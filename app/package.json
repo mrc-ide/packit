@@ -1,0 +1,19 @@
+{
+  "name": "packit",
+  "version": "1.0.0",
+  "description": "Web app for serving outpack metadata",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrc-ide/packit.git"
+  },
+  "author": "reside-ic",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mrc-ide/packit/issues"
+  },
+  "homepage": "https://github.com/mrc-ide/packit#readme"
+}
