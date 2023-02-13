@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -ex
+
+GIT_ID=$(git rev-parse --short=7 HEAD)
+GIT_BRANCH=$(git symbolic-ref --short HEAD)
+ORG=mrcide
+IMAGE_NAME=packit-db
+TAG_SHA="${ORG}/${IMAGE_NAME}:${GIT_ID}"
+TAG_BRANCH="${ORG}/${IMAGE_NAME}:${GIT_BRANCH}"
