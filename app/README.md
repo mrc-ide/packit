@@ -1,4 +1,4 @@
-# PACKIT Front End
+# Packit Front End
 
 ## Available Scripts
 

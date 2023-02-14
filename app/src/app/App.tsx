@@ -5,9 +5,7 @@ function App() {
     return (
         <div className="App">
             <header className="App-header">
-                <p data-testid={"app-welcome"}>
-                    Welcome to the new Packit modelling App
-                </p>
+                <p data-testid={"app-welcome"}>Welcome to packit</p>
             </header>
         </div>
     );
