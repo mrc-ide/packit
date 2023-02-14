@@ -21,9 +21,4 @@ jobs:
       - name: Test frontend
         run: npm test --prefix=app --coverage
       - name: Upload coverage
-        uses: codecov/codecov-action@v3
-        run: |
-          ls
-          ls app
-        with:
-          files: ./app/coverage/*.json
+        uses: codecov/codecov-action@v3 -f app/coverage/*.json
