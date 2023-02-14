@@ -2,7 +2,7 @@ name: test
 run-name: ${{ github.actor }} is testing packit features
 on: [push]
 jobs:
-  frontend-test:
+  frontend:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -10,20 +10,17 @@ jobs:
     steps:
       - name: Checkout out repository
         uses: actions/checkout@v3
-
       - name: use Nodejs ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-
       - name: Install dependencies
         run: npm ci --prefix=app
-
       - name: Build frontend
         run: npm run build --prefix=app
-
       - name: Test frontend
         run: npm test --prefix=app --coverage
-
-      - name: Upload coverage to codecov
+      - name: Upload coverage
         uses: codecov/codecov-action@v3
+        with:
+          files: app/coverage/*.json
