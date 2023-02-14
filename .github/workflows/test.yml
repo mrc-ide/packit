@@ -25,8 +25,8 @@ jobs:
       - name: Build frontend
         run: npm run build --prefix=app
       - name: Test frontend
-        run: npm test --prefix=app --coverage
+        run: npm test --prefix=app -- --coverage
       - name: Upload coverage
         uses: codecov/codecov-action@v3
         with:
-          files: ./app/coverage/*.json
+          fail_ci_if_error: true

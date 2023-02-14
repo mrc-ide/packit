@@ -1,7 +1,17 @@
 {
-  "name": "app",
-  "version": "0.1.0",
-  "private": true,
+  "name": "packit",
+  "version": "1.0.0",
+  "author": "reside-ic",
+  "license": "MIT",
+  "description": "Web app for serving outpack metadata",
+  "homepage": "https://github.com/mrc-ide/packit#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrc-ide/packit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mrc-ide/packit/issues"
+  },
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
