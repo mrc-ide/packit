@@ -1,6 +1,12 @@
 name: test
 run-name: ${{ github.actor }} is testing packit features
-on: [ push ]
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+    branches:
+      - 'main'
 jobs:
   frontend:
     runs-on: ubuntu-latest
@@ -21,4 +27,6 @@ jobs:
       - name: Test frontend
         run: npm test --prefix=app --coverage
       - name: Upload coverage
-        uses: codecov/codecov-action@v3 -f app/coverage/*.json
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./app/coverage/*.json
