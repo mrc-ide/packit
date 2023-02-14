@@ -1,12 +1,12 @@
 name: test
 run-name: ${{ github.actor }} is testing packit features
-on: [push]
+on: [ push ]
 jobs:
   frontend:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [ 16.x ]
     steps:
       - name: Checkout out repository
         uses: actions/checkout@v3
@@ -22,5 +22,8 @@ jobs:
         run: npm test --prefix=app --coverage
       - name: Upload coverage
         uses: codecov/codecov-action@v3
+        run: |
+          ls
+          ls app
         with:
-          files: app/coverage/*.json
+          files: ./app/coverage/*.json
