@@ -10,7 +10,7 @@ frontend:
 	@echo "Testing frontend"
 	npm test --prefix=app -- --coverage
 
-#Builds install dependencies, builds, test frontend and linting
+#Install dependencies, run eslint, build and test frontend
 frontend.deploy:
 	$(MAKE) frontend
 
