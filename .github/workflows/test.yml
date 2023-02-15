@@ -20,12 +20,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install dependencies
-        run: npm ci --prefix=app
-      - name: Build frontend
-        run: npm run build --prefix=app
-      - name: Test frontend
-        run: npm test --prefix=app -- --coverage
+      - name: Build, esLint and test frontend
+        run: make frontend.deploy
       - name: Upload coverage
         uses: codecov/codecov-action@v3
         with:

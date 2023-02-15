@@ -1,8 +1,9 @@
 # Packit Front End
+Interface is built in [React](https://reactjs.org) 
 
 ## Available Scripts
 
-In the project directory, you can run:
+**App can be started in the project directory when you run:**
 
 ### `npm start`
 
@@ -16,6 +17,10 @@ You will also see any lint errors in the console.
 
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+### `npm run lint` or `npm run lint:fix`
+
+Launches eslint, see [eslint](https://eslint.org/) for more information.
 
 ### `npm run build`
 
