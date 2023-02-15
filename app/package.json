@@ -30,8 +30,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "lint": "npx eslint ./src/**",
-    "lint:fix": "npx eslint --fix ./src/**",
+    "lint": "npx eslint ./src ",
+    "lint:fix": "npx eslint --fix ./src",
     "eject": "react-scripts eject",
     "serve": "serve -s build"
   },
