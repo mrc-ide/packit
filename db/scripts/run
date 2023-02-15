@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -e
+GIT_BRANCH=$(git -C "$PACKAGE_ROOT" symbolic-ref --short HEAD)
+docker run --rm -d --network=host --name packit-db mrcide/packit-db:$GIT_BRANCH
+
+# Need to give the database a little time to initialise before we can run the migration
+docker exec packit-db wait-for-db
+docker exec packit-db psql -U packituser -d packit -a -f /packit-schema/schema.sql

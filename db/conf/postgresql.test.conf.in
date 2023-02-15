@@ -1,0 +1,10 @@
+# ----------------------------------------------------------------------------
+# Test database config begins here.
+# Values here override those earlier in the file
+# ----------------------------------------------------------------------------
+shared_buffers = 128MB
+fsync = off
+synchronous_commit = off
+full_page_writes = off
+checkpoint_timeout = 45min
+max_wal_size = 4GB
