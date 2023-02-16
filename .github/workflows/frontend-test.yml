@@ -1,4 +1,4 @@
-name: test
+name: frontend-test
 run-name: ${{ github.actor }} is testing packit features
 on:
   push:
@@ -26,20 +26,3 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
-  backend:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java-version: [ 17.x ]
-    steps:
-      - name: Checkout out repository
-        uses: actions/checkout@v3
-      - name: Set up Java JDK ${{ matrix.java-version }}
-        working-directory: ./api
-        uses: actions/setup-java@v3
-        with:
-          java-version: ${{ matrix.java-version }}
-          distribution: "temurin"
-          cache: "gradle"
-      - name: test backend
-        run: ./gradlew :app:test --stacktrace

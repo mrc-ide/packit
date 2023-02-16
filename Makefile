@@ -13,6 +13,3 @@ frontend:
 #Install dependencies, run eslint, build and test frontend
 frontend.deploy:
 	$(MAKE) frontend
-
-db:
-	./db/scripts/run
