@@ -26,4 +26,4 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - uses: actions/checkout@v3
       - name: Build and push
-        run: ./db/scripts/run
+        run: db/scripts/run
