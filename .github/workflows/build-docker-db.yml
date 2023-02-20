@@ -26,6 +26,6 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Checkout repository
         uses: actions/checkout@v3
-        rum: git symbolic-ref --short HEAD
       - name: Build and push
         run: db/scripts/build
+
