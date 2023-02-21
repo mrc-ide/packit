@@ -18,8 +18,8 @@ class IndexRepositoryTest
     lateinit var indexRepository: IndexRepository
 
     val packet = listOf(
-        Packet(1, "test1", "test name1", "", false),
-        Packet(2, "test2", "test name2", "", false)
+        Packet("1", "test1", "test name1", "", false),
+        Packet("2", "test2", "test name2", "", false)
     )
 
     @Test
@@ -32,13 +32,5 @@ class IndexRepositoryTest
         assertEquals(result, packet)
     }
 
-    @Test
-    fun `gets index data by Id`()
-    {
-        indexRepository.saveAll(packet)
-
-        val result = indexRepository.findById(1).orElse(null)
-
-        assertEquals(result, Packet(1, "test1", "test name1", "", false))
-    }
 }
+

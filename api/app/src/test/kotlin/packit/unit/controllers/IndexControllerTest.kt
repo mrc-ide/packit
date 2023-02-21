@@ -11,10 +11,10 @@ import kotlin.test.assertEquals
 
 class IndexControllerTest
 {
-    private val packets = listOf(Packet(1, "test", "test name", "", false))
+    private val packets = listOf(Packet("1", "test", "test name", "", false))
 
     private val indexService = mock<IndexService> {
-        on { getPacket() } doReturn packets
+        on { getPackets() } doReturn packets
     }
 
     @Test

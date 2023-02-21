@@ -5,4 +5,4 @@ import org.springframework.stereotype.Repository
 import packit.model.Packet
 
 @Repository
-interface IndexRepository: JpaRepository<Packet, Long>
+interface IndexRepository: JpaRepository<Packet, Long>{}

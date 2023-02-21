@@ -7,13 +7,13 @@ import packit.repository.IndexRepository
 
 interface IndexService
 {
-    fun getPacket(): List<Packet>
+    fun getPackets(): List<Packet>
 }
 
 @Service
 class BaseIndexService(private val indexRepository: IndexRepository) : IndexService
 {
-    override fun getPacket(): List<Packet>
+    override fun getPackets(): List<Packet>
     {
         return indexRepository.findAll()
     }

@@ -14,6 +14,6 @@ class IndexController(private val indexService: IndexService)
     @GetMapping("/packet")
     fun getPackets(): ResponseEntity<List<Packet>>
     {
-        return ResponseEntity.ok(indexService.getPacket())
+        return ResponseEntity.ok(indexService.getPackets())
     }
 }

@@ -6,14 +6,13 @@ import jakarta.persistence.*
 @Table(name = "packet")
 data class Packet(
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    val id: Long? = -1,
-    @Column(name = "name", unique = true, nullable = false)
+    val id: String?= null,
+    @Column(name = "name")
     val name: String?= "",
-    @Column(name = "display_name", nullable = false)
+    @Column(name = "display_name", nullable = true)
     val displayName: String? ="",
     @Column(name = "parameters", nullable = true)
     val parameters: String? = null,
-    @Column(name = "published", nullable = true)
+    @Column(name = "published")
     val published: Boolean? = false
 )

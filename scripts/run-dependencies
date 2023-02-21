@@ -4,9 +4,9 @@ set -e
 
 HERE=$(realpath "$(dirname $0)")
 
-## Run database and add dummy
+## Start database
 "$HERE"/../db/scripts/build
 "$HERE"/../db/scripts/run
 
-# Populate db
+# Populate db with dummy data
 docker exec packit-db psql -U packituser -d packit -a -f /packit-dummy/import.sql
