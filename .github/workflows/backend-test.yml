@@ -17,6 +17,7 @@ jobs:
     services:
       packit-db:
         image: mrcide/packit-db:${{ github.head_ref || github.ref_name }}
+        container_name: packit-db
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -29,6 +30,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Connect to PostgreSQL
+        run:  docker ps && db/scripts/add-schema-and-dummy
         env:
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
