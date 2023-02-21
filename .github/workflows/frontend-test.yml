@@ -1,4 +1,4 @@
-name: test
+name: frontend-test
 run-name: ${{ github.actor }} is testing packit features
 on:
   push:
@@ -14,14 +14,20 @@ jobs:
       matrix:
         node-version: [ 16.x ]
     steps:
-      - name: Checkout out repository
+      - name: Checkout repository
         uses: actions/checkout@v3
       - name: Use NodeJs ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Build, esLint and test frontend
-        run: make frontend.deploy
+      - name: Installing dependencies
+        run: npm ci --prefix=app
+      - name: Building app
+        run: npm run build --prefix=app
+      - name: Running eslint
+        run: npm run lint --prefix=app
+      - name: Testing app
+        run: npm test --prefix=app -- --coverage
       - name: Upload coverage
         uses: codecov/codecov-action@v3
         with:

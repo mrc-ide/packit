@@ -1,5 +1,5 @@
 # Packit Front End
-Interface is built in [React](https://reactjs.org) 
+Interface is built with [React library](https://reactjs.org) 
 
 ## Available Scripts
 
