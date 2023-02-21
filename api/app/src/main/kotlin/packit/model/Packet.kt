@@ -1,4 +1,4 @@
-package packit.data
+package packit.model
 
 import jakarta.persistence.*
 
@@ -7,7 +7,7 @@ import jakarta.persistence.*
 data class Packet(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    val id: String? = "",
+    val id: Long? = -1,
     @Column(name = "name", unique = true, nullable = false)
     val name: String?= "",
     @Column(name = "display_name", nullable = false)

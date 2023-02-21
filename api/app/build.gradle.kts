@@ -30,6 +30,10 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
+    testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
+
+    runtimeOnly("com.h2database:h2")
+
     // This dependency is used by the application.
     implementation("com.google.guava:guava:31.1-jre")
 

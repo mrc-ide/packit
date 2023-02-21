@@ -1,16 +1,17 @@
 package packit.service
 
 import org.springframework.stereotype.Service
-import packit.data.Packet
+import packit.model.Packet
 import packit.repository.IndexRepository
 
-interface IIndexService
+
+interface IndexService
 {
     fun getPacket(): List<Packet>
 }
 
 @Service
-class IndexService(private val indexRepository: IndexRepository) : IIndexService
+class BaseIndexService(private val indexRepository: IndexRepository) : IndexService
 {
     override fun getPacket(): List<Packet>
     {
