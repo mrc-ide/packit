@@ -29,7 +29,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Connect to PostgreSQL
-        run:  docker ps && db/scripts/add-schema-and-dummy
         env:
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
