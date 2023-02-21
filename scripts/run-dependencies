@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-set -ex
+
+set -e
 
 HERE=$(realpath "$(dirname $0)")
 
-## Run database and populate data
+## Run database and add dummy
 "$HERE"/../db/scripts/build
 "$HERE"/../db/scripts/run
 "$HERE"/../db/scripts/populate
