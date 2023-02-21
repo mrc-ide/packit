@@ -7,11 +7,11 @@ import packit.model.Packet
 import packit.service.IndexService
 
 @RestController
-class IndexController(private val indexServiceInterface: IndexService)
+class IndexController(private val indexService: IndexService)
 {
     @GetMapping("/packet")
     fun getPackets(): ResponseEntity<List<Packet>>
     {
-        return ResponseEntity.ok(indexServiceInterface.getPacket())
+        return ResponseEntity.ok(indexService.getPacket())
     }
 }
