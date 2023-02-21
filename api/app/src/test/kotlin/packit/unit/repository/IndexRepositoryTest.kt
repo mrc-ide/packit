@@ -9,7 +9,6 @@ import packit.model.Packet
 import packit.repository.IndexRepository
 import kotlin.test.assertEquals
 
-
 @DataJpaTest
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
