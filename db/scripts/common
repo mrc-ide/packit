@@ -17,4 +17,3 @@ ORG=mrcide
 IMAGE_NAME=packit-db
 TAG_SHA="${ORG}/${IMAGE_NAME}:${GIT_ID}"
 TAG_BRANCH="${ORG}/${IMAGE_NAME}:${GIT_BRANCH}"
-NETWORK=packit_nw

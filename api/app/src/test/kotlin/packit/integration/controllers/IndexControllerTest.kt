@@ -10,7 +10,7 @@ class IndexControllerTest: IntegrationTest()
     @Test
     fun `can get packet`()
     {
-        val result = restTemplate.getForEntity("/packet", String::class.java)
+        val result = restTemplate.getForEntity("/index/packet", String::class.java)
         assertSuccess(result)
     }
 }

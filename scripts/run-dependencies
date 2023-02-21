@@ -7,4 +7,6 @@ HERE=$(realpath "$(dirname $0)")
 ## Run database and add dummy
 "$HERE"/../db/scripts/build
 "$HERE"/../db/scripts/run
-"$HERE"/../db/scripts/populate
+
+# Populate db
+docker exec packit-db psql -U packituser -d packit -a -f /packit-dummy/import.sql
