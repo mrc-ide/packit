@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -ex
+
+HERE=$(realpath "$(dirname $0)")
+
+## Run database and populate data
+"$HERE"/../db/scripts/build
+"$HERE"/../db/scripts/run
+"$HERE"/../db/scripts/populate

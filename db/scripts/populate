@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -e
+docker exec packit-db psql -U packituser -d packit -a -f /packit-dummy/import.sql;

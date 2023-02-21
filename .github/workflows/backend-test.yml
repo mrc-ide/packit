@@ -24,4 +24,4 @@ jobs:
           cache: "gradle"
       - name: test backend
         working-directory: api
-        run: ./gradlew :app:test --stacktrace
+        run: make test-backend

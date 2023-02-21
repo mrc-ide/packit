@@ -27,5 +27,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Build and push
-        run: db/scripts/build
+        run: make build-and-push-database
+      - name: populate db with dummy data
+        run: make dummy-data
 
