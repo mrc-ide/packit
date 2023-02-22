@@ -3,16 +3,16 @@ package packit.model
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "packet")
+@Table(name= "packet")
 data class Packet(
     @Id
-    val id: String?= null,
+    var id: String,
     @Column(name = "name")
-    val name: String?= "",
-    @Column(name = "display_name", nullable = true)
-    val displayName: String? ="",
-    @Column(name = "parameters", nullable = true)
-    val parameters: String? = null,
+    var name: String,
+    @Column(name = "display_name")
+    var displayName: String,
+    @Column(name = "parameters")
+    var parameters: String,
     @Column(name = "published")
-    val published: Boolean? = false
+    var published: Boolean
 )

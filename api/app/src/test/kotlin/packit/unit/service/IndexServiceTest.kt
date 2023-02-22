@@ -10,7 +10,7 @@ import kotlin.test.assertEquals
 
 class IndexServiceTest
 {
-    private val packets = listOf(Packet("1", "test", "test name", "", false))
+    private val packets = listOf(Packet("1", "db/test", "test name", "", false))
 
     private val indexRepository = mock<IndexRepository> {
         on { findAll() } doReturn packets

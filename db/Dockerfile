@@ -9,7 +9,6 @@ ENV POSTGRES_PASSWORD changeme
 ENV PGDATA /pgdata
 
 COPY conf /etc/packit
-COPY schema /packit-schema
 COPY dummy /packit-dummy
 
 RUN cat /etc/packit/postgresql.conf /etc/packit/postgresql.test.conf.in > \

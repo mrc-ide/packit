@@ -30,7 +30,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Connect to PostgreSQL
-        run:  db/scripts/add-schema-and-dummy
+        run:  db/scripts/add-dummy-data
         env:
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
