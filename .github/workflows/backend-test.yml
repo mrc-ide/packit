@@ -1,6 +1,10 @@
 name: backend-test
 run-name: ${{ github.actor }} is testing packit backend features
 on:
+  workflow_run:
+    workflows: [ "build-db" ]
+    types:
+      - completed
   push:
     branches:
       - 'main'
@@ -30,7 +34,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Connect to PostgreSQL
-        run:  db/scripts/add-schema-and-dummy
+        run: db/scripts/add-schema-and-dummy
         env:
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
@@ -42,4 +46,4 @@ jobs:
           cache: "gradle"
       - name: test backend
         working-directory: api
-        run: ./gradlew :app:test --stacktrace
+        run: ./gradlew :app:test --stacktrace --rerun
