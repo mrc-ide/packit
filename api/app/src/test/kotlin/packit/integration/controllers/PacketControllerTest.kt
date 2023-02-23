@@ -5,12 +5,12 @@ import org.springframework.boot.test.context.SpringBootTest
 import packit.integration.IntegrationTest
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class IndexControllerTest: IntegrationTest()
+class PacketControllerTest: IntegrationTest()
 {
     @Test
-    fun `can get packet`()
+    fun `can get packets`()
     {
-        val result = restTemplate.getForEntity("/index/packet", String::class.java)
+        val result = restTemplate.getForEntity("/packet/", String::class.java)
         assertSuccess(result)
     }
 }

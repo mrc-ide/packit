@@ -5,15 +5,15 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import packit.model.Packet
-import packit.service.IndexService
+import packit.service.PacketService
 
 @RestController
-@RequestMapping("/index")
-class IndexController(private val indexService: IndexService)
+@RequestMapping("/packet")
+class PacketController(private val packetService: PacketService)
 {
-    @GetMapping("/packet")
-    fun getPackets(): ResponseEntity<List<Packet>>
+    @GetMapping("/")
+    fun index(): ResponseEntity<List<Packet>>
     {
-        return ResponseEntity.ok(indexService.getPackets())
+        return ResponseEntity.ok(packetService.getPackets())
     }
 }

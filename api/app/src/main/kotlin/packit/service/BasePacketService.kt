@@ -2,19 +2,19 @@ package packit.service
 
 import org.springframework.stereotype.Service
 import packit.model.Packet
-import packit.repository.IndexRepository
+import packit.repository.PacketRepository
 
 
-interface IndexService
+interface PacketService
 {
     fun getPackets(): List<Packet>
 }
 
 @Service
-class BaseIndexService(private val indexRepository: IndexRepository) : IndexService
+class BasePacketService(private val packetRepository: PacketRepository) : PacketService
 {
     override fun getPackets(): List<Packet>
     {
-        return indexRepository.findAll()
+        return packetRepository.findAll()
     }
 }

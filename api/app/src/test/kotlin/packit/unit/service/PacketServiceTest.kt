@@ -4,22 +4,22 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import packit.model.Packet
-import packit.repository.IndexRepository
-import packit.service.BaseIndexService
+import packit.repository.PacketRepository
+import packit.service.BasePacketService
 import kotlin.test.assertEquals
 
-class IndexServiceTest
+class PacketServiceTest
 {
-    private val packets = listOf(Packet("1", "test", "test name", "", false))
+    private val packets = listOf(Packet("1", "test", "test name", mapOf("name" to "value"), false))
 
-    private val indexRepository = mock<IndexRepository> {
+    private val packetRepository = mock<PacketRepository> {
         on { findAll() } doReturn packets
     }
 
     @Test
     fun`gets packets`()
     {
-        val sut = BaseIndexService(indexRepository)
+        val sut = BasePacketService(packetRepository)
 
         val result = sut.getPackets()
 
