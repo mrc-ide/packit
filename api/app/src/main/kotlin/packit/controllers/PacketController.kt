@@ -11,7 +11,7 @@ import packit.service.PacketService
 @RequestMapping("/packet")
 class PacketController(private val packetService: PacketService)
 {
-    @GetMapping("")
+    @GetMapping
     fun index(): ResponseEntity<List<Packet>>
     {
         return ResponseEntity.ok(packetService.getPackets())
