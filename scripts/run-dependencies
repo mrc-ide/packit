@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -e
+
+HERE=$(realpath "$(dirname $0)")
+
+## Start database
+"$HERE"/../db/scripts/build
+"$HERE"/../db/scripts/run
+
+# Populate db with dummy data
+docker exec packit-db psql -U packituser -d packit -a -f /packit-dummy/import.sql

@@ -1,6 +1,10 @@
 name: frontend-test
 run-name: ${{ github.actor }} is testing packit features
 on:
+  workflow_run:
+    workflows: [ "backend-test" ]
+    types:
+      - completed
   push:
     branches:
       - 'main'

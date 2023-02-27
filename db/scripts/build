@@ -10,5 +10,3 @@ docker build \
        -t "$TAG_BRANCH" \
        $PACKAGE_ROOT
 
-docker push $TAG_SHA
-docker push $TAG_BRANCH

@@ -1,6 +1,10 @@
 name: backend-test
 run-name: ${{ github.actor }} is testing packit backend features
 on:
+  workflow_run:
+    workflows: [ "build-db" ]
+    types:
+      - completed
   push:
     branches:
       - 'main'
@@ -13,9 +17,27 @@ jobs:
     strategy:
       matrix:
         java-version: [ 17 ]
+    # Service containers to run with `runner-job`
+    services:
+      packit-db:
+        image: mrcide/packit-db:${{ github.head_ref || github.ref_name }}
+        # Set health checks to wait until postgres has started and add container name
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+          --name packit-db
+        ports:
+          - 5432:5432
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+      - name: Connect to PostgreSQL
+        run: db/scripts/add-schema-and-dummy
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
       - name: Set up Java JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v3
         with:
@@ -24,4 +46,4 @@ jobs:
           cache: "gradle"
       - name: test backend
         working-directory: api
-        run: ./gradlew :app:test --stacktrace
+        run: ./gradlew :app:test --stacktrace --rerun
