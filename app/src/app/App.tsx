@@ -1,12 +1,13 @@
 import React from "react";
-import "../styles/App.scss";
+import Header from "./components/header/Header";
 
 function App() {
     return (
         <div className="App">
-            <header className="App-header">
+            <Header/>
+            <div className="App-main">
                 <p data-testid={"app-welcome"}>Welcome to packit.</p>
-            </header>
+            </div>
         </div>
     );
 }
