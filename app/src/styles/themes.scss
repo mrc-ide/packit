@@ -1,0 +1,14 @@
+
+@import "variables";
+
+$themes: (
+        default: (
+                backgroundColor: $theme-default-primary,
+                textColor: $theme-default-text-color,
+                iconColor: $theme-default-primary,
+                buttonTextColor: #FFFFFF,
+                buttonColorHover: $theme-default-hover-color,
+                buttonTextHoverColor: #FFFFFF,
+                buttonColor: $theme-default-primary
+        )
+);

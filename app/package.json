@@ -4,7 +4,6 @@
   "author": "reside-ic",
   "license": "MIT",
   "description": "Web app for serving outpack metadata",
-  "homepage": "https://github.com/mrc-ide/packit#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mrc-ide/packit.git"
@@ -13,6 +12,10 @@
     "url": "https://github.com/mrc-ide/packit/issues"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/icons-material": "^5.11.11",
+    "@mui/material": "^5.11.12",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
