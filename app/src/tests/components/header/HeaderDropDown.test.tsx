@@ -13,7 +13,7 @@ describe("header drop down menu component", () => {
 
         expect(dropDown.className).toBe("icon-primary nav-item dropdown");
 
-        const userIcon = dropDown.querySelector("a")!!;
+        const userIcon = dropDown.querySelectorAll("a")[0];
 
         await waitFor(() => {
             userEvent.click(userIcon);
