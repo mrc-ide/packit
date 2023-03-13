@@ -1,12 +1,14 @@
 import React from "react";
-import "../styles/App.css";
+import Header from "./components/header/Header";
+import active from "../config/active.json";
 
 function App() {
     return (
-        <div className="App">
-            <header className="App-header">
-                <p data-testid={"app-welcome"}>Welcome to packit.</p>
-            </header>
+        <div data-testid="main" className={active.instance}>
+            <Header/>
+            <div className="app">
+                <p>Welcome to packit.</p>
+            </div>
         </div>
     );
 }
