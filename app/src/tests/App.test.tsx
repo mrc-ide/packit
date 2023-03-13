@@ -6,5 +6,5 @@ test("renders app welcome message", () => {
   render(<App />);
   const app = screen.getByTestId("main");
   expect(app).toHaveTextContent("Welcome to packit");
-  expect(app.className).toBe("default")
+  expect(app.className).toBe("default");
 });

@@ -13,16 +13,16 @@ describe("header drop down menu component", () => {
 
         expect(dropDown.className).toBe("icon-primary nav-item dropdown");
 
-        const userIcon = dropDown.querySelector("a")!!
+        const userIcon = dropDown.querySelector("a")!!;
 
         await waitFor(() => {
             userEvent.click(userIcon);
-        })
+        });
 
         expect(within(dropDown).getByText("l.ani@imperial.ac.uk")).toBeInTheDocument();
         expect(within(dropDown).getByText("Manage access")).toBeInTheDocument();
         expect(within(dropDown).getByText("Publish packets")).toBeInTheDocument();
         expect(within(dropDown).getByTestId("LogoutIcon")).toBeInTheDocument();
-    })
+    });
 
 });
