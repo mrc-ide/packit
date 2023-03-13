@@ -40,6 +40,14 @@ $theme-map: null;
   }
 }
 
+.dropdown-item {
+  &:hover {
+    color: themed('buttonTextHoverColor');
+    border-color: themed('buttonColorHover');
+    background-color: themed('buttonColor');
+  }
+}
+
 .icon-primary {
   color: themed('iconColor') !important;
   cursor: pointer;

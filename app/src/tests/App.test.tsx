@@ -4,6 +4,7 @@ import App from "../app/App";
 
 test("renders app welcome message", () => {
   render(<App />);
-  const linkElement = screen.getByTestId("app-welcome");
-  expect(linkElement).toHaveTextContent("Welcome to packit");
+  const app = screen.getByTestId("main");
+  expect(app).toHaveTextContent("Welcome to packit");
+  expect(app.className).toBe("default")
 });

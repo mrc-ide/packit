@@ -1,31 +1,29 @@
 import React from "react";
 import active from "../../../config/active.json";
 import HelpIcon from "@mui/icons-material/Help";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import HeaderDropDown from "./HeaderDropDown";
 
 const Header = () => {
     return (
         <header>
-            <nav className="navbar navbar-light bg-light">
+            <nav data-testid="header" className="navbar">
                 <a className="navbar-brand" href="/">
                     <img src={active.logo}
                          width="141"
                          height="36"
-                         alt=""/></a>
-                <span>
+                         alt="Logo"/></a>
+                <div>
                     <span className="px-3">
-                        <a className="btn btn-sm btn-dark rounded"
+                        <a className="btn btn-sm rounded"
                            href="#">Accessibility</a>
                     </span>
                     <span className="px-3">
                          <HelpIcon className="icon-primary" sx={{fontSize: 35}}/>
                     </span>
                     <span className="px-3">
-                          <AccountCircleIcon className="icon-primary" sx={{fontSize: 35}}/>
-                          <ArrowDropDownIcon className="icon-primary"/>
+                        <HeaderDropDown/>
                     </span>
-                </span>
+                </div>
             </nav>
         </header>
     );
