@@ -62,8 +62,74 @@ $theme-map: null;
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.content {
+  position: absolute;
+  top: 85px;
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: black;
+  transition: left 0.3s ease-in-out;
+}
+
+.sidebar {
+  background: #FFFFFF;
+  position: absolute;
+  top: 64px;
+  left: 0;
+  width: 245px;
+  height: 100%;
+  padding: 20px 0;
+  transition: color 0.1s, border-color 0.1s, background-color 0.1s;
+}
+
+.sidebar ul li {
+  alignment: center;
+  padding: 0 10px 0 10px;
+}
+
+.sidebar ul li a {
+  top: 20px;
+  display: block;
+  padding: 9px 30px;
+  color: #484646;
+  font-size: 12px;
+  position: relative;
+  text-align: left;
+  text-decoration: none;
+}
+
+.sidebar ul li a .sidebar-icon {
+  color: #484646;
+  width: 35px;
+  height: 25px;
+  display: inline-block;
+}
+
+.sidebar ul li a:hover,
+.sidebar ul li a.active,
+.sidebar ul li a.active .sidebar-icon {
+  color: #FFFFFF;
+
+  background: themed('buttonColor');
+  border-radius: 10px;
+}
+
+.sidebar ul li a:hover .sidebar-icon,
+.wrapper .sidebar ul li a.active .sidebar-icon {
+  color: #FFFFFF;
+}
+
+.sidebar ul li a:hover:before,
+.sidebar ul li a.active:before {
+  display: block;
 }
