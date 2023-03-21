@@ -15,11 +15,11 @@ describe("app component", () => {
         render(<App/>);
         const app = screen.getByTestId("app-id");
         const items = app.querySelectorAll("li a");
-        expect(items.length).toBe(4)
-        expect(items[0]).toHaveTextContent("Packet explorer")
-        expect(items[1]).toHaveTextContent("Packet runner")
-        expect(items[2]).toHaveTextContent("Workflow runner")
-        expect(items[3]).toHaveTextContent("Project documentation")
+        expect(items.length).toBe(4);
+        expect(items[0]).toHaveTextContent("Packet explorer");
+        expect(items[1]).toHaveTextContent("Packet runner");
+        expect(items[2]).toHaveTextContent("Workflow runner");
+        expect(items[3]).toHaveTextContent("Project documentation");
         expect(app).toHaveTextContent("Packet explorer");
     });
 
@@ -27,10 +27,10 @@ describe("app component", () => {
         render(<App/>);
         const mainComponent = screen.getByTestId("main-id");
         const items = mainComponent.querySelectorAll("li a");
-        expect(items.length).toBe(4)
-        const packetRunner = items[1]
-        expect(packetRunner).toHaveTextContent("Packet runner")
-        expect((packetRunner as HTMLLinkElement).href).toBe("http://localhost/#")
+        expect(items.length).toBe(4);
+        const packetRunner = items[1];
+        expect(packetRunner).toHaveTextContent("Packet runner");
+        expect((packetRunner as HTMLLinkElement).href).toBe("http://localhost/#");
 
         await waitFor(() => {
             userEvent.click(packetRunner);
@@ -43,10 +43,10 @@ describe("app component", () => {
         render(<App/>);
         const mainComponent = screen.getByTestId("main-id");
         const items = mainComponent.querySelectorAll("li a");
-        expect(items.length).toBe(4)
-        const workflowRunner = items[2]
-        expect(workflowRunner).toHaveTextContent("Workflow runner")
-        expect((workflowRunner as HTMLLinkElement).href).toBe("http://localhost/#")
+        expect(items.length).toBe(4);
+        const workflowRunner = items[2];
+        expect(workflowRunner).toHaveTextContent("Workflow runner");
+        expect((workflowRunner as HTMLLinkElement).href).toBe("http://localhost/#");
 
         await waitFor(() => {
             userEvent.click(workflowRunner);
@@ -59,10 +59,10 @@ describe("app component", () => {
         render(<App/>);
         const mainComponent = screen.getByTestId("main-id");
         const items = mainComponent.querySelectorAll("li a");
-        expect(items.length).toBe(4)
-        const projectDoc = items[3]
-        expect(projectDoc).toHaveTextContent("Project documentation")
-        expect((projectDoc as HTMLLinkElement).href).toBe("http://localhost/#")
+        expect(items.length).toBe(4);
+        const projectDoc = items[3];
+        expect(projectDoc).toHaveTextContent("Project documentation");
+        expect((projectDoc as HTMLLinkElement).href).toBe("http://localhost/#");
 
         await waitFor(() => {
             userEvent.click(projectDoc);
@@ -70,4 +70,4 @@ describe("app component", () => {
 
         expect(within(mainComponent).getByText("Project documentation page")).toBeInTheDocument();
     });
-})
+});

@@ -9,7 +9,7 @@ import {
 import {SideBarItems} from "../../types";
 
 export default function Main() {
-    const [activeNavBar, setActiveNavBar] = useState(0);
+    const [activeNavBar, setActiveNavBar] = useState(SideBarItems.explorer);
     return (
         <main>
             <Sidebar onChangeSideBar={(e) => setActiveNavBar(e)}/>
