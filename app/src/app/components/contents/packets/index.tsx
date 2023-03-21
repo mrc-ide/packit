@@ -1,3 +1,3 @@
-import RunPacket from "./RunPacket";
+import PacketRunner from "./PacketRunner";
 
-export {RunPacket};
+export {PacketRunner};

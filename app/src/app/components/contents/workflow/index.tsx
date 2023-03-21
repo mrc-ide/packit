@@ -1,3 +1,3 @@
-import RunWorkflow from "./RunWorkflow";
+import WorkflowRunner from "./WorkflowRunner";
 
-export {RunWorkflow};
+export {WorkflowRunner};

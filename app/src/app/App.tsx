@@ -1,17 +1,18 @@
 import React from "react";
-import Header from "./components/header/Header";
+import {Header} from "./components/header";
 import active from "../config/active.json";
-import Main from "./components/main/Main";
+import {Main} from "./components/main";
 
-function App() {
+export default function App() {
     return (
-        <div data-testid="main" className={active.instance}>
+        <div data-testid="app-id"
+             className={active.instance}>
             <Header/>
-            <div className="app">
+            <div data-testid="main-id"
+                 className="app">
                 <Main/>
             </div>
         </div>
     );
 }
 
-export default App;

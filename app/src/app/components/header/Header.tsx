@@ -1,7 +1,7 @@
 import React from "react";
 import active from "../../../config/active.json";
 import HelpIcon from "@mui/icons-material/Help";
-import HeaderDropDown from "./HeaderDropDown";
+import {HeaderDropDown} from "./index";
 
 export default function Header() {
     return (

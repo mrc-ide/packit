@@ -1,9 +1,9 @@
 import React, {useState} from "react";
-import Sidebar from "./Sidebar";
+import {Sidebar} from "./index";
 import {
     Explorer,
-    RunPacket,
-    RunWorkflow,
+    PacketRunner,
+    WorkflowRunner,
     ProjectDocumentation
 } from "./../contents";
 import {SideBarItems} from "../../types";
@@ -15,8 +15,8 @@ export default function Main() {
             <Sidebar onChangeSideBar={(e) => setActiveNavBar(e)}/>
             <div className="content">
                 {activeNavBar === SideBarItems.explorer && <Explorer/>}
-                {activeNavBar === SideBarItems.runPacket && <RunPacket/>}
-                {activeNavBar === SideBarItems.runWorkflow && <RunWorkflow/>}
+                {activeNavBar === SideBarItems.packetRunner && <PacketRunner/>}
+                {activeNavBar === SideBarItems.workflowRunner && <WorkflowRunner/>}
                 {activeNavBar === SideBarItems.projectDoc && <ProjectDocumentation/>}
             </div>
         </main>

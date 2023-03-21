@@ -94,13 +94,14 @@ body {
 
 .sidebar ul li {
   alignment: center;
-  padding: 0 10px 0 10px;
+  padding: 10px 10px 0 10px;
 }
 
 .sidebar ul li a {
   top: 20px;
+  height: 36px;
   display: block;
-  padding: 9px 30px;
+  padding: 8px 30px 10px 10px;
   color: #484646;
   font-size: 12px;
   position: relative;
@@ -115,17 +116,20 @@ body {
   display: inline-block;
 }
 
-.sidebar ul li a:hover,
-.sidebar ul li a.active,
-.sidebar ul li a.active .sidebar-icon {
+.sidebar ul li a.active {
   color: #FFFFFF;
-
   background: themed('buttonColor');
   border-radius: 10px;
 }
 
+.sidebar ul li a:hover {
+  color: #FFFFFF;
+  background: themed('buttonColorHover');
+  border-radius: 10px;
+}
+
 .sidebar ul li a:hover .sidebar-icon,
-.wrapper .sidebar ul li a.active .sidebar-icon {
+.sidebar ul li a.active .sidebar-icon {
   color: #FFFFFF;
 }
 

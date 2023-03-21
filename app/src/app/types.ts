@@ -1,7 +1,7 @@
 export enum SideBarItems {
     explorer,
-    runPacket,
-    runWorkflow,
+    packetRunner,
+    workflowRunner,
     projectDoc
 }
 

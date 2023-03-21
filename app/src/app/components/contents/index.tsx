@@ -1,11 +1,11 @@
 import {Explorer} from "./explorer";
-import {RunPacket} from "./packets";
-import {RunWorkflow} from "./workflow";
+import {PacketRunner} from "./packets";
+import {WorkflowRunner} from "./workflow";
 import {ProjectDocumentation} from "./documents";
 
 export {
     Explorer,
-    RunPacket,
-    RunWorkflow,
+    PacketRunner,
+    WorkflowRunner,
     ProjectDocumentation
 };
