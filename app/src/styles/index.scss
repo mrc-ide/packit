@@ -77,7 +77,7 @@ body {
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: black;
+  color: themed('textColor');
   transition: left 0.3s ease-in-out;
 }
 
@@ -116,16 +116,15 @@ body {
   display: inline-block;
 }
 
-.sidebar ul li a.active {
+.sidebar ul li a.active,
+.sidebar ul li a:hover {
   color: #FFFFFF;
   background: themed('buttonColor');
   border-radius: 10px;
 }
 
-.sidebar ul li a:hover {
-  color: #FFFFFF;
+.sidebar ul li a.active:hover {
   background: themed('buttonColorHover');
-  border-radius: 10px;
 }
 
 .sidebar ul li a:hover .sidebar-icon,
