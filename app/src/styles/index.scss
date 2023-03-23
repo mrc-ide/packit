@@ -79,10 +79,6 @@ body {
   transition: left 0.3s ease-in-out;
 }
 
-.packet-runner {
-  top: 90px;
-}
-
 .explorer {
   top: 90px;
   min-height: inherit;
@@ -95,6 +91,7 @@ body {
   border-radius: 10px;
   background-color: #FFFFFF;
 }
+
 .sidebar {
   background: #FFFFFF;
   position: absolute;
@@ -120,29 +117,41 @@ body {
       text-align: left;
       text-decoration: none;
 
-      .sidebar-icon {
-        color: themed("textColor");
-        width: 35px;
-        height: 25px;
-        display: inline-block;
-      }
-
-      &.active, &:hover {
+      &.active {
         color: #FFFFFF;
         background: themed("buttonColor");
         border-radius: 10px;
       }
 
-      &.active:hover {
-        background: themed("buttonColorHover");
+      &:hover {
+        color: #FFFFFF;
+        background: themed("buttonColor");
+        border-radius: 10px;
+
+        &:before {
+          display: block;
+        }
+      }
+
+      &.active {
+        &:before {
+          display: block;
+        }
+
+        &:hover {
+          background: themed("buttonColorHover");
+        }
       }
 
       &:hover .sidebar-icon, &.active .sidebar-icon {
         color: #FFFFFF;
       }
 
-      &:hover:before, &.active:before {
-        display: block;
+      .sidebar-icon {
+        color: #484646;
+        width: 35px;
+        height: 25px;
+        display: inline-block;
       }
     }
   }
