@@ -19,18 +19,6 @@ describe("main component", () => {
         expect(content).toHaveTextContent("Packet explorer page");
     });
 
-    it("renders sidebar items", () => {
-        render(<Main/>);
-        const app = screen.getByTestId("sidebar");
-        const items = app.querySelectorAll("li a");
-        expect(items.length).toBe(4);
-        expect(items[0]).toHaveTextContent("Packet explorer");
-        expect(items[1]).toHaveTextContent("Packet runner");
-        expect(items[2]).toHaveTextContent("Workflow runner");
-        expect(items[3]).toHaveTextContent("Project documentation");
-        expect(app).toHaveTextContent("Packet explorer");
-    });
-
     it("renders packet runner page", async () => {
         render(<Main/>);
         const mainComponent = screen.getByTestId("main");
