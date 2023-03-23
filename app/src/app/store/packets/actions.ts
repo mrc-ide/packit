@@ -1,20 +1,20 @@
 import {packetsSlice} from "./packets";
 import axios from "axios";
-import {Dispatch} from "@reduxjs/toolkit";
+import store from "../store";
 
 interface PacketsActions {
-    getPackets: (dispatch: Dispatch) => void;
+    getPackets: () => void;
 }
 
 export const actions: PacketsActions = {
-    getPackets: (dispatch) => {
+    getPackets: () => {
         const {setPackets, setPacketsError} = packetsSlice.actions;
         axios.get("http://localhost:8080/packet")
             .then(({data}) => {
-                dispatch(setPackets(data));
+                store.dispatch(setPackets(data));
             })
             .catch((error) => {
-                dispatch(setPacketsError(error));
+                store.dispatch(setPacketsError(error));
             });
     }
 };
