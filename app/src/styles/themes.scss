@@ -1,0 +1,13 @@
+@import "variables.scss";
+
+$themes: (
+        default: (
+                backgroundColor: $theme-primary,
+                textColor: $theme-text-color,
+                iconColor: $theme-primary,
+                buttonTextColor: #FFFFFF,
+                buttonColorHover: $theme-hover-color,
+                buttonTextHoverColor: #FFFFFF,
+                buttonColor: $theme-primary
+        )
+);

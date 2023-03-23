@@ -1,0 +1,69 @@
+@import '~bootstrap/scss/bootstrap.scss';
+@import "themes.scss";
+@import "header.scss";
+@import 'app.scss';
+
+/**
+ this mixin allows for dynamic theming of the app
+ */
+$theme-map: null;
+
+@mixin customTheme($themes: $themes) {
+  @each $theme, $map in $themes {
+    .#{$theme} & {
+      $theme-map: () !global;
+      @each $key, $submap in $map {
+        $value: map-get(map-get($themes, $theme), '#{$key}');
+        $theme-map: map-merge($theme-map, ($key: $value)) !global;
+      }
+      @content;
+    }
+  }
+}
+
+@function themed($key) {
+  @return map-get($theme-map, $key)
+}
+
+.btn {
+  @include customTheme($themes) {
+    color: themed('buttonTextColor');
+    background-color: themed('buttonColor');
+    border-color: themed('buttonColor');
+
+    &:hover {
+      color: themed('buttonTextHoverColor');
+      border-color: themed('buttonColorHover');
+      text-transform: themed('buttonTextTransform');
+      background-color: themed('buttonColorHover');
+    }
+  }
+}
+
+.dropdown-item {
+  &:hover {
+    color: themed('buttonTextHoverColor');
+    border-color: themed('buttonColorHover');
+    background-color: themed('buttonColor');
+  }
+}
+
+.icon-primary {
+  color: themed('iconColor') !important;
+  cursor: pointer;
+  display: inline-block;
+  transition: color 0.1s, border-color 0.1s, background-color 0.1s;
+
+  &:hover {
+    color: themed('buttonColorHover') !important;
+  }
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
