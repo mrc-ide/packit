@@ -13,7 +13,7 @@ export default function Main() {
     return (
         <main>
             <Sidebar onChangeSideBar={(e) => setActiveNavBar(e)}/>
-            <div className="content">
+            <div>
                 {activeNavBar === SideBarItems.explorer && <Explorer/>}
                 {activeNavBar === SideBarItems.packetRunner && <PacketRunner/>}
                 {activeNavBar === SideBarItems.workflowRunner && <WorkflowRunner/>}

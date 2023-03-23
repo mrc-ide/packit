@@ -70,15 +70,30 @@ body {
 
 .content {
   position: absolute;
-  top: 85px;
+  left: 265px;
+  right: 20px;
+  min-width: inherit;
   display: flex;
-  text-align: center;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
   color: themed('textColor');
   transition: left 0.3s ease-in-out;
+}
+
+.packet-runner {
+  top: 90px;
+}
+
+.explorer {
+  top: 90px;
+  min-height: inherit;
+}
+
+.content-box {
+  overflow: auto;
+  padding: 10px 10px 10px 10px;
+  max-height: calc(100vh - 150px);
+  border-radius: 10px;
+  background-color: #FFFFFF;
 }
 
 .sidebar {
@@ -102,7 +117,7 @@ body {
   height: 36px;
   display: block;
   padding: 8px 30px 10px 10px;
-  color: #484646;
+  color: themed("textColor");
   font-size: 12px;
   position: relative;
   text-align: left;
@@ -110,7 +125,7 @@ body {
 }
 
 .sidebar ul li a .sidebar-icon {
-  color: #484646;
+  color: themed("textColor");
   width: 35px;
   height: 25px;
   display: inline-block;
