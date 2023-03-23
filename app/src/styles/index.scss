@@ -90,49 +90,58 @@ body {
   height: 100%;
   padding: 20px 0;
   transition: color 0.1s, border-color 0.1s, background-color 0.1s;
-}
 
-.sidebar ul li {
-  alignment: center;
-  padding: 10px 10px 0 10px;
-}
+  ul li {
+    alignment: center;
+    padding: 10px 10px 0 10px;
 
-.sidebar ul li a {
-  top: 20px;
-  height: 36px;
-  display: block;
-  padding: 8px 30px 10px 10px;
-  color: #484646;
-  font-size: 12px;
-  position: relative;
-  text-align: left;
-  text-decoration: none;
-}
+    a {
+      top: 20px;
+      height: 36px;
+      display: block;
+      padding: 8px 30px 10px 10px;
+      color: #484646;
+      font-size: 12px;
+      position: relative;
+      text-align: left;
+      text-decoration: none;
 
-.sidebar ul li a .sidebar-icon {
-  color: #484646;
-  width: 35px;
-  height: 25px;
-  display: inline-block;
-}
+      &.active {
+        color: #FFFFFF;
+        background: themed("buttonColor");
+        border-radius: 10px;
+      }
 
-.sidebar ul li a.active,
-.sidebar ul li a:hover {
-  color: #FFFFFF;
-  background: themed('buttonColor');
-  border-radius: 10px;
-}
+      &:hover {
+        color: #FFFFFF;
+        background: themed("buttonColor");
+        border-radius: 10px;
 
-.sidebar ul li a.active:hover {
-  background: themed('buttonColorHover');
-}
+        &:before {
+          display: block;
+        }
+      }
 
-.sidebar ul li a:hover .sidebar-icon,
-.sidebar ul li a.active .sidebar-icon {
-  color: #FFFFFF;
-}
+      &.active {
+        &:before {
+          display: block;
+        }
 
-.sidebar ul li a:hover:before,
-.sidebar ul li a.active:before {
-  display: block;
+        &:hover {
+          background: themed("buttonColorHover");
+        }
+      }
+
+      &:hover .sidebar-icon, &.active .sidebar-icon {
+        color: #FFFFFF;
+      }
+
+      .sidebar-icon {
+        color: #484646;
+        width: 35px;
+        height: 25px;
+        display: inline-block;
+      }
+    }
+  }
 }
