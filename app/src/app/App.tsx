@@ -1,16 +1,15 @@
 import React from "react";
-import Header from "./components/header/Header";
+import {Header} from "./components/header";
 import active from "../config/active.json";
+import {Main} from "./components/main";
 
-function App() {
+export default function App() {
     return (
-        <div data-testid="main" className={active.instance}>
+        <div data-testid="app" className={active.instance}>
             <Header/>
             <div className="app">
-                <p>Welcome to packit.</p>
+                <Main/>
             </div>
         </div>
     );
 }
-
-export default App;

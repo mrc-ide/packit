@@ -1,9 +1,9 @@
 import React from "react";
 import active from "../../../config/active.json";
 import HelpIcon from "@mui/icons-material/Help";
-import HeaderDropDown from "./HeaderDropDown";
+import {HeaderDropDown} from "./index";
 
-const Header = () => {
+export default function Header() {
     return (
         <header>
             <nav data-testid="header" className="navbar">
@@ -27,5 +27,4 @@ const Header = () => {
             </nav>
         </header>
     );
-};
-export default Header;
+}

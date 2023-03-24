@@ -3,7 +3,7 @@ import {NavDropdown} from "react-bootstrap";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 
-const HeaderDropDown = () => {
+export default function HeaderDropDown() {
     return (
         <NavDropdown data-testid="drop-down" className="icon-primary" title={
             <AccountCircleIcon sx={{fontSize: 35}}/>}>
@@ -17,5 +17,4 @@ const HeaderDropDown = () => {
             </NavDropdown.Item>
         </NavDropdown>
     );
-};
-export default HeaderDropDown;
+}
