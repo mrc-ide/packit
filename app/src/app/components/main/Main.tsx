@@ -11,9 +11,9 @@ import {SideBarItems} from "../../types";
 export default function Main() {
     const [activeNavBar, setActiveNavBar] = useState(SideBarItems.explorer);
     return (
-        <main>
+        <main data-testid="main">
             <Sidebar onChangeSideBar={(e) => setActiveNavBar(e)}/>
-            <div>
+            <div data-testid="content" >
                 {activeNavBar === SideBarItems.explorer && <Explorer/>}
                 {activeNavBar === SideBarItems.packetRunner && <PacketRunner/>}
                 {activeNavBar === SideBarItems.workflowRunner && <WorkflowRunner/>}

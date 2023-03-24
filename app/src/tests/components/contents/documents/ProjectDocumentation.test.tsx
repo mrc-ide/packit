@@ -6,6 +6,6 @@ describe("project documentation component", () => {
     it("renders skeleton div", () => {
         const {container} = render(<ProjectDocumentation/>);
 
-        expect(container).toHaveTextContent("Project documentation pag");
+        expect(container).toHaveTextContent("Project documentation page");
     });
 });

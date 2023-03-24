@@ -5,14 +5,11 @@ import {Main} from "./components/main";
 
 export default function App() {
     return (
-        <div data-testid="app-id"
-             className={active.instance}>
+        <div data-testid="app" className={active.instance}>
             <Header/>
-            <div data-testid="main-id"
-                 className="app">
+            <div className="app">
                 <Main/>
             </div>
         </div>
     );
 }
-
