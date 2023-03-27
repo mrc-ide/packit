@@ -2,10 +2,12 @@ import React from "react";
 import {screen, render, within, waitFor} from "@testing-library/react";
 import {Main} from "../../../app/components/main";
 import userEvent from "@testing-library/user-event";
+import store from "../../../app/store/store";
+import {Provider} from "react-redux";
 
 describe("main component", () => {
     it("renders sidebar", () => {
-        render(<Main/>);
+        render(<Provider store={store}><Main/></Provider>);
         const sidebar = screen.getByTestId("sidebar");
         expect(sidebar).toBeInTheDocument();
         const list = sidebar.querySelectorAll("li a");
@@ -13,14 +15,15 @@ describe("main component", () => {
     });
 
     it("renders active content", () => {
-        render(<Main/>);
+        render(<Provider store={store}><Main/></Provider>);
         const content = screen.getByTestId("content");
         expect(content).toBeInTheDocument();
-        expect(content).toHaveTextContent("Packet explorer page");
+        expect(content).toHaveTextContent("Packets (0)");
+        expect(content).toHaveTextContent("Click on a column heading to sort by field.");
     });
 
     it("renders packet runner page", async () => {
-        render(<Main/>);
+        render(<Provider store={store}><Main/></Provider>);
         const mainComponent = screen.getByTestId("main");
         const items = mainComponent.querySelectorAll("li a");
         expect(items.length).toBe(4);
@@ -36,7 +39,7 @@ describe("main component", () => {
     });
 
     it("renders workflow runner page", async () => {
-        render(<Main/>);
+        render(<Provider store={store}><Main/></Provider>);
         const mainComponent = screen.getByTestId("main");
         const items = mainComponent.querySelectorAll("li a");
         expect(items.length).toBe(4);
@@ -52,7 +55,7 @@ describe("main component", () => {
     });
 
     it("renders project documentation page", async () => {
-        render(<Main/>);
+        render(<Provider store={store}><Main/></Provider>);
         const mainComponent = screen.getByTestId("main");
         const items = mainComponent.querySelectorAll("li a");
         expect(items.length).toBe(4);

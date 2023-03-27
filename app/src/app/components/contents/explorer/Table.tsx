@@ -16,7 +16,7 @@ export default function Table({data, headers}: PacketTable) {
             </thead>
             <tbody>
             {data.map((packet, key) => (
-                <tr key={key}>
+                <tr key={`row-${key}`}>
                     <td>
                         <span>
                             <a href="#">{packet.displayName ? packet.displayName : packet.name}</a>
@@ -32,11 +32,11 @@ export default function Table({data, headers}: PacketTable) {
                     </td>
                     <td>
                         <span>
-                            {Object.entries(packet.parameters).map(([key, value]) => (
-                                <ul key={key} className="list-unstyled ">
-                                    <li className="justify-content-evenly" key={key}>{key}={value}</li>
-                                </ul>
-                            ))}
+                            <ul className="list-unstyled ">
+                                {Object.entries(packet.parameters).map(([key, value]) => (
+                                    <li className="justify-content-evenly" key={`col-${key}`}>{key}={value}</li>
+                                ))}
+                            </ul>
                         </span>
                     </td>
                 </tr>

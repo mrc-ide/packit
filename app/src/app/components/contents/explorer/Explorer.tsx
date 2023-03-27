@@ -25,11 +25,11 @@ export default function Explorer() {
             </div>
             <div className="content-box">
                 <div className="table-responsive-sm pt-4">
-                    <table className="table table-hover table-bordered table-sm">
+                    <table data-testid="table" className="table table-hover table-bordered table-sm">
                         <Table data={packets.slice(0, 5)} headers={headers}/>
                     </table>
                 </div>
-                <div className="d-flex pt-xxl-5 align-items-center">
+                <div data-testid="pagination-content" className="d-flex pt-xxl-5 align-items-center">
                     <div className="m-2">Show</div>
                     <div className="col-1">
                         <select className="form-select mr-sm-2" defaultValue={10}>
