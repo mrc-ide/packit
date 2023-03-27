@@ -14,7 +14,7 @@ export interface Packet {
     name: string,
     displayName: string,
     published: boolean,
-    parameters: string
+    parameters: Record<string, string>
 }
 
 export interface Header {

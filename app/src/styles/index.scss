@@ -1,7 +1,7 @@
-@import '~bootstrap/scss/bootstrap.scss';
+@import "~bootstrap/scss/bootstrap.scss";
 @import "themes.scss";
 @import "header.scss";
-@import 'app.scss';
+@import "app.scss";
 
 /**
  this mixin allows for dynamic theming of the app
@@ -68,6 +68,15 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+a {
+  color: themed('primaryColor');
+  text-decoration: none;
+
+  &:hover {
+    color: themed('textColor');
+  }
+}
+
 .content {
   position: absolute;
   left: 265px;
@@ -82,6 +91,16 @@ body {
 .explorer {
   top: 90px;
   min-height: inherit;
+
+  .badge-published {
+    background-color: #868ED3;
+    color: white;
+  }
+
+  .badge-internal {
+    background-color: #d39e00;
+    color: white;
+  }
 }
 
 .content-box {

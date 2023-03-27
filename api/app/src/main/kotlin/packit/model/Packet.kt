@@ -1,25 +1,15 @@
 package packit.model
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.persistence.*
+import packit.helpers.JsonMapConverter
 
 @Entity
-@Table(name = "packet")
 data class Packet(
     @Id
     val id: String,
     val name: String,
     val displayName: String,
-    @Column(name = "parameters", columnDefinition = "json")
-    val parameters: String,
+    @Convert(converter = JsonMapConverter::class)
+    val parameters: Map<String, Any>,
     val published: Boolean,
 )
-{
-    constructor(
-        id: String,
-        name: String,
-        displayName: String,
-        parameters: Map<String, String>,
-        published: Boolean,
-    ) : this(id, name, displayName, ObjectMapper().writeValueAsString(parameters), published)
-}

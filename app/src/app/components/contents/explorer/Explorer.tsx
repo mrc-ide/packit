@@ -13,8 +13,8 @@ export default function Explorer() {
 
     const headers = [
         {label: "Name", accessor: "name", sortable: true},
-        {label: "Full Name", accessor: "displayName", sortable: true},
-        {label: "Published", accessor: "published", sortable: true},
+        {label: "Version", accessor: "version", sortable: true},
+        {label: "Status", accessor: "status", sortable: true},
         {label: "Parameters", accessor: "parameters", sortable: false}
     ];
     return (
@@ -26,7 +26,7 @@ export default function Explorer() {
             <div className="content-box">
                 <div className="table-responsive-sm pt-4">
                     <table className="table table-hover table-bordered table-sm">
-                        <Table data={packets.slice(0, 10)} headers={headers}/>
+                        <Table data={packets.slice(0, 5)} headers={headers}/>
                     </table>
                 </div>
                 <div className="d-flex pt-xxl-5 align-items-center">

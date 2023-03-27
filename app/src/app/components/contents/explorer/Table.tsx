@@ -8,9 +8,7 @@ export default function Table({data, headers}: PacketTable) {
             <tr>
                 {headers.map(({label, accessor, sortable}) => (
                     <th key={accessor}
-                        onClick={() => sortable
-                        ? console.log("Sort by", accessor)
-                        : null}>
+                        onClick={() => sortable ? console.log("We shall implement sort by", accessor) : null}>
                         <span className="m-4">{label}</span>
                     </th>
                 ))}
@@ -19,10 +17,28 @@ export default function Table({data, headers}: PacketTable) {
             <tbody>
             {data.map((packet, key) => (
                 <tr key={key}>
-                    <td>{packet.name}</td>
-                    <td>{packet.displayName}</td>
-                    <td>{packet.published.toString()}</td>
-                    <td>{packet.parameters}</td>
+                    <td>
+                        <span>
+                            <a href="#">{packet.displayName ? packet.displayName : packet.name}</a>
+                        </span>
+                    </td>
+                    <td>
+                        <span>{packet.id}</span>
+                    </td>
+                    <td>
+                        <span className={`badge ${packet.published ? "badge-published" : "badge-internal"}`}>
+                                {packet.published ? "published" : "internal"}
+                        </span>
+                    </td>
+                    <td>
+                        <span>
+                            {Object.entries(packet.parameters).map(([key, value]) => (
+                                <ul key={key} className="list-unstyled ">
+                                    <li className="justify-content-evenly" key={key}>{key}={value}</li>
+                                </ul>
+                            ))}
+                        </span>
+                    </td>
                 </tr>
             ))}
             </tbody>
