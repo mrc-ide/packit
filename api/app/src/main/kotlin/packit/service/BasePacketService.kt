@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service
 import packit.model.Packet
 import packit.repository.PacketRepository
 
-
 interface PacketService
 {
     fun getPackets(): List<Packet>
