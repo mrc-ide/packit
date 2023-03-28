@@ -1,6 +1,6 @@
-import {PacketsState} from "../../types";
+import {PacketsState} from "../../../types";
 import {createSlice} from "@reduxjs/toolkit";
-import {packetsReducers} from "./reducers";
+import {actions} from "./thunks";
 
 export const initialPacketsState: PacketsState = {
     packets: [],
@@ -10,8 +10,16 @@ export const initialPacketsState: PacketsState = {
 export const packetsSlice = createSlice({
     name: "packets",
     initialState: initialPacketsState,
-    reducers: {
-        ...packetsReducers
+    reducers: {},
+    extraReducers: (builder) => {
+        builder
+            .addCase(actions.fetchPackets.fulfilled, (state, action) => {
+                state.packets = action.payload;
+                state.packetsError = null;
+            })
+            .addCase(actions.fetchPackets.rejected, (state, action) => {
+                state.packetsError = action.payload ?? null;
+            });
     }
 });
 

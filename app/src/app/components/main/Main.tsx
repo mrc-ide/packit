@@ -6,7 +6,7 @@ import {
     WorkflowRunner,
     ProjectDocumentation
 } from "./../contents";
-import {SideBarItems} from "../../types";
+import {SideBarItems} from "../../../types";
 
 export default function Main() {
     const [activeNavBar, setActiveNavBar] = useState(SideBarItems.explorer);

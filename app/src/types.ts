@@ -1,8 +1,17 @@
+import {useDispatch} from "react-redux";
+import store, {rootReducer} from "./app/store/store";
+
 export enum SideBarItems {
     explorer,
     packetRunner,
     workflowRunner,
     projectDoc
+}
+
+export interface Error {
+    message: string,
+    status: number,
+    error: string,
 }
 
 export interface SidebarProps {
@@ -30,9 +39,11 @@ export interface PacketTable {
 
 export interface PacketsState {
     packets: Packet[]
-    packetsError: string | null
+    packetsError: Error | null | undefined
 }
 
-export interface RootState {
-    packets: PacketsState
-}
+export type RootState = ReturnType<typeof rootReducer>;
+
+export type AppDispatch = typeof store.dispatch;
+
+export const useAppDispatch = () => useDispatch<AppDispatch>();

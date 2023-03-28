@@ -1,11 +1,13 @@
 import React from "react";
-import {render} from "@testing-library/react";
+import {render, screen} from "@testing-library/react";
 import {PacketRunner} from "../../../../app/components/contents";
 
 describe("packet runner component", () => {
-    it("renders skeleton text", () => {
-        const {container} = render(<PacketRunner/>);
+    it("renders skeleton text", async () => {
+        render(<PacketRunner/>);
 
-        expect(container).toHaveTextContent("Packet runner page");
+        const content = await screen.findByText("Packet runner page");
+
+        expect(content).toBeInTheDocument();
     });
 });

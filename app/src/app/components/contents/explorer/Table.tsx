@@ -1,5 +1,5 @@
 import React from "react";
-import {PacketTable} from "../../../types";
+import {PacketTable} from "../../../../types";
 
 export default function Table({data, headers}: PacketTable) {
     return (
@@ -8,7 +8,7 @@ export default function Table({data, headers}: PacketTable) {
             <tr>
                 {headers.map(({label, accessor, sortable}) => (
                     <th key={accessor}
-                        onClick={() => sortable ? console.log("We shall implement sort by", accessor) : null}>
+                        onClick={() => sortable ? console.log(`We shall implement sort by ${accessor}`) : null}>
                         <span className="m-4">{label}</span>
                     </th>
                 ))}

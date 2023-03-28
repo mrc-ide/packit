@@ -24,5 +24,4 @@ describe("header drop down menu component", () => {
         expect(within(dropDown).getByText("Publish packets")).toBeInTheDocument();
         expect(within(dropDown).getByTestId("LogoutIcon")).toBeInTheDocument();
     });
-
 });

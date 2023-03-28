@@ -3,8 +3,9 @@ import {Provider} from "react-redux";
 import {Explorer} from "../../../../app/components/contents";
 import React from "react";
 import {mockPacketResponse, mockPacketsState} from "../../../mocks";
-import {PacketsState} from "../../../../app/types";
+import {PacketsState} from "../../../../types";
 import configureStore from "redux-mock-store";
+import thunk from "redux-thunk";
 
 describe("table component", () => {
 
@@ -19,7 +20,10 @@ describe("table component", () => {
     }];
 
     const getStore = (props: Partial<PacketsState> = {}) => {
-        const mockStore = configureStore();
+
+        const middlewares = [thunk];
+
+        const mockStore = configureStore(middlewares);
 
         const initialRootStates = {
             packets: mockPacketsState(props)

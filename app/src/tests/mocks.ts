@@ -1,4 +1,4 @@
-import {PacketsState} from "../app/types";
+import {PacketsState} from "../types";
 
 export const mockPacketsState = (props: Partial<PacketsState> = {}): PacketsState => {
     return {

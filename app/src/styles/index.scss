@@ -93,12 +93,12 @@ a {
   min-height: inherit;
 
   .badge-published {
-    background-color: #868ED3;
+    background-color: themed("badge-published");
     color: white;
   }
 
   .badge-internal {
-    background-color: #d39e00;
+    background-color: themed("secondaryColor");
     color: white;
   }
 }

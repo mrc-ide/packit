@@ -1,14 +1,17 @@
 import React, {useEffect} from "react";
 import Table from "./Table";
 import {useSelector} from "react-redux";
-import {actions} from "../../../store/packets/actions";
-import {RootState} from "../../../types";
+import {RootState, useAppDispatch} from "../../../../types";
+import {actions} from "../../../store/packets/thunks";
 
 export default function Explorer() {
+
     const {packets} = useSelector((state: RootState) => state.packets);
 
+    const dispatch = useAppDispatch();
+
     useEffect(() => {
-        actions.getPackets();
+        dispatch(actions.fetchPackets());
     }, []);
 
     const headers = [

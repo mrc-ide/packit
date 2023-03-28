@@ -2,7 +2,7 @@ import React from "react";
 import {screen, render, waitFor} from "@testing-library/react";
 import {Sidebar} from "../../../app/components/main";
 import userEvent from "@testing-library/user-event";
-import {SideBarItems} from "../../../app/types";
+import {SideBarItems} from "../../../types";
 
 describe("sidebar component", () => {
     beforeEach(() => {

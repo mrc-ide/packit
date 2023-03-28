@@ -9,6 +9,7 @@ $themes: (
                 buttonTextColor: #FFFFFF,
                 buttonColorHover: $theme-hover-color,
                 buttonTextHoverColor: #FFFFFF,
-                buttonColor: $theme-primary
+                buttonColor: $theme-primary,
+                badge-published: $theme-published
         )
 );
