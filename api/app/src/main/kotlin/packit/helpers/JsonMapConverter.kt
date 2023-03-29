@@ -1,6 +1,7 @@
 package packit.helpers
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.persistence.AttributeConverter
 
 class JsonMapConverter(private val objectMapper: ObjectMapper) : AttributeConverter<Map<String, Any>, String>
@@ -12,6 +13,6 @@ class JsonMapConverter(private val objectMapper: ObjectMapper) : AttributeConver
 
     override fun convertToEntityAttribute(parametersJson: String): Map<String, Any>
     {
-        return objectMapper.readValue(parametersJson, Map::class.java) as Map<String, Any>
+        return objectMapper.readValue(parametersJson)
     }
 }
