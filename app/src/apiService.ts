@@ -28,7 +28,7 @@ export class ApiService implements API {
             mutationType,
             (_, thunkAPI) =>
                 this.axiosInstance.get<T>(endpoint)
-                    .then(response => response.data)
+                    .then(response => thunkAPI.fulfillWithValue(response.data))
                     .catch(error => {
                         let errorMessage = "Could not parse API response";
                         if (error instanceof AxiosError && error.response) {
