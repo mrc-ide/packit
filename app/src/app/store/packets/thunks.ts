@@ -1,16 +1,15 @@
 import {AsyncThunk} from "@reduxjs/toolkit";
-import {Error, Packet} from "../../../types";
+import {Packet, RejectedErrorValue} from "../../../types";
 import {api} from "../../../apiService";
 
 export interface PacketsActions {
-    fetchPackets: AsyncThunk<Packet[], void, { rejectValue: Error }>;
+    fetchPackets: AsyncThunk<Packet[], void, RejectedErrorValue>;
 }
 
-export enum PacketsUploadMutation {
+export enum PacketsMutationType {
     GetPackets = "GetPackets"
 }
 
 export const actions: PacketsActions = {
-    fetchPackets: api<Packet[], Error>(PacketsUploadMutation.GetPackets)
-        .get("/packet")
+    fetchPackets: api.get<Packet[]>(PacketsMutationType.GetPackets, "/packet")
 };

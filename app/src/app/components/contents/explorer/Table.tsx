@@ -1,9 +1,15 @@
 import React from "react";
-import {PacketTable} from "../../../../types";
+import {Header, PacketTableProps} from "../../../../types";
 
-export default function Table({data, headers}: PacketTable) {
+export default function Table({data}: PacketTableProps) {
+    const headers: Header[] = [
+        {label: "Name", accessor: "name", sortable: true},
+        {label: "Version", accessor: "version", sortable: true},
+        {label: "Status", accessor: "status", sortable: true},
+        {label: "Parameters", accessor: "parameters", sortable: false}
+    ];
     return (
-        <>
+        <table data-testid="table" className="table table-hover table-bordered table-sm">
             <thead>
             <tr>
                 {headers.map(({label, accessor, sortable}) => (
@@ -42,6 +48,6 @@ export default function Table({data, headers}: PacketTable) {
                 </tr>
             ))}
             </tbody>
-        </>
+        </table>
     );
 }

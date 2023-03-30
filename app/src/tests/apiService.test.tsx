@@ -1,4 +1,4 @@
-import {CreateAsyncThunk} from "../apiService";
+import {ApiService} from "../apiService";
 import mockAxios from "../../mockAxios";
 
 describe("api service", () => {
@@ -18,9 +18,9 @@ describe("api service", () => {
 
         mockAxios.onGet(url).reply(200, responseData);
 
-        const api = new CreateAsyncThunk<typeof responseData, null>(type);
+        const api = new ApiService();
 
-        const asyncThunk = api.get(url);
+        const asyncThunk = api.get<typeof responseData>(type, url);
 
         const dispatch = jest.fn();
 
@@ -53,9 +53,9 @@ describe("api service", () => {
 
         mockAxios.onGet(url).reply(400, errorResponse);
 
-        const api = new CreateAsyncThunk<null, typeof errorResponse>(type);
+        const api = new ApiService();
 
-        const asyncThunk = api.get(url);
+        const asyncThunk = api.get(type, url);
 
         const dispatch = jest.fn();
 

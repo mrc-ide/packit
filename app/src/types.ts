@@ -8,10 +8,8 @@ export enum SideBarItems {
     projectDoc
 }
 
-export interface Error {
-    message: string,
-    status: number,
-    error: string,
+export interface RejectedErrorValue {
+    rejectValue: string
 }
 
 export interface SidebarProps {
@@ -32,14 +30,13 @@ export interface Header {
     sortable: boolean
 }
 
-export interface PacketTable {
-    headers: Header[],
+export interface PacketTableProps {
     data: Packet[]
 }
 
 export interface PacketsState {
     packets: Packet[]
-    packetsError: Error | null | undefined
+    packetsError: string | null
 }
 
 export type RootState = ReturnType<typeof rootReducer>;

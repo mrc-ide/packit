@@ -1,53 +1,43 @@
-import axios, { AxiosError, AxiosInstance } from "axios";
+import axios, {AxiosError, AxiosInstance} from "axios";
 import {
     createAsyncThunk,
     AsyncThunkOptions,
     AsyncThunk,
 } from "@reduxjs/toolkit";
+import {RejectedErrorValue} from "./types";
 
 const baseURL = "http://localhost:8080";
 
-interface CustomAsyncThunkOptions<E>
-    extends AsyncThunkOptions<void, { rejectValue: E }> {
-    rejectValue: E;
+interface CustomAsyncThunkOptions extends AsyncThunkOptions<void, RejectedErrorValue> {
+    rejectValue: string
 }
 
-interface API<T, E> {
-    get(
-        endpoint: string,
-        asyncThunkConfig?: CustomAsyncThunkOptions<E>
-    ): AsyncThunk<T, void, CustomAsyncThunkOptions<E>>;
+interface API {
+    get<T>(mutationType: string, endpoint: string): AsyncThunk<T, void, CustomAsyncThunkOptions>;
 }
 
-export class CreateAsyncThunk<T, E> implements API<T, E> {
-    private readonly type: string;
+export class ApiService implements API {
     private readonly axiosInstance: AxiosInstance;
 
-    constructor(type: string) {
-        this.type = type;
-        this.axiosInstance = axios.create({ baseURL });
+    constructor(axiosInstance = axios.create({baseURL})) {
+        this.axiosInstance = axiosInstance;
     }
 
-    get = (
-        endpoint: string,
-        asyncThunkConfig?: CustomAsyncThunkOptions<E>
-    ): AsyncThunk<T, void, CustomAsyncThunkOptions<E>> =>
-        createAsyncThunk<T, void, CustomAsyncThunkOptions<E>>(
-            this.type,
-            async (_, thunkAPI) => {
-                try {
-                    const response = await this.axiosInstance.get<T>(endpoint);
-                    return response.data;
-                } catch (error) {
-                    let errorMessage = null;
-                    if (error instanceof AxiosError && error.response) {
-                        errorMessage = error.response.data;
-                    }
-                    return thunkAPI.rejectWithValue(errorMessage);
-                }
-            },
-            asyncThunkConfig
-        );
+    get<T>(mutationType: string, endpoint: string): AsyncThunk<T, void, CustomAsyncThunkOptions> {
+        return createAsyncThunk<T, void, CustomAsyncThunkOptions>(
+            mutationType,
+            (_, thunkAPI) =>
+                this.axiosInstance.get<T>(endpoint)
+                    .then(response => response.data)
+                    .catch(error => {
+                        let errorMessage = "Could not parse API response";
+                        if (error instanceof AxiosError && error.response) {
+                            errorMessage = error.response.data;
+                        }
+
+                        return thunkAPI.rejectWithValue(errorMessage);
+                    }));
+    }
 }
 
-export const api = <T, E>(type: string) => new CreateAsyncThunk<T, E>(type);
+export const api = new ApiService();

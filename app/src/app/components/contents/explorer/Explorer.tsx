@@ -14,12 +14,6 @@ export default function Explorer() {
         dispatch(actions.fetchPackets());
     }, []);
 
-    const headers = [
-        {label: "Name", accessor: "name", sortable: true},
-        {label: "Version", accessor: "version", sortable: true},
-        {label: "Status", accessor: "status", sortable: true},
-        {label: "Parameters", accessor: "parameters", sortable: false}
-    ];
     return (
         <div className="content explorer">
             <div className="small">
@@ -28,9 +22,7 @@ export default function Explorer() {
             </div>
             <div className="content-box">
                 <div className="table-responsive-sm pt-4">
-                    <table data-testid="table" className="table table-hover table-bordered table-sm">
-                        <Table data={packets.slice(0, 5)} headers={headers}/>
-                    </table>
+                    <Table data={packets.slice(0, 5)}/>
                 </div>
                 <div data-testid="pagination-content" className="d-flex pt-xxl-5 align-items-center">
                     <div className="m-2">Show</div>
