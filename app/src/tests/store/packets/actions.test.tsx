@@ -8,7 +8,7 @@ describe("packet actions", () => {
         jest.clearAllMocks();
     });
 
-    it("should get packets from the server successfully", async () => {
+    it("should fetch packets as expected", async () => {
 
         const response = [mockPacketResponse];
 
@@ -40,7 +40,7 @@ describe("packet actions", () => {
         });
     });
 
-    it("should handle errors when getting packets from the server", async () => {
+    it("should handle errors when fetching packets", async () => {
 
         const dispatch = jest.fn();
 
