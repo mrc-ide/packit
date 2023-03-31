@@ -11,5 +11,5 @@ export enum PacketsMutationType {
 }
 
 export const actions: PacketsActions = {
-    fetchPackets: api.get<Packet[]>(PacketsMutationType.GetPackets, "/packet")
+    fetchPackets: api.get<Packet[]>(PacketsMutationType.GetPackets, "/packets")
 };

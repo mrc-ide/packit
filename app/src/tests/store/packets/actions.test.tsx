@@ -54,7 +54,7 @@ const expectPendingFetchPackets = async (
     response: string | Packet[] = "",
     statusCode = 400) => {
 
-    const url = "/packet";
+    const url = "/packets";
 
     mockAxios.onGet(url)
         .reply(statusCode, response);
