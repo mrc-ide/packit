@@ -1,7 +1,6 @@
 package packit.controllers
 
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -9,8 +8,7 @@ import packit.model.Packet
 import packit.service.PacketService
 
 @RestController
-@CrossOrigin
-@RequestMapping("/packet")
+@RequestMapping("/packets")
 class PacketController(private val packetService: PacketService)
 {
     @GetMapping
