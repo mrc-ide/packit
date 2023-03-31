@@ -4,9 +4,9 @@ import {Packet} from "../../../types";
 
 describe("packetsSlice reducer", () => {
 
-   beforeEach(() => {
-       jest.clearAllMocks()
-   })
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
 
     it("should handle fetchPackets.fulfilled", () => {
         const packets: Packet[] = [
@@ -30,18 +30,22 @@ describe("packetsSlice reducer", () => {
                     param2: "value2",
                     param3: "value3",
                 },
-            }]
+            }];
         const nextState = packetsReducer(initialPacketsState, actions.fetchPackets.fulfilled(packets, ""));
 
         expect(nextState.packets).toEqual(packets);
         expect(nextState.packetsError).toBeNull();
     });
 
-    it("should handle fetchPackets.rejected", () => {
-        const error = new Error("Failed to fetch packets");
-        const nextState = packetsReducer(initialPacketsState, actions.fetchPackets.rejected(error, ""));
+    it("should handle fetchPackets.rejected", async () => {
+        const error = Error("Could not parse API response");
 
-        expect(nextState.packets).toEqual([]);
-        expect(nextState.packetsError).toEqual(error.message);
+        const packetState = packetsReducer(
+            initialPacketsState,
+            actions.fetchPackets.rejected(error, "")
+        );
+
+        expect(packetState.packets).toEqual([]);
+        expect(packetState.packetsError?.message).toBe(error.message);
     });
 });

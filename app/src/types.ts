@@ -1,5 +1,6 @@
 import {useDispatch} from "react-redux";
 import store, {rootReducer} from "./app/store/store";
+import {SerializedError} from "@reduxjs/toolkit";
 
 export enum SideBarItems {
     explorer,
@@ -9,7 +10,7 @@ export enum SideBarItems {
 }
 
 export interface RejectedErrorValue {
-    rejectValue: string
+    rejectValue: SerializedError
 }
 
 export interface SidebarProps {
@@ -36,7 +37,7 @@ export interface PacketTableProps {
 
 export interface PacketsState {
     packets: Packet[]
-    packetsError: string | null
+    packetsError: SerializedError | null
 }
 
 export type RootState = ReturnType<typeof rootReducer>;

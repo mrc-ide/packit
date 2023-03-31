@@ -18,7 +18,7 @@ export const packetsSlice = createSlice({
                 state.packetsError = null;
             })
             .addCase(actions.fetchPackets.rejected, (state, action) => {
-                state.packetsError = action.payload ?? null;
+                state.packetsError = action.payload ?? action.error;
             });
     }
 });

@@ -2,14 +2,14 @@ import axios, {AxiosError, AxiosInstance} from "axios";
 import {
     createAsyncThunk,
     AsyncThunkOptions,
-    AsyncThunk,
+    AsyncThunk, SerializedError,
 } from "@reduxjs/toolkit";
 import {RejectedErrorValue} from "./types";
 
 const baseURL = "http://localhost:8080";
 
 interface CustomAsyncThunkOptions extends AsyncThunkOptions<void, RejectedErrorValue> {
-    rejectValue: string
+    rejectValue: SerializedError
 }
 
 interface API {
@@ -30,7 +30,7 @@ export class ApiService implements API {
                 this.axiosInstance.get<T>(endpoint)
                     .then(response => thunkAPI.fulfillWithValue(response.data))
                     .catch(error => {
-                        let errorMessage = "Could not parse API response";
+                        let errorMessage = {message: "Could not parse API response"};
                         if (error instanceof AxiosError && error.response) {
                             errorMessage = error.response.data;
                         }
