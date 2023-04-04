@@ -2,12 +2,14 @@
 
 $themes: (
         default: (
-                backgroundColor: $theme-primary,
+                primaryColor: $theme-primary,
+                secondaryColor: $theme-secondary,
                 textColor: $theme-text-color,
                 iconColor: $theme-primary,
                 buttonTextColor: #FFFFFF,
                 buttonColorHover: $theme-hover-color,
                 buttonTextHoverColor: #FFFFFF,
-                buttonColor: $theme-primary
+                buttonColor: $theme-primary,
+                badge-published: $theme-published
         )
 );

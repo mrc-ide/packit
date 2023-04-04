@@ -2,6 +2,8 @@ import React from "react";
 
 export default function ProjectDocumentation() {
     return (
-        <div>Project documentation page</div>
+        <div className="content">
+            Project documentation page
+        </div>
     );
 }

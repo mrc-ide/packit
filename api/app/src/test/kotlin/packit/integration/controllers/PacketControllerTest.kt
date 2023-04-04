@@ -10,7 +10,7 @@ class PacketControllerTest: IntegrationTest()
     @Test
     fun `can get packets`()
     {
-        val result = restTemplate.getForEntity("/packet", String::class.java)
+        val result = restTemplate.getForEntity("/packets", String::class.java)
         assertSuccess(result)
     }
 }

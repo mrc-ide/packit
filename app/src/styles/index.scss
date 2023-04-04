@@ -1,7 +1,7 @@
-@import '~bootstrap/scss/bootstrap.scss';
+@import "~bootstrap/scss/bootstrap.scss";
 @import "themes.scss";
 @import "header.scss";
-@import 'app.scss';
+@import "app.scss";
 
 /**
  this mixin allows for dynamic theming of the app
@@ -68,17 +68,47 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+a {
+  color: themed('primaryColor');
+  text-decoration: none;
+
+  &:hover {
+    color: themed('textColor');
+  }
+}
+
 .content {
   position: absolute;
-  top: 85px;
+  left: 265px;
+  right: 20px;
+  min-width: inherit;
   display: flex;
-  text-align: center;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
   color: themed('textColor');
   transition: left 0.3s ease-in-out;
+}
+
+.explorer {
+  top: 90px;
+  min-height: inherit;
+
+  .badge-published {
+    background-color: themed("badge-published");
+    color: white;
+  }
+
+  .badge-internal {
+    background-color: themed("secondaryColor");
+    color: white;
+  }
+}
+
+.content-box {
+  overflow: auto;
+  padding: 10px 10px 10px 10px;
+  max-height: calc(100vh - 150px);
+  border-radius: 10px;
+  background-color: #FFFFFF;
 }
 
 .sidebar {
@@ -100,7 +130,7 @@ body {
       height: 36px;
       display: block;
       padding: 8px 30px 10px 10px;
-      color: #484646;
+      color: themed("textColor");
       font-size: 12px;
       position: relative;
       text-align: left;

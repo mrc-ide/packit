@@ -4,8 +4,11 @@ import Header from "../../../app/components/header/Header";
 
 describe("header component", () => {
 
+    beforeEach(() => {
+        render(<Header />);
+    });
+
     it("renders nav brand and logo", () => {
-        render(<Header/>);
         const header = screen.getByTestId("header");
         expect(header).toBeInTheDocument();
 
@@ -15,7 +18,6 @@ describe("header component", () => {
     });
 
     it("renders navigation link and icons", () => {
-        render(<Header/>);
         const header = screen.getByTestId("header");
         expect(header).toBeInTheDocument();
 
@@ -32,10 +34,14 @@ describe("header component", () => {
     });
 
     it("can navigate to home page with brand logo", () => {
-        render(<Header/>);
         const header = screen.getByTestId("header");
-        const navBrand = header.querySelectorAll("a")[0];
-        expect(navBrand.className).toBe("navbar-brand");
-        expect(navBrand.href).toBe("http://localhost/");
+
+        expect(header).toBeInTheDocument();
+
+        const navBrand = header.querySelector(".navbar-brand");
+
+        expect(navBrand).toHaveClass("navbar-brand");
+
+        expect(navBrand).toHaveAttribute("href", "/");
     });
 });

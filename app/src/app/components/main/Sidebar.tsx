@@ -5,7 +5,7 @@ import {
     Schema,
     Inventory
 } from "@mui/icons-material";
-import {SideBarItems, SidebarProps} from "../../types";
+import {SideBarItems, SidebarProps} from "../../../types";
 
 export default function Sidebar({onChangeSideBar}: SidebarProps) {
     const [selected, setSelected] = useState(0);

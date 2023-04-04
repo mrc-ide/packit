@@ -8,7 +8,7 @@ import packit.model.Packet
 import packit.service.PacketService
 
 @RestController
-@RequestMapping("/packet")
+@RequestMapping("/packets")
 class PacketController(private val packetService: PacketService)
 {
     @GetMapping

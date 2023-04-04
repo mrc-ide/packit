@@ -2,6 +2,8 @@ import React from "react";
 
 export default function WorkflowRunner() {
     return (
-        <div>Workflow runner page</div>
+        <div className="content">
+            Workflow runner page
+        </div>
     );
 }
