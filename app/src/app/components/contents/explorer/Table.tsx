@@ -27,11 +27,10 @@ export default function Table({data}: PacketTableProps) {
                 {headers.map(({label, accessor, sortable}) => (
                     <th key={accessor}>
                         <span className="m-4"
-                              onClick={() => sortable ? sortPackets(accessor) : null}>{label}
+                              onClick={() => sortable ? sortPackets(accessor) : null}>
+                            {label}
+                            {sortable ? <span className="px-2 icon-sort"><FaSort/></span> : ""}
                         </span>
-                        {
-                            sortable ? <span className="icon-sort"><FaSort/></span> : ""
-                        }
                     </th>
                 ))}
             </tr>
