@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {AssessorsProperty, Header, PacketTableProps} from "../../../../types";
+import {Header, Packet, PacketTableProps} from "../../../../types";
 import {FaSort} from "react-icons/fa";
 
 const headers: Header[] = [
@@ -15,8 +15,8 @@ export default function Table({data}: PacketTableProps) {
     const sortPackets = (accessor: string) => {
         data.sort((a, b) => {
             setAscending(!ascending);
-            return (`${a[accessor as keyof AssessorsProperty]}`
-                .localeCompare(`${b[accessor as keyof AssessorsProperty]}`)) * (ascending ? -1 : 1);
+            return (`${a[accessor as keyof Packet]}`
+                .localeCompare(`${b[accessor as keyof Packet]}`)) * (ascending ? -1 : 1);
         });
     };
 
