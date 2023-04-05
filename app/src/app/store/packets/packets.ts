@@ -14,7 +14,7 @@ export const packetsSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(actions.fetchPackets.fulfilled, (state, action) => {
-                state.packets = action.payload;
+                state.packets = action.payload.sort((a, b) => a.name.localeCompare(b.name));
                 state.packetsError = null;
             })
             .addCase(actions.fetchPackets.rejected, (state, action) => {

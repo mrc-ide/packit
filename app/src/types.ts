@@ -25,9 +25,17 @@ export interface Packet {
     parameters: Record<string, string>
 }
 
+export interface AssessorsProperty {
+    name: string,
+    displayName: string,
+    id: string,
+    published: boolean,
+    parameters: string
+}
+
 export interface Header {
     label: string,
-    accessor: string,
+    accessor: keyof AssessorsProperty,
     sortable: boolean
 }
 

@@ -60,26 +60,4 @@ describe("packet explorer component", () => {
 
         expect(paginationContent).toHaveTextContent("entries");
     });
-
-    it("should dispatch an action when the user clicks on a sortable column header", () => {
-        const store = getStore();
-
-        const spy = jest.spyOn(store, "dispatch");
-
-        const spyOnConsole = jest.spyOn(console, "log");
-
-        render(<Provider store={store}><Explorer /></Provider>);
-
-        const { getByText } = screen;
-
-        getByText("Name").click();
-
-        expect(spy).toHaveBeenCalledTimes(1);
-
-        expect(spy).toHaveBeenCalledWith(expect.any(Function));
-
-        expect(spyOnConsole).toHaveBeenCalledTimes(1);
-
-        expect(spyOnConsole).toHaveBeenCalledWith("We shall implement sort by name");
-    });
 });

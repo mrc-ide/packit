@@ -1,21 +1,37 @@
-import React from "react";
-import {Header, PacketTableProps} from "../../../../types";
+import React, {useState} from "react";
+import {AssessorsProperty, Header, PacketTableProps} from "../../../../types";
+import {FaSort} from "react-icons/fa";
+
+const headers: Header[] = [
+    {label: "Name", accessor: "displayName", sortable: true},
+    {label: "Version", accessor: "id", sortable: false},
+    {label: "Status", accessor: "published", sortable: true},
+    {label: "Parameters", accessor: "parameters", sortable: false}
+];
 
 export default function Table({data}: PacketTableProps) {
-    const headers: Header[] = [
-        {label: "Name", accessor: "name", sortable: true},
-        {label: "Version", accessor: "version", sortable: true},
-        {label: "Status", accessor: "status", sortable: true},
-        {label: "Parameters", accessor: "parameters", sortable: false}
-    ];
+    const [ascending, setAscending] = useState(true);
+
+    const sortPackets = (accessor: string) => {
+        data.sort((a, b) => {
+            setAscending(!ascending);
+            return (`${a[accessor as keyof AssessorsProperty]}`
+                .localeCompare(`${b[accessor as keyof AssessorsProperty]}`)) * (ascending ? -1 : 1);
+        });
+    };
+
     return (
         <table data-testid="table" className="table table-hover table-bordered table-sm">
             <thead>
             <tr>
                 {headers.map(({label, accessor, sortable}) => (
-                    <th key={accessor}
-                        onClick={() => sortable ? console.log(`We shall implement sort by ${accessor}`) : null}>
-                        <span className="m-4">{label}</span>
+                    <th key={accessor}>
+                        <span className="m-4"
+                              onClick={() => sortable ? sortPackets(accessor) : null}>{label}
+                        </span>
+                        {
+                            sortable ? <span className="icon-sort"><FaSort/></span> : ""
+                        }
                     </th>
                 ))}
             </tr>
