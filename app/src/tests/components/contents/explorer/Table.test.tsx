@@ -152,7 +152,7 @@ describe("table component", () => {
 
         render(<Provider store={store}> <Table data={packets}/></Provider>);
 
-        const {getByText, getByTestId} = screen;
+        const {getByText} = screen;
 
         const statusHeader = getByText("Status");
 
