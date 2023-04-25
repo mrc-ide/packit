@@ -39,7 +39,7 @@ describe("table component", () => {
             parameters: {
                 "city_subset": "63f730b9fc13ae1df6000070"
             },
-            published: false
+            published: true
         }];
 
     const getStore = (props: Partial<PacketsState> = {}) => {
@@ -136,12 +136,19 @@ describe("table component", () => {
 
         const rows = screen.getAllByRole("row");
 
+        //unsorted list
+        expect(rows[2].querySelectorAll("td")[0]).toHaveTextContent("packet 2");
+        expect(rows[1].querySelectorAll("td")[0]).toHaveTextContent("packet 1");
+        expect(rows[3].querySelectorAll("td")[0]).toHaveTextContent("packet 3");
+
+        //sorted ascending
+        fireEvent.click(nameHeader);
         expect(rows[1].querySelectorAll("td")[0]).toHaveTextContent("packet 1");
         expect(rows[2].querySelectorAll("td")[0]).toHaveTextContent("packet 2");
         expect(rows[3].querySelectorAll("td")[0]).toHaveTextContent("packet 3");
 
+        //sorted descending
         fireEvent.click(nameHeader);
-
         expect(rows[1].querySelectorAll("td")[0]).toHaveTextContent("packet 3");
         expect(rows[2].querySelectorAll("td")[0]).toHaveTextContent("packet 2");
         expect(rows[3].querySelectorAll("td")[0]).toHaveTextContent("packet 1");
@@ -158,14 +165,14 @@ describe("table component", () => {
 
         const rows = screen.getAllByRole("row");
 
-        expect(rows[1].querySelectorAll("td")[2]).toHaveTextContent("internal");
+        expect(rows[1].querySelectorAll("td")[2]).toHaveTextContent("published");
         expect(rows[2].querySelectorAll("td")[2]).toHaveTextContent("internal");
         expect(rows[3].querySelectorAll("td")[2]).toHaveTextContent("published");
 
         fireEvent.click(statusHeader);
 
-        expect(rows[1].querySelectorAll("td")[2]).toHaveTextContent("published");
-        expect(rows[2].querySelectorAll("td")[2]).toHaveTextContent("internal");
-        expect(rows[3].querySelectorAll("td")[2]).toHaveTextContent("internal");
+        expect(rows[1].querySelectorAll("td")[2]).toHaveTextContent("internal");
+        expect(rows[2].querySelectorAll("td")[2]).toHaveTextContent("published");
+        expect(rows[3].querySelectorAll("td")[2]).toHaveTextContent("published");
     });
 });

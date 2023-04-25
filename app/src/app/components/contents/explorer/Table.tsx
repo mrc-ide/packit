@@ -10,14 +10,22 @@ const headers: Header[] = [
 ];
 
 export default function Table({data}: PacketTableProps) {
-    const [ascending, setAscending] = useState(true);
+    const [ascendingName, setAscendingName] = useState(false);
+    const [ascendingStatus, setAscendingStatus] = useState(false);
 
     const sortPackets = (accessor: string) => {
-        data.sort((a, b) => {
-            setAscending(!ascending);
-            return (`${a[accessor as keyof Packet]}`
-                .localeCompare(`${b[accessor as keyof Packet]}`)) * (ascending ? -1 : 1);
-        });
+        let ascending = false;
+        if (accessor === "displayName") {
+            ascending = ascendingName;
+            setAscendingName(!ascending);
+            setAscendingStatus(false);
+        } else if (accessor === "published") {
+            ascending = ascendingStatus;
+            setAscendingStatus(!ascending);
+            setAscendingName(false);
+        }
+        data.sort((a, b) => (`${a[accessor as keyof Packet]}`
+            .localeCompare(`${b[accessor as keyof Packet]}`)) * (ascending ? -1 : 1));
     };
 
     return (
