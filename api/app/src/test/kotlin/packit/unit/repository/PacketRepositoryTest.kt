@@ -35,4 +35,14 @@ class PacketRepositoryTest
         assertEquals(result, packet)
     }
 
+    @Test
+    fun `can get packet ids from db`()
+    {
+        packetRepository.saveAll(packet)
+
+        val result = packetRepository.findAllIds()
+
+        assertEquals(result, listOf("1", "2"))
+    }
+
 }
