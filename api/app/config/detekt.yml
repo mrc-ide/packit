@@ -1,0 +1,53 @@
+comments:
+  active: false
+
+complexity:
+  active: false
+
+potential-bugs:
+  HasPlatformType:
+    active: false
+  UnsafeCallOnNullableType:
+    active: false
+
+exceptions:
+  SwallowedException:
+    active: false
+  TooGenericExceptionCaught:
+    active: false
+
+formatting:
+  Indentation:
+    active: false
+  NoLineBreakAfterElse:
+    active: false
+  NoWildcardImports:
+    active: false
+  ParameterListWrapping:
+    active: false
+  SpacingAroundCurly:
+    active: false
+  SpacingAroundKeyword:
+    active: false
+
+style:
+  MandatoryBracesIfStatements:
+    active: true
+  MandatoryBracesLoops:
+    active: true
+  WildcardImport:
+    active: false
+  UseOrEmpty:
+    active: false
+  UnnecessaryAbstractClass:
+    active: false
+  FunctionOnlyReturningConstant:
+    active: false
+  SerialVersionUIDInSerializableClass:
+    active: false
+
+naming:
+  NoNameShadowing:
+    active: false
+  PackageNaming:
+    active: false

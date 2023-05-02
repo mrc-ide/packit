@@ -6,16 +6,20 @@ import org.mockito.kotlin.mock
 import packit.model.Packet
 import packit.repository.PacketRepository
 import packit.service.BasePacketService
-import kotlin.math.exp
 import kotlin.test.assertEquals
 
 class PacketServiceTest
 {
     private val packets = listOf(
-            Packet("1", "test", "test name",
-                    mapOf("name" to "value"), false),
-            Packet("2", "test2", "test2 name",
-                    mapOf("name" to "value"), false))
+            Packet(
+                    "1", "test", "test name",
+                    mapOf("name" to "value"), false
+            ),
+            Packet(
+                    "2", "test2", "test2 name",
+                    mapOf("name" to "value"), false
+            )
+    )
 
     private val packetRepository = mock<PacketRepository> {
         on { findAll() } doReturn packets

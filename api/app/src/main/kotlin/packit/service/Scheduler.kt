@@ -5,8 +5,10 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
 @Service
-class Scheduler(private val packetService: PacketService,
-                private val outpackServerClient: OutpackServerClient)
+class Scheduler(
+        private val packetService: PacketService,
+        private val outpackServerClient: OutpackServerClient
+)
 {
 
     @Scheduled(fixedDelay = 1000)
@@ -16,8 +18,10 @@ class Scheduler(private val packetService: PacketService,
         val new = outpackServerClient.getChecksum()
         if (current != new)
         {
-            log.info("Packet info is out of date: current {} =/= new {} ",
-                    current, new)
+            log.info(
+                    "Packet info is out of date: current {} =/= new {} ",
+                    current, new
+            )
         }
     }
 
