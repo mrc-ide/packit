@@ -17,7 +17,7 @@ class PacketServiceTest
     }
 
     @Test
-    fun`gets packets`()
+    fun `gets packets`()
     {
         val sut = BasePacketService(packetRepository)
 

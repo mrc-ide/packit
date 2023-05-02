@@ -21,8 +21,8 @@ class PacketRepositoryTest
     lateinit var packetRepository: PacketRepository
 
     val packet = listOf(
-        Packet("1", "test1", "test name1", mapOf("name" to "value"), false),
-        Packet("2", "test2", "test name2", mapOf("name2" to "value2"), false)
+            Packet("1", "test1", "test name1", mapOf("name" to "value"), false),
+            Packet("2", "test2", "test name2", mapOf("name2" to "value2"), false)
     )
 
     @Test

@@ -5,7 +5,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import packit.integration.IntegrationTest
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class PacketControllerTest: IntegrationTest()
+class PacketControllerTest : IntegrationTest()
 {
     @Test
     fun `can get packets`()
