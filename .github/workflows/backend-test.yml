@@ -47,3 +47,6 @@ jobs:
       - name: test backend
         working-directory: api
         run: ./gradlew :app:test --stacktrace --rerun
+      - name: lint
+        working-directory: api
+        run: ./gradlew :app:detekt
