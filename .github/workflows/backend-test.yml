@@ -2,7 +2,7 @@ name: backend-test
 run-name: ${{ github.actor }} is testing packit backend features
 on:
   workflow_run:
-    workflows: [ "build-db" ]
+    workflows: [ "build-docker-db" ]
     types:
       - completed
   push:
