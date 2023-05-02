@@ -5,8 +5,8 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
 @Service
-class ScheduledTasks(private val packetService: PacketService,
-                     private val outpackServerClient: OutpackServerClient) {
+class Scheduler(private val packetService: PacketService,
+                private val outpackServerClient: OutpackServerClient) {
 
     @Scheduled(fixedDelay = 1000)
     fun checkPackets() {
@@ -19,6 +19,6 @@ class ScheduledTasks(private val packetService: PacketService,
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger(ScheduledTasks::class.java)
+        private val log = LoggerFactory.getLogger(Scheduler::class.java)
     }
 }

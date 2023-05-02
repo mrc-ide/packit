@@ -23,6 +23,6 @@ class OutpackServerClientTest {
     fun `can get metadata`() {
         val sut = OutpackServerClient(mockConfig)
         val result = sut.getMetadata()
-        assert(result.first().name == "parameters")
+        assert(result.map{it.name }.containsAll(listOf("parameters", "explicit", "depends", "computed-resource")))
     }
 }
