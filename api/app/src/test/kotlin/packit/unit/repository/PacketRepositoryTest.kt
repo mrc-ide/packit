@@ -3,7 +3,6 @@ package packit.unit.repository
 import jakarta.transaction.Transactional
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
@@ -21,8 +20,8 @@ class PacketRepositoryTest
     lateinit var packetRepository: PacketRepository
 
     val packet = listOf(
-        Packet("1", "test1", "test name1", mapOf("name" to "value"), false),
-        Packet("2", "test2", "test name2", mapOf("name2" to "value2"), false)
+            Packet("1", "test1", "test name1", mapOf("name" to "value"), false),
+            Packet("2", "test2", "test name2", mapOf("name2" to "value2"), false)
     )
 
     @Test
@@ -34,5 +33,4 @@ class PacketRepositoryTest
 
         assertEquals(result, packet)
     }
-
 }

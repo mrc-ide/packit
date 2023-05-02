@@ -7,10 +7,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import org.springframework.web.filter.CorsFilter
 
 @Configuration
-class CorsConfig {
+class CorsConfig
+{
 
     @Bean
-    fun corsFilter(): CorsFilter {
+    fun corsFilter(): CorsFilter
+    {
         val source = UrlBasedCorsConfigurationSource()
         val config = CorsConfiguration()
         config.allowCredentials = true

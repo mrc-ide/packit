@@ -5,7 +5,4 @@ import org.springframework.stereotype.Repository
 import packit.model.Packet
 
 @Repository
-interface PacketRepository: JpaRepository<Packet, String>
-{
-
-}
+interface PacketRepository : JpaRepository<Packet, String>
