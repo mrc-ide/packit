@@ -9,7 +9,8 @@ import packit.service.BasePacketService
 import kotlin.math.exp
 import kotlin.test.assertEquals
 
-class PacketServiceTest {
+class PacketServiceTest
+{
     private val packets = listOf(
             Packet("1", "test", "test name",
                     mapOf("name" to "value"), false),
@@ -22,7 +23,8 @@ class PacketServiceTest {
     }
 
     @Test
-    fun `gets packets`() {
+    fun `gets packets`()
+    {
         val sut = BasePacketService(packetRepository)
 
         val result = sut.getPackets()
@@ -31,7 +33,8 @@ class PacketServiceTest {
     }
 
     @Test
-    fun `gets checksum of packet ids`() {
+    fun `gets checksum of packet ids`()
+    {
         val sut = BasePacketService(packetRepository)
 
         val result = sut.getChecksum()

@@ -13,9 +13,9 @@ class JsonMapConverterTest
     fun `converts map to string and vice versa`()
     {
         val paramsMap = mapOf(
-            "name" to "John",
-            "age" to 30,
-            "isEmployed" to true
+                "name" to "John",
+                "age" to 30,
+                "isEmployed" to true
         )
 
         val jsonParamsString = objectMapper.writeValueAsString(paramsMap)

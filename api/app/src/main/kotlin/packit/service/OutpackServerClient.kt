@@ -13,48 +13,59 @@ import packit.model.OutpackMetadata
 import packit.model.OutpackResponse
 
 @Service
-class OutpackServerClient(appConfig: AppConfig) {
+class OutpackServerClient(appConfig: AppConfig)
+{
 
     private val baseUrl: String = appConfig.outpackServerUrl
 
     private val restTemplate = RestTemplate()
 
-    fun getChecksum(): String {
+    fun getChecksum(): String
+    {
         return get("checksum")
     }
 
-    fun getMetadata(): List<OutpackMetadata> {
+    fun getMetadata(): List<OutpackMetadata>
+    {
         val url = "$baseUrl/metadata"
         val response = restTemplate.exchange(url,
                 HttpMethod.GET,
                 HttpEntity.EMPTY,
-                object : ParameterizedTypeReference<OutpackResponse<List<OutpackMetadata>>>() {})
+                object : ParameterizedTypeReference<OutpackResponse<List<OutpackMetadata>>>()
+                {})
 
         return handleResponse(response)
     }
 
     // This will work where T is a base type but not for package defined types
-    private fun <T> get(urlFragment: String): T {
+    private fun <T> get(urlFragment: String): T
+    {
         val url = "$baseUrl/$urlFragment"
         log.info("Fetching {}", url)
 
         val response = restTemplate.exchange(url,
                 HttpMethod.GET,
                 HttpEntity.EMPTY,
-                object : ParameterizedTypeReference<OutpackResponse<T>>() {})
+                object : ParameterizedTypeReference<OutpackResponse<T>>()
+                {})
 
         return handleResponse(response)
     }
 
-    private fun <T> handleResponse(response: ResponseEntity<OutpackResponse<T>>): T {
-        if (response.statusCode.isError) {
+    private fun <T> handleResponse(response: ResponseEntity<OutpackResponse<T>>): T
+    {
+        if (response.statusCode.isError)
+        {
             throw Exception(response.body?.errors.toString())
-        } else {
+        }
+        else
+        {
             return response.body!!.data
         }
     }
 
-    companion object {
+    companion object
+    {
         private val log = LoggerFactory.getLogger(OutpackServerClient::class.java)
     }
 }
