@@ -46,7 +46,7 @@ class OutpackServerClient(appConfig: AppConfig)
     private fun <T> get(urlFragment: String): T
     {
         val url = "$baseUrl/$urlFragment"
-        log.info("Fetching {}", url)
+        log.debug("Fetching {}", url)
 
         val response = restTemplate.exchange(
                 url,
