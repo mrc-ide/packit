@@ -1,51 +1,92 @@
 package packit.unit.service
 
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
+import org.mockito.kotlin.*
+import packit.model.OutpackMetadata
 import packit.model.Packet
 import packit.repository.PacketRepository
 import packit.service.BasePacketService
+import packit.service.OutpackServerClient
+import java.time.Instant
 import kotlin.test.assertEquals
 
 class PacketServiceTest
 {
-    private val packets = listOf(
+    private val now = Instant.now().epochSecond
+    private val newPackets = listOf(
             Packet(
-                    "1", "test", "test name",
-                    mapOf("name" to "value"), false
+                    "20190203-120000-1234dada", "test", "test",
+                    mapOf("alpha" to 1), false, now
             ),
             Packet(
-                    "2", "test2", "test2 name",
-                    mapOf("name" to "value"), false
+                    "20190403-120000-1234dfdf", "test2", "test2",
+                    mapOf(), false, now
+            )
+    )
+
+    private val oldPackets = listOf(
+            Packet(
+                    "20180203-120000-abdefg56", "test", "test name",
+                    mapOf("name" to "value"), false, now - 1
+            ),
+            Packet(
+                    "20180403-120000-a5bde567", "test2", "test2 name",
+                    mapOf("beta" to 1), true, now - 2
+            )
+    )
+
+    private val metadata = listOf(
+            OutpackMetadata(
+                    "20190203-120000-1234dada", "test",
+                    parameters = mapOf("alpha" to 1),
+                    custom = mapOf("orderly" to true)
+            ),
+            OutpackMetadata(
+                    "20190403-120000-1234dfdf", "test2",
+                    null, null
             )
     )
 
     private val packetRepository = mock<PacketRepository> {
-        on { findAll() } doReturn packets
-        on { findAllIds() } doReturn packets.map { it.id }
+        on { findAll() } doReturn oldPackets
+        on { findAllIds() } doReturn oldPackets.map { it.id }
+        on { findMostRecent() } doReturn oldPackets.first()
+    }
+
+    private val outpackServerClient = mock<OutpackServerClient> {
+        on { getMetadata(now - 1) } doReturn metadata
     }
 
     @Test
     fun `gets packets`()
     {
-        val sut = BasePacketService(packetRepository)
+        val sut = BasePacketService(packetRepository, mock())
 
         val result = sut.getPackets()
 
-        assertEquals(result, packets)
+        assertEquals(result, oldPackets)
     }
 
     @Test
     fun `gets checksum of packet ids`()
     {
-        val sut = BasePacketService(packetRepository)
+        val sut = BasePacketService(packetRepository, mock())
 
         val result = sut.getChecksum()
 
-        // outpack:::hash_ids(c("1", "2"))
+        // outpack:::hash_data(paste(c("20180203-120000-abdefg56",
+        // "20180403-120000-a5bde567"), collapse = ""), "sha256)
         val expected =
-                "sha256:6b51d431df5d7f141cbececcf79edf3dd861c3b4069f0b11661a3eefacbba918"
+                "sha256:723cf37faa446c3d4cf11659b5e4eb7a8ad93d847c344846962a9ddefa37519e"
         assertEquals(result, expected)
+    }
+
+    @Test
+    fun `imports packets`()
+    {
+        val sut = BasePacketService(packetRepository, outpackServerClient)
+        sut.importPackets()
+
+        verify(packetRepository).saveAll(newPackets)
     }
 }

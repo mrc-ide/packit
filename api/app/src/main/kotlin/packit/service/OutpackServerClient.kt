@@ -24,9 +24,13 @@ class OutpackServerClient(appConfig: AppConfig)
         return get("checksum")
     }
 
-    fun getMetadata(): List<OutpackMetadata>
+    fun getMetadata(from: Long? = null): List<OutpackMetadata>
     {
-        val url = "$baseUrl/metadata"
+        var url = "$baseUrl/metadata"
+        if (from != null)
+        {
+            url = "$url?known_since=$from"
+        }
         val response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,

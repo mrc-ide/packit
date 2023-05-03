@@ -70,5 +70,6 @@ CREATE TABLE "packet"
     "name" TEXT NOT NULL,
     "display_name" TEXT NULL,
     "parameters" JSON NULL,
-    "published" BOOLEAN NOT NULL DEFAULT FALSE
+    "published" BOOLEAN NOT NULL DEFAULT FALSE,
+    "time"  BIGINT NOT NULL
 );

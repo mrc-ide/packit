@@ -1,13 +1,10 @@
 package packit.integration.controllers
 
 import org.junit.jupiter.api.Test
-import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
 import packit.integration.IntegrationTest
+import org.springframework.test.context.ActiveProfiles
 
-@ActiveProfiles("test")
-@EnableConfigurationProperties
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class PacketControllerTest : IntegrationTest()
 {

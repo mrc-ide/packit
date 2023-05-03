@@ -7,11 +7,13 @@ import org.springframework.http.HttpStatus
 import packit.controllers.PacketController
 import packit.model.Packet
 import packit.service.PacketService
+import java.time.Instant
 import kotlin.test.assertEquals
 
 class PacketControllerTest
 {
-    private val packets = listOf(Packet("1", "test", "test name", mapOf("name" to "value"), false))
+    private val packets = listOf(Packet("1", "test", "test name",
+            mapOf("name" to "value"), false, Instant.now().epochSecond))
 
     private val indexService = mock<PacketService> {
         on { getPackets() } doReturn packets

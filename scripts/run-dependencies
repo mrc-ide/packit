@@ -9,12 +9,6 @@ HERE=$(realpath "$(dirname $0)")
 "$HERE"/../db/scripts/build
 "$HERE"/../db/scripts/run
 
-# Populate db with dummy data
-docker exec packit-db \
-  psql -U packituser \
-  -d packit \
-  -a -f /packit-dummy/import.sql
-
 # Start outpack_server
 docker run --name outpack_server \
   -v $HERE/../demos/orderly:/outpack \

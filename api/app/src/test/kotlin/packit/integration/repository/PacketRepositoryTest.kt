@@ -1,4 +1,4 @@
-package packit.unit.repository
+package packit.integration.repository
 
 import jakarta.transaction.Transactional
 import org.junit.jupiter.api.Test
@@ -26,32 +26,17 @@ class PacketRepositoryTest
     )
 
     @Test
-    fun `can get packets from db`()
+    fun `most recent packet is null if no packets in db`()
     {
-        packetRepository.saveAll(packet)
-
-        val result = packetRepository.findAll()
-
-        assertEquals(result, packet)
-    }
-
-    @Test
-    fun `can get packet ids from db`()
-    {
-        packetRepository.saveAll(packet)
-
-        val result = packetRepository.findAllIds()
-
-        assertEquals(result, listOf("1", "2"))
+        val result = packetRepository.findMostRecent()
+        assertEquals(result, null)
     }
 
     @Test
     fun `can get most recent packet from db`()
     {
         packetRepository.saveAll(packet)
-
         val result = packetRepository.findMostRecent()
-
         assertEquals(result!!.name, "test2")
     }
 }
