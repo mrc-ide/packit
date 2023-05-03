@@ -27,7 +27,7 @@ export interface Packet {
 
 export interface Header {
     label: string,
-    accessor: string,
+    accessor: keyof Packet,
     sortable: boolean
 }
 
