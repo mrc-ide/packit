@@ -59,6 +59,9 @@ class OutpackServerClient(appConfig: AppConfig)
     {
         if (response.statusCode.isError)
         {
+            // TODO we need proper error handling for the whole app
+            // this is really just a placeholder
+            @Suppress("TooGenericExceptionThrown")
             throw Exception(response.body?.errors.toString())
         }
         else
