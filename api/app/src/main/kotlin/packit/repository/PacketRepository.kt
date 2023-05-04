@@ -8,6 +8,6 @@ import packit.model.Packet
 @Repository
 interface PacketRepository : JpaRepository<Packet, String>
 {
-    @Query("select p.id from Packet p")
+    @Query("select p.id from Packet p order by p.id asc")
     fun findAllIds(): List<String>
 }

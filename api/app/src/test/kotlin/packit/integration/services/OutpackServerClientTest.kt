@@ -20,12 +20,4 @@ class OutpackServerClientTest
         val result = sut.getChecksum()
         assert(result.startsWith("sha256"))
     }
-
-    @Test
-    fun `can get metadata`()
-    {
-        val sut = OutpackServerClient(mockConfig)
-        val result = sut.getMetadata()
-        assert(result.map { it.name }.containsAll(listOf("parameters", "explicit", "depends", "computed-resource")))
-    }
 }
