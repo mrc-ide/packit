@@ -26,7 +26,7 @@ class OutpackServerClient(appConfig: AppConfig)
 
     fun getMetadata(from: Long? = null): List<OutpackMetadata>
     {
-        var url = "$baseUrl/metadata"
+        var url = "$baseUrl/packit/metadata"
         if (from != null)
         {
             url = "$url?known_since=$from"
