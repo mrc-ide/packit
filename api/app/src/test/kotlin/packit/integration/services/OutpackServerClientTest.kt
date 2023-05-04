@@ -1,22 +1,19 @@
 package packit.integration.services
 
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import packit.AppConfig
+import org.springframework.beans.factory.annotation.Autowired
+import packit.integration.IntegrationTest
 import packit.service.OutpackServerClient
 
-class OutpackServerClientTest
+class OutpackServerClientTest: IntegrationTest()
 {
 
-    private val mockConfig = mock<AppConfig> {
-        on { outpackServerUrl } doReturn "http://localhost:8000"
-    }
+    @Autowired
+    lateinit var sut: OutpackServerClient
 
     @Test
     fun `can get checksum`()
     {
-        val sut = OutpackServerClient(mockConfig)
         val result = sut.getChecksum()
         assert(result.startsWith("sha256"))
     }
@@ -24,7 +21,6 @@ class OutpackServerClientTest
     @Test
     fun `can get metadata`()
     {
-        val sut = OutpackServerClient(mockConfig)
         val result = sut.getMetadata()
         assert(result.map { it.name }.containsAll(listOf("parameters", "explicit", "depends", "computed-resource")))
     }
