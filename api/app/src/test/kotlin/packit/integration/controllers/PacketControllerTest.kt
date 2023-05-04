@@ -3,7 +3,6 @@ package packit.integration.controllers
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import packit.integration.IntegrationTest
-import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class PacketControllerTest : IntegrationTest()

@@ -3,7 +3,6 @@ package packit.integration.services
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import org.springframework.test.context.ActiveProfiles
 import packit.AppConfig
 import packit.service.OutpackServerClient
 

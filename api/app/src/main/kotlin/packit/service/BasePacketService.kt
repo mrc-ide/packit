@@ -25,8 +25,12 @@ class BasePacketService(
         val mostRecent = packetRepository.findMostRecent()?.time
         val now = Instant.now().epochSecond
         val packets = outpackServerClient.getMetadata(mostRecent)
-                .map { Packet(it.id, it.name, it.name,
-                        it.parameters?: mapOf(), false, now ) }
+                .map {
+                    Packet(
+                            it.id, it.name, it.name,
+                            it.parameters ?: mapOf(), false, now
+                    )
+                }
         packetRepository.saveAll(packets)
     }
 

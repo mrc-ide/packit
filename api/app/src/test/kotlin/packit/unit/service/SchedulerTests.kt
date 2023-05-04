@@ -5,8 +5,8 @@ import org.mockito.internal.verification.Times
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
-import packit.service.PacketService
 import packit.service.OutpackServerClient
+import packit.service.PacketService
 import packit.service.Scheduler
 
 class SchedulerTests

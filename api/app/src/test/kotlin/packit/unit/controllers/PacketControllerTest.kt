@@ -12,8 +12,12 @@ import kotlin.test.assertEquals
 
 class PacketControllerTest
 {
-    private val packets = listOf(Packet("1", "test", "test name",
-            mapOf("name" to "value"), false, Instant.now().epochSecond))
+    private val packets = listOf(
+            Packet(
+                    "1", "test", "test name",
+                    mapOf("name" to "value"), false, Instant.now().epochSecond
+            )
+    )
 
     private val indexService = mock<PacketService> {
         on { getPackets() } doReturn packets

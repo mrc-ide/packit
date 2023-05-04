@@ -19,10 +19,14 @@ class PacketRepositoryTest
     lateinit var packetRepository: PacketRepository
 
     val packet = listOf(
-            Packet("1", "test1", "test name1",
-                    mapOf("name" to "value"), false, Instant.now().epochSecond),
-            Packet("2", "test2", "test name2",
-                    mapOf("name2" to "value2"), false, Instant.now().epochSecond + 1)
+            Packet(
+                    "1", "test1", "test name1",
+                    mapOf("name" to "value"), false, Instant.now().epochSecond
+            ),
+            Packet(
+                    "2", "test2", "test name2",
+                    mapOf("name2" to "value2"), false, Instant.now().epochSecond + 1
+            )
     )
 
     @Test
