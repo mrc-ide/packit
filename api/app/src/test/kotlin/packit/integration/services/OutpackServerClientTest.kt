@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import packit.integration.IntegrationTest
 import packit.service.OutpackServerClient
 
-class OutpackServerClientTest: IntegrationTest()
+class OutpackServerClientTest : IntegrationTest()
 {
 
     @Autowired

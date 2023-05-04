@@ -6,4 +6,4 @@ import packit.integration.IntegrationTest
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Transactional
-abstract class RepositoryTest: IntegrationTest()
+abstract class RepositoryTest : IntegrationTest()

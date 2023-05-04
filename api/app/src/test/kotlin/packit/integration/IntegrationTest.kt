@@ -22,4 +22,3 @@ abstract class IntegrationTest
         assertThat(responseEntity.body).isNotEmpty
     }
 }
-
