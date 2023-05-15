@@ -11,7 +11,7 @@ class Scheduler(
 )
 {
 
-    @Scheduled(fixedDelay = 1000)
+    @Scheduled(fixedDelay = 10000)
     fun checkPackets()
     {
         val current = packetService.getChecksum()
