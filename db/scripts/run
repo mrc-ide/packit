@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 set -e
-GIT_BRANCH=$(git -C "$PACKAGE_ROOT" symbolic-ref --short HEAD)
+
+HERE=$(dirname $0)
+. $HERE/common
+
 docker run --rm -d \
  --network=bridge \
  --name packit-db \
  -p 5432:5432 \
-  mrcide/packit-db:$GIT_BRANCH
+ "$TAG_BRANCH"
 
 # Need to give the database a little time to initialise before we can run the migration
 docker exec packit-db wait-for-db

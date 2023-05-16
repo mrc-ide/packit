@@ -43,6 +43,8 @@ style:
     active: false
   FunctionOnlyReturningConstant:
     active: false
+  SerialVersionUIDInSerializableClass:
+    active: false
 
 naming:
   NoNameShadowing:

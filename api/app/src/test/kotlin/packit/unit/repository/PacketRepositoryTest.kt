@@ -20,8 +20,10 @@ class PacketRepositoryTest
     lateinit var packetRepository: PacketRepository
 
     val packet = listOf(
-            Packet("1", "test1", "test name1", mapOf("name" to "value"), false),
-            Packet("2", "test2", "test name2", mapOf("name2" to "value2"), false)
+            Packet("20180818-164847-7574883b", "test1", "test name1", mapOf("name" to "value"), false),
+            Packet("20170818-164847-7574883b", "test2", "test name2", mapOf("a" to 1), false),
+            Packet("20170819-164847-7574883b", "test3", "test name3", mapOf("alpha" to true), false),
+            Packet("20170819-164847-7574883a", "test4", "test name4", mapOf(), true)
     )
 
     @Test
@@ -32,5 +34,23 @@ class PacketRepositoryTest
         val result = packetRepository.findAll()
 
         assertEquals(result, packet)
+    }
+
+    @Test
+    fun `can get sorted packet ids from db`()
+    {
+        packetRepository.saveAll(packet)
+
+        val result = packetRepository.findAllIds()
+
+        assertEquals(
+                result,
+                listOf(
+                        "20170818-164847-7574883b",
+                        "20170819-164847-7574883a",
+                        "20170819-164847-7574883b",
+                        "20180818-164847-7574883b"
+                )
+        )
     }
 }
