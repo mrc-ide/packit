@@ -1,21 +1,38 @@
-import React from "react";
-import {Header, PacketTableProps} from "../../../../types";
+import React, {useState} from "react";
+import {Header, Packet, PacketTableProps} from "../../../../types";
+import {FaSort} from "react-icons/fa";
+
+const headers: Header[] = [
+    {label: "Name", accessor: "displayName", sortable: true},
+    {label: "Version", accessor: "id", sortable: false},
+    {label: "Status", accessor: "published", sortable: true},
+    {label: "Parameters", accessor: "parameters", sortable: false}
+];
 
 export default function Table({data}: PacketTableProps) {
-    const headers: Header[] = [
-        {label: "Name", accessor: "name", sortable: true},
-        {label: "Version", accessor: "version", sortable: true},
-        {label: "Status", accessor: "status", sortable: true},
-        {label: "Parameters", accessor: "parameters", sortable: false}
-    ];
+    const [ascending, setAscending] = useState(true);
+    const [sortColumn, setSortColumn] = useState("");
+
+    const sortPackets = (accessor: string) => {
+        const newAscending = (accessor === sortColumn) ? !ascending : true;
+        setAscending(newAscending);
+        setSortColumn(accessor);
+
+        data.sort((a, b) => (`${a[accessor as keyof Packet]}`
+            .localeCompare(`${b[accessor as keyof Packet]}`)) * (newAscending ? 1 : -1));
+    };
+
     return (
         <table data-testid="table" className="table table-hover table-bordered table-sm">
             <thead>
             <tr>
                 {headers.map(({label, accessor, sortable}) => (
-                    <th key={accessor}
-                        onClick={() => sortable ? console.log(`We shall implement sort by ${accessor}`) : null}>
-                        <span className="m-4">{label}</span>
+                    <th key={accessor}>
+                        <span className="m-4"
+                              onClick={() => sortable ? sortPackets(accessor) : null}>
+                            {label}
+                            {sortable ? <span className="px-2 icon-sort"><FaSort/></span> : ""}
+                        </span>
                     </th>
                 ))}
             </tr>

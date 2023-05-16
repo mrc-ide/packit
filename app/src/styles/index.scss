@@ -49,7 +49,18 @@ $theme-map: null;
 }
 
 .icon-primary {
-  color: themed('iconColor') !important;
+  color: black;
+  cursor: pointer;
+  display: inline-block;
+  transition: color 0.1s, border-color 0.1s, background-color 0.1s;
+
+  &:hover {
+    color: themed('icon-sort') !important;
+  }
+}
+
+.icon-sort {
+  color: themed('textColor') !important;
   cursor: pointer;
   display: inline-block;
   transition: color 0.1s, border-color 0.1s, background-color 0.1s;
