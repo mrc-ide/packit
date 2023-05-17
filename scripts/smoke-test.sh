@@ -5,9 +5,8 @@ wait_for()
     start_ts=$(date +%s)
     for i in $(seq $TIMEOUT); do
 
-        curl localhost:8080/packets/
-        result=$?
-        if [[ $result -eq 0 ]]; then
+        result=$(curl --write-out %{http_code} --silent --output /dev/null http://localhost:8080/packets)
+        if [[ $result -eq 200 ]]; then
             end_ts=$(date +%s)
             echo "API available after $((end_ts - start_ts)) seconds"
             break
@@ -31,7 +30,8 @@ docker run --network=host -d mrcide/packit-api:$TAG
 TIMEOUT="${1:-60}"
 wait_for
 RESULT=$?
-if [[ $RESULT -ne 0 ]]; then
+if [[ $RESULT -ne 200 ]]; then
   echo "API did not become available in time"
+  exit 1
 fi
-exit $RESULT
+exit 0

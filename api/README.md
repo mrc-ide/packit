@@ -22,6 +22,6 @@ To run a specific test alone, add `--test` + the \
 to the command. For example, the command for running AppTest.kt would be: `./api/gradlew -p api/app :app:test --tests AppTest`
 
 ## Building a docker image
-1. `./api/scripts/build` builds a docker image
-2. `./api/scripts/build-and-push` builds and pushes an image to dockerhub and runs on CI
-3. `./api/scripts/run` runs a built image with the current branch name
+1. `./api/scripts/build` builds a docker image.
+2. `./api/scripts/build-and-push` builds and pushes an image to dockerhub. This script is run on CI.
+3. `./api/scripts/run` runs a built image with the current branch name.
