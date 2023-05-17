@@ -50,3 +50,7 @@ jobs:
       - name: Build image
         working-directory: api
         run: ./gradlew :app:bootBuildImage --imageName=mrcide/packit:$BRANCH_NAME
+      - name: Run container
+        run: docker run --network=host -d mrcide/packit:$BRANCH_NAME
+      - name: Smoke test
+        run: curl localhost:8080/packets/
