@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -e
+HERE=$(dirname $0)
+. $HERE/common
+
+PACKAGE_ROOT=$(realpath $HERE/..)
+
+$PACKAGE_ROOT/gradlew -p $PACKAGE_ROOT :app:bootBuildImage --imageName=$TAG_BRANCH
+
+docker tag $TAG_BRANCH $TAG_SHA
