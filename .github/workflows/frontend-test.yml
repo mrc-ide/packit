@@ -11,12 +11,16 @@ on:
   pull_request:
     branches:
       - 'main'
+env:
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+
 jobs:
   frontend:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [ 16.x ]
+        java-version: [ 17 ]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -24,12 +28,23 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+      - name: Run dependencies
+        run: ./scripts/run-dependencies
+      - name: Set up Java JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: "temurin"
+          cache: "gradle"
       - name: Installing dependencies
         run: npm ci --prefix=app
       - name: Building app
         run: npm run build --prefix=app
       - name: Running eslint
         run: npm run lint --prefix=app
+      - name: Start API
+        working-directory: api
+        run: ./gradlew :app:bootRun &
       - name: Testing app
         run: npm test --prefix=app -- --coverage
       - name: Upload coverage

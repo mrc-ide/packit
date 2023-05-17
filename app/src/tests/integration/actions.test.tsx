@@ -33,7 +33,7 @@ describe("backend integration", () => {
         expect(result["type"]).toBe("GetPackets/fulfilled");
         expect(result["payload"]).toHaveLength(4);
         expect(result["payload"].map((p: Packet) => p.name).sort())
-            .toEqual(["computed-resource", "depends", "explicit", "parameters"])
+            .toEqual(["computed-resource", "depends", "explicit", "parameters"]);
     });
 
 });
