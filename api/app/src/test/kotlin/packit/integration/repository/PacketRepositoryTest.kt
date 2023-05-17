@@ -52,7 +52,7 @@ class PacketRepositoryTest : RepositoryTest()
     @Test
     fun `most recent packet is null if no packets in db`()
     {
-        val result = packetRepository.findMostRecent()
+        val result = packetRepository.findTopByOrderByTimeDesc()
         assertEquals(result, null)
     }
 
@@ -61,7 +61,7 @@ class PacketRepositoryTest : RepositoryTest()
     {
         packetRepository.saveAll(packet)
 
-        val result = packetRepository.findMostRecent()
+        val result = packetRepository.findTopByOrderByTimeDesc()
 
         assertEquals(result!!.id, "20170818-164847-7574883b")
     }
