@@ -18,7 +18,13 @@ wait_for()
     return $result
 }
 
-docker run --network=host -d mrcide/packit:$BRANCH_NAME
+if [[ -v "BRANCH_NAME" ]]; then
+    TAG=$BRANCH_NAME
+else
+    TAG=$(git symbolic-ref --short HEAD)
+fi
+
+docker run --network=host -d mrcide/packit-api:$TAG
 
 # The variable expansion below is 100s by default, or the argument provided
 # to this script

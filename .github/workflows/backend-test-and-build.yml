@@ -49,6 +49,6 @@ jobs:
         run: ./gradlew :app:test --stacktrace --rerun
       - name: Build image
         working-directory: api
-        run: ./gradlew :app:bootBuildImage --imageName=mrcide/packit:$BRANCH_NAME
+        run: ./scripts/build-and-push
       - name: Smoke test
         run: ./scripts/smoke-test.sh
