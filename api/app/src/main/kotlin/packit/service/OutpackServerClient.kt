@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import packit.AppConfig
+import packit.model.OutpackMetadata
 import packit.model.OutpackResponse
 
 @Service
@@ -23,11 +24,29 @@ class OutpackServerClient(appConfig: AppConfig)
         return get("checksum")
     }
 
+    fun getMetadata(from: Long? = null): List<OutpackMetadata>
+    {
+        var url = "$baseUrl/packit/metadata"
+        if (from != null)
+        {
+            url = "$url?known_since=$from"
+        }
+        val response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                object : ParameterizedTypeReference<OutpackResponse<List<OutpackMetadata>>>()
+                {}
+        )
+
+        return handleResponse(response)
+    }
+
     // This will work where T is a base type but not for package defined types
     private fun <T> get(urlFragment: String): T
     {
         val url = "$baseUrl/$urlFragment"
-        log.info("Fetching {}", url)
+        log.debug("Fetching {}", url)
 
         val response = restTemplate.exchange(
                 url,
