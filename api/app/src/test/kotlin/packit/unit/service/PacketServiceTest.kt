@@ -50,7 +50,7 @@ class PacketServiceTest
     private val packetRepository = mock<PacketRepository> {
         on { findAll() } doReturn oldPackets
         on { findAllIds() } doReturn oldPackets.map { it.id }
-        on { findMostRecent() } doReturn oldPackets.first()
+        on { findTopByOrderByTimeDesc() } doReturn oldPackets.first()
     }
 
     private val outpackServerClient = mock<OutpackServerClient> {

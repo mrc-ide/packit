@@ -37,8 +37,6 @@ dependencies {
 
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
 
-    runtimeOnly("com.h2database:h2")
-
     // This dependency is used by the application.
     implementation("com.google.guava:guava:31.1-jre")
 
@@ -46,10 +44,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.postgresql:postgresql")
+
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.21.0")
 }
 
