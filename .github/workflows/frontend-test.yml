@@ -33,10 +33,12 @@ jobs:
         run: npm run build --prefix=app
       - name: Running eslint
         run: npm run lint --prefix=app
-      - name: Run dependencies
-        run: ./scripts/run-dependencies && ./api/scripts/run
       - name: Testing app
         run: npm test --prefix=app -- --coverage
+      - name: Run dependencies
+        run: ./scripts/run-dependencies && ./api/scripts/run
+      - name: Run integration tests
+        run : npm run integration-test --prefix=app
       - name: Upload coverage
         uses: codecov/codecov-action@v3
         with:
