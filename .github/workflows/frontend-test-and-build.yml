@@ -11,6 +11,10 @@ on:
   pull_request:
     branches:
       - 'main'
+
+env:
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+
 jobs:
   frontend:
     runs-on: ubuntu-latest
@@ -36,3 +40,9 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: true
+      - name: Build image
+        working-directory: app
+        run: ./scripts/build-and-push
+      - name: Smoke test
+        working-directory: app
+        run: ./scripts/smoke-test.sh
