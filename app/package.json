@@ -39,7 +39,8 @@
   "jest": {
     "moduleNameMapper": {
       "^axios$": "axios/dist/axios.js"
-    }
+    },
+    "coveragePathIgnorePatterns": ["/node_modules/", "tests"]
   },
   "scripts": {
     "start": "react-scripts start",
