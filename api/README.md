@@ -6,8 +6,8 @@ This API is built with [Spring boot framework](https://spring.io)
   Eclipse Temurin is the open source Java SE build based upon OpenJDK.
 
 ## Run dependencies
-Before you can start packit you need to run `./scripts/run-dependencies` from project root \
-for database schema and dummy data to be populated.
+Before you can start packit you need to run `./scripts/run-dependencies` from the project root 
+to start database and `outpack_server` instances.
 
 ## Starting App
 Run up app on command line from the project root directory

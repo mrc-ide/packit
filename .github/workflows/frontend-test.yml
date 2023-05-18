@@ -36,7 +36,7 @@ jobs:
       - name: Testing app
         run: npm test --prefix=app -- --coverage
       - name: Run dependencies
-        run: ./scripts/run-dependencies && ./api/scripts/run
+        run: ./scripts/run-dependencies && ./api/scripts/run && ./scripts/smoke-test
       - name: Run integration tests
         run : npm run integration-test --prefix=app
       - name: Upload coverage
