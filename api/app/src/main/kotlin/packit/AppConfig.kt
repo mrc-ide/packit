@@ -1,15 +1,12 @@
 package packit
 
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
 import java.io.File
 import java.io.FileNotFoundException
 import java.net.URL
 import java.util.*
 
-
-//prevent auto-wiring of default Properties
+// prevent auto-wiring of default Properties
 class PackitProperties : Properties()
 
 @Component
