@@ -54,4 +54,4 @@ jobs:
         run: ./scripts/build-and-push
       - name: Smoke test
         working-directory: app
-        run: ./scripts/smoke-test.sh
+        run: ./scripts/smoke-test

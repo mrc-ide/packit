@@ -5,7 +5,7 @@ wait_for()
     start_ts=$(date +%s)
     for i in $(seq $TIMEOUT); do
 
-        result=$(curl --write-out %{http_code} --silent --output /dev/null http://localhost:80)
+        result=$(curl --write-out %{http_code} --silent --output /dev/null http://localhost)
         if [[ $result -eq 200 ]]; then
             end_ts=$(date +%s)
             echo "Web app available after $((end_ts - start_ts)) seconds"
