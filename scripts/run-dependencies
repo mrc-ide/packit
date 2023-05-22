@@ -6,7 +6,6 @@ HERE=$(realpath "$(dirname $0)")
 . "$HERE"/common
 
 ## Start database
-"$HERE"/../db/scripts/build
 "$HERE"/../db/scripts/run
 
 # Start outpack_server
