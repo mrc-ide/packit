@@ -4,7 +4,11 @@ set -e
 HERE=$(dirname $0)
 . $HERE/common
 
+PACKAGE_ROOT=$(realpath $HERE/..)
+
 docker run --rm -d \
   --network=host \
   --name packit-api \
   "$TAG_BRANCH"
+
+docker cp $PACKAGE_ROOT/app/src/main/resources/config.properties packit-api:/etc/packit/config.properties
