@@ -23,8 +23,6 @@ else
     TAG=$(git symbolic-ref --short HEAD)
 fi
 
-docker run --network=host -d mrcide/packit-api:$TAG
-
 # The variable expansion below is 60s by default, or the argument provided
 # to this script
 TIMEOUT="${1:-60}"

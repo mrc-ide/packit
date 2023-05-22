@@ -52,4 +52,4 @@ jobs:
         run: ./scripts/build-and-push
       - name: Smoke test
         working-directory: api
-        run: ./scripts/smoke-test
+        run: ./scripts/run && ./scripts/smoke-test

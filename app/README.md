@@ -14,12 +14,24 @@ Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.\
-You will also see any lint errors in the console.
+You will also see any lint errors in the console. \
+
+To see a working app you will need to run dependencies. From the root directory:
+1. ./scripts/run-dependencies
+2. ./api/scripts/run OR ./api/gradlew -p api :app:bootRun
 
 ### `npm test`
 
-Launches the test runner in the interactive watch mode.\
+Launches the test runner in the interactive watch mode. Excludes integration tests. \
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+### `npm run integration-test`
+
+Launches the test runner in the interactive watch mode, running only integration tests. \
+Dependencies must be running:
+1. ./scripts/run-dependencies
+2. ./api/scripts/run
+
 
 ### `npm run lint` or `npm run lint:fix`
 

@@ -45,6 +45,10 @@ jobs:
         run: npm run lint --prefix=app
       - name: Testing app
         run: npm test --prefix=app -- --coverage
+      - name: Run dependencies
+        run: ./scripts/run-dependencies && ./api/scripts/run && ./api/scripts/smoke-test
+      - name: Run integration tests
+        run : npm run integration-test --prefix=app
       - name: Upload coverage
         uses: codecov/codecov-action@v3
         with:
@@ -54,4 +58,4 @@ jobs:
         run: ./scripts/build-and-push
       - name: Smoke test
         working-directory: app
-        run: ./scripts/smoke-test
+        run: ./scripts/run && ./scripts/smoke-test
