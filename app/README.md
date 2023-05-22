@@ -1,4 +1,4 @@
-****# Packit Front End
+#Packit Front End
 Interface is built with [React library](https://reactjs.org) 
 
 ## Requirements
