@@ -61,6 +61,12 @@ application {
     mainClass.set("packit.AppKt")
 }
 
+//Run bootRun with eg -PspringProfile=prod to run with a different active profile from default 'dev'
+//defined in gradle.properties
+bootRun {
+    bootRun.systemProperty 'spring.profiles.active', springProfile
+}
+
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
