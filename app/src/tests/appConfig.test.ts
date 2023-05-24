@@ -1,4 +1,4 @@
-import config from "../config/appConfig";
+import appConfig from "../config/appConfig";
 
 describe("api service", () => {
 
@@ -14,16 +14,16 @@ describe("api service", () => {
     });
 
     test("uses default config by default", () => {
-        expect(config.apiUrl()).toBe("http://localhost:8080");
+        expect(appConfig.apiUrl()).toBe("http://localhost:8080");
     });
 
     test("uses production config if node_env is production", () => {
         /* eslint-disable */
         // @ts-ignore
         process.env.NODE_ENV = "production";
-        const config = require("../config/appConfig").default;
+        const appConfig = require("../config/appConfig").default;
         /* eslint-enable */
-        expect(config.apiUrl()).toBe("https://localhost/packit/api");
+        expect(appConfig.apiUrl()).toBe("https://localhost/packit/api");
     });
 });
 
