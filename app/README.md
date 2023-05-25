@@ -52,4 +52,4 @@ The app is containerised into an image based on nginx. Note that in deployment t
 security configuration is required here.
 1. `./app/scripts/build` builds a docker image.
 2. `./app/scripts/build-and-push` builds and pushes an image to dockerhub. This script is run on CI.
-3. `./app/scripts/run` runs a built image with the current branch name.****
+3. `./app/scripts/run` runs a built image with the current branch name.

@@ -5,9 +5,9 @@ import {
     AsyncThunk, SerializedError,
 } from "@reduxjs/toolkit";
 import {RejectedErrorValue} from "./types";
-import config from "./config/appConfig";
+import appConfig from "./config/appConfig";
 
-const baseURL = config.apiUrl();
+const baseURL = appConfig.apiUrl();
 
 interface CustomAsyncThunkOptions extends AsyncThunkOptions<void, RejectedErrorValue> {
     rejectValue: SerializedError

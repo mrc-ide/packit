@@ -10,10 +10,10 @@ const prodConfig: AppConfig = {
     apiUrl: () => `https://${window.location.host}/packit/api`,
 };
 
-let config = devConfig;
+let appConfig = devConfig;
 
 if (process.env.NODE_ENV == "production") {
-    config = prodConfig;
+    appConfig = prodConfig;
 }
 
-export default config;
+export default appConfig;
