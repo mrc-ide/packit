@@ -52,6 +52,7 @@
     "eject": "react-scripts eject",
     "serve": "serve -s build"
   },
+  "homepage": ".",
   "eslintConfig": {
     "extends": [
       "react-app",

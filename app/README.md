@@ -1,5 +1,8 @@
-# Packit Front End
+#Packit Front End
 Interface is built with [React library](https://reactjs.org) 
+
+## Requirements
+Node 18.
 
 ## Available Scripts
 
@@ -44,3 +47,9 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
+## Building a docker image
+The app is containerised into an image based on nginx. Note that in deployment this will be proxied, so no 
+security configuration is required here.
+1. `./app/scripts/build` builds a docker image.
+2. `./app/scripts/build-and-push` builds and pushes an image to dockerhub. This script is run on CI.
+3. `./app/scripts/run` runs a built image with the current branch name.

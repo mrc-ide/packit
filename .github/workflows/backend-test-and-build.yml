@@ -51,4 +51,5 @@ jobs:
         working-directory: api
         run: ./scripts/build-and-push
       - name: Smoke test
-        run: ./scripts/smoke-test
+        working-directory: api
+        run: ./scripts/run && ./scripts/smoke-test

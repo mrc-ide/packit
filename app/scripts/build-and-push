@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -e
+
+HERE=$(dirname $0)
+. "$HERE"/common
+
+# build docker image
+. "$HERE"/build
+
+docker push $TAG_SHA
+docker push $TAG_BRANCH
