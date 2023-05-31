@@ -1,4 +1,10 @@
-FROM eclipse-temurin:17-jdk-alpine
-VOLUME /tmp
-COPY /app/build/libs/*.jar app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+FROM openjdk:17
+
+COPY ./docker/entrypoint /entrypoint
+
+ADD ./app/build/distributions/app-boot.tar /
+
+# This path is needed for the eventual configuration
+RUN mkdir -p /etc/packit
+
+ENTRYPOINT ["/entrypoint"]

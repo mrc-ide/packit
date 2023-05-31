@@ -5,6 +5,8 @@ HERE=$(dirname $0)
 
 PACKAGE_ROOT=$(realpath $HERE/..)
 
-$PACKAGE_ROOT/gradlew -p $PACKAGE_ROOT :app:bootBuildImage --imageName=$TAG_BRANCH
+$PACKAGE_ROOT/gradlew -p $PACKAGE_ROOT :app:bootDistTar
+
+docker build -f $PACKAGE_ROOT/Dockerfile --tag $TAG_BRANCH $PACKAGE_ROOT
 
 docker tag $TAG_BRANCH $TAG_SHA
