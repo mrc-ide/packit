@@ -14,7 +14,7 @@ interface CustomAsyncThunkOptions extends AsyncThunkOptions<void, RejectedErrorV
 }
 
 interface API {
-    get<T>(mutationType: string, endpoint: string): AsyncThunk<T, void, CustomAsyncThunkOptions>;
+    get<T, V>(mutationType: string, endpoint: string): AsyncThunk<T, V, CustomAsyncThunkOptions>;
 }
 
 export class ApiService implements API {
@@ -24,11 +24,11 @@ export class ApiService implements API {
         this.axiosInstance = axiosInstance;
     }
 
-    get<T>(mutationType: string, endpoint: string): AsyncThunk<T, void, CustomAsyncThunkOptions> {
-        return createAsyncThunk<T, void, CustomAsyncThunkOptions>(
+    get<T, V>(mutationType: string, endpoint: string): AsyncThunk<T, V, CustomAsyncThunkOptions> {
+        return createAsyncThunk<T, V, CustomAsyncThunkOptions>(
             mutationType,
-            (_, thunkAPI) =>
-                this.axiosInstance.get<T>(endpoint)
+            (args, thunkAPI) =>
+                this.axiosInstance.get<T>(this.getEndpoint<V>(endpoint, args))
                     .then(response => thunkAPI.fulfillWithValue(response.data))
                     .catch(error => {
                         let errorMessage = {message: "Could not parse API response"};
@@ -38,6 +38,10 @@ export class ApiService implements API {
 
                         return thunkAPI.rejectWithValue(errorMessage);
                     }));
+    }
+
+    private getEndpoint<V>(endpoint: string, args: V): string {
+        return args ? `${endpoint}/${args}` : endpoint;
     }
 }
 

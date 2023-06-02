@@ -34,7 +34,7 @@ describe("packetsSlice reducer", () => {
         const nextState = packetsReducer(initialPacketsState, actions.fetchPackets.fulfilled(packets, ""));
 
         expect(nextState.packets).toEqual(packets);
-        expect(nextState.packetsError).toBeNull();
+        expect(nextState.error).toBeNull();
     });
 
     it("should handle fetchPackets.rejected", async () => {
@@ -46,6 +46,6 @@ describe("packetsSlice reducer", () => {
         );
 
         expect(packetState.packets).toEqual([]);
-        expect(packetState.packetsError?.message).toBe(error.message);
+        expect(packetState.error?.message).toBe(error.message);
     });
 });

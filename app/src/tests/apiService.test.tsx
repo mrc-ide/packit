@@ -20,7 +20,7 @@ describe("api service", () => {
 
         const api = new ApiService();
 
-        const asyncThunk = api.get<typeof responseData>(type, url);
+        const asyncThunk = api.get<typeof responseData, void>(type, url);
 
         const dispatch = jest.fn();
 
@@ -55,7 +55,7 @@ describe("api service", () => {
 
         const api = new ApiService();
 
-        const asyncThunk = api.get(type, url);
+        const asyncThunk = api.get<string, void>(type, url);
 
         const dispatch = jest.fn();
 

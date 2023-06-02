@@ -7,7 +7,7 @@ describe("backend integration", () => {
     it("can parse api errors", async () => {
 
         const dispatch = jest.fn();
-        const asyncThunk = api.get<Packet[]>(PacketsMutationType.GetPackets, "/bad-url")();
+        const asyncThunk = api.get<Packet[], void>(PacketsMutationType.GetPackets, "/bad-url")();
         await asyncThunk(dispatch, jest.fn(), jest.fn());
 
         expect(dispatch.mock.calls[0][0]).toMatchObject({

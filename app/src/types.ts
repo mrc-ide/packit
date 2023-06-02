@@ -33,11 +33,14 @@ export interface Header {
 
 export interface PacketTableProps {
     data: Packet[]
+    setSelectedBarItem: (item: SideBarItems) => void
 }
 
 export interface PacketsState {
     packets: Packet[]
-    packetsError: SerializedError | null
+    error: SerializedError | null
+    packet: Packet
+    activeSideBar: SideBarItems
 }
 
 export type RootState = ReturnType<typeof rootReducer>;

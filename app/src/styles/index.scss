@@ -114,6 +114,16 @@ a {
   }
 }
 
+.packet-runner {
+  top: 90px;
+  min-height: inherit;
+
+  .badge-parameter {
+    background-color: themed("secondaryColor");
+    color: themed("textColor");
+  }
+}
+
 .content-box {
   overflow: auto;
   padding: 10px 10px 10px 10px;

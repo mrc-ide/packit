@@ -5,17 +5,15 @@ import {
     Schema,
     Inventory
 } from "@mui/icons-material";
-import {SideBarItems, SidebarProps} from "../../../types";
+import {SideBarItems, useAppDispatch} from "../../../types";
+import {setActiveSideBar} from "../../store/packets/packets";
 
-export default function Sidebar({onChangeSideBar}: SidebarProps) {
+export default function Sidebar() {
+    const dispatch = useAppDispatch();
     const [selected, setSelected] = useState(0);
 
-    const handleSelected = (input: number) => {
-        setSelected(input);
-    };
-
     useEffect(() => {
-        onChangeSideBar(selected);
+        dispatch(setActiveSideBar(selected));
     }, [selected]);
 
     return (
@@ -24,7 +22,7 @@ export default function Sidebar({onChangeSideBar}: SidebarProps) {
                 <li>
                     <a href="#"
                        className={selected === SideBarItems.explorer ? "active" : ""}
-                       onClick={() => handleSelected(SideBarItems.explorer)}>
+                       onClick={() => setSelected(SideBarItems.explorer)}>
                         <span className="sidebar-icon"><FindInPage fontSize="small"/></span>
                         <span>Packet explorer</span>
                     </a>
@@ -32,7 +30,7 @@ export default function Sidebar({onChangeSideBar}: SidebarProps) {
                 <li>
                     <a href="#"
                        className={selected === SideBarItems.packetRunner ? "active" : ""}
-                       onClick={() => handleSelected(SideBarItems.packetRunner)}>
+                       onClick={() => setSelected(SideBarItems.packetRunner)}>
                         <span className="sidebar-icon"><Inventory fontSize="small"/>
                         </span><span>Packet runner</span>
                     </a>
@@ -40,7 +38,7 @@ export default function Sidebar({onChangeSideBar}: SidebarProps) {
                 <li>
                     <a href="#"
                        className={selected === SideBarItems.workflowRunner ? "active" : ""}
-                       onClick={() => handleSelected(SideBarItems.workflowRunner)}>
+                       onClick={() => setSelected(SideBarItems.workflowRunner)}>
                         <span className="sidebar-icon"><Schema fontSize="small"/></span>
                         <span>Workflow runner</span>
                     </a>
@@ -48,7 +46,7 @@ export default function Sidebar({onChangeSideBar}: SidebarProps) {
                 <li>
                     <a href="#"
                        className={selected === SideBarItems.projectDoc ? "active" : ""}
-                       onClick={() => handleSelected(SideBarItems.projectDoc)}>
+                       onClick={() => setSelected(SideBarItems.projectDoc)}>
                         <span className="sidebar-icon"><InsertDriveFile fontSize="small"/></span>
                         <span>Project documentation</span>
                     </a>

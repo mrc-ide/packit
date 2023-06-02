@@ -1,18 +1,21 @@
 import React, {useEffect} from "react";
 import Table from "./Table";
 import {useSelector} from "react-redux";
-import {RootState, useAppDispatch} from "../../../../types";
+import {RootState, SideBarItems, useAppDispatch} from "../../../../types";
 import {actions} from "../../../store/packets/thunks";
+import {setActiveSideBar} from "../../../store/packets/packets";
 
 export default function Explorer() {
-
-    const {packets} = useSelector((state: RootState) => state.packets);
-
     const dispatch = useAppDispatch();
+    const {packets} = useSelector((state: RootState) => state.packets);
 
     useEffect(() => {
         dispatch(actions.fetchPackets());
     }, []);
+
+    const selectActiveSideBar = () => {
+        dispatch(setActiveSideBar(SideBarItems.packetRunner));
+    };
 
     return (
         <div className="content explorer">
@@ -22,7 +25,7 @@ export default function Explorer() {
             </div>
             <div className="content-box">
                 <div className="table-responsive-sm pt-4">
-                    <Table data={packets.slice(0, 5)}/>
+                    <Table data={packets.slice(0, 5)} setSelectedBarItem={selectActiveSideBar} />
                 </div>
                 <div data-testid="pagination-content" className="d-flex pt-xxl-5 align-items-center">
                     <div className="m-2">Show</div>

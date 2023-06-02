@@ -9,10 +9,8 @@ describe("sidebar component", () => {
         jest.clearAllMocks();
     });
 
-    const mockHandleSelected = jest.fn().mockImplementation((data) => data);
-
     it("renders sidebar items", () => {
-        render(<Sidebar onChangeSideBar={() => mockHandleSelected(0)}/>);
+        render(<Sidebar/>);
         const app = screen.getByTestId("sidebar");
         const items = app.querySelectorAll("li a");
         expect(items.length).toBe(4);
@@ -53,7 +51,7 @@ const expectSidebarItemIsSelected = async (itemIndex: SideBarItems) => {
 
     const mockHandleSelected = jest.fn().mockImplementation((data) => data);
 
-    render(<Sidebar onChangeSideBar={(e) => mockHandleSelected(e)}/>);
+    render(<Sidebar/>);
 
     const sidebar = screen.getByTestId("sidebar");
 

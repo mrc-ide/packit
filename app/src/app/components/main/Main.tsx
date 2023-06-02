@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import {Sidebar} from "./index";
 import {
     Explorer,
@@ -6,18 +6,20 @@ import {
     WorkflowRunner,
     ProjectDocumentation
 } from "./../contents";
-import {SideBarItems} from "../../../types";
+import {RootState, SideBarItems} from "../../../types";
+import {useSelector} from "react-redux";
 
 export default function Main() {
-    const [activeNavBar, setActiveNavBar] = useState(SideBarItems.explorer);
+    const {activeSideBar} = useSelector((state: RootState) => state.packets);
+
     return (
         <main data-testid="main">
-            <Sidebar onChangeSideBar={(e) => setActiveNavBar(e)}/>
+            <Sidebar/>
             <div data-testid="content" >
-                {activeNavBar === SideBarItems.explorer && <Explorer/>}
-                {activeNavBar === SideBarItems.packetRunner && <PacketRunner/>}
-                {activeNavBar === SideBarItems.workflowRunner && <WorkflowRunner/>}
-                {activeNavBar === SideBarItems.projectDoc && <ProjectDocumentation/>}
+                {activeSideBar === SideBarItems.explorer && <Explorer/>}
+                {activeSideBar === SideBarItems.packetRunner && <PacketRunner/>}
+                {activeSideBar === SideBarItems.workflowRunner && <WorkflowRunner/>}
+                {activeSideBar === SideBarItems.projectDoc && <ProjectDocumentation/>}
             </div>
         </main>
     );
