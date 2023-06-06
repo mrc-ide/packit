@@ -26,7 +26,7 @@ describe("sidebar component", () => {
 
     it("renders sidebar items", () => {
 
-        const store = getStore()
+        const store = getStore();
 
         render(<Provider store={store}> <Sidebar/></Provider>);
 
@@ -72,7 +72,7 @@ const expectSidebarItemIsSelected = async (itemIndex: SideBarItems, store: Store
 
     const sidebar = screen.getByTestId("sidebar");
 
-    const mockDispatch = jest.spyOn(store, "dispatch")
+    const mockDispatch = jest.spyOn(store, "dispatch");
 
     const list = sidebar.querySelectorAll("li a");
 

@@ -21,7 +21,7 @@ describe("packet runner component", () => {
 
     it("renders skeleton text", async () => {
 
-        const store = getStore()
+        const store = getStore();
 
         render(<Provider store={store}> <PacketRunner/></Provider>);
 

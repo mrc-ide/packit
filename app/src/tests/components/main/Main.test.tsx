@@ -10,7 +10,7 @@ import configureStore from "redux-mock-store";
 
 describe("main component", () => {
 
-    const getStore = (props: Partial<PacketsState> = {packets: []}) => {
+    const getStore = (props: Partial<PacketsState> = {}) => {
         const middlewares = [thunk];
         const mockStore = configureStore(middlewares);
         const initialRootStates = {
@@ -20,7 +20,7 @@ describe("main component", () => {
         return mockStore(initialRootStates);
     };
 
-    const store = getStore()
+    const store = getStore();
 
     it("renders sidebar", () => {
         render(<Provider store={store}><Main/></Provider>);
