@@ -13,10 +13,6 @@ export interface RejectedErrorValue {
     rejectValue: SerializedError
 }
 
-export interface SidebarProps {
-    onChangeSideBar: (item: SideBarItems) => void
-}
-
 export interface Packet {
     id: string,
     name: string,

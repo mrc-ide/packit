@@ -21,10 +21,15 @@ class PacketRepositoryTest : RepositoryTest()
             Packet("20170819-164847-7574883a", "test4", "test name4", mapOf(), true, now)
     )
 
+    private fun saveAllPackets()
+    {
+        packetRepository.saveAll(packet)
+    }
+
     @Test
     fun `can get packets from db`()
     {
-        packetRepository.saveAll(packet)
+        saveAllPackets()
 
         val result = packetRepository.findAll()
 
@@ -34,7 +39,7 @@ class PacketRepositoryTest : RepositoryTest()
     @Test
     fun `can get sorted packet ids from db`()
     {
-        packetRepository.saveAll(packet)
+        saveAllPackets()
 
         val result = packetRepository.findAllIds()
 
@@ -59,10 +64,22 @@ class PacketRepositoryTest : RepositoryTest()
     @Test
     fun `can get most recent packet from db`()
     {
-        packetRepository.saveAll(packet)
+        saveAllPackets()
 
         val result = packetRepository.findTopByOrderByTimeDesc()
 
         assertEquals(result!!.id, "20170818-164847-7574883b")
+    }
+
+    @Test
+    fun `can get packet by id`()
+    {
+        saveAllPackets()
+
+        val result = packetRepository.findById(packet[0].id)
+
+        val id = result.orElseGet(null).id
+
+        assertEquals(id, "20170818-164847-7574883b")
     }
 }

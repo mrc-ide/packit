@@ -1,5 +1,7 @@
 package packit.integration.controllers
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Test
 import packit.integration.IntegrationTest
 
@@ -9,6 +11,22 @@ class PacketControllerTest : IntegrationTest()
     fun `can get packets`()
     {
         val result = restTemplate.getForEntity("/packets", String::class.java)
+        assertSuccess(result)
+    }
+
+    @Test
+    fun `can get packet by id`()
+    {
+        val packets = restTemplate.getForEntity("/packets", String::class.java)
+
+        val objectMapper = ObjectMapper()
+
+        val jsonNode: JsonNode = objectMapper.readTree(packets.body)
+
+        val id = jsonNode[0].get("id")
+
+        val result = restTemplate.getForEntity("/packets/${id}", String::class.java)
+
         assertSuccess(result)
     }
 }

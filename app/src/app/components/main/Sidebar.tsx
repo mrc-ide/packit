@@ -10,7 +10,8 @@ import {setActiveSideBar} from "../../store/packets/packets";
 
 export default function Sidebar() {
     const dispatch = useAppDispatch();
-    const [selected, setSelected] = useState(0);
+
+    const [selected, setSelected] = useState(SideBarItems.explorer);
 
     useEffect(() => {
         dispatch(setActiveSideBar(selected));

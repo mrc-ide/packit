@@ -2,15 +2,34 @@ import React from "react";
 import {screen, render, waitFor} from "@testing-library/react";
 import {Sidebar} from "../../../app/components/main";
 import userEvent from "@testing-library/user-event";
-import {SideBarItems} from "../../../types";
+import {PacketsState, SideBarItems} from "../../../types";
+import {Provider} from "react-redux";
+import {mockPacketResponse, mockPacketsState} from "../../mocks";
+import thunk from "redux-thunk";
+import configureStore from "redux-mock-store";
+import {Store} from "@reduxjs/toolkit";
 
 describe("sidebar component", () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
 
+    const getStore = (props: Partial<PacketsState> = {packets: [mockPacketResponse]}) => {
+        const middlewares = [thunk];
+        const mockStore = configureStore(middlewares);
+        const initialRootStates = {
+            packets: mockPacketsState(props)
+        };
+
+        return mockStore(initialRootStates);
+    };
+
     it("renders sidebar items", () => {
-        render(<Sidebar/>);
+
+        const store = getStore()
+
+        render(<Provider store={store}> <Sidebar/></Provider>);
+
         const app = screen.getByTestId("sidebar");
         const items = app.querySelectorAll("li a");
         expect(items.length).toBe(4);
@@ -31,29 +50,29 @@ describe("sidebar component", () => {
     });
 
     it("can navigate to packet runner page from sidebar", async () => {
-        await expectSidebarItemIsSelected(SideBarItems.packetRunner);
+        await expectSidebarItemIsSelected(SideBarItems.packetRunner, getStore());
     });
 
     it("can navigate to packet explorer page from sidebar", async () => {
-        await expectSidebarItemIsSelected(SideBarItems.explorer);
+        await expectSidebarItemIsSelected(SideBarItems.explorer, getStore());
     });
 
     it("can navigate to workflow page from sidebar", async () => {
-        await expectSidebarItemIsSelected(SideBarItems.workflowRunner);
+        await expectSidebarItemIsSelected(SideBarItems.workflowRunner, getStore());
     });
 
     it("can navigate to project doc page from sidebar", async () => {
-        await expectSidebarItemIsSelected(SideBarItems.projectDoc);
+        await expectSidebarItemIsSelected(SideBarItems.projectDoc, getStore());
     });
 });
 
-const expectSidebarItemIsSelected = async (itemIndex: SideBarItems) => {
+const expectSidebarItemIsSelected = async (itemIndex: SideBarItems, store: Store) => {
 
-    const mockHandleSelected = jest.fn().mockImplementation((data) => data);
-
-    render(<Sidebar/>);
+    render(<Provider store={store}> <Sidebar/></Provider>);
 
     const sidebar = screen.getByTestId("sidebar");
+
+    const mockDispatch = jest.spyOn(store, "dispatch")
 
     const list = sidebar.querySelectorAll("li a");
 
@@ -69,7 +88,12 @@ const expectSidebarItemIsSelected = async (itemIndex: SideBarItems) => {
 
     expect(list[itemIndex].className).toBe("active");
 
-    expect(mockHandleSelected).toHaveBeenCalled();
+    if (itemIndex !== 0) {
 
-    expect(mockHandleSelected).toHaveBeenCalledWith(itemIndex);
+        expect(mockDispatch).toHaveBeenCalled();
+
+        expect(mockDispatch.mock.calls[0][0].payload).toBe(itemIndex);
+
+        expect(mockDispatch.mock.calls[0][0].type).toBe("packets/setActiveSideBar");
+    }
 };

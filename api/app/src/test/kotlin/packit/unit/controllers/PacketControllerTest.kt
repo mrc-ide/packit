@@ -31,4 +31,14 @@ class PacketControllerTest
         assertEquals(result.statusCode, HttpStatus.OK)
         assertEquals(result.body, packets)
     }
+
+    @Test
+    fun `get packet by id`()
+    {
+        val sut = PacketController(indexService)
+        val result = sut.findPacket("1")
+        val responseBody = result.body?.get()
+        assertEquals(result.statusCode, HttpStatus.OK)
+        assertEquals(responseBody, packets.first())
+    }
 }

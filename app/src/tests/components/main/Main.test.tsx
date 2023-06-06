@@ -2,10 +2,26 @@ import React from "react";
 import {screen, render, within, waitFor} from "@testing-library/react";
 import {Main} from "../../../app/components/main";
 import userEvent from "@testing-library/user-event";
-import store from "../../../app/store/store";
 import {Provider} from "react-redux";
+import {PacketsState} from "../../../types";
+import {mockPacketsState} from "../../mocks";
+import thunk from "redux-thunk";
+import configureStore from "redux-mock-store";
 
 describe("main component", () => {
+
+    const getStore = (props: Partial<PacketsState> = {packets: []}) => {
+        const middlewares = [thunk];
+        const mockStore = configureStore(middlewares);
+        const initialRootStates = {
+            packets: mockPacketsState(props)
+        };
+
+        return mockStore(initialRootStates);
+    };
+
+    const store = getStore()
+
     it("renders sidebar", () => {
         render(<Provider store={store}><Main/></Provider>);
         const sidebar = screen.getByTestId("sidebar");
