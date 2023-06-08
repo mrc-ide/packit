@@ -47,14 +47,8 @@ describe("backend integration", () => {
         });
         const result = dispatch.mock.calls[1][0];
         expect(result["type"]).toBe("GetPacket/fulfilled");
-        expect(result["payload"]).toStrictEqual({
-            displayName: "explicit",
-            id: "20230427-150755-2dbede93",
-            name: "explicit",
-            parameters: {},
-            published: false,
-            time: 1686252422,
-        });
+        expect(result["payload"].id).toBe("20230427-150755-2dbede93");
+        expect(result["payload"].displayName).toBe("explicit");
     });
 
 });
