@@ -8,7 +8,9 @@ import packit.controllers.PacketController
 import packit.model.Packet
 import packit.service.PacketService
 import java.time.Instant
+import java.util.*
 import kotlin.test.assertEquals
+import org.mockito.ArgumentMatchers.anyString
 
 class PacketControllerTest
 {
@@ -21,6 +23,7 @@ class PacketControllerTest
 
     private val indexService = mock<PacketService> {
         on { getPackets() } doReturn packets
+        on { getPacket(anyString()) } doReturn Optional.of(packets.first())
     }
 
     @Test

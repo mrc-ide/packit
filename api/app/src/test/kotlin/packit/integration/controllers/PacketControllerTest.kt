@@ -16,7 +16,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `can get packet by id`()
+    fun `get packet by packet id`()
     {
         val packets = restTemplate.getForEntity("/packets", String::class.java)
 
