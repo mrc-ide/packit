@@ -29,7 +29,7 @@ export interface Header {
 
 export interface PacketTableProps {
     data: Packet[]
-    setSelectedBarItem: (item: SideBarItems) => void
+    setSelectedPacket: (id: string) => void
 }
 
 export interface PacketsState {

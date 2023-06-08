@@ -36,4 +36,25 @@ describe("backend integration", () => {
             .toEqual(["computed-resource", "depends", "explicit", "parameters"]);
     });
 
+    it("can fetch packet by ID", async () => {
+        const dispatch = jest.fn();
+        const asyncThunk = actions.fetchPacketById("20230427-150755-2dbede93");
+        await asyncThunk(dispatch, jest.fn(), jest.fn());
+
+        expect(dispatch.mock.calls[0][0]).toMatchObject({
+            type: "GetPacket/pending",
+            payload: undefined,
+        });
+        const result = dispatch.mock.calls[1][0];
+        expect(result["type"]).toBe("GetPacket/fulfilled");
+        expect(result["payload"]).toEqual({
+            displayName: "explicit",
+            id: "20230427-150755-2dbede93",
+            name: "explicit",
+            parameters: {},
+            published: false,
+            time: 1686049656
+        });
+    });
+
 });

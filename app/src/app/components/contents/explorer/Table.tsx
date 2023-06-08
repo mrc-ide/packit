@@ -1,7 +1,6 @@
 import React, {useState} from "react";
-import {Header, Packet, PacketTableProps, SideBarItems, useAppDispatch} from "../../../../types";
+import {Header, Packet, PacketTableProps} from "../../../../types";
 import {FaSort} from "react-icons/fa";
-import {actions} from "../../../store/packets/thunks";
 
 const headers: Header[] = [
     {label: "Name", accessor: "displayName", sortable: true},
@@ -10,14 +9,12 @@ const headers: Header[] = [
     {label: "Parameters", accessor: "parameters", sortable: false}
 ];
 
-export default function Table({data, setSelectedBarItem}: PacketTableProps) {
-    const dispatch = useAppDispatch();
+export default function Table({data, setSelectedPacket}: PacketTableProps) {
     const [ascending, setAscending] = useState(true);
     const [sortColumn, setSortColumn] = useState("");
 
-    const showPacket = (id: string) => {
-        dispatch(actions.fetchPacketById(id));
-        setSelectedBarItem(SideBarItems.packetRunner);
+    const setPacket = (id: string) => {
+        setSelectedPacket(id);
     };
 
     const sortPackets = (accessor: string) => {
@@ -50,7 +47,7 @@ export default function Table({data, setSelectedBarItem}: PacketTableProps) {
                     <td>
                         <span>
                             <a href="#"
-                               onClick={() => showPacket(packet.id)}>
+                               onClick={() => setPacket(packet.id)}>
                                 {packet.displayName ? packet.displayName : packet.name}
                             </a>
                         </span>

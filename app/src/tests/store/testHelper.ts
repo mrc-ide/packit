@@ -25,7 +25,7 @@ export const expectThunkActionWith = async (
         payload: undefined,
     });
 
-    if (statusCode == 200) {
+    if (statusCode === 200) {
         expect(dispatch.mock.calls[1][0]).toMatchObject({
             type: `${mutationType}/fulfilled`,
             payload: response,

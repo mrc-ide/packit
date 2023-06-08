@@ -1,5 +1,5 @@
 import React from "react";
-import {render, screen} from "@testing-library/react";
+import {fireEvent, render, screen} from "@testing-library/react";
 import {Explorer} from "../../../../app/components/contents";
 import {Provider} from "react-redux";
 import configureStore from "redux-mock-store";
@@ -8,6 +8,10 @@ import {PacketsState} from "../../../../types";
 import thunk from "redux-thunk";
 
 describe("packet explorer component", () => {
+
+    beforeEach(() => {
+        jest.restoreAllMocks();
+    });
 
     const getStore = (props: Partial<PacketsState> = {packets: [mockPacketResponse]}) => {
         const middlewares = [thunk];
@@ -18,6 +22,38 @@ describe("packet explorer component", () => {
 
         return mockStore(initialRootStates);
     };
+
+    it("it should render component as expected", () => {
+        const store = getStore();
+
+        const mockDispatch = jest.spyOn(store, "dispatch");
+
+        render(<Provider store={store}> <Explorer/></Provider>);
+
+        expect(screen.getByText("Packets (1)")).toBeVisible();
+
+        expect(screen.getByText("Click on a column heading to sort by field.")).toBeVisible();
+
+        expect(mockDispatch).toHaveBeenCalledTimes(1);
+    });
+
+    it("dispatches actions when packed detail page", () => {
+        const store = getStore();
+
+        const mockDispatch = jest.spyOn(store, "dispatch");
+
+        render(<Provider store={store}> <Explorer/></Provider>);
+
+        const firstCell = screen.getByText("touchstone");
+
+        fireEvent.click(firstCell);
+
+        expect(mockDispatch).toHaveBeenCalledTimes(3);
+        expect(mockDispatch.mock.calls[2][0]).toEqual({
+            payload: 1,
+            type: "packets/setActiveSideBar"
+        });
+    });
 
     it("it should render component as expected", () => {
         const store = getStore();

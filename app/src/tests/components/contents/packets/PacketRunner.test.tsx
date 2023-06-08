@@ -29,4 +29,48 @@ describe("packet runner component", () => {
 
         expect(content).toBeInTheDocument();
     });
+
+    it("renders first packet when packet is not selected", async () => {
+        const store = getStore();
+        render(<Provider store={store}> <PacketRunner/></Provider>);
+
+        expect(screen.getByText(mockPacketResponse.displayName)).toBeInTheDocument();
+        expect(screen.getByText(mockPacketResponse.id)).toBeInTheDocument();
+
+        expect(screen.getByText("Name:")).toBeInTheDocument();
+        expect(screen.getByText(mockPacketResponse.name)).toBeInTheDocument();
+
+        expect(screen.getByText("Parameters")).toBeInTheDocument();
+        Object.entries(mockPacketResponse.parameters).map(([key, value ]) => {
+            expect(screen.getByText(`${key}:`)).toBeInTheDocument();
+            expect(screen.getByText(String(value))).toBeInTheDocument();
+        });
+    });
+
+    it("renders selected packet", () => {
+        const packet = {
+            id: "123",
+            name: "Interim update",
+            displayName: "unity",
+            parameters: {
+                "subset": "superset"
+            },
+            published: false
+        };
+        const store = getStore({packet, packets: [mockPacketResponse]});
+
+        render(<Provider store={store}> <PacketRunner/></Provider>);
+
+        expect(screen.getByText(packet.displayName)).toBeInTheDocument();
+        expect(screen.getByText(packet.id)).toBeInTheDocument();
+
+        expect(screen.getByText("Name:")).toBeInTheDocument();
+        expect(screen.getByText(packet.name)).toBeInTheDocument();
+
+        expect(screen.getByText("Parameters")).toBeInTheDocument();
+        Object.entries(packet.parameters).map(([key, value ]) => {
+            expect(screen.getByText(`${key}:`)).toBeInTheDocument();
+            expect(screen.getByText(String(value))).toBeInTheDocument();
+        });
+    });
 });

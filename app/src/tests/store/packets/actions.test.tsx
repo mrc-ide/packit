@@ -1,7 +1,7 @@
 import mockAxios from "../../../../mockAxios";
 import {mockPacketResponse} from "../../mocks";
 import {actions, PacketsMutationType} from "../../../app/store/packets/thunks";
-import { expectThunkActionWith } from "../actionsTestHelper";
+import { expectThunkActionWith } from "../testHelper";
 
 describe("packet actions", () => {
 
