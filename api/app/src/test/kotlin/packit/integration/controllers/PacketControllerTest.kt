@@ -1,6 +1,7 @@
 package packit.integration.controllers
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,9 +24,15 @@ class PacketControllerTest : IntegrationTest()
     @BeforeEach
     fun `init`()
     {
-
         packetRepository.save(packet)
     }
+
+    @AfterEach
+    fun teardown()
+    {
+        packetRepository.delete(packet)
+    }
+
     @Test
     fun `can get packets`()
     {
