@@ -1,6 +1,7 @@
 package packit.unit.controllers
 
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.springframework.http.HttpStatus
@@ -10,7 +11,6 @@ import packit.service.PacketService
 import java.time.Instant
 import java.util.*
 import kotlin.test.assertEquals
-import org.mockito.ArgumentMatchers.anyString
 
 class PacketControllerTest
 {
