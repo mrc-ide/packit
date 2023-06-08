@@ -25,7 +25,7 @@ class PacketControllerTest : IntegrationTest()
 
         val id = jsonNode[0].get("id")
 
-        val result = restTemplate.getForEntity("/packets/${id}", String::class.java)
+        val result = restTemplate.getForEntity("/packets/$id", String::class.java)
 
         assertSuccess(result)
     }
