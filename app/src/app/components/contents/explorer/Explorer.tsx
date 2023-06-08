@@ -18,7 +18,7 @@ export default function Explorer() {
     };
 
     return (
-        <div className="content explorer">
+        <div data-testid="explorer" className="content explorer">
             <div className="small">
                 <span className="d-flex">Packets ({packets.length})</span>
                 <span className="d-flex pb-3">Click on a column heading to sort by field.</span>

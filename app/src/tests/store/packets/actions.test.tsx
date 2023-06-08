@@ -1,7 +1,7 @@
 import mockAxios from "../../../../mockAxios";
 import {mockPacketResponse} from "../../mocks";
-import {actions} from "../../../app/store/packets/thunks";
-import {Packet} from "../../../types";
+import {actions, PacketsMutationType} from "../../../app/store/packets/thunks";
+import { expectThunkActionWith } from "../actionsTestHelper";
 
 describe("packet actions", () => {
 
@@ -11,66 +11,59 @@ describe("packet actions", () => {
     });
 
     it("should fetch packets as expected", async () => {
-
         const response = [mockPacketResponse];
-
         const dispatch = jest.fn();
-
-        await expectPendingFetchPackets(dispatch, response, 200);
-
-        expect(dispatch.mock.calls[1][0]).toMatchObject({
-            type: "GetPackets/fulfilled",
-            payload: response,
-        });
+        await expectThunkActionWith(
+            dispatch,
+            response,
+            200,
+            actions.fetchPackets(),
+            PacketsMutationType.GetPackets,
+            "/packets");
     });
 
     it("should handle errors when fetching packets when response as error data", async () => {
-
         const dispatch = jest.fn();
-
-        await expectPendingFetchPackets(dispatch, "ERROR");
-
-        expect(dispatch.mock.calls[1][0]).toMatchObject({
-            type: "GetPackets/rejected",
-            payload: "ERROR",
-        });
+        await expectThunkActionWith(
+            dispatch,
+            "ERROR",
+            400,
+            actions.fetchPackets(),
+            PacketsMutationType.GetPackets,
+            "/packets");
     });
 
     it("should handle errors when fetching packets when empty response data", async () => {
-
         const dispatch = jest.fn();
+        await expectThunkActionWith(
+            dispatch,
+            null,
+            400,
+            actions.fetchPackets(),
+            PacketsMutationType.GetPackets,
+            "/packets");
+    });
 
-        await expectPendingFetchPackets(dispatch);
 
-        expect(dispatch.mock.calls[1][0].type).toBe("GetPackets/rejected");
-        expect(dispatch.mock.calls[1][0].error).toEqual({
-            message: "Rejected"
-        });
+    it("should fetch packets  by ID as expected", async () => {
+        const dispatch = jest.fn();
+        await expectThunkActionWith(
+            dispatch,
+            "PACKET",
+            200,
+            actions.fetchPacketById("123"),
+            PacketsMutationType.GetPacket,
+            "/packets/123");
+    });
+
+    it("should handle fetch packets by ID error", async () => {
+        const dispatch = jest.fn();
+        await expectThunkActionWith(
+            dispatch,
+            "Error",
+            500,
+            actions.fetchPacketById("123"),
+            PacketsMutationType.GetPacket,
+            "/packets/123");
     });
 });
-
-const expectPendingFetchPackets = async (
-    dispatch: jest.Mock,
-    response: string | Packet[] = "",
-    statusCode = 400) => {
-
-    const url = "/packets";
-
-    mockAxios.onGet(url)
-        .reply(statusCode, response);
-
-    const asyncThunk = actions.fetchPackets();
-
-    await asyncThunk(dispatch, jest.fn(), jest.fn());
-
-    expect(mockAxios.history.get).toHaveLength(1);
-
-    expect(mockAxios.history.get[0].url).toBe(url);
-
-    expect(dispatch.mock.calls.length).toBe(2);
-
-    expect(dispatch.mock.calls[0][0]).toMatchObject({
-        type: "GetPackets/pending",
-        payload: undefined,
-    });
-};

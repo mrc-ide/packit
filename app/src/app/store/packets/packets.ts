@@ -13,7 +13,7 @@ export const packetsSlice = createSlice({
     name: "packets",
     initialState: initialPacketsState,
     reducers: {
-        setActiveSideBar: (state, action) => {
+        setActiveSideBar: (state, action ) => {
             state.activeSideBar = action.payload;
         }
     },

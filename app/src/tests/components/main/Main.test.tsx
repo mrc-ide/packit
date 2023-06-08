@@ -1,10 +1,10 @@
 import React from "react";
-import {screen, render, within, waitFor} from "@testing-library/react";
+import {render, screen, waitFor, within} from "@testing-library/react";
 import {Main} from "../../../app/components/main";
 import userEvent from "@testing-library/user-event";
 import {Provider} from "react-redux";
-import {PacketsState} from "../../../types";
-import {mockPacketsState} from "../../mocks";
+import {PacketsState, SideBarItems} from "../../../types";
+import {mockPacketResponse, mockPacketsState} from "../../mocks";
 import thunk from "redux-thunk";
 import configureStore from "redux-mock-store";
 
@@ -20,9 +20,8 @@ describe("main component", () => {
         return mockStore(initialRootStates);
     };
 
-    const store = getStore();
-
     it("renders sidebar", () => {
+        const store = getStore();
         render(<Provider store={store}><Main/></Provider>);
         const sidebar = screen.getByTestId("sidebar");
         expect(sidebar).toBeInTheDocument();
@@ -31,6 +30,7 @@ describe("main component", () => {
     });
 
     it("renders active content", () => {
+        const store = getStore();
         render(<Provider store={store}><Main/></Provider>);
         const content = screen.getByTestId("content");
         expect(content).toBeInTheDocument();
@@ -38,7 +38,20 @@ describe("main component", () => {
         expect(content).toHaveTextContent("Click on a column heading to sort by field.");
     });
 
+    it("renders packet explorer page", () => {
+        const store = getStore();
+        render(<Provider store={store}><Main/></Provider>);
+        expect(screen.getByTestId("explorer")).toBeInTheDocument();
+        expect(screen.queryByTestId("packet-runner")).toBeNull();
+        expect(screen.queryByTestId("workflow-runner")).toBeNull();
+        expect(screen.queryByTestId("project-documentation")).toBeNull();
+    });
+
     it("renders packet runner page", async () => {
+        const store = getStore({
+            activeSideBar: SideBarItems.packetRunner,
+            packet: mockPacketResponse
+        });
         render(<Provider store={store}><Main/></Provider>);
         const mainComponent = screen.getByTestId("main");
         const items = mainComponent.querySelectorAll("li a");
@@ -50,11 +63,14 @@ describe("main component", () => {
         await waitFor(() => {
             userEvent.click(packetRunner);
         });
-
         expect(within(mainComponent).getByText("Packet runner page")).toBeInTheDocument();
     });
 
     it("renders workflow runner page", async () => {
+        const store = getStore({
+            activeSideBar: SideBarItems.workflowRunner,
+            packet: mockPacketResponse
+        });
         render(<Provider store={store}><Main/></Provider>);
         const mainComponent = screen.getByTestId("main");
         const items = mainComponent.querySelectorAll("li a");
@@ -71,6 +87,10 @@ describe("main component", () => {
     });
 
     it("renders project documentation page", async () => {
+        const store = getStore({
+            activeSideBar: SideBarItems.projectDoc,
+            packet: mockPacketResponse
+        });
         render(<Provider store={store}><Main/></Provider>);
         const mainComponent = screen.getByTestId("main");
         const items = mainComponent.querySelectorAll("li a");

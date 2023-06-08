@@ -7,7 +7,7 @@ export default function PacketRunner() {
     const data = Object.keys(packet).length > 0 ? packet : packets[0];
 
     return (
-        <div className="content packet-runner">
+        <div data-testid="packet-runner" className="content packet-runner">
             <div className="pb-3 d-flex flex-column align-items-start">
                 <span className="p-2 pb-0 h1">{data.displayName}</span>
                 <span className="p-2 pt-0 small">{data.id}</span>

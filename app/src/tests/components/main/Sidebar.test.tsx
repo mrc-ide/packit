@@ -95,5 +95,8 @@ const expectSidebarItemIsSelected = async (itemIndex: SideBarItems, store: Store
         expect(mockDispatch.mock.calls[0][0].payload).toBe(itemIndex);
 
         expect(mockDispatch.mock.calls[0][0].type).toBe("packets/setActiveSideBar");
+
+    } else {
+        expect(mockDispatch).not.toHaveBeenCalled();
     }
 };
