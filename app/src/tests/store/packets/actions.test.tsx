@@ -2,6 +2,7 @@ import mockAxios from "../../../../mockAxios";
 import {mockPacketResponse} from "../../mocks";
 import {actions, PacketsMutationType} from "../../../app/store/packets/thunks";
 import { expectThunkActionWith } from "../testHelper";
+import {Packet} from "../../../types";
 
 describe("packet actions", () => {
 
@@ -13,7 +14,7 @@ describe("packet actions", () => {
     it("should fetch packets as expected", async () => {
         const response = [mockPacketResponse];
         const dispatch = jest.fn();
-        await expectThunkActionWith(
+        await expectThunkActionWith<Packet[], Packet[], void>(
             dispatch,
             response,
             200,
@@ -24,7 +25,7 @@ describe("packet actions", () => {
 
     it("should handle errors when fetching packets when response as error data", async () => {
         const dispatch = jest.fn();
-        await expectThunkActionWith(
+        await expectThunkActionWith<string, Packet[], void>(
             dispatch,
             "ERROR",
             400,
@@ -35,7 +36,7 @@ describe("packet actions", () => {
 
     it("should handle errors when fetching packets when empty response data", async () => {
         const dispatch = jest.fn();
-        await expectThunkActionWith(
+        await expectThunkActionWith<null, Packet[], void>(
             dispatch,
             null,
             400,
@@ -44,10 +45,9 @@ describe("packet actions", () => {
             "/packets");
     });
 
-
     it("should fetch packets  by ID as expected", async () => {
         const dispatch = jest.fn();
-        await expectThunkActionWith(
+        await expectThunkActionWith<string, Packet, string>(
             dispatch,
             "PACKET",
             200,
@@ -58,7 +58,7 @@ describe("packet actions", () => {
 
     it("should handle fetch packetsById when errored", async () => {
         const dispatch = jest.fn();
-        await expectThunkActionWith(
+        await expectThunkActionWith<string, Packet, string>(
             dispatch,
             "Error",
             500,

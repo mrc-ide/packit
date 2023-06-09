@@ -1,11 +1,13 @@
 import {HttpStatusCode} from "axios";
 import mockAxios from "../../../mockAxios";
+import {AsyncThunkAction} from "@reduxjs/toolkit";
+import {RejectedErrorValue} from "../../types";
 
-export const expectThunkActionWith = async (
+export const expectThunkActionWith = async <S, T, U>(
     dispatch: jest.Mock,
-    response: any,
+    response: S,
     statusCode: HttpStatusCode,
-    asyncThunk: any,
+    asyncThunk: AsyncThunkAction<T, U, RejectedErrorValue>,
     mutationType: string,
     url: string
 ) => {
