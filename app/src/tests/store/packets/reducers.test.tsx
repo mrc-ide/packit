@@ -61,7 +61,7 @@ describe("packetsSlice reducer", () => {
                     param1: "value1",
                     param2: "value2",
                 },
-            }
+            };
         const nextState = packetsReducer(
             initialPacketsState,
             actions.fetchPacketById.fulfilled(packet, "", "1")
