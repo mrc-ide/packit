@@ -13,7 +13,7 @@ describe("table component", () => {
         jest.clearAllMocks();
     });
 
-    const mockSelectedSideBar = jest.fn();
+    const mockSetSelectedPacket = jest.fn();
 
     const packets = [
         {
@@ -74,7 +74,7 @@ describe("table component", () => {
     it("render table as expected", () => {
         const store = getStore();
 
-        render(<Provider store={store}> <Table data={packets} setSelectedPacket={mockSelectedSideBar}/></Provider>);
+        render(<Provider store={store}> <Table data={packets} setSelectedPacket={mockSetSelectedPacket}/></Provider>);
 
         const table = screen.getByTestId("table");
 
@@ -113,7 +113,7 @@ describe("table component", () => {
     it("renders packet name when displayName is empty", () => {
         const store = getStore();
 
-        render(<Provider store={store}> <Table data={packets} setSelectedPacket={mockSelectedSideBar}/></Provider>);
+        render(<Provider store={store}> <Table data={packets} setSelectedPacket={mockSetSelectedPacket}/></Provider>);
 
         const table = screen.getByTestId("table");
 
@@ -128,7 +128,7 @@ describe("table component", () => {
     it("renders published badge when a packet is published", () => {
         const store = getStore({packets});
 
-        render(<Provider store={store}> <Table data={packets} setSelectedPacket={mockSelectedSideBar}/></Provider>);
+        render(<Provider store={store}> <Table data={packets} setSelectedPacket={mockSetSelectedPacket}/></Provider>);
 
         const table = screen.getByTestId("table");
 
@@ -144,7 +144,7 @@ describe("table component", () => {
     it("can sort data by name header as expected", () => {
         const store = getStore();
 
-        render(<Provider store={store}> <Table data={packets} setSelectedPacket={mockSelectedSideBar}/></Provider>);
+        render(<Provider store={store}> <Table data={packets} setSelectedPacket={mockSetSelectedPacket}/></Provider>);
 
         const {getByText} = screen;
 
@@ -173,7 +173,7 @@ describe("table component", () => {
     it("can sort data by status header as expected", async () => {
         const store = getStore();
 
-        render(<Provider store={store}> <Table data={packets} setSelectedPacket={mockSelectedSideBar}/></Provider>);
+        render(<Provider store={store}> <Table data={packets} setSelectedPacket={mockSetSelectedPacket}/></Provider>);
 
         const {getByText} = screen;
 
