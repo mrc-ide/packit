@@ -56,7 +56,7 @@ describe("packet actions", () => {
             "/packets/123");
     });
 
-    it("should handle fetch packets by ID error", async () => {
+    it("should handle fetch packetsById when errored", async () => {
         const dispatch = jest.fn();
         await expectThunkActionWith(
             dispatch,

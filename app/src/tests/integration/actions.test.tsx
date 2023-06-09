@@ -36,7 +36,7 @@ describe("backend integration", () => {
             .toEqual(["computed-resource", "depends", "explicit", "parameters"]);
     });
 
-    it("can fetch packet by ID", async () => {
+    it("can fetch packetById", async () => {
         const dispatch = jest.fn();
         const asyncThunk = actions.fetchPacketById("20230427-150755-2dbede93");
         await asyncThunk(dispatch, jest.fn(), jest.fn());
