@@ -6,13 +6,14 @@ import configureStore from "redux-mock-store";
 import {mockPacketsState, mockPacketResponse} from "../../../mocks";
 import {PacketsState} from "../../../../types";
 import thunk from "redux-thunk";
-import {MemoryRouter} from "react-router-dom";
+import {MemoryRouter, Route, Routes} from "react-router-dom";
 import {Store} from "@reduxjs/toolkit";
+import PacketDetails from "../../../../app/components/contents/packets/PacketDetails";
 
 describe("packet explorer component", () => {
 
     beforeEach(() => {
-        jest.restoreAllMocks();
+        jest.clearAllMocks();
     });
 
     const getStore = (props: Partial<PacketsState> = {packets: [mockPacketResponse]}) => {
@@ -28,7 +29,7 @@ describe("packet explorer component", () => {
     const renderElement = (store: Store = getStore()) => {
         return render(
             <Provider store={store}>
-                <MemoryRouter>
+                <MemoryRouter initialEntries={["/"]}>
                     <Explorer/>
                 </MemoryRouter>
             </Provider>);
@@ -51,7 +52,19 @@ describe("packet explorer component", () => {
     it("dispatches actions when packed detail page", () => {
         const store = getStore();
 
-        renderElement(store);
+        const mockDispatch = jest.spyOn(store, "dispatch");
+
+        render(
+            <Provider store={store}>
+                <MemoryRouter initialEntries={["/"]}>
+                    <Routes>
+                        <Route path="/" element={<Explorer/>} />
+                        <Route path="/packets/:packetId" element={<PacketDetails />} />
+                    </Routes>
+                </MemoryRouter>
+            </Provider>);
+
+        expect(mockDispatch).toHaveBeenCalledTimes(1);
 
         const firstCell = screen.getByText("touchstone");
 
@@ -59,6 +72,8 @@ describe("packet explorer component", () => {
 
         expect((firstCell as HTMLLinkElement).href)
             .toBe("http://localhost/packets/52fd88b2-8ee8-4ac0-a0e5-41b9a15554a4");
+
+        expect(mockDispatch).toHaveBeenCalledTimes(2);
     });
 
     it("it should render component as expected", () => {
