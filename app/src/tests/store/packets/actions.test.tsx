@@ -14,7 +14,7 @@ describe("packet actions", () => {
     it("should fetch packets as expected", async () => {
         const response = [mockPacketResponse];
         const dispatch = jest.fn();
-        await expectThunkActionWith<Packet[], Packet[], void>(
+        await expectThunkActionWith<Packet[], void>(
             dispatch,
             response,
             200,
@@ -25,7 +25,7 @@ describe("packet actions", () => {
 
     it("should handle errors when fetching packets when response as error data", async () => {
         const dispatch = jest.fn();
-        await expectThunkActionWith<string, Packet[], void>(
+        await expectThunkActionWith<Packet[] | string, void>(
             dispatch,
             "ERROR",
             400,
@@ -36,7 +36,7 @@ describe("packet actions", () => {
 
     it("should handle errors when fetching packets when empty response data", async () => {
         const dispatch = jest.fn();
-        await expectThunkActionWith<null, Packet[], void>(
+        await expectThunkActionWith<null | Packet[], void>(
             dispatch,
             null,
             400,
@@ -47,7 +47,7 @@ describe("packet actions", () => {
 
     it("should fetch packets  by ID as expected", async () => {
         const dispatch = jest.fn();
-        await expectThunkActionWith<string, Packet, string>(
+        await expectThunkActionWith<Packet | string, string>(
             dispatch,
             "PACKET",
             200,
@@ -58,7 +58,7 @@ describe("packet actions", () => {
 
     it("should handle fetch packetsById when errored", async () => {
         const dispatch = jest.fn();
-        await expectThunkActionWith<string, Packet, string>(
+        await expectThunkActionWith<Packet | string , string>(
             dispatch,
             "Error",
             500,

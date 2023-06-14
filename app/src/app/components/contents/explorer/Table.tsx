@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {Header, Packet, PacketTableProps} from "../../../../types";
 import {FaSort} from "react-icons/fa";
+import {Link} from "react-router-dom";
 
 const headers: Header[] = [
     {label: "Name", accessor: "displayName", sortable: true},
@@ -9,13 +10,9 @@ const headers: Header[] = [
     {label: "Parameters", accessor: "parameters", sortable: false}
 ];
 
-export default function Table({data, setSelectedPacket}: PacketTableProps) {
+export default function Table({data}: PacketTableProps) {
     const [ascending, setAscending] = useState(true);
     const [sortColumn, setSortColumn] = useState("");
-
-    const setPacket = (id: string) => {
-        setSelectedPacket(id);
-    };
 
     const sortPackets = (accessor: string) => {
         const newAscending = (accessor === sortColumn) ? !ascending : true;
@@ -46,10 +43,9 @@ export default function Table({data, setSelectedPacket}: PacketTableProps) {
                 <tr key={`row-${key}`}>
                     <td>
                         <span>
-                            <a href="#"
-                               onClick={() => setPacket(packet.id)}>
+                            <Link to={`/packets/${packet.id}`}>
                                 {packet.displayName ? packet.displayName : packet.name}
-                            </a>
+                            </Link>
                         </span>
                     </td>
                     <td>

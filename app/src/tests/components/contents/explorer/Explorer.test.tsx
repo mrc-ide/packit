@@ -6,6 +6,8 @@ import configureStore from "redux-mock-store";
 import {mockPacketsState, mockPacketResponse} from "../../../mocks";
 import {PacketsState} from "../../../../types";
 import thunk from "redux-thunk";
+import {MemoryRouter} from "react-router-dom";
+import {Store} from "@reduxjs/toolkit";
 
 describe("packet explorer component", () => {
 
@@ -23,12 +25,21 @@ describe("packet explorer component", () => {
         return mockStore(initialRootStates);
     };
 
+    const renderElement = (store: Store = getStore()) => {
+        return render(
+            <Provider store={store}>
+                <MemoryRouter>
+                    <Explorer/>
+                </MemoryRouter>
+            </Provider>);
+    };
+
     it("it should render component as expected", () => {
         const store = getStore();
 
         const mockDispatch = jest.spyOn(store, "dispatch");
 
-        render(<Provider store={store}> <Explorer/></Provider>);
+        renderElement(store);
 
         expect(screen.getByText("Packets (1)")).toBeVisible();
 
@@ -40,25 +51,18 @@ describe("packet explorer component", () => {
     it("dispatches actions when packed detail page", () => {
         const store = getStore();
 
-        const mockDispatch = jest.spyOn(store, "dispatch");
-
-        render(<Provider store={store}> <Explorer/></Provider>);
+        renderElement(store);
 
         const firstCell = screen.getByText("touchstone");
 
         fireEvent.click(firstCell);
 
-        expect(mockDispatch).toHaveBeenCalledTimes(3);
-        expect(mockDispatch.mock.calls[2][0]).toEqual({
-            payload: 1,
-            type: "packets/setActiveSideBar"
-        });
+        expect((firstCell as HTMLLinkElement).href)
+            .toBe("http://localhost/packets/52fd88b2-8ee8-4ac0-a0e5-41b9a15554a4");
     });
 
     it("it should render component as expected", () => {
-        const store = getStore();
-
-        render(<Provider store={store}> <Explorer/></Provider>);
+        renderElement();
 
         expect(screen.getByText("Packets (1)")).toBeVisible();
 
@@ -66,9 +70,7 @@ describe("packet explorer component", () => {
     });
 
     it("should render packet explorer table as expected", () => {
-        const store = getStore();
-
-        render(<Provider store={store}> <Explorer/></Provider>);
+        renderElement();
 
         const { getByTestId, getAllByRole } = screen;
 
@@ -78,9 +80,7 @@ describe("packet explorer component", () => {
     });
 
     it("should render skeleton pagination content as expected", () => {
-        const store = getStore();
-
-        render(<Provider store={store}> <Explorer/></Provider>);
+        renderElement();
 
         const paginationContent = screen.getByTestId("pagination-content");
 

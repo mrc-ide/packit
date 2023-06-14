@@ -8,6 +8,7 @@ import {mockPacketResponse, mockPacketsState} from "../../mocks";
 import thunk from "redux-thunk";
 import configureStore from "redux-mock-store";
 import {Store} from "@reduxjs/toolkit";
+import {MemoryRouter} from "react-router-dom";
 
 describe("sidebar component", () => {
     beforeEach(() => {
@@ -28,7 +29,7 @@ describe("sidebar component", () => {
 
         const store = getStore();
 
-        render(<Provider store={store}> <Sidebar/></Provider>);
+        render(<Provider store={store}> <MemoryRouter><Sidebar/></MemoryRouter></Provider>);
 
         const app = screen.getByTestId("sidebar");
         const items = app.querySelectorAll("li a");
@@ -68,11 +69,9 @@ describe("sidebar component", () => {
 
 const expectSidebarItemIsSelected = async (itemIndex: SideBarItems, store: Store) => {
 
-    render(<Provider store={store}> <Sidebar/></Provider>);
+    render(<Provider store={store}> <MemoryRouter><Sidebar/></MemoryRouter></Provider>);
 
     const sidebar = screen.getByTestId("sidebar");
-
-    const mockDispatch = jest.spyOn(store, "dispatch");
 
     const list = sidebar.querySelectorAll("li a");
 
@@ -87,16 +86,4 @@ const expectSidebarItemIsSelected = async (itemIndex: SideBarItems, store: Store
     });
 
     expect(list[itemIndex].className).toBe("active");
-
-    if (itemIndex !== 0) {
-
-        expect(mockDispatch).toHaveBeenCalled();
-
-        expect(mockDispatch.mock.calls[0][0].payload).toBe(itemIndex);
-
-        expect(mockDispatch.mock.calls[0][0].type).toBe("packets/setActiveSideBar");
-
-    } else {
-        expect(mockDispatch).not.toHaveBeenCalled();
-    }
 };

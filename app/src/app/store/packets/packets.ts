@@ -1,22 +1,17 @@
-import {Packet, PacketsState, SideBarItems} from "../../../types";
+import {Packet, PacketsState} from "../../../types";
 import {createSlice} from "@reduxjs/toolkit";
 import {actions} from "./thunks";
 
 export const initialPacketsState: PacketsState = {
     packets: [],
     error: null,
-    packet: {} as Packet,
-    activeSideBar: SideBarItems.explorer
+    packet: {} as Packet
 };
 
 export const packetsSlice = createSlice({
     name: "packets",
     initialState: initialPacketsState,
-    reducers: {
-        setActiveSideBar: (state, action ) => {
-            state.activeSideBar = action.payload;
-        }
-    },
+    reducers: {},
     extraReducers: (builder) => {
         builder
             .addCase(actions.fetchPackets.fulfilled, (state, action) => {
@@ -35,7 +30,5 @@ export const packetsSlice = createSlice({
             });
     }
 });
-
-export const {setActiveSideBar} = packetsSlice.actions;
 
 export default packetsSlice.reducer;

@@ -1,11 +1,10 @@
-import {Packet, PacketsState, SideBarItems} from "../types";
+import {Packet, PacketsState} from "../types";
 
 export const mockPacketsState = (props: Partial<PacketsState> = {}): PacketsState => {
     return {
         packets: [],
         packet: {} as Packet,
         error: null,
-        activeSideBar: SideBarItems.explorer,
         ...props
     };
 };

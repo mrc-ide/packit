@@ -29,14 +29,12 @@ export interface Header {
 
 export interface PacketTableProps {
     data: Packet[]
-    setSelectedPacket: (id: string) => void
 }
 
 export interface PacketsState {
     packets: Packet[]
     error: SerializedError | null
     packet: Packet
-    activeSideBar: SideBarItems
 }
 
 export type RootState = ReturnType<typeof rootReducer>;

@@ -1,17 +1,17 @@
 import React from "react";
 import {render, screen} from "@testing-library/react";
-import {PacketRunner} from "../../../../app/components/contents";
 import {PacketsState} from "../../../../types";
-import {mockPacketResponse, mockPacketsState} from "../../../mocks";
+import {mockPacketsState} from "../../../mocks";
 import thunk from "redux-thunk";
 import configureStore from "redux-mock-store";
 import {Provider} from "react-redux";
 import {Store} from "@reduxjs/toolkit";
 import {MemoryRouter} from "react-router-dom";
+import ParameterList from "../../../../app/components/contents/packets/ParameterList";
 
-describe("packet runner component", () => {
+describe("parameterList component", () => {
 
-    const getStore = (props: Partial<PacketsState> = {packets: [mockPacketResponse]} ) => {
+    const getStore = (props: Partial<PacketsState> = {}) => {
         const middlewares = [thunk];
         const mockStore = configureStore(middlewares);
         const initialRootStates = {
@@ -21,20 +21,25 @@ describe("packet runner component", () => {
         return mockStore(initialRootStates);
     };
 
+    const parameters = {
+        "subset": "superset"
+    };
+
     const renderElement = (store: Store = getStore()) => {
         return render(
             <Provider store={store}>
                 <MemoryRouter>
-                    <PacketRunner/>
+                    <ParameterList parameters={parameters}/>
                 </MemoryRouter>
             </Provider>);
     };
 
-    it("renders skeleton text", async () => {
+    it("renders parameter list as expected", () => {
         renderElement();
-
-        const content = await screen.findByText("Packet runner page");
-
-        expect(content).toBeInTheDocument();
+        expect(screen.getByText("Parameters")).toBeInTheDocument();
+        Object.entries(parameters).map(([key, value]) => {
+            expect(screen.getByText(`${key}:`)).toBeInTheDocument();
+            expect(screen.getByText(String(value))).toBeInTheDocument();
+        });
     });
 });

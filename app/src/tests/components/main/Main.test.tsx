@@ -3,10 +3,12 @@ import {render, screen, waitFor, within} from "@testing-library/react";
 import {Main} from "../../../app/components/main";
 import userEvent from "@testing-library/user-event";
 import {Provider} from "react-redux";
-import {PacketsState, SideBarItems} from "../../../types";
+import {PacketsState} from "../../../types";
 import {mockPacketResponse, mockPacketsState} from "../../mocks";
 import thunk from "redux-thunk";
 import configureStore from "redux-mock-store";
+import {Store} from "@reduxjs/toolkit";
+import {MemoryRouter} from "react-router-dom";
 
 describe("main component", () => {
 
@@ -20,18 +22,24 @@ describe("main component", () => {
         return mockStore(initialRootStates);
     };
 
+    const renderElement = (store: Store = getStore()) => {
+        return render(
+            <Provider store={store}>
+                <MemoryRouter>
+                    <Main/>
+                </MemoryRouter>
+            </Provider>);
+    };
+
     it("renders sidebar", () => {
-        const store = getStore();
-        render(<Provider store={store}><Main/></Provider>);
+        renderElement();
         const sidebar = screen.getByTestId("sidebar");
         expect(sidebar).toBeInTheDocument();
         const list = sidebar.querySelectorAll("li a");
         expect(list.length).toBe(4);
     });
-
     it("renders active content", () => {
-        const store = getStore();
-        render(<Provider store={store}><Main/></Provider>);
+        renderElement();
         const content = screen.getByTestId("content");
         expect(content).toBeInTheDocument();
         expect(content).toHaveTextContent("Packets (0)");
@@ -39,8 +47,7 @@ describe("main component", () => {
     });
 
     it("renders packet explorer page", () => {
-        const store = getStore();
-        render(<Provider store={store}><Main/></Provider>);
+        renderElement();
         expect(screen.getByTestId("explorer")).toBeInTheDocument();
         expect(screen.queryByTestId("packet-runner")).toBeNull();
         expect(screen.queryByTestId("workflow-runner")).toBeNull();
@@ -49,16 +56,15 @@ describe("main component", () => {
 
     it("renders packet runner page", async () => {
         const store = getStore({
-            activeSideBar: SideBarItems.packetRunner,
             packet: mockPacketResponse
         });
-        render(<Provider store={store}><Main/></Provider>);
+        renderElement(store);
         const mainComponent = screen.getByTestId("main");
         const items = mainComponent.querySelectorAll("li a");
         expect(items.length).toBe(4);
         const packetRunner = items[1];
         expect(packetRunner).toHaveTextContent("Packet runner");
-        expect((packetRunner as HTMLLinkElement).href).toBe("http://localhost/#");
+        expect((packetRunner as HTMLLinkElement).href).toBe("http://localhost/run");
 
         await waitFor(() => {
             userEvent.click(packetRunner);
@@ -68,16 +74,15 @@ describe("main component", () => {
 
     it("renders workflow runner page", async () => {
         const store = getStore({
-            activeSideBar: SideBarItems.workflowRunner,
             packet: mockPacketResponse
         });
-        render(<Provider store={store}><Main/></Provider>);
+        renderElement(store);
         const mainComponent = screen.getByTestId("main");
         const items = mainComponent.querySelectorAll("li a");
         expect(items.length).toBe(4);
         const workflowRunner = items[2];
         expect(workflowRunner).toHaveTextContent("Workflow runner");
-        expect((workflowRunner as HTMLLinkElement).href).toBe("http://localhost/#");
+        expect((workflowRunner as HTMLLinkElement).href).toBe("http://localhost/run-workflow");
 
         await waitFor(() => {
             userEvent.click(workflowRunner);
@@ -88,16 +93,15 @@ describe("main component", () => {
 
     it("renders project documentation page", async () => {
         const store = getStore({
-            activeSideBar: SideBarItems.projectDoc,
             packet: mockPacketResponse
         });
-        render(<Provider store={store}><Main/></Provider>);
+        renderElement(store);
         const mainComponent = screen.getByTestId("main");
         const items = mainComponent.querySelectorAll("li a");
         expect(items.length).toBe(4);
         const projectDoc = items[3];
         expect(projectDoc).toHaveTextContent("Project documentation");
-        expect((projectDoc as HTMLLinkElement).href).toBe("http://localhost/#");
+        expect((projectDoc as HTMLLinkElement).href).toBe("http://localhost/documentation");
 
         await waitFor(() => {
             userEvent.click(projectDoc);

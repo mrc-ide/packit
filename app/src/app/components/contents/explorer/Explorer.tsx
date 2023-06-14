@@ -1,9 +1,8 @@
 import React, {useEffect} from "react";
 import Table from "./Table";
 import {useSelector} from "react-redux";
-import {RootState, SideBarItems, useAppDispatch} from "../../../../types";
+import {RootState, useAppDispatch} from "../../../../types";
 import {actions} from "../../../store/packets/thunks";
-import {setActiveSideBar} from "../../../store/packets/packets";
 
 export default function Explorer() {
     const dispatch = useAppDispatch();
@@ -13,11 +12,6 @@ export default function Explorer() {
         dispatch(actions.fetchPackets());
     }, []);
 
-    const showPacketDetail = (id: string) => {
-        dispatch(actions.fetchPacketById(id));
-        dispatch(setActiveSideBar(SideBarItems.packetRunner));
-    };
-
     return (
         <div data-testid="explorer" className="content explorer">
             <div className="small">
@@ -26,7 +20,7 @@ export default function Explorer() {
             </div>
             <div className="content-box">
                 <div className="table-responsive-sm pt-4">
-                    <Table data={packets.slice(0, 5)} setSelectedPacket={(id) => showPacketDetail(id)} />
+                    <Table data={packets.slice(0, 5)} />
                 </div>
                 <div data-testid="pagination-content" className="d-flex pt-xxl-5 align-items-center">
                     <div className="m-2">Show</div>
