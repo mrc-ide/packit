@@ -6,6 +6,8 @@ import {mockPacketsState} from "../../../mocks";
 import {PacketsState} from "../../../../types";
 import configureStore from "redux-mock-store";
 import thunk from "redux-thunk";
+import {Store} from "@reduxjs/toolkit";
+import {MemoryRouter} from "react-router-dom";
 
 describe("table component", () => {
 
@@ -55,10 +57,27 @@ describe("table component", () => {
         return mockStore(initialRootStates);
     };
 
-    it("render table as expected", () => {
-        const store = getStore();
+    const renderElement = (store: Store = getStore()) => {
+        return render(
+            <Provider store={store}>
+                <MemoryRouter>
+                    <Table data={packets}/>
+                </MemoryRouter>
+            </Provider>);
+    };
 
-        render(<Provider store={store}> <Table data={packets}/></Provider>);
+    it("can navigate to selected packet page", () => {
+        renderElement();
+
+        const firstCell = screen.getByText("packet 2");
+
+        fireEvent.click(firstCell);
+
+        expect((firstCell as HTMLLinkElement).href).toBe("http://localhost/packets/52fd88b2");
+    });
+
+    it("render table as expected", () => {
+        renderElement();
 
         const table = screen.getByTestId("table");
 
@@ -95,9 +114,7 @@ describe("table component", () => {
     });
 
     it("renders packet name when displayName is empty", () => {
-        const store = getStore();
-
-        render(<Provider store={store}> <Table data={packets}/></Provider>);
+        renderElement();
 
         const table = screen.getByTestId("table");
 
@@ -112,7 +129,7 @@ describe("table component", () => {
     it("renders published badge when a packet is published", () => {
         const store = getStore({packets});
 
-        render(<Provider store={store}> <Table data={packets}/></Provider>);
+        renderElement(store);
 
         const table = screen.getByTestId("table");
 
@@ -126,9 +143,7 @@ describe("table component", () => {
     });
 
     it("can sort data by name header as expected", () => {
-        const store = getStore();
-
-        render(<Provider store={store}> <Table data={packets}/></Provider>);
+        renderElement();
 
         const {getByText} = screen;
 
@@ -155,9 +170,7 @@ describe("table component", () => {
     });
 
     it("can sort data by status header as expected", async () => {
-        const store = getStore();
-
-        render(<Provider store={store}> <Table data={packets}/></Provider>);
+        renderElement();
 
         const {getByText} = screen;
 

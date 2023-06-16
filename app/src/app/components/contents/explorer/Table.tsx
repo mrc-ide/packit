@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {Header, Packet, PacketTableProps} from "../../../../types";
 import {FaSort} from "react-icons/fa";
+import {Link} from "react-router-dom";
 
 const headers: Header[] = [
     {label: "Name", accessor: "displayName", sortable: true},
@@ -42,7 +43,9 @@ export default function Table({data}: PacketTableProps) {
                 <tr key={`row-${key}`}>
                     <td>
                         <span>
-                            <a href="#">{packet.displayName ? packet.displayName : packet.name}</a>
+                            <Link to={`/packets/${packet.id}`}>
+                                {packet.displayName ? packet.displayName : packet.name}
+                            </Link>
                         </span>
                     </td>
                     <td>

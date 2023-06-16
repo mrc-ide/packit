@@ -1,13 +1,20 @@
 import React from "react";
-import {render, screen} from "@testing-library/react";
+import {fireEvent, render, screen} from "@testing-library/react";
 import {Explorer} from "../../../../app/components/contents";
 import {Provider} from "react-redux";
 import configureStore from "redux-mock-store";
 import {mockPacketsState, mockPacketResponse} from "../../../mocks";
 import {PacketsState} from "../../../../types";
 import thunk from "redux-thunk";
+import {MemoryRouter, Route, Routes} from "react-router-dom";
+import {Store} from "@reduxjs/toolkit";
+import PacketDetails from "../../../../app/components/contents/packets/PacketDetails";
 
 describe("packet explorer component", () => {
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
 
     const getStore = (props: Partial<PacketsState> = {packets: [mockPacketResponse]}) => {
         const middlewares = [thunk];
@@ -19,10 +26,58 @@ describe("packet explorer component", () => {
         return mockStore(initialRootStates);
     };
 
+    const renderElement = (store: Store = getStore()) => {
+        return render(
+            <Provider store={store}>
+                <MemoryRouter initialEntries={["/"]}>
+                    <Explorer/>
+                </MemoryRouter>
+            </Provider>);
+    };
+
     it("it should render component as expected", () => {
         const store = getStore();
 
-        render(<Provider store={store}> <Explorer/></Provider>);
+        const mockDispatch = jest.spyOn(store, "dispatch");
+
+        renderElement(store);
+
+        expect(screen.getByText("Packets (1)")).toBeVisible();
+
+        expect(screen.getByText("Click on a column heading to sort by field.")).toBeVisible();
+
+        expect(mockDispatch).toHaveBeenCalledTimes(1);
+    });
+
+    it("dispatches actions when packed detail page", () => {
+        const store = getStore();
+
+        const mockDispatch = jest.spyOn(store, "dispatch");
+
+        render(
+            <Provider store={store}>
+                <MemoryRouter initialEntries={["/"]}>
+                    <Routes>
+                        <Route path="/" element={<Explorer/>} />
+                        <Route path="/packets/:packetId" element={<PacketDetails />} />
+                    </Routes>
+                </MemoryRouter>
+            </Provider>);
+
+        expect(mockDispatch).toHaveBeenCalledTimes(1);
+
+        const firstCell = screen.getByText("touchstone");
+
+        fireEvent.click(firstCell);
+
+        expect((firstCell as HTMLLinkElement).href)
+            .toBe("http://localhost/packets/52fd88b2-8ee8-4ac0-a0e5-41b9a15554a4");
+
+        expect(mockDispatch).toHaveBeenCalledTimes(2);
+    });
+
+    it("it should render component as expected", () => {
+        renderElement();
 
         expect(screen.getByText("Packets (1)")).toBeVisible();
 
@@ -30,9 +85,7 @@ describe("packet explorer component", () => {
     });
 
     it("should render packet explorer table as expected", () => {
-        const store = getStore();
-
-        render(<Provider store={store}> <Explorer/></Provider>);
+        renderElement();
 
         const { getByTestId, getAllByRole } = screen;
 
@@ -42,9 +95,7 @@ describe("packet explorer component", () => {
     });
 
     it("should render skeleton pagination content as expected", () => {
-        const store = getStore();
-
-        render(<Provider store={store}> <Explorer/></Provider>);
+        renderElement();
 
         const paginationContent = screen.getByTestId("pagination-content");
 

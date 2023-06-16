@@ -13,7 +13,7 @@ describe("header component", () => {
         expect(header).toBeInTheDocument();
 
         const logo = screen.getByRole("img");
-        expect(logo).toHaveAttribute("src", "img/packit-logo.png");
+        expect(logo).toHaveAttribute("src", "/img/packit-logo.png");
         expect(logo).toHaveAttribute("alt", "Logo");
     });
 

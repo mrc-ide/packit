@@ -1,6 +1,7 @@
 package packit.unit.controllers
 
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.springframework.http.HttpStatus
@@ -8,6 +9,7 @@ import packit.controllers.PacketController
 import packit.model.Packet
 import packit.service.PacketService
 import java.time.Instant
+import java.util.*
 import kotlin.test.assertEquals
 
 class PacketControllerTest
@@ -21,6 +23,7 @@ class PacketControllerTest
 
     private val indexService = mock<PacketService> {
         on { getPackets() } doReturn packets
+        on { getPacket(anyString()) } doReturn Optional.of(packets.first())
     }
 
     @Test
@@ -30,5 +33,15 @@ class PacketControllerTest
         val result = sut.index()
         assertEquals(result.statusCode, HttpStatus.OK)
         assertEquals(result.body, packets)
+    }
+
+    @Test
+    fun `get packet by id`()
+    {
+        val sut = PacketController(indexService)
+        val result = sut.findPacket("1")
+        val responseBody = result.body?.get()
+        assertEquals(result.statusCode, HttpStatus.OK)
+        assertEquals(responseBody, packets.first())
     }
 }

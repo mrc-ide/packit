@@ -1,10 +1,11 @@
-import {PacketsState} from "../../../types";
+import {Packet, PacketsState} from "../../../types";
 import {createSlice} from "@reduxjs/toolkit";
 import {actions} from "./thunks";
 
 export const initialPacketsState: PacketsState = {
     packets: [],
-    packetsError: null
+    error: null,
+    packet: {} as Packet
 };
 
 export const packetsSlice = createSlice({
@@ -15,10 +16,17 @@ export const packetsSlice = createSlice({
         builder
             .addCase(actions.fetchPackets.fulfilled, (state, action) => {
                 state.packets = action.payload;
-                state.packetsError = null;
+                state.error = null;
             })
             .addCase(actions.fetchPackets.rejected, (state, action) => {
-                state.packetsError = action.payload ?? action.error;
+                state.error = action.payload ?? action.error;
+            })
+            .addCase(actions.fetchPacketById.fulfilled, (state, action) => {
+                state.packet = action.payload;
+                state.error = null;
+            })
+            .addCase(actions.fetchPacketById.rejected, (state, action) => {
+                state.error = action.payload ?? action.error;
             });
     }
 });

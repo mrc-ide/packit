@@ -8,7 +8,7 @@ export default function Header() {
         <header>
             <nav data-testid="header" className="navbar">
                 <a className="navbar-brand" href="/">
-                    <img src={active.logo}
+                    <img src={`/img/${active.logo}`}
                          width="141"
                          height="36"
                          alt="Logo"/></a>

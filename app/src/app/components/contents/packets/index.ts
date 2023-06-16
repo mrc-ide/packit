@@ -1,3 +1,3 @@
-import PacketRunner from "./PacketRunner";
+import PacketRunner from "./runner/PacketRunner";
 
 export {PacketRunner};

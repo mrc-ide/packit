@@ -13,10 +13,6 @@ export interface RejectedErrorValue {
     rejectValue: SerializedError
 }
 
-export interface SidebarProps {
-    onChangeSideBar: (item: SideBarItems) => void
-}
-
 export interface Packet {
     id: string,
     name: string,
@@ -37,7 +33,8 @@ export interface PacketTableProps {
 
 export interface PacketsState {
     packets: Packet[]
-    packetsError: SerializedError | null
+    error: SerializedError | null
+    packet: Packet
 }
 
 export type RootState = ReturnType<typeof rootReducer>;

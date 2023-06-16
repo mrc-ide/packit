@@ -34,7 +34,7 @@ describe("packetsSlice reducer", () => {
         const nextState = packetsReducer(initialPacketsState, actions.fetchPackets.fulfilled(packets, ""));
 
         expect(nextState.packets).toEqual(packets);
-        expect(nextState.packetsError).toBeNull();
+        expect(nextState.error).toBeNull();
     });
 
     it("should handle fetchPackets.rejected", async () => {
@@ -46,6 +46,40 @@ describe("packetsSlice reducer", () => {
         );
 
         expect(packetState.packets).toEqual([]);
-        expect(packetState.packetsError?.message).toBe(error.message);
+        expect(packetState.error?.message).toBe(error.message);
+    });
+
+
+    it("should handle fetchPackets.fulfilled", () => {
+        const packet: Packet =
+            {
+                id: "1",
+                name: "packet-1",
+                displayName: "Packet 1",
+                published: true,
+                parameters: {
+                    param1: "value1",
+                    param2: "value2",
+                },
+            };
+        const nextState = packetsReducer(
+            initialPacketsState,
+            actions.fetchPacketById.fulfilled(packet, "", "1")
+        );
+
+        expect(nextState.packet).toEqual(packet);
+        expect(nextState.error).toBeNull();
+    });
+
+    it("should handle fetchPacketById when rejected", async () => {
+        const error = Error("Could not parse API response");
+
+        const packetState = packetsReducer(
+            initialPacketsState,
+            actions.fetchPacketById.rejected(error, "", "1")
+        );
+
+        expect(packetState.packet).toEqual({});
+        expect(packetState.error?.message).toBe(error.message);
     });
 });

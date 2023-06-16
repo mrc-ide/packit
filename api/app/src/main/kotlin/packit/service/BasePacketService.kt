@@ -5,10 +5,12 @@ import packit.model.Packet
 import packit.repository.PacketRepository
 import java.security.MessageDigest
 import java.time.Instant
+import java.util.*
 
 interface PacketService
 {
     fun getPackets(): List<Packet>
+    fun getPacket(id: String): Optional<Packet>
     fun getChecksum(): String
     fun importPackets()
 }
@@ -37,6 +39,11 @@ class BasePacketService(
     override fun getPackets(): List<Packet>
     {
         return packetRepository.findAll()
+    }
+
+    override fun getPacket(id: String): Optional<Packet>
+    {
+        return packetRepository.findById(id)
     }
 
     override fun getChecksum(): String
