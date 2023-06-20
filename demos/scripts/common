@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -ex
+
+if [[ -v "GITHUB_SHA" ]]; then
+    GIT_ID=${GITHUB_SHA:0:7}
+else
+    GIT_ID=$(git rev-parse --short=7 HEAD)
+fi
+
+if [[ -v "BRANCH_NAME" ]]; then
+    GIT_BRANCH=${BRANCH_NAME}
+else
+    GIT_BRANCH=$(git symbolic-ref --short HEAD)
+fi
+
+ORG=mrcide
+IMAGE_NAME=outpack-demo
+TAG_SHA="${ORG}/${IMAGE_NAME}:${GIT_ID}"
+TAG_BRANCH="${ORG}/${IMAGE_NAME}:${GIT_BRANCH}"

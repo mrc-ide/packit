@@ -8,3 +8,10 @@ To add a new report to the `orderly` directory:
 1. add a new folder to `./orderly/src` with a valid `orderly.R` script
 1. run the new report with `orderly3::run_report(<name>)`
 1. commit the results to GitHub to use in CI
+
+## Docker
+This directory builds a docker image that can be used to generate 
+demo outpack volumes. 
+
+To populate a volume with the demo metadata contained in the `orderly` 
+directory, run `./scripts/run volume_name`.

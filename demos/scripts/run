@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -e
+
+HERE=$(dirname $0)
+. $HERE/common
+
+docker run --rm -d \
+ --name outpack-demo \
+ --volume $1:/outpack \
+  -it \
+ "$TAG_BRANCH"
