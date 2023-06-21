@@ -1,16 +1,16 @@
 package packit.service
 
 import org.springframework.stereotype.Service
+import packit.exceptions.PackitException
 import packit.model.Packet
 import packit.repository.PacketRepository
 import java.security.MessageDigest
 import java.time.Instant
-import java.util.*
 
 interface PacketService
 {
     fun getPackets(): List<Packet>
-    fun getPacket(id: String): Optional<Packet>
+    fun getPacket(id: String): Packet
     fun getChecksum(): String
     fun importPackets()
 }
@@ -41,9 +41,16 @@ class BasePacketService(
         return packetRepository.findAll()
     }
 
-    override fun getPacket(id: String): Optional<Packet>
+    override fun getPacket(id: String): Packet
     {
-        return packetRepository.findById(id)
+        val packet = packetRepository.findById(id)
+
+        if (packet.isEmpty)
+        {
+            throw PackitException("Packet does not exist")
+        }
+
+        return packet.get()
     }
 
     override fun getChecksum(): String
