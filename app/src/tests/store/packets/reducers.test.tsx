@@ -43,7 +43,7 @@ describe("packetsSlice reducer", () => {
                 detail: "FAKE ERROR",
                 error: "OTHER_ERROR"
             }
-        }
+        };
 
         const packetState = packetsReducer(
             initialPacketsState,
@@ -82,7 +82,7 @@ describe("packetsSlice reducer", () => {
                 detail: "Packet does not exist",
                 error: "OTHER_ERROR"
             }
-        }
+        };
 
         const packetState = packetsReducer(
             initialPacketsState,

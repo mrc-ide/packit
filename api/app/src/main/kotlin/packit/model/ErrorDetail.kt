@@ -4,9 +4,11 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 
-class ErrorDetail(private val httpStatus: HttpStatus,
-                  val detail: String,
-                  val error: String = defaultError)
+class ErrorDetail(
+    private val httpStatus: HttpStatus,
+    val detail: String,
+    val error: String = defaultError,
+)
 {
 
     companion object
