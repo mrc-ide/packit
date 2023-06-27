@@ -1,6 +1,5 @@
 import {useDispatch} from "react-redux";
 import store, {rootReducer} from "./app/store/store";
-import {SerializedError} from "@reduxjs/toolkit";
 
 export enum SideBarItems {
     explorer,
