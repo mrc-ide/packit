@@ -40,6 +40,17 @@ describe("packet details component", () => {
         expect(loadingText).toBeInTheDocument();
     });
 
+    it("can render error message", () => {
+        const packetError = {error: {detail: "Packet does not exist", error: "Error"}};
+
+        const store = getStore({packetError, packet: {} as Packet});
+
+        renderElement(store);
+
+        const loadingText = screen.getByText("Packet does not exist");
+
+        expect(loadingText).toBeInTheDocument();
+    });
 
     it("renders packet details when packet is not empty", () => {
         const packet = {
