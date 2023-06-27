@@ -10,7 +10,7 @@ export enum SideBarItems {
 }
 
 export interface RejectedErrorValue {
-    rejectValue: SerializedError
+    rejectValue: Error
 }
 
 export interface Packet {
@@ -33,8 +33,16 @@ export interface PacketTableProps {
 
 export interface PacketsState {
     packets: Packet[]
-    error: SerializedError | null
-    packet: Packet
+    error:  null | Error
+    packet: Packet,
+    packetError: null | Error
+}
+
+export interface Error {
+    error: {
+        detail: string
+        error: string
+    }
 }
 
 export type RootState = ReturnType<typeof rootReducer>;

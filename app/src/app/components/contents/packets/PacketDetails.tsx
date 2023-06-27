@@ -17,14 +17,20 @@ export default function PacketDetails() {
         }
     }, [packetId]);
 
-    const {packet} = useSelector((state: RootState) => state.packets);
+    const {packet, packetError} = useSelector((state: RootState) => state.packets);
 
     const paramLen = (): boolean => {
         return Object.entries(packet.parameters).length > 0;
     };
 
+    if (packetError) {
+        return <div>{packetError.error.detail}</div>;
+    }
+
     if (Object.keys(packet).length === 0) {
-        return <div>Loading...</div>;
+        return (
+            <div>Loading...</div>
+        );
     }
 
     return (

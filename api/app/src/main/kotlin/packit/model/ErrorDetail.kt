@@ -17,7 +17,7 @@ class ErrorDetail(private val httpStatus: HttpStatus,
     fun <T> toResponseEntity() = ResponseEntity
         .status(this.httpStatus)
         .contentType(MediaType.APPLICATION_JSON)
-        .body(ErrorResponse(listOf(this)).toJsonString() as T)
+        .body(ErrorResponse(this).toJsonString() as T)
 
     override fun equals(other: Any?): Boolean
     {

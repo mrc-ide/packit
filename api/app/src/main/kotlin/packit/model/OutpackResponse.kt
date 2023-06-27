@@ -10,7 +10,7 @@ data class OutpackResponse<T>(
         val errors: Any?
 ) : Serializable
 
-data class ErrorResponse(val errors: List<ErrorDetail>)
+data class ErrorResponse(val error: ErrorDetail)
 {
         val data = mapOf<Any, Any>()
         val status = "failure"

@@ -1,7 +1,9 @@
 package packit.unit.service
 
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.*
+import packit.exceptions.PackitException
 import packit.model.OutpackMetadata
 import packit.model.Packet
 import packit.repository.PacketRepository
@@ -65,6 +67,16 @@ class PacketServiceTest
         val result = sut.getPackets()
 
         assertEquals(result, oldPackets)
+    }
+
+    @Test
+    fun `throws exception if packet does not exist`()
+    {
+        val sut = BasePacketService(packetRepository, mock())
+
+        assertThatThrownBy { sut.getPacket("123") }
+            .isInstanceOf(PackitException::class.java)
+            .hasMessageContaining("PackitException with key packetDoesNotExist")
     }
 
     @Test

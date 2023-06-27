@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.servlet.NoHandlerFoundException
 import packit.model.ErrorDetail
-import packit.model.ErrorDetail.Companion.defaultError
+import java.util.*
 
 @ControllerAdvice
 class PackitExceptionHandler
@@ -19,10 +19,12 @@ class PackitExceptionHandler
 
     @ExceptionHandler(PackitException::class)
     fun handlePackitException(
-        e: PackitException,
+        error: PackitException
     ): ResponseEntity<String>
     {
-        return ErrorDetail(e.httpStatus, e.message ?: "")
+        val resourceBundle = getBundle()
+
+        return ErrorDetail(error.httpStatus, resourceBundle.getString(error.key))
             .toResponseEntity()
     }
 
@@ -38,7 +40,11 @@ class PackitExceptionHandler
     {
         val message = originalMessage ?: ""
 
-        return ErrorDetail(status, message, defaultError)
-            .toResponseEntity()
+        return ErrorDetail(status, message).toResponseEntity()
+    }
+
+    private fun getBundle(): ResourceBundle
+    {
+        return ResourceBundle.getBundle("errorBundle", Locale("en"))
     }
 }

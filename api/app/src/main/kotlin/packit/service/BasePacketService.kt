@@ -47,7 +47,7 @@ class BasePacketService(
 
         if (packet.isEmpty)
         {
-            throw PackitException("Packet does not exist")
+            throw PackitException("packetDoesNotExist")
         }
 
         return packet.get()
