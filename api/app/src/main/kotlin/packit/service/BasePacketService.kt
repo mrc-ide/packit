@@ -1,5 +1,6 @@
 package packit.service
 
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
 import packit.model.Packet
@@ -47,7 +48,7 @@ class BasePacketService(
 
         if (packet.isEmpty)
         {
-            throw PackitException("packetDoesNotExist")
+            throw PackitException("packetDoesNotExist", HttpStatus.NOT_FOUND)
         }
 
         return packet.get()

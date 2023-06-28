@@ -12,9 +12,10 @@ import java.util.*
 class PackitExceptionHandler
 {
     @ExceptionHandler(NoHandlerFoundException::class)
-    fun handleNoHandlerFoundException(error: Exception): Any
+    fun handleNoHandlerFoundException(e: Exception): Any
     {
-        return handleErrorPage(error)
+        return ErrorDetail(HttpStatus.NOT_FOUND, e.message ?: "")
+            .toResponseEntity()
     }
 
     @ExceptionHandler(PackitException::class)
@@ -28,23 +29,8 @@ class PackitExceptionHandler
             .toResponseEntity()
     }
 
-    private fun handleErrorPage(e: Exception): ResponseEntity<String>
-    {
-        return unexpectedError(HttpStatus.NOT_FOUND, e.message)
-    }
-
-    private fun unexpectedError(
-        status: HttpStatus,
-        originalMessage: String? = null,
-    ): ResponseEntity<String>
-    {
-        val message = originalMessage ?: ""
-
-        return ErrorDetail(status, message).toResponseEntity()
-    }
-
     private fun getBundle(): ResourceBundle
     {
-        return ResourceBundle.getBundle("errorBundle", Locale("en"))
+        return ResourceBundle.getBundle("errorBundle", Locale.ENGLISH)
     }
 }

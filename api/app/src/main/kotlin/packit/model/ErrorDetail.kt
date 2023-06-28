@@ -16,10 +16,10 @@ class ErrorDetail(
         const val defaultError = "OTHER_ERROR"
     }
 
-    fun <T> toResponseEntity() = ResponseEntity
+    fun toResponseEntity() = ResponseEntity
         .status(this.httpStatus)
         .contentType(MediaType.APPLICATION_JSON)
-        .body(ErrorResponse(this).toJsonString() as T)
+        .body(PackitErrorResponse(this).toJsonString())
 
     override fun equals(other: Any?): Boolean
     {

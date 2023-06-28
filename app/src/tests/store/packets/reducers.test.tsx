@@ -34,7 +34,7 @@ describe("packetsSlice reducer", () => {
         const nextState = packetsReducer(initialPacketsState, actions.fetchPackets.fulfilled(packets, ""));
 
         expect(nextState.packets).toEqual(packets);
-        expect(nextState.error).toBeNull();
+        expect(nextState.fetchPacketsError).toBeNull();
     });
 
     it("should handle fetchPackets.rejected", async () => {
@@ -51,7 +51,7 @@ describe("packetsSlice reducer", () => {
         );
 
         expect(packetState.packets).toEqual([]);
-        expect(packetState.error).toBe(error);
+        expect(packetState.fetchPacketsError).toBe(error);
     });
 
 
@@ -73,11 +73,11 @@ describe("packetsSlice reducer", () => {
         );
 
         expect(nextState.packet).toEqual(packet);
-        expect(nextState.error).toBeNull();
+        expect(nextState.fetchPacketsError).toBeNull();
     });
 
     it("should handle fetchPacketById when rejected", async () => {
-        const packerError = {
+        const packetError = {
             error: {
                 detail: "Packet does not exist",
                 error: "OTHER_ERROR"
@@ -86,10 +86,10 @@ describe("packetsSlice reducer", () => {
 
         const packetState = packetsReducer(
             initialPacketsState,
-            actions.fetchPacketById.rejected(null, "", "1", packerError)
+            actions.fetchPacketById.rejected(null, "", "1", packetError)
         );
 
         expect(packetState.packet).toEqual({});
-        expect(packetState.packetError).toBe(packerError);
+        expect(packetState.packetError).toBe(packetError);
     });
 });

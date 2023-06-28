@@ -10,12 +10,12 @@ data class OutpackResponse<T>(
         val errors: Any?
 ) : Serializable
 
-data class ErrorResponse(val error: ErrorDetail)
+data class PackitErrorResponse(val error: ErrorDetail)
 {
         val data = mapOf<Any, Any>()
         val status = "failure"
 }
 
-fun ErrorResponse.toJsonString() = ObjectMapper().apply {
+fun PackitErrorResponse.toJsonString() = ObjectMapper().apply {
         setSerializationInclusion(JsonInclude.Include.NON_NULL)
 }.writeValueAsString(this)

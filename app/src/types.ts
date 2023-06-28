@@ -32,7 +32,7 @@ export interface PacketTableProps {
 
 export interface PacketsState {
     packets: Packet[]
-    error:  null | Error
+    fetchPacketsError:  null | Error
     packet: Packet,
     packetError: null | Error
 }
