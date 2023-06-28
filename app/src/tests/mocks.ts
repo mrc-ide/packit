@@ -4,7 +4,8 @@ export const mockPacketsState = (props: Partial<PacketsState> = {}): PacketsStat
     return {
         packets: [],
         packet: {} as Packet,
-        error: null,
+        fetchPacketsError: null,
+        packetError: null,
         ...props
     };
 };

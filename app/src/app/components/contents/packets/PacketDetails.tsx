@@ -17,14 +17,18 @@ export default function PacketDetails() {
         }
     }, [packetId]);
 
-    const {packet} = useSelector((state: RootState) => state.packets);
+    const {packet, packetError} = useSelector((state: RootState) => state.packets);
 
-    const paramLen = (): boolean => {
+    const hasParameters = (): boolean => {
         return Object.entries(packet.parameters).length > 0;
     };
 
-    if (Object.keys(packet).length === 0) {
-        return <div>Loading...</div>;
+    if (packetError) {
+        return <div>{packetError.error.detail}</div>;
+    }
+
+    if (!packetError && Object.keys(packet).length === 0) {
+        return (<div>Loading...</div>);
     }
 
     return (
@@ -36,7 +40,7 @@ export default function PacketDetails() {
                     <span className="p-2 fw-semibold">Name:</span>
                     <span className="p-lg-4">{packet.name}</span>
                 </span>
-                {paramLen() && <ParameterList parameters={packet.parameters}/>}
+                {hasParameters() && <ParameterList parameters={packet.parameters}/>}
             </div>
             <div data-testid="runner-content" className="content-box">
                 <p>content</p>

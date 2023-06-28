@@ -4,8 +4,9 @@ import {actions} from "./thunks";
 
 export const initialPacketsState: PacketsState = {
     packets: [],
-    error: null,
-    packet: {} as Packet
+    fetchPacketsError: null,
+    packet: {} as Packet,
+    packetError: null
 };
 
 export const packetsSlice = createSlice({
@@ -16,17 +17,17 @@ export const packetsSlice = createSlice({
         builder
             .addCase(actions.fetchPackets.fulfilled, (state, action) => {
                 state.packets = action.payload;
-                state.error = null;
+                state.fetchPacketsError = null;
             })
             .addCase(actions.fetchPackets.rejected, (state, action) => {
-                state.error = action.payload ?? action.error;
+                state.fetchPacketsError = action.payload ?? null;
             })
             .addCase(actions.fetchPacketById.fulfilled, (state, action) => {
                 state.packet = action.payload;
-                state.error = null;
+                state.packetError = null;
             })
             .addCase(actions.fetchPacketById.rejected, (state, action) => {
-                state.error = action.payload ?? action.error;
+                state.packetError = action.payload ?? null;
             });
     }
 });

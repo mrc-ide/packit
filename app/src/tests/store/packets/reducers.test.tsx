@@ -34,19 +34,24 @@ describe("packetsSlice reducer", () => {
         const nextState = packetsReducer(initialPacketsState, actions.fetchPackets.fulfilled(packets, ""));
 
         expect(nextState.packets).toEqual(packets);
-        expect(nextState.error).toBeNull();
+        expect(nextState.fetchPacketsError).toBeNull();
     });
 
     it("should handle fetchPackets.rejected", async () => {
-        const error = Error("Could not parse API response");
+        const error = {
+            error: {
+                detail: "FAKE ERROR",
+                error: "OTHER_ERROR"
+            }
+        };
 
         const packetState = packetsReducer(
             initialPacketsState,
-            actions.fetchPackets.rejected(error, "")
+            actions.fetchPackets.rejected(null, "", undefined, error)
         );
 
         expect(packetState.packets).toEqual([]);
-        expect(packetState.error?.message).toBe(error.message);
+        expect(packetState.fetchPacketsError).toBe(error);
     });
 
 
@@ -68,18 +73,23 @@ describe("packetsSlice reducer", () => {
         );
 
         expect(nextState.packet).toEqual(packet);
-        expect(nextState.error).toBeNull();
+        expect(nextState.fetchPacketsError).toBeNull();
     });
 
     it("should handle fetchPacketById when rejected", async () => {
-        const error = Error("Could not parse API response");
+        const packetError = {
+            error: {
+                detail: "Packet does not exist",
+                error: "OTHER_ERROR"
+            }
+        };
 
         const packetState = packetsReducer(
             initialPacketsState,
-            actions.fetchPacketById.rejected(error, "", "1")
+            actions.fetchPacketById.rejected(null, "", "1", packetError)
         );
 
         expect(packetState.packet).toEqual({});
-        expect(packetState.error?.message).toBe(error.message);
+        expect(packetState.packetError).toBe(packetError);
     });
 });

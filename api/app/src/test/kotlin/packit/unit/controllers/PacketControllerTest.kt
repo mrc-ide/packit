@@ -9,7 +9,6 @@ import packit.controllers.PacketController
 import packit.model.Packet
 import packit.service.PacketService
 import java.time.Instant
-import java.util.*
 import kotlin.test.assertEquals
 
 class PacketControllerTest
@@ -23,7 +22,7 @@ class PacketControllerTest
 
     private val indexService = mock<PacketService> {
         on { getPackets() } doReturn packets
-        on { getPacket(anyString()) } doReturn Optional.of(packets.first())
+        on { getPacket(anyString()) } doReturn packets.first()
     }
 
     @Test
@@ -40,7 +39,7 @@ class PacketControllerTest
     {
         val sut = PacketController(indexService)
         val result = sut.findPacket("1")
-        val responseBody = result.body?.get()
+        val responseBody = result.body
         assertEquals(result.statusCode, HttpStatus.OK)
         assertEquals(responseBody, packets.first())
     }
