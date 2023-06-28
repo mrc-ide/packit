@@ -27,7 +27,7 @@ class PackitExceptionHandlerTest : IntegrationTest()
     {
         val entity = restTemplate.getForEntity("/packets/nonsense", String::class.java)
 
-        assertEquals(entity.statusCode, HttpStatus.INTERNAL_SERVER_ERROR)
+        assertEquals(entity.statusCode, HttpStatus.NOT_FOUND)
 
         val responseBodyJson = ObjectMapper().readTree(entity.body)
 
