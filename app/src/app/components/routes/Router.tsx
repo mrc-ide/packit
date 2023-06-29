@@ -3,11 +3,13 @@ import {Explorer, PacketRunner, ProjectDocumentation, WorkflowRunner} from "../c
 import PacketDetails from "../contents/packets/PacketDetails";
 import React from "react";
 import {Sidebar} from "../main";
+import {NotFound} from "../NotFound";
 
 export function Router() {
     return (
         <>
             <Routes>
+                <Route path="*" element={<NotFound/>}/>
                 <Route element={<Sidebar/>}>
                     <Route index element={<Explorer/>}/>
                     <Route path="packets" element={<Explorer/>}/>
