@@ -7,8 +7,6 @@ import packit.exceptions.PackitException
 import packit.model.Packet
 import packit.model.PacketMetadata
 import packit.repository.PacketRepository
-import java.io.ByteArrayInputStream
-import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.time.Instant
 
@@ -90,10 +88,15 @@ class BasePacketService(
     {
         val response = outpackServerClient.getFileBy(hash)
 
-        val stringResponseBody = response.first.toString().toByteArray(StandardCharsets.UTF_8)
+        val inputStream = response.first.toString().byteInputStream()
 
-        val inputStream = ByteArrayInputStream(stringResponseBody)
+        val inputStreamResource = InputStreamResource(inputStream)
 
-        return Pair(InputStreamResource(inputStream), response.second)
+        val headers = HttpHeaders().apply {
+            contentType = response.second.contentType
+            contentDisposition = response.second.contentDisposition
+        }
+
+        return inputStreamResource to headers
     }
 }

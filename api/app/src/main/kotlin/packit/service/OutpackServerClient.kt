@@ -42,7 +42,6 @@ class OutpackServerClient(appConfig: AppConfig): OutpackServer
             HttpEntity.EMPTY,
             ByteArray::class.java
         )
-
         return handleFileResponse(response)
     }
 
@@ -52,7 +51,7 @@ class OutpackServerClient(appConfig: AppConfig): OutpackServer
         {
             throw PackitException("couldNotStreamFile", HttpStatus.valueOf(response.statusCode.value()))
         }
-        return Pair(response.body!!, response.headers)
+        return response.body!! to response.headers
     }
 
     private inline fun <reified T> getEndpoint(urlFragment: String): T
