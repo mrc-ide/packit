@@ -1,11 +1,10 @@
 package packit.controllers
 
+import org.springframework.core.io.InputStreamResource
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import packit.model.Packet
+import packit.model.PacketMetadata
 import packit.service.PacketService
 
 @RestController
@@ -18,9 +17,16 @@ class PacketController(private val packetService: PacketService)
         return ResponseEntity.ok(packetService.getPackets())
     }
 
-    @GetMapping("/{id}")
-    fun findPacket(@PathVariable id: String): ResponseEntity<Packet>
+    @GetMapping("/metadata/{id}")
+    fun findPacket(@PathVariable id: String): ResponseEntity<PacketMetadata>
     {
-        return ResponseEntity.ok(packetService.getPacket(id))
+        return ResponseEntity.ok(packetService.getMetadataBy(id))
+    }
+
+    @GetMapping("/file/{hash}")
+    @ResponseBody
+    fun findFile(@PathVariable hash: String): ResponseEntity<InputStreamResource>
+    {
+        return ResponseEntity.ok(packetService.getFileBy(hash))
     }
 }

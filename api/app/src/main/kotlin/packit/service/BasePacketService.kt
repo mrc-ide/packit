@@ -1,9 +1,11 @@
 package packit.service
 
+import org.springframework.core.io.InputStreamResource
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
 import packit.model.Packet
+import packit.model.PacketMetadata
 import packit.repository.PacketRepository
 import java.security.MessageDigest
 import java.time.Instant
@@ -14,12 +16,14 @@ interface PacketService
     fun getPacket(id: String): Packet
     fun getChecksum(): String
     fun importPackets()
+    fun getMetadataBy(id: String): PacketMetadata
+    fun getFileBy(hash: String): InputStreamResource
 }
 
 @Service
 class BasePacketService(
         private val packetRepository: PacketRepository,
-        private val outpackServerClient: OutpackServerClient
+        private val outpackServerClient: OutpackServer
 ) : PacketService
 {
 
@@ -73,5 +77,15 @@ class BasePacketService(
     private fun ByteArray.toHex(): String
     {
         return this.joinToString("") { "%02x".format(it) }
+    }
+
+    override fun getMetadataBy(id: String): PacketMetadata
+    {
+        return outpackServerClient.getMetadataById(id)
+    }
+
+    override fun getFileBy(hash: String): InputStreamResource
+    {
+        return outpackServerClient.getFileBy(hash)
     }
 }

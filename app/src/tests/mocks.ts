@@ -1,11 +1,13 @@
-import {Packet, PacketsState} from "../types";
+import {Packet, PacketMetadata, PacketsState} from "../types";
 
 export const mockPacketsState = (props: Partial<PacketsState> = {}): PacketsState => {
     return {
         packets: [],
-        packet: {} as Packet,
+        packet: {} as PacketMetadata,
         fetchPacketsError: null,
         packetError: null,
+        fileUrl: "",
+        fileUrlError: null,
         ...props
     };
 };

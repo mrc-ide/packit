@@ -2,7 +2,7 @@ import mockAxios from "../../../../mockAxios";
 import {mockPacketResponse} from "../../mocks";
 import {actions, PacketsMutationType} from "../../../app/store/packets/thunks";
 import { expectThunkActionWith } from "../testHelper";
-import {Packet} from "../../../types";
+import {Packet, PacketMetadata} from "../../../types";
 
 describe("packet actions", () => {
 
@@ -47,7 +47,7 @@ describe("packet actions", () => {
 
     it("should fetch packets  by ID as expected", async () => {
         const dispatch = jest.fn();
-        await expectThunkActionWith<Packet | string, string>(
+        await expectThunkActionWith<PacketMetadata | string, string>(
             dispatch,
             "PACKET",
             200,
@@ -58,7 +58,7 @@ describe("packet actions", () => {
 
     it("should handle fetch packetsById when errored", async () => {
         const dispatch = jest.fn();
-        await expectThunkActionWith<Packet | string , string>(
+        await expectThunkActionWith<PacketMetadata | string , string>(
             dispatch,
             "Error",
             500,

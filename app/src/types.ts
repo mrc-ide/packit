@@ -33,8 +33,44 @@ export interface PacketTableProps {
 export interface PacketsState {
     packets: Packet[]
     fetchPacketsError:  null | Error
-    packet: Packet,
-    packetError: null | Error
+    packet: PacketMetadata,
+    packetError: null | Error,
+    fileUrl: string,
+    fileUrlError: null | Error
+}
+
+export interface PacketMetadata {
+    id: string
+    name: string
+    displayName?: string
+    published?: boolean
+    parameters: Record<string, string> | null
+    time?: Record<string, string>
+    files?: File[]
+    custom?: Custom
+    [key: string]: any
+}
+
+interface Custom {
+    orderly: Artefact[]
+    description: description
+    [key: string]: any
+}
+
+interface description {
+    custom: Record<string, any>
+    display: string
+}
+
+interface Artefact {
+    description: string
+    paths: string[]
+}
+
+interface File {
+    path: string,
+    size: number,
+    hash: string
 }
 
 export interface Error {

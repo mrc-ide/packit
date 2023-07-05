@@ -1,12 +1,14 @@
-import {Packet, PacketsState} from "../../../types";
+import {Packet, PacketMetadata, PacketsState} from "../../../types";
 import {createSlice} from "@reduxjs/toolkit";
 import {actions} from "./thunks";
 
 export const initialPacketsState: PacketsState = {
     packets: [],
     fetchPacketsError: null,
-    packet: {} as Packet,
-    packetError: null
+    packet: {} as PacketMetadata,
+    packetError: null,
+    fileUrl: "",
+    fileUrlError: null
 };
 
 export const packetsSlice = createSlice({
@@ -28,6 +30,13 @@ export const packetsSlice = createSlice({
             })
             .addCase(actions.fetchPacketById.rejected, (state, action) => {
                 state.packetError = action.payload ?? null;
+            })
+            .addCase(actions.fetchFileByHash.fulfilled, (state, action) => {
+                state.fileUrl = action.payload;
+                state.fileUrlError = null;
+            })
+            .addCase(actions.fetchFileByHash.rejected, (state, action) => {
+                state.fileUrlError = action.payload ?? null;
             });
     }
 });
