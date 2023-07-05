@@ -46,18 +46,20 @@ export interface PacketMetadata {
     published?: boolean
     parameters: Record<string, string> | null
     time?: Record<string, string>
-    files?: File[]
+    files: File[]
     custom?: Custom
     [key: string]: any
 }
 
-interface Custom {
-    orderly: Artefact[]
-    description: description
-    [key: string]: any
+export interface Custom {
+    orderly: {
+        artefacts: Artefact[]
+        description: Description
+        [key: string]: any
+    }
 }
 
-interface description {
+interface Description {
     custom: Record<string, any>
     display: string
 }

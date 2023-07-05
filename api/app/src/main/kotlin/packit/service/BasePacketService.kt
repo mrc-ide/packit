@@ -1,12 +1,14 @@
 package packit.service
 
 import org.springframework.core.io.InputStreamResource
-import org.springframework.http.HttpStatus
+import org.springframework.http.*
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
 import packit.model.Packet
 import packit.model.PacketMetadata
 import packit.repository.PacketRepository
+import java.io.ByteArrayInputStream
+import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.time.Instant
 
@@ -17,7 +19,7 @@ interface PacketService
     fun getChecksum(): String
     fun importPackets()
     fun getMetadataBy(id: String): PacketMetadata
-    fun getFileBy(hash: String): InputStreamResource
+    fun getFileBy(hash: String): Pair<InputStreamResource, HttpHeaders>
 }
 
 @Service
@@ -84,8 +86,14 @@ class BasePacketService(
         return outpackServerClient.getMetadataById(id)
     }
 
-    override fun getFileBy(hash: String): InputStreamResource
+    override fun getFileBy(hash: String): Pair<InputStreamResource, HttpHeaders>
     {
-        return outpackServerClient.getFileBy(hash)
+        val response = outpackServerClient.getFileBy(hash)
+
+        val stringResponseBody = response.first.toString().toByteArray(StandardCharsets.UTF_8)
+
+        val inputStream = ByteArrayInputStream(stringResponseBody)
+
+        return Pair(InputStreamResource(inputStream), response.second)
     }
 }

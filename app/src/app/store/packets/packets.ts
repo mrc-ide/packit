@@ -1,4 +1,4 @@
-import {Packet, PacketMetadata, PacketsState} from "../../../types";
+import {PacketMetadata, PacketsState} from "../../../types";
 import {createSlice} from "@reduxjs/toolkit";
 import {actions} from "./thunks";
 

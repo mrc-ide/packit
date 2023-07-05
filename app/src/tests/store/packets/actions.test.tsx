@@ -53,7 +53,7 @@ describe("packet actions", () => {
             200,
             actions.fetchPacketById("123"),
             PacketsMutationType.GetPacket,
-            "/packets/123");
+            "/packets/metadata/123");
     });
 
     it("should handle fetch packetsById when errored", async () => {
@@ -64,6 +64,6 @@ describe("packet actions", () => {
             500,
             actions.fetchPacketById("123"),
             PacketsMutationType.GetPacket,
-            "/packets/123");
+            "/packets/metadata/123");
     });
 });

@@ -27,6 +27,10 @@ class PacketController(private val packetService: PacketService)
     @ResponseBody
     fun findFile(@PathVariable hash: String): ResponseEntity<InputStreamResource>
     {
-        return ResponseEntity.ok(packetService.getFileBy(hash))
+        val response = packetService.getFileBy(hash)
+        return ResponseEntity
+            .ok()
+            .headers(response.second)
+            .body(response.first)
     }
 }

@@ -4,7 +4,7 @@ import {actions} from "../../../store/packets/thunks";
 import {useSelector} from "react-redux";
 
 interface PacketFile {
-    hash: string
+    hash: string | undefined
 }
 
 export function PacketFile({hash}: PacketFile) {
