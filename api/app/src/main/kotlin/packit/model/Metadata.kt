@@ -1,13 +1,13 @@
 package packit.model
 
 data class PacketMetadata(
-    val custom: Map<String, Any>?,
-    val files: List<File>?,
-    val git: Git?,
     val id: String,
     val name: String,
     val parameters: Map<String, Any>?,
+    val files: List<File>?,
+    val git: Git?,
     val time: Time,
+    val custom: Map<String, Any>?
 )
 
 data class Git(

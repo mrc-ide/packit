@@ -82,11 +82,13 @@ class BasePacketService(
     override fun getMetadataBy(id: String): PacketMetadata
     {
         return outpackServerClient.getMetadataById(id)
+            ?: throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
     }
 
     override fun getFileBy(hash: String): Pair<InputStreamResource, HttpHeaders>
     {
         val response = outpackServerClient.getFileBy(hash)
+            ?: throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
 
         val inputStream = response.first.toString().byteInputStream()
 

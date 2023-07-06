@@ -14,8 +14,8 @@ import packit.model.PacketMetadata
 interface OutpackServer {
     fun getMetadata(from: Long? = null): List<OutpackMetadata>
     fun <T> get(urlFragment: String): T
-    fun getMetadataById(id: String): PacketMetadata
-    fun getFileBy(hash: String): Pair<ByteArray, HttpHeaders>
+    fun getMetadataById(id: String): PacketMetadata?
+    fun getFileBy(hash: String): Pair<ByteArray?, HttpHeaders>?
 }
 
 @Service
@@ -31,7 +31,7 @@ class OutpackServerClient(appConfig: AppConfig): OutpackServer
         return getEndpoint("metadata/$id/json")
     }
 
-    override fun getFileBy(hash: String): Pair<ByteArray, HttpHeaders>
+    override fun getFileBy(hash: String): Pair<ByteArray?, HttpHeaders>
     {
         val url = "$baseUrl/file/$hash"
         log.debug("Fetching {}", url)
@@ -45,13 +45,13 @@ class OutpackServerClient(appConfig: AppConfig): OutpackServer
         return handleFileResponse(response)
     }
 
-    private fun handleFileResponse(response: ResponseEntity<ByteArray>): Pair<ByteArray, HttpHeaders>
+    private fun handleFileResponse(response: ResponseEntity<ByteArray>): Pair<ByteArray?, HttpHeaders>
     {
         if (response.statusCode.isError)
         {
-            throw PackitException("couldNotStreamFile", HttpStatus.valueOf(response.statusCode.value()))
+            throw PackitException("couldNotGetFile", HttpStatus.valueOf(response.statusCode.value()))
         }
-        return response.body!! to response.headers
+        return response.body to response.headers
     }
 
     private inline fun <reified T> getEndpoint(urlFragment: String): T

@@ -18,7 +18,7 @@ class PacketController(private val packetService: PacketService)
     }
 
     @GetMapping("/metadata/{id}")
-    fun findPacket(@PathVariable id: String): ResponseEntity<PacketMetadata>
+    fun findPacketMetadata(@PathVariable id: String): ResponseEntity<PacketMetadata>
     {
         return ResponseEntity.ok(packetService.getMetadataBy(id))
     }
