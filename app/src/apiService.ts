@@ -47,12 +47,12 @@ export class ApiService implements API {
             const data = await response.text();
 
             fileReader.onload = () => {
-                errorMessage = {error: {detail: JSON.parse(data), error: "File download error"}};
+                errorMessage = {error: {detail: JSON.parse(data), error: "error"}};
             };
 
             fileReader.readAsText(response);
         } else if (error instanceof AxiosError && error.response) {
-            errorMessage = error.response.data as any
+            errorMessage = error.response.data as any;
         }
 
         return errorMessage;
