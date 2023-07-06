@@ -19,7 +19,7 @@ interface OutpackServer {
 }
 
 @Service
-class OutpackServerClient(appConfig: AppConfig): OutpackServer
+class OutpackServerClient(appConfig: AppConfig) : OutpackServer
 {
 
     private val baseUrl: String = appConfig.outpackServerUrl
