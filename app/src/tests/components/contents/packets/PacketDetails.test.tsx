@@ -76,7 +76,7 @@ describe("packet details component", () => {
 
         renderElement(store);
 
-        expect(screen.getByText(packet.custom!.orderly.description!.display)).toBeInTheDocument();
+        expect(screen.getByText(packet.custom!.orderly.description.display)).toBeInTheDocument();
         expect(screen.getByText(packet.id)).toBeInTheDocument();
 
         expect(screen.getByText("Name:")).toBeInTheDocument();

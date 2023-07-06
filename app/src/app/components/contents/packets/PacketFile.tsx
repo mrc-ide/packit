@@ -20,8 +20,6 @@ export function PacketFile({hash}: PacketFile) {
     }, [hash]);
 
     return (
-        <iframe className="packit-iframe"
-                src={fileUrl}>
-        </iframe>
+        <iframe className="packit-iframe" src={fileUrl}></iframe>
     );
 }

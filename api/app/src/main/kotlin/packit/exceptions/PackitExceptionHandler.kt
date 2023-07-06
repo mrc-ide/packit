@@ -20,7 +20,6 @@ class PackitExceptionHandler
             .toResponseEntity()
     }
 
-
     @ExceptionHandler(HttpServerErrorException::class)
     fun handleHttpServerErrorException(e: Exception): ResponseEntity<String>
     {
