@@ -49,15 +49,13 @@ export class ApiService implements API {
             fileReader.onload = () => {
                 errorMessage = {error: {detail: JSON.parse(data), error: "error"}};
             };
-
             fileReader.readAsText(response);
         } else if (error instanceof AxiosError && error.response) {
-            errorMessage = error.response.data as any;
+            errorMessage = error.response.data as Error;
         }
 
         return errorMessage;
     };
-
 
     download<T, V>(mutationType: string, endpoint: string): AsyncThunk<T, V, CustomAsyncThunkOptions> {
         return createAsyncThunk<T, V, CustomAsyncThunkOptions>(
