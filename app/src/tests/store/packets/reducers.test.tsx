@@ -123,7 +123,7 @@ describe("packetsSlice reducer", () => {
                     packetError)
         );
 
-        expect(packetState.fileUrl).toEqual({});
+        expect(packetState.fileUrl).toEqual("");
         expect(packetState.fileUrlError).toBe(packetError);
     });
 });
