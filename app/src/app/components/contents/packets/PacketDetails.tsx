@@ -14,7 +14,7 @@ export default function PacketDetails() {
 
     useEffect(() => {
         if (packetId) {
-            dispatch(actions.fetchPacketById(packetId));
+            dispatch(actions.fetchPacketMetadataById(packetId));
         }
     }, [packetId]);
 

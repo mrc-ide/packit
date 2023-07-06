@@ -24,11 +24,11 @@ export const packetsSlice = createSlice({
             .addCase(actions.fetchPackets.rejected, (state, action) => {
                 state.fetchPacketsError = action.payload ?? null;
             })
-            .addCase(actions.fetchPacketById.fulfilled, (state, action) => {
+            .addCase(actions.fetchPacketMetadataById.fulfilled, (state, action) => {
                 state.packet = action.payload;
                 state.packetError = null;
             })
-            .addCase(actions.fetchPacketById.rejected, (state, action) => {
+            .addCase(actions.fetchPacketMetadataById.rejected, (state, action) => {
                 state.packetError = action.payload ?? null;
             })
             .addCase(actions.fetchFileByHash.fulfilled, (state, action) => {
