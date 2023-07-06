@@ -26,8 +26,7 @@ export class ApiService implements API {
     }
 
     private handleDownloadResponse<T>(response: AxiosResponse): T {
-        const contentType = response.headers["content-type"];
-        if (contentType !== "text/html") {
+        if (response.headers["content-type"] !== "text/html") {
             // should render blank on iframe
             return "" as T;
         }
@@ -52,6 +51,8 @@ export class ApiService implements API {
             };
 
             fileReader.readAsText(response);
+        } else if (error instanceof AxiosError && error.response) {
+            errorMessage = error.response.data as any
         }
 
         return errorMessage;
