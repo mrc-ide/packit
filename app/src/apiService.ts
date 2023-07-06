@@ -33,27 +33,12 @@ export class ApiService implements API {
         return URL.createObjectURL(response.data) as T;
     }
 
-    private handleDownloadError = async (error: AxiosError) => {
-
+    private handleDownloadError = (error: AxiosError) => {
         console.log(error.response && error.response.data || error);
-
         let errorMessage = {error: {detail: "Could not parse API response", error: "error"}};
-
-        const response = error.response && error.response.data;
-
-        if (response instanceof Blob) {
-            const fileReader = new FileReader();
-
-            const data = await response.text();
-
-            fileReader.onload = () => {
-                errorMessage = {error: {detail: JSON.parse(data), error: "error"}};
-            };
-            fileReader.readAsText(response);
-        } else if (error instanceof AxiosError && error.response) {
+        if (error instanceof AxiosError && error.response) {
             errorMessage = error.response.data as Error;
         }
-
         return errorMessage;
     };
 
@@ -66,7 +51,7 @@ export class ApiService implements API {
                     {responseType: "blob"})
                     .then(response => thunkAPI.fulfillWithValue(this.handleDownloadResponse<T>(response)))
                     .catch(async (error: AxiosError) => {
-                        const message = await this.handleDownloadError(error);
+                        const message = this.handleDownloadError(error);
                         return thunkAPI.rejectWithValue(message);
                     }));
     }

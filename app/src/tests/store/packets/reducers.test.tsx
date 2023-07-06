@@ -3,7 +3,6 @@ import {actions} from "../../../app/store/packets/thunks";
 import {Custom, Packet, PacketMetadata} from "../../../types";
 
 describe("packetsSlice reducer", () => {
-
     beforeEach(() => {
         jest.clearAllMocks();
     });
@@ -54,7 +53,6 @@ describe("packetsSlice reducer", () => {
         expect(packetState.fetchPacketsError).toBe(error);
     });
 
-
     it("should handle fetchPackets.fulfilled", () => {
         const packet: PacketMetadata =
             {
@@ -93,5 +91,39 @@ describe("packetsSlice reducer", () => {
 
         expect(packetState.packet).toEqual({});
         expect(packetState.packetError).toBe(packetError);
+    });
+
+    it("should handle fetchFileByHash.fulfilled", () => {
+        const response = "example.com";
+        const nextState = packetsReducer(
+            initialPacketsState,
+            actions.fetchFileByHash.fulfilled(response, "", "1")
+        );
+
+        expect(nextState.fileUrl).toEqual(response);
+        expect(nextState.fileUrlError).toBeNull();
+    });
+
+    it("should handle fetchFileByHash when rejected", async () => {
+        const packetError = {
+            error: {
+                detail: "Error",
+                error: "OTHER_ERROR"
+            }
+        };
+        Error("Error");
+
+        const packetState = packetsReducer(
+            initialPacketsState,
+            actions.fetchFileByHash
+                .rejected(
+                    null,
+                    "",
+                    "sha256:861174b1b90413269c8551b73af20b898a571aa971cb38a4b5cafbec31dd402d",
+                    packetError)
+        );
+
+        expect(packetState.fileUrl).toEqual({});
+        expect(packetState.fileUrlError).toBe(packetError);
     });
 });
