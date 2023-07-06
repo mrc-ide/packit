@@ -13,7 +13,6 @@ import java.time.Instant
 interface PacketService
 {
     fun getPackets(): List<Packet>
-    fun getPacket(id: String): Packet
     fun getChecksum(): String
     fun importPackets()
     fun getMetadataBy(id: String): PacketMetadata
@@ -44,18 +43,6 @@ class BasePacketService(
     override fun getPackets(): List<Packet>
     {
         return packetRepository.findAll()
-    }
-
-    override fun getPacket(id: String): Packet
-    {
-        val packet = packetRepository.findById(id)
-
-        if (packet.isEmpty)
-        {
-            throw PackitException("packetDoesNotExist", HttpStatus.NOT_FOUND)
-        }
-
-        return packet.get()
     }
 
     override fun getChecksum(): String

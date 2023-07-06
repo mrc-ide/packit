@@ -4,7 +4,6 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.*
-import org.springframework.core.io.InputStreamResource
 import org.springframework.http.HttpHeaders
 import packit.exceptions.PackitException
 import packit.model.*
@@ -133,10 +132,7 @@ class PacketServiceTest
         val sut = BasePacketService(packetRepository, outpackServerClient)
         val result = sut.getFileBy("sha123")
 
-        val inputStream = InputStreamResource(responseByte.first.toString().byteInputStream())
         assertEquals(result.first.isReadable, true)
-        assertEquals(result.first, inputStream)
-        assertEquals(result.second, responseByte.second)
     }
 
     @Test

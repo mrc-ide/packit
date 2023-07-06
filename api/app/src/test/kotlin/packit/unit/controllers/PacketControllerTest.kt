@@ -35,7 +35,9 @@ class PacketControllerTest
         emptyMap(),
     )
 
-    private val inputStream = InputStreamResource("htmlContent".byteInputStream()) to HttpHeaders.EMPTY
+    private val htmlContent = "<html><body><h1>Test html file</h1></body></html>"
+
+    private val inputStream = InputStreamResource(htmlContent.byteInputStream()) to HttpHeaders.EMPTY
 
     private val indexService = mock<PacketService> {
         on { getPackets() } doReturn packets
@@ -68,8 +70,11 @@ class PacketControllerTest
         val sut = PacketController(indexService)
         val result = sut.findFile("sha123")
         val responseBody = result.body
+
+        val actualText = responseBody?.inputStream?.use { it.readBytes().toString(Charsets.UTF_8) }
+
         assertEquals(result.statusCode, HttpStatus.OK)
-        assertEquals(responseBody, inputStream.first)
+        assertEquals(htmlContent, actualText)
         assertEquals(result.headers, inputStream.second)
     }
 }

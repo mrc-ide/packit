@@ -48,19 +48,17 @@ export interface PacketMetadata {
     time?: Record<string, string>
     files: File[]
     custom?: Custom
-    [key: string]: any
 }
 
 export interface Custom {
     orderly: {
         artefacts: Artefact[]
         description: Description
-        [key: string]: any
     }
 }
 
 interface Description {
-    custom: Record<string, any>
+    custom: Record<string, string>
     display: string
 }
 

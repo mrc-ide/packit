@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.servlet.NoHandlerFoundException
 import packit.model.ErrorDetail
@@ -19,8 +20,16 @@ class PackitExceptionHandler
             .toResponseEntity()
     }
 
+
     @ExceptionHandler(HttpServerErrorException::class)
     fun handleHttpServerErrorException(e: Exception): ResponseEntity<String>
+    {
+        return ErrorDetail(HttpStatus.INTERNAL_SERVER_ERROR, e.message ?: "")
+            .toResponseEntity()
+    }
+
+    @ExceptionHandler(HttpClientErrorException::class)
+    fun handleHttpClientErrorException(e: Exception): ResponseEntity<String>
     {
         return ErrorDetail(HttpStatus.INTERNAL_SERVER_ERROR, e.message ?: "")
             .toResponseEntity()
