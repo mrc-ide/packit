@@ -3,7 +3,6 @@ package packit.service
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
-import packit.model.File
 import packit.model.Packet
 import packit.repository.PacketRepository
 import java.security.MessageDigest
@@ -15,7 +14,6 @@ interface PacketService
     fun getPacket(id: String): Packet
     fun getChecksum(): String
     fun importPackets()
-    fun getArtefacts(id: String): List<File>
 }
 
 @Service
@@ -75,10 +73,5 @@ class BasePacketService(
     private fun ByteArray.toHex(): String
     {
         return this.joinToString("") { "%02x".format(it) }
-    }
-
-    override fun getArtefacts(id: String): List<File>
-    {
-        return outpackServerClient.getArtefacts(id)
     }
 }
