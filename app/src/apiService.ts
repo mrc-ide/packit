@@ -50,7 +50,7 @@ export class ApiService implements API {
                     this.getEndpoint<V>(endpoint, args),
                     {responseType: "blob"})
                     .then(response => thunkAPI.fulfillWithValue(this.handleDownloadResponse<T>(response)))
-                    .catch(async (error: AxiosError) => {
+                    .catch((error: AxiosError) => {
                         const message = this.handleDownloadError(error);
                         return thunkAPI.rejectWithValue(message);
                     }));
@@ -62,7 +62,7 @@ export class ApiService implements API {
             (args, thunkAPI) =>
                 this.axiosInstance.get<T>(this.getEndpoint<V>(endpoint, args))
                     .then(response => thunkAPI.fulfillWithValue(response.data))
-                    .catch(error => {
+                    .catch((error: AxiosError) => {
                         const message = this.handleDownloadError(error);
                         return thunkAPI.rejectWithValue(message);
                     }));
