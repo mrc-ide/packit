@@ -2,7 +2,7 @@ import mockAxios from "../../../../mockAxios";
 import {mockPacketResponse} from "../../mocks";
 import {actions, PacketsMutationType} from "../../../app/store/packets/thunks";
 import { expectThunkActionWith } from "../testHelper";
-import {Packet} from "../../../types";
+import {Packet, PacketMetadata} from "../../../types";
 
 describe("packet actions", () => {
 
@@ -45,25 +45,48 @@ describe("packet actions", () => {
             "/packets");
     });
 
-    it("should fetch packets  by ID as expected", async () => {
+    it("should fetch packets by ID as expected", async () => {
         const dispatch = jest.fn();
-        await expectThunkActionWith<Packet | string, string>(
+        await expectThunkActionWith<PacketMetadata | string, string>(
             dispatch,
             "PACKET",
             200,
-            actions.fetchPacketById("123"),
+            actions.fetchPacketMetadataById("123"),
             PacketsMutationType.GetPacket,
-            "/packets/123");
+            "/packets/metadata/123");
     });
 
     it("should handle fetch packetsById when errored", async () => {
         const dispatch = jest.fn();
-        await expectThunkActionWith<Packet | string , string>(
+        await expectThunkActionWith<PacketMetadata | string , string>(
             dispatch,
             "Error",
             500,
-            actions.fetchPacketById("123"),
+            actions.fetchPacketMetadataById("123"),
             PacketsMutationType.GetPacket,
-            "/packets/123");
+            "/packets/metadata/123");
+    });
+
+    it("should fetch fileById as expected", async () => {
+        const dispatch = jest.fn();
+        const mockBlobResponse = new Blob(["Mock data"], { type: "text/html" });
+        await expectThunkActionWith<Blob | string, string>(
+            dispatch,
+            mockBlobResponse,
+            200,
+            actions.fetchFileByHash("123"),
+            PacketsMutationType.GetFile,
+            "/packets/file/123");
+    });
+
+    it("should handle fetch fileById when errored", async () => {
+        const dispatch = jest.fn();
+        await expectThunkActionWith<string , string>(
+            dispatch,
+            "Error",
+            500,
+            actions.fetchFileByHash("123"),
+            PacketsMutationType.GetFile,
+            "/packets/file/123");
     });
 });

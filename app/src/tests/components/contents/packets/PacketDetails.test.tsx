@@ -1,6 +1,6 @@
 import React from "react";
 import {render, screen} from "@testing-library/react";
-import {Packet, PacketsState} from "../../../../types";
+import {PacketMetadata, PacketsState} from "../../../../types";
 import {mockPacketsState} from "../../../mocks";
 import thunk from "redux-thunk";
 import configureStore from "redux-mock-store";
@@ -31,7 +31,7 @@ describe("packet details component", () => {
     };
 
     it("renders loading state when packet is empty", () => {
-        const store = getStore({packet: {} as Packet});
+        const store = getStore({packet: {} as PacketMetadata});
 
         renderElement(store);
 
@@ -43,7 +43,7 @@ describe("packet details component", () => {
     it("can render error message", () => {
         const packetError = {error: {detail: "Packet does not exist", error: "Error"}};
 
-        const store = getStore({packetError, packet: {} as Packet});
+        const store = getStore({packetError, packet: {} as PacketMetadata});
 
         renderElement(store);
 
@@ -53,20 +53,30 @@ describe("packet details component", () => {
     });
 
     it("renders packet details when packet is not empty", () => {
-        const packet = {
+        const packet: PacketMetadata = {
             id: "123",
             name: "Interim update",
-            displayName: "unity",
             parameters: {
                 "subset": "superset"
             },
-            published: false
+            published: false,
+            files: [],
+            custom: {
+                orderly: {
+                    artefacts: [],
+                    description: {
+                        display: "Corn pack",
+                        custom: {}
+                    }
+                },
+
+            }
         };
         const store = getStore({packet});
 
         renderElement(store);
 
-        expect(screen.getByText(packet.displayName)).toBeInTheDocument();
+        expect(screen.getByText(packet.custom!.orderly.description.display)).toBeInTheDocument();
         expect(screen.getByText(packet.id)).toBeInTheDocument();
 
         expect(screen.getByText("Name:")).toBeInTheDocument();
@@ -74,7 +84,7 @@ describe("packet details component", () => {
 
         expect(screen.getByText("Parameters")).toBeInTheDocument();
 
-        Object.entries(packet.parameters).map(([key, value]) => {
+        packet.parameters && Object.entries(packet.parameters).map(([key, value]) => {
             expect(screen.getByText(`${key}:`)).toBeInTheDocument();
             expect(screen.getByText(String(value))).toBeInTheDocument();
         });

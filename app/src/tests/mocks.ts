@@ -1,11 +1,14 @@
-import {Packet, PacketsState} from "../types";
+
+import {Custom, PacketMetadata, PacketsState} from "../types";
 
 export const mockPacketsState = (props: Partial<PacketsState> = {}): PacketsState => {
     return {
         packets: [],
-        packet: {} as Packet,
+        packet: {} as PacketMetadata,
         fetchPacketsError: null,
         packetError: null,
+        fileUrl: "",
+        fileUrlError: null,
         ...props
     };
 };
@@ -17,5 +20,7 @@ export const mockPacketResponse = {
     parameters: {
         "city_subset": "63f730b9fc13ae1df6000070"
     },
+    custom: {} as Custom,
+    files: [{hash: "sha:234:50873fVFDSVSF4", path: "data.rds", size: 97}],
     published: false
 };

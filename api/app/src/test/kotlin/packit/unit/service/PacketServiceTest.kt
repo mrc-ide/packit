@@ -2,10 +2,11 @@ package packit.unit.service
 
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.*
+import org.springframework.http.HttpHeaders
 import packit.exceptions.PackitException
-import packit.model.OutpackMetadata
-import packit.model.Packet
+import packit.model.*
 import packit.repository.PacketRepository
 import packit.service.BasePacketService
 import packit.service.OutpackServerClient
@@ -49,6 +50,18 @@ class PacketServiceTest
             )
     )
 
+    private val packetMetadata = PacketMetadata(
+        "3",
+        "test",
+        mapOf("name" to "value"),
+        emptyList(),
+        Git("git", "sha", emptyList()),
+        Time(Instant.now().epochSecond.toDouble(), Instant.now().epochSecond.toDouble()),
+        emptyMap(),
+    )
+
+    private val responseByte = "htmlContent".toByteArray() to HttpHeaders.EMPTY
+
     private val packetRepository = mock<PacketRepository> {
         on { findAll() } doReturn oldPackets
         on { findAllIds() } doReturn oldPackets.map { it.id }
@@ -57,6 +70,8 @@ class PacketServiceTest
 
     private val outpackServerClient = mock<OutpackServerClient> {
         on { getMetadata(now - 1) } doReturn metadata
+        on { getMetadataById(anyString()) } doReturn packetMetadata
+        on {getFileByHash(anyString())} doReturn responseByte
     }
 
     @Test
@@ -70,13 +85,13 @@ class PacketServiceTest
     }
 
     @Test
-    fun `throws exception if packet does not exist`()
+    fun `throws exception if packet metadata does not exist`()
     {
         val sut = BasePacketService(packetRepository, mock())
 
-        assertThatThrownBy { sut.getPacket("123") }
+        assertThatThrownBy { sut.getMetadataBy("123") }
             .isInstanceOf(PackitException::class.java)
-            .hasMessageContaining("PackitException with key packetDoesNotExist")
+            .hasMessageContaining("PackitException with key doesNotExist")
     }
 
     @Test
@@ -100,5 +115,33 @@ class PacketServiceTest
         sut.importPackets()
 
         verify(packetRepository).saveAll(newPackets)
+    }
+
+    @Test
+    fun `can get packet metadata`()
+    {
+        val sut = BasePacketService(packetRepository, outpackServerClient)
+        val result = sut.getMetadataBy("123")
+
+        assertEquals(result, packetMetadata)
+    }
+
+    @Test
+    fun `can get packet file`()
+    {
+        val sut = BasePacketService(packetRepository, outpackServerClient)
+        val result = sut.getFileBy("sha123")
+
+        assertEquals(result.first.isReadable, true)
+    }
+
+    @Test
+    fun `throws exception if client could not get file from outpack`()
+    {
+        val sut = BasePacketService(packetRepository, mock())
+
+        assertThatThrownBy { sut.getFileBy("123") }
+            .isInstanceOf(PackitException::class.java)
+            .hasMessageContaining("PackitException with key doesNotExist")
     }
 }

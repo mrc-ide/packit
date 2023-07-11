@@ -1,9 +1,11 @@
 package packit.service
 
-import org.springframework.http.HttpStatus
+import org.springframework.core.io.InputStreamResource
+import org.springframework.http.*
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
 import packit.model.Packet
+import packit.model.PacketMetadata
 import packit.repository.PacketRepository
 import java.security.MessageDigest
 import java.time.Instant
@@ -11,15 +13,16 @@ import java.time.Instant
 interface PacketService
 {
     fun getPackets(): List<Packet>
-    fun getPacket(id: String): Packet
     fun getChecksum(): String
     fun importPackets()
+    fun getMetadataBy(id: String): PacketMetadata
+    fun getFileBy(hash: String): Pair<InputStreamResource, HttpHeaders>
 }
 
 @Service
 class BasePacketService(
         private val packetRepository: PacketRepository,
-        private val outpackServerClient: OutpackServerClient
+        private val outpackServerClient: OutpackServer
 ) : PacketService
 {
 
@@ -42,18 +45,6 @@ class BasePacketService(
         return packetRepository.findAll()
     }
 
-    override fun getPacket(id: String): Packet
-    {
-        val packet = packetRepository.findById(id)
-
-        if (packet.isEmpty)
-        {
-            throw PackitException("packetDoesNotExist", HttpStatus.NOT_FOUND)
-        }
-
-        return packet.get()
-    }
-
     override fun getChecksum(): String
     {
         return packetRepository.findAllIds()
@@ -73,5 +64,32 @@ class BasePacketService(
     private fun ByteArray.toHex(): String
     {
         return this.joinToString("") { "%02x".format(it) }
+    }
+
+    override fun getMetadataBy(id: String): PacketMetadata
+    {
+        return outpackServerClient.getMetadataById(id)
+            ?: throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
+    }
+
+    override fun getFileBy(hash: String): Pair<InputStreamResource, HttpHeaders>
+    {
+        val response = outpackServerClient.getFileByHash(hash)
+
+        if (response?.first == null || response.first.isEmpty())
+        {
+            throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
+        }
+
+        val inputStream = response.first.toString().byteInputStream()
+
+        val inputStreamResource = InputStreamResource(inputStream)
+
+        val headers = HttpHeaders().apply {
+            contentType = response.second.contentType
+            contentDisposition = response.second.contentDisposition
+        }
+
+        return inputStreamResource to headers
     }
 }

@@ -21,4 +21,11 @@ abstract class IntegrationTest
         assertEquals(responseEntity.headers.contentType, MediaType.APPLICATION_JSON)
         assertThat(responseEntity.body).isNotEmpty
     }
+
+    protected fun assertFileSuccess(responseEntity: ResponseEntity<String>)
+    {
+        assertEquals(responseEntity.statusCode, HttpStatus.OK)
+        assertEquals(responseEntity.headers.contentType, MediaType.APPLICATION_OCTET_STREAM)
+        assertThat(responseEntity.body).isNotEmpty
+    }
 }

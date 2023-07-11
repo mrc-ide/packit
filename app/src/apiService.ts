@@ -1,4 +1,4 @@
-import axios, {AxiosError, AxiosInstance} from "axios";
+import axios, {AxiosError, AxiosInstance, AxiosResponse} from "axios";
 import {
     createAsyncThunk,
     AsyncThunkOptions,
@@ -15,6 +15,7 @@ interface CustomAsyncThunkOptions extends AsyncThunkOptions<void, RejectedErrorV
 
 interface API {
     get<T, V>(mutationType: string, endpoint: string): AsyncThunk<T, V, CustomAsyncThunkOptions>;
+    download<T, V>(mutationType: string, endpoint: string): AsyncThunk<T, V, CustomAsyncThunkOptions>;
 }
 
 export class ApiService implements API {
@@ -24,7 +25,35 @@ export class ApiService implements API {
         this.axiosInstance = axiosInstance;
     }
 
+    private handleDownloadResponse<T>(response: AxiosResponse): T {
+        if (response.headers["content-type"] !== "text/html") {
+            // should render blank on iframe
+            return "" as T;
+        }
+        return URL.createObjectURL(response.data) as T;
+    }
 
+    private handleDownloadError = (error: AxiosError) => {
+        let errorMessage = {error: {detail: "Could not parse API response", error: "error"}};
+        if (error instanceof AxiosError && error.response) {
+            errorMessage = error.response.data as Error;
+        }
+        return errorMessage;
+    };
+
+    download<T, V>(mutationType: string, endpoint: string): AsyncThunk<T, V, CustomAsyncThunkOptions> {
+        return createAsyncThunk<T, V, CustomAsyncThunkOptions>(
+            mutationType,
+            (args, thunkAPI) =>
+                this.axiosInstance.get<T>(
+                    this.getEndpoint<V>(endpoint, args),
+                    {responseType: "blob"})
+                    .then(response => thunkAPI.fulfillWithValue(this.handleDownloadResponse<T>(response)))
+                    .catch((error: AxiosError) => {
+                        const message = this.handleDownloadError(error);
+                        return thunkAPI.rejectWithValue(message);
+                    }));
+    }
 
     get<T, V>(mutationType: string, endpoint: string): AsyncThunk<T, V, CustomAsyncThunkOptions> {
         return createAsyncThunk<T, V, CustomAsyncThunkOptions>(
@@ -32,13 +61,9 @@ export class ApiService implements API {
             (args, thunkAPI) =>
                 this.axiosInstance.get<T>(this.getEndpoint<V>(endpoint, args))
                     .then(response => thunkAPI.fulfillWithValue(response.data))
-                    .catch(error => {
-                        let errorMessage = {error: {detail: "Could not parse API response", error: "error"}};
-                        if (error instanceof AxiosError && error.response) {
-                            errorMessage = error.response.data;
-                        }
-
-                        return thunkAPI.rejectWithValue(errorMessage);
+                    .catch((error: AxiosError) => {
+                        const message = this.handleDownloadError(error);
+                        return thunkAPI.rejectWithValue(message);
                     }));
     }
 

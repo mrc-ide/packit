@@ -1,15 +1,16 @@
 package packit.integration.controllers
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import packit.integration.IntegrationTest
+import packit.model.Git
 import packit.model.Packet
+import packit.model.PacketMetadata
+import packit.model.Time
 import packit.repository.PacketRepository
 import java.time.Instant
-import kotlin.test.assertEquals
 
 class PacketControllerTest : IntegrationTest()
 {
@@ -19,6 +20,16 @@ class PacketControllerTest : IntegrationTest()
     val packet = Packet(
         "1", "test", "test name",
         mapOf("name" to "value"), false, Instant.now().epochSecond
+    )
+
+    val packetMetadata = PacketMetadata(
+        "3",
+        "test",
+        mapOf("name" to "value"),
+        emptyList(),
+        Git("git", "sha", emptyList()),
+        Time(Instant.now().epochSecond.toDouble(), Instant.now().epochSecond.toDouble()),
+        emptyMap(),
     )
 
     @BeforeEach
@@ -41,16 +52,21 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `get packet by packet id`()
+    fun `get packet metadata by packet id`()
     {
-        val result = restTemplate.getForEntity("/packets/1", String::class.java)
-
-        val objectMapper = ObjectMapper()
-
-        val response = objectMapper.readValue(result.body, Packet::class.java)
-
-        assertEquals(response, packet)
-
+        val result = restTemplate.getForEntity("/packets/metadata/20230427-150755-2dbede93", String::class.java)
         assertSuccess(result)
+    }
+
+    @Test
+    fun `get packet file by hash`()
+    {
+        val result = restTemplate
+            .getForEntity(
+                "/packets/file/sha256:c7b512b2d14a7caae8968830760cb95980a98e18ca2c2991b87c71529e223164",
+                String::class.java
+            )
+
+        assertFileSuccess(result)
     }
 }
