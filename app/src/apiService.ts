@@ -63,12 +63,8 @@ export class ApiService implements API {
                 this.axiosInstance.get<T>(this.getEndpoint<V>(endpoint, args))
                     .then(response => thunkAPI.fulfillWithValue(response.data))
                     .catch(error => {
-                        let errorMessage = {error: {detail: "Could not parse API response", error: "error"}};
-                        if (error instanceof AxiosError && error.response) {
-                            errorMessage = error.response.data;
-                        }
-
-                        return thunkAPI.rejectWithValue(errorMessage);
+                        const message = this.handleDownloadError(error);
+                        return thunkAPI.rejectWithValue(message);
                     }));
     }
 

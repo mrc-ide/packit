@@ -20,14 +20,7 @@ class PackitExceptionHandler
             .toResponseEntity()
     }
 
-    @ExceptionHandler(HttpServerErrorException::class)
-    fun handleHttpServerErrorException(e: Exception): ResponseEntity<String>
-    {
-        return ErrorDetail(HttpStatus.INTERNAL_SERVER_ERROR, e.message ?: "")
-            .toResponseEntity()
-    }
-
-    @ExceptionHandler(HttpClientErrorException::class)
+    @ExceptionHandler(HttpClientErrorException::class, HttpServerErrorException::class)
     fun handleHttpClientErrorException(e: Exception): ResponseEntity<String>
     {
         return ErrorDetail(HttpStatus.INTERNAL_SERVER_ERROR, e.message ?: "")

@@ -15,13 +15,12 @@ interface OutpackServer {
     fun getMetadata(from: Long? = null): List<OutpackMetadata>
     fun <T> get(urlFragment: String): T
     fun getMetadataById(id: String): PacketMetadata?
-    fun getFileBy(hash: String): Pair<ByteArray, HttpHeaders>?
+    fun getFileByHash(hash: String): Pair<ByteArray, HttpHeaders>?
 }
 
 @Service
 class OutpackServerClient(appConfig: AppConfig) : OutpackServer
 {
-
     private val baseUrl: String = appConfig.outpackServerUrl
 
     private val restTemplate = RestTemplate()
@@ -31,7 +30,7 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
         return getEndpoint("metadata/$id/json")
     }
 
-    override fun getFileBy(hash: String): Pair<ByteArray, HttpHeaders>
+    override fun getFileByHash(hash: String): Pair<ByteArray, HttpHeaders>
     {
         val url = "$baseUrl/file/$hash"
         log.debug("Fetching {}", url)

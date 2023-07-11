@@ -74,8 +74,12 @@ class BasePacketService(
 
     override fun getFileBy(hash: String): Pair<InputStreamResource, HttpHeaders>
     {
-        val response = outpackServerClient.getFileBy(hash)
-            ?: throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
+        val response = outpackServerClient.getFileByHash(hash)
+
+        if (response?.first == null || response.first.isEmpty())
+        {
+            throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
+        }
 
         val inputStream = response.first.toString().byteInputStream()
 

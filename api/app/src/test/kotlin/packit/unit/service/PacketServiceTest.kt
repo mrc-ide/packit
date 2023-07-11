@@ -71,7 +71,7 @@ class PacketServiceTest
     private val outpackServerClient = mock<OutpackServerClient> {
         on { getMetadata(now - 1) } doReturn metadata
         on { getMetadataById(anyString()) } doReturn packetMetadata
-        on {getFileBy(anyString())} doReturn responseByte
+        on {getFileByHash(anyString())} doReturn responseByte
     }
 
     @Test
