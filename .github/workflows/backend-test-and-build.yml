@@ -43,7 +43,7 @@ jobs:
           cache: "gradle"
       - name: Lint
         working-directory: api
-        run: ./gradlew :app:detekt --rerun
+        run: ./gradlew :app:detekt
       - name: Test backend
         working-directory: api
         run: ./gradlew :app:test --stacktrace --rerun
