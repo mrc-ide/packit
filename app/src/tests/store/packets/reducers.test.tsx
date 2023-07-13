@@ -69,7 +69,7 @@ describe("packetsSlice reducer", () => {
             };
         const nextState = packetsReducer(
             initialPacketsState,
-            actions.fetchPacketMetadataById.fulfilled(packet, "", "1")
+            actions.fetchPacketById.fulfilled(packet, "", "1")
         );
 
         expect(nextState.packet).toEqual(packet);
@@ -86,44 +86,10 @@ describe("packetsSlice reducer", () => {
 
         const packetState = packetsReducer(
             initialPacketsState,
-            actions.fetchPacketMetadataById.rejected(null, "", "1", packetError)
+            actions.fetchPacketById.rejected(null, "", "1", packetError)
         );
 
         expect(packetState.packet).toEqual({});
         expect(packetState.packetError).toBe(packetError);
-    });
-
-    it("should handle fetchFileByHash.fulfilled", () => {
-        const response = "example.com";
-        const nextState = packetsReducer(
-            initialPacketsState,
-            actions.fetchFileByHash.fulfilled(response, "", "1")
-        );
-
-        expect(nextState.fileUrl).toEqual(response);
-        expect(nextState.fileUrlError).toBeNull();
-    });
-
-    it("should handle fetchFileByHash when rejected", async () => {
-        const packetError = {
-            error: {
-                detail: "Error",
-                error: "OTHER_ERROR"
-            }
-        };
-        Error("Error");
-
-        const packetState = packetsReducer(
-            initialPacketsState,
-            actions.fetchFileByHash
-                .rejected(
-                    null,
-                    "",
-                    "sha256:861174b1b90413269c8551b73af20b898a571aa971cb38a4b5cafbec31dd402d",
-                    packetError)
-        );
-
-        expect(packetState.fileUrl).toEqual("");
-        expect(packetState.fileUrlError).toBe(packetError);
     });
 });

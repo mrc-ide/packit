@@ -37,7 +37,7 @@ describe("backend integration", () => {
 
     it("can fetch packetById", async () => {
         const dispatch = jest.fn();
-        const asyncThunk = actions.fetchPacketMetadataById("20230427-150755-2dbede93");
+        const asyncThunk = actions.fetchPacketById("20230427-150755-2dbede93");
         await asyncThunk(dispatch, jest.fn(), jest.fn());
 
         expect(dispatch.mock.calls[0][0]).toMatchObject({
@@ -48,27 +48,6 @@ describe("backend integration", () => {
         expect(result["type"]).toBe("GetPacket/fulfilled");
         expect(result["payload"].id).toBe("20230427-150755-2dbede93");
         expect(result["payload"].name).toBe("explicit");
-    });
-
-    it("can fetch packet fileByHash", async () => {
-        const dispatch = jest.fn();
-        const asyncThunk = actions.fetchPacketMetadataById("20230427-150755-2dbede93");
-        await asyncThunk(dispatch, jest.fn(), jest.fn());
-
-        expect(dispatch.mock.calls[0][0]).toMatchObject({
-            type: "GetPacket/pending",
-            payload: undefined,
-        });
-        const result = dispatch.mock.calls[1][0];
-        expect(result["type"]).toBe("GetPacket/fulfilled");
-
-        const dispatchFile = jest.fn();
-        const asyncThunkFile = actions.fetchFileByHash(result["payload"].files[0].hash);
-        await asyncThunkFile(dispatchFile, jest.fn(), jest.fn());
-        const resultFile = dispatchFile.mock.calls[1][0];
-        expect(resultFile["type"]).toBe("GetFile/fulfilled");
-        //asserts empty string when content-type is not html
-        expect(resultFile["payload"]).toBe("");
     });
 
 });

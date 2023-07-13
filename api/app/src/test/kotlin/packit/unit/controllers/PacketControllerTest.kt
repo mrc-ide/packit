@@ -8,10 +8,10 @@ import org.springframework.core.io.InputStreamResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import packit.controllers.PacketController
-import packit.model.Git
+import packit.model.GitMetadata
 import packit.model.Packet
-import packit.model.PacketMetadata
-import packit.model.Time
+import packit.model.Metadata
+import packit.model.TimeMetadata
 import packit.service.PacketService
 import java.time.Instant
 import kotlin.test.assertEquals
@@ -25,13 +25,13 @@ class PacketControllerTest
             )
     )
 
-    private val packetMetadata = PacketMetadata(
+    private val packetMetadata = Metadata(
         "3",
         "test",
         mapOf("name" to "value"),
         emptyList(),
-        Git("git", "sha", emptyList()),
-        Time(Instant.now().epochSecond.toDouble(), Instant.now().epochSecond.toDouble()),
+        GitMetadata("git", "sha", emptyList()),
+        TimeMetadata(Instant.now().epochSecond.toDouble(), Instant.now().epochSecond.toDouble()),
         emptyMap(),
     )
 
@@ -42,7 +42,7 @@ class PacketControllerTest
     private val indexService = mock<PacketService> {
         on { getPackets() } doReturn packets
         on { getMetadataBy(anyString()) } doReturn packetMetadata
-        on { getFileBy(anyString()) } doReturn inputStream
+        on { getFileByHash(anyString()) } doReturn inputStream
     }
 
     @Test

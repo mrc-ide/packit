@@ -1,25 +1,19 @@
-import {RootState, useAppDispatch} from "../../../../types";
-import React, {useEffect} from "react";
-import {actions} from "../../../store/packets/thunks";
-import {useSelector} from "react-redux";
+import {FileMetadata} from "../../../../types";
+import React from "react";
+import appConfig from "../../../../config/appConfig";
 
-interface PacketFile {
-    hash: string | undefined
+interface PacketFileProps {
+    fileMetadata: FileMetadata | undefined
 }
-
-export function PacketFile({hash}: PacketFile) {
-
-    const dispatch = useAppDispatch();
-
-    const {fileUrl} = useSelector((state: RootState) => state.packets);
-
-    useEffect(() => {
-        if (hash) {
-            dispatch(actions.fetchFileByHash(hash));
-        }
-    }, [hash]);
-
+export function PacketFile({ fileMetadata }: PacketFileProps) {
     return (
-        <iframe className="packit-iframe" src={fileUrl}></iframe>
+        <>
+            {fileMetadata && (
+                <iframe
+                    className="packit-iframe"
+                    src={`${appConfig.apiUrl()}/packets/file/${fileMetadata?.hash}`}
+                ></iframe>
+            )}
+        </>
     );
 }

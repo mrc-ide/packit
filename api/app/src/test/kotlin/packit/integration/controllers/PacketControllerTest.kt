@@ -5,10 +5,10 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import packit.integration.IntegrationTest
-import packit.model.Git
+import packit.model.GitMetadata
 import packit.model.Packet
-import packit.model.PacketMetadata
-import packit.model.Time
+import packit.model.Metadata
+import packit.model.TimeMetadata
 import packit.repository.PacketRepository
 import java.time.Instant
 
@@ -22,13 +22,13 @@ class PacketControllerTest : IntegrationTest()
         mapOf("name" to "value"), false, Instant.now().epochSecond
     )
 
-    val packetMetadata = PacketMetadata(
+    val packetMetadata = Metadata(
         "3",
         "test",
         mapOf("name" to "value"),
         emptyList(),
-        Git("git", "sha", emptyList()),
-        Time(Instant.now().epochSecond.toDouble(), Instant.now().epochSecond.toDouble()),
+        GitMetadata("git", "sha", emptyList()),
+        TimeMetadata(Instant.now().epochSecond.toDouble(), Instant.now().epochSecond.toDouble()),
         emptyMap(),
     )
 

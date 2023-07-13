@@ -8,6 +8,7 @@ import {Provider} from "react-redux";
 import {Store} from "@reduxjs/toolkit";
 import {MemoryRouter} from "react-router-dom";
 import PacketDetails from "../../../../app/components/contents/packets/PacketDetails";
+import appConfig from "../../../../config/appConfig";
 
 describe("packet details component", () => {
 
@@ -77,6 +78,7 @@ describe("packet details component", () => {
         renderElement(store);
 
         expect(screen.getByText(packet.custom!.orderly.description.display)).toBeInTheDocument();
+
         expect(screen.getByText(packet.id)).toBeInTheDocument();
 
         expect(screen.getByText("Name:")).toBeInTheDocument();
@@ -88,5 +90,34 @@ describe("packet details component", () => {
             expect(screen.getByText(`${key}:`)).toBeInTheDocument();
             expect(screen.getByText(String(value))).toBeInTheDocument();
         });
+    });
+
+    it("renders packet file when packet is not empty", () => {
+        const fileMetadata = {hash: "example", path: "example.html", size: 1};
+        const packet: PacketMetadata = {
+            id: "123",
+            name: "Interim update",
+            parameters: {
+                "subset": "superset"
+            },
+            published: false,
+            files: [fileMetadata],
+            custom: {
+                orderly: {
+                    artefacts: [],
+                    description: {
+                        display: "Corn pack",
+                        custom: {}
+                    }
+                }
+            }
+        };
+        const store = getStore({packet});
+
+        const {container} = renderElement(store);
+
+        const iframe = container.querySelector("iframe");
+
+        expect(iframe).toHaveAttribute("src", `${appConfig.apiUrl()}/packets/file/${fileMetadata.hash}`);
     });
 });

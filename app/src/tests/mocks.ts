@@ -7,8 +7,6 @@ export const mockPacketsState = (props: Partial<PacketsState> = {}): PacketsStat
         packet: {} as PacketMetadata,
         fetchPacketsError: null,
         packetError: null,
-        fileUrl: "",
-        fileUrlError: null,
         ...props
     };
 };

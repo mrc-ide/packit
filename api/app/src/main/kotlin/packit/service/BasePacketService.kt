@@ -1,22 +1,23 @@
 package packit.service
 
-import org.springframework.core.io.InputStreamResource
-import org.springframework.http.*
-import org.springframework.stereotype.Service
-import packit.exceptions.PackitException
-import packit.model.Packet
-import packit.model.PacketMetadata
-import packit.repository.PacketRepository
 import java.security.MessageDigest
 import java.time.Instant
+import org.springframework.core.io.InputStreamResource
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
+import org.springframework.stereotype.Service
+import packit.exceptions.PackitException
+import packit.model.Metadata
+import packit.model.Packet
+import packit.repository.PacketRepository
 
 interface PacketService
 {
     fun getPackets(): List<Packet>
     fun getChecksum(): String
     fun importPackets()
-    fun getMetadataBy(id: String): PacketMetadata
-    fun getFileBy(hash: String): Pair<InputStreamResource, HttpHeaders>
+    fun getMetadataBy(id: String): Metadata
+    fun getFileByHash(hash: String): Pair<InputStreamResource, HttpHeaders>
 }
 
 @Service
@@ -25,7 +26,6 @@ class BasePacketService(
         private val outpackServerClient: OutpackServer
 ) : PacketService
 {
-
     override fun importPackets()
     {
         val mostRecent = packetRepository.findTopByOrderByTimeDesc()?.time
@@ -66,13 +66,13 @@ class BasePacketService(
         return this.joinToString("") { "%02x".format(it) }
     }
 
-    override fun getMetadataBy(id: String): PacketMetadata
+    override fun getMetadataBy(id: String): Metadata
     {
         return outpackServerClient.getMetadataById(id)
             ?: throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
     }
 
-    override fun getFileBy(hash: String): Pair<InputStreamResource, HttpHeaders>
+    override fun getFileByHash(hash: String): Pair<InputStreamResource, HttpHeaders>
     {
         val response = outpackServerClient.getFileByHash(hash)
 

@@ -7,6 +7,7 @@ import {Provider} from "react-redux";
 import {MemoryRouter} from "react-router-dom";
 import React from "react";
 import {PacketFile} from "../../../../app/components/contents/packets/PacketFile";
+import appConfig from "../../../../config/appConfig";
 
 describe("Packet file component", () => {
     const getStore = (props: Partial<PacketsState> = {}) => {
@@ -20,24 +21,33 @@ describe("Packet file component", () => {
     };
 
     it("renders iframe with the correct src", () => {
-        const hash = "example-hash";
-        const fileUrl = "example-url";
+        const fileMetadata = {hash: "example-hash", path: "", size: 1};
 
-        const store = getStore({packet: {files: [{hash} as any]} as any, fileUrl});
-
-        const mockDispatch = jest.spyOn(store, "dispatch");
+        const store = getStore({packet: {files: [fileMetadata]} as any});
 
         const {container} = render(
             <Provider store={store}>
                 <MemoryRouter>
-                    <PacketFile hash={hash}/>
+                    <PacketFile fileMetadata={fileMetadata}/>
                 </MemoryRouter>
             </Provider>
         );
 
         const iframe = container.querySelector("iframe");
-        expect(iframe).toHaveAttribute("src", fileUrl);
-        expect(mockDispatch).toHaveBeenCalledTimes(1);
+        expect(iframe).toHaveAttribute("src", `${appConfig.apiUrl()}/packets/file/${fileMetadata.hash}`);
+    });
+
+    it("does not render iframe when file is empty", () => {
+        const store = getStore();
+        const {container} = render(
+            <Provider store={store}>
+                <MemoryRouter>
+                    <PacketFile fileMetadata={undefined}/>
+                </MemoryRouter>
+            </Provider>
+        );
+
+        expect(container.querySelector("iframe")).not.toBeInTheDocument();
     });
 
 });
