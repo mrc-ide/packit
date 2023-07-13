@@ -37,7 +37,7 @@ describe("Packet file component", () => {
         expect(iframe).toHaveAttribute("src", `${appConfig.apiUrl()}/packets/file/${fileMetadata.hash}`);
     });
 
-    it("renders iframe with the correct text when file is unsupported", () => {
+    it("does not render iframe when file is empty", () => {
         const store = getStore();
         const {container} = render(
             <Provider store={store}>
