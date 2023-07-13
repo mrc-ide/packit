@@ -1,3 +1,3 @@
 import Download from "./Download";
 
-export {Download}
+export {Download};
