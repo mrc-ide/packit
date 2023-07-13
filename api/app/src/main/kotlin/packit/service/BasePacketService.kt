@@ -5,7 +5,7 @@ import org.springframework.http.*
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
 import packit.model.Packet
-import packit.model.PacketMetadata
+import packit.model.Metadata
 import packit.repository.PacketRepository
 import java.security.MessageDigest
 import java.time.Instant
@@ -15,7 +15,7 @@ interface PacketService
     fun getPackets(): List<Packet>
     fun getChecksum(): String
     fun importPackets()
-    fun getMetadataBy(id: String): PacketMetadata
+    fun getMetadataBy(id: String): Metadata
     fun getFileBy(hash: String): Pair<InputStreamResource, HttpHeaders>
 }
 
@@ -66,7 +66,7 @@ class BasePacketService(
         return this.joinToString("") { "%02x".format(it) }
     }
 
-    override fun getMetadataBy(id: String): PacketMetadata
+    override fun getMetadataBy(id: String): Metadata
     {
         return outpackServerClient.getMetadataById(id)
             ?: throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)

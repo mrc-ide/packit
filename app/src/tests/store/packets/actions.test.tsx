@@ -66,27 +66,4 @@ describe("packet actions", () => {
             PacketsMutationType.GetPacket,
             "/packets/metadata/123");
     });
-
-    it("should fetch fileById as expected", async () => {
-        const dispatch = jest.fn();
-        const mockBlobResponse = new Blob(["Mock data"], { type: "text/html" });
-        await expectThunkActionWith<Blob | string, string>(
-            dispatch,
-            mockBlobResponse,
-            200,
-            actions.fetchFileByHash("123"),
-            PacketsMutationType.GetFile,
-            "/packets/file/123");
-    });
-
-    it("should handle fetch fileById when errored", async () => {
-        const dispatch = jest.fn();
-        await expectThunkActionWith<string , string>(
-            dispatch,
-            "Error",
-            500,
-            actions.fetchFileByHash("123"),
-            PacketsMutationType.GetFile,
-            "/packets/file/123");
-    });
 });

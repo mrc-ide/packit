@@ -9,12 +9,12 @@ import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.model.OutpackMetadata
 import packit.model.OutpackResponse
-import packit.model.PacketMetadata
+import packit.model.Metadata
 
 interface OutpackServer {
     fun getMetadata(from: Long? = null): List<OutpackMetadata>
     fun <T> get(urlFragment: String): T
-    fun getMetadataById(id: String): PacketMetadata?
+    fun getMetadataById(id: String): Metadata?
     fun getFileByHash(hash: String): Pair<ByteArray, HttpHeaders>?
 }
 
@@ -25,7 +25,7 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
 
     private val restTemplate = RestTemplate()
 
-    override fun getMetadataById(id: String): PacketMetadata
+    override fun getMetadataById(id: String): Metadata
     {
         return getEndpoint("metadata/$id/json")
     }

@@ -50,13 +50,13 @@ class PacketServiceTest
             )
     )
 
-    private val packetMetadata = PacketMetadata(
+    private val packetMetadata = Metadata(
         "3",
         "test",
         mapOf("name" to "value"),
         emptyList(),
-        Git("git", "sha", emptyList()),
-        Time(Instant.now().epochSecond.toDouble(), Instant.now().epochSecond.toDouble()),
+        GitMetadata("git", "sha", emptyList()),
+        TimeMetadata(Instant.now().epochSecond.toDouble(), Instant.now().epochSecond.toDouble()),
         emptyMap(),
     )
 

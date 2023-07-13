@@ -24,8 +24,14 @@ export default function PacketDetails() {
         return Boolean(packet.parameters && Object.keys(packet.parameters).length > 0);
     };
 
-    const hasHash = (): boolean => {
+    const hasFiles = (): boolean => {
         return packet.files.length > 0;
+    };
+
+    const getHashOfHtmlFile = () => {
+        return hasFiles()
+            ? packet.files.find(file => file.path.split(".").pop() === "html")
+            : undefined;
     };
 
     if (packetError) {
@@ -48,7 +54,7 @@ export default function PacketDetails() {
                 {hasParameters() && <ParameterList parameters={packet.parameters}/>}
             </div>
             <div data-testid="runner-content" className="content-box">
-                {hasHash() && <PacketFile hash={packet.files[0].hash}/>}
+                {hasFiles() && <PacketFile fileMetadata={getHashOfHtmlFile()}/>}
             </div>
         </div>
     );

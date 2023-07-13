@@ -34,9 +34,7 @@ export interface PacketsState {
     packets: Packet[]
     fetchPacketsError:  null | Error
     packet: PacketMetadata,
-    packetError: null | Error,
-    fileUrl: string,
-    fileUrlError: null | Error
+    packetError: null | Error
 }
 
 export interface PacketMetadata {
@@ -46,7 +44,7 @@ export interface PacketMetadata {
     published?: boolean
     parameters: Record<string, string> | null
     time?: Record<string, string>
-    files: File[]
+    files: FileMetadata[]
     custom?: Custom
 }
 
@@ -67,7 +65,7 @@ interface Artefact {
     paths: string[]
 }
 
-interface File {
+export interface FileMetadata {
     path: string,
     size: number,
     hash: string

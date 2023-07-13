@@ -7,8 +7,6 @@ export const initialPacketsState: PacketsState = {
     fetchPacketsError: null,
     packet: {} as PacketMetadata,
     packetError: null,
-    fileUrl: "",
-    fileUrlError: null
 };
 
 export const packetsSlice = createSlice({
@@ -30,13 +28,6 @@ export const packetsSlice = createSlice({
             })
             .addCase(actions.fetchPacketMetadataById.rejected, (state, action) => {
                 state.packetError = action.payload ?? null;
-            })
-            .addCase(actions.fetchFileByHash.fulfilled, (state, action) => {
-                state.fileUrl = action.payload;
-                state.fileUrlError = null;
-            })
-            .addCase(actions.fetchFileByHash.rejected, (state, action) => {
-                state.fileUrlError = action.payload ?? null;
             });
     }
 });
