@@ -9,8 +9,8 @@ export default function PacketMenu() {
         <div className="sidebar-packet-list">
             <ul className="list-unstyled">
                 <li>
-                    <NavLink to={`/packets/${packetId}`}>
-                        <span>Packet detail</span>
+                    <NavLink to={`/packets/${packetId}/`}>
+                        <span>Packet</span>
                     </NavLink>
                 </li>
                 <li>

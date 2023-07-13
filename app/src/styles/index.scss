@@ -79,6 +79,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.card-width {
+  max-width: 100%;
+}
+
 a {
   color: themed('primaryColor');
   text-decoration: none;
@@ -100,7 +104,7 @@ a {
 }
 
 .sidebar-right {
-  background: #FFFFFF;
+  background: themed("buttonTextColor");
   position: absolute;
   top: 64px;
   left: 0;
@@ -116,12 +120,12 @@ a {
 
   .badge-published {
     background-color: themed("badge-published");
-    color: white;
+    color: themed("buttonTextColor");
   }
 
   .badge-internal {
     background-color: themed("secondaryColor");
-    color: white;
+    color: themed("buttonTextColor");
   }
 }
 
@@ -140,7 +144,7 @@ a {
   padding: 10px 10px 10px 10px;
   max-height: calc(100vh - 150px);
   border-radius: 10px;
-  background-color: #FFFFFF;
+  background-color: themed("buttonTextColor");
 }
 
 .packit-iframe {
@@ -148,12 +152,9 @@ a {
   width: 100%;
 }
 
-.sidebar-packet-list {
-  background: #FFFFFF;
-  position: absolute;
-  left: 55px;
-  width: 195px;
-  height: 100vh;
+.sidebar-packet-list,
+.sidebar-short,
+.sidebar {
   top: 64px;
   padding: 20px 0;
   transition: color 0.1s, border-color 0.1s, background-color 0.1s;
@@ -174,14 +175,13 @@ a {
       text-decoration: none;
 
       &.active {
-        color: #FFFFFF;
+        color: themed("buttonTextColor");
         background: themed("buttonColor");
         border-radius: 10px;
       }
 
       &:hover {
-        color: #FFFFFF;
-        background: themed("buttonColor");
+        color: themed("buttonTextColor");
         border-radius: 10px;
 
         &:before {
@@ -199,148 +199,75 @@ a {
         }
       }
 
-      &:hover .sidebar-icon, &.active .sidebar-icon {
-        color: #FFFFFF;
-      }
-
       .sidebar-icon {
         color: #484646;
         width: 35px;
         height: 25px;
         display: inline-block;
+      }
+    }
+  }
+}
+
+.sidebar-packet-list {
+  background: themed("buttonTextColor");
+  position: absolute;
+  left: 55px;
+  width: 195px;
+  height: 100vh;
+
+  ul li {
+    a {
+      &:hover {
+        background: themed("buttonColor");
+      }
+      &:hover .sidebar-icon,
+      &.active .sidebar-icon {
+        color: themed("buttonTextHoverColor");
       }
     }
   }
 }
 
 .sidebar-short {
-  top: 64px;
   background: themed("secondaryColor");
   position: absolute;
   left: 0;
   width: 55px;
   height: 100vh;
-  padding: 20px 0;
-  transition: color 0.1s, border-color 0.1s, background-color 0.1s;
+
+  .text {
+    display: none;
+  }
 
   ul li {
-    alignment: center;
-    padding: 10px 10px 0 10px;
-
     a {
-      top: 20px;
-      height: 36px;
-      display: block;
-      padding: 8px 30px 10px 10px;
-      color: themed("textColor");
-      font-size: 12px;
-      position: relative;
-      text-decoration: none;
-      text-align: left;
-      .text {
-        display: none;
-      }
-
-      &.active {
-        color: #FFFFFF;
-        background: themed("buttonColor");
-        border-radius: 10px;
-      }
-
-      &:hover {
-        color: themed("buttonColor");
-        background: themed("buttonTextHoverColor");
-        border-radius: 10px;
-
-        &:before {
-          display: block;
-        }
-      }
-
-      &.active {
-        &:before {
-          display: block;
-        }
-
-        &:hover {
-          background: themed("buttonColorHover");
-        }
-      }
-
-      &:hover .sidebar-icon, &.active .sidebar-icon {
-        color: themed("buttonColorHover");
-      }
-
-      .sidebar-icon {
-        color: #484646;
-        width: 35px;
-        height: 25px;
-        display: inline-block;
+      &:hover .sidebar-icon {
+        color: themed("textColor");
+        background: themed("buttonTextColor");
+        transition: transform .2s;
+        box-shadow: 1px 1px 1px 8px themed("buttonTextHoverColor");
       }
     }
   }
 }
 
 .sidebar {
-  top: 64px;
   background: #FFFFFF;
   position: absolute;
   left: 0;
   width: 245px;
   height: 100vh;
-  padding: 20px 0;
-  transition: color 0.1s, border-color 0.1s, background-color 0.1s;
 
   ul li {
-    alignment: center;
-    padding: 10px 10px 0 10px;
-
     a {
-      top: 20px;
-      height: 36px;
-      display: block;
-      padding: 8px 30px 10px 10px;
-      color: themed("textColor");
-      font-size: 12px;
-      position: relative;
-      text-align: left;
-      text-decoration: none;
-
-      &.active {
-        color: #FFFFFF;
-        background: themed("buttonColor");
-        border-radius: 10px;
-      }
-
       &:hover {
-        color: #FFFFFF;
         background: themed("buttonColor");
-        border-radius: 10px;
-
-        &:before {
-          display: block;
-        }
       }
 
-      &.active {
-        &:before {
-          display: block;
-        }
-
-        &:hover {
-          background: themed("buttonColorHover");
-        }
-      }
-
-      &:hover .sidebar-icon, &.active .sidebar-icon {
+      &:hover .sidebar-icon,
+      &.active .sidebar-icon {
         color: #FFFFFF;
-      }
-
-      .sidebar-icon {
-        color: #484646;
-        width: 35px;
-        height: 25px;
-        display: inline-block;
       }
     }
   }
