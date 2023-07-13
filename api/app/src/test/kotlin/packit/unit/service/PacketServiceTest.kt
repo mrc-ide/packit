@@ -130,7 +130,7 @@ class PacketServiceTest
     fun `can get packet file`()
     {
         val sut = BasePacketService(packetRepository, outpackServerClient)
-        val result = sut.getFileBy("sha123")
+        val result = sut.getFileByHash("sha123")
 
         assertEquals(result.first.isReadable, true)
     }
@@ -140,7 +140,7 @@ class PacketServiceTest
     {
         val sut = BasePacketService(packetRepository, mock())
 
-        assertThatThrownBy { sut.getFileBy("123") }
+        assertThatThrownBy { sut.getFileByHash("123") }
             .isInstanceOf(PackitException::class.java)
             .hasMessageContaining("PackitException with key doesNotExist")
     }

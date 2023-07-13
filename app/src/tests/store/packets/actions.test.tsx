@@ -51,7 +51,7 @@ describe("packet actions", () => {
             dispatch,
             "PACKET",
             200,
-            actions.fetchPacketMetadataById("123"),
+            actions.fetchPacketById("123"),
             PacketsMutationType.GetPacket,
             "/packets/metadata/123");
     });
@@ -62,7 +62,7 @@ describe("packet actions", () => {
             dispatch,
             "Error",
             500,
-            actions.fetchPacketMetadataById("123"),
+            actions.fetchPacketById("123"),
             PacketsMutationType.GetPacket,
             "/packets/metadata/123");
     });

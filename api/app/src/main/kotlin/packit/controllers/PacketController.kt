@@ -3,8 +3,8 @@ package packit.controllers
 import org.springframework.core.io.InputStreamResource
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import packit.model.Packet
 import packit.model.Metadata
+import packit.model.Packet
 import packit.service.PacketService
 
 @RestController
@@ -27,7 +27,7 @@ class PacketController(private val packetService: PacketService)
     @ResponseBody
     fun findFile(@PathVariable hash: String): ResponseEntity<InputStreamResource>
     {
-        val response = packetService.getFileBy(hash)
+        val response = packetService.getFileByHash(hash)
         return ResponseEntity
             .ok()
             .headers(response.second)

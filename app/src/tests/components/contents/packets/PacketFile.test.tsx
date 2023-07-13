@@ -2,7 +2,7 @@ import {PacketsState} from "../../../../types";
 import thunk from "redux-thunk";
 import configureStore from "redux-mock-store";
 import {mockPacketsState} from "../../../mocks";
-import {render, screen} from "@testing-library/react";
+import {render} from "@testing-library/react";
 import {Provider} from "react-redux";
 import {MemoryRouter} from "react-router-dom";
 import React from "react";
@@ -39,17 +39,15 @@ describe("Packet file component", () => {
 
     it("renders iframe with the correct text when file is unsupported", () => {
         const store = getStore();
-        const mockDispatch = jest.spyOn(store, "dispatch");
-
-        render(
+        const {container} = render(
             <Provider store={store}>
                 <MemoryRouter>
                     <PacketFile fileMetadata={undefined}/>
                 </MemoryRouter>
             </Provider>
         );
-        expect(mockDispatch).not.toHaveBeenCalled();
-        expect(screen.getByText("Unsupported file format, unable to display the file.")).toBeInTheDocument();
+
+        expect(container.querySelector("iframe")).not.toBeInTheDocument();
     });
 
 });

@@ -14,7 +14,7 @@ export default function PacketDetails() {
 
     useEffect(() => {
         if (packetId) {
-            dispatch(actions.fetchPacketMetadataById(packetId));
+            dispatch(actions.fetchPacketById(packetId));
         }
     }, [packetId]);
 
@@ -53,9 +53,9 @@ export default function PacketDetails() {
                 </span>
                 {hasParameters() && <ParameterList parameters={packet.parameters}/>}
             </div>
-            <div data-testid="runner-content" className="content-box">
+            {<div data-testid="runner-content" className="content-box">
                 {hasFiles() && <PacketFile fileMetadata={getHashOfHtmlFile()}/>}
-            </div>
+            </div>}
         </div>
     );
 }

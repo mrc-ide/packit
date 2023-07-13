@@ -37,7 +37,7 @@ describe("backend integration", () => {
 
     it("can fetch packetById", async () => {
         const dispatch = jest.fn();
-        const asyncThunk = actions.fetchPacketMetadataById("20230427-150755-2dbede93");
+        const asyncThunk = actions.fetchPacketById("20230427-150755-2dbede93");
         await asyncThunk(dispatch, jest.fn(), jest.fn());
 
         expect(dispatch.mock.calls[0][0]).toMatchObject({

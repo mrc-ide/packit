@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import packit.AppConfig
 import packit.exceptions.PackitException
+import packit.model.Metadata
 import packit.model.OutpackMetadata
 import packit.model.OutpackResponse
-import packit.model.Metadata
 
 interface OutpackServer {
     fun getMetadata(from: Long? = null): List<OutpackMetadata>

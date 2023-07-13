@@ -69,7 +69,7 @@ describe("packetsSlice reducer", () => {
             };
         const nextState = packetsReducer(
             initialPacketsState,
-            actions.fetchPacketMetadataById.fulfilled(packet, "", "1")
+            actions.fetchPacketById.fulfilled(packet, "", "1")
         );
 
         expect(nextState.packet).toEqual(packet);
@@ -86,7 +86,7 @@ describe("packetsSlice reducer", () => {
 
         const packetState = packetsReducer(
             initialPacketsState,
-            actions.fetchPacketMetadataById.rejected(null, "", "1", packetError)
+            actions.fetchPacketById.rejected(null, "", "1", packetError)
         );
 
         expect(packetState.packet).toEqual({});

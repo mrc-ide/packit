@@ -4,7 +4,7 @@ import {api} from "../../../apiService";
 
 export interface PacketsActions {
     fetchPackets: AsyncThunk<Packet[], void, RejectedErrorValue>;
-    fetchPacketMetadataById: AsyncThunk<PacketMetadata, string, RejectedErrorValue>;
+    fetchPacketById: AsyncThunk<PacketMetadata, string, RejectedErrorValue>;
 }
 
 export enum PacketsMutationType {
@@ -14,5 +14,5 @@ export enum PacketsMutationType {
 
 export const actions: PacketsActions = {
     fetchPackets: api.get<Packet[], void>(PacketsMutationType.GetPackets, "/packets"),
-    fetchPacketMetadataById: api.get<PacketMetadata, string>(PacketsMutationType.GetPacket, "/packets/metadata")
+    fetchPacketById: api.get<PacketMetadata, string>(PacketsMutationType.GetPacket, "/packets/metadata")
 };

@@ -42,7 +42,7 @@ class PacketControllerTest
     private val indexService = mock<PacketService> {
         on { getPackets() } doReturn packets
         on { getMetadataBy(anyString()) } doReturn packetMetadata
-        on { getFileBy(anyString()) } doReturn inputStream
+        on { getFileByHash(anyString()) } doReturn inputStream
     }
 
     @Test
