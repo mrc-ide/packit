@@ -79,8 +79,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.card-width {
-  max-width: 100%;
+.custom-card {
+  max-width: 75%;
+  text-align: left;
 }
 
 a {

@@ -38,8 +38,8 @@ export default function Download()
             <ul className="list-unstyled">
                 {packet.files.map((data, key) =>
                     (
-                        <li key={key}>
-                            <div className="card card-width">
+                        <li key={key} className="pb-2">
+                            <div className="card custom-card">
                                 <div className="card-header">
                                     Outputs for {data.path} model
                                 </div>
