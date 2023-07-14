@@ -1,3 +1,5 @@
+import {TimeMetadata} from "./types";
+
 export function bytesToSize(bytes: number): string {
     const units = ["byte", "kilobyte", "megabyte", "gigabyte", "terabyte"];
 
@@ -9,3 +11,24 @@ export function bytesToSize(bytes: number): string {
         unit: units[unitIndex]
     }).format(bytes / (1024 ** unitIndex));
 }
+
+export const getDateUTCString = (time: TimeMetadata) => {
+    return new Date(time.start).toUTCString();
+};
+
+export const getElapsedTime = (time: TimeMetadata) => {
+    const timeDiffInMillis = Math.floor(new Date(time.end).getTime() - new Date(time.start).getTime());
+    const minutes = Math.floor(timeDiffInMillis / 60000); // Convert milliseconds to minutes
+    const seconds = Math.floor((timeDiffInMillis % 60000) / 1000); // Convert the remaining milliseconds to seconds
+
+    let formattedTime = "";
+    if (minutes > 0) {
+        formattedTime += `${minutes} minute${minutes > 1 ? "s" : ""}`;
+    }
+    if (seconds > 0) {
+        formattedTime += ` ${seconds} second${seconds > 1 ? "s" : ""}`;
+    }
+
+    return formattedTime;
+};
+

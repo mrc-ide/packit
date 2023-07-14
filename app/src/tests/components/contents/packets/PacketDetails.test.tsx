@@ -1,6 +1,6 @@
 import React from "react";
 import {render, screen} from "@testing-library/react";
-import {PacketMetadata, PacketsState} from "../../../../types";
+import {PacketMetadata, PacketsState, TimeMetadata} from "../../../../types";
 import {mockPacketsState} from "../../../mocks";
 import thunk from "redux-thunk";
 import configureStore from "redux-mock-store";
@@ -70,8 +70,8 @@ describe("packet details component", () => {
                         custom: {}
                     }
                 },
-
-            }
+            },
+            time: {} as TimeMetadata
         };
         const store = getStore({packet});
 
@@ -102,6 +102,7 @@ describe("packet details component", () => {
             },
             published: false,
             files: [fileMetadata],
+            time: {} as TimeMetadata,
             custom: {
                 orderly: {
                     artefacts: [],

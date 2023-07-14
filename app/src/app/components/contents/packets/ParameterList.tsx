@@ -1,10 +1,10 @@
 import React from "react";
 
-interface ParameterProp {
+interface ParameterProps {
     parameters: Record<string, string> | null
 }
 
-export default function ParameterList({parameters}: ParameterProp) {
+export default function ParameterList({parameters}: ParameterProps) {
     return (
         <>
             <span className="p-2 fw-semibold">Parameters </span>
