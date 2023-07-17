@@ -50,7 +50,7 @@ class PacketServiceTest
             )
     )
 
-    private val packetMetadata = Metadata(
+    private val packetMetadata = PacketMetadata(
         "3",
         "test",
         mapOf("name" to "value"),

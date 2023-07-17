@@ -3,8 +3,8 @@ package packit.controllers
 import org.springframework.core.io.InputStreamResource
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import packit.model.Metadata
 import packit.model.Packet
+import packit.model.PacketMetadata
 import packit.service.PacketService
 
 @RestController
@@ -18,7 +18,7 @@ class PacketController(private val packetService: PacketService)
     }
 
     @GetMapping("/metadata/{id}")
-    fun findPacketMetadata(@PathVariable id: String): ResponseEntity<Metadata>
+    fun findPacketMetadata(@PathVariable id: String): ResponseEntity<PacketMetadata>
     {
         return ResponseEntity.ok(packetService.getMetadataBy(id))
     }

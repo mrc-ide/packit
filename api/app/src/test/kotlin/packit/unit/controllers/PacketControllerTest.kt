@@ -9,8 +9,8 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import packit.controllers.PacketController
 import packit.model.GitMetadata
-import packit.model.Metadata
 import packit.model.Packet
+import packit.model.PacketMetadata
 import packit.model.TimeMetadata
 import packit.service.PacketService
 import java.time.Instant
@@ -25,7 +25,7 @@ class PacketControllerTest
             )
     )
 
-    private val packetMetadata = Metadata(
+    private val packetMetadata = PacketMetadata(
         "3",
         "test",
         mapOf("name" to "value"),

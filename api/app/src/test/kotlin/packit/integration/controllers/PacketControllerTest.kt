@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import packit.integration.IntegrationTest
 import packit.model.GitMetadata
-import packit.model.Metadata
 import packit.model.Packet
+import packit.model.PacketMetadata
 import packit.model.TimeMetadata
 import packit.repository.PacketRepository
 import java.time.Instant
@@ -22,7 +22,7 @@ class PacketControllerTest : IntegrationTest()
         mapOf("name" to "value"), false, Instant.now().epochSecond
     )
 
-    val packetMetadata = Metadata(
+    val packetMetadata = PacketMetadata(
         "3",
         "test",
         mapOf("name" to "value"),
