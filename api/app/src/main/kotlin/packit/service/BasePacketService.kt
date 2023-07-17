@@ -1,7 +1,5 @@
 package packit.service
 
-import java.security.MessageDigest
-import java.time.Instant
 import org.springframework.core.io.InputStreamResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -10,6 +8,8 @@ import packit.exceptions.PackitException
 import packit.model.Metadata
 import packit.model.Packet
 import packit.repository.PacketRepository
+import java.security.MessageDigest
+import java.time.Instant
 
 interface PacketService
 {

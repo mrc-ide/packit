@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import packit.integration.IntegrationTest
 import packit.model.GitMetadata
-import packit.model.Packet
 import packit.model.Metadata
+import packit.model.Packet
 import packit.model.TimeMetadata
 import packit.repository.PacketRepository
 import java.time.Instant

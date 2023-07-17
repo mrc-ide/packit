@@ -9,8 +9,8 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import packit.controllers.PacketController
 import packit.model.GitMetadata
-import packit.model.Packet
 import packit.model.Metadata
+import packit.model.Packet
 import packit.model.TimeMetadata
 import packit.service.PacketService
 import java.time.Instant
