@@ -14,5 +14,9 @@
       "type": "local",
       "args": []
     }
-  ]
+  ],
+  "logging": {
+    "threshold": "debug",
+    "console": true
+  }
 }
