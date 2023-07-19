@@ -1,23 +1,26 @@
 package packit.service
 
-import java.security.MessageDigest
-import java.time.Instant
-import org.springframework.core.io.InputStreamResource
+import org.springframework.core.io.ByteArrayResource
+import org.springframework.http.ContentDisposition
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
+import packit.contentTypes
 import packit.exceptions.PackitException
-import packit.model.Metadata
 import packit.model.Packet
+import packit.model.PacketMetadata
 import packit.repository.PacketRepository
+import java.security.MessageDigest
+import java.time.Instant
 
 interface PacketService
 {
     fun getPackets(): List<Packet>
     fun getChecksum(): String
     fun importPackets()
-    fun getMetadataBy(id: String): Metadata
-    fun getFileByHash(hash: String): Pair<InputStreamResource, HttpHeaders>
+    fun getMetadataBy(id: String): PacketMetadata
+    fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<ByteArrayResource, HttpHeaders>
 }
 
 @Service
@@ -66,13 +69,13 @@ class BasePacketService(
         return this.joinToString("") { "%02x".format(it) }
     }
 
-    override fun getMetadataBy(id: String): Metadata
+    override fun getMetadataBy(id: String): PacketMetadata
     {
         return outpackServerClient.getMetadataById(id)
             ?: throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
     }
 
-    override fun getFileByHash(hash: String): Pair<InputStreamResource, HttpHeaders>
+    override fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<ByteArrayResource, HttpHeaders>
     {
         val response = outpackServerClient.getFileByHash(hash)
 
@@ -81,15 +84,19 @@ class BasePacketService(
             throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
         }
 
-        val inputStream = response.first.toString().byteInputStream()
+        val byteArrayResource = ByteArrayResource(response.first)
 
-        val inputStreamResource = InputStreamResource(inputStream)
+        val disposition = if (inline) "inline" else "attachment"
+
+        val extension = filename.substringAfterLast(".")
+
+        val contentMediaType = contentTypes[extension] ?: MediaType.APPLICATION_OCTET_STREAM_VALUE
 
         val headers = HttpHeaders().apply {
-            contentType = response.second.contentType
-            contentDisposition = response.second.contentDisposition
+            contentType = MediaType.valueOf(contentMediaType)
+            contentDisposition = ContentDisposition.parse("$disposition; filename=$filename")
         }
 
-        return inputStreamResource to headers
+        return byteArrayResource to headers
     }
 }

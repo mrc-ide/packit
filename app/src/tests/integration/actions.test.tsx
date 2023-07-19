@@ -30,9 +30,9 @@ describe("backend integration", () => {
         });
         const result = dispatch.mock.calls[1][0];
         expect(result["type"]).toBe("GetPackets/fulfilled");
-        expect(result["payload"]).toHaveLength(4);
+        expect(result["payload"]).toHaveLength(5);
         expect(result["payload"].map((p: Packet) => p.name).sort())
-            .toEqual(["computed-resource", "depends", "explicit", "parameters"]);
+            .toEqual(["artefact-types", "computed-resource", "depends", "explicit", "parameters"]);
     });
 
     it("can fetch packetById", async () => {

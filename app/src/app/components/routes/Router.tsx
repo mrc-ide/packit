@@ -10,21 +10,19 @@ import {Metadata} from "../contents/metadata";
 
 export function Router() {
     return (
-        <>
-            <Routes>
-                <Route path="*" element={<NotFound/>}/>
-                <Route element={<Sidebar/>}>
-                    <Route index element={<Explorer/>}/>
-                    <Route path="packets" element={<Explorer/>}/>
-                    <Route path="run" element={<PacketRunner/>}/>
-                    <Route path="run-workflow" element={<WorkflowRunner/>}/>
-                    <Route path="documentation" element={<ProjectDocumentation/>}/>
-                    <Route path="packets/:packetId" element={<PacketDetails/>}/>
-                    <Route path="packets/:packetId/metadata" element={<Metadata/>}/>
-                    <Route path="packets/:packetId/downloads" element={<Download/>}/>
-                    <Route path="packets/:packetId/changelogs" element={<ChangeLogs/>}/>
-                </Route>
-            </Routes>
-        </>
+        <Routes>
+            <Route path="*" element={<NotFound/>}/>
+            <Route element={<Sidebar/>}>
+                <Route index element={<Explorer/>}/>
+                <Route path="packets" element={<Explorer/>}/>
+                <Route path="run" element={<PacketRunner/>}/>
+                <Route path="run-workflow" element={<WorkflowRunner/>}/>
+                <Route path="documentation" element={<ProjectDocumentation/>}/>
+                <Route path="packets/:packetId" element={<PacketDetails/>}/>
+                <Route path="packets/:packetId/metadata" element={<Metadata/>}/>
+                <Route path="packets/:packetId/downloads" element={<Download/>}/>
+                <Route path="packets/:packetId/changelogs" element={<ChangeLogs/>}/>
+            </Route>
+        </Routes>
     );
 }

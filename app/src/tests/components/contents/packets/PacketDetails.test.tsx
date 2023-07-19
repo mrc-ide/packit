@@ -119,6 +119,7 @@ describe("packet details component", () => {
 
         const iframe = container.querySelector("iframe");
 
-        expect(iframe).toHaveAttribute("src", `${appConfig.apiUrl()}/packets/file/${fileMetadata.hash}`);
+        expect(iframe).toHaveAttribute("src",
+            `${appConfig.apiUrl()}/packets/file/${fileMetadata.hash}?inline=true&filename=example.html`);
     });
 });

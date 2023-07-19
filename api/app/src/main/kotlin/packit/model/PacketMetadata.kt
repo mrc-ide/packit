@@ -1,6 +1,6 @@
 package packit.model
 
-data class Metadata(
+data class PacketMetadata(
     val id: String,
     val name: String,
     val parameters: Map<String, Any>?,
