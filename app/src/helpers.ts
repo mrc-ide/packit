@@ -13,17 +13,30 @@ export function bytesToSize(bytes: number): string {
 }
 
 export const getDateUTCString = (time: TimeMetadata) => {
-    return new Date(time.start).toUTCString();
+    return new Date(time.start * 1000).toUTCString();
 };
 
 export const getElapsedTime = (time: TimeMetadata) => {
-    const timeDiffInMillis = Math.floor(new Date(time.end).getTime() - new Date(time.start).getTime());
-    const minutes = Math.floor(timeDiffInMillis / 60000); // Convert milliseconds to minutes
-    const seconds = Math.floor((timeDiffInMillis % 60000) / 1000); // Convert the remaining milliseconds to seconds
+    // Multiply by 1000 to convert seconds to milliseconds
+    const startDateInMillis = time.start * 1000;
+    const endDateInMillis = time.end * 1000;
+
+    const timeDiffInMillis = Math.floor(new Date(endDateInMillis).getTime() - new Date(startDateInMillis).getTime());
+    // Convert milliseconds to minutes
+    const minutes = Math.floor(timeDiffInMillis / 60000);
+    // Convert the remaining milliseconds to seconds
+    const seconds = Math.floor((timeDiffInMillis % 60000) / 1000);
+    // Convert minutes to hours
+    const hours = Math.floor(minutes / 60);
+    // Calculate remaining minutes after subtracting hours
+    const remainingMinutes = minutes % 60;
 
     let formattedTime = "";
-    if (minutes > 0) {
-        formattedTime += `${minutes} minute${minutes > 1 ? "s" : ""}`;
+    if (hours > 0) {
+        formattedTime += `${hours} hour${hours > 1 ? "s" : ""}`;
+    }
+    if (remainingMinutes > 0) {
+        formattedTime += ` ${remainingMinutes} minute${remainingMinutes > 1 ? "s" : ""}`;
     }
     if (seconds > 0) {
         formattedTime += ` ${seconds} second${seconds > 1 ? "s" : ""}`;
