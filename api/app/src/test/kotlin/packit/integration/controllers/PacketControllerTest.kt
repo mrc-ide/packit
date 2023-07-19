@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import packit.integration.IntegrationTest
 import packit.model.GitMetadata
 import packit.model.Packet
-import packit.model.Metadata
+import packit.model.PacketMetadata
 import packit.model.TimeMetadata
 import packit.repository.PacketRepository
 import java.time.Instant
@@ -22,7 +22,7 @@ class PacketControllerTest : IntegrationTest()
         mapOf("name" to "value"), false, Instant.now().epochSecond
     )
 
-    val packetMetadata = Metadata(
+    val packetMetadata = PacketMetadata(
         "3",
         "test",
         mapOf("name" to "value"),
@@ -63,10 +63,11 @@ class PacketControllerTest : IntegrationTest()
     {
         val result = restTemplate
             .getForEntity(
-                "/packets/file/sha256:c7b512b2d14a7caae8968830760cb95980a98e18ca2c2991b87c71529e223164",
+                "/packets/file/sha256:715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1" +
+                        "?filename=report.html",
                 String::class.java
             )
 
-        assertFileSuccess(result)
+        assertHtmlFileSuccess(result)
     }
 }

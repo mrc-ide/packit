@@ -22,10 +22,10 @@ abstract class IntegrationTest
         assertThat(responseEntity.body).isNotEmpty
     }
 
-    protected fun assertFileSuccess(responseEntity: ResponseEntity<String>)
+    protected fun assertHtmlFileSuccess(responseEntity: ResponseEntity<String>)
     {
         assertEquals(responseEntity.statusCode, HttpStatus.OK)
-        assertEquals(responseEntity.headers.contentType, MediaType.APPLICATION_OCTET_STREAM)
-        assertThat(responseEntity.body).isNotEmpty
+        assertEquals(responseEntity.headers.contentType, MediaType.TEXT_HTML)
+        assertThat(responseEntity.body).isEqualToIgnoringNewLines("<html><body><h1>TEST</h1></body></html>")
     }
 }

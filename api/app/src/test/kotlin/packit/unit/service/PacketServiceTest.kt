@@ -50,7 +50,7 @@ class PacketServiceTest
             )
     )
 
-    private val packetMetadata = Metadata(
+    private val packetMetadata = PacketMetadata(
         "3",
         "test",
         mapOf("name" to "value"),
@@ -130,7 +130,7 @@ class PacketServiceTest
     fun `can get packet file`()
     {
         val sut = BasePacketService(packetRepository, outpackServerClient)
-        val result = sut.getFileByHash("sha123")
+        val result = sut.getFileByHash("sha123", true, "test.html")
 
         assertEquals(result.first.isReadable, true)
     }
@@ -140,7 +140,7 @@ class PacketServiceTest
     {
         val sut = BasePacketService(packetRepository, mock())
 
-        assertThatThrownBy { sut.getFileByHash("123") }
+        assertThatThrownBy { sut.getFileByHash("123", true, "test.html") }
             .isInstanceOf(PackitException::class.java)
             .hasMessageContaining("PackitException with key doesNotExist")
     }

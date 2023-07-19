@@ -1,16 +1,17 @@
 package packit.unit.controllers
 
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentMatchers.anyBoolean
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import org.springframework.core.io.InputStreamResource
+import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import packit.controllers.PacketController
 import packit.model.GitMetadata
 import packit.model.Packet
-import packit.model.Metadata
+import packit.model.PacketMetadata
 import packit.model.TimeMetadata
 import packit.service.PacketService
 import java.time.Instant
@@ -25,7 +26,7 @@ class PacketControllerTest
             )
     )
 
-    private val packetMetadata = Metadata(
+    private val packetMetadata = PacketMetadata(
         "3",
         "test",
         mapOf("name" to "value"),
@@ -35,14 +36,14 @@ class PacketControllerTest
         emptyMap(),
     )
 
-    private val htmlContent = "<html><body><h1>Test html file</h1></body></html>"
+    private val htmlContentByteArray = "<html><body><h1>Test html file</h1></body></html>".toByteArray()
 
-    private val inputStream = InputStreamResource(htmlContent.byteInputStream()) to HttpHeaders.EMPTY
+    private val inputStream = ByteArrayResource(htmlContentByteArray) to HttpHeaders.EMPTY
 
     private val indexService = mock<PacketService> {
         on { getPackets() } doReturn packets
         on { getMetadataBy(anyString()) } doReturn packetMetadata
-        on { getFileByHash(anyString()) } doReturn inputStream
+        on { getFileByHash(anyString(), anyBoolean(), anyString()) } doReturn inputStream
     }
 
     @Test
@@ -68,13 +69,13 @@ class PacketControllerTest
     fun `get packet file by id`()
     {
         val sut = PacketController(indexService)
-        val result = sut.findFile("sha123")
+        val result = sut.findFile("sha123", false, "test.html")
         val responseBody = result.body
 
         val actualText = responseBody?.inputStream?.use { it.readBytes().toString(Charsets.UTF_8) }
 
         assertEquals(result.statusCode, HttpStatus.OK)
-        assertEquals(htmlContent, actualText)
+        assertEquals("<html><body><h1>Test html file</h1></body></html>", actualText)
         assertEquals(result.headers, inputStream.second)
     }
 }
