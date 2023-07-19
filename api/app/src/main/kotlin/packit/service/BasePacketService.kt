@@ -94,7 +94,7 @@ class BasePacketService(
 
         val headers = HttpHeaders().apply {
             contentType = MediaType.valueOf(contentMediaType)
-            contentDisposition = ContentDisposition.parse("$disposition; filename='$filename'")
+            contentDisposition = ContentDisposition.parse("$disposition; filename=$filename")
         }
 
         return byteArrayResource to headers

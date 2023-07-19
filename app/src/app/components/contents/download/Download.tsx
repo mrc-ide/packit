@@ -1,5 +1,5 @@
 import {useSelector} from "react-redux";
-import {RootState, useAppDispatch} from "../../../../types";
+import {FileMetadata, RootState, useAppDispatch} from "../../../../types";
 import React, {useEffect} from "react";
 import {actions} from "../../../store/packets/thunks";
 import {NavLink, useParams} from "react-router-dom";
@@ -21,8 +21,8 @@ export default function Download()
         }
     }, [packetId]);
 
-    const download = (hash: string) => {
-        return `${appConfig.apiUrl()}/packets/file/${hash}`;
+    const download = (file: FileMetadata) => {
+        return `${appConfig.apiUrl()}/packets/file/${file.hash}?filename=${file.path}`;
     };
 
     if (Object.keys(packet).length === 0) {
@@ -44,7 +44,7 @@ export default function Download()
                                     Outputs for {data.path} model
                                 </div>
                                 <div className="card-body">
-                                    <NavLink className="card-text" to={download(data.hash)}>
+                                    <NavLink className="card-text" to={download(data)}>
                                         <span className="p-2">{data.path}</span>
                                         <span className="sidebar-icon"><CloudDownload/></span>
                                     </NavLink>
