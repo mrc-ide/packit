@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.http.ContentDisposition
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -26,6 +27,10 @@ abstract class IntegrationTest
     {
         assertEquals(responseEntity.statusCode, HttpStatus.OK)
         assertEquals(responseEntity.headers.contentType, MediaType.TEXT_HTML)
+        assertEquals(
+            responseEntity.headers.contentDisposition,
+            ContentDisposition.parse("attachment; filename=report.html")
+        )
         assertThat(responseEntity.body).isEqualToIgnoringNewLines("<html><body><h1>TEST</h1></body></html>")
     }
 }
