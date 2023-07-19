@@ -1,6 +1,6 @@
 import React from "react";
 import {render, screen} from "@testing-library/react";
-import {Packet, PacketsState} from "../../../../types";
+import {PacketMetadata, PacketsState} from "../../../../types";
 import {mockPacketsState} from "../../../mocks";
 import thunk from "redux-thunk";
 import configureStore from "redux-mock-store";
@@ -8,6 +8,7 @@ import {Provider} from "react-redux";
 import {Store} from "@reduxjs/toolkit";
 import {MemoryRouter} from "react-router-dom";
 import PacketDetails from "../../../../app/components/contents/packets/PacketDetails";
+import appConfig from "../../../../config/appConfig";
 
 describe("packet details component", () => {
 
@@ -31,7 +32,7 @@ describe("packet details component", () => {
     };
 
     it("renders loading state when packet is empty", () => {
-        const store = getStore({packet: {} as Packet});
+        const store = getStore({packet: {} as PacketMetadata});
 
         renderElement(store);
 
@@ -43,7 +44,7 @@ describe("packet details component", () => {
     it("can render error message", () => {
         const packetError = {error: {detail: "Packet does not exist", error: "Error"}};
 
-        const store = getStore({packetError, packet: {} as Packet});
+        const store = getStore({packetError, packet: {} as PacketMetadata});
 
         renderElement(store);
 
@@ -53,20 +54,31 @@ describe("packet details component", () => {
     });
 
     it("renders packet details when packet is not empty", () => {
-        const packet = {
+        const packet: PacketMetadata = {
             id: "123",
             name: "Interim update",
-            displayName: "unity",
             parameters: {
                 "subset": "superset"
             },
-            published: false
+            published: false,
+            files: [],
+            custom: {
+                orderly: {
+                    artefacts: [],
+                    description: {
+                        display: "Corn pack",
+                        custom: {}
+                    }
+                },
+
+            }
         };
         const store = getStore({packet});
 
         renderElement(store);
 
-        expect(screen.getByText(packet.displayName)).toBeInTheDocument();
+        expect(screen.getByText(packet.custom!.orderly.description.display)).toBeInTheDocument();
+
         expect(screen.getByText(packet.id)).toBeInTheDocument();
 
         expect(screen.getByText("Name:")).toBeInTheDocument();
@@ -74,9 +86,39 @@ describe("packet details component", () => {
 
         expect(screen.getByText("Parameters")).toBeInTheDocument();
 
-        Object.entries(packet.parameters).map(([key, value]) => {
+        packet.parameters && Object.entries(packet.parameters).map(([key, value]) => {
             expect(screen.getByText(`${key}:`)).toBeInTheDocument();
             expect(screen.getByText(String(value))).toBeInTheDocument();
         });
+    });
+
+    it("renders packet file when packet is not empty", () => {
+        const fileMetadata = {hash: "example", path: "example.html", size: 1};
+        const packet: PacketMetadata = {
+            id: "123",
+            name: "Interim update",
+            parameters: {
+                "subset": "superset"
+            },
+            published: false,
+            files: [fileMetadata],
+            custom: {
+                orderly: {
+                    artefacts: [],
+                    description: {
+                        display: "Corn pack",
+                        custom: {}
+                    }
+                }
+            }
+        };
+        const store = getStore({packet});
+
+        const {container} = renderElement(store);
+
+        const iframe = container.querySelector("iframe");
+
+        expect(iframe).toHaveAttribute("src",
+            `${appConfig.apiUrl()}/packets/file/${fileMetadata.hash}?inline=true&filename=example.html`);
     });
 });

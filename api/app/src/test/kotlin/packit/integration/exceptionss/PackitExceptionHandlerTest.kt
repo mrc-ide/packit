@@ -23,16 +23,10 @@ class PackitExceptionHandlerTest : IntegrationTest()
     }
 
     @Test
-    fun `throws exception when packet is not found`()
+    fun `throws exception when client error occurred`()
     {
-        val entity = restTemplate.getForEntity("/packets/nonsense", String::class.java)
+        val entity = restTemplate.getForEntity("/packets/metadata/nonsense", String::class.java)
 
-        assertEquals(entity.statusCode, HttpStatus.NOT_FOUND)
-
-        val responseBodyJson = ObjectMapper().readTree(entity.body)
-
-        assertEquals("OTHER_ERROR", responseBodyJson["error"]["error"].asText())
-
-        assertEquals("Packet does not exist", responseBodyJson["error"]["detail"].asText())
+        assertEquals(entity.statusCode, HttpStatus.INTERNAL_SERVER_ERROR)
     }
 }

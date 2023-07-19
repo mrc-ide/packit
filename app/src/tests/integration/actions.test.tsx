@@ -20,7 +20,6 @@ describe("backend integration", () => {
     });
 
     it("can fetch packets", async () => {
-
         const dispatch = jest.fn();
         const asyncThunk = actions.fetchPackets();
         await asyncThunk(dispatch, jest.fn(), jest.fn());
@@ -31,9 +30,9 @@ describe("backend integration", () => {
         });
         const result = dispatch.mock.calls[1][0];
         expect(result["type"]).toBe("GetPackets/fulfilled");
-        expect(result["payload"]).toHaveLength(4);
+        expect(result["payload"]).toHaveLength(5);
         expect(result["payload"].map((p: Packet) => p.name).sort())
-            .toEqual(["computed-resource", "depends", "explicit", "parameters"]);
+            .toEqual(["artefact-types", "computed-resource", "depends", "explicit", "parameters"]);
     });
 
     it("can fetch packetById", async () => {
@@ -48,7 +47,7 @@ describe("backend integration", () => {
         const result = dispatch.mock.calls[1][0];
         expect(result["type"]).toBe("GetPacket/fulfilled");
         expect(result["payload"].id).toBe("20230427-150755-2dbede93");
-        expect(result["payload"].displayName).toBe("explicit");
+        expect(result["payload"].name).toBe("explicit");
     });
 
 });

@@ -1,9 +1,8 @@
 import packetsReducer, {initialPacketsState} from "../../../app/store/packets/packets";
 import {actions} from "../../../app/store/packets/thunks";
-import {Packet} from "../../../types";
+import {Custom, Packet, PacketMetadata} from "../../../types";
 
 describe("packetsSlice reducer", () => {
-
     beforeEach(() => {
         jest.clearAllMocks();
     });
@@ -54,9 +53,8 @@ describe("packetsSlice reducer", () => {
         expect(packetState.fetchPacketsError).toBe(error);
     });
 
-
     it("should handle fetchPackets.fulfilled", () => {
-        const packet: Packet =
+        const packet: PacketMetadata =
             {
                 id: "1",
                 name: "packet-1",
@@ -66,6 +64,8 @@ describe("packetsSlice reducer", () => {
                     param1: "value1",
                     param2: "value2",
                 },
+                custom: {} as Custom,
+                files: []
             };
         const nextState = packetsReducer(
             initialPacketsState,

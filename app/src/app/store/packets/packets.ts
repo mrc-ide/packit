@@ -1,12 +1,12 @@
-import {Packet, PacketsState} from "../../../types";
+import {PacketMetadata, PacketsState} from "../../../types";
 import {createSlice} from "@reduxjs/toolkit";
 import {actions} from "./thunks";
 
 export const initialPacketsState: PacketsState = {
     packets: [],
     fetchPacketsError: null,
-    packet: {} as Packet,
-    packetError: null
+    packet: {} as PacketMetadata,
+    packetError: null,
 };
 
 export const packetsSlice = createSlice({

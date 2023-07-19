@@ -1,9 +1,15 @@
 package packit.service
 
+import org.springframework.core.io.ByteArrayResource
+import org.springframework.http.ContentDisposition
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
+import packit.contentTypes
 import packit.exceptions.PackitException
 import packit.model.Packet
+import packit.model.PacketMetadata
 import packit.repository.PacketRepository
 import java.security.MessageDigest
 import java.time.Instant
@@ -11,18 +17,18 @@ import java.time.Instant
 interface PacketService
 {
     fun getPackets(): List<Packet>
-    fun getPacket(id: String): Packet
     fun getChecksum(): String
     fun importPackets()
+    fun getMetadataBy(id: String): PacketMetadata
+    fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<ByteArrayResource, HttpHeaders>
 }
 
 @Service
 class BasePacketService(
         private val packetRepository: PacketRepository,
-        private val outpackServerClient: OutpackServerClient
+        private val outpackServerClient: OutpackServer
 ) : PacketService
 {
-
     override fun importPackets()
     {
         val mostRecent = packetRepository.findTopByOrderByTimeDesc()?.time
@@ -40,18 +46,6 @@ class BasePacketService(
     override fun getPackets(): List<Packet>
     {
         return packetRepository.findAll()
-    }
-
-    override fun getPacket(id: String): Packet
-    {
-        val packet = packetRepository.findById(id)
-
-        if (packet.isEmpty)
-        {
-            throw PackitException("packetDoesNotExist", HttpStatus.NOT_FOUND)
-        }
-
-        return packet.get()
     }
 
     override fun getChecksum(): String
@@ -73,5 +67,36 @@ class BasePacketService(
     private fun ByteArray.toHex(): String
     {
         return this.joinToString("") { "%02x".format(it) }
+    }
+
+    override fun getMetadataBy(id: String): PacketMetadata
+    {
+        return outpackServerClient.getMetadataById(id)
+            ?: throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
+    }
+
+    override fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<ByteArrayResource, HttpHeaders>
+    {
+        val response = outpackServerClient.getFileByHash(hash)
+
+        if (response?.first == null || response.first.isEmpty())
+        {
+            throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
+        }
+
+        val byteArrayResource = ByteArrayResource(response.first)
+
+        val disposition = if (inline) "inline" else "attachment"
+
+        val extension = filename.substringAfterLast(".")
+
+        val contentMediaType = contentTypes[extension] ?: MediaType.APPLICATION_OCTET_STREAM_VALUE
+
+        val headers = HttpHeaders().apply {
+            contentType = MediaType.valueOf(contentMediaType)
+            contentDisposition = ContentDisposition.parse("$disposition; filename=$filename")
+        }
+
+        return byteArrayResource to headers
     }
 }

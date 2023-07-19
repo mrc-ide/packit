@@ -24,7 +24,13 @@ export class ApiService implements API {
         this.axiosInstance = axiosInstance;
     }
 
-
+    private handleErrorResponse = (error: AxiosError) => {
+        let errorMessage = {error: {detail: "Could not parse API response", error: "error"}};
+        if (error instanceof AxiosError && error.response) {
+            errorMessage = error.response.data as Error;
+        }
+        return errorMessage;
+    };
 
     get<T, V>(mutationType: string, endpoint: string): AsyncThunk<T, V, CustomAsyncThunkOptions> {
         return createAsyncThunk<T, V, CustomAsyncThunkOptions>(
@@ -32,13 +38,9 @@ export class ApiService implements API {
             (args, thunkAPI) =>
                 this.axiosInstance.get<T>(this.getEndpoint<V>(endpoint, args))
                     .then(response => thunkAPI.fulfillWithValue(response.data))
-                    .catch(error => {
-                        let errorMessage = {error: {detail: "Could not parse API response", error: "error"}};
-                        if (error instanceof AxiosError && error.response) {
-                            errorMessage = error.response.data;
-                        }
-
-                        return thunkAPI.rejectWithValue(errorMessage);
+                    .catch((error: AxiosError) => {
+                        const message = this.handleErrorResponse(error);
+                        return thunkAPI.rejectWithValue(message);
                     }));
     }
 
