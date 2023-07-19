@@ -63,7 +63,8 @@ class PacketControllerTest : IntegrationTest()
     {
         val result = restTemplate
             .getForEntity(
-                "/packets/file/sha256:c7b512b2d14a7caae8968830760cb95980a98e18ca2c2991b87c71529e223164",
+                "/packets/file/sha256:c7b512b2d14a7caae8968830760cb95980a98e18ca2c2991b87c71529e223164" +
+                        "?filename='unknown'",
                 String::class.java
             )
 

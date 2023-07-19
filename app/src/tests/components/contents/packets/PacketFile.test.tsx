@@ -21,7 +21,7 @@ describe("Packet file component", () => {
     };
 
     it("renders iframe with the correct src", () => {
-        const fileMetadata = {hash: "example-hash", path: "", size: 1};
+        const fileMetadata = {hash: "example-hash", path: "example.html", size: 1};
 
         const store = getStore({packet: {files: [fileMetadata]} as any});
 
@@ -34,7 +34,8 @@ describe("Packet file component", () => {
         );
 
         const iframe = container.querySelector("iframe");
-        expect(iframe).toHaveAttribute("src", `${appConfig.apiUrl()}/packets/file/${fileMetadata.hash}`);
+        expect(iframe).toHaveAttribute("src",
+            `${appConfig.apiUrl()}/packets/file/${fileMetadata.hash}?inline=true&filename=example.html`);
     });
 
     it("does not render iframe when file is empty", () => {
