@@ -1,6 +1,6 @@
 package packit.controllers
 
-import org.springframework.core.io.InputStreamResource
+import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import packit.model.Packet
@@ -29,7 +29,7 @@ class PacketController(private val packetService: PacketService)
         @PathVariable hash: String,
         @RequestParam inline: Boolean = false,
         @RequestParam filename: String,
-    ): ResponseEntity<InputStreamResource>
+    ): ResponseEntity<ByteArrayResource>
     {
         val response = packetService.getFileByHash(hash, inline, filename)
 

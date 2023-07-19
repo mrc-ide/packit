@@ -5,7 +5,7 @@ import org.mockito.ArgumentMatchers.anyBoolean
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import org.springframework.core.io.InputStreamResource
+import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import packit.controllers.PacketController
@@ -36,9 +36,9 @@ class PacketControllerTest
         emptyMap(),
     )
 
-    private val htmlContent = "<html><body><h1>Test html file</h1></body></html>"
+    private val htmlContentByteArray = "<html><body><h1>Test html file</h1></body></html>".toByteArray()
 
-    private val inputStream = InputStreamResource(htmlContent.byteInputStream()) to HttpHeaders.EMPTY
+    private val inputStream = ByteArrayResource(htmlContentByteArray) to HttpHeaders.EMPTY
 
     private val indexService = mock<PacketService> {
         on { getPackets() } doReturn packets
@@ -75,7 +75,7 @@ class PacketControllerTest
         val actualText = responseBody?.inputStream?.use { it.readBytes().toString(Charsets.UTF_8) }
 
         assertEquals(result.statusCode, HttpStatus.OK)
-        assertEquals(htmlContent, actualText)
+        assertEquals("<html><body><h1>Test html file</h1></body></html>", actualText)
         assertEquals(result.headers, inputStream.second)
     }
 }

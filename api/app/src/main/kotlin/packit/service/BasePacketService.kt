@@ -1,11 +1,12 @@
 package packit.service
 
-import org.springframework.core.io.InputStreamResource
+import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.ContentDisposition
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
+import packit.contentTypes
 import packit.exceptions.PackitException
 import packit.model.Packet
 import packit.model.PacketMetadata
@@ -19,7 +20,7 @@ interface PacketService
     fun getChecksum(): String
     fun importPackets()
     fun getMetadataBy(id: String): PacketMetadata
-    fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<InputStreamResource, HttpHeaders>
+    fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<ByteArrayResource, HttpHeaders>
 }
 
 @Service
@@ -74,7 +75,7 @@ class BasePacketService(
             ?: throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
     }
 
-    override fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<InputStreamResource, HttpHeaders>
+    override fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<ByteArrayResource, HttpHeaders>
     {
         val response = outpackServerClient.getFileByHash(hash)
 
@@ -83,17 +84,19 @@ class BasePacketService(
             throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
         }
 
-        val inputStream = response.first.toString().byteInputStream()
-
-        val inputStreamResource = InputStreamResource(inputStream)
+        val byteArrayResource = ByteArrayResource(response.first)
 
         val disposition = if (inline) "inline" else "attachment"
 
+        val extension = filename.substringAfterLast(".")
+
+        val contentMediaType = contentTypes[extension] ?: MediaType.APPLICATION_OCTET_STREAM_VALUE
+
         val headers = HttpHeaders().apply {
-            contentType = if (inline) MediaType.TEXT_HTML else response.second.contentType
+            contentType = MediaType.valueOf(contentMediaType)
             contentDisposition = ContentDisposition.parse("$disposition; filename='$filename'")
         }
 
-        return inputStreamResource to headers
+        return byteArrayResource to headers
     }
 }
