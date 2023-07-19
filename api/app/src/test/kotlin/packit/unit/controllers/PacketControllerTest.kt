@@ -1,6 +1,7 @@
 package packit.unit.controllers
 
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentMatchers.anyBoolean
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -42,7 +43,7 @@ class PacketControllerTest
     private val indexService = mock<PacketService> {
         on { getPackets() } doReturn packets
         on { getMetadataBy(anyString()) } doReturn packetMetadata
-        on { getFileByHash(anyString()) } doReturn inputStream
+        on { getFileByHash(anyString(), anyBoolean(), anyString()) } doReturn inputStream
     }
 
     @Test
@@ -68,7 +69,7 @@ class PacketControllerTest
     fun `get packet file by id`()
     {
         val sut = PacketController(indexService)
-        val result = sut.findFile("sha123")
+        val result = sut.findFile("sha123", false, "test.html")
         val responseBody = result.body
 
         val actualText = responseBody?.inputStream?.use { it.readBytes().toString(Charsets.UTF_8) }

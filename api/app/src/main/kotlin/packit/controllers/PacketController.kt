@@ -25,9 +25,14 @@ class PacketController(private val packetService: PacketService)
 
     @GetMapping("/file/{hash}")
     @ResponseBody
-    fun findFile(@PathVariable hash: String): ResponseEntity<InputStreamResource>
+    fun findFile(
+        @PathVariable hash: String,
+        @RequestParam inline: Boolean = false,
+        @RequestParam filename: String,
+    ): ResponseEntity<InputStreamResource>
     {
-        val response = packetService.getFileByHash(hash)
+        val response = packetService.getFileByHash(hash, inline, filename)
+
         return ResponseEntity
             .ok()
             .headers(response.second)

@@ -1,8 +1,10 @@
 package packit.service
 
 import org.springframework.core.io.InputStreamResource
+import org.springframework.http.ContentDisposition
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
 import packit.model.Packet
@@ -17,7 +19,7 @@ interface PacketService
     fun getChecksum(): String
     fun importPackets()
     fun getMetadataBy(id: String): PacketMetadata
-    fun getFileByHash(hash: String): Pair<InputStreamResource, HttpHeaders>
+    fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<InputStreamResource, HttpHeaders>
 }
 
 @Service
@@ -72,7 +74,7 @@ class BasePacketService(
             ?: throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
     }
 
-    override fun getFileByHash(hash: String): Pair<InputStreamResource, HttpHeaders>
+    override fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<InputStreamResource, HttpHeaders>
     {
         val response = outpackServerClient.getFileByHash(hash)
 
@@ -85,9 +87,11 @@ class BasePacketService(
 
         val inputStreamResource = InputStreamResource(inputStream)
 
+        val disposition = if (inline) "inline" else "attachment"
+
         val headers = HttpHeaders().apply {
-            contentType = response.second.contentType
-            contentDisposition = response.second.contentDisposition
+            contentType = if (inline) MediaType.TEXT_HTML else response.second.contentType
+            contentDisposition = ContentDisposition.parse("$disposition; filename='$filename'")
         }
 
         return inputStreamResource to headers
