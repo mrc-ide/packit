@@ -45,7 +45,7 @@ export interface PacketMetadata {
     parameters: Record<string, string> | null
     time: TimeMetadata
     files: FileMetadata[]
-    custom?: Custom
+    custom: Custom
     git?: GitMetadata
 }
 

@@ -1,4 +1,4 @@
-import {PacketsState} from "../../../../types";
+import {PacketMetadata, PacketsState} from "../../../../types";
 import thunk from "redux-thunk";
 import configureStore from "redux-mock-store";
 import {mockPacketsState} from "../../../mocks";
@@ -6,7 +6,7 @@ import {render} from "@testing-library/react";
 import {Provider} from "react-redux";
 import {MemoryRouter} from "react-router-dom";
 import React from "react";
-import {PacketFile} from "../../../../app/components/contents/packets/PacketFile";
+import {PacketFile} from "../../../../app/components/contents/packets";
 import appConfig from "../../../../config/appConfig";
 
 describe("Packet file component", () => {
@@ -23,7 +23,7 @@ describe("Packet file component", () => {
     it("renders iframe with the correct src", () => {
         const fileMetadata = {hash: "example-hash", path: "example.html", size: 1};
 
-        const store = getStore({packet: {files: [fileMetadata]} as any});
+        const store = getStore({packet: {files: [fileMetadata]} as PacketMetadata});
 
         const {container} = render(
             <Provider store={store}>

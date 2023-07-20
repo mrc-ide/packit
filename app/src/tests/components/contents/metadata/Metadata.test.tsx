@@ -61,7 +61,7 @@ describe("Metadata component", () => {
 
         renderElement(store);
 
-        expect(screen.getByText('Loading...')).toBeInTheDocument();
+        expect(screen.getByText("Loading...")).toBeInTheDocument();
     });
 
     it("renders metadata correctly when packet is available", async () => {
@@ -69,10 +69,10 @@ describe("Metadata component", () => {
 
         renderElement(store);
 
-        expect(screen.getByText('Started:')).toBeInTheDocument();
-        expect(screen.getByText('Elapsed:')).toBeInTheDocument();
-        expect(screen.getByText('Git Branch:')).toBeInTheDocument();
-        expect(screen.getByText('Git Commit:')).toBeInTheDocument();
+        expect(screen.getByText("Started:")).toBeInTheDocument();
+        expect(screen.getByText("Elapsed:")).toBeInTheDocument();
+        expect(screen.getByText("Git Branch:")).toBeInTheDocument();
+        expect(screen.getByText("Git Commit:")).toBeInTheDocument();
 
         expect(screen.getByText("Fri, 12 Dec 55513 06:13:20 GMT")).toBeInTheDocument();
         expect(screen.getByText("16 hours 40 minutes")).toBeInTheDocument();
@@ -91,7 +91,7 @@ describe("Metadata component", () => {
                     },
                     git: {branch: "main"} as GitMetadata,
                 }
-        })
+        });
         renderElement(store);
 
         expect(screen.queryByTestId("elapsed")).toBeNull();
@@ -111,7 +111,7 @@ describe("Metadata component", () => {
                     git: {} as GitMetadata,
 
                 }
-        })
+        });
         renderElement(store);
 
         expect(screen.queryByTestId("elapsed")).toBeInTheDocument();
