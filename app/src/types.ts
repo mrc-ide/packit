@@ -12,6 +12,17 @@ export interface RejectedErrorValue {
     rejectValue: Error
 }
 
+export interface PageablePackets {
+    content: Packet[];
+    totalPages: number;
+    totalElements: number;
+    last: boolean;
+    numberOfElements: number;
+    size: number;
+    number: number;
+    first: boolean;
+}
+
 export interface Packet {
     id: string,
     name: string,
@@ -32,6 +43,7 @@ export interface PacketTableProps {
 
 export interface PacketsState {
     packets: Packet[]
+    pageablePackets: PageablePackets
     fetchPacketsError:  null | Error
     packet: PacketMetadata,
     packetError: null | Error
@@ -76,6 +88,12 @@ export interface Error {
         detail: string
         error: string
     }
+}
+
+
+export interface Pagination {
+    pageNumber: number
+    pageSize: number
 }
 
 export type RootState = ReturnType<typeof rootReducer>;

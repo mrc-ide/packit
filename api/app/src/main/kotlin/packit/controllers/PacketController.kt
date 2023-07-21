@@ -1,10 +1,12 @@
 package packit.controllers
 
 import org.springframework.core.io.ByteArrayResource
+import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import packit.model.Packet
 import packit.model.PacketMetadata
+import packit.model.PageablePayload
 import packit.service.PacketService
 
 @RestController
@@ -15,6 +17,16 @@ class PacketController(private val packetService: PacketService)
     fun index(): ResponseEntity<List<Packet>>
     {
         return ResponseEntity.ok(packetService.getPackets())
+    }
+
+    @GetMapping("/")
+    fun index(
+        @RequestParam pageNumber: Int,
+        @RequestParam pageSize: Int
+    ): ResponseEntity<Page<Packet>>
+    {
+        val payload = PageablePayload(pageNumber, pageSize)
+        return ResponseEntity.ok(packetService.getPackets(payload))
     }
 
     @GetMapping("/metadata/{id}")

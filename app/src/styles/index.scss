@@ -88,6 +88,31 @@ a {
   }
 }
 
+.page-item .page-link {
+  color: themed('primaryColor');
+  &:hover {
+    color: themed('buttonTextHoverColor');
+    border-color: themed('buttonColorHover');
+    text-transform: themed('buttonTextTransform');
+    background-color: themed('buttonColorHover');
+  }
+}
+
+.page-item {
+  &.active .page-link {
+    background-color: themed('primaryColor') !important;
+    color: themed('buttonTextHoverColor') !important;
+    border-color: themed('primaryColor');
+
+    &:hover {
+      color: themed('buttonTextHoverColor');
+      border-color: themed('buttonColorHover');
+      text-transform: themed('buttonTextTransform');
+      background-color: themed('buttonColorHover') !important;
+    }
+  }
+}
+
 .content {
   position: absolute;
   left: 265px;

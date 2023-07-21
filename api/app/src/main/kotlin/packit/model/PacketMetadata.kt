@@ -26,3 +26,5 @@ data class FileMetadata(
     val size: Number,
     val hash: String,
 )
+
+data class PageablePayload(val pageNumber: Int = 0, val pageSize: Int = 10)

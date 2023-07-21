@@ -1,11 +1,14 @@
 import packetsReducer, {initialPacketsState} from "../../../app/store/packets/packets";
 import {actions} from "../../../app/store/packets/thunks";
-import {Custom, Packet, PacketMetadata} from "../../../types";
+import {Custom, Packet, PacketMetadata, PageablePackets} from "../../../types";
+import Packets from "../../../app/store/packets/packets";
 
 describe("packetsSlice reducer", () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
+
+    const pageable = {pageNumber: 0, pageSize: 10}
 
     it("should handle fetchPackets.fulfilled", () => {
         const packets: Packet[] = [
@@ -30,7 +33,17 @@ describe("packetsSlice reducer", () => {
                     param3: "value3",
                 },
             }];
-        const nextState = packetsReducer(initialPacketsState, actions.fetchPackets.fulfilled(packets, ""));
+
+        const pageablePackets: PageablePackets = {
+            content: packets
+        } as any
+
+        const nextState = packetsReducer(
+            initialPacketsState,
+            actions.fetchPackets.fulfilled(
+                pageablePackets,
+                "",
+                pageable));
 
         expect(nextState.packets).toEqual(packets);
         expect(nextState.fetchPacketsError).toBeNull();
@@ -46,7 +59,7 @@ describe("packetsSlice reducer", () => {
 
         const packetState = packetsReducer(
             initialPacketsState,
-            actions.fetchPackets.rejected(null, "", undefined, error)
+            actions.fetchPackets.rejected(null, "", pageable, error)
         );
 
         expect(packetState.packets).toEqual([]);

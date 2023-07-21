@@ -1,9 +1,10 @@
 
-import {Custom, PacketMetadata, PacketsState} from "../types";
+import {Custom, PacketMetadata, PacketsState, PageablePackets} from "../types";
 
 export const mockPacketsState = (props: Partial<PacketsState> = {}): PacketsState => {
     return {
         packets: [],
+        pageablePackets: {} as PageablePackets,
         packet: {} as PacketMetadata,
         fetchPacketsError: null,
         packetError: null,

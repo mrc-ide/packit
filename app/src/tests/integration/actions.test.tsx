@@ -3,6 +3,8 @@ import {Packet} from "../../types";
 import {api} from "../../apiService";
 describe("backend integration", () => {
 
+    const pageable = {pageNumber: 0, pageSize: 10}
+
     // TODO mrc-4208 return custom error responses
     it("can parse api errors", async () => {
 
@@ -21,7 +23,7 @@ describe("backend integration", () => {
 
     it("can fetch packets", async () => {
         const dispatch = jest.fn();
-        const asyncThunk = actions.fetchPackets();
+        const asyncThunk = actions.fetchPackets(pageable);
         await asyncThunk(dispatch, jest.fn(), jest.fn());
 
         expect(dispatch.mock.calls[0][0]).toMatchObject({

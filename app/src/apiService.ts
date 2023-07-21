@@ -9,12 +9,13 @@ import appConfig from "./config/appConfig";
 
 const baseURL = appConfig.apiUrl();
 
-interface CustomAsyncThunkOptions extends AsyncThunkOptions<void, RejectedErrorValue> {
+export interface CustomAsyncThunkOptions extends AsyncThunkOptions<void, RejectedErrorValue> {
     rejectValue: Error
 }
 
 interface API {
     get<T, V>(mutationType: string, endpoint: string): AsyncThunk<T, V, CustomAsyncThunkOptions>;
+    getx<T>(endpoint: string, thunkAPI: any): any;
 }
 
 export class ApiService implements API {
@@ -42,6 +43,16 @@ export class ApiService implements API {
                         const message = this.handleErrorResponse(error);
                         return thunkAPI.rejectWithValue(message);
                     }));
+    }
+
+
+    getx<T>(endpoint: string, thunkAPI: any): any {
+        return this.axiosInstance.get(endpoint)
+            .then(response => thunkAPI.fulfillWithValue(response.data))
+            .catch((error: AxiosError) => {
+                const message = this.handleErrorResponse(error);
+                return thunkAPI.rejectWithValue(message);
+            });
     }
 
     private getEndpoint<V>(endpoint: string, args: V): string {
