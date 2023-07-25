@@ -22,13 +22,10 @@ export const getElapsedTime = (time: TimeMetadata) => {
     const endDateInMillis = time.end * 1000;
 
     const timeDiffInMillis = Math.floor(new Date(endDateInMillis).getTime() - new Date(startDateInMillis).getTime());
-    // Convert milliseconds to minutes
+
     const minutes = Math.floor(timeDiffInMillis / 60000);
-    // Convert the remaining milliseconds to seconds
     const seconds = Math.floor((timeDiffInMillis % 60000) / 1000);
-    // Convert minutes to hours
     const hours = Math.floor(minutes / 60);
-    // Calculate remaining minutes after subtracting hours
     const remainingMinutes = minutes % 60;
 
     let formattedTime = "";
