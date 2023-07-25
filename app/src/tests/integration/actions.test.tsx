@@ -1,15 +1,19 @@
 import {actions, PacketsMutationType} from "../../app/store/packets/thunks";
-import {Packet} from "../../types";
+import {CustomAsyncThunkOptions, Packet} from "../../types";
 import {api} from "../../apiService";
+import {createAsyncThunk} from "@reduxjs/toolkit";
 describe("backend integration", () => {
 
-    const pageable = {pageNumber: 0, pageSize: 10}
+    const pageable = {pageNumber: 0, pageSize: 10};
 
     // TODO mrc-4208 return custom error responses
     it("can parse api errors", async () => {
 
         const dispatch = jest.fn();
-        const asyncThunk = api.get<Packet[], void>(PacketsMutationType.GetPackets, "/bad-url")();
+        const asyncThunk = createAsyncThunk<Packet[], void, CustomAsyncThunkOptions>(
+            PacketsMutationType.GetPackets,
+            async (_, thunkAPI) => api.get("/bad-url", thunkAPI))();
+
         await asyncThunk(dispatch, jest.fn(), jest.fn());
 
         expect(dispatch.mock.calls[0][0]).toMatchObject({

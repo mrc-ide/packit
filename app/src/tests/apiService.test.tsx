@@ -1,5 +1,7 @@
 import {ApiService} from "../apiService";
 import mockAxios from "../../mockAxios";
+import {createAsyncThunk} from "@reduxjs/toolkit";
+import {CustomAsyncThunkOptions} from "../types";
 
 describe("api service", () => {
 
@@ -20,11 +22,12 @@ describe("api service", () => {
 
         const api = new ApiService();
 
-        const asyncThunk = api.get<typeof responseData, void>(type, url);
+        const asyncThunk = createAsyncThunk<typeof responseData, void, CustomAsyncThunkOptions>(
+            type, async (_, thunkAPI) => api.get(url, thunkAPI))();
 
         const dispatch = jest.fn();
 
-        await asyncThunk()(dispatch, jest.fn(), jest.fn());
+        await asyncThunk(dispatch, jest.fn(), jest.fn());
 
         expect(mockAxios.history.get).toHaveLength(1);
 
@@ -55,11 +58,12 @@ describe("api service", () => {
 
         const api = new ApiService();
 
-        const asyncThunk = api.get<string, void>(type, url);
+        const asyncThunk = createAsyncThunk<string, void, CustomAsyncThunkOptions>(
+            type, async (_, thunkAPI) => api.get(url, thunkAPI))();
 
         const dispatch = jest.fn();
 
-        await asyncThunk()(dispatch, jest.fn(), jest.fn());
+        await asyncThunk(dispatch, jest.fn(), jest.fn());
 
         expect(mockAxios.history.get).toHaveLength(1);
 

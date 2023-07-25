@@ -1,21 +1,11 @@
 import axios, {AxiosError, AxiosInstance} from "axios";
-import {
-    createAsyncThunk,
-    AsyncThunkOptions,
-    AsyncThunk,
-} from "@reduxjs/toolkit";
-import {RejectedErrorValue, Error} from "./types";
+import {Error} from "./types";
 import appConfig from "./config/appConfig";
 
 const baseURL = appConfig.apiUrl();
 
-export interface CustomAsyncThunkOptions extends AsyncThunkOptions<void, RejectedErrorValue> {
-    rejectValue: Error
-}
-
 interface API {
-    get<T, V>(mutationType: string, endpoint: string): AsyncThunk<T, V, CustomAsyncThunkOptions>;
-    getx<T>(endpoint: string, thunkAPI: any): any;
+    get<T>(endpoint: string, thunkAPI: any): Promise<T>;
 }
 
 export class ApiService implements API {
@@ -33,30 +23,13 @@ export class ApiService implements API {
         return errorMessage;
     };
 
-    get<T, V>(mutationType: string, endpoint: string): AsyncThunk<T, V, CustomAsyncThunkOptions> {
-        return createAsyncThunk<T, V, CustomAsyncThunkOptions>(
-            mutationType,
-            (args, thunkAPI) =>
-                this.axiosInstance.get<T>(this.getEndpoint<V>(endpoint, args))
-                    .then(response => thunkAPI.fulfillWithValue(response.data))
-                    .catch((error: AxiosError) => {
-                        const message = this.handleErrorResponse(error);
-                        return thunkAPI.rejectWithValue(message);
-                    }));
-    }
-
-
-    getx<T>(endpoint: string, thunkAPI: any): any {
+    get<T>(endpoint: string, thunkAPI: any): Promise<T> {
         return this.axiosInstance.get(endpoint)
             .then(response => thunkAPI.fulfillWithValue(response.data))
             .catch((error: AxiosError) => {
                 const message = this.handleErrorResponse(error);
                 return thunkAPI.rejectWithValue(message);
             });
-    }
-
-    private getEndpoint<V>(endpoint: string, args: V): string {
-        return args ? `${endpoint}/${args}` : endpoint;
     }
 }
 

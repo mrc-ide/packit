@@ -60,7 +60,8 @@ describe("main component", () => {
         });
         renderElement(store);
         const mainComponent = screen.getByTestId("main");
-        const items = mainComponent.querySelectorAll("li a");
+        const sidebar = screen.getByTestId("sidebar");
+        const items = sidebar.querySelectorAll("li a");
         expect(items.length).toBe(4);
         const packetRunner = items[1];
         expect(packetRunner).toHaveTextContent("Packet runner");
@@ -78,7 +79,8 @@ describe("main component", () => {
         });
         renderElement(store);
         const mainComponent = screen.getByTestId("main");
-        const items = mainComponent.querySelectorAll("li a");
+        const sidebar = screen.getByTestId("sidebar");
+        const items = sidebar.querySelectorAll("li a");
         expect(items.length).toBe(4);
         const workflowRunner = items[2];
         expect(workflowRunner).toHaveTextContent("Workflow runner");
@@ -97,7 +99,8 @@ describe("main component", () => {
         });
         renderElement(store);
         const mainComponent = screen.getByTestId("main");
-        const items = mainComponent.querySelectorAll("li a");
+        const sidebar = screen.getByTestId("sidebar");
+        const items = sidebar.querySelectorAll("li a");
         expect(items.length).toBe(4);
         const projectDoc = items[3];
         expect(projectDoc).toHaveTextContent("Project documentation");

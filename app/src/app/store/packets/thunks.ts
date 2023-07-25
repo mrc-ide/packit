@@ -1,12 +1,16 @@
 import {AsyncThunk, createAsyncThunk} from "@reduxjs/toolkit";
-import {Packet, PacketMetadata, PageablePackets, Pagination, RejectedErrorValue} from "../../../types";
-import {api, CustomAsyncThunkOptions} from "../../../apiService";
+import {
+    CustomAsyncThunkOptions,
+    PacketMetadata,
+    PageablePackets,
+    PaginationProps,
+    RejectedErrorValue
+} from "../../../types";
+import {api} from "../../../apiService";
 import qs from "qs";
 
 export interface PacketsActions {
-    fetchPackets: AsyncThunk<PageablePackets, Pagination, RejectedErrorValue>;
-    //fetchPacketsx: AsyncThunk<Packet[], void, RejectedErrorValue>;
-    //fetchPacketByIdx: AsyncThunk<PacketMetadata, string, RejectedErrorValue>;
+    fetchPackets: AsyncThunk<PageablePackets, PaginationProps, RejectedErrorValue>;
     fetchPacketById: AsyncThunk<PacketMetadata, string, RejectedErrorValue>;
 }
 
@@ -16,18 +20,13 @@ export enum PacketsMutationType {
 }
 
 export const actions: PacketsActions = {
-    //fetchPacketsx: api.get<Packet[], void>(PacketsMutationType.GetPackets, "/packets"),
-
-    //fetchPacketByIdx: api.get<PacketMetadata, string>(PacketsMutationType.GetPacket, "/packets/metadata"),
-
-    fetchPackets: createAsyncThunk<PageablePackets, Pagination, CustomAsyncThunkOptions>(
+    fetchPackets: createAsyncThunk<PageablePackets, PaginationProps, CustomAsyncThunkOptions>(
         PacketsMutationType.GetPackets,
         async (queryParams, thunkAPI) =>
-            api.getx(`/packets/?${qs.stringify(queryParams)}`, thunkAPI)),
+            api.get(`/packets/?${qs.stringify(queryParams)}`, thunkAPI)),
 
     fetchPacketById: createAsyncThunk<PacketMetadata, string, CustomAsyncThunkOptions>(
         PacketsMutationType.GetPacket,
         async (packetId, thunkAPI) =>
-            api.getx(`/packets/metadata/${packetId}`, thunkAPI))
-
+            api.get(`/packets/metadata/${packetId}`, thunkAPI))
 };

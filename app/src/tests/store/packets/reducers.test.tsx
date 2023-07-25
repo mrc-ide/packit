@@ -1,14 +1,13 @@
 import packetsReducer, {initialPacketsState} from "../../../app/store/packets/packets";
 import {actions} from "../../../app/store/packets/thunks";
 import {Custom, Packet, PacketMetadata, PageablePackets} from "../../../types";
-import Packets from "../../../app/store/packets/packets";
 
 describe("packetsSlice reducer", () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
 
-    const pageable = {pageNumber: 0, pageSize: 10}
+    const pageable = {pageNumber: 0, pageSize: 10};
 
     it("should handle fetchPackets.fulfilled", () => {
         const packets: Packet[] = [
@@ -34,9 +33,7 @@ describe("packetsSlice reducer", () => {
                 },
             }];
 
-        const pageablePackets: PageablePackets = {
-            content: packets
-        } as any
+        const pageablePackets = {content: packets} as PageablePackets;
 
         const nextState = packetsReducer(
             initialPacketsState,
