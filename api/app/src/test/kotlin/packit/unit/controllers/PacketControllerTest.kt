@@ -17,10 +17,10 @@ import kotlin.test.assertEquals
 class PacketControllerTest
 {
     private val packets = listOf(
-            Packet(
-                    "1", "test", "test name",
-                    mapOf("name" to "value"), false, Instant.now().epochSecond
-            )
+        Packet(
+            "1", "test", "test name",
+            mapOf("name" to "value"), false, Instant.now().epochSecond
+        )
     )
 
     private val packetMetadata = PacketMetadata(
@@ -80,7 +80,7 @@ class PacketControllerTest
     fun `get pageable packets`()
     {
         val sut = PacketController(indexService)
-        val result = sut.pageableIndex(0,10)
+        val result = sut.pageableIndex(0, 10)
         assertEquals(result.statusCode, HttpStatus.OK)
         assertEquals(result.body, mockPageablePackets)
         assertEquals(1, mockPageablePackets.totalPages)

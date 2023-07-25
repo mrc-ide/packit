@@ -91,7 +91,6 @@ export interface Error {
     }
 }
 
-
 export interface PaginationProps {
     pageNumber: number
     pageSize: number
