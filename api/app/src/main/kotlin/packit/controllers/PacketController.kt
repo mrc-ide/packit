@@ -20,7 +20,7 @@ class PacketController(private val packetService: PacketService)
     }
 
     @GetMapping("/")
-    fun index(
+    fun pageableIndex(
         @RequestParam pageNumber: Int,
         @RequestParam pageSize: Int
     ): ResponseEntity<Page<Packet>>
