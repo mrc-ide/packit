@@ -9,6 +9,7 @@ import thunk from "redux-thunk";
 import {MemoryRouter, Route, Routes} from "react-router-dom";
 import {Store} from "@reduxjs/toolkit";
 import PacketDetails from "../../../../app/components/contents/packets/PacketDetails";
+import userEvent from "@testing-library/user-event";
 
 describe("packet explorer component", () => {
 
@@ -110,6 +111,27 @@ describe("packet explorer component", () => {
         expect(select.options.selectedIndex).toBe(2);
 
         expect(paginationContent).toHaveTextContent("entries");
+    });
+
+    it("can trigger jump to different page size", () => {
+
+        renderElement();
+
+        const paginationContent = screen.getByTestId("pagination-content");
+
+        expect(paginationContent).toBeVisible();
+
+        const select = paginationContent.querySelector("select") as HTMLSelectElement;
+
+        expect(select).toHaveLength(4);
+
+        expect(select.options.selectedIndex).toBe(2);
+
+        expect(paginationContent).toHaveTextContent("entries");
+
+        userEvent.selectOptions(select, "25");
+
+        expect(select.options.selectedIndex).toBe(1);
     });
 
     it("should render pagination as expected", () => {
