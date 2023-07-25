@@ -25,7 +25,7 @@ describe("backend integration", () => {
         expect(result["payload"]["error"]).toBe("Not Found");
     });
 
-    it("can fetch packets", async () => {
+    it("can fetch pageable packets", async () => {
         const dispatch = jest.fn();
         const asyncThunk = actions.fetchPackets(pageable);
         await asyncThunk(dispatch, jest.fn(), jest.fn());
@@ -36,8 +36,10 @@ describe("backend integration", () => {
         });
         const result = dispatch.mock.calls[1][0];
         expect(result["type"]).toBe("GetPackets/fulfilled");
-        expect(result["payload"]).toHaveLength(5);
-        expect(result["payload"].map((p: Packet) => p.name).sort())
+        expect(result["payload"]["size"]).toBe(10);
+        expect(result["payload"]["totalPages"]).toBe(1);
+        expect(result["payload"]["content"]).toHaveLength(5);
+        expect(result["payload"]["content"].map((p: Packet) => p.name))
             .toEqual(["artefact-types", "computed-resource", "depends", "explicit", "parameters"]);
     });
 
