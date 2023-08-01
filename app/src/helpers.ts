@@ -23,6 +23,7 @@ export const getElapsedTime = (time: TimeMetadata) => {
 
     const timeDiffInMillis = Math.floor(new Date(endDateInMillis).getTime() - new Date(startDateInMillis).getTime());
 
+    const milliseconds = timeDiffInMillis % 1000;
     const minutes = Math.floor(timeDiffInMillis / 60000);
     const seconds = Math.floor((timeDiffInMillis % 60000) / 1000);
     const hours = Math.floor(minutes / 60);
@@ -38,7 +39,10 @@ export const getElapsedTime = (time: TimeMetadata) => {
     if (seconds > 0) {
         formattedTime += ` ${seconds} second${seconds > 1 ? "s" : ""}`;
     }
+    if (milliseconds >= 0) {
+        formattedTime += ` ${milliseconds} millisecond${milliseconds > 1 ? "s" : ""}`;
+    }
 
-    return formattedTime;
+    return formattedTime.trim();
 };
 
