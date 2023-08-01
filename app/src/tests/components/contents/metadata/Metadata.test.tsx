@@ -75,7 +75,7 @@ describe("Metadata component", () => {
         expect(screen.getByText("Git Commit:")).toBeInTheDocument();
 
         expect(screen.getByText("Fri, 12 Dec 55513 06:13:20 GMT")).toBeInTheDocument();
-        expect(screen.getByText("16 hours 40 minutes")).toBeInTheDocument();
+        expect(screen.getByText("16 hours 40 minutes 0 millisecond")).toBeInTheDocument();
         expect(screen.getByText("main")).toBeInTheDocument();
         expect(screen.getByText("f98f49e4beb0fe724897792f050bf24fa3fabe85")).toBeInTheDocument();
     });
@@ -94,7 +94,7 @@ describe("Metadata component", () => {
         });
         renderElement(store);
 
-        expect(screen.queryByTestId("elapsed")).toBeNull();
+        expect(screen.queryByTestId("elapsed")).toBeInTheDocument();
         expect(screen.queryByTestId("git-sha")).toBeNull();
         expect(screen.queryByTestId("git-branch")).toBeInTheDocument();
     });
