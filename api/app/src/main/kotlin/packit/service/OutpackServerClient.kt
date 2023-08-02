@@ -1,22 +1,29 @@
 package packit.service
 
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import org.apache.tomcat.util.http.fileupload.IOUtils
 import org.slf4j.LoggerFactory
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.*
+import org.springframework.http.client.ClientHttpRequest
 import org.springframework.stereotype.Service
+import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate
 import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.model.OutpackMetadata
 import packit.model.OutpackResponse
 import packit.model.PacketMetadata
+import java.net.URI
 
 interface OutpackServer
 {
     fun getMetadata(from: Long? = null): List<OutpackMetadata>
-    fun <T> get(urlFragment: String): T
     fun getMetadataById(id: String): PacketMetadata?
     fun getFileByHash(hash: String): Pair<ByteArray, HttpHeaders>?
+    fun proxyRequest(urlFragment: String, request: HttpServletRequest, response: HttpServletResponse)
+    fun getChecksum(): String
 }
 
 @Service
@@ -25,6 +32,32 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
     val baseUrl: String = appConfig.outpackServerUrl
 
     private val restTemplate = RestTemplate()
+
+    override fun proxyRequest(urlFragment: String, request: HttpServletRequest, response: HttpServletResponse)
+    {
+        val url = "$baseUrl/$urlFragment"
+        val method = request.method
+        log.debug("{} {}", method, url)
+        try
+        {
+            restTemplate.execute(
+                    URI(url),
+                    HttpMethod.valueOf(method),
+                    { outpackServerRequest: ClientHttpRequest ->
+                        IOUtils.copy(request.inputStream, outpackServerRequest.body)
+                    }
+            ) { outpackServerResponse ->
+                response.status = response.status
+                outpackServerResponse.headers.map { response.setHeader(it.key, it.value.first()) }
+                IOUtils.copy(outpackServerResponse.body, response.outputStream)
+                true
+            }
+        }
+        catch (e: HttpStatusCodeException)
+        {
+            throw OutpackServerException(e)
+        }
+    }
 
     override fun getMetadataById(id: String): PacketMetadata
     {
@@ -54,47 +87,22 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
         return response.body!! to response.headers
     }
 
-    private inline fun <reified T> getEndpoint(urlFragment: String): T
+    override fun getChecksum(): String
     {
-        val url = "$baseUrl/$urlFragment"
-        log.debug("Fetching {}", url)
-
-        val response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                HttpEntity.EMPTY,
-                object : ParameterizedTypeReference<OutpackResponse<T>>()
-                {}
-        )
-
-        return handleResponse(response)
-    }
-
-    fun getChecksum(): String
-    {
-        return get("checksum")
+        return getEndpoint("checksum")
     }
 
     override fun getMetadata(from: Long?): List<OutpackMetadata>
     {
-        var url = "$baseUrl/packit/metadata"
+        var url = "packit/metadata"
         if (from != null)
         {
             url = "$url?known_since=$from"
         }
-        val response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                HttpEntity.EMPTY,
-                object : ParameterizedTypeReference<OutpackResponse<List<OutpackMetadata>>>()
-                {}
-        )
-
-        return handleResponse(response)
+        return getEndpoint(url)
     }
 
-    // This will work where T is a base type but not for package defined types
-    override fun <T> get(urlFragment: String): T
+    private inline fun <reified T> getEndpoint(urlFragment: String): T
     {
         val url = "$baseUrl/$urlFragment"
         log.debug("Fetching {}", url)
@@ -130,3 +138,5 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
         private val log = LoggerFactory.getLogger(OutpackServerClient::class.java)
     }
 }
+
+class OutpackServerException(e: HttpStatusCodeException) : Exception(e)

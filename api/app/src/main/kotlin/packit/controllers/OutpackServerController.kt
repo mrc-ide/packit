@@ -2,18 +2,12 @@ package packit.controllers
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.apache.tomcat.util.http.fileupload.IOUtils
-import org.springframework.http.HttpMethod
-import org.springframework.http.client.ClientHttpRequest
 import org.springframework.util.AntPathMatcher
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.client.HttpStatusCodeException
-import org.springframework.web.client.RestTemplate
 import org.springframework.web.servlet.HandlerMapping
 import packit.service.OutpackServerClient
-import java.net.URI
 
 @RestController
 @RequestMapping("/outpack")
@@ -24,27 +18,7 @@ class OutpackServerController(private val outpackServerClient: OutpackServerClie
     fun post(request: HttpServletRequest, response: HttpServletResponse)
     {
         val url = getUrlFragment(request)
-        val restTemplate = RestTemplate()
-
-        try
-        {
-            restTemplate.execute(
-                    URI("${outpackServerClient.baseUrl}/$url"),
-                    HttpMethod.valueOf(request.method),
-                    { outpackServerRequest: ClientHttpRequest ->
-                        IOUtils.copy(request.inputStream, outpackServerRequest.body)
-                    }
-            ) { outpackServerResponse ->
-                response.status = response.status
-                outpackServerResponse.headers.map { response.setHeader(it.key, it.value.first()) }
-                IOUtils.copy(outpackServerResponse.body, response.outputStream)
-                true
-            }
-        }
-        catch (e: HttpStatusCodeException)
-        {
-            throw OutpackServerException(e)
-        }
+        outpackServerClient.proxyRequest(url, request, response)
     }
 
     private fun getUrlFragment(request: HttpServletRequest): String
@@ -56,5 +30,3 @@ class OutpackServerController(private val outpackServerClient: OutpackServerClie
         )
     }
 }
-
-class OutpackServerException(e: HttpStatusCodeException) : Exception(e)

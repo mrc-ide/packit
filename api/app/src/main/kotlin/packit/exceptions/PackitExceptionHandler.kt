@@ -8,8 +8,8 @@ import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.servlet.NoHandlerFoundException
-import packit.controllers.OutpackServerException
 import packit.model.ErrorDetail
+import packit.service.OutpackServerException
 import java.util.*
 
 @ControllerAdvice
