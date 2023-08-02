@@ -31,13 +31,13 @@ class OutpackServerController(private val outpackServerClient: OutpackServerClie
             restTemplate.execute(
                     URI("${outpackServerClient.baseUrl}/$url"),
                     HttpMethod.valueOf(request.method),
-                    { requestCallback: ClientHttpRequest ->
-                        IOUtils.copy(request.inputStream, requestCallback.body)
+                    { outpackServerRequest: ClientHttpRequest ->
+                        IOUtils.copy(request.inputStream, outpackServerRequest.body)
                     }
-            ) { responseExtractor ->
+            ) { outpackServerResponse ->
                 response.status = response.status
-                responseExtractor.headers.map { response.setHeader(it.key, it.value.first()) }
-                IOUtils.copy(responseExtractor.body, response.outputStream)
+                outpackServerResponse.headers.map { response.setHeader(it.key, it.value.first()) }
+                IOUtils.copy(outpackServerResponse.body, response.outputStream)
                 true
             }
         }
