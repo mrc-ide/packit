@@ -8,7 +8,7 @@ import com.github.fge.jsonschema.core.load.configuration.LoadingConfiguration
 import com.github.fge.jsonschema.main.JsonSchemaFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
-import java.io.File
+import java.io.IOException
 import java.net.URI
 
 class JSONValidator
@@ -31,9 +31,11 @@ class JSONValidator
         assertValidates(schemaName, data)
     }
 
-    fun validateError(response: String,
-                      expectedError: String?,
-                      expectedErrorText: String?)
+    fun validateError(
+            response: String,
+            expectedError: String?,
+            expectedErrorText: String?
+    )
     {
         val json = parseJson(response)
         checkResultSchema(json, "failure")
@@ -65,7 +67,9 @@ class JSONValidator
         val report = schemaFactory.getJsonSchema(uri.toString()).validate(json)
         if (!report.isSuccess)
         {
-            fail<Any>("JSON failed schema validation. Attempted to validate: $json against $name. Report follows: $report")
+            val msg = "JSON failed schema validation. Attempted to validate: $json against $name. " +
+                    "Report follows: $report"
+            fail<Any>(msg)
         }
     }
 
@@ -87,7 +91,7 @@ class JSONValidator
         }
         catch (e: JsonParseException)
         {
-            throw Exception("Failed to parse text as JSON.\nText was: $jsonAsString\n\n$e")
+            throw IOException("Failed to parse text as JSON.\nText was: $jsonAsString\n\n$e")
         }
     }
 }

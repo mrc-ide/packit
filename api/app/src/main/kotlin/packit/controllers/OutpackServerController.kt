@@ -26,9 +26,11 @@ class OutpackServerController(private val outpackServerClient: OutpackServerClie
         {
             return outpackServerClient.getRaw(finalPath)
         }
-        catch(e: HttpClientErrorException) {
+        catch (e: HttpClientErrorException)
+        {
             throw OutpackServerException(e)
         }
     }
 }
-class OutpackServerException(e: HttpClientErrorException): Exception(e)
+
+class OutpackServerException(e: HttpClientErrorException) : Exception(e)
