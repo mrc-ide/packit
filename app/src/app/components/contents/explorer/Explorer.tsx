@@ -71,6 +71,7 @@ export default function Explorer() {
                             activeClassName={"active"}
                             breakClassName={"page-item"}
                             breakLinkClassName={"page-link"}
+                            disabledClassName={"disabled"}
                         />
                     </div>
                 </div>

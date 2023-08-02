@@ -88,6 +88,10 @@ a {
   }
 }
 
+.pagination .disabled {
+  opacity: 0.6;
+}
+
 .page-item .page-link {
   color: themed('primaryColor');
   &:hover {

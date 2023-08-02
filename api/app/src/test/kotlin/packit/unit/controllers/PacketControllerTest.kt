@@ -13,6 +13,7 @@ import packit.model.*
 import packit.service.PacketService
 import java.time.Instant
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class PacketControllerTest
 {
@@ -55,7 +56,7 @@ class PacketControllerTest
                 "test name3",
                 mapOf("alpha" to true),
                 false,
-                now
+                1690902034
             )
         )
     )

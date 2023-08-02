@@ -58,7 +58,7 @@ class BasePacketService(
         val pageable = PageRequest.of(
             pageablePayload.pageNumber,
             pageablePayload.pageSize,
-            Sort.by("name").ascending()
+            Sort.by("time").descending()
         )
         return packetRepository.findAll(pageable)
     }
