@@ -22,7 +22,7 @@ describe("packet actions", () => {
             200,
             actions.fetchPackets(pageable),
             PacketsMutationType.GetPackets,
-            "/packets/?pageNumber=0&pageSize=10");
+            "/packets?pageNumber=0&pageSize=10");
     });
 
     it("should handle errors when fetching packets when response as error data", async () => {
@@ -33,7 +33,7 @@ describe("packet actions", () => {
             400,
             actions.fetchPackets({pageNumber: 0, pageSize: 10}),
             PacketsMutationType.GetPackets,
-            "/packets/?pageNumber=0&pageSize=10");
+            "/packets?pageNumber=0&pageSize=10");
     });
 
     it("should handle errors when fetching packets when empty response data", async () => {
@@ -44,7 +44,7 @@ describe("packet actions", () => {
             400,
             actions.fetchPackets(pageable),
             PacketsMutationType.GetPackets,
-            "/packets/?pageNumber=0&pageSize=10");
+            "/packets?pageNumber=0&pageSize=10");
     });
 
     it("should fetch packets by ID as expected", async () => {

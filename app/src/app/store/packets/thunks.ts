@@ -23,7 +23,7 @@ export const actions: PacketsActions = {
     fetchPackets: createAsyncThunk<PageablePackets, PaginationProps, CustomAsyncThunkOptions>(
         PacketsMutationType.GetPackets,
         async (queryParams, thunkAPI) =>
-            api.get(`/packets/?${qs.stringify(queryParams)}`, thunkAPI)),
+            api.get(`/packets?${qs.stringify(queryParams)}`, thunkAPI)),
 
     fetchPacketById: createAsyncThunk<PacketMetadata, string, CustomAsyncThunkOptions>(
         PacketsMutationType.GetPacket,

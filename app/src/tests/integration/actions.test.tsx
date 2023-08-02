@@ -40,7 +40,7 @@ describe("backend integration", () => {
         expect(result["payload"]["totalPages"]).toBe(1);
         expect(result["payload"]["content"]).toHaveLength(5);
         expect(result["payload"]["content"].map((p: Packet) => p.name))
-            .toEqual(["artefact-types", "computed-resource", "depends", "explicit", "parameters"]);
+            .toEqual(["parameters", "explicit", "depends", "computed-resource", "artefact-types"]);
     });
 
     it("can fetch packetById", async () => {

@@ -14,12 +14,6 @@ import packit.service.PacketService
 class PacketController(private val packetService: PacketService)
 {
     @GetMapping
-    fun index(): ResponseEntity<List<Packet>>
-    {
-        return ResponseEntity.ok(packetService.getPackets())
-    }
-
-    @GetMapping("/")
     fun pageableIndex(
         @RequestParam pageNumber: Int,
         @RequestParam pageSize: Int
