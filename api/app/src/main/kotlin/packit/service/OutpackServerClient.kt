@@ -11,11 +11,13 @@ import packit.model.OutpackMetadata
 import packit.model.OutpackResponse
 import packit.model.PacketMetadata
 
-interface OutpackServer {
+interface OutpackServer
+{
     fun getMetadata(from: Long? = null): List<OutpackMetadata>
     fun <T> get(urlFragment: String): T
     fun getMetadataById(id: String): PacketMetadata?
     fun getFileByHash(hash: String): Pair<ByteArray, HttpHeaders>?
+    fun getRaw(urlFragment: String): ResponseEntity<String>
 }
 
 @Service
@@ -36,10 +38,10 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
         log.debug("Fetching {}", url)
 
         val response = restTemplate.exchange(
-            url,
-            HttpMethod.GET,
-            HttpEntity.EMPTY,
-            ByteArray::class.java
+                url,
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                ByteArray::class.java
         )
         return handleFileResponse(response)
     }
@@ -59,11 +61,11 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
         log.debug("Fetching {}", url)
 
         val response = restTemplate.exchange(
-            url,
-            HttpMethod.GET,
-            HttpEntity.EMPTY,
-            object : ParameterizedTypeReference<OutpackResponse<T>>()
-            {}
+                url,
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                object : ParameterizedTypeReference<OutpackResponse<T>>()
+                {}
         )
 
         return handleResponse(response)
@@ -107,6 +109,14 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
         )
 
         return handleResponse(response)
+    }
+
+    override fun getRaw(urlFragment: String): ResponseEntity<String>
+    {
+        val url = "$baseUrl/$urlFragment"
+        log.debug("Fetching {}", url)
+
+        return restTemplate.getForEntity(url, String::class.java)
     }
 
     private fun <T> handleResponse(response: ResponseEntity<OutpackResponse<T>>): T
