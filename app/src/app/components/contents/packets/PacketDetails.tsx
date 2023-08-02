@@ -35,7 +35,7 @@ export default function PacketDetails() {
             : null;
     };
 
-    const getPath = () => {
+    const getHtmlFilePath = () => {
         return getHashOfHtmlFile()
             ? `packets/file/${getHashOfHtmlFile()?.hash}?inline=true&filename=${getHashOfHtmlFile()?.path}`
             : null;
@@ -60,16 +60,16 @@ export default function PacketDetails() {
                 </span>
                 {hasParameters() && <ParameterList parameters={packet.parameters}/>}
             </div>
-            {getPath() && <div>
+            {getHtmlFilePath() && <div>
                 <div data-testid="runner-content" className="content-box">
-                    <PacketFile path={getPath()}/>
+                    <PacketFile path={getHtmlFilePath()}/>
                 </div>
                 <div data-testid="view-fullscreen"
                      className="p-4 d-flex flex-column align-items-end">
                         <a className="btn btn-sm rounded"
                            target="_blank"
                            rel="noreferrer"
-                           href={`${appConfig.apiUrl()}/${getPath()}`}>View fullscreen</a>
+                           href={`${appConfig.apiUrl()}/${getHtmlFilePath()}`}>View fullscreen</a>
                 </div>
             </div>}
         </div>
