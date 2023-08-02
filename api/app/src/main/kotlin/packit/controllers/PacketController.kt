@@ -15,8 +15,8 @@ class PacketController(private val packetService: PacketService)
 {
     @GetMapping
     fun pageableIndex(
-        @RequestParam pageNumber: Int,
-        @RequestParam pageSize: Int
+        @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
+        @RequestParam(required = false, defaultValue = "1") pageSize: Int
     ): ResponseEntity<Page<Packet>>
     {
         val payload = PageablePayload(pageNumber, pageSize)

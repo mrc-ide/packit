@@ -39,6 +39,13 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
+    fun `can get non pageable packets`()
+    {
+        val result = restTemplate.getForEntity("/packets", String::class.java)
+        assertSuccess(result)
+    }
+
+    @Test
     fun `get packet metadata by packet id`()
     {
         val result = restTemplate.getForEntity("/packets/metadata/20230427-150755-2dbede93", String::class.java)
