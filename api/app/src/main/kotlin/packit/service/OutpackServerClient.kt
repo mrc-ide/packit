@@ -17,13 +17,12 @@ interface OutpackServer
     fun <T> get(urlFragment: String): T
     fun getMetadataById(id: String): PacketMetadata?
     fun getFileByHash(hash: String): Pair<ByteArray, HttpHeaders>?
-    fun getRaw(urlFragment: String): ResponseEntity<String>
 }
 
 @Service
 class OutpackServerClient(appConfig: AppConfig) : OutpackServer
 {
-    private val baseUrl: String = appConfig.outpackServerUrl
+    val baseUrl: String = appConfig.outpackServerUrl
 
     private val restTemplate = RestTemplate()
 
@@ -109,14 +108,6 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
         )
 
         return handleResponse(response)
-    }
-
-    override fun getRaw(urlFragment: String): ResponseEntity<String>
-    {
-        val url = "$baseUrl/$urlFragment"
-        log.debug("Fetching {}", url)
-
-        return restTemplate.getForEntity(url, String::class.java)
     }
 
     private fun <T> handleResponse(response: ResponseEntity<OutpackResponse<T>>): T

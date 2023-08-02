@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.HttpServerErrorException
+import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.servlet.NoHandlerFoundException
 import packit.controllers.OutpackServerException
 import packit.model.ErrorDetail
@@ -31,7 +32,7 @@ class PackitExceptionHandler
     @ExceptionHandler(OutpackServerException::class)
     fun handleOutpackServerException(e: OutpackServerException): ResponseEntity<String>
     {
-        val clientError = e.cause!! as HttpClientErrorException
+        val clientError = e.cause!! as HttpStatusCodeException
         val message = clientError.responseBodyAsString
         return ResponseEntity<String>(message, clientError.responseHeaders, clientError.statusCode)
     }

@@ -3,4 +3,4 @@ set -ex
 
 # Export env vars needed for running test dependencies
 export ORG=mrcide
-export OUTPACK_SERVER_TAG=$ORG/outpack_server:main
+export OUTPACK_SERVER_TAG=$ORG/outpack_server:vimc-4400
