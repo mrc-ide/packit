@@ -44,6 +44,9 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
                     URI(url),
                     HttpMethod.valueOf(method),
                     { outpackServerRequest: ClientHttpRequest ->
+                        request.headerNames.asIterator().forEach {
+                            outpackServerRequest.headers.set(it, request.getHeader(it))
+                        }
                         IOUtils.copy(request.inputStream, outpackServerRequest.body)
                     }
             ) { outpackServerResponse ->

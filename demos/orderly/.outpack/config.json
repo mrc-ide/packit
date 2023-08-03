@@ -9,7 +9,6 @@
   "location": [
     {
       "name": "local",
-      "id": "b4b39243",
       "priority": 0,
       "type": "local",
       "args": []
