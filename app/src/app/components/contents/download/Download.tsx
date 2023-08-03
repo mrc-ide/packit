@@ -2,7 +2,7 @@ import {useSelector} from "react-redux";
 import {FileMetadata, RootState, useAppDispatch} from "../../../../types";
 import React, {useEffect} from "react";
 import {actions} from "../../../store/packets/thunks";
-import {NavLink, useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {CloudDownload} from "@mui/icons-material";
 import appConfig from "../../../../config/appConfig";
 import {bytesToSize} from "../../../../helpers";
@@ -41,13 +41,13 @@ export default function Download()
                         <li key={key} className="pb-2">
                             <div className="card custom-card">
                                 <div className="card-header">
-                                    Outputs for {data.path} model
+                                    Download {data.path}
                                 </div>
                                 <div className="card-body">
-                                    <NavLink className="card-text" to={download(data)}>
+                                    <Link className="card-text" to={download(data)}>
                                         <span className="p-2">{data.path}</span>
                                         <span className="sidebar-icon"><CloudDownload/></span>
-                                    </NavLink>
+                                    </Link>
                                     <span className="small p-2 text-muted">({bytesToSize(data.size)})</span>
                                 </div>
                             </div>
