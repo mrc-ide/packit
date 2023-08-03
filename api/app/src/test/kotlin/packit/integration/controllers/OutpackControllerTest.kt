@@ -34,6 +34,7 @@ class OutpackControllerTest : IntegrationTest()
         val result = restTemplate.getForEntity("/outpack/metadata/list", String::class.java)
         assertSuccess(result)
         jsonValidator.validateAgainstOutpackSchema(result.body!!, "location")
+        assert(jsonValidator.getData(result.body!!).asIterable().count() > 1)
     }
 
     @Test
@@ -45,6 +46,7 @@ class OutpackControllerTest : IntegrationTest()
         )
         assertEquals(result.statusCode, HttpStatus.OK)
         assert(result.headers.contentType.toString().contains("text/plain"))
+        assertContains(result.body!!, "\"name\":\"explicit\"")
     }
 
     @Test
