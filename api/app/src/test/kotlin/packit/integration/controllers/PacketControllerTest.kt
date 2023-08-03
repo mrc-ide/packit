@@ -1,48 +1,10 @@
 package packit.integration.controllers
 
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import packit.integration.IntegrationTest
-import packit.model.GitMetadata
-import packit.model.Packet
-import packit.model.PacketMetadata
-import packit.model.TimeMetadata
-import packit.repository.PacketRepository
-import java.time.Instant
 
 class PacketControllerTest : IntegrationTest()
 {
-    @Autowired
-    lateinit var packetRepository: PacketRepository
-
-    val packet = Packet(
-        "1", "test", "test name",
-        mapOf("name" to "value"), false, Instant.now().epochSecond
-    )
-
-    val packetMetadata = PacketMetadata(
-        "3",
-        "test",
-        mapOf("name" to "value"),
-        emptyList(),
-        GitMetadata("git", "sha", emptyList()),
-        TimeMetadata(Instant.now().epochSecond.toDouble(), Instant.now().epochSecond.toDouble()),
-        emptyMap(),
-    )
-
-    @BeforeEach
-    fun `init`()
-    {
-        packetRepository.save(packet)
-    }
-
-    @AfterEach
-    fun teardown()
-    {
-        packetRepository.delete(packet)
-    }
 
     @Test
     fun `can get packets`()
