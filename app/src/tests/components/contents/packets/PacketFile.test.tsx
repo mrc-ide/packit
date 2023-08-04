@@ -28,14 +28,14 @@ describe("Packet file component", () => {
         const {container} = render(
             <Provider store={store}>
                 <MemoryRouter>
-                    <PacketFile fileMetadata={fileMetadata}/>
+                    <PacketFile path={"example.html"}/>
                 </MemoryRouter>
             </Provider>
         );
 
         const iframe = container.querySelector("iframe");
         expect(iframe).toHaveAttribute("src",
-            `${appConfig.apiUrl()}/packets/file/${fileMetadata.hash}?inline=true&filename=example.html`);
+            `${appConfig.apiUrl()}/example.html`);
     });
 
     it("does not render iframe when file is empty", () => {
@@ -43,7 +43,7 @@ describe("Packet file component", () => {
         const {container} = render(
             <Provider store={store}>
                 <MemoryRouter>
-                    <PacketFile fileMetadata={undefined}/>
+                    <PacketFile path={null}/>
                 </MemoryRouter>
             </Provider>
         );

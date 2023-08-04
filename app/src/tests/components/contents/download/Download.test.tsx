@@ -80,8 +80,8 @@ describe("download component", () => {
         const downloadLink = screen.getByRole("link", { name: "example.html" });
         expect(downloadLink).toHaveAttribute("href",
             `${appConfig.apiUrl()}/packets/file/example-hash?filename=example.html`);
-        expect(screen.getByText("(1 byte)")).toBeInTheDocument();
-        expect(screen.getByText("Outputs for example.html model")).toBeInTheDocument();
+        expect(screen.getByText("(1 bytes)")).toBeInTheDocument();
+        expect(screen.getByText("Download example.html")).toBeInTheDocument();
     });
 
 });

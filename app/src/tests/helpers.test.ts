@@ -34,26 +34,26 @@ describe("helpers", () => {
 
     test("can format size in bytes", () => {
         const result = bytesToSize(42);
-        expect(result).toBe("42 byte");
+        expect(result).toBe("42 bytes");
     });
 
     test("can format size in kilobytes", () => {
         const result = bytesToSize(1024);
-        expect(result).toBe("1 kB");
+        expect(result).toBe("1 kilobytes");
     });
 
     test("can format size in megabytes", () => {
         const result = bytesToSize(1048576);
-        expect(result).toBe("1 MB");
+        expect(result).toBe("1 megabytes");
     });
 
     test("can format size in gigabytes", () => {
         const result = bytesToSize(1073741824);
-        expect(result).toBe("1 GB");
+        expect(result).toBe("1 gigabytes");
     });
 
     test("can format size in terabytes", () => {
         const result = bytesToSize(1099511627776);
-        expect(result).toBe("1 TB");
+        expect(result).toBe("1 terabytes");
     });
 });

@@ -16,6 +16,8 @@ abstract class IntegrationTest
     @Autowired
     lateinit var restTemplate: TestRestTemplate
 
+    val jsonValidator = JSONValidator()
+
     protected fun assertSuccess(responseEntity: ResponseEntity<String>)
     {
         assertEquals(responseEntity.statusCode, HttpStatus.OK)

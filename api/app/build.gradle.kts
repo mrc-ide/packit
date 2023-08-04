@@ -36,6 +36,8 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
+    testImplementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.1")
+    testImplementation("com.github.fge:json-schema-validator:2.2.6")
 
     // This dependency is used by the application.
     implementation("com.google.guava:guava:31.1-jre")

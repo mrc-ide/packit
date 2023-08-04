@@ -1,18 +1,15 @@
-import {FileMetadata} from "../../../../types";
 import React from "react";
 import appConfig from "../../../../config/appConfig";
 
 interface PacketFileProps {
-    fileMetadata: FileMetadata | undefined
+    path: string | null
 }
 
-export function PacketFile({fileMetadata}: PacketFileProps) {
-
-    const path = `packets/file/${fileMetadata?.hash}?inline=true&filename=${fileMetadata?.path}`;
+export function PacketFile({path}: PacketFileProps) {
 
     return (
         <>
-            {fileMetadata && (
+            {path && (
                 <iframe
                     className="packit-iframe"
                     src={`${appConfig.apiUrl()}/${path}`}
