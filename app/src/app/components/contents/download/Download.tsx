@@ -6,6 +6,7 @@ import {Link, useParams} from "react-router-dom";
 import {CloudDownload} from "@mui/icons-material";
 import appConfig from "../../../../config/appConfig";
 import {bytesToSize} from "../../../../helpers";
+import {PacketHeader} from "../packets";
 
 export default function Download()
 {
@@ -31,10 +32,7 @@ export default function Download()
 
     return (
         <div className="content packet-details">
-            <div className="pb-3 d-flex flex-column align-items-start">
-                <span className="p-2 pb-0 h1">{packet.custom?.orderly.description.display || packet.name}</span>
-                <span className="p-2 pt-0 small">{packet.id}</span>
-            </div>
+            <PacketHeader packet={packet}/>
             <ul className="list-unstyled">
                 {packet.files.map((data, key) =>
                     (

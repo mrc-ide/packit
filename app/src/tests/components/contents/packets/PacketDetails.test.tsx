@@ -1,6 +1,6 @@
 import React from "react";
 import {render, screen} from "@testing-library/react";
-import {FileMetadata, PacketMetadata, PacketsState} from "../../../../types";
+import {FileMetadata, PacketMetadata, PacketsState, TimeMetadata} from "../../../../types";
 import {mockPacketsState} from "../../../mocks";
 import thunk from "redux-thunk";
 import configureStore from "redux-mock-store";
@@ -21,6 +21,7 @@ describe("packet details component", () => {
             },
             published: false,
             files: [fileMetadata],
+            time: {} as TimeMetadata,
             custom: {
                 orderly: {
                     artefacts: [],
@@ -91,14 +92,14 @@ describe("packet details component", () => {
                         custom: {}
                     }
                 },
-
-            }
+            },
+            time: {} as TimeMetadata
         };
         const store = getStore({packet});
 
         renderElement(store);
 
-        expect(screen.getByText(packet.custom!.orderly.description.display)).toBeInTheDocument();
+        expect(screen.getByText(packet.custom.orderly.description.display)).toBeInTheDocument();
 
         expect(screen.getByText(packet.id)).toBeInTheDocument();
 
@@ -115,9 +116,7 @@ describe("packet details component", () => {
 
     it("renders packet file when packet is not empty", () => {
         const fileMetadata = {hash: "example", path: "example.html", size: 1};
-
         const packet = getPacketMeta(fileMetadata);
-
         const store = getStore({packet});
 
         const {container} = renderElement(store);

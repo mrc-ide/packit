@@ -6,7 +6,7 @@ export default function PacketMenu() {
     const {packetId} = useParams();
 
     return (
-        <div data-testid="packet-menu" className="sidebar-packet-list">
+        <div data-testid="packet-menu" className="sidebar-packet-menu">
             <ul className="list-unstyled">
                 <li>
                     <NavLink to={`/packets/${packetId}/`}>

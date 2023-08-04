@@ -43,9 +43,21 @@ export interface PacketMetadata {
     displayName?: string
     published?: boolean
     parameters: Record<string, string> | null
-    time?: Record<string, string>
+    time: TimeMetadata
     files: FileMetadata[]
-    custom?: Custom
+    custom: Custom
+    git?: GitMetadata
+}
+
+export interface GitMetadata {
+    branch: string
+    sha: string
+    url: string[]
+}
+
+export interface TimeMetadata {
+    start: number
+    end: number
 }
 
 export interface Custom {
