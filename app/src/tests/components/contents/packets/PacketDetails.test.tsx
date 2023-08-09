@@ -1,6 +1,6 @@
 import React from "react";
 import {render, screen} from "@testing-library/react";
-import {PacketMetadata, PacketsState} from "../../../../types";
+import {FileMetadata, PacketMetadata, PacketsState} from "../../../../types";
 import {mockPacketsState} from "../../../mocks";
 import thunk from "redux-thunk";
 import configureStore from "redux-mock-store";
@@ -11,6 +11,27 @@ import PacketDetails from "../../../../app/components/contents/packets/PacketDet
 import appConfig from "../../../../config/appConfig";
 
 describe("packet details component", () => {
+
+    const getPacketMeta = (fileMetadata: FileMetadata) => {
+        return {
+            id: "123",
+            name: "Interim update",
+            parameters: {
+                "subset": "superset"
+            },
+            published: false,
+            files: [fileMetadata],
+            custom: {
+                orderly: {
+                    artefacts: [],
+                    description: {
+                        display: "Corn pack",
+                        custom: {}
+                    }
+                }
+            }
+        };
+    };
 
     const getStore = (props: Partial<PacketsState> = {}) => {
         const middlewares = [thunk];
@@ -94,24 +115,9 @@ describe("packet details component", () => {
 
     it("renders packet file when packet is not empty", () => {
         const fileMetadata = {hash: "example", path: "example.html", size: 1};
-        const packet: PacketMetadata = {
-            id: "123",
-            name: "Interim update",
-            parameters: {
-                "subset": "superset"
-            },
-            published: false,
-            files: [fileMetadata],
-            custom: {
-                orderly: {
-                    artefacts: [],
-                    description: {
-                        display: "Corn pack",
-                        custom: {}
-                    }
-                }
-            }
-        };
+
+        const packet = getPacketMeta(fileMetadata);
+
         const store = getStore({packet});
 
         const {container} = renderElement(store);
@@ -119,6 +125,39 @@ describe("packet details component", () => {
         const iframe = container.querySelector("iframe");
 
         expect(iframe).toHaveAttribute("src",
+            `${appConfig.apiUrl()}/packets/file/${fileMetadata.hash}?inline=true&filename=example.html`);
+    });
+
+    it("does not render packet in fullscreen when path is empty", () => {
+        const fileMetadata = {hash: "example", path: "", size: 1};
+
+        const packet = getPacketMeta(fileMetadata);
+
+        const store = getStore({packet});
+
+        renderElement(store);
+
+        expect(screen.queryByText("View fullscreen")).not.toBeInTheDocument();
+    });
+
+    it("renders packet in fullscreen correctly", () => {
+        const fileMetadata = {hash: "example", path: "example.html", size: 1};
+
+        const packet = getPacketMeta(fileMetadata);
+
+        const store = getStore({packet});
+
+        renderElement(store);
+
+        expect(screen.queryByText("View fullscreen")).toBeInTheDocument();
+
+        const fullScreenLink = screen.getByTestId("view-fullscreen").querySelector("a");
+
+        expect(fullScreenLink).toHaveAttribute("target", "_blank");
+
+        expect(fullScreenLink).toHaveAttribute("rel", "noreferrer");
+
+        expect(fullScreenLink).toHaveAttribute("href",
             `${appConfig.apiUrl()}/packets/file/${fileMetadata.hash}?inline=true&filename=example.html`);
     });
 });

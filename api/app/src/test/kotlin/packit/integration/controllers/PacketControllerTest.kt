@@ -1,35 +1,10 @@
 package packit.integration.controllers
 
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import packit.integration.IntegrationTest
-import packit.model.Packet
-import packit.repository.PacketRepository
-import java.time.Instant
 
 class PacketControllerTest : IntegrationTest()
 {
-    @Autowired
-    lateinit var packetRepository: PacketRepository
-
-    val packet = Packet(
-        "1", "test", "test name",
-        mapOf("name" to "value"), false, Instant.now().epochSecond
-    )
-
-    @BeforeEach
-    fun `init`()
-    {
-        packetRepository.save(packet)
-    }
-
-    @AfterEach
-    fun teardown()
-    {
-        packetRepository.delete(packet)
-    }
 
     @Test
     fun `can get pageable packets`()
