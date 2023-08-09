@@ -1,6 +1,7 @@
 import packetsReducer, {initialPacketsState} from "../../../app/store/packets/packets";
 import {actions} from "../../../app/store/packets/thunks";
-import {Custom, Packet, PacketMetadata, PageablePackets} from "../../../types";
+import {Custom, Packet, PacketMetadata, TimeMetadata, PageablePackets} from "../../../types";
+
 
 describe("packetsSlice reducer", () => {
     beforeEach(() => {
@@ -75,7 +76,8 @@ describe("packetsSlice reducer", () => {
                     param2: "value2",
                 },
                 custom: {} as Custom,
-                files: []
+                files: [],
+                time: {} as TimeMetadata
             };
         const nextState = packetsReducer(
             initialPacketsState,

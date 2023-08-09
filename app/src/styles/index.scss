@@ -77,6 +77,7 @@ body {
   sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #EBE5E5;
 }
 
 .custom-card {
@@ -133,17 +134,6 @@ a {
   transition: left 0.3s ease-in-out;
 }
 
-.sidebar-right {
-  background: themed("buttonTextColor");
-  position: absolute;
-  top: 64px;
-  left: 0;
-  width: 50px;
-  height: 100%;
-  padding: 20px 0;
-  transition: color 0.1s, border-color 0.1s, background-color 0.1s;
-}
-
 .explorer {
   top: 90px;
   min-height: inherit;
@@ -182,12 +172,13 @@ a {
   width: 100%;
 }
 
-.sidebar-packet-list,
+.sidebar-packet-menu,
 .sidebar-short,
 .sidebar {
   top: 64px;
   padding: 20px 0;
   transition: color 0.1s, border-color 0.1s, background-color 0.1s;
+  height: calc(100vh - 65px);
 
   ul li {
     alignment: center;
@@ -239,12 +230,11 @@ a {
   }
 }
 
-.sidebar-packet-list {
+.sidebar-packet-menu {
   background: themed("buttonTextColor");
   position: absolute;
   left: 55px;
   width: 195px;
-  height: 100vh;
 
   ul li {
     a {
@@ -264,7 +254,6 @@ a {
   position: absolute;
   left: 0;
   width: 55px;
-  height: 100vh;
 
   .text {
     display: none;
@@ -287,7 +276,6 @@ a {
   position: absolute;
   left: 0;
   width: 245px;
-  height: 100vh;
 
   ul li {
     a {

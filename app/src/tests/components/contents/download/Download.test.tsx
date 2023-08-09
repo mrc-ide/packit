@@ -2,7 +2,7 @@ import {render, screen} from "@testing-library/react";
 import {MemoryRouter} from "react-router-dom";
 import React from "react";
 import {Download} from "../../../../app/components/contents";
-import {PacketMetadata, PacketsState} from "../../../../types";
+import {PacketMetadata, PacketsState, TimeMetadata} from "../../../../types";
 import thunk from "redux-thunk";
 import configureStore from "redux-mock-store";
 import {mockPacketsState} from "../../../mocks";
@@ -29,7 +29,8 @@ describe("download component", () => {
                 }
             },
 
-        }
+        },
+        time: {} as TimeMetadata
     };
 
     const getStore = (props: Partial<PacketsState> = {}) => {
@@ -65,7 +66,8 @@ describe("download component", () => {
 
         renderElement(store);
 
-        expect(screen.getByText(packet.custom!.orderly.description.display)).toBeInTheDocument();
+        expect(screen.getByText(packet.custom.orderly.description.display)).toBeInTheDocument();
+
         expect(screen.getByText(packet.id)).toBeInTheDocument();
     });
 
