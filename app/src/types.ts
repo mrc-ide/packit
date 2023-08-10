@@ -43,7 +43,6 @@ export interface PacketTableProps {
 }
 
 export interface PacketsState {
-    packets: Packet[]
     pageablePackets: PageablePackets
     fetchPacketsError:  null | Error
     packet: PacketMetadata,

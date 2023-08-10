@@ -2,7 +2,7 @@ import React from "react";
 import {screen, render, waitFor} from "@testing-library/react";
 import {Sidebar} from "../../../app/components/main";
 import userEvent from "@testing-library/user-event";
-import {PacketsState, SideBarItems} from "../../../types";
+import {Packet, PacketsState, PageablePackets, SideBarItems} from "../../../types";
 import {Provider} from "react-redux";
 import {mockPacketResponse, mockPacketsState} from "../../mocks";
 import thunk from "redux-thunk";
@@ -15,7 +15,11 @@ describe("sidebar component", () => {
         jest.clearAllMocks();
     });
 
-    const getStore = (props: Partial<PacketsState> = {packets: [mockPacketResponse]}) => {
+    const getStore = (props: Partial<PacketsState> = {
+        pageablePackets: {
+            content: [mockPacketResponse] as Packet[]
+        } as PageablePackets
+    }) => {
         const middlewares = [thunk];
         const mockStore = configureStore(middlewares);
         const initialRootStates = {

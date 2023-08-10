@@ -3,7 +3,6 @@ import {createSlice} from "@reduxjs/toolkit";
 import {actions} from "./thunks";
 
 export const initialPacketsState: PacketsState = {
-    packets: [],
     pageablePackets: {} as PageablePackets,
     fetchPacketsError: null,
     packet: {} as PacketMetadata,
@@ -17,7 +16,6 @@ export const packetsSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(actions.fetchPackets.fulfilled, (state, action) => {
-                state.packets = action.payload.content;
                 state.pageablePackets = action.payload;
                 state.fetchPacketsError = null;
             })

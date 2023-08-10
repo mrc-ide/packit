@@ -1,4 +1,4 @@
-import {PacketsState, SideBarItems} from "../../../types";
+import {Packet, PacketsState, PageablePackets, SideBarItems} from "../../../types";
 import {mockPacketResponse, mockPacketsState} from "../../mocks";
 import thunk from "redux-thunk";
 import configureStore from "redux-mock-store";
@@ -21,7 +21,11 @@ describe("PacketMenu component", () => {
         jest.clearAllMocks();
     });
 
-    const getStore = (props: Partial<PacketsState> = {packets: [mockPacketResponse]}) => {
+    const getStore = (props: Partial<PacketsState> = {
+        pageablePackets: {
+            content: [mockPacketResponse] as Packet[]
+        } as PageablePackets
+    }) => {
         const middlewares = [thunk];
         const mockStore = configureStore(middlewares);
         const initialRootStates = {

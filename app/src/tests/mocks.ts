@@ -2,7 +2,6 @@ import {Custom, PacketMetadata, PacketsState, TimeMetadata, PageablePackets} fro
 
 export const mockPacketsState = (props: Partial<PacketsState> = {}): PacketsState => {
     return {
-        packets: [],
         pageablePackets: {} as PageablePackets,
         packet: {} as PacketMetadata,
         fetchPacketsError: null,

@@ -4,7 +4,7 @@ import {Explorer} from "../../../../app/components/contents";
 import {Provider} from "react-redux";
 import configureStore from "redux-mock-store";
 import {mockPacketsState, mockPacketResponse} from "../../../mocks";
-import {PacketsState, PageablePackets} from "../../../../types";
+import {Packet, PacketsState, PageablePackets} from "../../../../types";
 import thunk from "redux-thunk";
 import {MemoryRouter, Route, Routes} from "react-router-dom";
 import {Store} from "@reduxjs/toolkit";
@@ -17,7 +17,14 @@ describe("packet explorer component", () => {
         jest.clearAllMocks();
     });
 
-    const getStore = (props: Partial<PacketsState> = {packets: [mockPacketResponse]}) => {
+    const getPageablePackets = (props: Partial<object> = {}) => {
+        return {
+            content: [mockPacketResponse] as Packet[],
+            ...props
+        } as PageablePackets;
+    };
+
+    const getStore = (props: Partial<PacketsState> = {pageablePackets: getPageablePackets()}) => {
         const middlewares = [thunk];
         const mockStore = configureStore(middlewares);
         const initialRootStates = {
@@ -136,8 +143,7 @@ describe("packet explorer component", () => {
 
     it("should render pagination as expected", () => {
         const store = getStore({
-            packets: [mockPacketResponse],
-            pageablePackets: {totalPages: 2} as PageablePackets
+            pageablePackets: getPageablePackets({totalPages: 2})
         });
 
         renderElement(store);
@@ -151,8 +157,7 @@ describe("packet explorer component", () => {
 
     it("can trigger next pagination as expected", () => {
         const store = getStore({
-            packets: [mockPacketResponse],
-            pageablePackets: {totalPages: 52} as PageablePackets
+            pageablePackets: getPageablePackets({totalPages: 52})
         });
 
         renderElement(store);
@@ -175,8 +180,7 @@ describe("packet explorer component", () => {
     it("changes page when clicking pagination", () => {
 
         const store = getStore({
-            packets: [mockPacketResponse],
-            pageablePackets: {totalPages: 2} as PageablePackets
+            pageablePackets: getPageablePackets({totalPages: 2})
         });
 
         const mockDispatch = jest.spyOn(store, "dispatch");

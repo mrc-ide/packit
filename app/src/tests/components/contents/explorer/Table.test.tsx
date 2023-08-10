@@ -127,7 +127,7 @@ describe("table component", () => {
     });
 
     it("renders published badge when a packet is published", () => {
-        const store = getStore({packets});
+        const store = getStore({pageablePackets: {content: packets} as any});
 
         renderElement(store);
 

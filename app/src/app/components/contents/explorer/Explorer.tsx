@@ -7,7 +7,8 @@ import ReactPaginate from "react-paginate";
 
 export default function Explorer() {
     const dispatch = useAppDispatch();
-    const {packets, pageablePackets} = useSelector((state: RootState) => state.packets);
+    const {pageablePackets} = useSelector((state: RootState) => state.packets);
+    const packets = pageablePackets.content ?? [];
     const [pageNumber, setPageNumber] = useState(0);
     const [pageSize, setPageSize] = useState(50);
     const pageSizeOptions = [10, 25, 50, 100];

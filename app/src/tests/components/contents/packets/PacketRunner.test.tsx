@@ -1,7 +1,7 @@
 import React from "react";
 import {render, screen} from "@testing-library/react";
 import {PacketRunner} from "../../../../app/components/contents";
-import {PacketsState} from "../../../../types";
+import {Packet, PacketsState} from "../../../../types";
 import {mockPacketResponse, mockPacketsState} from "../../../mocks";
 import thunk from "redux-thunk";
 import configureStore from "redux-mock-store";
@@ -11,7 +11,9 @@ import {MemoryRouter} from "react-router-dom";
 
 describe("packet runner component", () => {
 
-    const getStore = (props: Partial<PacketsState> = {packets: [mockPacketResponse]} ) => {
+    const getStore = (props: Partial<PacketsState> = {
+        pageablePackets: {content: [mockPacketResponse] as Packet[]} as any
+    }) => {
         const middlewares = [thunk];
         const mockStore = configureStore(middlewares);
         const initialRootStates = {

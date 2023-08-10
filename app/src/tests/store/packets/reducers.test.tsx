@@ -43,7 +43,7 @@ describe("packetsSlice reducer", () => {
                 "",
                 pageable));
 
-        expect(nextState.packets).toEqual(packets);
+        expect(nextState.pageablePackets.content).toEqual(packets);
         expect(nextState.fetchPacketsError).toBeNull();
     });
 
@@ -60,7 +60,7 @@ describe("packetsSlice reducer", () => {
             actions.fetchPackets.rejected(null, "", pageable, error)
         );
 
-        expect(packetState.packets).toEqual([]);
+        expect(packetState.pageablePackets).toEqual({});
         expect(packetState.fetchPacketsError).toBe(error);
     });
 
