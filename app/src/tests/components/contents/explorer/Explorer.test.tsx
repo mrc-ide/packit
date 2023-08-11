@@ -4,11 +4,12 @@ import {Explorer} from "../../../../app/components/contents";
 import {Provider} from "react-redux";
 import configureStore from "redux-mock-store";
 import {mockPacketsState, mockPacketResponse} from "../../../mocks";
-import {PacketsState} from "../../../../types";
+import {Packet, PacketsState, PageablePackets} from "../../../../types";
 import thunk from "redux-thunk";
 import {MemoryRouter, Route, Routes} from "react-router-dom";
 import {Store} from "@reduxjs/toolkit";
 import PacketDetails from "../../../../app/components/contents/packets/PacketDetails";
+import userEvent from "@testing-library/user-event";
 
 describe("packet explorer component", () => {
 
@@ -16,7 +17,14 @@ describe("packet explorer component", () => {
         jest.clearAllMocks();
     });
 
-    const getStore = (props: Partial<PacketsState> = {packets: [mockPacketResponse]}) => {
+    const getPageablePackets = (props: Partial<object> = {}) => {
+        return {
+            content: [mockPacketResponse] as Packet[],
+            ...props
+        } as PageablePackets;
+    };
+
+    const getStore = (props: Partial<PacketsState> = {pageablePackets: getPageablePackets()}) => {
         const middlewares = [thunk];
         const mockStore = configureStore(middlewares);
         const initialRootStates = {
@@ -94,7 +102,7 @@ describe("packet explorer component", () => {
         expect(getAllByRole("row")).toHaveLength(2);
     });
 
-    it("should render skeleton pagination content as expected", () => {
+    it("should render jump to page as expected", () => {
         renderElement();
 
         const paginationContent = screen.getByTestId("pagination-content");
@@ -107,8 +115,88 @@ describe("packet explorer component", () => {
 
         expect(select).toHaveLength(4);
 
-        expect(select).toHaveTextContent("10");
+        expect(select.options.selectedIndex).toBe(2);
 
         expect(paginationContent).toHaveTextContent("entries");
+    });
+
+    it("can trigger jump to different page size", () => {
+
+        renderElement();
+
+        const paginationContent = screen.getByTestId("pagination-content");
+
+        expect(paginationContent).toBeVisible();
+
+        const select = paginationContent.querySelector("select") as HTMLSelectElement;
+
+        expect(select).toHaveLength(4);
+
+        expect(select.options.selectedIndex).toBe(2);
+
+        expect(paginationContent).toHaveTextContent("entries");
+
+        userEvent.selectOptions(select, "25");
+
+        expect(select.options.selectedIndex).toBe(1);
+    });
+
+    it("should render pagination as expected", () => {
+        const store = getStore({
+            pageablePackets: getPageablePackets({totalPages: 2})
+        });
+
+        renderElement(store);
+
+        expect(screen.getByText("1").parentElement).toHaveClass("active");
+        expect(screen.queryByText("Previous")).toBeInTheDocument();
+        expect(screen.getByText("Previous").parentElement).toHaveClass("disabled");
+        expect(screen.queryByText("Next")).toBeInTheDocument();
+        expect(screen.getByText("Next").parentElement).not.toHaveClass("disabled");
+    });
+
+    it("can trigger next pagination as expected", () => {
+        const store = getStore({
+            pageablePackets: getPageablePackets({totalPages: 52})
+        });
+
+        renderElement(store);
+
+        expect(screen.getByText("1").parentElement).toHaveClass("active");
+        expect(screen.queryByText("Previous")).toBeInTheDocument();
+        expect(screen.getByText("Previous").parentElement).toHaveClass("disabled");
+        expect(screen.queryByText("1")).toBeInTheDocument();
+        expect(screen.queryByText("2")).toBeInTheDocument();
+        expect(screen.queryByText("3")).toBeInTheDocument();
+        expect(screen.queryByText("4")).toBeInTheDocument();
+        expect(screen.queryByText("5")).toBeInTheDocument();
+        expect(screen.queryByText("...")).toBeInTheDocument();
+        expect(screen.queryByText("50")).toBeInTheDocument();
+        expect(screen.queryByText("51")).toBeInTheDocument();
+        expect(screen.queryByText("Next")).toBeInTheDocument();
+        expect(screen.getByText("Next").parentElement).not.toHaveClass("disabled");
+    });
+
+    it("changes page when clicking pagination", () => {
+
+        const store = getStore({
+            pageablePackets: getPageablePackets({totalPages: 2})
+        });
+
+        const mockDispatch = jest.spyOn(store, "dispatch");
+
+        renderElement(store);
+
+        expect(mockDispatch).toHaveBeenCalledTimes(1);
+        expect(screen.getByText("1").parentElement).toHaveClass("active");
+
+        fireEvent.click(screen.getByText("2"));
+
+        expect(mockDispatch).toHaveBeenCalledTimes(2);
+
+        expect(screen.getByText("2").parentElement).toHaveClass("active");
+
+        expect(screen.getByText("Previous").parentElement).not.toHaveClass("disabled");
+        expect(screen.getByText("Next").parentElement).toHaveClass("disabled");
     });
 });

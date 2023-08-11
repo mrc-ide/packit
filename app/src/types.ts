@@ -1,5 +1,6 @@
 import {useDispatch} from "react-redux";
 import store, {rootReducer} from "./app/store/store";
+import {AsyncThunkOptions} from "@reduxjs/toolkit";
 
 export enum SideBarItems {
     explorer,
@@ -10,6 +11,17 @@ export enum SideBarItems {
 
 export interface RejectedErrorValue {
     rejectValue: Error
+}
+
+export interface PageablePackets {
+    content: Packet[];
+    totalPages: number;
+    totalElements: number;
+    last: boolean;
+    numberOfElements: number;
+    size: number;
+    number: number;
+    first: boolean;
 }
 
 export interface Packet {
@@ -31,7 +43,7 @@ export interface PacketTableProps {
 }
 
 export interface PacketsState {
-    packets: Packet[]
+    pageablePackets: PageablePackets
     fetchPacketsError:  null | Error
     packet: PacketMetadata,
     packetError: null | Error
@@ -90,8 +102,17 @@ export interface Error {
     }
 }
 
+export interface PaginationProps {
+    pageNumber: number
+    pageSize: number
+}
+
 export type RootState = ReturnType<typeof rootReducer>;
 
 export type AppDispatch = typeof store.dispatch;
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
+
+export interface CustomAsyncThunkOptions extends AsyncThunkOptions<void, RejectedErrorValue> {
+    rejectValue: Error
+}

@@ -1,9 +1,9 @@
-import {PacketMetadata, PacketsState} from "../../../types";
+import {PacketMetadata, PacketsState, PageablePackets} from "../../../types";
 import {createSlice} from "@reduxjs/toolkit";
 import {actions} from "./thunks";
 
 export const initialPacketsState: PacketsState = {
-    packets: [],
+    pageablePackets: {} as PageablePackets,
     fetchPacketsError: null,
     packet: {} as PacketMetadata,
     packetError: null,
@@ -16,7 +16,7 @@ export const packetsSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(actions.fetchPackets.fulfilled, (state, action) => {
-                state.packets = action.payload;
+                state.pageablePackets = action.payload;
                 state.fetchPacketsError = null;
             })
             .addCase(actions.fetchPackets.rejected, (state, action) => {

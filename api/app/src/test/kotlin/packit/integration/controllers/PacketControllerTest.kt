@@ -7,7 +7,14 @@ class PacketControllerTest : IntegrationTest()
 {
 
     @Test
-    fun `can get packets`()
+    fun `can get pageable packets`()
+    {
+        val result = restTemplate.getForEntity("/packets?pageNumber=3&pageSize=5", String::class.java)
+        assertSuccess(result)
+    }
+
+    @Test
+    fun `can get non pageable packets`()
     {
         val result = restTemplate.getForEntity("/packets", String::class.java)
         assertSuccess(result)

@@ -1,6 +1,9 @@
 package packit.service
 
 import org.springframework.core.io.ByteArrayResource
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.ContentDisposition
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -10,12 +13,14 @@ import packit.contentTypes
 import packit.exceptions.PackitException
 import packit.model.Packet
 import packit.model.PacketMetadata
+import packit.model.PageablePayload
 import packit.repository.PacketRepository
 import java.security.MessageDigest
 import java.time.Instant
 
 interface PacketService
 {
+    fun getPackets(pageablePayload: PageablePayload): Page<Packet>
     fun getPackets(): List<Packet>
     fun getChecksum(): String
     fun importPackets()
@@ -46,6 +51,16 @@ class BasePacketService(
     override fun getPackets(): List<Packet>
     {
         return packetRepository.findAll()
+    }
+
+    override fun getPackets(pageablePayload: PageablePayload): Page<Packet>
+    {
+        val pageable = PageRequest.of(
+            pageablePayload.pageNumber,
+            pageablePayload.pageSize,
+            Sort.by("time").descending()
+        )
+        return packetRepository.findAll(pageable)
     }
 
     override fun getChecksum(): String
