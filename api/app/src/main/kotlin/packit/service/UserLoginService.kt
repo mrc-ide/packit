@@ -6,7 +6,7 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import packit.model.LoginRequest
-import packit.security.JwtIssuer
+import packit.security.issuer.JwtIssuer
 import packit.security.profile.UserPrincipal
 
 interface LoginService
