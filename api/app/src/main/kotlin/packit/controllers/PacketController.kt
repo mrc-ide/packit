@@ -3,10 +3,12 @@ package packit.controllers
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import packit.model.Packet
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
+import packit.security.profile.UserPrincipal
 import packit.service.PacketService
 
 @RestController
@@ -15,10 +17,12 @@ class PacketController(private val packetService: PacketService)
 {
     @GetMapping
     fun pageableIndex(
+        @AuthenticationPrincipal userPrincipal: UserPrincipal,
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
         @RequestParam(required = false, defaultValue = "1") pageSize: Int
     ): ResponseEntity<Page<Packet>>
     {
+        println(userPrincipal.username)
         val payload = PageablePayload(pageNumber, pageSize)
         return ResponseEntity.ok(packetService.getPackets(payload))
     }
