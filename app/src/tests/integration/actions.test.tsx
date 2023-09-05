@@ -1,4 +1,4 @@
-import {actions, PacketsMutationType} from "../../app/store/packets/thunks";
+import {actions, PacketsMutationType} from "../../app/store/packets/packetThunks";
 import {CustomAsyncThunkOptions, Packet} from "../../types";
 import {api} from "../../apiService";
 import {createAsyncThunk} from "@reduxjs/toolkit";

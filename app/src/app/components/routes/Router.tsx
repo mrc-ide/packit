@@ -7,13 +7,15 @@ import {NotFound} from "../NotFound";
 import {Download} from "../contents/download";
 import {ChangeLogs} from "../contents/changelogs";
 import {Metadata} from "../contents/metadata";
+import {Login} from "../login";
 
 export function Router() {
     return (
         <Routes>
+            <Route index element={<Login/>}/>
             <Route path="*" element={<NotFound/>}/>
             <Route element={<Sidebar/>}>
-                <Route index element={<Explorer/>}/>
+                <Route path={"/"} element={<Explorer/>}/>
                 <Route path="packets" element={<Explorer/>}/>
                 <Route path="run" element={<PacketRunner/>}/>
                 <Route path="run-workflow" element={<WorkflowRunner/>}/>

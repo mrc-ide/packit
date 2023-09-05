@@ -1,6 +1,6 @@
 import mockAxios from "../../../../mockAxios";
 import {mockPacketResponse} from "../../mocks";
-import {actions, PacketsMutationType} from "../../../app/store/packets/thunks";
+import {actions, PacketsMutationType} from "../../../app/store/packets/packetThunks";
 import { expectThunkActionWith } from "../testHelper";
 import {Packet, PacketMetadata, PageablePackets, PaginationProps} from "../../../types";
 

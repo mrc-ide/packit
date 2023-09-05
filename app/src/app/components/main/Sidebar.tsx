@@ -17,7 +17,7 @@ export default function Sidebar() {
                 <div className={`${packetId ? "sidebar-short" : "sidebar"}`}>
                     <ul className="list-unstyled">
                         <li>
-                            <NavLink to="/">
+                            <NavLink to="/packets">
                                 <span className="sidebar-icon"><FindInPage fontSize="small"/></span>
                                 <span className="text">Packet explorer</span>
                             </NavLink>

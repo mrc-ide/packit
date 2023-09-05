@@ -49,6 +49,11 @@ export interface PacketsState {
     packetError: null | Error
 }
 
+export interface LoginState {
+    token: string
+    tokenError:  null | Error
+}
+
 export interface PacketMetadata {
     id: string
     name: string
@@ -105,6 +110,11 @@ export interface Error {
 export interface PaginationProps {
     pageNumber: number
     pageSize: number
+}
+
+export interface UserLoginDetails {
+    email: string
+    password: string
 }
 
 export type RootState = ReturnType<typeof rootReducer>;

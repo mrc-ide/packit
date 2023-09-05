@@ -1,5 +1,5 @@
 import packetsReducer, {initialPacketsState} from "../../../app/store/packets/packets";
-import {actions} from "../../../app/store/packets/thunks";
+import {actions} from "../../../app/store/packets/packetThunks";
 import {Custom, Packet, PacketMetadata, TimeMetadata, PageablePackets} from "../../../types";
 
 

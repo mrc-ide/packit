@@ -22,7 +22,6 @@ class PacketController(private val packetService: PacketService)
         @RequestParam(required = false, defaultValue = "1") pageSize: Int
     ): ResponseEntity<Page<Packet>>
     {
-        println(userPrincipal.username)
         val payload = PageablePayload(pageNumber, pageSize)
         return ResponseEntity.ok(packetService.getPackets(payload))
     }
