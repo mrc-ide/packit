@@ -5,13 +5,16 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import {useSelector} from "react-redux";
 import {RootState, useAppDispatch} from "../../../types";
 import {logout} from "../../store/login/login";
+import {useNavigate} from "react-router-dom";
 
 export default function HeaderDropDown() {
+    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const {isAuthenticated} = useSelector((state: RootState) => state.login);
 
     const handleLogout = () => {
         dispatch(logout());
+        navigate("/login");
     };
 
     return (
