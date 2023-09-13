@@ -44,3 +44,11 @@ export const getElapsedTime = (time: TimeMetadata) => {
     return formattedTime.trim();
 };
 
+export const validateToken = (token: string): boolean => {
+    // TODO unauthenticated users
+    //remember to store retrieve other data from jwt
+    //check if token is expired
+    // logout if expired
+    //validate token expiration
+    return !!token;
+};

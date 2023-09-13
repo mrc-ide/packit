@@ -17,11 +17,6 @@ class LoginController(val loginService: UserLoginService)
     @PostMapping("/login")
     fun login(@RequestBody @Validated user: LoginRequest): ResponseEntity<String>
     {
-        if (user.email.isEmpty() && user.password.isEmpty())
-        {
-            throw PackitException("Empty user details")
-        }
-
         val token = loginService.authenticateAndIssueToken(user)
 
         return ResponseEntity.ok(token)

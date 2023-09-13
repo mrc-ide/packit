@@ -1,6 +1,7 @@
 import axios, {AxiosError, AxiosInstance} from "axios";
 import {Error} from "./types";
 import appConfig from "./config/appConfig";
+import {validateToken} from "./helpers";
 
 let store: any;
 
@@ -35,7 +36,7 @@ export class ApiService implements API {
     addAuthorizationHeader = (axiosInstance: AxiosInstance) => {
         //TODO validate for expired token
         axiosInstance.interceptors.request.use(config => {
-            if (store.getState().login.token || localStorage.getItem("token")) {
+            if (validateToken(store.getState().login.token)) {
                 config.headers.authorization =
                     `Bearer ${store.getState().login.token || localStorage.getItem("token")}`;
             }

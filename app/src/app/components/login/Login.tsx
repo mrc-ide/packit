@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {Link, Navigate} from "react-router-dom";
 import appConfig from "../../../config/appConfig";
 import {RootState, useAppDispatch} from "../../../types";
@@ -7,11 +7,10 @@ import {useSelector} from "react-redux";
 
 export default function Login() {
     const dispatch = useAppDispatch();
-    const {token, tokenError} = useSelector((state: RootState) => state.login);
+    const {isAuthenticated, tokenError} = useSelector((state: RootState) => state.login);
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [redirectTo, setRedirectTo] = useState(false);
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
 
@@ -34,17 +33,6 @@ export default function Login() {
 
         dispatch(actions.fetchToken({email, password}));
     };
-
-    useEffect(() => {
-        //remember to store retrieve other data from jwt
-        //check if token is expired
-        // logout if expired
-        //validate token expiration
-        // TODO redirect unauthenticated users
-        if (token) {
-            setRedirectTo(true);
-        }
-    },[token]);
 
     const isValidEmail = (email: string) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -79,14 +67,13 @@ export default function Login() {
                     <button className="btn" onClick={handleLogin}>
                         Login
                     </button>
-                    {redirectTo && <Navigate to="/packets"/>}
+                    {isAuthenticated && <Navigate to="/"/>}
                     <div className="divider m-2">OR</div>
                     <Link to={`${appConfig.apiUrl()}/oauth2/authorization/github`} className="btn">
                         Login With GitHub
                     </Link>
                 </div>
                 {tokenError && <div className="invalid-feedback">{tokenError.error.detail}</div>}
-
             </div>
         </div>
     );

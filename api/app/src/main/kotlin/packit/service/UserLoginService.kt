@@ -5,6 +5,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
+import packit.exceptions.PackitException
 import packit.model.LoginRequest
 import packit.security.issuer.JwtIssuer
 import packit.security.profile.UserPrincipal
@@ -22,6 +23,11 @@ class UserLoginService(
 {
     override fun authenticateAndIssueToken(loginRequest: LoginRequest): String
     {
+        if (loginRequest.email.isEmpty() && loginRequest.password.isEmpty())
+        {
+            throw PackitException("Empty user details")
+        }
+
         val authentication = authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(
                 loginRequest.email,

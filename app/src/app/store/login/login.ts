@@ -1,21 +1,28 @@
 import {LoginState} from "../../../types";
 import {createSlice} from "@reduxjs/toolkit";
 import {actions} from "./loginThunks";
+import {validateToken} from "../../../helpers";
 
 export const initialLoginState: LoginState = {
     token: "",
-    tokenError: null
+    tokenError: null,
+    isAuthenticated: false
 };
 
 export const loginSlice = createSlice({
     name: "login",
     initialState: initialLoginState,
-    reducers: {},
+    reducers: {
+        logout: (state) => {
+            state.token = "";
+            state.isAuthenticated = false;
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(actions.fetchToken.fulfilled, (state, action) => {
-                localStorage.setItem("token", action.payload);
                 state.token = action.payload;
+                state.isAuthenticated = validateToken(state.token);
                 state.tokenError = null;
             })
             .addCase(actions.fetchToken.rejected, (state, action) => {
@@ -24,4 +31,5 @@ export const loginSlice = createSlice({
     }
 });
 
+export const {logout} = loginSlice.actions;
 export default loginSlice.reducer;

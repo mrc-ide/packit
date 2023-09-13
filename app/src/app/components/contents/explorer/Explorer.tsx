@@ -8,7 +8,6 @@ import ReactPaginate from "react-paginate";
 export default function Explorer() {
     const dispatch = useAppDispatch();
     const {pageablePackets} = useSelector((state: RootState) => state.packets);
-    const {token, tokenError} = useSelector((state: RootState) => state.login);
 
     const packets = pageablePackets.content ?? [];
     const [pageNumber, setPageNumber] = useState(0);
@@ -25,9 +24,8 @@ export default function Explorer() {
     };
 
     useEffect(() => {
-        console.log(token);
         dispatch(actions.fetchPackets({pageNumber, pageSize}));
-    }, [pageNumber, pageSize, token]);
+    }, [pageNumber, pageSize]);
 
     return (
         <div data-testid="explorer" className="content explorer">
