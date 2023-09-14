@@ -23,10 +23,10 @@ class UserPrincipal(
             val authorities = AuthorityUtils.createAuthorityList(user.role.toString())
             return UserPrincipal(
                 user.email,
-                user.password, // You can remove this if you don't store passwords
+                user.password,
                 authorities,
                 user.name,
-                attributes // Add any required attributes from OAuth2 or your user model
+                attributes
             )
         }
     }
