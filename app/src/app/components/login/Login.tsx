@@ -69,7 +69,9 @@ export default function Login() {
                     </button>
                     {isAuthenticated && <Navigate to="/"/>}
                     <div className="divider m-2">OR</div>
-                    <Link to={`${appConfig.apiUrl()}/oauth2/authorization/github`} className="btn">
+                    <Link
+                        to={`${appConfig.apiUrl()}/oauth2/authorization/github`}
+                        className="btn">
                         Login With GitHub
                     </Link>
                 </div>

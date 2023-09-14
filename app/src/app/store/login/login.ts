@@ -16,6 +16,11 @@ export const loginSlice = createSlice({
         logout: (state) => {
             state.token = "";
             state.isAuthenticated = false;
+        },
+        saveToken: (state, action) => {
+            state.token = action.payload;
+            state.isAuthenticated = validateToken(state.token);
+            state.tokenError = null;
         }
     },
     extraReducers: (builder) => {
@@ -31,5 +36,6 @@ export const loginSlice = createSlice({
     }
 });
 
-export const {logout} = loginSlice.actions;
+export const {logout, saveToken} = loginSlice.actions;
+
 export default loginSlice.reducer;

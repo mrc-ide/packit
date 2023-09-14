@@ -16,6 +16,12 @@ class BasicUserDetailsServiceClient(val userService: UserService) : UserDetailsS
         val user = userService.findByEmail(username)
             .orElseThrow { PackitException("User $username does not exist") }
 
-        return UserPrincipal(user.email, user.password, mutableListOf(SimpleGrantedAuthority(user.role.toString())))
+        return UserPrincipal(
+            user.email,
+            user.password,
+            mutableListOf(SimpleGrantedAuthority(user.role.toString())),
+            user.name,
+            user.attributes
+        )
     }
 }

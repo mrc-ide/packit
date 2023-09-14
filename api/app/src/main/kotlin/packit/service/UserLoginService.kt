@@ -37,6 +37,7 @@ class UserLoginService(
 
         SecurityContextHolder.getContext().authentication = authentication
 
+        /*
         val userPrincipal = authentication.principal as UserPrincipal
 
         val roles = userPrincipal.authorities
@@ -44,5 +45,7 @@ class UserLoginService(
             .toList()
 
         return jwtIssuer.issue(userPrincipal.username, roles)
+        */
+        return jwtIssuer.issue(authentication)
     }
 }

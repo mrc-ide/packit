@@ -19,7 +19,9 @@ class TokenToPrincipalConverter : TokenToPrincipal
         return UserPrincipal(
             jwt.getClaim("email").toString(),
             "",
-            extractAuthorities(jwt)
+            extractAuthorities(jwt),
+            jwt.getClaim("name").toString(),
+            mutableMapOf()
         )
     }
 

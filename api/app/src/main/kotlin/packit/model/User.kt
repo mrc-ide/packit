@@ -9,4 +9,6 @@ data class User(
     @JsonIgnore
     val password: String,
     val role: Role,
+    val name: String,
+    val attributes: MutableMap<String, Any>,
 )

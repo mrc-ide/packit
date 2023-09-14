@@ -7,13 +7,14 @@ import {NotFound} from "../NotFound";
 import {Download} from "../contents/download";
 import {ChangeLogs} from "../contents/changelogs";
 import {Metadata} from "../contents/metadata";
-import {Login} from "../login";
+import {Login, Redirect} from "../login";
 import {ProtectedRoute} from "./ProtectedRoute";
 
 export function Router() {
     return (
         <Routes>
-            <Route path={"/login"} element={<Login/>}/>
+            <Route path={"login"} element={<Login/>}/>
+            <Route path="redirect" element={<Redirect/>}/>
             <Route path="*" element={<ProtectedRoute element={<NotFound/>}/>}/>
             <Route element={<Sidebar/>}>
                 <Route index element={<ProtectedRoute element={<Explorer/>}/>}/>

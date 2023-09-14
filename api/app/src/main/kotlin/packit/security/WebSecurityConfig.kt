@@ -14,11 +14,19 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import packit.AppConfig
 import packit.security.clients.BasicUserDetailsServiceClient
+import packit.security.clients.Oauth2UserServiceClient
+import packit.security.issuer.JwtIssuer
 
 @Configuration
 @EnableWebSecurity
-class WebSecurityConfig(val customDetailsService: BasicUserDetailsServiceClient)
+class WebSecurityConfig(
+    val customBasicUserService: BasicUserDetailsServiceClient,
+    val customOauth2UserService: Oauth2UserServiceClient,
+    val config: AppConfig,
+    val jwtIssuer: JwtIssuer,
+)
 {
     @Bean
     fun securityFilterChain(
@@ -41,7 +49,12 @@ class WebSecurityConfig(val customDetailsService: BasicUserDetailsServiceClient)
                     .requestMatchers("/admin/**").hasRole(Role.ADMIN.toString())
                     .anyRequest().authenticated()
             }
-            .oauth2Login(withDefaults())
+            .oauth2Login { oauth2Login ->
+                oauth2Login
+                    .userInfoEndpoint().userService(customOauth2UserService)
+                    .and()
+                    .successHandler(OAuth2SuccessHandler(config, jwtIssuer))
+            }
             .exceptionHandling { exceptionHandling ->
                 exceptionHandling.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
             }
@@ -59,7 +72,7 @@ class WebSecurityConfig(val customDetailsService: BasicUserDetailsServiceClient)
     fun authenticationManager(httpSecurity: HttpSecurity): AuthenticationManager
     {
         return httpSecurity.getSharedObject(AuthenticationManagerBuilder::class.java)
-            .userDetailsService(customDetailsService)
+            .userDetailsService(customBasicUserService)
             .passwordEncoder(passwordEncoder())
             .and()
             .build()

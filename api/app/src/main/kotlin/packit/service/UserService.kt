@@ -31,7 +31,9 @@ class UserServiceImpl : UserService
                 1L,
                 USER,
                 PASSWORD,
-                Role.USER
+                Role.USER,
+                "TEST_USER",
+                mutableMapOf()
             )
         )
     }

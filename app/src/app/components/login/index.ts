@@ -1,3 +1,4 @@
 import Login from "./Login";
+import Redirect from "./Redirect";
 
-export {Login};
+export {Login, Redirect};
