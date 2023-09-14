@@ -59,6 +59,11 @@ class WebSecurityConfig(
                 exceptionHandling.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
             }
 
+        if (!config.authEnableGithubLogin)
+        {
+            httpSecurity.oauth2Login().disable()
+        }
+
         return httpSecurity.build()
     }
 

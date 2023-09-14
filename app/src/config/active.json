@@ -1,6 +1,5 @@
 {
   "instance": "default",
   "logo": "packit-logo.png",
-  "description": "This config consist of packit settings",
-  "oauth2_login_method": false
+  "description": "This config consist of packit default styles"
 }

@@ -1,42 +1,40 @@
 package packit.controllers
 
 import jakarta.servlet.http.HttpServletResponse
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.stereotype.Controller
 import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.util.UriComponentsBuilder
 import packit.AppConfig
 import packit.model.LoginRequest
 import packit.service.UserLoginService
-import java.net.URI
 
-
-@RestController
+@Controller
 @RequestMapping("/auth")
-class LoginController(val loginService: UserLoginService)
+class LoginController(val loginService: UserLoginService, val config: AppConfig)
 {
     @PostMapping("/login")
     fun login(
         @RequestBody @Validated user: LoginRequest,
         response: HttpServletResponse,
         config: AppConfig,
-    )
+    ): ResponseEntity<String>
     {
         val token = loginService.authenticateAndIssueToken(user)
+        return ResponseEntity.ok(token)
+    }
 
-        val uri = UriComponentsBuilder
-            .fromUriString(config.authRedirectUri)
-            .queryParam("token", token)
-            .build()
-            .toUriString()
+    @GetMapping("/config")
+    fun authConfig(): ResponseEntity<Map<String, Any>>
+    {
+        val loginConfig = mapOf(
+            "enableGithubLogin" to config.authEnableGithubLogin,
+            "enableFormLogin" to config.authEnableFormLogin
+        )
 
-        response.sendRedirect(uri)
-
-        //return ResponseEntity.ok(token)
+        return ResponseEntity.ok(loginConfig)
     }
 }

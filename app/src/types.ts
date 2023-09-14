@@ -52,7 +52,9 @@ export interface PacketsState {
 export interface LoginState {
     token: string
     tokenError:  null | Error
-    isAuthenticated: boolean
+    isAuthenticated: boolean,
+    authConfig: Record<string, any>,
+    authConfigError: null | Error
 }
 
 export interface PacketMetadata {

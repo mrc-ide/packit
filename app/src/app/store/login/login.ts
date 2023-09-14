@@ -6,7 +6,9 @@ import {validateToken} from "../../../helpers";
 export const initialLoginState: LoginState = {
     token: "",
     tokenError: null,
-    isAuthenticated: false
+    isAuthenticated: false,
+    authConfig: {},
+    authConfigError: null
 };
 
 export const loginSlice = createSlice({
@@ -32,6 +34,13 @@ export const loginSlice = createSlice({
             })
             .addCase(actions.fetchToken.rejected, (state, action) => {
                 state.tokenError = action.payload ?? null;
+            })
+            .addCase(actions.authConfig.fulfilled, (state, action) => {
+                state.authConfig = action.payload;
+                state.authConfigError = null;
+            })
+            .addCase(actions.authConfig.rejected, (state, action) => {
+                state.authConfigError = action.payload ?? null;
             });
     }
 });

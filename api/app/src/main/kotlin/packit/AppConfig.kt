@@ -18,6 +18,8 @@ class AppConfig(private val props: PackitProperties = properties)
     val dbPassword: String = propString("db.password")
     val authBasicSecret: String = propString("auth.basic.secret")
     val authRedirectUri: String = propString("auth.oauth2.redirect.url")
+    val authEnableFormLogin: Boolean = propString("auth.enableFormLogin").toBoolean()
+    val authEnableGithubLogin: Boolean = propString("auth.enableGithubLogin").toBoolean()
 
     private fun propString(propName: String): String
     {
