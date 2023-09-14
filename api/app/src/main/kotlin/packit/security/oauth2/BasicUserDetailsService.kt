@@ -1,4 +1,4 @@
-package packit.security.clients
+package packit.security.oauth2
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
@@ -9,7 +9,7 @@ import packit.security.profile.UserPrincipal
 import packit.service.UserService
 
 @Component
-class BasicUserDetailsServiceClient(val userService: UserService) : UserDetailsService
+class BasicUserDetailsService(val userService: UserService) : UserDetailsService
 {
     override fun loadUserByUsername(username: String): UserDetails
     {

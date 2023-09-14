@@ -1,4 +1,4 @@
-package packit.security
+package packit.security.oauth2
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

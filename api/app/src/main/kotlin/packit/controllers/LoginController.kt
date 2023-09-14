@@ -14,7 +14,7 @@ import packit.service.UserLoginService
 
 @Controller
 @RequestMapping("/auth")
-class LoginController(val loginService: UserLoginService, val config: AppConfig)
+class LoginController(val loginService: UserLoginService)
 {
     @PostMapping("/login")
     fun login(
@@ -30,11 +30,6 @@ class LoginController(val loginService: UserLoginService, val config: AppConfig)
     @GetMapping("/config")
     fun authConfig(): ResponseEntity<Map<String, Any>>
     {
-        val loginConfig = mapOf(
-            "enableGithubLogin" to config.authEnableGithubLogin,
-            "enableFormLogin" to config.authEnableFormLogin
-        )
-
-        return ResponseEntity.ok(loginConfig)
+        return ResponseEntity.ok(loginService.authConfig())
     }
 }

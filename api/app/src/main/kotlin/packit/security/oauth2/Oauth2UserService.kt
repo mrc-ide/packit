@@ -1,4 +1,4 @@
-package packit.security.clients
+package packit.security.oauth2
 
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest
@@ -7,11 +7,10 @@ import org.springframework.stereotype.Component
 import packit.exceptions.PackitException
 import packit.model.User
 import packit.security.Role
-import packit.security.oauth2.GithubOAuth2UserInfo
 import packit.security.profile.UserPrincipal
 
 @Component
-class Oauth2UserServiceClient: DefaultOAuth2UserService()
+class Oauth2UserService: DefaultOAuth2UserService()
 {
     override fun loadUser(userRequest: OAuth2UserRequest): OAuth2User
     {

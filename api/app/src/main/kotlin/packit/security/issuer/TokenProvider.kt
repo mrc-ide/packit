@@ -17,7 +17,7 @@ interface JwtIssuer
 }
 
 @Component
-class TokenIssuer(val config: AppConfig) : JwtIssuer
+class TokenProvider(val config: AppConfig) : JwtIssuer
 {
     companion object
     {
