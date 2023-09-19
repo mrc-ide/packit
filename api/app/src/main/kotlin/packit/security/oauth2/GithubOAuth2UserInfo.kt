@@ -1,6 +1,6 @@
 package packit.security.oauth2
 
-class GithubOAuth2UserInfo(private val attributes: MutableMap<String, Any>): OAuth2UserInfo
+class GithubOAuth2UserInfo(private val attributes: MutableMap<String, Any>) : OAuth2UserInfo
 {
     override fun id(): String
     {

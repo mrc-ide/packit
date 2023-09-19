@@ -10,7 +10,7 @@ import packit.security.Role
 import packit.security.profile.UserPrincipal
 
 @Component
-class Oauth2UserService: DefaultOAuth2UserService()
+class OAuth2UserService : DefaultOAuth2UserService()
 {
     override fun loadUser(userRequest: OAuth2UserRequest): OAuth2User
     {
@@ -28,7 +28,7 @@ class Oauth2UserService: DefaultOAuth2UserService()
             throw PackitException("Email not found from Github provider")
         }
 
-        //TODO check if user exists, if not, save user email to database
+        // TODO check if user exists, if not, save user email to database
 
         val user = User(
             1L,

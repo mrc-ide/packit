@@ -19,6 +19,10 @@ class TokenAuthenticationFilter(
     val jwtToPrincipal: TokenToPrincipal,
 ) : OncePerRequestFilter()
 {
+    companion object
+    {
+        private const val BearerTokenSubString = 7
+    }
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -44,7 +48,7 @@ class TokenAuthenticationFilter(
         {
             if (token.startsWith("Bearer "))
             {
-                return Optional.of(token.substring(7))
+                return Optional.of(token.substring(BearerTokenSubString))
             } else
             {
                 throw PackitException("Invalid authorization type. Please use a Bearer token.")

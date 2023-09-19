@@ -15,16 +15,16 @@ import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import packit.AppConfig
-import packit.security.oauth2.BasicUserDetailsService
-import packit.security.oauth2.Oauth2UserService
 import packit.security.issuer.JwtIssuer
+import packit.security.oauth2.BasicUserDetailsService
 import packit.security.oauth2.OAuth2SuccessHandler
+import packit.security.oauth2.OAuth2UserService
 
-@Configuration
 @EnableWebSecurity
+@Configuration
 class WebSecurityConfig(
     val customBasicUserService: BasicUserDetailsService,
-    val customOauth2UserService: Oauth2UserService,
+    val customOauth2UserService: OAuth2UserService,
     val config: AppConfig,
     val jwtIssuer: JwtIssuer,
 )
