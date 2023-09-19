@@ -27,7 +27,7 @@ class TokenToPrincipalConverter : TokenToPrincipal
 
     override fun extractAuthorities(jwt: DecodedJWT): MutableCollection<out GrantedAuthority>
     {
-        val claims = jwt.getClaim("a")
+        val claims = jwt.getClaim("au")
 
         if (claims.isNull || claims.isMissing)
         {

@@ -35,7 +35,7 @@ class TokenProvider(val config: AppConfig) : JwtIssuer
             .withIssuer(TOKEN_ISSUER)
             .withClaim("email", "user.username")
             .withClaim("datetime", Instant.now())
-            .withClaim("role", roles)
+            .withClaim("au", roles)
             .withExpiresAt(Instant.now().plus(Duration.of(1, ChronoUnit.DAYS)))
             .sign(Algorithm.HMAC256(config.authBasicSecret))
     }

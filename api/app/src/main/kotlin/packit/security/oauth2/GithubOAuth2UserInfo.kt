@@ -16,9 +16,4 @@ class GithubOAuth2UserInfo(private val attributes: MutableMap<String, Any>): OAu
     {
         return attributes["email"].toString()
     }
-
-    override fun imageUrl(): String
-    {
-        return attributes["avatar_url"].toString()
-    }
 }
