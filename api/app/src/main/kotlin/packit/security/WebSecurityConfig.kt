@@ -15,10 +15,10 @@ import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import packit.AppConfig
-import packit.security.issuer.JwtIssuer
 import packit.security.oauth2.BasicUserDetailsService
 import packit.security.oauth2.OAuth2SuccessHandler
 import packit.security.oauth2.OAuth2UserService
+import packit.security.provider.JwtIssuer
 
 @EnableWebSecurity
 @Configuration

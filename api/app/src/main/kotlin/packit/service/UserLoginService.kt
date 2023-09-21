@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service
 import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.model.LoginRequest
-import packit.security.issuer.JwtIssuer
+import packit.security.provider.JwtIssuer
 
 interface LoginService
 {

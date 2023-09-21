@@ -1,4 +1,4 @@
-package packit.security.issuer
+package packit.security.provider
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
@@ -27,13 +27,13 @@ class TokenDecoder(val config: AppConfig) : JwtDecoder
                 .verify(token)
         } catch (e: SignatureVerificationException)
         {
-            throw PackitException("Request to verify JWT with invalid signature failed: ${e.message}")
+            throw PackitException("Signature failed: ${e.message}")
         } catch (e: TokenExpiredException)
         {
-            throw PackitException("Request to verify JWT with expired token failed: ${e.message}")
+            throw PackitException("Expired failed: ${e.message}")
         } catch (e: JWTVerificationException)
         {
-            throw PackitException("Request to verify JWT with invalid token failed: ${e.message}")
+            throw PackitException("Verification failed: ${e.message}")
         }
     }
 }

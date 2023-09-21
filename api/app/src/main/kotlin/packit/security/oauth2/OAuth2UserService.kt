@@ -19,7 +19,7 @@ class OAuth2UserService : DefaultOAuth2UserService()
         return processOAuth2User(oAuth2User)
     }
 
-    private fun processOAuth2User(oAuth2User: OAuth2User): OAuth2User
+    fun processOAuth2User(oAuth2User: OAuth2User): OAuth2User
     {
         val githubInfo = GithubOAuth2UserInfo(oAuth2User.attributes)
 

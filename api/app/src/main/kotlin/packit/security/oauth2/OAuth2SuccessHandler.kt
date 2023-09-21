@@ -7,7 +7,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component
 import org.springframework.web.util.UriComponentsBuilder
 import packit.AppConfig
-import packit.security.issuer.JwtIssuer
+import packit.security.provider.JwtIssuer
 
 @Component
 class OAuth2SuccessHandler(
@@ -31,17 +31,19 @@ class OAuth2SuccessHandler(
         authentication: Authentication,
     )
     {
-        var targetUrl =
-            config.authRedirectUri.ifEmpty { determineTargetUrl(request, response, authentication) }
-
         val token = jwtIssuer.issue(authentication)
 
-        targetUrl = UriComponentsBuilder
-            .fromUriString(targetUrl)
+        val targetUrl = buildUri(token)
+
+        redirectStrategy.sendRedirect(request, response, targetUrl)
+    }
+
+    fun buildUri(token: String): String
+    {
+        return UriComponentsBuilder
+            .fromUriString(config.authRedirectUri)
             .queryParam("token", token)
             .build()
             .toUriString()
-
-        redirectStrategy.sendRedirect(request, response, targetUrl)
     }
 }

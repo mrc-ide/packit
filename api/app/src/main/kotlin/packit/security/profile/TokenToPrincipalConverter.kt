@@ -17,10 +17,10 @@ class TokenToPrincipalConverter : TokenToPrincipal
     override fun convert(jwt: DecodedJWT): UserPrincipal
     {
         return UserPrincipal(
-            jwt.getClaim("email").toString(),
+            jwt.getClaim("email").asString(),
             "",
             extractAuthorities(jwt),
-            jwt.getClaim("name").toString(),
+            jwt.getClaim("name").asString(),
             mutableMapOf()
         )
     }

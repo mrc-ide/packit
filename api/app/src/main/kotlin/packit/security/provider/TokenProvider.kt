@@ -1,4 +1,4 @@
-package packit.security.issuer
+package packit.security.provider
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
@@ -30,13 +30,18 @@ class TokenProvider(val config: AppConfig) : JwtIssuer
 
         val roles = user.authorities.map { it.authority }
 
+        val createdDate = Instant.now()
+
+        val expiredDate = createdDate.plus(Duration.of(1, ChronoUnit.DAYS))
+
         return JWT.create()
             .withAudience(TOKEN_AUDIENCE)
             .withIssuer(TOKEN_ISSUER)
-            .withClaim("email", "user.username")
-            .withClaim("datetime", Instant.now())
+            .withClaim("email", user.username)
+            .withClaim("name", user.name)
+            .withClaim("datetime", createdDate)
             .withClaim("au", roles)
-            .withExpiresAt(Instant.now().plus(Duration.of(1, ChronoUnit.DAYS)))
+            .withExpiresAt(expiredDate)
             .sign(Algorithm.HMAC256(config.authBasicSecret))
     }
 }

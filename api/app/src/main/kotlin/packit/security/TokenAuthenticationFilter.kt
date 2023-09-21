@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component
 import org.springframework.util.StringUtils
 import org.springframework.web.filter.OncePerRequestFilter
 import packit.exceptions.PackitException
-import packit.security.issuer.JwtDecoder
 import packit.security.profile.TokenToPrincipal
 import packit.security.profile.UserPrincipalAuthenticationToken
+import packit.security.provider.JwtDecoder
 import java.util.Optional
 
 @Component
@@ -51,7 +51,7 @@ class TokenAuthenticationFilter(
                 return Optional.of(token.substring(BearerTokenSubString))
             } else
             {
-                throw PackitException("Invalid authorization type. Please use a Bearer token.")
+                throw PackitException("Invalid authorization type. Please use a Bearer token")
             }
         }
         return Optional.empty()
