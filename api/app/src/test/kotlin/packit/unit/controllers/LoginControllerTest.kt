@@ -17,7 +17,7 @@ class LoginControllerTest
         val request = LoginRequest("test@example.com", "test")
 
         val mockUserLoginService = mock<UserLoginService> {
-            on { authenticateAndIssueToken(request) } doReturn "Token"
+            on { authenticateAndIssueToken(request) } doReturn mapOf("token" to "fakeToken")
         }
 
         val sut = LoginController(mockUserLoginService)
@@ -26,7 +26,7 @@ class LoginControllerTest
 
         assertEquals(result.statusCode, HttpStatus.OK)
 
-        assertEquals(result.body, "Token")
+        assertEquals(result.body, mapOf("token" to "fakeToken"))
     }
 
     @Test

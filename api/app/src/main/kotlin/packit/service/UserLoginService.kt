@@ -11,7 +11,7 @@ import packit.security.provider.JwtIssuer
 
 interface LoginService
 {
-    fun authenticateAndIssueToken(loginRequest: LoginRequest): String
+    fun authenticateAndIssueToken(loginRequest: LoginRequest): Map<String, String>
     fun authConfig(): Map<String, Any>
 }
 
@@ -19,10 +19,10 @@ interface LoginService
 class UserLoginService(
     val jwtIssuer: JwtIssuer,
     val authenticationManager: AuthenticationManager,
-    val config: AppConfig
+    val config: AppConfig,
 ) : LoginService
 {
-    override fun authenticateAndIssueToken(loginRequest: LoginRequest): String
+    override fun authenticateAndIssueToken(loginRequest: LoginRequest): Map<String, String>
     {
         if (loginRequest.email.isEmpty() && loginRequest.password.isEmpty())
         {
@@ -38,7 +38,9 @@ class UserLoginService(
 
         SecurityContextHolder.getContext().authentication = authentication
 
-        return jwtIssuer.issue(authentication)
+        val token = jwtIssuer.issue(authentication)
+
+        return mapOf("token" to token)
     }
 
     override fun authConfig(): Map<String, Any>

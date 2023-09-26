@@ -15,7 +15,7 @@ class LoginControllerTest : IntegrationTest()
     @Test
     fun `can login`()
     {
-        val loginRequest = LoginRequest("test@email.com", "test")
+        val loginRequest = LoginRequest("test.user@example.com", "password")
 
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_JSON

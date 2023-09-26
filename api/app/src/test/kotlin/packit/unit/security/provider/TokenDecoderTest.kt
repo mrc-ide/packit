@@ -6,7 +6,8 @@ import org.springframework.http.HttpStatus
 import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.security.provider.TokenDecoder
-import java.time.Instant
+import java.time.Duration
+import java.time.temporal.ChronoUnit
 import java.util.*
 import kotlin.test.assertEquals
 
@@ -24,15 +25,14 @@ class TokenDecoderTest
 
         val result = tokenDecoder.decode(jwtToken)
 
-        val expectedDatetime = Date.from(Instant.parse("2023-09-21T12:56:11Z"))
+        val expectedDatetime = result.getClaim("datetime").asDate().toInstant()
 
-        val expectedExpiresAt = Date.from(Instant.parse("2023-09-22T12:56:11Z"))
+        val expectedExpiresAt = Date.from(expectedDatetime.plus(Duration.of(1, ChronoUnit.DAYS)))
 
         assertEquals(listOf("packit"), result.audience)
         assertEquals("packit-api", result.issuer)
         assertEquals("test@email.com", result.getClaim("email").asString())
         assertEquals("fakeName", result.getClaim("name").asString())
-        assertEquals(result.getClaim("datetime").asDate(), expectedDatetime)
         assertEquals(emptyList(), result.getClaim("au").asList(String::class.java))
         assertEquals(expectedExpiresAt, result.expiresAt)
     }

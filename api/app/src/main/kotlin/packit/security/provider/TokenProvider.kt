@@ -32,7 +32,7 @@ class TokenProvider(val config: AppConfig) : JwtIssuer
 
         val createdDate = Instant.now()
 
-        val expiredDate = createdDate.plus(Duration.of(1, ChronoUnit.DAYS))
+        val expiredDate = createdDate.plus(Duration.of(config.authExpiryDays, ChronoUnit.DAYS))
 
         return JWT.create()
             .withAudience(TOKEN_AUDIENCE)

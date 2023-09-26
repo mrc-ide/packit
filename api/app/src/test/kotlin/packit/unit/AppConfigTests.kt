@@ -35,15 +35,34 @@ class AppConfigTests
     @Test
     fun `derives config from properties`()
     {
+        val authSecret = "secret"
+        val expiryDays = 1L
+        val redirectUrl = "http://redirect"
+        val enableFormLogin = false
+        val enableGithubLogin = true
+
         val props = PackitProperties()
-        props["outpack.server.url"] = "outpackServerUrl"
+
         props["db.url"] = "url"
         props["db.user"] = "user"
         props["db.password"] = "pw"
+        props["auth.expiryDays"] = expiryDays
+        props["auth.basic.secret"] = authSecret
+        props["outpack.server.url"] = "outpackServerUrl"
+        props["auth.enableFormLogin"] = enableFormLogin
+        props["auth.enableGithubLogin"] = enableGithubLogin
+        props["auth.oauth2.redirect.url"] = redirectUrl
+
         val sut = AppConfig(props)
-        assertEquals(sut.outpackServerUrl, "outpackServerUrl")
+
         assertEquals(sut.dbUrl, "url")
         assertEquals(sut.dbUser, "user")
         assertEquals(sut.dbPassword, "pw")
+        assertEquals(sut.authExpiryDays, expiryDays)
+        assertEquals(sut.authBasicSecret, authSecret)
+        assertEquals(sut.authRedirectUri, redirectUrl)
+        assertEquals(sut.outpackServerUrl, "outpackServerUrl")
+        assertEquals(sut.authEnableFormLogin, enableFormLogin)
+        assertEquals(sut.authEnableGithubLogin, enableGithubLogin)
     }
 }

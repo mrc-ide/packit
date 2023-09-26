@@ -20,6 +20,7 @@ class AppConfig(private val props: PackitProperties = properties)
     val authRedirectUri: String = propString("auth.oauth2.redirect.url")
     val authEnableFormLogin: Boolean = propString("auth.enableFormLogin").toBoolean()
     val authEnableGithubLogin: Boolean = propString("auth.enableGithubLogin").toBoolean()
+    val authExpiryDays: Long = propString("auth.expiryDays").toLong()
 
     private fun propString(propName: String): String
     {

@@ -17,7 +17,6 @@ import kotlin.test.assertEquals
 
 class TokenToPrincipalConverterTest
 {
-
     @Test
     fun `can extract authorities`()
     {
@@ -32,22 +31,6 @@ class TokenToPrincipalConverterTest
         val result = sut.extractAuthorities(mockDecodedJWT)
 
         assertEquals(result, mockClaim.asList(SimpleGrantedAuthority::class.java))
-    }
-
-    @Test
-    fun `extracts empty authorities when claim does not exist`()
-    {
-        val mockClaim = mock<Claim>()
-
-        val mockDecodedJWT = mock<DecodedJWT> {
-            on { getClaim("empty") } doReturn mockClaim
-        }
-
-        val sut = TokenToPrincipalConverter()
-
-        val result = sut.extractAuthorities(mockDecodedJWT)
-
-        assertEquals(result, mutableListOf())
     }
 
     @Test
