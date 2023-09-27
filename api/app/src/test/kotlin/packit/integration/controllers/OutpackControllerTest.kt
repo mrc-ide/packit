@@ -39,7 +39,7 @@ class OutpackControllerTest : IntegrationTest()
             getTokenizedHttpEntity()
         )
         assertSuccess(result)
-        jsonValidator.validateAgainstOutpackSchema(result.body!!, "location")
+        jsonValidator.validateAgainstOutpackSchema(result.body!!, "locations")
         assert(jsonValidator.getData(result.body!!).asIterable().count() > 1)
     }
 
