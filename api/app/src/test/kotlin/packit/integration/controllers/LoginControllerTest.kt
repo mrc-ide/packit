@@ -18,10 +18,13 @@ class LoginControllerTest : IntegrationTest()
         val loginRequest = LoginRequest("test.user@example.com", "password")
 
         val headers = HttpHeaders()
+
         headers.contentType = MediaType.APPLICATION_JSON
+
         val requestEntity = HttpEntity(loginRequest, headers)
 
         val result: ResponseEntity<String> = restTemplate.exchange("/auth/login", HttpMethod.POST, requestEntity)
+
         assertSuccess(result)
     }
 
@@ -29,6 +32,7 @@ class LoginControllerTest : IntegrationTest()
     fun `can get config`()
     {
         val result = restTemplate.getForEntity("/auth/config", String::class.java)
+
         assertSuccess(result)
     }
 }

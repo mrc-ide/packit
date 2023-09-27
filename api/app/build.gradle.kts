@@ -34,6 +34,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.1")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.security:spring-security-test")
 
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
     testImplementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.1")
