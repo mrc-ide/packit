@@ -123,7 +123,8 @@ class OutpackControllerTest : IntegrationTest()
         val result = restTemplate.postForEntity(
             "/outpack/packet/badhash",
             getTokenizedHttpEntity(MediaType.TEXT_PLAIN, testPacket),
-            String::class.java)
+            String::class.java
+        )
 
         assertEquals(result.statusCode, HttpStatusCode.valueOf(400))
         jsonValidator.validateError(

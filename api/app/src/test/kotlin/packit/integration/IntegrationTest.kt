@@ -16,7 +16,7 @@ abstract class IntegrationTest
     lateinit var restTemplate: TestRestTemplate
 
     @Autowired
-    private lateinit var jwtIssuer: JwtIssuer;
+    private lateinit var jwtIssuer: JwtIssuer
 
     val jsonValidator = JSONValidator()
 
