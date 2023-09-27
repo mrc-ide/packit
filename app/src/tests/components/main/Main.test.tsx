@@ -4,7 +4,7 @@ import {Main} from "../../../app/components/main";
 import userEvent from "@testing-library/user-event";
 import {Provider} from "react-redux";
 import {PacketsState} from "../../../types";
-import {mockPacketResponse, mockPacketsState} from "../../mocks";
+import {mockLoginState, mockPacketResponse, mockPacketsState} from "../../mocks";
 import thunk from "redux-thunk";
 import configureStore from "redux-mock-store";
 import {Store} from "@reduxjs/toolkit";
@@ -16,7 +16,8 @@ describe("main component", () => {
         const middlewares = [thunk];
         const mockStore = configureStore(middlewares);
         const initialRootStates = {
-            packets: mockPacketsState(props)
+            packets: mockPacketsState(props),
+            login: (mockLoginState({isAuthenticated: true}))
         };
 
         return mockStore(initialRootStates);

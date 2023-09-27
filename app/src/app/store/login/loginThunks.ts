@@ -1,5 +1,6 @@
 import {AsyncThunk, createAsyncThunk} from "@reduxjs/toolkit";
 import {
+    CurrentUser,
     CustomAsyncThunkOptions,
     RejectedErrorValue,
     UserLoginDetails
@@ -7,7 +8,7 @@ import {
 import {api} from "../../../apiService";
 
 export interface LoginActions {
-    fetchToken: AsyncThunk<string, UserLoginDetails, RejectedErrorValue>;
+    fetchToken: AsyncThunk<CurrentUser, UserLoginDetails, RejectedErrorValue>;
     authConfig: AsyncThunk<Record<string, any>, void, RejectedErrorValue>;
 }
 
@@ -17,12 +18,12 @@ export enum PacketsMutationType {
 }
 
 export const actions: LoginActions = {
-    fetchToken: createAsyncThunk<string, UserLoginDetails, CustomAsyncThunkOptions>(
+    fetchToken: createAsyncThunk<CurrentUser, UserLoginDetails, CustomAsyncThunkOptions>(
         PacketsMutationType.GetToken,
         async (props, thunkAPI) =>
-            api.postAndReturn("/auth/login", props, thunkAPI)),
+            api().postAndReturn("/auth/login", props, thunkAPI)),
     authConfig: createAsyncThunk<Record<string, any>, void, CustomAsyncThunkOptions>(
         PacketsMutationType.AuthConfig,
         async (_, thunkAPI) =>
-            api.get("/auth/config", thunkAPI))
+            api().get("/auth/config", thunkAPI))
 };

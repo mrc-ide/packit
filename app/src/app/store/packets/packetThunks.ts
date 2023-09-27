@@ -23,10 +23,10 @@ export const actions: PacketsActions = {
     fetchPackets: createAsyncThunk<PageablePackets, PaginationProps, CustomAsyncThunkOptions>(
         PacketsMutationType.GetPackets,
         async (props, thunkAPI) =>
-            api.get(`/packets?${qs.stringify(props)}`, thunkAPI)),
+            api().get(`/packets?${qs.stringify(props)}`, thunkAPI)),
 
     fetchPacketById: createAsyncThunk<PacketMetadata, string, CustomAsyncThunkOptions>(
         PacketsMutationType.GetPacket,
         async (packetId, thunkAPI) =>
-            api.get(`/packets/metadata/${packetId}`, thunkAPI))
+            api().get(`/packets/metadata/${packetId}`, thunkAPI))
 };

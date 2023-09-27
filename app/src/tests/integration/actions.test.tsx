@@ -12,7 +12,7 @@ describe("backend integration", () => {
         const dispatch = jest.fn();
         const asyncThunk = createAsyncThunk<Packet[], void, CustomAsyncThunkOptions>(
             PacketsMutationType.GetPackets,
-            async (_, thunkAPI) => api.get("/bad-url", thunkAPI))();
+            async (_, thunkAPI) => api().get("/bad-url", thunkAPI))();
 
         await asyncThunk(dispatch, jest.fn(), jest.fn());
 

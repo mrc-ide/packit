@@ -2,6 +2,8 @@ import axios, {AxiosError, AxiosInstance} from "axios";
 import {Error} from "./types";
 import appConfig from "./config/appConfig";
 import {validateToken} from "./helpers";
+import {getCurrentUser} from "./localStorageManager";
+import {Store} from "@reduxjs/toolkit";
 
 let store: any;
 
@@ -20,10 +22,11 @@ interface API {
 export class ApiService implements API {
     private readonly axiosInstance: AxiosInstance;
     private readonly headers: any;
+    private readonly injectedStore: any;
 
     private ignoreAuthorization = false;
 
-    constructor(axiosInstance = axios.create({baseURL})) {
+    constructor(injectStore = store, axiosInstance = axios.create({baseURL})) {
         this.headers = {
             "Content-Type": "application/json",
         };
@@ -31,20 +34,22 @@ export class ApiService implements API {
         this.addAuthorizationHeader(axiosInstance);
 
         this.axiosInstance = axiosInstance;
+        this.injectedStore = injectStore;
     }
 
     addAuthorizationHeader = (axiosInstance: AxiosInstance) => {
-        //TODO validate for expired token
+
         axiosInstance.interceptors.request.use(config => {
-            if (validateToken(store.getState().login.token)) {
-                config.headers.authorization =
-                    `Bearer ${store.getState().login.token || localStorage.getItem("token")}`;
+            if (validateToken(getCurrentUser() || this.injectedStore.getState().login.user)) {
+                config.headers.authorization = `Bearer ${getCurrentUser().token
+                || this.injectedStore.getState().login.user.token}`;
             }
             return config;
         });
     };
 
     private handleErrorResponse = (error: AxiosError) => {
+        console.debug(error);
         let errorMessage = {error: {detail: "Could not parse API response", error: "error"}};
         if (error instanceof AxiosError && error.response) {
             errorMessage = error.response.data as Error;
@@ -71,4 +76,4 @@ export class ApiService implements API {
     }
 }
 
-export const api = new ApiService();
+export const api = (initialStore: Store = store) => new ApiService(initialStore);

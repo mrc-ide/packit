@@ -1,6 +1,7 @@
 import {useDispatch} from "react-redux";
 import store, {rootReducer} from "./app/store/store";
 import {AsyncThunkOptions} from "@reduxjs/toolkit";
+import {validateToken} from "./helpers";
 
 export enum SideBarItems {
     explorer,
@@ -50,7 +51,7 @@ export interface PacketsState {
 }
 
 export interface LoginState {
-    token: string
+    user: CurrentUser
     tokenError:  null | Error
     isAuthenticated: boolean,
     authConfig: Record<string, any>,
@@ -128,4 +129,8 @@ export const useAppDispatch = () => useDispatch<AppDispatch>();
 
 export interface CustomAsyncThunkOptions extends AsyncThunkOptions<void, RejectedErrorValue> {
     rejectValue: Error
+}
+
+export interface CurrentUser {
+    token: string
 }

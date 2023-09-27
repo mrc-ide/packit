@@ -2,7 +2,7 @@ import React from "react";
 import {useEffect} from "react";
 import {RootState, useAppDispatch} from "../../../types";
 import {Navigate, useLocation} from "react-router-dom";
-import {saveToken} from "../../store/login/login";
+import {saveUser} from "../../store/login/login";
 import {useSelector} from "react-redux";
 
 export default function Redirect() {
@@ -14,7 +14,7 @@ export default function Redirect() {
 
     useEffect(() => {
         if (token) {
-            dispatch(saveToken(token));
+            dispatch(saveUser({token: token}));
         }
     }, [token]);
 

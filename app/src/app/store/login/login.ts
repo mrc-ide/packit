@@ -1,10 +1,11 @@
-import {LoginState} from "../../../types";
+import {CurrentUser, LoginState} from "../../../types";
 import {createSlice} from "@reduxjs/toolkit";
 import {actions} from "./loginThunks";
 import {validateToken} from "../../../helpers";
+import {CURRENT_USER, saveCurrentUser} from "../../../localStorageManager";
 
 export const initialLoginState: LoginState = {
-    token: "",
+    user: {} as CurrentUser,
     tokenError: null,
     isAuthenticated: false,
     authConfig: {},
@@ -16,20 +17,23 @@ export const loginSlice = createSlice({
     initialState: initialLoginState,
     reducers: {
         logout: (state) => {
-            state.token = "";
+            state.user = {} as CurrentUser;
             state.isAuthenticated = false;
+            localStorage.removeItem(CURRENT_USER);
         },
-        saveToken: (state, action) => {
-            state.token = action.payload;
-            state.isAuthenticated = validateToken(state.token);
+        saveUser: (state, action) => {
+            state.user = action.payload;
+            saveCurrentUser(state.user);
+            state.isAuthenticated = validateToken(state.user);
             state.tokenError = null;
         }
     },
     extraReducers: (builder) => {
         builder
             .addCase(actions.fetchToken.fulfilled, (state, action) => {
-                state.token = action.payload;
-                state.isAuthenticated = validateToken(state.token);
+                state.user = action.payload;
+                saveCurrentUser(state.user);
+                state.isAuthenticated = validateToken(state.user);
                 state.tokenError = null;
             })
             .addCase(actions.fetchToken.rejected, (state, action) => {
@@ -45,6 +49,6 @@ export const loginSlice = createSlice({
     }
 });
 
-export const {logout, saveToken} = loginSlice.actions;
+export const {logout, saveUser} = loginSlice.actions;
 
 export default loginSlice.reducer;

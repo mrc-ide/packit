@@ -1,4 +1,4 @@
-import {TimeMetadata} from "./types";
+import {CurrentUser, TimeMetadata} from "./types";
 
 export function bytesToSize(bytes: number): string {
     const units = ["bytes", "kilobytes", "megabytes", "gigabytes", "terabytes"];
@@ -44,11 +44,10 @@ export const getElapsedTime = (time: TimeMetadata) => {
     return formattedTime.trim();
 };
 
-export const validateToken = (token: string): boolean => {
+export const validateToken = (user: CurrentUser): boolean => {
     // TODO unauthenticated users
     //remember to store retrieve other data from jwt
     //check if token is expired
     // logout if expired
-    //validate token expiration
-    return !!token;
+    return !!user.token;
 };

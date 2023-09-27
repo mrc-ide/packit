@@ -2,6 +2,9 @@ import {ApiService} from "../apiService";
 import mockAxios from "../../mockAxios";
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import {CustomAsyncThunkOptions} from "../types";
+import thunk from "redux-thunk";
+import configureStore from "redux-mock-store";
+import {mockLoginState, mockPacketsState} from "./mocks";
 
 describe("api service", () => {
 
@@ -9,6 +12,17 @@ describe("api service", () => {
         mockAxios.reset();
         jest.clearAllMocks();
     });
+
+    const getStore = () => {
+        const middlewares = [thunk];
+        const mockStore = configureStore(middlewares);
+        const initialRootStates = {
+            packets: mockPacketsState(),
+            login: mockLoginState()
+        };
+
+        return mockStore(initialRootStates);
+    };
 
     it("executes async GET method successfully", async () => {
 
@@ -20,7 +34,7 @@ describe("api service", () => {
 
         mockAxios.onGet(url).reply(200, responseData);
 
-        const api = new ApiService();
+        const api = new ApiService(getStore());
 
         const asyncThunk = createAsyncThunk<typeof responseData, void, CustomAsyncThunkOptions>(
             type, async (_, thunkAPI) => api.get(url, thunkAPI))();
@@ -56,7 +70,7 @@ describe("api service", () => {
 
         mockAxios.onGet(url).reply(400, errorResponse);
 
-        const api = new ApiService();
+        const api = new ApiService(getStore());
 
         const asyncThunk = createAsyncThunk<string, void, CustomAsyncThunkOptions>(
             type, async (_, thunkAPI) => api.get(url, thunkAPI))();

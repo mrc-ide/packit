@@ -5,11 +5,13 @@ import {
     Schema,
     Inventory
 } from "@mui/icons-material";
-import {NavLink, Outlet, useParams} from "react-router-dom";
+import {NavLink, Outlet, useLocation, useParams} from "react-router-dom";
 import PacketMenu from "./PacketMenu";
 
 export default function Sidebar() {
     const {packetId} = useParams();
+    const location = useLocation();
+    const to = location.pathname === "/packets" ? "/packets" : "/";
 
     return (
         <>
@@ -17,7 +19,7 @@ export default function Sidebar() {
                 <div className={`${packetId ? "sidebar-short" : "sidebar"}`}>
                     <ul className="list-unstyled">
                         <li>
-                            <NavLink to="/packets">
+                            <NavLink to={to}>
                                 <span className="sidebar-icon"><FindInPage fontSize="small"/></span>
                                 <span className="text">Packet explorer</span>
                             </NavLink>

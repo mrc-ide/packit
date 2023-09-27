@@ -48,7 +48,7 @@ export default function Login() {
     };
 
     return (
-        <div className="login-container">
+        <div data-testid="login" className="login-container">
             <div className="login-box">
                 <h1 className="mb-4">Login</h1>
                 {authConfig.enableFormLogin && <div>

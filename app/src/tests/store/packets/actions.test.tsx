@@ -3,12 +3,14 @@ import {mockPacketResponse} from "../../mocks";
 import {actions, PacketsMutationType} from "../../../app/store/packets/packetThunks";
 import { expectThunkActionWith } from "../testHelper";
 import {Packet, PacketMetadata, PageablePackets, PaginationProps} from "../../../types";
+import {saveCurrentUser} from "../../../localStorageManager";
 
 describe("packet actions", () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
         mockAxios.reset();
+        saveCurrentUser({token: "fake"})
     });
 
     const pageable = {pageNumber: 0, pageSize: 10};
