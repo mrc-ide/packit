@@ -63,7 +63,7 @@ class JSONValidator
 
     private fun assertValidates(name: String, json: JsonNode)
     {
-        val uri = URI("https://raw.githubusercontent.com/mrc-ide/outpack_server/main/schema/$name.json")
+        val uri = URI("https://raw.githubusercontent.com/mrc-ide/outpack_server/main/schema/server/$name.json")
         val report = schemaFactory.getJsonSchema(uri.toString()).validate(json)
         if (!report.isSuccess)
         {

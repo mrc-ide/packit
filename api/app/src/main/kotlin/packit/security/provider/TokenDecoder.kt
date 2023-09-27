@@ -27,13 +27,13 @@ class TokenDecoder(val config: AppConfig) : JwtDecoder
                 .verify(token)
         } catch (e: SignatureVerificationException)
         {
-            throw PackitException("Signature failed: ${e.message}")
+            throw PackitException("signature failed: ${e.message}")
         } catch (e: TokenExpiredException)
         {
-            throw PackitException("Expired failed: ${e.message}")
+            throw PackitException("expired token: ${e.message}")
         } catch (e: JWTVerificationException)
         {
-            throw PackitException("Verification failed: ${e.message}")
+            throw PackitException("verification failed: ${e.message}")
         }
     }
 }

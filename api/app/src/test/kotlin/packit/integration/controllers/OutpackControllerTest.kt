@@ -5,7 +5,6 @@ import org.springframework.boot.test.web.client.exchange
 import org.springframework.http.*
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
-import kotlin.test.Ignore
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
@@ -86,7 +85,6 @@ class OutpackControllerTest : IntegrationTest()
     }
 
     @Test
-    @Ignore
     @WithAuthenticatedUser
     fun `can POST file to outpack_server`()
     {
@@ -129,7 +127,7 @@ class OutpackControllerTest : IntegrationTest()
         assertEquals(result.statusCode, HttpStatusCode.valueOf(400))
         jsonValidator.validateError(
                 result.body!!, "invalid input parameter",
-                "Hash of packet does not match"
+                "Invalid hash format 'badhash'"
         )
     }
 }
