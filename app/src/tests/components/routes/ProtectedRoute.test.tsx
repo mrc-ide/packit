@@ -8,15 +8,17 @@ import {MemoryRouter} from "react-router-dom";
 import ProtectedRoute from "../../../app/components/routes/ProtectedRoute";
 import {LoginState} from "../../../types";
 import {mockLoginState} from "../../mocks";
-import {saveCurrentUser} from "../../../localStorageManager";
+
+const mockedUsedNavigate = jest.fn();
+
+jest.mock("react-router-dom", () => ({
+    ...jest.requireActual("react-router-dom") as any,
+    useNavigate: () => mockedUsedNavigate,
+}));
 
 describe("protected routes", () => {
     beforeEach(() => {
         jest.clearAllMocks();
-    });
-
-    afterEach(() => {
-        localStorage.clear();
     });
 
     const getStore = (props: Partial<LoginState> = {}) => {
@@ -39,10 +41,11 @@ describe("protected routes", () => {
     };
 
     it("renders protected routes when user is authenticated using access token", () => {
-        saveCurrentUser({token: "fakeToken"});
-        const store = getStore({isAuthenticated: true});
+        const store = getStore();
         const mockDispatch = jest.spyOn(store, "dispatch");
         renderElement(store);
+
+        store.dispatch({ type: "login/saveUser", payload: { token: "fakeToken" } });
 
         expect(mockDispatch).toHaveBeenCalledTimes(1);
         expect(mockDispatch).toHaveBeenCalledWith(
@@ -50,13 +53,13 @@ describe("protected routes", () => {
                 type: "login/saveUser",
                 payload: {token: "fakeToken"}
             });
+        expect(mockedUsedNavigate).toHaveBeenCalledWith("/login");
     });
 
     it("does not renders protected routes when user is unauthenticated using access token", () => {
-        const store = getStore({isAuthenticated: true});
+        const store = getStore();
         const mockDispatch = jest.spyOn(store, "dispatch");
         renderElement(store);
-
         expect(mockDispatch).toHaveBeenCalledTimes(0);
     });
 });

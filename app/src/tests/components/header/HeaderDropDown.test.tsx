@@ -10,6 +10,13 @@ import {Store} from "@reduxjs/toolkit";
 import {Provider} from "react-redux";
 import {MemoryRouter} from "react-router-dom";
 
+const mockedUsedNavigate = jest.fn();
+
+jest.mock("react-router-dom", () => ({
+    ...jest.requireActual("react-router-dom") as any,
+    useNavigate: () => mockedUsedNavigate,
+}));
+
 describe("header drop down menu component", () => {
 
     const getStore = (props: Partial<LoginState> = {}) => {
@@ -83,5 +90,7 @@ describe("header drop down menu component", () => {
         expect(mockDispatch).toHaveBeenCalledTimes(1);
 
         expect(mockDispatch).toHaveBeenCalledWith({ type: "login/logout", payload: undefined });
+
+        expect(mockedUsedNavigate).toHaveBeenCalledWith("/login");
     });
 });
