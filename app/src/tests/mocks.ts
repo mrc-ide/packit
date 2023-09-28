@@ -26,7 +26,7 @@ export const mockPacketResponse = {
 export const mockLoginState = (props: Partial<LoginState> = {}): LoginState => {
     return {
         user: {} as CurrentUser,
-        tokenError: null,
+        userError: null,
         isAuthenticated: false,
         authConfig: {},
         authConfigError: null,

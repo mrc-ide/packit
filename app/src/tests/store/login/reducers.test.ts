@@ -1,18 +1,20 @@
 import loginReducer, {initialLoginState} from "../../../app/store/login/login";
 import {actions} from "../../../app/store/login/loginThunks";
 import {CurrentUser} from "../../../types";
+import {getCurrentUser} from "../../../localStorageManager";
 
 
 describe("login reducer", () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        localStorage.clear();
     });
 
     const fetchUserResponse: CurrentUser = {token: "fakeToken"};
 
     const authConfigResponse = {"TEST": "TEST"};
 
-    it("should handle fetchPackets.fulfilled", () => {
+    it("should handle fetchToken.fulfilled", () => {
         const loginState = loginReducer(initialLoginState, {
             type: actions.fetchToken.fulfilled.type,
             payload: fetchUserResponse,
@@ -20,10 +22,10 @@ describe("login reducer", () => {
 
         expect(loginState.user).toEqual(fetchUserResponse);
 
-        expect(loginState.tokenError).toBeNull();
+        expect(loginState.userError).toBeNull();
     });
 
-    it("should handle fetchPackets.rejected", async () => {
+    it("should handle fetchToken.rejected", async () => {
         const error = {
             error: {
                 detail: "FAKE ERROR",
@@ -37,8 +39,7 @@ describe("login reducer", () => {
         });
 
         expect(loginState.user).toEqual({});
-
-        expect(loginState.tokenError).toBe(error);
+        expect(loginState.userError).toBe(error);
     });
 
     it("should handle fetchAuthConfig.fulfilled", () => {
@@ -48,7 +49,6 @@ describe("login reducer", () => {
         });
 
         expect(loginState.authConfig).toEqual(authConfigResponse);
-
         expect(loginState.authConfigError).toBeNull();
     });
 
@@ -66,7 +66,26 @@ describe("login reducer", () => {
         });
 
         expect(loginState.authConfig).toEqual({});
-
         expect(loginState.authConfigError).toBe(error);
+    });
+
+    it("should handle logout", () => {
+        //Authenticated state
+        const loginState = loginReducer(initialLoginState, {
+            type: actions.fetchToken.fulfilled.type,
+            payload: fetchUserResponse,
+        });
+
+        expect(loginState.user).toEqual(fetchUserResponse);
+        expect(loginState.isAuthenticated).toEqual(true);
+        expect(getCurrentUser()).toEqual(fetchUserResponse);
+
+        //Logout state
+        const loginStateLogout = loginReducer(initialLoginState, {
+            type: "LOGOUT"
+        });
+
+        expect(loginStateLogout.user).toEqual({});
+        expect(loginStateLogout.isAuthenticated).toBe(false);
     });
 });

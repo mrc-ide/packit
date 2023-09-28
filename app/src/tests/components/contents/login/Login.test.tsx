@@ -61,6 +61,24 @@ describe("login", () => {
         expect(screen.getByText("Login With GitHub")).toBeInTheDocument();
     });
 
+    it("can render token error", () => {
+        renderElement(getStore(
+            {
+                userError: {error: {detail: "ERROR DETAIL", error: "ERROR"} },
+                authConfig: {
+                    enableFormLogin: true,
+                    enableGithubLogin: true
+                }
+            }));
+
+        expect(screen.getByText("Email")).toBeInTheDocument();
+        expect(screen.getByText("Password")).toBeInTheDocument();
+        expect(screen.getByRole("button").textContent).toBe("Login");
+        expect(screen.getByText("OR")).toBeInTheDocument();
+        expect(screen.getByText("Login With GitHub")).toBeInTheDocument();
+        expect(screen.getByText("ERROR DETAIL")).toBeInTheDocument();
+    });
+
     it("can render both login methods", () => {
         renderElement(getStore(
             {
@@ -73,6 +91,7 @@ describe("login", () => {
         expect(screen.getByText("Email")).toBeInTheDocument();
         expect(screen.getByText("Password")).toBeInTheDocument();
         expect(screen.getByRole("button").textContent).toBe("Login");
+        expect(screen.getByText("OR")).toBeInTheDocument();
         expect(screen.getByText("Login With GitHub")).toBeInTheDocument();
     });
 
@@ -100,6 +119,58 @@ describe("login", () => {
         fireEvent.click(loginButton);
 
         expect(mockDispatch).toHaveBeenCalledTimes(2);
+    });
+
+    it("can render invalid email feedback", () => {
+        const store = getStore(
+            {
+                authConfig: {
+                    enableFormLogin: true,
+                    enableGithubLogin: true
+                }
+            });
+
+        const mockDispatch = jest.spyOn(store, "dispatch");
+
+        renderElement(store);
+
+        expect(mockDispatch).toHaveBeenCalledTimes(1);
+
+        const emailInput = screen.getByLabelText("Email");
+        const passwordInput = screen.getByLabelText("Password");
+        const loginButton = screen.getAllByText("Login")[1];
+
+        fireEvent.change(emailInput, { target: { value: "test@example" } });
+        fireEvent.change(passwordInput, { target: { value: "password123" } });
+        fireEvent.click(loginButton);
+        expect(screen.getByText("Invalid email format")).toBeInTheDocument();
+        expect(mockDispatch).toHaveBeenCalledTimes(1);
+    });
+
+    it("can render required password feedback", () => {
+        const store = getStore(
+            {
+                authConfig: {
+                    enableFormLogin: true,
+                    enableGithubLogin: true
+                }
+            });
+
+        const mockDispatch = jest.spyOn(store, "dispatch");
+
+        renderElement(store);
+
+        expect(mockDispatch).toHaveBeenCalledTimes(1);
+
+        const emailInput = screen.getByLabelText("Email");
+        const passwordInput = screen.getByLabelText("Password");
+        const loginButton = screen.getAllByText("Login")[1];
+
+        fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+        fireEvent.change(passwordInput, { target: { value: "" } });
+        fireEvent.click(loginButton);
+        expect(screen.getByText("Password is required")).toBeInTheDocument();
+        expect(mockDispatch).toHaveBeenCalledTimes(1);
     });
 
     it("can navigate to github login", () => {

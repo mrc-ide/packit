@@ -6,7 +6,7 @@ import {CURRENT_USER, saveCurrentUser} from "../../../localStorageManager";
 
 export const initialLoginState: LoginState = {
     user: {} as CurrentUser,
-    tokenError: null,
+    userError: null,
     isAuthenticated: false,
     authConfig: {},
     authConfigError: null
@@ -25,7 +25,7 @@ export const loginSlice = createSlice({
             state.user = action.payload;
             saveCurrentUser(state.user);
             state.isAuthenticated = validateToken(state.user);
-            state.tokenError = null;
+            state.userError = null;
         }
     },
     extraReducers: (builder) => {
@@ -34,10 +34,10 @@ export const loginSlice = createSlice({
                 state.user = action.payload;
                 saveCurrentUser(state.user);
                 state.isAuthenticated = validateToken(state.user);
-                state.tokenError = null;
+                state.userError = null;
             })
             .addCase(actions.fetchToken.rejected, (state, action) => {
-                state.tokenError = action.payload ?? null;
+                state.userError = action.payload ?? null;
             })
             .addCase(actions.fetchAuthConfig.fulfilled, (state, action) => {
                 state.authConfig = action.payload;

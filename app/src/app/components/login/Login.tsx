@@ -9,7 +9,7 @@ export default function Login() {
     const dispatch = useAppDispatch();
     const {
         isAuthenticated,
-        tokenError,
+        userError,
         authConfig
     } = useSelector((state: RootState) => state.login);
 
@@ -91,7 +91,7 @@ export default function Login() {
                         </Link>
                     </div>
                 }
-                {tokenError && <div className="invalid-feedback">{tokenError.error.detail}</div>}
+                {userError && <div className="invalid-feedback">{userError.error.detail}</div>}
             </div>
         </div>
     );

@@ -49,7 +49,6 @@ export class ApiService implements API {
     };
 
     private handleErrorResponse = (error: AxiosError) => {
-        console.debug(error);
         let errorMessage = {error: {detail: "Could not parse API response", error: "error"}};
         if (error instanceof AxiosError && error.response) {
             errorMessage = error.response.data as Error;

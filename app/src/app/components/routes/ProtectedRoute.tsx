@@ -13,7 +13,7 @@ export default function ProtectedRoute() {
     useEffect(() => {
         const user = getCurrentUser();
 
-        if (!isAuthenticated && user && !user.token) {
+        if (!isAuthenticated && !user?.token) {
             navigate("/login");
             return;
         }
@@ -22,7 +22,7 @@ export default function ProtectedRoute() {
             dispatch(saveUser(user));
         }
 
-    }, [navigate, isAuthenticated]);
+    }, [navigate]);
 
     return (
         <Outlet />

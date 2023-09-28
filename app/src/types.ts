@@ -51,7 +51,7 @@ export interface PacketsState {
 
 export interface LoginState {
     user: CurrentUser
-    tokenError:  null | Error
+    userError:  null | Error
     isAuthenticated: boolean,
     authConfig: Record<string, any>,
     authConfigError: null | Error
