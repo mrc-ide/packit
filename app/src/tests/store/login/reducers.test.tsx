@@ -7,7 +7,6 @@ import {getCurrentUser} from "../../../localStorageManager";
 describe("login reducer", () => {
     beforeEach(() => {
         jest.clearAllMocks();
-        localStorage.clear();
     });
 
     const fetchUserResponse: CurrentUser = {token: "fakeToken"};
@@ -69,6 +68,19 @@ describe("login reducer", () => {
         expect(loginState.authConfigError).toBe(error);
     });
 
+    it("should handle redirected save user", () => {
+        const actions = {
+            type: "login/saveUser",
+            payload: fetchUserResponse
+        };
+        const loginState = loginReducer(initialLoginState, actions);
+
+        expect(getCurrentUser()).toEqual(fetchUserResponse);
+        expect(loginState.isAuthenticated).toBe(true);
+        expect(loginState.user).toEqual(fetchUserResponse);
+        expect(loginState.userError).toEqual(null);
+    });
+
     it("should handle logout", () => {
         //Authenticated state
         const loginState = loginReducer(initialLoginState, {
@@ -82,10 +94,11 @@ describe("login reducer", () => {
 
         //Logout state
         const loginStateLogout = loginReducer(initialLoginState, {
-            type: "LOGOUT"
+            type: "login/logout"
         });
 
         expect(loginStateLogout.user).toEqual({});
         expect(loginStateLogout.isAuthenticated).toBe(false);
+        expect(getCurrentUser()).toEqual(null);
     });
 });

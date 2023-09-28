@@ -1,5 +1,5 @@
 import React from "react";
-import {LoginState} from "../../../../types";
+import {LoginState, UserLoginDetailProps} from "../../../../types";
 import thunk from "redux-thunk";
 import configureStore from "redux-mock-store";
 import {mockLoginState} from "../../../mocks";
@@ -64,7 +64,7 @@ describe("login", () => {
     it("can render token error", () => {
         renderElement(getStore(
             {
-                userError: {error: {detail: "ERROR DETAIL", error: "ERROR"} },
+                userError: {error: {detail: "ERROR DETAIL", error: "ERROR"}},
                 authConfig: {
                     enableFormLogin: true,
                     enableGithubLogin: true
@@ -99,8 +99,7 @@ describe("login", () => {
         const store = getStore(
             {
                 authConfig: {
-                    enableFormLogin: true,
-                    enableGithubLogin: true
+                    enableFormLogin: true
                 }
             });
 
@@ -108,15 +107,7 @@ describe("login", () => {
 
         renderElement(store);
 
-        expect(mockDispatch).toHaveBeenCalledTimes(1);
-
-        const emailInput = screen.getByLabelText("Email");
-        const passwordInput = screen.getByLabelText("Password");
-        const loginButton = screen.getAllByText("Login")[1];
-
-        fireEvent.change(emailInput, { target: { value: "test@example.com" } });
-        fireEvent.change(passwordInput, { target: { value: "password123" } });
-        fireEvent.click(loginButton);
+        loginWithUsernameAndPassword({email: "test@example.com", password: "password123"});
 
         expect(mockDispatch).toHaveBeenCalledTimes(2);
     });
@@ -125,8 +116,7 @@ describe("login", () => {
         const store = getStore(
             {
                 authConfig: {
-                    enableFormLogin: true,
-                    enableGithubLogin: true
+                    enableFormLogin: true
                 }
             });
 
@@ -134,16 +124,12 @@ describe("login", () => {
 
         renderElement(store);
 
+        loginWithUsernameAndPassword({email: "test@example", password: "password123"});
+
         expect(mockDispatch).toHaveBeenCalledTimes(1);
 
-        const emailInput = screen.getByLabelText("Email");
-        const passwordInput = screen.getByLabelText("Password");
-        const loginButton = screen.getAllByText("Login")[1];
-
-        fireEvent.change(emailInput, { target: { value: "test@example" } });
-        fireEvent.change(passwordInput, { target: { value: "password123" } });
-        fireEvent.click(loginButton);
         expect(screen.getByText("Invalid email format")).toBeInTheDocument();
+
         expect(mockDispatch).toHaveBeenCalledTimes(1);
     });
 
@@ -151,8 +137,7 @@ describe("login", () => {
         const store = getStore(
             {
                 authConfig: {
-                    enableFormLogin: true,
-                    enableGithubLogin: true
+                    enableFormLogin: true
                 }
             });
 
@@ -160,16 +145,31 @@ describe("login", () => {
 
         renderElement(store);
 
+        loginWithUsernameAndPassword({email: "test@example.com", password: ""});
+
         expect(mockDispatch).toHaveBeenCalledTimes(1);
 
-        const emailInput = screen.getByLabelText("Email");
-        const passwordInput = screen.getByLabelText("Password");
-        const loginButton = screen.getAllByText("Login")[1];
-
-        fireEvent.change(emailInput, { target: { value: "test@example.com" } });
-        fireEvent.change(passwordInput, { target: { value: "" } });
-        fireEvent.click(loginButton);
         expect(screen.getByText("Password is required")).toBeInTheDocument();
+
+        expect(mockDispatch).toHaveBeenCalledTimes(1);
+    });
+
+    it("can render required email feedback", () => {
+        const store = getStore(
+            {
+                authConfig: {
+                    enableFormLogin: true
+                }
+            });
+
+        const mockDispatch = jest.spyOn(store, "dispatch");
+
+        renderElement(store);
+
+        loginWithUsernameAndPassword({email: "", password: "pass"});
+
+        expect(screen.getByText("Email is required")).toBeInTheDocument();
+
         expect(mockDispatch).toHaveBeenCalledTimes(1);
     });
 
@@ -195,3 +195,13 @@ describe("login", () => {
         expect(mockDispatch).toHaveBeenCalledTimes(1);
     });
 });
+
+const loginWithUsernameAndPassword = (user: UserLoginDetailProps) => {
+    const emailInput = screen.getByLabelText("Email");
+    const passwordInput = screen.getByLabelText("Password");
+    const loginButton = screen.getAllByText("Login")[1];
+
+    fireEvent.change(emailInput, {target: {value: user.email}});
+    fireEvent.change(passwordInput, {target: {value: user.password}});
+    fireEvent.click(loginButton);
+};

@@ -26,7 +26,7 @@ export class ApiService implements API {
 
     private ignoreAuthorization = false;
 
-    constructor(injectStore = store, axiosInstance = axios.create({baseURL})) {
+    constructor(injectStore: Store, axiosInstance = axios.create({baseURL})) {
         this.headers = {
             "Content-Type": "application/json",
         };

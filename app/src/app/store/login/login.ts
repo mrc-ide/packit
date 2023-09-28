@@ -1,5 +1,5 @@
 import {CurrentUser, LoginState} from "../../../types";
-import {createSlice} from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {actions} from "./loginThunks";
 import {validateToken} from "../../../helpers";
 import {CURRENT_USER, saveCurrentUser} from "../../../localStorageManager";
@@ -21,7 +21,7 @@ export const loginSlice = createSlice({
             state.isAuthenticated = false;
             localStorage.removeItem(CURRENT_USER);
         },
-        saveUser: (state, action) => {
+        saveUser: (state, action: PayloadAction<CurrentUser>) => {
             state.user = action.payload;
             saveCurrentUser(state.user);
             state.isAuthenticated = validateToken(state.user);

@@ -2,7 +2,6 @@ import packetsReducer, {initialPacketsState} from "../../../app/store/packets/pa
 import {actions} from "../../../app/store/packets/packetThunks";
 import {Custom, Packet, PacketMetadata, TimeMetadata, PageablePackets} from "../../../types";
 
-
 describe("packetsSlice reducer", () => {
     beforeEach(() => {
         jest.clearAllMocks();
