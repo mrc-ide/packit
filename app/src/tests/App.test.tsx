@@ -13,7 +13,7 @@ describe("app component", () => {
 
     beforeEach(() =>{
         jest.resetAllMocks();
-    })
+    });
 
     const getStore = (props: Partial<LoginState> = {}) => {
         const middlewares = [thunk];
@@ -29,14 +29,14 @@ describe("app component", () => {
     const renderElement = (store: Store = getStore()) => {
         return render(
             <Provider store={store}>
-                <MemoryRouter initialEntries={['/login']}>
+                <MemoryRouter initialEntries={["/login"]}>
                     <App/>
                 </MemoryRouter>
             </Provider>);
     };
 
     it("renders packet explorer page", () => {
-        renderElement(getStore({isAuthenticated: true}))
+        renderElement(getStore({isAuthenticated: true}));
         const app = screen.getByTestId("app");
         expect(app).toHaveTextContent("Packets (0)");
         expect(app).toHaveTextContent("Click on a column heading to sort by field.");
@@ -44,13 +44,13 @@ describe("app component", () => {
     });
 
     it("renders app header", () => {
-        renderElement()
+        renderElement();
         const header = screen.getByTestId("header");
         expect(header).toBeInTheDocument();
     });
 
     it("renders app main", () => {
-        renderElement()
+        renderElement();
         const main = screen.getByTestId("main");
         expect(main).toBeInTheDocument();
     });

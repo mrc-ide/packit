@@ -8,9 +8,9 @@ import {useSelector} from "react-redux";
 export default function Redirect() {
     const dispatch = useAppDispatch();
     const location = useLocation();
-    const {isAuthenticated} = useSelector((state: RootState) => state.login);
     const searchParams = new URLSearchParams(location.search);
     const token = searchParams.get("token");
+    const {isAuthenticated} = useSelector((state: RootState) => state.login);
 
     useEffect(() => {
         if (token) {
@@ -22,7 +22,8 @@ export default function Redirect() {
         return (<div><p>Redirecting...</p></div>);
     }
     return (
-        <div><p>Redirecting user</p>
+        <div>
+            <p>Redirecting user</p>
             {<Navigate to="/"/>}
         </div>
     );

@@ -25,7 +25,7 @@ export function Router() {
                     <Route path="run" element={<PacketRunner/>}/>
                     <Route path="run-workflow" element={<WorkflowRunner/>}/>
                     <Route path="documentation" element={<ProjectDocumentation/>}/>
-                    <Route path="packets/:packetId" element={<PacketDetails/>}/>
+                    <Route path="packets/:packetId/packet" element={<PacketDetails/>}/>
                     <Route path="packets/:packetId/metadata" element={<Metadata/>}/>
                     <Route path="packets/:packetId/downloads" element={<Download/>}/>
                     <Route path="packets/:packetId/changelogs" element={<ChangeLogs/>}/>

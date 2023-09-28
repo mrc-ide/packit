@@ -10,7 +10,11 @@ describe("packet actions", () => {
     beforeEach(() => {
         jest.clearAllMocks();
         mockAxios.reset();
-        saveCurrentUser({token: "fake"})
+        saveCurrentUser({token: "fake"});
+    });
+
+    afterEach(() => {
+        localStorage.clear();
     });
 
     const pageable = {pageNumber: 0, pageSize: 10};

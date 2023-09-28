@@ -39,11 +39,11 @@ export const loginSlice = createSlice({
             .addCase(actions.fetchToken.rejected, (state, action) => {
                 state.tokenError = action.payload ?? null;
             })
-            .addCase(actions.authConfig.fulfilled, (state, action) => {
+            .addCase(actions.fetchAuthConfig.fulfilled, (state, action) => {
                 state.authConfig = action.payload;
                 state.authConfigError = null;
             })
-            .addCase(actions.authConfig.rejected, (state, action) => {
+            .addCase(actions.fetchAuthConfig.rejected, (state, action) => {
                 state.authConfigError = action.payload ?? null;
             });
     }

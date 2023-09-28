@@ -47,7 +47,6 @@ class WebSecurityConfig(
                 authorizeRequests
                     .requestMatchers("/").permitAll()
                     .requestMatchers("/auth/**", "/oauth2/**").permitAll()
-                    .requestMatchers("/admin/**").hasRole(Role.ADMIN.toString())
                     .anyRequest().authenticated()
             }
             .oauth2Login { oauth2Login ->

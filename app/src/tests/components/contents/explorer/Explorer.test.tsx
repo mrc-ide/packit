@@ -57,7 +57,7 @@ describe("packet explorer component", () => {
         expect(mockDispatch).toHaveBeenCalledTimes(1);
     });
 
-    it("dispatches actions when packed detail page", () => {
+    it("dispatches actions when on packet detail page", () => {
         const store = getStore();
 
         const mockDispatch = jest.spyOn(store, "dispatch");
@@ -67,7 +67,7 @@ describe("packet explorer component", () => {
                 <MemoryRouter initialEntries={["/"]}>
                     <Routes>
                         <Route path="/" element={<Explorer/>} />
-                        <Route path="/packets/:packetId" element={<PacketDetails />} />
+                        <Route path="/packets/:packetId/packet" element={<PacketDetails />} />
                     </Routes>
                 </MemoryRouter>
             </Provider>);
@@ -79,7 +79,7 @@ describe("packet explorer component", () => {
         fireEvent.click(firstCell);
 
         expect((firstCell as HTMLLinkElement).href)
-            .toBe("http://localhost/packets/52fd88b2-8ee8-4ac0-a0e5-41b9a15554a4");
+            .toBe("http://localhost/packets/52fd88b2-8ee8-4ac0-a0e5-41b9a15554a4/packet");
 
         expect(mockDispatch).toHaveBeenCalledTimes(2);
     });

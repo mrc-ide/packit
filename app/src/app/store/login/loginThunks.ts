@@ -3,27 +3,27 @@ import {
     CurrentUser,
     CustomAsyncThunkOptions,
     RejectedErrorValue,
-    UserLoginDetails
+    UserLoginDetailProps
 } from "../../../types";
 import {api} from "../../../apiService";
 
 export interface LoginActions {
-    fetchToken: AsyncThunk<CurrentUser, UserLoginDetails, RejectedErrorValue>;
-    authConfig: AsyncThunk<Record<string, any>, void, RejectedErrorValue>;
+    fetchToken: AsyncThunk<CurrentUser, UserLoginDetailProps, RejectedErrorValue>;
+    fetchAuthConfig: AsyncThunk<Record<string, any>, void, RejectedErrorValue>;
 }
 
-export enum PacketsMutationType {
+export enum LoginMutationType {
     GetToken = "GetToken",
-    AuthConfig = "AuthConfig"
+    GetAuthConfig = "GetAuthConfig"
 }
 
 export const actions: LoginActions = {
-    fetchToken: createAsyncThunk<CurrentUser, UserLoginDetails, CustomAsyncThunkOptions>(
-        PacketsMutationType.GetToken,
+    fetchToken: createAsyncThunk<CurrentUser, UserLoginDetailProps, CustomAsyncThunkOptions>(
+        LoginMutationType.GetToken,
         async (props, thunkAPI) =>
             api().postAndReturn("/auth/login", props, thunkAPI)),
-    authConfig: createAsyncThunk<Record<string, any>, void, CustomAsyncThunkOptions>(
-        PacketsMutationType.AuthConfig,
+    fetchAuthConfig: createAsyncThunk<Record<string, any>, void, CustomAsyncThunkOptions>(
+        LoginMutationType.GetAuthConfig,
         async (_, thunkAPI) =>
             api().get("/auth/config", thunkAPI))
 };

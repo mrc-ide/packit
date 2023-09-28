@@ -31,7 +31,7 @@ describe("header component", () => {
     };
 
     it("renders nav brand and logo", () => {
-        renderElement()
+        renderElement();
         const header = screen.getByTestId("header");
         expect(header).toBeInTheDocument();
 
@@ -41,7 +41,7 @@ describe("header component", () => {
     });
 
     it("renders navigation link and icons", () => {
-        renderElement(getStore({isAuthenticated: true}))
+        renderElement(getStore({isAuthenticated: true}));
         const header = screen.getByTestId("header");
         expect(header).toBeInTheDocument();
 
@@ -58,7 +58,7 @@ describe("header component", () => {
     });
 
     it("can navigate to home page with brand logo", () => {
-        renderElement()
+        renderElement();
         const header = screen.getByTestId("header");
 
         expect(header).toBeInTheDocument();

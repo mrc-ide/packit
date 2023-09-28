@@ -43,7 +43,7 @@ export default function Table({data}: PacketTableProps) {
                 <tr key={`row-${key}`}>
                     <td>
                         <span>
-                            <Link to={`/packets/${packet.id}`}>
+                            <Link to={`/packets/${packet.id}/packet`}>
                                 {packet.displayName ? packet.displayName : packet.name}
                             </Link>
                         </span>

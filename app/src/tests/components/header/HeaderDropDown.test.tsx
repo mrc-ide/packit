@@ -32,7 +32,7 @@ describe("header drop down menu component", () => {
     };
 
     it("renders drop down menu as expected when authenticated", async () => {
-        renderElement(getStore({isAuthenticated: true}))
+        renderElement(getStore({isAuthenticated: true}));
         const dropDown = screen.getByTestId("drop-down");
         expect(dropDown).toBeInTheDocument();
         expect(screen.getByTestId("AccountCircleIcon")).toBeInTheDocument();
@@ -52,17 +52,17 @@ describe("header drop down menu component", () => {
     });
 
     it("does not render drop down menu when user is not logged in", async () => {
-        renderElement()
-        const {queryByTestId} = screen
+        renderElement();
+        const {queryByTestId} = screen;
         expect(queryByTestId("drop-down")).toBeNull();
     });
 
     it("can logout authenticated user", async () => {
-        const store = getStore({isAuthenticated: true})
+        const store = getStore({isAuthenticated: true});
 
         const mockDispatch = jest.spyOn(store, "dispatch");
 
-        renderElement(store)
+        renderElement(store);
 
         const dropDown = screen.getByTestId("drop-down");
 
@@ -70,15 +70,15 @@ describe("header drop down menu component", () => {
 
         await waitFor(() => {
             userEvent.click(userIcon);
-        })
+        });
 
-        const logoutIcon = dropDown.querySelectorAll("a")[4]
+        const logoutIcon = dropDown.querySelectorAll("a")[4];
 
-        expect(logoutIcon.textContent).toBe("Logout")
+        expect(logoutIcon.textContent).toBe("Logout");
 
         await waitFor(() => {
             userEvent.click(logoutIcon);
-        })
+        });
 
         expect(mockDispatch).toHaveBeenCalledTimes(1);
 

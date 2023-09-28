@@ -8,8 +8,6 @@ describe("packetsSlice reducer", () => {
         jest.clearAllMocks();
     });
 
-    const pageable = {pageNumber: 0, pageSize: 10};
-
     it("should handle fetchPackets.fulfilled", () => {
         const packets: Packet[] = [
             {
@@ -36,15 +34,14 @@ describe("packetsSlice reducer", () => {
 
         const pageablePackets = {content: packets} as PageablePackets;
 
-        const nextState = packetsReducer(
-            initialPacketsState,
-            actions.fetchPackets.fulfilled(
-                pageablePackets,
-                "",
-                pageable));
+        const packetState = packetsReducer(initialPacketsState, {
+            type: actions.fetchPackets.fulfilled.type,
+            payload: pageablePackets,
+        });
 
-        expect(nextState.pageablePackets.content).toEqual(packets);
-        expect(nextState.fetchPacketsError).toBeNull();
+        expect(packetState.pageablePackets.content).toEqual(packets);
+
+        expect(packetState.fetchPacketsError).toBeNull();
     });
 
     it("should handle fetchPackets.rejected", async () => {
@@ -55,12 +52,13 @@ describe("packetsSlice reducer", () => {
             }
         };
 
-        const packetState = packetsReducer(
-            initialPacketsState,
-            actions.fetchPackets.rejected(null, "", pageable, error)
-        );
+        const packetState = packetsReducer(initialPacketsState, {
+            type: actions.fetchPackets.rejected.type,
+            payload: error,
+        });
 
         expect(packetState.pageablePackets).toEqual({});
+
         expect(packetState.fetchPacketsError).toBe(error);
     });
 
@@ -79,13 +77,15 @@ describe("packetsSlice reducer", () => {
                 files: [],
                 time: {} as TimeMetadata
             };
-        const nextState = packetsReducer(
-            initialPacketsState,
-            actions.fetchPacketById.fulfilled(packet, "", "1")
-        );
 
-        expect(nextState.packet).toEqual(packet);
-        expect(nextState.fetchPacketsError).toBeNull();
+        const packetState = packetsReducer(initialPacketsState, {
+            type: actions.fetchPacketById.fulfilled.type,
+            payload: packet,
+        });
+
+        expect(packetState.packet).toEqual(packet);
+
+        expect(packetState.fetchPacketsError).toBeNull();
     });
 
     it("should handle fetchPacketById when rejected", async () => {
@@ -96,12 +96,13 @@ describe("packetsSlice reducer", () => {
             }
         };
 
-        const packetState = packetsReducer(
-            initialPacketsState,
-            actions.fetchPacketById.rejected(null, "", "1", packetError)
-        );
+        const packetState = packetsReducer(initialPacketsState, {
+            type: actions.fetchPacketById.rejected.type,
+            payload: packetError,
+        });
 
         expect(packetState.packet).toEqual({});
+
         expect(packetState.packetError).toBe(packetError);
     });
 });

@@ -1,7 +1,6 @@
 import {useDispatch} from "react-redux";
 import store, {rootReducer} from "./app/store/store";
 import {AsyncThunkOptions} from "@reduxjs/toolkit";
-import {validateToken} from "./helpers";
 
 export enum SideBarItems {
     explorer,
@@ -116,7 +115,7 @@ export interface PaginationProps {
     pageSize: number
 }
 
-export interface UserLoginDetails {
+export interface UserLoginDetailProps {
     email: string
     password: string
 }

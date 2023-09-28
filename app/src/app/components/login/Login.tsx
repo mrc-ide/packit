@@ -19,7 +19,7 @@ export default function Login() {
     const [passwordError, setPasswordError] = useState("");
 
     useEffect(() => {
-        dispatch(actions.authConfig());
+        dispatch(actions.fetchAuthConfig());
     }, []);
 
     const handleLogin = () => {
@@ -53,22 +53,24 @@ export default function Login() {
                 <h1 className="mb-4">Login</h1>
                 {authConfig.enableFormLogin && <div>
                     <div className="mb-3 text-start">
-                        <label className="form-label">Email</label>
+                        <label htmlFor="email" className="form-label">Email</label>
                         <input
                             type="email"
                             className={`form-control ${emailError ? "is-invalid" : ""}`}
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            id="email"
                         />
                         {emailError && <div className="invalid-feedback">{emailError}</div>}
                     </div>
                     <div className="mb-3 text-start">
-                        <label className="form-label">Password</label>
+                        <label htmlFor="password" className="form-label">Password</label>
                         <input
                             type="password"
                             className={`form-control ${passwordError ? "is-invalid" : ""}`}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            id="password"
                         />
                         {passwordError && <div className="invalid-feedback">{passwordError}</div>}
                     </div>
