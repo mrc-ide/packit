@@ -9,12 +9,6 @@ import packit.exceptions.PackitException
 import packit.model.LoginRequest
 import packit.security.provider.JwtIssuer
 
-interface LoginService
-{
-    fun authenticateAndIssueToken(loginRequest: LoginRequest): Map<String, String>
-    fun authConfig(): Map<String, Any>
-}
-
 @Service
 class UserLoginService(
     val jwtIssuer: JwtIssuer,
