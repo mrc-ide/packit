@@ -37,6 +37,7 @@ class AppConfigTests
     {
         val authSecret = "secret"
         val expiryDays = 1L
+        val enableAuth = true
         val redirectUrl = "http://redirect"
         val enableFormLogin = false
         val enableGithubLogin = true
@@ -46,6 +47,7 @@ class AppConfigTests
         props["db.url"] = "url"
         props["db.user"] = "user"
         props["db.password"] = "pw"
+        props["auth.enabled"] = enableAuth
         props["auth.expiryDays"] = expiryDays
         props["auth.basic.secret"] = authSecret
         props["outpack.server.url"] = "outpackServerUrl"
@@ -58,6 +60,7 @@ class AppConfigTests
         assertEquals(sut.dbUrl, "url")
         assertEquals(sut.dbUser, "user")
         assertEquals(sut.dbPassword, "pw")
+        assertEquals(sut.authEnabled, enableAuth)
         assertEquals(sut.authExpiryDays, expiryDays)
         assertEquals(sut.authBasicSecret, authSecret)
         assertEquals(sut.authRedirectUri, redirectUrl)

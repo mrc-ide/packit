@@ -1,6 +1,7 @@
 package packit.controllers
 
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import packit.model.LoginRequest
@@ -9,6 +10,7 @@ import packit.service.UserLoginService
 @RestController
 @RequestMapping("/auth")
 class LoginController(val loginService: UserLoginService)
+
 {
     @PostMapping("/login")
     @ResponseBody

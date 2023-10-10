@@ -47,7 +47,8 @@ class UserLoginService(
     {
         return mapOf(
             "enableGithubLogin" to config.authEnableGithubLogin,
-            "enableFormLogin" to config.authEnableFormLogin
+            "enableFormLogin" to config.authEnableFormLogin,
+            "enableAuth" to config.authEnabled
         )
     }
 }

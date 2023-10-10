@@ -42,29 +42,48 @@ class WebSecurityConfig(
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .formLogin().disable()
-            .securityMatcher("/**")
-            .authorizeHttpRequests { authorizeRequests ->
-                authorizeRequests
-                    .requestMatchers("/").permitAll()
-                    .requestMatchers("/auth/**", "/oauth2/**").permitAll()
-                    .anyRequest().authenticated()
+            .handleSecurePaths()
+            .handleOauth2Login()
+            .exceptionHandling { exceptionHandling ->
+                exceptionHandling.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
             }
-            .oauth2Login { oauth2Login ->
+
+        return httpSecurity.build()
+    }
+
+    fun HttpSecurity.handleOauth2Login(): HttpSecurity
+    {
+        if (config.authEnableGithubLogin)
+        {
+            this.oauth2Login { oauth2Login ->
                 oauth2Login
                     .userInfoEndpoint().userService(customOauth2UserService)
                     .and()
                     .successHandler(OAuth2SuccessHandler(config, jwtIssuer))
             }
-            .exceptionHandling { exceptionHandling ->
-                exceptionHandling.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-            }
+        }
+        return this
+    }
 
-        if (!config.authEnableGithubLogin)
+    fun HttpSecurity.handleSecurePaths(): HttpSecurity
+    {
+        if (config.authEnabled)
         {
-            httpSecurity.oauth2Login().disable()
+            this.securityMatcher("/**")
+                .authorizeHttpRequests { authorizeRequests ->
+                    authorizeRequests
+                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/auth/**", "/oauth2/**").permitAll()
+                        .anyRequest().authenticated()
+                }
+        } else
+        {
+            this.securityMatcher("/**")
+                .authorizeHttpRequests()
+                .anyRequest().permitAll()
         }
 
-        return httpSecurity.build()
+        return this
     }
 
     @Bean
