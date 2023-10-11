@@ -24,7 +24,8 @@ describe("login integration", () => {
         expect(result["payload"]).toEqual(
             {
                 "enableFormLogin": true,
-                "enableGithubLogin": true
+                "enableGithubLogin": true,
+                "enableAuth": true
             });
     });
 
