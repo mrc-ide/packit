@@ -51,7 +51,7 @@ export class ApiService implements API {
     private handle401Error = (error: AxiosError) => {
         if (error.response && error.response.status === 401) {
             removeCurrentUser();
-            window.location.assign("/");
+            window.location.assign("/login");
         }
     };
 
