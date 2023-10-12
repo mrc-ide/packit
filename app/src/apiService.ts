@@ -1,4 +1,4 @@
-import axios, {AxiosError, AxiosInstance, AxiosResponse} from "axios";
+import axios, {AxiosError, AxiosInstance} from "axios";
 import {Error} from "./types";
 import appConfig from "./config/appConfig";
 import {validateToken} from "./helpers";
