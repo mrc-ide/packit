@@ -9,7 +9,6 @@ import packit.service.UserLoginService
 @RestController
 @RequestMapping("/auth")
 class LoginController(val loginService: UserLoginService)
-
 {
     @PostMapping("/login")
     @ResponseBody

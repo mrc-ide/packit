@@ -1,8 +1,8 @@
-import axios, {AxiosError, AxiosInstance} from "axios";
+import axios, {AxiosError, AxiosInstance, AxiosResponse} from "axios";
 import {Error} from "./types";
 import appConfig from "./config/appConfig";
 import {validateToken} from "./helpers";
-import {getCurrentUser} from "./localStorageManager";
+import {removeCurrentUser, getCurrentUser} from "./localStorageManager";
 import {Store} from "@reduxjs/toolkit";
 
 let store: any;
@@ -48,7 +48,17 @@ export class ApiService implements API {
         });
     };
 
+    private handle401Error = (error: AxiosError) => {
+        if (error.response && error.response.status === 401) {
+            removeCurrentUser();
+            window.location.assign("/");
+        }
+    };
+
     private handleErrorResponse = (error: AxiosError) => {
+
+        this.handle401Error(error);
+
         let errorMessage = {error: {detail: "Could not parse API response", error: "error"}};
         if (error instanceof AxiosError && error.response) {
             errorMessage = error.response.data as Error;
