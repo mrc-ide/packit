@@ -5,7 +5,7 @@ import {validateToken} from "../../../helpers";
 import {CURRENT_USER, saveCurrentUser} from "../../../localStorageManager";
 
 export const initialLoginState: LoginState = {
-    user: {} as CurrentUser,
+    user: {email: "Guest"} as CurrentUser,
     userError: null,
     isAuthenticated: false,
     authConfig: {},

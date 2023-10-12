@@ -37,7 +37,7 @@ describe("login reducer", () => {
             payload: error,
         });
 
-        expect(loginState.user).toEqual({});
+        expect(loginState.user).toEqual({email: "Guest"});
         expect(loginState.userError).toBe(error);
     });
 

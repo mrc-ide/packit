@@ -52,7 +52,7 @@ describe("header drop down menu component", () => {
             userEvent.click(userIcon);
         });
 
-        expect(within(dropDown).getByText("l.ani@imperial.ac.uk")).toBeInTheDocument();
+        expect(within(dropDown).getByText("Guest")).toBeInTheDocument();
         expect(within(dropDown).getByText("Manage access")).toBeInTheDocument();
         expect(within(dropDown).getByText("Publish packets")).toBeInTheDocument();
         expect(within(dropDown).getByTestId("LogoutIcon")).toBeInTheDocument();

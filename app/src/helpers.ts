@@ -1,4 +1,6 @@
 import {CurrentUser, TimeMetadata} from "./types";
+import {getCurrentUser} from "./localStorageManager";
+import {InternalAxiosRequestConfig} from "axios";
 
 export function bytesToSize(bytes: number): string {
     const units = ["bytes", "kilobytes", "megabytes", "gigabytes", "terabytes"];
@@ -45,9 +47,20 @@ export const getElapsedTime = (time: TimeMetadata) => {
 };
 
 export const validateToken = (user: CurrentUser): boolean => {
-    // TODO unauthenticated users
-    //remember to store retrieve other data from jwt
-    //check if token is expired
-    // logout if expired
     return !!user.token;
 };
+
+export const useBearerToken = (
+    injectedStore: any,
+    config: InternalAxiosRequestConfig<any>)
+    : InternalAxiosRequestConfig<any> => {
+    if (validateToken(getCurrentUser() || injectedStore.getState().login.user)) {
+        config.headers.authorization = `Bearer ${getCurrentUser().token
+        || injectedStore.getState().login.user.token}`;
+    }
+    return config;
+};
+
+export const fakeJwtToken ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwYWNraXQiLCJpc3MiOiJwYWNraXQtYXBpIi" +
+    "wiZW1haWwiOiJ0ZXN0LnVzZXJAZXhhbXBsZS5jb20iLCJuYW1lIjoiVEVTVF9VU0VSIiwiZGF0ZXRpbWUiOjE2OTcxMjE3NTksImF1IjpbI" +
+    "lVTRVIiXSwiZXhwIjoxNjk3MjA4MTU5fQ.D0YoYiz4vEue1fs_rZXZp3hC1q5FZRNM9nJY-p_O28I";

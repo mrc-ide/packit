@@ -10,7 +10,7 @@ import {useNavigate} from "react-router-dom";
 export default function HeaderDropDown() {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const {isAuthenticated} = useSelector((state: RootState) => state.login);
+    const {isAuthenticated, user} = useSelector((state: RootState) => state.login);
 
     const handleLogout = () => {
         dispatch(logout());
@@ -22,7 +22,7 @@ export default function HeaderDropDown() {
             {isAuthenticated &&
                 <NavDropdown data-testid="drop-down" className="icon-primary" title={
                     <AccountCircleIcon sx={{fontSize: 35}}/>}>
-                    <NavDropdown.Item>l.ani@imperial.ac.uk</NavDropdown.Item>
+                    <NavDropdown.Item>{user.email} </NavDropdown.Item>
                     <NavDropdown.Item>Manage access</NavDropdown.Item>
                     <NavDropdown.Item>Publish packets</NavDropdown.Item>
                     <NavDropdown.Divider></NavDropdown.Divider>

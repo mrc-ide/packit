@@ -1,8 +1,8 @@
 import axios, {AxiosError, AxiosInstance} from "axios";
 import {Error} from "./types";
 import appConfig from "./config/appConfig";
-import {validateToken} from "./helpers";
-import {removeCurrentUser, getCurrentUser} from "./localStorageManager";
+import {useBearerToken} from "./helpers";
+import {removeCurrentUser} from "./localStorageManager";
 import {Store} from "@reduxjs/toolkit";
 
 let store: any;
@@ -38,20 +38,13 @@ export class ApiService implements API {
     }
 
     addAuthorizationHeader = (axiosInstance: AxiosInstance) => {
-
-        axiosInstance.interceptors.request.use(config => {
-            if (validateToken(getCurrentUser() || this.injectedStore.getState().login.user)) {
-                config.headers.authorization = `Bearer ${getCurrentUser().token
-                || this.injectedStore.getState().login.user.token}`;
-            }
-            return config;
-        });
+        axiosInstance.interceptors.request.use(config => useBearerToken(this.injectedStore, config));
     };
 
     private handle401Error = (error: AxiosError) => {
         if (error.response && error.response.status === 401) {
             removeCurrentUser();
-            window.location.assign("/");
+            window.location.assign("/login");
         }
     };
 
@@ -76,7 +69,7 @@ export class ApiService implements API {
     }
 
     postAndReturn<T>(endpoint: string, data: any, thunkAPI: any): Promise<T> {
-        return this.axiosInstance.post(endpoint, data, {headers:this.headers})
+        return this.axiosInstance.post(endpoint, data, {headers: this.headers})
             .then(response => thunkAPI.fulfillWithValue(response.data))
             .catch((error: AxiosError) => {
                 const message = this.handleErrorResponse(error);

@@ -132,4 +132,11 @@ export interface CustomAsyncThunkOptions extends AsyncThunkOptions<void, Rejecte
 
 export interface CurrentUser {
     token: string
+    email?: string
+}
+
+export interface PackitDecodedToken {
+    au: []
+    email: string
+    name: string
 }
