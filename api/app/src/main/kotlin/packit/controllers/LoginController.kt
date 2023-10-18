@@ -25,7 +25,7 @@ class LoginController(
         return ResponseEntity.ok(token)
     }
 
-    @PostMapping("/github/login")
+    @PostMapping("/login/github")
     @ResponseBody
     fun loginWithGithub(
         @RequestBody @Validated user: LoginWithGithubToken,

@@ -22,12 +22,12 @@ class GithubUserLoginService(
 {
     fun authenticateAndIssueToken(loginRequest: LoginWithGithubToken): Map<String, String>
     {
-        if (loginRequest.githubToken.isEmpty())
+        if (loginRequest.githubtoken.isEmpty())
         {
-            throw PackitException("Empty Github personal access token")
+            throw PackitException("emptyGitToken", HttpStatus.BAD_REQUEST)
         }
 
-        val client = githubClient.build(loginRequest.githubToken)
+        val client = githubClient.build(loginRequest.githubtoken)
 
         val response = client.get<MutableList<Map<String, Any>>>("/user/orgs")
 
@@ -39,7 +39,7 @@ class GithubUserLoginService(
 
         if (organizations.isEmpty())
         {
-            throw PackitException("githubRestrictedAccess", HttpStatus.FORBIDDEN)
+            throw PackitException("githubRestrictedAccess", HttpStatus.UNAUTHORIZED)
         }
 
         val orgs = organizations.map { foo -> foo["login"].toString() }

@@ -9,4 +9,4 @@ data class LoginRequest(
     val password: String
 )
 
-data class LoginWithGithubToken(@NotNull val githubToken: String)
+data class LoginWithGithubToken(@NotNull val githubtoken: String)

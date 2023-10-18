@@ -2,6 +2,7 @@ package packit.exceptions
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.client.HttpClientErrorException
@@ -22,10 +23,22 @@ class PackitExceptionHandler
             .toResponseEntity()
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    fun handleHttpMessageNotReadableException(e: Exception): Any
+    {
+        return ErrorDetail(HttpStatus.BAD_REQUEST, e.message ?: "")
+            .toResponseEntity()
+    }
+
     @ExceptionHandler(HttpClientErrorException::class, HttpServerErrorException::class)
     fun handleHttpClientErrorException(e: Exception): ResponseEntity<String>
     {
-        return ErrorDetail(HttpStatus.INTERNAL_SERVER_ERROR, e.message ?: "")
+        val status = when (e) {
+            is HttpClientErrorException.Unauthorized -> HttpStatus.UNAUTHORIZED
+            is HttpClientErrorException.BadRequest -> HttpStatus.BAD_REQUEST
+            else -> HttpStatus.INTERNAL_SERVER_ERROR
+        }
+        return ErrorDetail(status, e.message ?: "")
             .toResponseEntity()
     }
 

@@ -10,7 +10,7 @@ import packit.model.LoginRequest
 import packit.security.provider.JwtIssuer
 
 @Service
-class UserLoginService(
+class BasicUserLoginService(
     val jwtIssuer: JwtIssuer,
     val authenticationManager: AuthenticationManager,
     val config: AppConfig,
