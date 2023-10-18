@@ -61,6 +61,6 @@ export const useBearerToken = (
     return config;
 };
 
-export const fakeJwtToken ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwYWNraXQiLCJpc3MiOiJwYWNraXQtYXBpIi" +
-    "wiZW1haWwiOiJ0ZXN0LnVzZXJAZXhhbXBsZS5jb20iLCJuYW1lIjoiVEVTVF9VU0VSIiwiZGF0ZXRpbWUiOjE2OTcxMjE3NTksImF1IjpbI" +
-    "lVTRVIiXSwiZXhwIjoxNjk3MjA4MTU5fQ.D0YoYiz4vEue1fs_rZXZp3hC1q5FZRNM9nJY-p_O28I";
+export const expiredJwtToken ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwYWNraXQiLCJpc3MiOiJwYWNraXQtYXBp" +
+    "IiwiZW1haWwiOiJMZWthbkFubmlAZ21haWwuY29tIiwibmFtZSI6Ikxla2FuIEFuaWZvd29zaGUiLCJkYXRldGltZSI6MTY5N" +
+    "zYzNzQ2NywiYXUiOlsiVVNFUiJdLCJleHAiOjE2OTc3MjM4Njd9";

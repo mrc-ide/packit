@@ -37,7 +37,7 @@ export default function ProtectedRoute() {
 
             const decodedToken = decodeToken(token) as PackitDecodedToken;
 
-            const newUser = decodedToken.email
+            const newUser = (decodedToken && decodedToken.email)
                 ? {...user, email: decodedToken.email}
                 : user;
 

@@ -137,6 +137,8 @@ export interface CurrentUser {
 
 export interface PackitDecodedToken {
     au: []
+    aud: string
     email: string
     name: string
+    exp: bigint
 }

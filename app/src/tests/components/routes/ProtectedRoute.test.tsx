@@ -8,6 +8,8 @@ import {MemoryRouter} from "react-router-dom";
 import ProtectedRoute from "../../../app/components/routes/ProtectedRoute";
 import {LoginState} from "../../../types";
 import {mockLoginState} from "../../mocks";
+import {removeCurrentUser, saveCurrentUser} from "../../../localStorageManager";
+import {expiredJwtToken} from "../../../helpers";
 
 const mockedUsedNavigate = jest.fn();
 
@@ -54,6 +56,23 @@ describe("protected routes", () => {
                 payload: {token: "fakeToken"}
             });
         expect(mockedUsedNavigate).toHaveBeenCalledWith("/login");
+    });
+
+    it("redirects users to login page when using expired token", () => {
+        saveCurrentUser({token: expiredJwtToken})
+
+        const store = getStore({authConfig: {enableAuth: true}});
+        const mockDispatch = jest.spyOn(store, "dispatch");
+        renderElement(store);
+
+        expect(mockDispatch).toHaveBeenCalledTimes(2);
+        expect(mockDispatch).toHaveBeenCalledWith(
+            {
+                type: "login/saveUser",
+                payload: {token: expiredJwtToken}
+            });
+        expect(mockedUsedNavigate).toHaveBeenCalledWith("/login");
+        removeCurrentUser()
     });
 
     it("redirects to login page when user is unauthenticated and authentication is enabled", () => {
