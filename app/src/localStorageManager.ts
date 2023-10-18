@@ -11,3 +11,9 @@ export const saveCurrentUser = (user: CurrentUser) => {
     localStorage.removeItem(CURRENT_USER);
     localStorage.setItem(CURRENT_USER, JSON.stringify(user));
 };
+
+export const removeCurrentUser = () => {
+    if (getCurrentUser()) {
+        localStorage.removeItem(CURRENT_USER);
+    }
+};

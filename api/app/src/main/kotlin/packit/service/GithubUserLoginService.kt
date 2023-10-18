@@ -1,53 +1,70 @@
 package packit.service
 
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient
-import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService
-import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient
-import org.springframework.security.oauth2.core.user.OAuth2User
+import org.springframework.http.HttpStatus
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.stereotype.Component
 import packit.AppConfig
+import packit.clients.GithubClient
 import packit.exceptions.PackitException
-import packit.model.LoginRequest
+import packit.model.LoginWithGithubToken
+import packit.model.User
+import packit.security.Role
+import packit.security.oauth2.GithubAuthentication
+import packit.security.profile.UserPrincipal
+import packit.security.provider.JwtIssuer
 
-class GithubUserLoginService(val config: AppConfig) : LoginService, OAuth2UserService<OAuth2UserRequest, OAuth2User>
+@Component
+class GithubUserLoginService(
+    val config: AppConfig,
+    val jwtIssuer: JwtIssuer,
+    val githubClient: GithubClient,
+)
 {
-    override fun authenticateAndIssueToken(loginRequest: LoginRequest): Map<String, String>
+    fun authenticateAndIssueToken(loginRequest: LoginWithGithubToken): Map<String, String>
     {
-        if (loginRequest.email.isEmpty() && loginRequest.password.isEmpty())
+        if (loginRequest.githubToken.isEmpty())
         {
-            throw PackitException("Empty email or Github personal access token")
+            throw PackitException("Empty Github personal access token")
         }
 
-        //get github orgs and teams
+        val client = githubClient.build(loginRequest.githubToken)
 
-        //
+        val response = client.get<MutableList<Map<String, Any>>>("/user/orgs")
 
+        val organizations = response.body!!
 
-        return emptyMap()
+        val allowedOrganizations = config.authGithubAPIOrgs.split(",").toList()
+
+        organizations.removeIf { org -> !allowedOrganizations.contains(org["login"]) }
+
+        if (organizations.isEmpty())
+        {
+            throw PackitException("githubRestrictedAccess", HttpStatus.FORBIDDEN)
+        }
+
+        val orgs = organizations.map { foo -> foo["login"].toString() }
+
+        val userResponse = client.get<Map<String, Any>>("/user")
+
+        val res = userResponse.body!!
+
+        val user = User(
+            res["id"].toString().toLong(),
+            res["login"].toString(),
+            "",
+            Role.USER,
+            res["name"].toString(),
+            mutableMapOf()
+        )
+
+        val userPrincipal = UserPrincipal.create(user, mutableMapOf())
+
+        val authentication = GithubAuthentication(userPrincipal, orgs)
+
+        SecurityContextHolder.getContext().authentication = authentication
+
+        val token = jwtIssuer.issue(authentication)
+
+        return mapOf("token" to token)
     }
-
-
-    override fun loadUser(userRequest: OAuth2UserRequest): OAuth2User
-    {
-        val delegate = DefaultOAuth2UserService()
-
-        val user = delegate.loadUser(userRequest)
-
-        val client = OAuth2AuthorizedClient(userRequest.clientRegistration, user.name, userRequest.accessToken)
-
-        val url = user.getAttribute<String>("organizations_url")
-/*
-        val orgs: List<Map<String, Any>> = rest
-            .get().uri(url)
-            .attributes(oauth2AuthorizedClient(client))
-            .retrieve()
-            .bodyToMono(MutableList::class.java)
-            .block()
-*/
-        println(user)
-
-        TODO("Not yet implemented")
-    }
-
 }
