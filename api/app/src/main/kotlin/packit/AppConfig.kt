@@ -1,5 +1,6 @@
 package packit
 
+import org.springframework.context.annotation.PropertySource
 import org.springframework.stereotype.Component
 import java.io.File
 import java.io.FileNotFoundException
@@ -10,6 +11,7 @@ import java.util.*
 class PackitProperties : Properties()
 
 @Component
+@PropertySource("classpath:config.properties")
 class AppConfig(private val props: PackitProperties = properties)
 {
     val outpackServerUrl: String = propString("outpack.server.url")
