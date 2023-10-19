@@ -59,7 +59,7 @@ describe("protected routes", () => {
     });
 
     it("redirects users to login page when using expired token", () => {
-        saveCurrentUser({token: expiredJwtToken})
+        saveCurrentUser({token: expiredJwtToken});
 
         const store = getStore({authConfig: {enableAuth: true}});
         const mockDispatch = jest.spyOn(store, "dispatch");
@@ -72,7 +72,7 @@ describe("protected routes", () => {
                 payload: {token: expiredJwtToken}
             });
         expect(mockedUsedNavigate).toHaveBeenCalledWith("/login");
-        removeCurrentUser()
+        removeCurrentUser();
     });
 
     it("redirects to login page when user is unauthenticated and authentication is enabled", () => {
