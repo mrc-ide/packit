@@ -3,7 +3,7 @@ import {useSelector} from "react-redux";
 import {RootState, useAppDispatch} from "../../../../types";
 import ParameterList from "./ParameterList";
 import {useParams} from "react-router-dom";
-import {actions} from "../../../store/packets/thunks";
+import {actions} from "../../../store/packets/packetThunks";
 import {PacketFile} from "./PacketFile";
 import appConfig from "../../../../config/appConfig";
 

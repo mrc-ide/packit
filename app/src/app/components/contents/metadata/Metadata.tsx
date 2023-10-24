@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import {useSelector} from "react-redux";
 import {RootState, useAppDispatch} from "../../../../types";
 import {useParams} from "react-router-dom";
-import {actions} from "../../../store/packets/thunks";
+import {actions} from "../../../store/packets/packetThunks";
 import {PacketHeader} from "../packets";
 import {getDateUTCString, getElapsedTime} from "../../../../helpers";
 

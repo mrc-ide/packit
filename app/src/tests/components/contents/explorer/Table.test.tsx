@@ -73,7 +73,7 @@ describe("table component", () => {
 
         fireEvent.click(firstCell);
 
-        expect((firstCell as HTMLLinkElement).href).toBe("http://localhost/packets/52fd88b2");
+        expect((firstCell as HTMLLinkElement).href).toBe("http://localhost/packets/52fd88b2/packet");
     });
 
     it("render table as expected", () => {

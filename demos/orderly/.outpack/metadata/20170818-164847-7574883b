@@ -1,0 +1,18 @@
+{
+  "schema_version": "0.0.1",
+  "name": "modup-201707-queries1",
+  "id": "20170818-164847-7574883b",
+  "time": {
+    "start": 1503074938.2232,
+    "end": 1503074938.2232
+  },
+  "parameters": null,
+  "files": [],
+  "depends": [],
+  "script": [
+    "script.R"
+  ],
+  "session": {
+  },
+  "custom": null
+}

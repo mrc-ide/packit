@@ -49,6 +49,14 @@ export interface PacketsState {
     packetError: null | Error
 }
 
+export interface LoginState {
+    user: CurrentUser
+    userError:  null | Error
+    isAuthenticated: boolean,
+    authConfig: Record<string, any>,
+    authConfigError: null | Error
+}
+
 export interface PacketMetadata {
     id: string
     name: string
@@ -107,6 +115,11 @@ export interface PaginationProps {
     pageSize: number
 }
 
+export interface UserLoginDetailProps {
+    email: string
+    password: string
+}
+
 export type RootState = ReturnType<typeof rootReducer>;
 
 export type AppDispatch = typeof store.dispatch;
@@ -115,4 +128,8 @@ export const useAppDispatch = () => useDispatch<AppDispatch>();
 
 export interface CustomAsyncThunkOptions extends AsyncThunkOptions<void, RejectedErrorValue> {
     rejectValue: Error
+}
+
+export interface CurrentUser {
+    token: string
 }

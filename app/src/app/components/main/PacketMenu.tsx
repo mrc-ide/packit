@@ -9,23 +9,23 @@ export default function PacketMenu() {
         <div data-testid="packet-menu" className="sidebar-packet-menu">
             <ul className="list-unstyled">
                 <li>
-                    <NavLink to={`/packets/${packetId}/`}>
-                        <span>Packet</span>
+                    <NavLink to={`/packets/${packetId}/packet`}>
+                        <span className="text">Packet</span>
                     </NavLink>
                 </li>
                 <li>
                     <NavLink to={`/packets/${packetId}/metadata`}>
-                        <span>Metadata</span>
+                        <span className="text">Metadata</span>
                     </NavLink>
                 </li>
                 <li>
                     <NavLink to={`/packets/${packetId}/downloads`}>
-                        <span>Downloads</span>
+                        <span className="text">Downloads</span>
                     </NavLink>
                 </li>
                 <li>
                     <NavLink to={`/packets/${packetId}/changelogs`}>
-                        <span>Changelogs</span>
+                        <span className="text">Changelogs</span>
                     </NavLink>
                 </li>
             </ul>

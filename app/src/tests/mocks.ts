@@ -1,4 +1,4 @@
-import {Custom, PacketMetadata, PacketsState, TimeMetadata, PageablePackets} from "../types";
+import {Custom, PacketMetadata, PacketsState, TimeMetadata, PageablePackets, LoginState, CurrentUser} from "../types";
 
 export const mockPacketsState = (props: Partial<PacketsState> = {}): PacketsState => {
     return {
@@ -21,4 +21,15 @@ export const mockPacketResponse = {
     files: [{hash: "sha:234:50873fVFDSVSF4", path: "data.rds", size: 97}],
     published: false,
     time: {} as TimeMetadata
+};
+
+export const mockLoginState = (props: Partial<LoginState> = {}): LoginState => {
+    return {
+        user: {} as CurrentUser,
+        userError: null,
+        isAuthenticated: false,
+        authConfig: {},
+        authConfigError: null,
+        ...props
+    };
 };

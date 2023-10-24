@@ -2,20 +2,23 @@ import React from "react";
 import active from "../../../config/active.json";
 import HelpIcon from "@mui/icons-material/Help";
 import {HeaderDropDown} from "./index";
+import { NavLink } from "react-router-dom";
 
 export default function Header() {
     return (
         <header>
             <nav data-testid="header" className="navbar">
-                <a className="navbar-brand" href="/">
+                <NavLink to="/" className="navbar-brand">
                     <img src={`/img/${active.logo}`}
                          width="141"
                          height="36"
-                         alt="Logo"/></a>
+                         alt="Logo"/>
+                </NavLink>
                 <div>
                     <span className="px-3">
-                        <a className="btn btn-sm rounded"
-                           href="#">Accessibility</a>
+                        <NavLink to="#" className="btn btn-sm rounded">
+                            Accessibility
+                        </NavLink>
                     </span>
                     <span className="px-3">
                          <HelpIcon className="icon-primary" sx={{fontSize: 35}}/>

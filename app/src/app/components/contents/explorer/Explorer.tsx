@@ -2,12 +2,13 @@ import React, {useEffect, useState} from "react";
 import Table from "./Table";
 import {useSelector} from "react-redux";
 import {RootState, useAppDispatch} from "../../../../types";
-import {actions} from "../../../store/packets/thunks";
+import {actions} from "../../../store/packets/packetThunks";
 import ReactPaginate from "react-paginate";
 
 export default function Explorer() {
     const dispatch = useAppDispatch();
     const {pageablePackets} = useSelector((state: RootState) => state.packets);
+
     const packets = pageablePackets.content ?? [];
     const [pageNumber, setPageNumber] = useState(0);
     const [pageSize, setPageSize] = useState(50);

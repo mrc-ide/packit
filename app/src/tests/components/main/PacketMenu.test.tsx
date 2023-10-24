@@ -47,7 +47,7 @@ describe("PacketMenu component", () => {
 
         expect(items[0]).toHaveTextContent("Packet");
 
-        expect(items[0].getAttribute("href")).toBe("/packets/packetId123/");
+        expect(items[0].getAttribute("href")).toBe("/packets/packetId123/packet");
 
         expect(items[1]).toHaveTextContent("Metadata");
 

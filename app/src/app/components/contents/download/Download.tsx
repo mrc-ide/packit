@@ -1,7 +1,7 @@
 import {useSelector} from "react-redux";
 import {FileMetadata, RootState, useAppDispatch} from "../../../../types";
 import React, {useEffect} from "react";
-import {actions} from "../../../store/packets/thunks";
+import {actions} from "../../../store/packets/packetThunks";
 import {Link, useParams} from "react-router-dom";
 import {CloudDownload} from "@mui/icons-material";
 import appConfig from "../../../../config/appConfig";

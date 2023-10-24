@@ -1,9 +1,10 @@
 package packit.integration.controllers
 
 import org.junit.jupiter.api.Test
+import org.springframework.boot.test.web.client.exchange
 import org.springframework.http.*
 import packit.integration.IntegrationTest
-import kotlin.test.Ignore
+import packit.integration.WithAuthenticatedUser
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
@@ -29,20 +30,27 @@ class OutpackControllerTest : IntegrationTest()
             "}"
 
     @Test
+    @WithAuthenticatedUser
     fun `can GET json from outpack_server`()
     {
-        val result = restTemplate.getForEntity("/outpack/metadata/list", String::class.java)
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/outpack/metadata/list",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
         assertSuccess(result)
-        jsonValidator.validateAgainstOutpackSchema(result.body!!, "location")
+        jsonValidator.validateAgainstOutpackSchema(result.body!!, "locations")
         assert(jsonValidator.getData(result.body!!).asIterable().count() > 1)
     }
 
     @Test
+    @WithAuthenticatedUser
     fun `can GET plain text from outpack_server`()
     {
-        val result = restTemplate.getForEntity(
-                "/outpack/metadata/20230427-150755-2dbede93/text",
-                String::class.java
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/outpack/metadata/20230427-150755-2dbede93/text",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
         )
         assertEquals(result.statusCode, HttpStatus.OK)
         assert(result.headers.contentType.toString().contains("text/plain"))
@@ -50,11 +58,13 @@ class OutpackControllerTest : IntegrationTest()
     }
 
     @Test
+    @WithAuthenticatedUser
     fun `can GET file from outpack_server`()
     {
-        val result = restTemplate.getForEntity(
-                "/outpack/file/sha256:1e2e932aa25493f54366fef8ec996a24ff3456c6b30d4ff6fa753e6263cf8ee0",
-                String::class.java
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/outpack/file/sha256:1e2e932aa25493f54366fef8ec996a24ff3456c6b30d4ff6fa753e6263cf8ee0",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
         )
         assertEquals(result.statusCode, HttpStatus.OK)
         assertEquals(result.headers.contentType, MediaType.APPLICATION_OCTET_STREAM)
@@ -62,38 +72,41 @@ class OutpackControllerTest : IntegrationTest()
     }
 
     @Test
+    @WithAuthenticatedUser
     fun `can POST text to outpack_server`()
     {
-        val headers = HttpHeaders()
-        headers.contentType = MediaType.TEXT_PLAIN
-        val request = HttpEntity(testPacket, headers)
         val result = restTemplate.postForEntity(
-                "/outpack/packet/sha256:ad153e5f6720dde3161b229ef73ca2b302fb95a37a092a2c8e3350a8ed6713d4",
-                request, String::class.java
+            "/outpack/packet/sha256:ad153e5f6720dde3161b229ef73ca2b302fb95a37a092a2c8e3350a8ed6713d4",
+            getTokenizedHttpEntity(MediaType.TEXT_PLAIN, testPacket),
+            String::class.java
         )
         assertSuccess(result)
         jsonValidator.validateAgainstOutpackSchema(result.body!!, "null-response")
     }
 
     @Test
-    @Ignore
+    @WithAuthenticatedUser
     fun `can POST file to outpack_server`()
     {
-        val headers = HttpHeaders()
-        headers.contentType = MediaType.APPLICATION_OCTET_STREAM
-        val request = HttpEntity("test", headers)
         val result = restTemplate.postForEntity(
-                "/outpack/file/sha256:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
-                request, String::class.java
+            "/outpack/file/sha256:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+            getTokenizedHttpEntity(MediaType.APPLICATION_OCTET_STREAM, "test"),
+            String::class.java
         )
         assertSuccess(result)
         jsonValidator.validateAgainstOutpackSchema(result.body!!, "null-response")
     }
 
     @Test
+    @WithAuthenticatedUser
     fun `can return GET errors from outpack_server`()
     {
-        val result = restTemplate.getForEntity("/outpack/bad", String::class.java)
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/outpack/bad",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
         assertEquals(result.statusCode, HttpStatusCode.valueOf(404))
         jsonValidator.validateError(
                 result.body!!, "NOT_FOUND",
@@ -102,17 +115,19 @@ class OutpackControllerTest : IntegrationTest()
     }
 
     @Test
+    @WithAuthenticatedUser
     fun `can return POST errors from outpack_server`()
     {
-        val headers = HttpHeaders()
-        headers.contentType = MediaType.TEXT_PLAIN
-        val request = HttpEntity(testPacket, headers)
-        val result = restTemplate.postForEntity("/outpack/packet/badhash", request, String::class.java)
+        val result = restTemplate.postForEntity(
+            "/outpack/packet/badhash",
+            getTokenizedHttpEntity(MediaType.TEXT_PLAIN, testPacket),
+            String::class.java
+        )
 
         assertEquals(result.statusCode, HttpStatusCode.valueOf(400))
         jsonValidator.validateError(
                 result.body!!, "invalid input parameter",
-                "Hash of packet does not match"
+                "Invalid hash format 'badhash'"
         )
     }
 }

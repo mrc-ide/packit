@@ -1,6 +1,6 @@
 import {PacketMetadata, PacketsState, PageablePackets} from "../../../types";
 import {createSlice} from "@reduxjs/toolkit";
-import {actions} from "./thunks";
+import {actions} from "./packetThunks";
 
 export const initialPacketsState: PacketsState = {
     pageablePackets: {} as PageablePackets,
