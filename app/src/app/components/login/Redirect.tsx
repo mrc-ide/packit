@@ -24,7 +24,7 @@ export default function Redirect() {
     return (
         <div>
             <p>Redirecting user</p>
-            {<Navigate to="/"/>}
+            <Navigate to="/"/>
         </div>
     );
 }
