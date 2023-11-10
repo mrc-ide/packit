@@ -16,4 +16,9 @@ class GithubOAuth2UserInfo(private val attributes: MutableMap<String, Any>) : OA
     {
         return attributes["email"].toString()
     }
+
+    override fun username(): String
+    {
+        return attributes["login"].toString()
+    }
 }
