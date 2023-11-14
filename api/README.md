@@ -23,6 +23,21 @@ to the command. For example, the command for running AppTest.kt would be: `./api
 
 Dependencies must be running for integration tests to pass. 
 
+## Config
+
+To update app config for local dev run, edit `./api/app/src/main/resources.config.properties`.
+
+## Debugging
+
+To debug the api in IntelliJ you can do the following:
+- Go to Run | Edit Configurations
+- Add a new Gradle configuration
+- Provide a name e.g. `Run API`
+- Set the value of "Run" to `app:run`
+- Set the value of "Gradle project" to `api`
+- OK from the dialog. The configuration should now be available in the toolbar to Run or Debug.
+
+
 ## Building a docker image
 1. `./api/scripts/build` builds a docker image.
 2. `./api/scripts/build-and-push` builds and pushes an image to dockerhub. This script is run on CI.
