@@ -3,7 +3,7 @@ Packit uses [Spring Security](https://spring.io/projects/spring-security) for au
 OAuth2 and a partial demo Basic auth method (to demonstrate supporting multiple auth types). We
 will eventually replace the Basic auth support with Montagu auth. 
 
-We use tokens rather than cookies for auth during web sessions. These same tokens are used for auth over the API.
+We use JWT tokens rather than cookies for authentication both from the browser and using the API. 
 
 
 ###
@@ -26,5 +26,29 @@ of an interface type supported by those classes is required.
 
 ### Github Auth
 
-This diagram shows the security classes used for Github auth and how they interact:
+These diagrams show the main security classes used for GitHub auth and how they interact:
+
+#### Github Login
+![image](Packit%20Github%20login.drawio.png)
+
+#### Authenticate requests 
+
+These classes are used for authenticated JWT tokens received from both GitHub and Basic authentication
+![image](Packit%20JWT%20authenticate.drawio.png)
+
+#### Browser GitHub Auth Sequence
+
+To login with Github, the web app front end requests from the ... endpoint
+The front end checks if the token has expired. 
+
+The app front end stores JWT token in local storage and presents it in Auth header (TODO) when accessing any backend endpoint. 
+
+
+#### API GitHub Auth Sequence
+
+To login with GitHub over the API, a request should be made passing the user's personal access token in the request (TODO) - 
+the PAT will be verified with GitHub, user's membership of authorized org checked, and a JWT token returned. This token
+should be included in the Auth header in all subsequent requests to the API. 
+
+
 
