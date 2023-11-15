@@ -36,7 +36,7 @@ Relevant `application.properties` values:
 - `spring.security.oauth2.client.registration.github.client-id`
 - `spring.security.oauth2.client.registration.github.client-secret`
 
-These specify a Github App (or GitHub OAuth app) to use - users will be required to authorize the app in order to
+These specify a [Github App](https://docs.github.com/en/apps) (or GitHub OAuth app) to use - users will be required to authorize the app in order to
 log in. 
 
 ### Local development 
