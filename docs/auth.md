@@ -1,21 +1,41 @@
+## Authentication in Packit
 
-Packit uses [Spring Security](https://spring.io/projects/spring-security) for authentication. We currently support Github authentication using
-OAuth2 and a partial demo Basic auth method (to demonstrate supporting multiple auth types). We
-will eventually replace the Basic auth support with Montagu auth. 
+Packit uses [Spring Security](https://spring.io/projects/spring-security) for authentication. For logging in through the front end web app, we currently 
+support GitHub authentication using OAuth2 and a partial demo Basic auth method (to demonstrate supporting multiple auth types). We
+will eventually replace the Basic auth support with Montagu auth. We also support authenticated API access, currently
+with GitHub auth only. 
 
-We use JWT tokens rather than cookies for authentication both from the browser and using the API. 
+We use JWT tokens rather than cookies for authenticated access, both from the browser and using the API. 
 
-TODO: How to test Github in local dev
+Login through the web app uses standard Spring Security configuration to redirect user to provide credentials via
+GitHub.
 
+Authentication for API access uses a bespoke approach where the `LoginController` directly invokes the
+`GithubUserLoginService`.
 
 ### Auth configuration in Packit
 TODO: App config & spring config
+
+
+### Local development 
+
+To run Packit locally with GitHub auth, you'll need the client id and client secret of an OAuth app in Github. 
+You can either set one up yourself associated with your GitHub account (in Settings -> Developer Settings -> OAuth 
+apps), or use the details of an existing test app, which are stored as a in the MRC Vault at
+`secret/packit/oauth/test`.
+
+Update `api/app/src/main/resources/application-properties` by setting the values of
+`spring.security.oauth2.client.registration.github.client-id` and 
+`spring.security.oauth2.client.registration.github.client-secret` to the details of the test app. 
+
+Be sure not to push these config changes!
+
 
 ### WebSecurityConfig
 
 The starting point for securing the application is the 
 [WebSecurityConfig](https://github.com/mrc-ide/packit/blob/main/api/app/src/main/kotlin/packit/security/WebSecurityConfig.kt)
-class. This defines beans to tell Spring Security how to manage security in the app, primarily:
+class. This includes Beans to tell Spring Security how to manage security in the app, primarily:
 - `securityFilterChain` - this defines the main security logic for the application as a chain of filters. This 
 conditionally configures oauth2 support, including a custom user service and success handler, if github auth is enabled
 in application config. Also defines which routes require securing e.g. none if auth is not enabled.
@@ -34,7 +54,7 @@ These diagrams show the main security classes used for GitHub auth and how they 
 ![image](Packit%20Github%20login.drawio.png)
 
 
-NB Browser login not currently verifying org membership - tbd!?
+TODO: NB Browser login not currently verifying org membership - make ticket
 
 #### Authenticate requests 
 
