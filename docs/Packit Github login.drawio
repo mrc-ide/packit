@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-11-15T10:24:55.495Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36" etag="lF5jxAOnW7-LWXLy5x7p" version="22.1.1" type="google">
+<mxfile host="app.diagrams.net" modified="2023-11-15T15:57:58.005Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36" etag="MUS5dZ5fWsW4jdmJ_3aG" version="22.1.1" type="google">
   <diagram name="Page-1" id="xQTv8ktl3ab50IudVMbU">
     <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -10,7 +10,7 @@
         <mxCell id="QaVGa3plkibNSy2gWu0X-2" value="&lt;div&gt;&lt;b&gt;WebSecurityConfig&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Entry point for security configuration &lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="270" y="40" width="240" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="QaVGa3plkibNSy2gWu0X-3" value="&lt;div align=&quot;center&quot;&gt;&lt;b&gt;OAuth2UserService: &lt;/b&gt;DefaultOAuth2UserService&lt;br&gt;&lt;/div&gt;&lt;div align=&quot;center&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div align=&quot;center&quot;&gt;Does any required custom processing of user on login, and returns an &lt;i&gt;OAuth2User&lt;/i&gt;&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="1">
+        <mxCell id="QaVGa3plkibNSy2gWu0X-3" value="&lt;div align=&quot;center&quot;&gt;&lt;b&gt;OAuth2UserService: &lt;/b&gt;DefaultOAuth2UserService&lt;br&gt;&lt;/div&gt;&lt;div align=&quot;center&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div align=&quot;center&quot;&gt;Does any required custom processing of user on login, and returns an &lt;i&gt;OAuth2User &lt;/i&gt;(e.g extract roles from database - not implemented yet)&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="1">
           <mxGeometry x="80" y="160" width="290" height="80" as="geometry" />
         </mxCell>
         <mxCell id="QaVGa3plkibNSy2gWu0X-6" value="" style="endArrow=none;html=1;rounded=0;entryX=0.375;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.462;exitY=0.025;exitDx=0;exitDy=0;exitPerimeter=0;startArrow=classic;startFill=1;" edge="1" parent="1" source="QaVGa3plkibNSy2gWu0X-3" target="QaVGa3plkibNSy2gWu0X-2">
@@ -24,7 +24,7 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="QaVGa3plkibNSy2gWu0X-8" value="&lt;div align=&quot;center&quot;&gt;&lt;b&gt;OAuth2SuccessHandler: &lt;/b&gt;SimpleUrlAuthenticationSuccessHandler&lt;br&gt;&lt;/div&gt;&lt;div align=&quot;center&quot;&gt;&lt;br&gt;&lt;/div&gt;Generates a token from &lt;i&gt;TokenProvider&lt;/i&gt; and redirects on sucessful authenticate" style="rounded=0;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="1">
+        <mxCell id="QaVGa3plkibNSy2gWu0X-8" value="&lt;div align=&quot;center&quot;&gt;&lt;b&gt;OAuth2SuccessHandler: &lt;/b&gt;SimpleUrlAuthenticationSuccessHandler&lt;br&gt;&lt;/div&gt;&lt;div align=&quot;center&quot;&gt;&lt;br&gt;&lt;/div&gt;Generates a JWT token from &lt;i&gt;TokenProvider&lt;/i&gt; and redirects on sucessful authenticate - this redirects to the front end location configured in app config, passing the JWT token" style="rounded=0;whiteSpace=wrap;html=1;align=center;" vertex="1" parent="1">
           <mxGeometry x="400" y="160" width="370" height="80" as="geometry" />
         </mxCell>
         <mxCell id="QaVGa3plkibNSy2gWu0X-9" value="" style="endArrow=none;html=1;rounded=0;entryX=0.567;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.25;exitY=0;exitDx=0;exitDy=0;startArrow=classic;startFill=1;" edge="1" parent="1" source="QaVGa3plkibNSy2gWu0X-8" target="QaVGa3plkibNSy2gWu0X-2">
