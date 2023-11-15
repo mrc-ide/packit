@@ -19,3 +19,6 @@ See [api/README.md](https://github.com/mrc-ide/packit/blob/main/api/README.md)
 
 ## App
 See [app/README.md](https://github.com/mrc-ide/packit/blob/main/app/README.md)
+
+## Authentication in Packit
+See [docs/auth.md](docs/auth.md)
