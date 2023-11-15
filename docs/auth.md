@@ -7,6 +7,8 @@ with GitHub auth only.
 
 We use JWT tokens rather than cookies for authenticated access, both from the browser and using the API. 
 
+Packit instances can restrict GitHub login to users who are members of configured Organizations or Teams (TODO!).
+
 Login through the web app uses standard Spring Security configuration to redirect user to provide credentials via
 GitHub.
 
@@ -14,17 +16,36 @@ Authentication for API access uses a bespoke approach where the `LoginController
 `GithubUserLoginService`.
 
 ### Auth configuration in Packit
-TODO: App config & spring config
+Configuration relevant to auth can be found in both `config.properties` (custom Packit config) and `application.properties`
+(Spring Booth configuration). Development versions of both files can be found in `api/app/src/main/resources`.
 
+Relevant `config.properties` values:
+- `auth.basic.secret` Secret used to encode and decode JWT tokens
+- `auth.oauth2.redirect.url` The front end API Packit url to redirect to on successful user authentication - this should
+be of form {Front end base url}/redirect
+- `auth.enableGithubLogin` true if GitHub auth should be enabled for this instance
+- `auth.enableFormLogin` true if Basic auth should be enabled for this instance
+- `auth.expiryDays` Number of days before a JWT token shoul expire
+- `auth.enabled` true if auth is enabled - if false, all data is visible to any user, and no login is required
+- `auth.githubAPIBaseUrl` Base URL for querying GitHub API to verify PAT and check user Org membership - this is unlikely to change!
+- `auth.githubAPIOrgs` Comma separated list of authorized GitHub Organizations - if specified, a user must be a member 
+of one of these in order to log in. If not set, any GitHub user can log in. 
+
+Relevant `application.properties` values:
+- `spring.security.oauth2.client.registration.github.client-id`
+- `spring.security.oauth2.client.registration.github.client-secret`
+
+These specify a Github App (or GitHub OAuth app) to use - users will be required to authorize the app in order to
+log in. 
 
 ### Local development 
 
-To run Packit locally with GitHub auth, you'll need the client id and client secret of an OAuth app in Github. 
-You can either set one up yourself associated with your GitHub account (in Settings -> Developer Settings -> OAuth 
-apps), or use the details of an existing test app, which are stored as a in the MRC Vault at
+To run Packit locally with GitHub auth, you'll need the client id and client secret of a GitHub App, or GitHub OAuth app. 
+You can either set one up yourself associated with your GitHub account (in Settings -> Developer Settings),
+or use the details of an existing test app, which are stored in the MRC Vault at
 `secret/packit/oauth/test`.
 
-Update `api/app/src/main/resources/application-properties` by setting the values of
+Update `api/app/src/main/resources/application.properties` by setting the values of
 `spring.security.oauth2.client.registration.github.client-id` and 
 `spring.security.oauth2.client.registration.github.client-secret` to the details of the test app. 
 
@@ -84,8 +105,8 @@ The GitApiLoginService class is invoked by the LoginController to:
 - generate and return a JWT token which will be included in the request response. This token should be included in the 
 as a Bearer token in the Authorization header in all subsequent requests to the API. 
 
-TODO: remarks on front end vs back end
-TODO: Cors config??
+TODO: Does OrderlyWeb DirectClient currently use PAT?
+TODO: remarks on front end vs back end ?
 TODO: document what happens on Auth failure
 TODO: ticket for expiring - but possible make this a redirect from the front end - can't redirect though because it's
 just an API.... Check if expiry is checked in extract ticket!
