@@ -13,6 +13,9 @@ export default function Login() {
         authConfig
     } = useSelector((state: RootState) => state.login);
 
+    console.log("Rendering Login where userError is " + JSON.stringify(userError));
+
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [emailError, setEmailError] = useState("");
@@ -91,7 +94,7 @@ export default function Login() {
                         </Link>
                     </div>
                 }
-                {userError && <div className="invalid-feedback">{userError.error.detail}</div>}
+                {userError && <div className="invalid-feedback d-block">{userError.error.detail}</div>}
             </div>
         </div>
     );

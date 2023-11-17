@@ -5,13 +5,13 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler
 import org.springframework.stereotype.Component
-import org.springframework.web.util.UriComponentsBuilder
-import packit.AppConfig
+import org.springframework.util.LinkedMultiValueMap
+import packit.security.BrowserRedirect
 import packit.security.provider.JwtIssuer
 
 @Component
 class OAuth2SuccessHandler(
-    val config: AppConfig,
+    private val redirect: BrowserRedirect,
     val jwtIssuer: JwtIssuer,
 ) : SimpleUrlAuthenticationSuccessHandler()
 {
@@ -33,17 +33,7 @@ class OAuth2SuccessHandler(
     {
         val token = jwtIssuer.issue(authentication)
 
-        val targetUrl = buildUri(token)
-
-        redirectStrategy.sendRedirect(request, response, targetUrl)
-    }
-
-    fun buildUri(token: String): String
-    {
-        return UriComponentsBuilder
-            .fromUriString(config.authRedirectUri)
-            .queryParam("token", token)
-            .build()
-            .toUriString()
+        val qs = LinkedMultiValueMap<String, String>().apply{ this.add("token", token) }
+        redirect.redirectToBrowser(request, response,qs)
     }
 }

@@ -16,6 +16,7 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import packit.AppConfig
 import packit.security.oauth2.BasicUserDetailsService
+import packit.security.oauth2.OAuth2FailureHandler
 import packit.security.oauth2.OAuth2SuccessHandler
 import packit.security.oauth2.OAuth2UserService
 import packit.security.provider.JwtIssuer
@@ -27,6 +28,7 @@ class WebSecurityConfig(
     val customOauth2UserService: OAuth2UserService,
     val config: AppConfig,
     val jwtIssuer: JwtIssuer,
+    val browserRedirect: BrowserRedirect
 )
 {
     @Bean
@@ -59,7 +61,8 @@ class WebSecurityConfig(
                 oauth2Login
                     .userInfoEndpoint().userService(customOauth2UserService)
                     .and()
-                    .successHandler(OAuth2SuccessHandler(config, jwtIssuer))
+                    .successHandler(OAuth2SuccessHandler(browserRedirect, jwtIssuer))
+                    .failureHandler(OAuth2FailureHandler(browserRedirect))
             }
         }
         return this

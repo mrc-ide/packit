@@ -66,7 +66,6 @@ class OAuth2UserService(val clients: ClientRegistrationRepository?, val authz: O
 
     private fun checkGithubUserMembership(request: OAuth2UserRequest, user: OAuth2User)
     {
-        // TODO: redirect to error page
         val client = OAuth2AuthorizedClient(request.clientRegistration, user.name, request.accessToken)
         val oauth2WebClient = getOAuth2WebClient()
 
@@ -84,8 +83,8 @@ class OAuth2UserService(val clients: ClientRegistrationRepository?, val authz: O
                 orgs.stream().anyMatch{ org: Any? -> org is Map<*, *> && allowedOrgs.contains(org["login"])}
 
         if (!inAuthorizedOrg) {
-            //throw OAuth2AuthenticationException(OAuth2Error(OAuth2ErrorCodes.INVALID_TOKEN, "Not in allowed organization", ""))
-            throw PackitException("githubRestrictedAccess", HttpStatus.UNAUTHORIZED)
+            throw OAuth2AuthenticationException(OAuth2Error(OAuth2ErrorCodes.INVALID_TOKEN,
+                "User is not in allowed organization. Please contact your administrator.", ""))
         }
     }
 }

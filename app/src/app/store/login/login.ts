@@ -26,6 +26,14 @@ export const loginSlice = createSlice({
             saveCurrentUser(state.user);
             state.isAuthenticated = validateToken(state.user);
             state.userError = null;
+        },
+        loginError: (state, action: PayloadAction<string>) => {
+            state.userError = {
+                error: {
+                    error: "Login failed",
+                    detail: action.payload
+                }
+            };
         }
     },
     extraReducers: (builder) => {
@@ -49,6 +57,10 @@ export const loginSlice = createSlice({
     }
 });
 
-export const {logout, saveUser} = loginSlice.actions;
+export const {
+    logout,
+    saveUser,
+    loginError
+} = loginSlice.actions;
 
 export default loginSlice.reducer;
