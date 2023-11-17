@@ -1,5 +1,6 @@
 package packit.security.oauth2
 
+import org.springframework.http.HttpStatus
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService
@@ -9,6 +10,7 @@ import org.springframework.security.oauth2.client.web.reactive.function.client.S
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException
 import org.springframework.security.oauth2.core.OAuth2Error
+import org.springframework.security.oauth2.core.OAuth2ErrorCodes
 import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
@@ -64,14 +66,11 @@ class OAuth2UserService(val clients: ClientRegistrationRepository?, val authz: O
 
     private fun checkGithubUserMembership(request: OAuth2UserRequest, user: OAuth2User)
     {
-        // TODO: use real error codes
         // TODO: redirect to error page
-        // TODO: use orgs from config
         val client = OAuth2AuthorizedClient(request.clientRegistration, user.name, request.accessToken)
-        val url = "${config.authGithubAPIBaseUrl}/user/orgs"
-
         val oauth2WebClient = getOAuth2WebClient()
 
+        val url = "${config.authGithubAPIBaseUrl}/user/orgs"
         val orgs = oauth2WebClient
             .get().uri(url)
             .attributes(oauth2AuthorizedClient(client))
@@ -79,14 +78,14 @@ class OAuth2UserService(val clients: ClientRegistrationRepository?, val authz: O
             .bodyToMono(MutableList::class.java)
             .block()
 
-        //val testOrg = "spring-projects"
-        val testOrg = "vimc"
+        val allowedOrgs = config.authGithubAPIOrgs.split(",").toList()
 
-        //val count = orgs!!.stream().count()
-        val inAuthorizedOrg = orgs!= null && orgs.stream().anyMatch{ org: Any? -> org!= null && (org as Map<String, String>)["login"] == testOrg}
+        val inAuthorizedOrg = orgs!= null &&
+                orgs.stream().anyMatch{ org: Any? -> org is Map<*, *> && allowedOrgs.contains(org["login"])}
 
         if (!inAuthorizedOrg) {
-            throw OAuth2AuthenticationException(OAuth2Error("invalid_token", "Not in Spring Team", ""))
+            //throw OAuth2AuthenticationException(OAuth2Error(OAuth2ErrorCodes.INVALID_TOKEN, "Not in allowed organization", ""))
+            throw PackitException("githubRestrictedAccess", HttpStatus.UNAUTHORIZED)
         }
     }
 }
