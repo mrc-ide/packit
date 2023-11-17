@@ -12,13 +12,16 @@ import org.springframework.security.oauth2.core.OAuth2Error
 import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.model.User
 import packit.security.Role
 import packit.security.profile.UserPrincipal
 
 @Component
-class OAuth2UserService(val clients: ClientRegistrationRepository?, val authz: OAuth2AuthorizedClientRepository?) : DefaultOAuth2UserService()
+class OAuth2UserService(val clients: ClientRegistrationRepository?, val authz: OAuth2AuthorizedClientRepository?,
+    val config: AppConfig
+) : DefaultOAuth2UserService()
 {
     override fun loadUser(userRequest: OAuth2UserRequest): OAuth2User
     {
@@ -65,15 +68,10 @@ class OAuth2UserService(val clients: ClientRegistrationRepository?, val authz: O
         // TODO: redirect to error page
         // TODO: use orgs from config
         val client = OAuth2AuthorizedClient(request.clientRegistration, user.name, request.accessToken)
-        val url: String? = user.getAttribute("organizations_url")
-        println("URL is " + url)
-        if (url == null) {
-            throw OAuth2AuthenticationException(OAuth2Error("invalid_token", "Organizations url not available", ""))
-        }
+        val url = "${config.authGithubAPIBaseUrl}/user/orgs"
 
         val oauth2WebClient = getOAuth2WebClient()
 
-        // TODO: Fix  class java.util.stream.ReferencePipeline$Head cannot be cast to class java.util.List
         val orgs = oauth2WebClient
             .get().uri(url)
             .attributes(oauth2AuthorizedClient(client))
@@ -84,8 +82,10 @@ class OAuth2UserService(val clients: ClientRegistrationRepository?, val authz: O
         //val testOrg = "spring-projects"
         val testOrg = "vimc"
 
-        val orgsList = orgs?.stream() as List<Map<String, Any>>?
-        if ((orgsList == null) || !orgsList.any { org: Map<String, Any> -> org["login"] == testOrg}) {
+        //val count = orgs!!.stream().count()
+        val inAuthorizedOrg = orgs!= null && orgs.stream().anyMatch{ org: Any? -> org!= null && (org as Map<String, String>)["login"] == testOrg}
+
+        if (!inAuthorizedOrg) {
             throw OAuth2AuthenticationException(OAuth2Error("invalid_token", "Not in Spring Team", ""))
         }
     }
