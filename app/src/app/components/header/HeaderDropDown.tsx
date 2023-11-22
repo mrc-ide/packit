@@ -1,37 +1,54 @@
-import React from "react";
-import {NavDropdown} from "react-bootstrap";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import LogoutIcon from "@mui/icons-material/Logout";
-import {useSelector} from "react-redux";
-import {RootState, useAppDispatch} from "../../../types";
-import {logout} from "../../store/login/login";
-import {useNavigate} from "react-router-dom";
+import { useAppDispatch } from "../../../types";
+import { logout } from "../../store/login/login";
+import { useNavigate } from "react-router-dom";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from "../../../shadcn/components/DropdownMenu";
+import { Button } from "../../../shadcn/components/Button";
+import { Avatar, AvatarFallback, AvatarImage } from "../../../shadcn/components/Avatar";
 
 export default function HeaderDropDown() {
-    const navigate = useNavigate();
-    const dispatch = useAppDispatch();
-    const {isAuthenticated} = useSelector((state: RootState) => state.login);
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
-    const handleLogout = () => {
-        dispatch(logout());
-        navigate("/login");
-    };
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+  };
 
-    return (
-        <>
-            {isAuthenticated &&
-                <NavDropdown data-testid="drop-down" className="icon-primary" title={
-                    <AccountCircleIcon sx={{fontSize: 35}}/>}>
-                    <NavDropdown.Item>l.ani@imperial.ac.uk</NavDropdown.Item>
-                    <NavDropdown.Item>Manage access</NavDropdown.Item>
-                    <NavDropdown.Item>Publish packets</NavDropdown.Item>
-                    <NavDropdown.Divider></NavDropdown.Divider>
-                    <NavDropdown.Item onClick={handleLogout}>
-                        <LogoutIcon className="me-2" sx={{fontSize: 20}}/>
-                        Logout
-                    </NavDropdown.Item>
-                </NavDropdown>
-            }
-        </>
-    );
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="relative h-10 w-10 rounded full">
+          <Avatar className="h-8 w-8">
+            <AvatarImage src="https://github.com/shadcn.png" alt="shadcn" />
+            <AvatarFallback>LA</AvatarFallback>
+          </Avatar>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56" align="end" forceMount>
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="text-base font-medium leading-none">Lekan</p>
+            <p className="text-sm leading-none text-muted-foreground">l.ani@imperial.ac.uk</p>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem className="text-base">Manage Access</DropdownMenuItem>
+          <DropdownMenuItem className="text-base">Publish Packets</DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem className="text-base" onClick={handleLogout}>
+          Log out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 }
