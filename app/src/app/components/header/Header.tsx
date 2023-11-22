@@ -13,10 +13,10 @@ export default function Header() {
   return (
     <header>
       <div data-testid="header" className="flex-col">
-        <div className="border-b">
+        <div className="border-b shadow-sm dark:shadow-accent">
           <div className="flex h-20 items-center px-4">
             <NavLink to="/">
-              <div className="text-3xl font-bold  flex gap-1 items-center space">
+              <div className="text-xl font-bold flex gap-1 items-center">
                 <PackageOpen />
                 Packit
               </div>

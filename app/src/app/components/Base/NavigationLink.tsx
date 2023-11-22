@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "../../../lib/cn";
 import { ReactNode } from "react";
 
@@ -8,12 +8,14 @@ interface NavigationLinkProps {
   className?: string;
 }
 export const NavigationLink = ({ to, children, className }: NavigationLinkProps) => {
+  const { pathname } = useLocation();
+
   return (
     <NavLink
       to={to}
       className={({ isActive }) =>
         cn(
-          "text-lg font-medium transition-colors hover:text-primary",
+          "font-medium transition-colors hover:text-primary",
           {
             "text-muted-foreground": !isActive
           },

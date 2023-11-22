@@ -8,6 +8,7 @@ import { Metadata } from "../contents/metadata";
 import { Login, Redirect } from "../login";
 import ProtectedRoute from "./ProtectedRoute";
 import { Breadcrumb } from "../main/Breadcrumb";
+import { Sidebar } from "../main/Sidebar";
 
 export function Router() {
   return (
@@ -23,10 +24,12 @@ export function Router() {
           <Route path="runner" element={<PacketRunner />} />
           <Route path="run-workflow" element={<WorkflowRunner />} />
           <Route path="documentation" element={<ProjectDocumentation />} />
-          <Route path="/:packetId" element={<PacketDetails />} />
-          <Route path="/:packetId/metadata" element={<Metadata />} />
-          <Route path="/:packetId/downloads" element={<Download />} />
-          <Route path="/:packetId/changelogs" element={<ChangeLogs />} />
+          <Route element={<Sidebar />} path="/:packetId">
+            <Route path="/:packetId" element={<PacketDetails />} />
+            <Route path="/:packetId/metadata" element={<Metadata />} />
+            <Route path="/:packetId/downloads" element={<Download />} />
+            <Route path="/:packetId/changelogs" element={<ChangeLogs />} />
+          </Route>
         </Route>
       </Route>
     </Routes>

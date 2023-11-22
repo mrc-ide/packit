@@ -1,7 +1,4 @@
 import Main from "./Main";
-import Sidebar from "./Sidebar";
+import { Sidebar } from "./Sidebar";
 
-export {
-    Main,
-    Sidebar
-};
+export { Main, Sidebar };
