@@ -24,6 +24,7 @@ export function Router() {
           <Route path="runner" element={<PacketRunner />} />
           <Route path="run-workflow" element={<WorkflowRunner />} />
           <Route path="documentation" element={<ProjectDocumentation />} />
+          {/* // TODO: update show only when packet/:version is present */}
           <Route element={<Sidebar />} path="/:packetId">
             <Route path="/:packetId" element={<PacketDetails />} />
             <Route path="/:packetId/metadata" element={<Metadata />} />

@@ -1,7 +1,7 @@
 import { Outlet, useParams } from "react-router-dom";
 import { SidebarNav } from "./SidebarNav";
 
-// TODO: update show only when packetId/:version is present
+// TODO: update show only when packet/:version is present
 const getSideBarNavItems = (packetId: string) => [
   {
     to: `/${packetId}`,
