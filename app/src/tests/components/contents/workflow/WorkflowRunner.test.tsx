@@ -1,14 +1,17 @@
-import React from "react";
-import {render, screen} from "@testing-library/react";
-import {WorkflowRunner} from "../../../../app/components/contents";
-import {MemoryRouter} from "react-router-dom";
+import { render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
+import { WorkflowRunner } from "../../../../app/components/contents";
 
 describe("workflow runner component", () => {
-    it("renders skeleton text", async () => {
-        render(<MemoryRouter><WorkflowRunner/></MemoryRouter>);
+  it("renders skeleton text", async () => {
+    render(
+      <MemoryRouter>
+        <WorkflowRunner />
+      </MemoryRouter>
+    );
 
-        const content = await screen.findByText("Workflow runner page");
+    const content = await screen.findByText("Workflow runner page");
 
-        expect(content).toBeInTheDocument();
-    });
+    expect(content).toBeInTheDocument();
+  });
 });

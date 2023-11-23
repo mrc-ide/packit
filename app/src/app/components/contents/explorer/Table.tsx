@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Header, Packet, PacketTableProps } from "../../../../types";
 
-import { Link } from "react-router-dom";
 import { SortAsc } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const headers: Header[] = [
   { label: "Name", accessor: "displayName", sortable: true },

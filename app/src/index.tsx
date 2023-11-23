@@ -1,13 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./styles/globals.css";
-import App from "./app/App";
-import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
-import store from "./app/store/store";
 import { BrowserRouter } from "react-router-dom";
 import { injectStore } from "./apiService";
+import App from "./app/App";
 import { ThemeProvider } from "./app/components/providers/ThemeProvider";
+import store from "./app/store/store";
+import reportWebVitals from "./reportWebVitals";
+import "./styles/globals.css";
 
 injectStore(store);
 

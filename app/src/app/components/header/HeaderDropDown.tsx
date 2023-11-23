@@ -1,6 +1,8 @@
+import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../types";
 import { logout } from "../../store/login/login";
-import { useNavigate } from "react-router-dom";
+import { Avatar, AvatarFallback, AvatarImage } from "../Base/Avatar";
+import { Button } from "../Base/Button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,8 +12,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "../Base/DropdownMenu";
-import { Button } from "../Base/Button";
-import { Avatar, AvatarFallback, AvatarImage } from "../Base/Avatar";
 
 export default function HeaderDropDown() {
   const navigate = useNavigate();

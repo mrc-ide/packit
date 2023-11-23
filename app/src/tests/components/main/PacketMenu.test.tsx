@@ -1,13 +1,13 @@
-import { Packet, PacketsState, PageablePackets, SideBarItems } from "../../../types";
-import { mockPacketResponse, mockPacketsState } from "../../mocks";
-import thunk from "redux-thunk";
-import configureStore from "redux-mock-store";
+import { Store } from "@reduxjs/toolkit";
 import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
-import { Store } from "@reduxjs/toolkit";
-import userEvent from "@testing-library/user-event";
-import React from "react";
+import configureStore from "redux-mock-store";
+import thunk from "redux-thunk";
+import { Packet, PacketsState, PageablePackets, SideBarItems } from "../../../types";
+import { mockPacketResponse, mockPacketsState } from "../../mocks";
+
 import { Sidebar } from "../../../app/components/main/Sidebar";
 
 // Mock react-router-dom module

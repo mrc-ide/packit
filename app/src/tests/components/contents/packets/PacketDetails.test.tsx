@@ -1,162 +1,166 @@
-import React from "react";
-import {render, screen} from "@testing-library/react";
-import {FileMetadata, PacketMetadata, PacketsState, TimeMetadata} from "../../../../types";
-import {mockPacketsState} from "../../../mocks";
-import thunk from "redux-thunk";
+import { Store } from "@reduxjs/toolkit";
+import { render, screen } from "@testing-library/react";
+import { Provider } from "react-redux";
+import { MemoryRouter } from "react-router-dom";
 import configureStore from "redux-mock-store";
-import {Provider} from "react-redux";
-import {Store} from "@reduxjs/toolkit";
-import {MemoryRouter} from "react-router-dom";
+import thunk from "redux-thunk";
 import PacketDetails from "../../../../app/components/contents/packets/PacketDetails";
 import appConfig from "../../../../config/appConfig";
+import { FileMetadata, PacketMetadata, PacketsState, TimeMetadata } from "../../../../types";
+import { mockPacketsState } from "../../../mocks";
 
 describe("packet details component", () => {
+  const getPacketMeta = (fileMetadata: FileMetadata) => {
+    return {
+      id: "123",
+      name: "Interim update",
+      parameters: {
+        subset: "superset"
+      },
+      published: false,
+      files: [fileMetadata],
+      time: {} as TimeMetadata,
+      custom: {
+        orderly: {
+          artefacts: [],
+          description: {
+            display: "Corn pack",
+            custom: {}
+          }
+        }
+      }
+    };
+  };
 
-    const getPacketMeta = (fileMetadata: FileMetadata) => {
-        return {
-            id: "123",
-            name: "Interim update",
-            parameters: {
-                "subset": "superset"
-            },
-            published: false,
-            files: [fileMetadata],
-            time: {} as TimeMetadata,
-            custom: {
-                orderly: {
-                    artefacts: [],
-                    description: {
-                        display: "Corn pack",
-                        custom: {}
-                    }
-                }
-            }
-        };
+  const getStore = (props: Partial<PacketsState> = {}) => {
+    const middlewares = [thunk];
+    const mockStore = configureStore(middlewares);
+    const initialRootStates = {
+      packets: mockPacketsState(props)
     };
 
-    const getStore = (props: Partial<PacketsState> = {}) => {
-        const middlewares = [thunk];
-        const mockStore = configureStore(middlewares);
-        const initialRootStates = {
-            packets: mockPacketsState(props)
-        };
+    return mockStore(initialRootStates);
+  };
 
-        return mockStore(initialRootStates);
+  const renderElement = (store: Store = getStore()) => {
+    return render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <PacketDetails />
+        </MemoryRouter>
+      </Provider>
+    );
+  };
+
+  it("renders loading state when packet is empty", () => {
+    const store = getStore({ packet: {} as PacketMetadata });
+
+    renderElement(store);
+
+    const loadingText = screen.getByText("Loading...");
+
+    expect(loadingText).toBeInTheDocument();
+  });
+
+  it("can render error message", () => {
+    const packetError = { error: { detail: "Packet does not exist", error: "Error" } };
+
+    const store = getStore({ packetError, packet: {} as PacketMetadata });
+
+    renderElement(store);
+
+    const loadingText = screen.getByText("Packet does not exist");
+
+    expect(loadingText).toBeInTheDocument();
+  });
+
+  it("renders packet details when packet is not empty", () => {
+    const packet: PacketMetadata = {
+      id: "123",
+      name: "Interim update",
+      parameters: {
+        subset: "superset"
+      },
+      published: false,
+      files: [],
+      custom: {
+        orderly: {
+          artefacts: [],
+          description: {
+            display: "Corn pack",
+            custom: {}
+          }
+        }
+      },
+      time: {} as TimeMetadata
     };
+    const store = getStore({ packet });
 
-    const renderElement = (store: Store = getStore()) => {
-        return render(
-            <Provider store={store}>
-                <MemoryRouter>
-                    <PacketDetails/>
-                </MemoryRouter>
-            </Provider>);
-    };
+    renderElement(store);
 
-    it("renders loading state when packet is empty", () => {
-        const store = getStore({packet: {} as PacketMetadata});
+    expect(screen.getByText(packet.custom.orderly.description.display)).toBeInTheDocument();
 
-        renderElement(store);
+    expect(screen.getByText(packet.id)).toBeInTheDocument();
 
-        const loadingText = screen.getByText("Loading...");
+    expect(screen.getByText("Name:")).toBeInTheDocument();
+    expect(screen.getByText(packet.name)).toBeInTheDocument();
 
-        expect(loadingText).toBeInTheDocument();
-    });
+    expect(screen.getByText("Parameters")).toBeInTheDocument();
 
-    it("can render error message", () => {
-        const packetError = {error: {detail: "Packet does not exist", error: "Error"}};
+    packet.parameters &&
+      Object.entries(packet.parameters).map(([key, value]) => {
+        expect(screen.getByText(`${key}:`)).toBeInTheDocument();
+        expect(screen.getByText(String(value))).toBeInTheDocument();
+      });
+  });
 
-        const store = getStore({packetError, packet: {} as PacketMetadata});
+  it("renders packet file when packet is not empty", () => {
+    const fileMetadata = { hash: "example", path: "example.html", size: 1 };
+    const packet = getPacketMeta(fileMetadata);
+    const store = getStore({ packet });
 
-        renderElement(store);
+    const { container } = renderElement(store);
 
-        const loadingText = screen.getByText("Packet does not exist");
+    const iframe = container.querySelector("iframe");
 
-        expect(loadingText).toBeInTheDocument();
-    });
+    expect(iframe).toHaveAttribute(
+      "src",
+      `${appConfig.apiUrl()}/packets/file/${fileMetadata.hash}?inline=true&filename=example.html`
+    );
+  });
 
-    it("renders packet details when packet is not empty", () => {
-        const packet: PacketMetadata = {
-            id: "123",
-            name: "Interim update",
-            parameters: {
-                "subset": "superset"
-            },
-            published: false,
-            files: [],
-            custom: {
-                orderly: {
-                    artefacts: [],
-                    description: {
-                        display: "Corn pack",
-                        custom: {}
-                    }
-                },
-            },
-            time: {} as TimeMetadata
-        };
-        const store = getStore({packet});
+  it("does not render packet in fullscreen when path is empty", () => {
+    const fileMetadata = { hash: "example", path: "", size: 1 };
 
-        renderElement(store);
+    const packet = getPacketMeta(fileMetadata);
 
-        expect(screen.getByText(packet.custom.orderly.description.display)).toBeInTheDocument();
+    const store = getStore({ packet });
 
-        expect(screen.getByText(packet.id)).toBeInTheDocument();
+    renderElement(store);
 
-        expect(screen.getByText("Name:")).toBeInTheDocument();
-        expect(screen.getByText(packet.name)).toBeInTheDocument();
+    expect(screen.queryByText("View fullscreen")).not.toBeInTheDocument();
+  });
 
-        expect(screen.getByText("Parameters")).toBeInTheDocument();
+  it("renders packet in fullscreen correctly", () => {
+    const fileMetadata = { hash: "example", path: "example.html", size: 1 };
 
-        packet.parameters && Object.entries(packet.parameters).map(([key, value]) => {
-            expect(screen.getByText(`${key}:`)).toBeInTheDocument();
-            expect(screen.getByText(String(value))).toBeInTheDocument();
-        });
-    });
+    const packet = getPacketMeta(fileMetadata);
 
-    it("renders packet file when packet is not empty", () => {
-        const fileMetadata = {hash: "example", path: "example.html", size: 1};
-        const packet = getPacketMeta(fileMetadata);
-        const store = getStore({packet});
+    const store = getStore({ packet });
 
-        const {container} = renderElement(store);
+    renderElement(store);
 
-        const iframe = container.querySelector("iframe");
+    expect(screen.queryByText("View fullscreen")).toBeInTheDocument();
 
-        expect(iframe).toHaveAttribute("src",
-            `${appConfig.apiUrl()}/packets/file/${fileMetadata.hash}?inline=true&filename=example.html`);
-    });
+    const fullScreenLink = screen.getByTestId("view-fullscreen").querySelector("a");
 
-    it("does not render packet in fullscreen when path is empty", () => {
-        const fileMetadata = {hash: "example", path: "", size: 1};
+    expect(fullScreenLink).toHaveAttribute("target", "_blank");
 
-        const packet = getPacketMeta(fileMetadata);
+    expect(fullScreenLink).toHaveAttribute("rel", "noreferrer");
 
-        const store = getStore({packet});
-
-        renderElement(store);
-
-        expect(screen.queryByText("View fullscreen")).not.toBeInTheDocument();
-    });
-
-    it("renders packet in fullscreen correctly", () => {
-        const fileMetadata = {hash: "example", path: "example.html", size: 1};
-
-        const packet = getPacketMeta(fileMetadata);
-
-        const store = getStore({packet});
-
-        renderElement(store);
-
-        expect(screen.queryByText("View fullscreen")).toBeInTheDocument();
-
-        const fullScreenLink = screen.getByTestId("view-fullscreen").querySelector("a");
-
-        expect(fullScreenLink).toHaveAttribute("target", "_blank");
-
-        expect(fullScreenLink).toHaveAttribute("rel", "noreferrer");
-
-        expect(fullScreenLink).toHaveAttribute("href",
-            `${appConfig.apiUrl()}/packets/file/${fileMetadata.hash}?inline=true&filename=example.html`);
-    });
+    expect(fullScreenLink).toHaveAttribute(
+      "href",
+      `${appConfig.apiUrl()}/packets/file/${fileMetadata.hash}?inline=true&filename=example.html`
+    );
+  });
 });

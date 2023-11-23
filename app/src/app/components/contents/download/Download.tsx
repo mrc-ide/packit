@@ -1,12 +1,12 @@
+import { DownloadCloud } from "lucide-react";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { FileMetadata, RootState, useAppDispatch } from "../../../../types";
-import React, { useEffect } from "react";
-import { actions } from "../../../store/packets/packetThunks";
 import { Link, useParams } from "react-router-dom";
 import appConfig from "../../../../config/appConfig";
 import { bytesToSize } from "../../../../helpers";
+import { FileMetadata, RootState, useAppDispatch } from "../../../../types";
+import { actions } from "../../../store/packets/packetThunks";
 import { PacketHeader } from "../packets";
-import { DownloadCloud } from "lucide-react";
 
 export default function Download() {
   const { packet } = useSelector((state: RootState) => state.packets);

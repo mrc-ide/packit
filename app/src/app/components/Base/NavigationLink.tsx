@@ -1,6 +1,6 @@
-import { NavLink, useLocation } from "react-router-dom";
-import { cn } from "../../../lib/cn";
 import { ReactNode } from "react";
+import { NavLink } from "react-router-dom";
+import { cn } from "../../../lib/cn";
 
 interface NavigationLinkProps {
   to: string;
