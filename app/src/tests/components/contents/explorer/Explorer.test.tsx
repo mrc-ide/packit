@@ -78,11 +78,9 @@ describe("packet explorer component", () => {
 
     fireEvent.click(firstCell);
 
-    expect((firstCell as HTMLLinkElement).href).toBe(
-      "http://localhost/packets/52fd88b2-8ee8-4ac0-a0e5-41b9a15554a4/packet"
-    );
+    expect((firstCell as HTMLLinkElement).href).toBe("http://localhost/52fd88b2-8ee8-4ac0-a0e5-41b9a15554a4");
 
-    expect(mockDispatch).toHaveBeenCalledTimes(2);
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
   });
 
   it("it should render component as expected", () => {

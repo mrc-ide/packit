@@ -29,7 +29,7 @@ export const Sidebar = () => {
 
   return (
     <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-10 lg:space-y-2">
-      <aside className="lg:w-1/5 pl-2">
+      <aside data-testid="sidebar" className="lg:w-1/5 pl-2">
         <SidebarNav items={sidebarNavItems} />
       </aside>
       <div className="flex-1 lg:max-w-6xl">

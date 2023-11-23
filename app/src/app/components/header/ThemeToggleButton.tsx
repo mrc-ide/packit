@@ -5,14 +5,14 @@ import { useTheme } from "../providers/ThemeProvider";
 
 export const ThemeToggleButton = () => {
   const { theme, setTheme } = useTheme();
-  const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-  const actualTheme = theme === "system" ? systemTheme : theme;
+  const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")?.matches ? "dark" : "light";
+  const darkOrLightTheme = theme === "system" ? systemTheme : theme;
 
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          {actualTheme === "dark" ? (
+          {darkOrLightTheme === "dark" ? (
             <Button variant="ghost" size="icon" onClick={() => setTheme("light")}>
               <MoonStar />
             </Button>

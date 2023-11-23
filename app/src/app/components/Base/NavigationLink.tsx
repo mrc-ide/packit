@@ -13,7 +13,7 @@ export const NavigationLink = ({ to, children, className }: NavigationLinkProps)
       to={to}
       className={({ isActive }) =>
         cn(
-          "font-medium transition-colors hover:text-primary",
+          "transition-colors hover:text-primary font-semibold",
           {
             "text-muted-foreground": !isActive
           },
