@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
 "use client";
 
-import { Button, buttonVariants } from "../../../shadcn/components/Button";
+import { Button, buttonVariants } from "../Base/Button";
 import { cn } from "../../../lib/cn";
-import { Label } from "../../../shadcn/components/Label";
-import { Input } from "../../../shadcn/components/Input";
+import { Label } from "../Base/Label";
+import { Input } from "../Base/Input";
 import { Github } from "lucide-react";
 import { RootState, useAppDispatch } from "../../../types";
 import { useSelector } from "react-redux";

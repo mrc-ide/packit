@@ -1,6 +1,6 @@
 import { MoonStar, Sun } from "lucide-react";
-import { Button } from "../../../shadcn/components/Button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../shadcn/components/Tooltip";
+import { Button } from "../Base/Button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../Base/Tooltip";
 import { useTheme } from "../providers/ThemeProvider";
 
 export const ThemeToggleButton = () => {

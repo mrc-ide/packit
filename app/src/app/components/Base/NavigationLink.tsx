@@ -8,8 +8,6 @@ interface NavigationLinkProps {
   className?: string;
 }
 export const NavigationLink = ({ to, children, className }: NavigationLinkProps) => {
-  const { pathname } = useLocation();
-
   return (
     <NavLink
       to={to}

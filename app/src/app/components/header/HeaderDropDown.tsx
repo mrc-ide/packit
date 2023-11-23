@@ -9,9 +9,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger
-} from "../../../shadcn/components/DropdownMenu";
-import { Button } from "../../../shadcn/components/Button";
-import { Avatar, AvatarFallback, AvatarImage } from "../../../shadcn/components/Avatar";
+} from "../Base/DropdownMenu";
+import { Button } from "../Base/Button";
+import { Avatar, AvatarFallback, AvatarImage } from "../Base/Avatar";
 
 export default function HeaderDropDown() {
   const navigate = useNavigate();
