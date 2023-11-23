@@ -1,11 +1,11 @@
-import { NavLink } from "react-router-dom";
 import { PackageOpen } from "lucide-react";
-import { LeftNav } from "./LeftNav";
-import { RootState } from "../../../types";
 import { useSelector } from "react-redux";
+import { NavLink } from "react-router-dom";
+import { RootState } from "../../../types";
 import { NavigationLink } from "../Base/NavigationLink";
-import { ThemeToggleButton } from "./ThemeToggleButton";
 import HeaderDropDown from "./HeaderDropDown";
+import { LeftNav } from "./LeftNav";
+import { ThemeToggleButton } from "./ThemeToggleButton";
 
 export default function Header() {
   const { isAuthenticated } = useSelector((state: RootState) => state.login);
@@ -16,7 +16,7 @@ export default function Header() {
         <div className="border-b shadow-sm dark:shadow-accent">
           <div className="flex h-20 items-center px-4">
             <NavLink to="/">
-              <div className="text-xl font-bold flex gap-1 items-center">
+              <div className="text-xl font-extrabold flex gap-1 items-center">
                 <PackageOpen />
                 Packit
               </div>

@@ -23,7 +23,7 @@ export default function HeaderDropDown() {
   };
 
   return (
-    <DropdownMenu>
+    <DropdownMenu data-testid="test1">
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded full">
           <Avatar className="h-8 w-8">
