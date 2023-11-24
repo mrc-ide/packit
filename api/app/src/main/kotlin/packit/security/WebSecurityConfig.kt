@@ -15,10 +15,7 @@ import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import packit.AppConfig
-import packit.security.oauth2.BasicUserDetailsService
-import packit.security.oauth2.OAuth2FailureHandler
-import packit.security.oauth2.OAuth2SuccessHandler
-import packit.security.oauth2.OAuth2UserService
+import packit.security.oauth2.*
 import packit.security.provider.JwtIssuer
 
 @EnableWebSecurity
@@ -57,7 +54,7 @@ class WebSecurityConfig(
     {
         if (config.authEnableGithubLogin)
         {
-            this.oauth2Login { oauth2Login ->
+             this.oauth2Login { oauth2Login ->
                 oauth2Login
                     .userInfoEndpoint().userService(customOauth2UserService)
                     .and()
