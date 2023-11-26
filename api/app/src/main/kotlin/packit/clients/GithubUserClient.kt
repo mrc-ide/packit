@@ -15,7 +15,7 @@ import packit.security.profile.UserPrincipal
 class GithubUserClient(private val config: AppConfig, private val githubBuilder: GitHubBuilder = GitHubBuilder()) {
 
     private var github: GitHub? = null
-    private var ghUser: GHUser? = null
+    private var ghUser: GHMyself? = null
     private val allowedOrgs = config.authGithubAPIOrgs.split(",")
 
 
@@ -44,7 +44,10 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
     fun checkGithubOrgMembership()
     {
         checkAuthenticated()
-        val inAllowedOrg = allowedOrgs.any {orgName -> ghUser!!.isMemberOf(getOrg(orgName))}
+
+        val userOrgs = ghUser!!.allOrganizations.map {org -> org.login}
+        val inAllowedOrg = allowedOrgs.any {allowed -> userOrgs.contains(allowed)}
+
         if (!inAllowedOrg)
         {
             throw OAuth2AuthenticationException(OAuth2Error(OAuth2ErrorCodes.INVALID_TOKEN,
@@ -69,25 +72,11 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
         github = githubBuilder.withOAuthToken(token).build()
     }
 
-    private fun getGitHubUser(): GHUser
+    private fun getGitHubUser(): GHMyself
     {
         try
         {
             return github!!.myself
-        }
-        catch(e: HttpException)
-        {
-            throw throwOnHttpException(e)
-        }
-    }
-
-    private fun getOrg(orgName: String): GHOrganization
-    {
-        // TODO: allow org to not exist
-        try
-        {
-            val x =  github!!.getOrganization(orgName)
-            return x
         }
         catch(e: HttpException)
         {
