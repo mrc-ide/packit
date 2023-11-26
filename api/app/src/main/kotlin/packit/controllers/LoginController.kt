@@ -31,8 +31,6 @@ class LoginController(
         @RequestBody @Validated user: LoginWithGithubToken,
     ): ResponseEntity<Map<String, String>>
     {
-        // TODO: return error appropriately  - see PackitExceptionHandler
-        // TODO: seems slow to log in - check if it's actually any slower than before
         val token = gitApiLoginService.authenticateAndIssueToken(user)
         return ResponseEntity.ok(token)
     }

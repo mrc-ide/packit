@@ -3,10 +3,8 @@ package packit.clients
 import org.springframework.stereotype.Component
 import org.springframework.http.HttpStatus
 import org.kohsuke.github.*
-import org.springframework.security.oauth2.core.OAuth2AuthenticationException
-import org.springframework.security.oauth2.core.OAuth2Error
-import org.springframework.security.oauth2.core.OAuth2ErrorCodes
 import packit.AppConfig
+import packit.exceptions.PackitAuthenticationException
 import packit.model.User
 import packit.security.Role
 import packit.security.profile.UserPrincipal
@@ -50,8 +48,7 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
 
         if (!inAllowedOrg)
         {
-            throw OAuth2AuthenticationException(OAuth2Error(OAuth2ErrorCodes.INVALID_TOKEN,
-                "User is not in allowed organization. Please contact your administrator.", ""))
+            throw PackitAuthenticationException("githubUserRestrictedAccess", HttpStatus.UNAUTHORIZED)
         }
     }
 
@@ -62,14 +59,7 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
 
     private fun connectToClient(token: String)
     {
-        if (token.isBlank())
-        {
-            throw OAuth2AuthenticationException(
-                OAuth2Error(
-                    OAuth2ErrorCodes.INVALID_TOKEN, "Token cannot be blank", ""))
-        }
-
-        github = githubBuilder.withOAuthToken(token).build()
+       github = githubBuilder.withOAuthToken(token).build()
     }
 
     private fun getGitHubUser(): GHMyself
@@ -86,14 +76,10 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
 
     private fun throwOnHttpException(e: HttpException): Exception
     {
-        if (e.responseCode == HttpStatus.UNAUTHORIZED.value())
-        {
-            // TODO: This might not be an appropriate exception type?
-            // Expect different token to be referenced?
-            return OAuth2AuthenticationException(
-                OAuth2Error(
-                    OAuth2ErrorCodes.INVALID_TOKEN, e.message ?: "", ""))
-        }
-        return e
+        val errorCode = if (e.responseCode == HttpStatus.UNAUTHORIZED.value())
+            "githubTokenInsufficientPermissions"
+        else
+            "githubTokenUnexpectedError"
+        return PackitAuthenticationException(errorCode, HttpStatus.valueOf(e.responseCode))
     }
 }
