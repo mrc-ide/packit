@@ -29,7 +29,7 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
         val ghu = ghUser!!
 
         val user = User(
-            ghu.getId(),
+            1L,
             ghu.login,
             "",
             Role.USER,
