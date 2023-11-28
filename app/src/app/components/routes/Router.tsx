@@ -1,9 +1,10 @@
 import { Route, Routes } from "react-router-dom";
 import { NotFound } from "../NotFound";
-import { Explorer, PacketRunner, ProjectDocumentation, WorkflowRunner } from "../contents";
+import { PacketRunner, ProjectDocumentation, WorkflowRunner } from "../contents";
 import { Accessibility } from "../contents/accessibility";
 import { ChangeLogs } from "../contents/changelogs";
 import { Download } from "../contents/download";
+import { Home } from "../contents/explorer/Home";
 import { Metadata } from "../contents/metadata";
 import PacketDetails from "../contents/packets/PacketDetails";
 import { Login, Redirect } from "../login";
@@ -22,7 +23,7 @@ export function Router() {
       </Route>
       <Route element={<ProtectedRoute />}>
         <Route element={<Breadcrumb />}>
-          <Route index element={<Explorer />} />
+          <Route index element={<Home />} />
           <Route path="runner" element={<PacketRunner />} />
           <Route path="run-workflow" element={<WorkflowRunner />} />
           <Route path="documentation" element={<ProjectDocumentation />} />

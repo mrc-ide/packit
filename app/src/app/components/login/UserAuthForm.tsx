@@ -1,17 +1,17 @@
 /* eslint-disable react/prop-types */
 "use client";
 
-import { Button, buttonVariants } from "../Base/Button";
-import { cn } from "../../../lib/cn";
-import { Label } from "../Base/Label";
-import { Input } from "../Base/Input";
 import { Github } from "lucide-react";
-import { RootState, useAppDispatch } from "../../../types";
-import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { actions } from "../../store/login/loginThunks";
+import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import appConfig from "../../../config/appConfig";
+import { cn } from "../../../lib/cn";
+import { RootState, useAppDispatch } from "../../../types";
+import { actions } from "../../store/login/loginThunks";
+import { Button, buttonVariants } from "../Base/Button";
+import { Input } from "../Base/Input";
+import { Label } from "../Base/Label";
 
 type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -111,7 +111,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           </Link>
         </>
       )}
-      {userError && <div className="text-xs text-red-500">{userError.error.detail}</div>}
+      {userError && <div className="text-xs text-red-500">{userError?.error?.detail}</div>}
     </div>
   );
 }
