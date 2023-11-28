@@ -25,7 +25,6 @@ export interface PageablePackets {
 }
 
 export interface PageablePacketIdCountsDTO {
-  name: ReactNode;
   content: PacketIdCountsDTO[];
   totalPages: number;
   totalElements: number;
