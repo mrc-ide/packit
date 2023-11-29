@@ -10,9 +10,7 @@ import org.springframework.web.util.UriComponentsBuilder
 import packit.AppConfig
 
 @Component
-class BrowserRedirect(val config: AppConfig) {
-    private val redirectStrategy: RedirectStrategy = DefaultRedirectStrategy()
-
+class BrowserRedirect(private val config: AppConfig, val redirectStrategy: RedirectStrategy) {
     fun redirectToBrowser(
         request: HttpServletRequest,
         response: HttpServletResponse,
