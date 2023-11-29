@@ -1,11 +1,5 @@
 package packit.unit.security.oauth2
 
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
-import org.junit.jupiter.api.BeforeEach
-import org.mockito.ArgumentCaptor
-import org.mockito.Captor
-import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.*
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException
@@ -15,7 +9,7 @@ import packit.exceptions.PackitExceptionHandler
 import packit.security.oauth2.OAuth2FailureHandler
 import kotlin.test.Test
 
-class OAuth2FailureHandlerTest: OAuthHandlerTest() {
+class OAuth2FailureHandlerTest : OAuthHandlerTest() {
     fun assertExpectedRedirectOnException(exception: AuthenticationException, expectedError: String)
     {
         val sut = OAuth2FailureHandler(mockRedirect, PackitExceptionHandler())
@@ -23,14 +17,15 @@ class OAuth2FailureHandlerTest: OAuthHandlerTest() {
 
         verify(mockRedirect).redirectToBrowser(eq(mockRequest), eq(mockResponse), capture(qsCaptor))
         assert((qsCaptor.value["error"]?.get(0) ?: "") == expectedError)
-
     }
 
     @Test
     fun `can redirect on PackitAuthenticationException`()
     {
-        assertExpectedRedirectOnException(PackitAuthenticationException("githubTokenInsufficientPermissions"),
-            "The supplied GitHub token is invalid or does not have sufficient permissions to check user credentials.")
+        assertExpectedRedirectOnException(
+            PackitAuthenticationException("githubTokenInsufficientPermissions"),
+            "The supplied GitHub token is invalid or does not have sufficient permissions to check user credentials."
+        )
     }
 
     @Test

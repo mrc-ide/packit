@@ -1,8 +1,8 @@
 package packit.clients
 
-import org.springframework.stereotype.Component
-import org.springframework.http.HttpStatus
 import org.kohsuke.github.*
+import org.springframework.http.HttpStatus
+import org.springframework.stereotype.Component
 import packit.AppConfig
 import packit.exceptions.PackitAuthenticationException
 import packit.model.User
@@ -15,7 +15,6 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
     private var github: GitHub? = null
     private var ghUser: GHMyself? = null
     private val allowedOrgs = config.authGithubAPIOrgs.split(",")
-
 
     fun authenticate(token: String)
     {
@@ -76,10 +75,12 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
 
     private fun throwOnHttpException(e: HttpException): Exception
     {
-        val errorCode = if (e.responseCode == HttpStatus.UNAUTHORIZED.value())
+        val errorCode = if (e.responseCode == HttpStatus.UNAUTHORIZED.value()) {
             "githubTokenInsufficientPermissions"
-        else
+        }
+        else {
             "githubTokenUnexpectedError"
+        }
         return PackitAuthenticationException(errorCode, HttpStatus.valueOf(e.responseCode))
     }
 }

@@ -2,7 +2,6 @@ package packit.security
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.springframework.security.web.DefaultRedirectStrategy
 import org.springframework.security.web.RedirectStrategy
 import org.springframework.stereotype.Component
 import org.springframework.util.MultiValueMap

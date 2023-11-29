@@ -24,6 +24,10 @@ class BrowserRedirectTest {
         val queryParams = LinkedMultiValueMap<String, String>().apply { this.add("token", "1234") }
         val sut = BrowserRedirect(mockAppConfig, mockRedirectStrategy)
         sut.redirectToBrowser(mockRequest, mockResponse, queryParams)
-        verify(mockRedirectStrategy).sendRedirect(mockRequest, mockResponse, "http://localhost:3000/redirect?token=1234")
+        verify(mockRedirectStrategy).sendRedirect(
+            mockRequest,
+            mockResponse,
+            "http://localhost:3000/redirect?token=1234"
+        )
     }
 }

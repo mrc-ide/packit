@@ -17,7 +17,7 @@ class GithubAPILoginServiceTest {
     private val mockConfig = mock<AppConfig>()
     private val mockUserPrincipal = mock<UserPrincipal>()
     private val mockIssuer = mock<JwtIssuer> {
-        on { issue(argThat{ it -> it.principal == mockUserPrincipal }) } doReturn "fake jwt"
+        on { issue(argThat{ it.principal == mockUserPrincipal }) } doReturn "fake jwt"
     }
     private val mockGithubUserClient = mock<GithubUserClient> {
         on { getUser() } doReturn mockUserPrincipal
@@ -37,7 +37,7 @@ class GithubAPILoginServiceTest {
     fun `throws exception if token is empty`()
     {
         val sut = GithubAPILoginService(mockConfig, mockIssuer, mockGithubUserClient)
-        val ex =assertThrows<PackitException>{ sut.authenticateAndIssueToken(LoginWithGithubToken("")) }
+        val ex = assertThrows<PackitException>{ sut.authenticateAndIssueToken(LoginWithGithubToken("")) }
         assertEquals("emptyGitToken", ex.key)
         assertEquals(HttpStatus.BAD_REQUEST, ex.httpStatus)
     }

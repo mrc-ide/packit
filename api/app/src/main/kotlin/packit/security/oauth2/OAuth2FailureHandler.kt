@@ -1,4 +1,4 @@
-package packit.security.oauth2;
+package packit.security.oauth2
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -19,12 +19,14 @@ class OAuth2FailureHandler(
         exception: AuthenticationException
     )
     {
-        val message = if (exception is PackitAuthenticationException)
+        val message = if (exception is PackitAuthenticationException) {
             exceptionHandler.errorDetailForPackitAuthenticationException(exception).detail
-        else
+        }
+        else {
             exception.message
+        }
 
         val qs = LinkedMultiValueMap<String, String>().apply{ this.add("error", message) }
-        redirect.redirectToBrowser(request, response,qs)
+        redirect.redirectToBrowser(request, response, qs)
     }
 }

@@ -3,10 +3,10 @@ package packit.service
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import packit.AppConfig
+import packit.clients.GithubUserClient
 import packit.exceptions.PackitException
 import packit.model.LoginWithGithubToken
 import packit.security.oauth2.GithubAuthentication
-import packit.clients.GithubUserClient
 import packit.security.provider.JwtIssuer
 
 @Component

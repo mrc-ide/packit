@@ -13,7 +13,7 @@ import kotlin.test.assertTrue
 
 class OAuth2UserServiceTest
 {
-    private val mockGithubUserClient = mock<GithubUserClient>();
+    private val mockGithubUserClient = mock<GithubUserClient>()
     @Test
     fun `can process oauth user attributes`()
     {
@@ -42,7 +42,7 @@ class OAuth2UserServiceTest
             on { tokenValue } doReturn "fakeToken"
         }
         val mockRequest = mock<OAuth2UserRequest> {
-            on { accessToken }  doReturn mockAccessToken
+            on { accessToken } doReturn mockAccessToken
         }
 
         val sut = OAuth2UserService(mockGithubUserClient)

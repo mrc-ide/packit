@@ -34,6 +34,6 @@ class OAuth2SuccessHandler(
         val token = jwtIssuer.issue(authentication)
 
         val qs = LinkedMultiValueMap<String, String>().apply{ this.add("token", token) }
-        redirect.redirectToBrowser(request, response,qs)
+        redirect.redirectToBrowser(request, response, qs)
     }
 }
