@@ -4,13 +4,6 @@ import appConfig from "../../../../config/appConfig";
 import { fetcher } from "../../../../lib/fetch";
 import { PageablePacketIdCountsDTO } from "../../../../types";
 
-const groupBy = (xs: any[] | undefined, key: string) => {
-  return xs?.reduce(function (rv, x) {
-    (rv[x[key]] = rv[x[key]] || []).push(x);
-    return rv;
-  }, {});
-};
-
 export const Home = () => {
   const [pageNumber, setPageNumber] = useState(0);
   const [filterByName, setFilterByName] = useState("");
