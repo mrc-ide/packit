@@ -17,7 +17,7 @@ class GithubAPILoginServiceTest {
     private val mockConfig = mock<AppConfig>()
     private val mockUserPrincipal = mock<UserPrincipal>()
     private val mockIssuer = mock<JwtIssuer> {
-        on { issue(argThat{ it.principal == mockUserPrincipal }) } doReturn "fake jwt"
+        on { issue(argThat{ this.principal == mockUserPrincipal }) } doReturn "fake jwt"
     }
     private val mockGithubUserClient = mock<GithubUserClient> {
         on { getUser() } doReturn mockUserPrincipal

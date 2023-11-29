@@ -17,7 +17,7 @@ import kotlin.test.assertEquals
 internal class NoRedirectHttpRequestFactory : SimpleClientHttpRequestFactory() {
     @Throws(IOException::class)
     override fun prepareConnection(connection: HttpURLConnection, httpMethod: String) {
-        super.prepareConnection(connection, httpMethod!!)
+        super.prepareConnection(connection, httpMethod)
         connection.setInstanceFollowRedirects(false)
     }
 }
