@@ -13,9 +13,6 @@ export default function Login() {
         authConfig
     } = useSelector((state: RootState) => state.login);
 
-    console.log("Rendering Login where userError is " + JSON.stringify(userError));
-
-
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [emailError, setEmailError] = useState("");
