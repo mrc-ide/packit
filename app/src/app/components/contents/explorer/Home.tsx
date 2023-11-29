@@ -1,32 +1,34 @@
-import { useState } from "react";
-import useSWR from "swr";
-import appConfig from "../../../../config/appConfig";
-import { fetcher } from "../../../../lib/fetch";
-import { PageablePacketIdCountsDTO } from "../../../../types";
+import debounce from "lodash.debounce";
+import { useCallback, useEffect, useState } from "react";
+import { Input } from "../../Base/Input";
+import { PacketList } from "./PacketList";
 
 export const Home = () => {
-  const [pageNumber, setPageNumber] = useState(0);
-  const [filterByName, setFilterByName] = useState("");
+  const [filterByName, setFilterByName] = useState(""); // TODO add debounce
 
-  const { data, isLoading, error } = useSWR<PageablePacketIdCountsDTO>(
-    `${appConfig.apiUrl()}/packets/overview?pageNumber=${pageNumber}&pageSize=10&filterName=${filterByName}`,
-    (url: string) => fetcher({ url, authRequired: true })
-  );
+  const debouncedSetFilterByName = useCallback(debounce(setFilterByName, 300), []);
 
-  console.log(data);
-
-  if (error) return <div className="text-red-500">failed to load</div>;
-  if (isLoading) return <div>loading...</div>;
+  useEffect(() => {
+    return () => {
+      debouncedSetFilterByName.cancel();
+    };
+  }, []);
 
   return (
-    <div>
-      Home
+    <div className="h-full flex-1 flex-col space-y-8 p-8 flex">
       <div>
-        {data?.content?.map((packet, i) => (
-          <div key={i}>
-            name: {packet.name} - latestid: {packet.latestId} - count: {packet.count} - latesttime: {packet.latestTime}
-          </div>
-        ))}
+        <h2 className="text-2xl font-bold tracking-tight">Welcome to Reports</h2>
+        <p className="text-muted-foreground">Here&apos;s a list of all reports</p>
+      </div>
+      <div className="space-y-4 flex flex-col">
+        <div>
+          <Input
+            placeholder="Find a Report by name..."
+            onChange={(event) => debouncedSetFilterByName(event.target.value)}
+            className="h-8 sm:w-[450px] lg:w-[600px]"
+          />
+        </div>
+        <PacketList filterByName={filterByName} />
       </div>
     </div>
   );

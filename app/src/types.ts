@@ -36,7 +36,7 @@ export interface PageablePacketIdCountsDTO {
 }
 export interface PacketIdCountsDTO {
   name: string;
-  count: number;
+  nameCount: number;
   latestId: string;
   latestTime: number;
 }
