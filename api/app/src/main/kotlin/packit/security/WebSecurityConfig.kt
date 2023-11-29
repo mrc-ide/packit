@@ -105,10 +105,4 @@ class WebSecurityConfig(
             .and()
             .build()
     }
-
-    @Bean
-    fun redirectStrategy(): RedirectStrategy
-    {
-        return DefaultRedirectStrategy()
-    }
 }
