@@ -4,9 +4,16 @@ import { Input } from "../../Base/Input";
 import { PacketList } from "./PacketList";
 
 export const Home = () => {
-  const [filterByName, setFilterByName] = useState(""); // TODO add debounce
+  const [filterByName, setFilterByName] = useState("");
+  const [pageNumber, setPageNumber] = useState(0);
+  const pageSize = 2;
 
-  const debouncedSetFilterByName = useCallback(debounce(setFilterByName, 300), []);
+  const handleSetNameFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterByName(event.target.value);
+    setPageNumber(0);
+  };
+
+  const debouncedSetFilterByName = useCallback(debounce(handleSetNameFilter, 300), []);
 
   useEffect(() => {
     return () => {
@@ -24,11 +31,16 @@ export const Home = () => {
         <div>
           <Input
             placeholder="Find a Report by name..."
-            onChange={(event) => debouncedSetFilterByName(event.target.value)}
+            onChange={debouncedSetFilterByName}
             className="h-8 sm:w-[450px] lg:w-[600px]"
           />
         </div>
-        <PacketList filterByName={filterByName} />
+        <PacketList
+          filterByName={filterByName}
+          pageNumber={pageNumber}
+          pageSize={pageSize}
+          setPageNumber={setPageNumber}
+        />
       </div>
     </div>
   );

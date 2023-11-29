@@ -14,6 +14,7 @@ interface PacketRepository : JpaRepository<Packet, String>
     @Query("select p.id from Packet p order by p.id asc")
     fun findAllIds(): List<String>
     fun findTopByOrderByTimeDesc(): Packet?
+
     @Query(
         value = "SELECT " +
                 "    name as name, " +
@@ -31,7 +32,7 @@ interface PacketRepository : JpaRepository<Packet, String>
                 ") as RankedData " +
                 "WHERE row_num = 1 AND LOWER(name) LIKE %?1% " +
                 "ORDER BY TIME DESC",
-        countQuery = "SELECT count(distinct name) from Packet",
+        countQuery = "SELECT count(distinct name) from packet where LOWER(name) LIKE %?1%",
         nativeQuery = true
     )
     fun findIdCountDataByName(filterName: String, pageable: Pageable): Page<IPacketIdCountsDTO>

@@ -9,6 +9,7 @@ interface PacketListItemProps {
 // TODO: update link paths -> 1. /{name} 2. /{name}/{id}
 export const PacketListItem = ({ packet }: PacketListItemProps) => {
   const { unit, value } = getTimeDifferenceToDisplay(packet.latestTime);
+
   return (
     <li key={packet.latestId} className="p-4 flex flex-col border-b space-y-1">
       <Link to={`/${packet.name}`} className="hover:underline decoration-blue-500">
