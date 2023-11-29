@@ -1,37 +1,35 @@
 package packit.unit.security.oauth2
 
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
+import org.mockito.ArgumentCaptor
+import org.mockito.Captor
+import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.*
 import org.springframework.security.core.Authentication
+import org.springframework.util.MultiValueMap
 import packit.AppConfig
+import packit.security.BrowserRedirect
 import packit.security.oauth2.OAuth2SuccessHandler
 import packit.security.provider.JwtIssuer
 import kotlin.test.assertEquals
 
-class OAuth2SuccessHandlerTest
+class OAuth2SuccessHandlerTest: OAuthHandlerTest()
 {
     @Test
-    fun `can build uri component`()
+    fun `can redirect on authentication exception`()
     {
         val mockAuth = mock<Authentication>()
-
-        val formedUri = "http://frontend/redirect/?token=fakeToken"
-
         val token = "fakeToken"
-
-        val mockAppConfig = mock<AppConfig> {
-            on { authRedirectUri } doReturn "http://frontend/redirect/"
-        }
 
         val mockJwtIssuer = mock<JwtIssuer> {
             on { issue(mockAuth) } doReturn token
         }
 
-       /* val sut = OAuth2SuccessHandler(mockAppConfig, mockJwtIssuer)
+        val sut = OAuth2SuccessHandler(mockRedirect, mockJwtIssuer)
 
-        val result = sut.buildUri(token)
-
-        assertEquals(result, formedUri)*/
+        sut.onAuthenticationSuccess(mockRequest, mockResponse, mockAuth)
+        verify(mockRedirect).redirectToBrowser(eq(mockRequest), eq(mockResponse), capture(qsCaptor))
+        assert((qsCaptor.value["token"]?.get(0) ?: "") == token)
     }
 }

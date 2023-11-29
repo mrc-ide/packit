@@ -10,28 +10,12 @@ import org.mockito.kotlin.*
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException
 import org.springframework.security.oauth2.core.OAuth2Error
-import org.springframework.util.MultiValueMap
 import packit.exceptions.PackitAuthenticationException
 import packit.exceptions.PackitExceptionHandler
-import packit.security.BrowserRedirect
 import packit.security.oauth2.OAuth2FailureHandler
 import kotlin.test.Test
 
-class OAuth2FailureHandlerTest {
-    private val mockRedirect = mock<BrowserRedirect>()
-    private val mockRequest = mock<HttpServletRequest>()
-    private val mockResponse = mock<HttpServletResponse>()
-
-    @Captor
-    private lateinit var qsCaptor: ArgumentCaptor<MultiValueMap<String, String>>
-
-    @BeforeEach
-    fun setup()
-    {
-        // ensure the captor is initialised
-        MockitoAnnotations.openMocks(this)
-    }
-
+class OAuth2FailureHandlerTest: OAuthHandlerTest() {
     fun assertExpectedRedirectOnException(exception: AuthenticationException, expectedError: String)
     {
         val sut = OAuth2FailureHandler(mockRedirect, PackitExceptionHandler())
