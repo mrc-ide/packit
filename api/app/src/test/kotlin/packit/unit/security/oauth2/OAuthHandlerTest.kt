@@ -21,7 +21,8 @@ open class OAuthHandlerTest {
     @BeforeEach
     fun setup()
     {
-        // ensure the captor is initialised
+        // ensure the captor is initialised - we initialise the captor through annotation here as using fromClass cannot
+        // be used with generic classes
         MockitoAnnotations.openMocks(this)
     }
 }

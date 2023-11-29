@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.oauth2.core.user.OAuth2User
 import packit.model.User
 
-class UserPrincipal(
+open class UserPrincipal(
     private val email: String,
     @JsonIgnore
     private val password: String,
