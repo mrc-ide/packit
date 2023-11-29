@@ -1,9 +1,11 @@
 package packit.unit.controllers
 
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers.*
+import org.mockito.ArgumentMatchers.anyBoolean
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.HttpHeaders
@@ -37,6 +39,22 @@ class PacketControllerTest
         )
     )
 
+    private val packetsIdCountsDTO = listOf(
+        object : IPacketIdCountsDTO
+        {
+            override fun getName(): String = ""
+            override fun getNameCount(): Int = 10
+            override fun getLatestId(): String = "20180818-164847-7574883b"
+            override fun getLatestTime(): Long = 1690902034
+        },
+        object : IPacketIdCountsDTO
+        {
+            override fun getName(): String = ""
+            override fun getNameCount(): Int = 10
+            override fun getLatestId(): String = "20180818-164847-7574883b"
+            override fun getLatestTime(): Long = 1690902034
+        })
+
     private val packetMetadata = PacketMetadata(
         "3",
         "test",
@@ -51,12 +69,14 @@ class PacketControllerTest
 
     private val inputStream = ByteArrayResource(htmlContentByteArray) to HttpHeaders.EMPTY
 
-    val mockPageablePackets = PageImpl(packets)
+    private val mockPageablePackets = PageImpl(packets)
+    private val mockPacketIdCountsDTO = PageImpl(packetsIdCountsDTO)
 
     private val indexService = mock<PacketService> {
         on { getPackets(PageablePayload(0, 10)) } doReturn mockPageablePackets
         on { getMetadataBy(anyString()) } doReturn packetMetadata
         on { getFileByHash(anyString(), anyBoolean(), anyString()) } doReturn inputStream
+        on { getPacketIdCountDataByName(PageablePayload(0, 10), "") } doReturn mockPacketIdCountsDTO
     }
 
     @Test
@@ -68,6 +88,16 @@ class PacketControllerTest
         assertEquals(result.body, mockPageablePackets)
         assertEquals(1, mockPageablePackets.totalPages)
         assertEquals(2, mockPageablePackets.totalElements)
+    }
+
+    @Test
+    fun `get packet id count data by name`()
+    {
+        val sut = PacketController(indexService)
+        val result = sut.findPacketIdCountDataByName(0, 10, "")
+        assertEquals(result.statusCode, HttpStatus.OK)
+        assertEquals(result.body, mockPacketIdCountsDTO)
+        verify(indexService).getPacketIdCountDataByName(PageablePayload(0, 10), "")
     }
 
     @Test

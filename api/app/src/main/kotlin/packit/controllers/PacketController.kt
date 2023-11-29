@@ -4,8 +4,8 @@ import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import packit.model.IPacketIdCountsDTO
 import packit.model.Packet
-import packit.model.PacketIdCountsDTO
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
 import packit.service.PacketService
@@ -17,7 +17,7 @@ class PacketController(private val packetService: PacketService)
     @GetMapping
     fun pageableIndex(
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
-        @RequestParam(required = false, defaultValue = "100") pageSize: Int
+        @RequestParam(required = false, defaultValue = "50") pageSize: Int
     ): ResponseEntity<Page<Packet>>
     {
         val payload = PageablePayload(pageNumber, pageSize)
@@ -27,9 +27,9 @@ class PacketController(private val packetService: PacketService)
     @GetMapping("/overview")
     fun findPacketIdCountDataByName(
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
-        @RequestParam(required = false, defaultValue = "100") pageSize: Int,
+        @RequestParam(required = false, defaultValue = "50") pageSize: Int,
         @RequestParam(required = false, defaultValue = "") filterName: String,
-    ): ResponseEntity<Page<PacketIdCountsDTO>>
+    ): ResponseEntity<Page<IPacketIdCountsDTO>>
     {
         val payload = PageablePayload(pageNumber, pageSize)
         return ResponseEntity.ok(packetService.getPacketIdCountDataByName(payload, filterName))

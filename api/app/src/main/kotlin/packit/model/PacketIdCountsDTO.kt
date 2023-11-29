@@ -11,4 +11,3 @@ interface IPacketIdCountsDTO
 
 }
 
-data class PacketIdCountsDTO(val name: String, val count: Int, val latestId: String, val latestTime: Long)

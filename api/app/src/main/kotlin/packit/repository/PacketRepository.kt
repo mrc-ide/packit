@@ -14,10 +14,6 @@ interface PacketRepository : JpaRepository<Packet, String>
     @Query("select p.id from Packet p order by p.id asc")
     fun findAllIds(): List<String>
     fun findTopByOrderByTimeDesc(): Packet?
-
-//    @Query("select p.name as name, count(p.id) as nameCount from Packet p group by p.name order by MAX(p.time) desc")
-//    fun findCountsByName(pageable: Pageable): Page<IPacketNameCount>
-
     @Query(
         value = "SELECT " +
                 "    name as name, " +
