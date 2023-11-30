@@ -22,7 +22,8 @@ class AppConfig(private val props: PackitProperties = properties)
     val authEnableGithubLogin: Boolean = propString("auth.enableGithubLogin").toBoolean()
     val authExpiryDays: Long = propString("auth.expiryDays").toLong()
     val authEnabled: Boolean = propString("auth.enabled").toBoolean()
-    val authGithubAPIOrgs: String = propString("auth.githubAPIOrgs")
+    val authGithubAPIOrg: String = propString("auth.githubAPIOrg")
+    val authGithubAPITeam: String = propString("auth.githubAPITeam")
 
     private fun propString(propName: String): String
     {

@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import packit.AppConfig
 import packit.exceptions.PackitAuthenticationException
+import packit.exceptions.PackitException
 import packit.model.User
 import packit.security.Role
 import packit.security.profile.UserPrincipal
@@ -14,7 +15,6 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
 
     private var github: GitHub? = null
     private var ghUser: GHMyself? = null
-    private val allowedOrgs = config.authGithubAPIOrgs.split(",")
 
     fun authenticate(token: String)
     {
@@ -38,14 +38,23 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
         return UserPrincipal.create(user, mutableMapOf())
     }
 
-    fun checkGithubOrgMembership()
+    fun checkGithubMembership()
     {
         checkAuthenticated()
 
-        val userOrgs = ghUser!!.allOrganizations.map {org -> org.login}
-        val inAllowedOrg = allowedOrgs.any {allowed -> userOrgs.contains(allowed)}
+        val userOrg = ghUser!!.allOrganizations.firstOrNull { org -> org.login == config.authGithubAPIOrg }
+        var userAllowed = userOrg != null
 
-        if (!inAllowedOrg)
+        val allowedTeam = config.authGithubAPITeam
+        if (userAllowed && !allowedTeam.isEmpty())
+        {
+            // We've confirmed user is in org, and required team is not empty, so we need to check that too
+            val team = userOrg!!.teams[allowedTeam] ?: throw PackitAuthenticationException("githubConfigTeamNotInOrg",
+                HttpStatus.UNAUTHORIZED)
+            userAllowed = ghUser!!.isMemberOf(team)
+        }
+
+        if (!userAllowed)
         {
             throw PackitAuthenticationException("githubUserRestrictedAccess", HttpStatus.UNAUTHORIZED)
         }

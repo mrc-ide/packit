@@ -49,6 +49,6 @@ class OAuth2UserServiceTest
 
         sut.checkGithubUserMembership(mockRequest)
         verify(mockGithubUserClient).authenticate("fakeToken")
-        verify(mockGithubUserClient).checkGithubOrgMembership()
+        verify(mockGithubUserClient).checkGithubMembership()
     }
 }

@@ -24,7 +24,7 @@ class GithubAPILoginService(
         }
 
         githubUserClient.authenticate(loginRequest.githubtoken)
-        githubUserClient.checkGithubOrgMembership()
+        githubUserClient.checkGithubMembership()
         val userPrincipal = githubUserClient.getUser()
 
         // TODO add user to db if not already there

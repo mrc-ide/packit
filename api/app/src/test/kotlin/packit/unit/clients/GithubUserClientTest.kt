@@ -14,7 +14,7 @@ import kotlin.test.assertEquals
 class GithubUserClientTest {
 
     private val mockConfig = mock<AppConfig> {
-        on { authGithubAPIOrgs } doReturn "vimc,mrc-ide"
+        on { authGithubAPIOrg } doReturn "vimc,mrc-ide"
     }
 
     private val mockOrg = mock<GHOrganization>{
@@ -63,18 +63,18 @@ class GithubUserClientTest {
     fun `can check github org membership`()
     {
         sut.authenticate(token)
-        sut.checkGithubOrgMembership()
+        sut.checkGithubMembership()
     }
 
     @Test
     fun `throws expected exception when user is not in allowed org`()
     {
         val mockErrorConfig = mock<AppConfig> {
-            on { authGithubAPIOrgs } doReturn "vimc,mrc-idex"
+            on { authGithubAPIOrg } doReturn "vimc,mrc-idex"
         }
         val errorSut = GithubUserClient(mockErrorConfig, mockGithubBuilder)
         errorSut.authenticate(token)
-        assertThatThrownBy { errorSut.checkGithubOrgMembership() }
+        assertThatThrownBy { errorSut.checkGithubMembership() }
             .isInstanceOf(PackitAuthenticationException::class.java)
             .matches { (it as PackitAuthenticationException).key === "githubUserRestrictedAccess" }
             .matches { (it as PackitAuthenticationException).httpStatus === HttpStatus.UNAUTHORIZED }
@@ -129,6 +129,6 @@ class GithubUserClientTest {
     @Test
     fun `handles not authenticated on checkGithubOrgMembership`()
     {
-        assertThrowsUserNotAutheticated { sut.checkGithubOrgMembership() }
+        assertThrowsUserNotAutheticated { sut.checkGithubMembership() }
     }
 }
