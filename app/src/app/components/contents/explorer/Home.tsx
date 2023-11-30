@@ -9,7 +9,7 @@ export const Home = () => {
   const [filterByName, setFilterByName] = useState("");
   const [pageNumber, setPageNumber] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
-  const PAGE_SIZE = 3;
+  const PAGE_SIZE = 50;
 
   const handleSetNameFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterByName(event.target.value);

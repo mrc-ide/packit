@@ -30,7 +30,7 @@ export const PacketList = ({ filterByName, pageNumber, pageSize, setPageNumber }
   if (isLoading)
     return (
       <ul className="flex flex-col border rounded-md">
-        {[...Array(10)].map((val, index) => (
+        {[...Array(8)].map((val, index) => (
           <li key={index} className="p-4 flex flex-col border-b space-y-1">
             <Skeleton className="h-6 w-64" />
             <div className="flex space-x-3 items-center">
