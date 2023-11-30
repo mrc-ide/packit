@@ -17,7 +17,7 @@ export const PacketListItem = ({ packet }: PacketListItemProps) => {
       </Link>
       <div className="flex space-x-3 items-center">
         <Link
-          to={`/${packet.latestId}`}
+          to={`/${packet.name}/${packet.latestId}`}
           className="text-muted-foreground text-xs flex items-center gap-[1px] 
 hover:text-blue-500"
         >

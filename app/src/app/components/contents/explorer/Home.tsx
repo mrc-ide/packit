@@ -1,18 +1,27 @@
 import debounce from "lodash.debounce";
-import { useCallback, useEffect, useState } from "react";
+import { X } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Button } from "../../Base/Button";
 import { Input } from "../../Base/Input";
 import { PacketList } from "./PacketList";
 
 export const Home = () => {
   const [filterByName, setFilterByName] = useState("");
   const [pageNumber, setPageNumber] = useState(0);
-  const pageSize = 2;
+  const inputRef = useRef<HTMLInputElement>(null);
+  const PAGE_SIZE = 3;
 
   const handleSetNameFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterByName(event.target.value);
     setPageNumber(0);
   };
-
+  const handleResetFilter = () => {
+    if (inputRef?.current) {
+      inputRef.current.value = "";
+    }
+    setFilterByName("");
+    setPageNumber(0);
+  };
   const debouncedSetFilterByName = useCallback(debounce(handleSetNameFilter, 300), []);
 
   useEffect(() => {
@@ -28,17 +37,24 @@ export const Home = () => {
         <p className="text-muted-foreground">Here&apos;s a list of all reports</p>
       </div>
       <div className="space-y-4 flex flex-col">
-        <div>
+        <div className="flex space-x-4">
           <Input
             placeholder="Find a Report by name..."
             onChange={debouncedSetFilterByName}
             className="h-8 sm:w-[450px] lg:w-[600px]"
+            ref={inputRef}
           />
+          {filterByName && (
+            <Button variant="ghost" onClick={handleResetFilter} className="h-8 px-2 lg:px-3">
+              Reset
+              <X className="ml-2 h-4 w-4" />
+            </Button>
+          )}
         </div>
         <PacketList
           filterByName={filterByName}
           pageNumber={pageNumber}
-          pageSize={pageSize}
+          pageSize={PAGE_SIZE}
           setPageNumber={setPageNumber}
         />
       </div>
