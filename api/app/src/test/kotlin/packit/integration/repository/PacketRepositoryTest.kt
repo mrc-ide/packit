@@ -21,12 +21,11 @@ class PacketRepositoryTest : RepositoryTest()
     val packet = listOf(
         Packet("20180818-164847-7574833b", "test1", "test name1", mapOf("name" to "value"), false, now),
         Packet("20170818-164847-7574853b", "test2", "test name2", mapOf("a" to 1), false, now + 1),
-        Packet("20170819-164847-7574823b", "test3", "test name3", mapOf("alpha" to true), false, now + 3),
+        Packet("20170819-164847-7574823b", "random", "random", mapOf("alpha" to true), false, now + 3),
         Packet("20170819-164847-7574113a", "test4", "test name4", mapOf(), true, now + 4),
         Packet("20170819-164847-7574983b", "test4", "test name4", mapOf(), true, now + 2),
         Packet("20170819-164847-7574333b", "test1", "test name1", mapOf(), true, now + 5),
-
-        )
+    )
 
     @BeforeEach
     fun setup()
@@ -85,6 +84,27 @@ class PacketRepositoryTest : RepositoryTest()
         assertEquals(result.content[0].latestId, "20170819-164847-7574113a")
         assertEquals(result.content[0].latestTime, now + 4)
         assertEquals(result.content[0].nameCount, 2)
+    }
+
+    @Test
+    fun `returns correct paging data when calling findIdCountDataByName`()
+    {
+        packetRepository.saveAll(packet)
+
+        val result = packetRepository.findIdCountDataByName("random", PageRequest.of(0, 10)).map {
+            object
+            {
+                val name = it.getName()
+                val latestTime = it.getLatestTime()
+                val latestId = it.getLatestId()
+                val nameCount = it.getNameCount()
+            }
+        }
+
+        assertEquals(result.totalPages, 1)
+        assertEquals(result.isFirst, true)
+        assertEquals(result.isLast, true)
+
     }
 
     @Test

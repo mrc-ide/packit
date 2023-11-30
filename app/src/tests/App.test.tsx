@@ -1,5 +1,5 @@
 import { Store } from "@reduxjs/toolkit";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
 import configureStore from "redux-mock-store";
@@ -34,12 +34,12 @@ describe("app component", () => {
     );
   };
 
-  it("renders packet explorer page", () => {
+  it("renders reports page", async () => {
     renderElement(getStore({ isAuthenticated: true }));
-    const app = screen.getByTestId("app");
-    expect(app).toHaveTextContent("Packets (0)");
-    expect(app).toHaveTextContent("Click on a column heading to sort by field.");
-    expect(app.className).toBe("default");
+
+    await waitFor(() => {
+      expect(screen.getByText(/welcome to reports/i)).toBeVisible();
+    });
   });
 
   it("renders app header", () => {

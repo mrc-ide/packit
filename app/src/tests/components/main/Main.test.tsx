@@ -1,5 +1,5 @@
 import { Store } from "@reduxjs/toolkit";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
 import configureStore from "redux-mock-store";
@@ -30,18 +30,21 @@ describe("main component", () => {
     );
   };
 
-  it("renders active content", () => {
+  it("renders active content", async () => {
     renderElement();
     const content = screen.getByTestId("content");
-    expect(content).toBeInTheDocument();
-    expect(content).toHaveTextContent("Packets (0)");
-    expect(content).toHaveTextContent("Click on a column heading to sort by field.");
+
+    await waitFor(() => {
+      expect(content).toBeInTheDocument();
+    });
   });
 
-  it("renders packet root page", () => {
+  it("renders packet root page", async () => {
     renderElement();
-    expect(screen.getByTestId("explorer")).toBeInTheDocument();
-    expect(screen.queryByTestId("packet-runner")).toBeNull();
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("packet-runner")).toBeNull();
+    });
     expect(screen.queryByTestId("workflow-runner")).toBeNull();
     expect(screen.queryByTestId("project-documentation")).toBeNull();
   });

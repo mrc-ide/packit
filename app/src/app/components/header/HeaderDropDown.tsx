@@ -27,7 +27,7 @@ export default function HeaderDropDown() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded full">
           <Avatar className="h-8 w-8">
-            <AvatarImage src="https://github.com/shadcn.png" alt="shadcn" />
+            <AvatarImage src="/img/avatar.webp" alt="avatar" />
             <AvatarFallback>LA</AvatarFallback>
           </Avatar>
         </Button>
@@ -35,6 +35,7 @@ export default function HeaderDropDown() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
+            {/* TODO: get info from jwt */}
             <p className="text-base font-medium leading-none">Lekan</p>
             <p className="text-sm leading-none text-muted-foreground">l.ani@imperial.ac.uk</p>
           </div>
