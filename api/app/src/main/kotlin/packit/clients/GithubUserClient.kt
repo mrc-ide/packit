@@ -48,7 +48,7 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
         val allowedTeam = config.authGithubAPITeam
         if (userAllowed && !allowedTeam.isEmpty())
         {
-            // We've confirmed user is in org, and required team is not empty, so we need to check that too
+            // We've confirmed user is in org, and required team is not empty, so we need to check team membership too
             val team = userOrg!!.teams[allowedTeam] ?: throw PackitAuthenticationException("githubConfigTeamNotInOrg",
                 HttpStatus.UNAUTHORIZED)
             userAllowed = ghUser!!.isMemberOf(team)

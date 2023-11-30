@@ -14,11 +14,15 @@ import kotlin.test.assertEquals
 class GithubUserClientTest {
 
     private val mockConfig = mock<AppConfig> {
-        on { authGithubAPIOrg } doReturn "vimc,mrc-ide"
+        on { authGithubAPIOrg } doReturn "mrc-ide"
+        on { authGithubAPITeam } doReturn "packit"
     }
+
+    private val mockTeam = mock<GHTeam>()
 
     private val mockOrg = mock<GHOrganization>{
         on { login } doReturn "mrc-ide"
+        on { teams } doReturn mapOf("packit" to mockTeam)
     }
     private val mockOrgs = mock<GHPersonSet<GHOrganization>> {
         on { iterator() } doReturn mutableListOf(mockOrg).listIterator()
@@ -28,6 +32,7 @@ class GithubUserClientTest {
         on { login } doReturn "test@login.com"
         on { name } doReturn "test name"
         on { allOrganizations } doReturn mockOrgs
+        on { isMemberOf(mockTeam) } doReturn true
     }
 
     private val mockGitHub = mock<GitHub> {
@@ -70,7 +75,7 @@ class GithubUserClientTest {
     fun `throws expected exception when user is not in allowed org`()
     {
         val mockErrorConfig = mock<AppConfig> {
-            on { authGithubAPIOrg } doReturn "vimc,mrc-idex"
+            on { authGithubAPIOrg } doReturn "mrc-idex"
         }
         val errorSut = GithubUserClient(mockErrorConfig, mockGithubBuilder)
         errorSut.authenticate(token)
