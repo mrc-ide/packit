@@ -81,6 +81,20 @@ describe("login reducer", () => {
         expect(loginState.userError).toEqual(null);
     });
 
+    it("should set login error", () => {
+        const actions = {
+            type: "login/loginError",
+            payload: "bad token"
+        };
+        const loginState = loginReducer(initialLoginState, actions);
+        expect(loginState.userError).toEqual({
+            error: {
+                error: "Login failed",
+                detail: "bad token"
+            }
+        });
+    });
+
     it("should handle logout", () => {
         //Authenticated state
         const loginState = loginReducer(initialLoginState, {
