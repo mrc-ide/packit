@@ -22,7 +22,6 @@ import packit.security.provider.JwtIssuer
 @EnableWebSecurity
 @Configuration
 class WebSecurityConfig(
-    val customBasicUserService: BasicUserDetailsService,
     val customOauth2UserService: OAuth2UserService,
     val config: AppConfig,
     val jwtIssuer: JwtIssuer,
@@ -92,15 +91,5 @@ class WebSecurityConfig(
     fun passwordEncoder(): PasswordEncoder
     {
         return BCryptPasswordEncoder()
-    }
-
-    @Bean
-    fun authenticationManager(httpSecurity: HttpSecurity): AuthenticationManager
-    {
-        return httpSecurity.getSharedObject(AuthenticationManagerBuilder::class.java)
-            .userDetailsService(customBasicUserService)
-            .passwordEncoder(passwordEncoder())
-            .and()
-            .build()
     }
 }

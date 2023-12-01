@@ -49,9 +49,8 @@ class AppConfigTests
         props["db.password"] = "pw"
         props["auth.enabled"] = enableAuth
         props["auth.expiryDays"] = expiryDays
-        props["auth.basic.secret"] = authSecret
+        props["auth.jwt.secret"] = authSecret
         props["outpack.server.url"] = "outpackServerUrl"
-        props["auth.enableFormLogin"] = enableFormLogin
         props["auth.enableGithubLogin"] = enableGithubLogin
         props["auth.oauth2.redirect.url"] = redirectUrl
 
@@ -62,10 +61,9 @@ class AppConfigTests
         assertEquals(sut.dbPassword, "pw")
         assertEquals(sut.authEnabled, enableAuth)
         assertEquals(sut.authExpiryDays, expiryDays)
-        assertEquals(sut.authBasicSecret, authSecret)
+        assertEquals(sut.authJWTSecret, authSecret)
         assertEquals(sut.authRedirectUri, redirectUrl)
         assertEquals(sut.outpackServerUrl, "outpackServerUrl")
-        assertEquals(sut.authEnableFormLogin, enableFormLogin)
         assertEquals(sut.authEnableGithubLogin, enableGithubLogin)
     }
 }

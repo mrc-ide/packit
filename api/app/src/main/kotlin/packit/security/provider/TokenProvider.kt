@@ -42,6 +42,6 @@ class TokenProvider(val config: AppConfig) : JwtIssuer
             .withClaim("datetime", createdDate)
             .withClaim("au", roles)
             .withExpiresAt(expiredDate)
-            .sign(Algorithm.HMAC256(config.authBasicSecret))
+            .sign(Algorithm.HMAC256(config.authJWTSecret))
     }
 }
