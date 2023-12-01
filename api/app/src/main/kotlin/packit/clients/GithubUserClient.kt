@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import packit.AppConfig
 import packit.exceptions.PackitAuthenticationException
-import packit.exceptions.PackitException
 import packit.model.User
 import packit.security.Role
 import packit.security.profile.UserPrincipal
@@ -49,8 +48,10 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
         if (userAllowed && !allowedTeam.isEmpty())
         {
             // We've confirmed user is in org, and required team is not empty, so we need to check team membership too
-            val team = userOrg!!.teams[allowedTeam] ?: throw PackitAuthenticationException("githubConfigTeamNotInOrg",
-                HttpStatus.UNAUTHORIZED)
+            val team = userOrg!!.teams[allowedTeam] ?: throw PackitAuthenticationException(
+                "githubConfigTeamNotInOrg",
+                HttpStatus.UNAUTHORIZED
+            )
             userAllowed = ghUser!!.isMemberOf(team)
         }
 

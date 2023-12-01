@@ -19,7 +19,7 @@ class GithubUserClientTest {
     }
 
     private val mockTeam = mock<GHTeam>()
-    private val anotherMockTeam  = mock<GHTeam>()
+    private val anotherMockTeam = mock<GHTeam>()
 
     private val mockOrg = mock<GHOrganization>{
         on { login } doReturn "mrc-ide"
