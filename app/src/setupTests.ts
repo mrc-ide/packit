@@ -3,6 +3,15 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import "@testing-library/jest-dom";
+import { server } from "./msw/server";
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
+jest.mock("./lib/getBearerToken", () => ({
+  getBearerToken: jest.fn(() => "fake-token")
+}));
 
 Object.defineProperty(window, "matchMedia", {
   writable: true,

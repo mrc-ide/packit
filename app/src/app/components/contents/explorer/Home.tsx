@@ -31,32 +31,34 @@ export const Home = () => {
   }, []);
 
   return (
-    <div className="h-full flex-1 flex-col space-y-8 p-8 flex">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight">Welcome to Reports</h2>
-        <p className="text-muted-foreground">Here&apos;s a list of all reports</p>
-      </div>
-      <div className="space-y-4 flex flex-col">
-        <div className="flex space-x-4">
-          <Input
-            placeholder="Find a Report by name..."
-            onChange={debouncedSetFilterByName}
-            className="h-8 sm:w-[450px] lg:w-[600px]"
-            ref={inputRef}
-          />
-          {filterByName && (
-            <Button variant="ghost" onClick={handleResetFilter} className="h-8 px-2 lg:px-3">
-              Reset
-              <X className="ml-2 h-4 w-4" />
-            </Button>
-          )}
+    <div className="flex justify-center">
+      <div className="h-full flex flex-1 flex-col space-y-8 p-8 max-w-5xl">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Welcome to Reports</h2>
+          <p className="text-muted-foreground">Here&apos;s a list of all reports</p>
         </div>
-        <PacketList
-          filterByName={filterByName}
-          pageNumber={pageNumber}
-          pageSize={PAGE_SIZE}
-          setPageNumber={setPageNumber}
-        />
+        <div className="space-y-4 flex flex-col">
+          <div className="flex space-x-4">
+            <Input
+              placeholder="Find a Report by name..."
+              onChange={debouncedSetFilterByName}
+              className="h-8 sm:w-[450px] lg:w-[600px]"
+              ref={inputRef}
+            />
+            {filterByName && (
+              <Button variant="ghost" onClick={handleResetFilter} className="h-8 px-2 lg:px-3">
+                Reset
+                <X className="ml-2 h-4 w-4" />
+              </Button>
+            )}
+          </div>
+          <PacketList
+            filterByName={filterByName}
+            pageNumber={pageNumber}
+            pageSize={PAGE_SIZE}
+            setPageNumber={setPageNumber}
+          />
+        </div>
       </div>
     </div>
   );

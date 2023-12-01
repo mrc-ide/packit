@@ -27,6 +27,7 @@ export const Pagination = ({
           className="hidden h-8 w-8 p-0 md:flex"
           onClick={() => setPageNumber(0)}
           disabled={isFirstPage}
+          aria-label="back-to-first-page"
         >
           <ChevronsLeft size={16} />
         </Button>
@@ -35,6 +36,7 @@ export const Pagination = ({
           className="h-8 w-8 p-0"
           onClick={() => setPageNumber(currentPageNumber - 1)}
           disabled={isFirstPage}
+          aria-label="back-to-previous-page"
         >
           <ChevronLeft size={16} />
         </Button>
@@ -43,6 +45,7 @@ export const Pagination = ({
           className="h-8 w-8 p-0"
           onClick={() => setPageNumber(currentPageNumber + 1)}
           disabled={isLastPage}
+          aria-label="go-to-next-page"
         >
           <ChevronRight size={16} />
         </Button>
@@ -51,6 +54,7 @@ export const Pagination = ({
           className="hidden h-8 w-8 p-0 md:flex"
           onClick={() => setPageNumber(totalPages - 1)}
           disabled={isLastPage}
+          aria-label="go-to-last-page"
         >
           <ChevronsRight size={16} />
         </Button>

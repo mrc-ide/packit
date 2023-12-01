@@ -9,25 +9,23 @@ export const Breadcrumb = () => {
 
   return (
     <>
-      <div className="flex-col mb-2">
-        <div className="border-b ">
-          <div className="flex h-10 items-center px-4 justify-start space-x-1">
-            {pathNames.map((path, index) => {
-              const routeTo = `${pathNames.slice(0, index + 1).join("/")}`;
-              const displayName = routeTo === "" ? "Home" : capitalizeFirstLetter(path);
+      <div className="flex-col mb-2 border-b-2 shadow-sm">
+        <div className="flex h-10 items-center px-4 justify-start space-x-1">
+          {pathNames.map((path, index) => {
+            const routeTo = `${pathNames.slice(0, index + 1).join("/")}`;
+            const displayName = routeTo === "" ? "Home" : capitalizeFirstLetter(path);
 
-              return index === pathNames.length - 1 ? (
-                <div key={index}>{displayName}</div>
-              ) : (
-                <div className="flex space-x-1 justify-between items-center" key={index}>
-                  <NavLink to={routeTo} className="transition-colors hover:text-primary text-muted-foreground">
-                    {displayName}
-                  </NavLink>
-                  <ChevronRight />
-                </div>
-              );
-            })}
-          </div>
+            return index === pathNames.length - 1 ? (
+              <div key={index}>{displayName}</div>
+            ) : (
+              <div className="flex space-x-1 justify-between items-center" key={index}>
+                <NavLink to={routeTo} className="transition-colors hover:text-primary text-muted-foreground">
+                  {displayName}
+                </NavLink>
+                <ChevronRight />
+              </div>
+            );
+          })}
         </div>
       </div>
       <Outlet />
