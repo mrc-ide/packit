@@ -26,7 +26,7 @@ class OAuth2FailureHandler(
             exception.message
         }
 
-        val qs = LinkedMultiValueMap<String, String>().apply{ this.add("error", message) }
-        redirect.redirectToBrowser(request, response, qs)
+        val queryString = LinkedMultiValueMap<String, String>().apply{ this.add("error", message) }
+        redirect.redirectToBrowser(request, response, queryString)
     }
 }
