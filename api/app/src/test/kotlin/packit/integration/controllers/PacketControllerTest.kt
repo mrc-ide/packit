@@ -36,7 +36,7 @@ class PacketControllerTest : IntegrationTest()
     fun `test can get overview of packets if authenticated`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/overview?pageNumber=3&pageSize=5&filterName=hell",
+            "/packets/packetGroupSummary?pageNumber=3&pageSize=5&filterName=hell",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )

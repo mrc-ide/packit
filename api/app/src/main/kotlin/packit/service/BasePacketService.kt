@@ -11,8 +11,8 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import packit.contentTypes
 import packit.exceptions.PackitException
-import packit.model.IPacketIdCountsDTO
 import packit.model.Packet
+import packit.model.PacketGroupSummary
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
 import packit.repository.PacketRepository
@@ -28,7 +28,7 @@ interface PacketService
     fun getMetadataBy(id: String): PacketMetadata
     fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<ByteArrayResource, HttpHeaders>
 
-    fun getPacketIdCountDataByName(pageablePayload: PageablePayload, filteredName: String): Page<IPacketIdCountsDTO>
+    fun getPacketGroupSummary(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroupSummary>
 }
 
 @Service
@@ -56,12 +56,12 @@ class BasePacketService(
         return packetRepository.findAll()
     }
 
-    override fun getPacketIdCountDataByName(
+    override fun getPacketGroupSummary(
         pageablePayload: PageablePayload,
         filteredName: String
-    ): Page<IPacketIdCountsDTO>
+    ): Page<PacketGroupSummary>
     {
-        return packetRepository.findIdCountDataByName(
+        return packetRepository.findPacketGroupSummaryByName(
             filteredName,
             PageRequest.of(
                 pageablePayload.pageNumber,

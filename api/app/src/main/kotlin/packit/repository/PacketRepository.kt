@@ -5,8 +5,8 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
-import packit.model.IPacketIdCountsDTO
 import packit.model.Packet
+import packit.model.PacketGroupSummary
 
 @Repository
 interface PacketRepository : JpaRepository<Packet, String>
@@ -20,7 +20,7 @@ interface PacketRepository : JpaRepository<Packet, String>
                 "    name as name, " +
                 "    time as latestTime, " +
                 "    id AS latestId, " +
-                "    id_count as nameCount  " +
+                "    id_count as packetCount  " +
                 "FROM ( " +
                 "    SELECT " +
                 "        name, " +
@@ -35,6 +35,6 @@ interface PacketRepository : JpaRepository<Packet, String>
         countQuery = "SELECT count(distinct name) from packet where LOWER(name) LIKE %?1%",
         nativeQuery = true
     )
-    fun findIdCountDataByName(filterName: String, pageable: Pageable): Page<IPacketIdCountsDTO>
+    fun findPacketGroupSummaryByName(filterName: String, pageable: Pageable): Page<PacketGroupSummary>
 }
 

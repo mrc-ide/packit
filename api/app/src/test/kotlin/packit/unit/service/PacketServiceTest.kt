@@ -64,17 +64,17 @@ class PacketServiceTest
         emptyMap(),
     )
     private val packetsIdCountsDTO = listOf(
-        object : IPacketIdCountsDTO
+        object : PacketGroupSummary
         {
             override fun getName(): String = ""
-            override fun getNameCount(): Int = 10
+            override fun getPacketCount(): Int = 10
             override fun getLatestId(): String = "20180818-164847-7574883b"
             override fun getLatestTime(): Long = 1690902034
         },
-        object : IPacketIdCountsDTO
+        object : PacketGroupSummary
         {
             override fun getName(): String = ""
-            override fun getNameCount(): Int = 10
+            override fun getPacketCount(): Int = 10
             override fun getLatestId(): String = "20180818-164847-7574883b"
             override fun getLatestTime(): Long = 1690902034
         })
@@ -86,7 +86,7 @@ class PacketServiceTest
         on { findAll() } doReturn oldPackets
         on { findAllIds() } doReturn oldPackets.map { it.id }
         on { findTopByOrderByTimeDesc() } doReturn oldPackets.first()
-        on { findIdCountDataByName("random", PageRequest.of(0, 10)) } doReturn mockPacketIdCountsDTO
+        on { findPacketGroupSummaryByName("random", PageRequest.of(0, 10)) } doReturn mockPacketIdCountsDTO
     }
 
     private val outpackServerClient = mock<OutpackServerClient> {
@@ -111,11 +111,11 @@ class PacketServiceTest
     {
         val sut = BasePacketService(packetRepository, mock())
 
-        val result = sut.getPacketIdCountDataByName(PageablePayload(0, 10), "random")
+        val result = sut.getPacketGroupSummary(PageablePayload(0, 10), "random")
 
         assertEquals(result.totalElements, 2)
         assertEquals(result.content, packetsIdCountsDTO)
-        verify(packetRepository).findIdCountDataByName("random", PageRequest.of(0, 10))
+        verify(packetRepository).findPacketGroupSummaryByName("random", PageRequest.of(0, 10))
     }
 
     @Test

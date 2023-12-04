@@ -15,7 +15,8 @@ interface PacketListProps {
 }
 export const PacketList = ({ filterByName, pageNumber, pageSize, setPageNumber }: PacketListProps) => {
   const { data, isLoading, error } = useSWR<PageablePacketIdCountsDTO>(
-    `${appConfig.apiUrl()}/packets/overview?pageNumber=${pageNumber}&pageSize=${pageSize}&filterName=${filterByName}`,
+    `${appConfig.apiUrl()}/packets/packetGroupSummary?pageNumber=${pageNumber}&pageSize=${pageSize}\
+    &filterName=${filterByName}`,
     (url: string) => fetcher({ url, authRequired: true })
   );
 
