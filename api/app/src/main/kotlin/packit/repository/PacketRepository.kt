@@ -30,9 +30,9 @@ interface PacketRepository : JpaRepository<Packet, String>
                 "        COUNT(id) OVER (PARTITION BY name) AS id_count " +
                 "    FROM packet " +
                 ") as RankedData " +
-                "WHERE row_num = 1 AND LOWER(name) LIKE %?1% " +
+                "WHERE row_num = 1 AND name ILIKE %?1% " +
                 "ORDER BY TIME DESC",
-        countQuery = "SELECT count(distinct name) from packet where LOWER(name) LIKE %?1%",
+        countQuery = "SELECT count(distinct name) from packet where name ILIKE %?1%",
         nativeQuery = true
     )
     fun findPacketGroupSummaryByName(filterName: String, pageable: Pageable): Page<PacketGroupSummary>
