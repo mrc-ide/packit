@@ -44,9 +44,10 @@ class LoginControllerTest
 
         assertEquals(result.statusCode, HttpStatus.OK)
 
-        assertEquals(result.body, mapOf(
+        val expectedConfig = mapOf(
             "enableGithubLogin" to false,
             "enableAuth" to true
-        ))
+        )
+        assertEquals(result.body, expectedConfig)
     }
 }

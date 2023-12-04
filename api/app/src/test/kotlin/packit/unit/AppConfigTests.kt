@@ -39,7 +39,6 @@ class AppConfigTests
         val expiryDays = 1L
         val enableAuth = true
         val redirectUrl = "http://redirect"
-        val enableFormLogin = false
         val enableGithubLogin = true
 
         val props = PackitProperties()

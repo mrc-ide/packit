@@ -28,7 +28,7 @@ class LoginController(
     @ResponseBody
     fun authConfig(): ResponseEntity<Map<String, Any>>
     {
-        val authConfig =  mapOf(
+        val authConfig = mapOf(
             "enableGithubLogin" to config.authEnableGithubLogin,
             "enableAuth" to config.authEnabled
         )
