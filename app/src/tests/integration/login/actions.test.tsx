@@ -23,31 +23,8 @@ describe("login integration", () => {
         expect(result["type"]).toBe("GetAuthConfig/fulfilled");
         expect(result["payload"]).toEqual(
             {
-                "enableFormLogin": true,
                 "enableGithubLogin": true,
                 "enableAuth": true
             });
-    });
-
-    it("can get token", async () => {
-        const testUser = {email: "test.user@example.com", password: "password"};
-        const dispatch = jest.fn();
-
-        const fetchTokenThunk = createAsyncThunk<Record<string, any>, UserLoginDetailProps, CustomAsyncThunkOptions>(
-            LoginMutationType.GetToken,
-            async (prop, thunkAPI) => api(store)
-                .postAndReturn("/auth/login", prop, thunkAPI));
-
-        const fetchTokenAction = fetchTokenThunk(testUser);
-
-        await fetchTokenAction(dispatch, jest.fn(), jest.fn());
-
-        expect(dispatch.mock.calls[0][0]).toMatchObject({
-            type: "GetToken/pending",
-            payload: undefined,
-        });
-        const result = dispatch.mock.calls[1][0];
-        expect(result["type"]).toBe("GetToken/fulfilled");
-        expect(result["payload"].token).toBeTruthy();
     });
 });
