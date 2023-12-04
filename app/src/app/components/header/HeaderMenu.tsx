@@ -7,7 +7,7 @@ import { LeftNavItems } from "./LeftNav";
 export const HeaderMenu = () => {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon">
           <Menu />
         </Button>

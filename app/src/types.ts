@@ -12,7 +12,7 @@ export enum SideBarItems {
 export interface RejectedErrorValue {
   rejectValue: Error;
 }
-// TODO: depricate below
+
 export interface PageablePackets {
   content: Packet[];
   totalPages: number;

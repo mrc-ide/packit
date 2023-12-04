@@ -3,11 +3,13 @@ package packit.unit.service
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpHeaders
 import packit.exceptions.PackitException
 import packit.model.*
@@ -63,7 +65,7 @@ class PacketServiceTest
         TimeMetadata(Instant.now().epochSecond.toDouble(), Instant.now().epochSecond.toDouble()),
         emptyMap(),
     )
-    private val packetsIdCountsDTO = listOf(
+    private val packetGroupSummaries = listOf(
         object : PacketGroupSummary
         {
             override fun getName(): String = ""
@@ -80,13 +82,14 @@ class PacketServiceTest
         })
 
     private val responseByte = "htmlContent".toByteArray() to HttpHeaders.EMPTY
-    private val mockPacketIdCountsDTO = PageImpl(packetsIdCountsDTO)
+    private val mockPacketGroupSummaries = PageImpl(packetGroupSummaries)
 
     private val packetRepository = mock<PacketRepository> {
         on { findAll() } doReturn oldPackets
         on { findAllIds() } doReturn oldPackets.map { it.id }
         on { findTopByOrderByTimeDesc() } doReturn oldPackets.first()
-        on { findPacketGroupSummaryByName("random", PageRequest.of(0, 10)) } doReturn mockPacketIdCountsDTO
+        on { findPacketGroupSummaryByName("random", PageRequest.of(0, 10)) } doReturn mockPacketGroupSummaries
+        on { findByName(anyString(), any()) } doReturn PageImpl(oldPackets)
     }
 
     private val outpackServerClient = mock<OutpackServerClient> {
@@ -105,16 +108,26 @@ class PacketServiceTest
         assertEquals(result, oldPackets)
     }
 
+    @Test
+    fun `gets packets by name`()
+    {
+        val sut = BasePacketService(packetRepository, mock())
+
+        val result = sut.getPacketsByName("pg1", PageablePayload(0, 10))
+
+        assertEquals(result, PageImpl(oldPackets))
+        verify(packetRepository).findByName("pg1", PageRequest.of(0, 10, Sort.by("time").descending()))
+    }
 
     @Test
-    fun `test getPacketIdCountDataByName`()
+    fun `gets package groups summary`()
     {
         val sut = BasePacketService(packetRepository, mock())
 
         val result = sut.getPacketGroupSummary(PageablePayload(0, 10), "random")
 
         assertEquals(result.totalElements, 2)
-        assertEquals(result.content, packetsIdCountsDTO)
+        assertEquals(result.content, packetGroupSummaries)
         verify(packetRepository).findPacketGroupSummaryByName("random", PageRequest.of(0, 10))
     }
 

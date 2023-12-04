@@ -29,6 +29,9 @@ interface PacketService
     fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<ByteArrayResource, HttpHeaders>
 
     fun getPacketGroupSummary(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroupSummary>
+    fun getPacketsByName(
+        name: String, payload: PageablePayload
+    ): Page<Packet>
 }
 
 @Service
@@ -69,6 +72,17 @@ class BasePacketService(
             )
         )
     }
+
+    override fun getPacketsByName(name: String, payload: PageablePayload): Page<Packet>
+    {
+        val pageable = PageRequest.of(
+            payload.pageNumber,
+            payload.pageSize,
+            Sort.by("time").descending()
+        )
+        return packetRepository.findByName(name, pageable)
+    }
+
 
     override fun getPackets(pageablePayload: PageablePayload): Page<Packet>
     {

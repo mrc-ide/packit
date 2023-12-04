@@ -3,6 +3,7 @@ package packit.unit.controllers
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyBoolean
 import org.mockito.ArgumentMatchers.anyString
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
@@ -39,7 +40,7 @@ class PacketControllerTest
         )
     )
 
-    private val packetsIdCountsDTO = listOf(
+    private val packetGroupSummaries = listOf(
         object : PacketGroupSummary
         {
             override fun getName(): String = ""
@@ -70,13 +71,14 @@ class PacketControllerTest
     private val inputStream = ByteArrayResource(htmlContentByteArray) to HttpHeaders.EMPTY
 
     private val mockPageablePackets = PageImpl(packets)
-    private val mockPacketIdCountsDTO = PageImpl(packetsIdCountsDTO)
+    private val mockPacketGroupsSummary = PageImpl(packetGroupSummaries)
 
     private val indexService = mock<PacketService> {
         on { getPackets(PageablePayload(0, 10)) } doReturn mockPageablePackets
         on { getMetadataBy(anyString()) } doReturn packetMetadata
         on { getFileByHash(anyString(), anyBoolean(), anyString()) } doReturn inputStream
-        on { getPacketGroupSummary(PageablePayload(0, 10), "") } doReturn mockPacketIdCountsDTO
+        on { getPacketGroupSummary(PageablePayload(0, 10), "") } doReturn mockPacketGroupsSummary
+        on { getPacketsByName(anyString(), any()) } doReturn mockPageablePackets
     }
 
     @Test
@@ -91,12 +93,24 @@ class PacketControllerTest
     }
 
     @Test
-    fun `get packet id count data by name`()
+    fun `get packets by packet group name`()
+    {
+        val sut = PacketController(indexService)
+
+        val result = sut.getPacketsByName("pg1", 0, 10)
+
+        assertEquals(result.statusCode, HttpStatus.OK)
+        assertEquals(result.body, mockPageablePackets)
+        verify(indexService).getPacketsByName("pg1", PageablePayload(0, 10))
+    }
+
+    @Test
+    fun `get packet groups summary`()
     {
         val sut = PacketController(indexService)
         val result = sut.getPacketGroupSummary(0, 10, "")
         assertEquals(result.statusCode, HttpStatus.OK)
-        assertEquals(result.body, mockPacketIdCountsDTO)
+        assertEquals(result.body, mockPacketGroupsSummary)
         verify(indexService).getPacketGroupSummary(PageablePayload(0, 10), "")
     }
 
