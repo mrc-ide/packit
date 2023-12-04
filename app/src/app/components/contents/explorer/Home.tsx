@@ -9,7 +9,7 @@ export const Home = () => {
   const [filterByName, setFilterByName] = useState("");
 
   const { data, isLoading, error } = useSWR<PageablePacketIdCountsDTO>(
-    `${appConfig.apiUrl()}/packets/overview?pageNumber=${pageNumber}&pageSize=10&filterName=${filterByName}`,
+    `${appConfig.apiUrl()}/packets/packetGroupSummary?pageNumber=${pageNumber}&pageSize=10&filterName=${filterByName}`,
     (url: string) => fetcher({ url, authRequired: true })
   );
 
@@ -24,7 +24,8 @@ export const Home = () => {
       <div>
         {data?.content?.map((packet, i) => (
           <div key={i}>
-            name: {packet.name} - latestid: {packet.latestId} - count: {packet.count} - latesttime: {packet.latestTime}
+            name: {packet.name} - latestid: {packet.latestId} - count: {packet.nameCount} - latesttime:{" "}
+            {packet.latestTime}
           </div>
         ))}
       </div>

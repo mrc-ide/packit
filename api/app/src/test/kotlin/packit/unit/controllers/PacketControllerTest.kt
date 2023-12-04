@@ -40,17 +40,17 @@ class PacketControllerTest
     )
 
     private val packetsIdCountsDTO = listOf(
-        object : IPacketIdCountsDTO
+        object : PacketGroupSummary
         {
             override fun getName(): String = ""
-            override fun getNameCount(): Int = 10
+            override fun getPacketCount(): Int = 10
             override fun getLatestId(): String = "20180818-164847-7574883b"
             override fun getLatestTime(): Long = 1690902034
         },
-        object : IPacketIdCountsDTO
+        object : PacketGroupSummary
         {
             override fun getName(): String = ""
-            override fun getNameCount(): Int = 10
+            override fun getPacketCount(): Int = 10
             override fun getLatestId(): String = "20180818-164847-7574883b"
             override fun getLatestTime(): Long = 1690902034
         })
@@ -76,7 +76,7 @@ class PacketControllerTest
         on { getPackets(PageablePayload(0, 10)) } doReturn mockPageablePackets
         on { getMetadataBy(anyString()) } doReturn packetMetadata
         on { getFileByHash(anyString(), anyBoolean(), anyString()) } doReturn inputStream
-        on { getPacketIdCountDataByName(PageablePayload(0, 10), "") } doReturn mockPacketIdCountsDTO
+        on { getPacketGroupSummary(PageablePayload(0, 10), "") } doReturn mockPacketIdCountsDTO
     }
 
     @Test
@@ -94,10 +94,10 @@ class PacketControllerTest
     fun `get packet id count data by name`()
     {
         val sut = PacketController(indexService)
-        val result = sut.findPacketIdCountDataByName(0, 10, "")
+        val result = sut.getPacketGroupSummary(0, 10, "")
         assertEquals(result.statusCode, HttpStatus.OK)
         assertEquals(result.body, mockPacketIdCountsDTO)
-        verify(indexService).getPacketIdCountDataByName(PageablePayload(0, 10), "")
+        verify(indexService).getPacketGroupSummary(PageablePayload(0, 10), "")
     }
 
     @Test

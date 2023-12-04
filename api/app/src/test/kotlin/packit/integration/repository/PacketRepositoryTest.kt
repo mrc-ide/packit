@@ -49,20 +49,20 @@ class PacketRepositoryTest : RepositoryTest()
     {
         packetRepository.saveAll(packet)
 
-        val result = packetRepository.findIdCountDataByName("", PageRequest.of(0, 10)).map {
+        val result = packetRepository.findPacketGroupSummaryByName("", PageRequest.of(0, 10)).map {
             object
             {
                 val name = it.getName()
                 val latestTime = it.getLatestTime()
                 val latestId = it.getLatestId()
-                val nameCount = it.getNameCount()
+                val packetCount = it.getPacketCount()
             }
         }
         assertEquals(result.totalElements, 4)
         assertEquals(result.content[0].name, "test1")
         assertEquals(result.content[0].latestId, "20170819-164847-7574333b")
         assertEquals(result.content[0].latestTime, now + 5)
-        assertEquals(result.content[0].nameCount, 2)
+        assertEquals(result.content[0].packetCount, 2)
     }
 
     @Test
@@ -70,13 +70,13 @@ class PacketRepositoryTest : RepositoryTest()
     {
         packetRepository.saveAll(packet)
 
-        val result = packetRepository.findIdCountDataByName("4", PageRequest.of(0, 10)).map {
+        val result = packetRepository.findPacketGroupSummaryByName("4", PageRequest.of(0, 10)).map {
             object
             {
                 val name = it.getName()
                 val latestTime = it.getLatestTime()
                 val latestId = it.getLatestId()
-                val nameCount = it.getNameCount()
+                val packetCount = it.getPacketCount()
             }
         }
 
@@ -84,7 +84,7 @@ class PacketRepositoryTest : RepositoryTest()
         assertEquals(result.content[0].name, "test4")
         assertEquals(result.content[0].latestId, "20170819-164847-7574113a")
         assertEquals(result.content[0].latestTime, now + 4)
-        assertEquals(result.content[0].nameCount, 2)
+        assertEquals(result.content[0].packetCount, 2)
     }
 
     @Test
