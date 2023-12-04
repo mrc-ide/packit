@@ -8,7 +8,6 @@ import {MemoryRouter} from "react-router-dom";
 import ProtectedRoute from "../../../app/components/routes/ProtectedRoute";
 import {LoginState} from "../../../types";
 import {mockLoginState} from "../../mocks";
-import {saveCurrentUser} from "../../../localStorageManager";
 
 const mockedUsedNavigate = jest.fn();
 

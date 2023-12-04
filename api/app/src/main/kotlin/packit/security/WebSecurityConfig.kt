@@ -15,9 +15,8 @@ import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import packit.AppConfig
-import packit.security.oauth2.BasicUserDetailsService
-import packit.security.oauth2.OAuth2SuccessHandler
-import packit.security.oauth2.OAuth2UserService
+import packit.exceptions.PackitExceptionHandler
+import packit.security.oauth2.*
 import packit.security.provider.JwtIssuer
 
 @EnableWebSecurity
@@ -27,6 +26,8 @@ class WebSecurityConfig(
     val customOauth2UserService: OAuth2UserService,
     val config: AppConfig,
     val jwtIssuer: JwtIssuer,
+    val browserRedirect: BrowserRedirect,
+    val exceptionHandler: PackitExceptionHandler
 )
 {
     @Bean
@@ -55,11 +56,12 @@ class WebSecurityConfig(
     {
         if (config.authEnableGithubLogin)
         {
-            this.oauth2Login { oauth2Login ->
+             this.oauth2Login { oauth2Login ->
                 oauth2Login
                     .userInfoEndpoint().userService(customOauth2UserService)
                     .and()
-                    .successHandler(OAuth2SuccessHandler(config, jwtIssuer))
+                    .successHandler(OAuth2SuccessHandler(browserRedirect, jwtIssuer))
+                    .failureHandler(OAuth2FailureHandler(browserRedirect, exceptionHandler))
             }
         }
         return this

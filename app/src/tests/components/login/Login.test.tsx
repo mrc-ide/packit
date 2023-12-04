@@ -1,13 +1,13 @@
 import React from "react";
-import {LoginState, UserLoginDetailProps} from "../../../../types";
+import {LoginState, UserLoginDetailProps} from "../../../types";
 import thunk from "redux-thunk";
 import configureStore from "redux-mock-store";
-import {mockLoginState} from "../../../mocks";
+import {mockLoginState} from "../../mocks";
 import {Store} from "@reduxjs/toolkit";
 import {fireEvent, render, screen} from "@testing-library/react";
 import {Provider} from "react-redux";
 import {MemoryRouter} from "react-router-dom";
-import {Login} from "../../../../app/components/login";
+import {Login} from "../../../app/components/login";
 
 describe("login", () => {
     beforeEach(() => {

@@ -2,7 +2,7 @@ import React from "react";
 import {useEffect} from "react";
 import {RootState, useAppDispatch} from "../../../types";
 import {Navigate, useLocation} from "react-router-dom";
-import {saveUser} from "../../store/login/login";
+import {saveUser, loginError} from "../../store/login/login";
 import {useSelector} from "react-redux";
 
 export default function Redirect() {
@@ -10,21 +10,25 @@ export default function Redirect() {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const token = searchParams.get("token");
-    const {isAuthenticated} = useSelector((state: RootState) => state.login);
+    const error = searchParams.get("error");
+    const {isAuthenticated, userError} = useSelector((state: RootState) => state.login);
 
     useEffect(() => {
         if (token) {
             dispatch(saveUser({token: token}));
         }
-    }, [token]);
+        if (error) {
+            dispatch(loginError(error));
+        }
+    }, [token, error]);
 
-    if (!isAuthenticated) {
+    if ((token && !isAuthenticated) || (error && !userError)) {
         return (<div><p>Redirecting...</p></div>);
     }
     return (
         <div>
             <p>Redirecting user</p>
-            <Navigate to="/"/>
+            <Navigate to={ error ? "/login" : "/"}/>
         </div>
     );
 }

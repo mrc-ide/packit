@@ -91,7 +91,7 @@ export default function Login() {
                         </Link>
                     </div>
                 }
-                {userError && <div className="invalid-feedback">{userError.error.detail}</div>}
+                {userError && <div className="invalid-feedback d-block">{userError.error.detail}</div>}
             </div>
         </div>
     );

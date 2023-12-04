@@ -7,7 +7,7 @@ import packit.controllers.LoginController
 import packit.model.LoginRequest
 import packit.model.LoginWithGithubToken
 import packit.service.BasicUserLoginService
-import packit.service.GithubUserLoginService
+import packit.service.GithubAPILoginService
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -36,7 +36,7 @@ class LoginControllerTest
     {
         val request = LoginWithGithubToken("fakeToken")
 
-        val mockLoginService = mock<GithubUserLoginService> {
+        val mockLoginService = mock<GithubAPILoginService> {
             on { authenticateAndIssueToken(request) } doReturn mapOf("token" to "packitToken")
         }
 

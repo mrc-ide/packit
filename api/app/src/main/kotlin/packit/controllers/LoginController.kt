@@ -5,14 +5,14 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import packit.model.LoginRequest
 import packit.model.LoginWithGithubToken
-import packit.service.GithubUserLoginService
+import packit.service.GithubAPILoginService
 import packit.service.LoginService
 
 @RestController
 @RequestMapping("/auth")
 class LoginController(
     val basicLoginService: LoginService,
-    val gitApiLoginService: GithubUserLoginService
+    val gitApiLoginService: GithubAPILoginService
 )
 {
     @PostMapping("/login")

@@ -14,7 +14,7 @@ Login through the web app uses standard Spring Security configuration to redirec
 GitHub.
 
 Authentication for API access uses a bespoke approach where the `LoginController` directly invokes the
-`GithubUserLoginService` class.
+`GithubAPILoginService` class.
 
 ### Auth configuration in Packit
 Configuration relevant to auth can be found in both `config.properties` (custom Packit config) and `application.properties`
@@ -77,9 +77,6 @@ These diagrams show the main security classes used for GitHub auth and how they 
 #### Github Login
 ![image](Packit%20Github%20login.drawio.png)
 
-
-NB Note that Browser login is not currently verifying org membership (TODO!)
-
 #### Authenticated requests 
 
 These classes are used to verify JWT tokens received from both GitHub and Basic authentication
@@ -94,7 +91,7 @@ The frontend (React) app stores the JWT token in local storage. If a token is no
 If the user chooses
 Login with GitHub, this navigates to `/oauth2/authorization/github` in the backend (SpringBoot) app. This triggers
 the Spring Security OAuth2 pipeline which manages the redirect to GitHub to confirm user credentials, which invokes
-the two configured pieces of custom code (`OAuth2UserService` and `OAuth2SuccessHandler`). 
+the configured custom code (`OAuth2UserService` and either `OAuth2SuccessHandler` or `OAuth2FailureHandler`). 
 
 When this sequence is complete,
 SpringBoot will redirect to the configured redirect location in the React front end, `/redirect` (handled by
@@ -107,7 +104,7 @@ back end, passing it as a Bearer token in the Authorization header.
 
 #### API GitHub Auth Sequence
 
-To login with GitHub over the API, a POST request is made to `/login/github` in Packit backend passing the user's GitHub
+To login with GitHub over the API, a POST request is made to `/auth/login/github` in Packit backend passing the user's GitHub
 personal access token in the request body's `githubtoken` field. 
 The GitApiLoginService class is invoked by the LoginController to:
 - verify the PAT with GitHub API
