@@ -91,13 +91,13 @@ class PacketRepositoryTest : RepositoryTest()
     {
         packetRepository.saveAll(packet)
 
-        val result = packetRepository.findIdCountDataByName("random", PageRequest.of(0, 10)).map {
+        val result = packetRepository.findPacketGroupSummaryByName("random", PageRequest.of(0, 10)).map {
             object
             {
                 val name = it.getName()
                 val latestTime = it.getLatestTime()
                 val latestId = it.getLatestId()
-                val nameCount = it.getNameCount()
+                val packetCount = it.getPacketCount()
             }
         }
 
