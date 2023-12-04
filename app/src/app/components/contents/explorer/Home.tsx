@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "../../Base/Button";
 import { Input } from "../../Base/Input";
-import { PacketList } from "./PacketList";
+import { PacketGroupSummaryList } from "./PacketGroupSummaryList";
 
 export const Home = () => {
   const [filterByName, setFilterByName] = useState("");
@@ -52,7 +52,7 @@ export const Home = () => {
               </Button>
             )}
           </div>
-          <PacketList
+          <PacketGroupSummaryList
             filterByName={filterByName}
             pageNumber={pageNumber}
             pageSize={PAGE_SIZE}

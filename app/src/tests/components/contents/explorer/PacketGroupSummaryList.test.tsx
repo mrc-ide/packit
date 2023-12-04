@@ -2,16 +2,16 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { rest } from "msw";
 import { MemoryRouter } from "react-router";
 import { SWRConfig } from "swr";
-import { PacketList } from "../../../../app/components/contents/explorer/PacketList";
+import { PacketGroupSummaryList } from "../../../../app/components/contents/explorer/PacketGroupSummaryList";
 import { server } from "../../../../msw/server";
-import { mockPacketGroups } from "../../../mocks";
+import { mockPacketGroupSummary } from "../../../mocks";
 
 describe("PacketList test", () => {
   const renderComponent = () =>
     render(
       <SWRConfig value={{ dedupingInterval: 0 }}>
         <MemoryRouter>
-          <PacketList filterByName="" pageNumber={0} pageSize={10} setPageNumber={jest.fn()} />
+          <PacketGroupSummaryList filterByName="" pageNumber={0} pageSize={10} setPageNumber={jest.fn()} />
         </MemoryRouter>
       </SWRConfig>
     );
@@ -20,7 +20,7 @@ describe("PacketList test", () => {
     renderComponent();
 
     await waitFor(() => {
-      mockPacketGroups.content.forEach((packet, index) => {
+      mockPacketGroupSummary.content.forEach((packet, index) => {
         expect(screen.getByRole("link", { name: packet.name })).toHaveAttribute("href", `/${packet.name}`);
         expect(screen.getAllByRole("link", { name: /latest/i })[index]).toHaveAttribute(
           "href",

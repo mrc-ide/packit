@@ -4,7 +4,7 @@ import {
   LoginState,
   PacketMetadata,
   PacketsState,
-  PageablePacketIdCountsDTO,
+  PageablePacketGroupSummary,
   PageablePackets,
   TimeMetadata
 } from "../types";
@@ -32,7 +32,7 @@ export const mockPacketResponse = {
   time: {} as TimeMetadata
 };
 
-export const mockPacketGroups: PageablePacketIdCountsDTO = {
+export const mockPacketGroupSummary: PageablePacketGroupSummary = {
   content: [
     {
       latestId: "20231130-082812-cd744153",

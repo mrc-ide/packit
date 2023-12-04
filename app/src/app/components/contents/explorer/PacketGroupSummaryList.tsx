@@ -2,19 +2,24 @@ import { Dispatch, SetStateAction } from "react";
 import useSWR from "swr";
 import appConfig from "../../../../config/appConfig";
 import { fetcher } from "../../../../lib/fetch";
-import { PageablePacketIdCountsDTO } from "../../../../types";
+import { PageablePacketGroupSummary } from "../../../../types";
 import { Skeleton } from "../../Base/Skeleton";
 import { Pagination } from "../common/Pagination";
-import { PacketListItem } from "./PacketListItem";
+import { PacketGroupSummaryListItem } from "./PacketGroupSummaryListItem";
 
-interface PacketListProps {
+interface PacketGroupSummaryListProps {
   filterByName: string;
   pageNumber: number;
   pageSize: number;
   setPageNumber: Dispatch<SetStateAction<number>>;
 }
-export const PacketList = ({ filterByName, pageNumber, pageSize, setPageNumber }: PacketListProps) => {
-  const { data, isLoading, error } = useSWR<PageablePacketIdCountsDTO>(
+export const PacketGroupSummaryList = ({
+  filterByName,
+  pageNumber,
+  pageSize,
+  setPageNumber
+}: PacketGroupSummaryListProps) => {
+  const { data, isLoading, error } = useSWR<PageablePacketGroupSummary>(
     `${appConfig.apiUrl()}/packets/packetGroupSummary?pageNumber=${pageNumber}&pageSize=${pageSize}\
     &filterName=${filterByName}`,
     (url: string) => fetcher({ url, authRequired: true })
@@ -50,7 +55,7 @@ export const PacketList = ({ filterByName, pageNumber, pageSize, setPageNumber }
         <div className="flex border rounded-md p-6 justify-center text-muted-foreground">No reports found</div>
       ) : (
         <ul className="flex flex-col border rounded-md">
-          {data?.content?.map((packet) => <PacketListItem key={packet.latestId} packet={packet} />)}
+          {data?.content?.map((packet) => <PacketGroupSummaryListItem key={packet.latestId} packet={packet} />)}
         </ul>
       )}
 

@@ -1,13 +1,13 @@
 import { ExternalLink, History, Hourglass } from "lucide-react";
 import { Link } from "react-router-dom";
-import { PacketIdCountsDTO } from "../../../../types";
+import { PacketGroupSummary } from "../../../../types";
 import { getTimeDifferenceToDisplay } from "./utils/getTimeDifferenceToDisplay";
 
-interface PacketListItemProps {
-  packet: PacketIdCountsDTO;
+interface PacketGroupSummaryListItemProps {
+  packet: PacketGroupSummary;
 }
-// TODO: update link paths -> 1. /{name} 2. /{name}/{id}
-export const PacketListItem = ({ packet }: PacketListItemProps) => {
+
+export const PacketGroupSummaryListItem = ({ packet }: PacketGroupSummaryListItemProps) => {
   const { unit, value } = getTimeDifferenceToDisplay(packet.latestTime);
 
   return (

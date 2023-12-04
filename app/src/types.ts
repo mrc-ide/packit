@@ -24,8 +24,8 @@ export interface PageablePackets {
   first: boolean;
 }
 
-export interface PageablePacketIdCountsDTO {
-  content: PacketIdCountsDTO[];
+export interface PageablePacketGroupSummary {
+  content: PacketGroupSummary[];
   totalPages: number;
   totalElements: number;
   last: boolean;
@@ -34,7 +34,7 @@ export interface PageablePacketIdCountsDTO {
   number: number;
   first: boolean;
 }
-export interface PacketIdCountsDTO {
+export interface PacketGroupSummary {
   name: string;
   nameCount: number;
   latestId: string;
