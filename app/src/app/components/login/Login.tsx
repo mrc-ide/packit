@@ -25,7 +25,6 @@ export default function Login() {
                 {
                     authConfig.enableGithubLogin &&
                     <div>
-                        {authConfig.enableFormLogin && <div className="divider m-2">OR</div>}
                         <Link
                             to={`${appConfig.apiUrl()}/oauth2/authorization/github`}
                             className="btn">
