@@ -34,8 +34,8 @@ export const Home = () => {
     <div className="flex justify-center">
       <div className="h-full flex flex-1 flex-col space-y-8 p-8 max-w-5xl">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Welcome to Reports</h2>
-          <p className="text-muted-foreground">Here&apos;s a list of all reports</p>
+          <h2 className="text-2xl font-bold tracking-tight">A place to view and manage packets</h2>
+          <p className="text-muted-foreground">Here&apos;s a list of packet groups</p>
         </div>
         <div className="space-y-4 flex flex-col">
           <div className="flex space-x-4">

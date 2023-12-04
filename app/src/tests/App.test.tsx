@@ -38,7 +38,7 @@ describe("app component", () => {
     renderElement(getStore({ isAuthenticated: true }));
 
     await waitFor(() => {
-      expect(screen.getByText(/welcome to reports/i)).toBeVisible();
+      expect(screen.getByText(/list of packet groups/i)).toBeVisible();
     });
   });
 
