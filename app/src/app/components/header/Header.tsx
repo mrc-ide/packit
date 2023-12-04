@@ -3,7 +3,8 @@ import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { RootState } from "../../../types";
 import { NavigationLink } from "../Base/NavigationLink";
-import HeaderDropDown from "./HeaderDropDown";
+import AccountHeaderDropdown from "./AccountHeaderDropdown";
+import { HeaderMenu } from "./HeaderMenu";
 import { LeftNav } from "./LeftNav";
 import { ThemeToggleButton } from "./ThemeToggleButton";
 
@@ -21,11 +22,16 @@ export default function Header() {
                 Packit
               </div>
             </NavLink>
-            {isAuthenticated && <LeftNav className="mx-6" />}
+            <div className="mx-3 flex items-center md:hidden">
+              <HeaderMenu />
+            </div>
+            {isAuthenticated && <LeftNav className="mx-6 hidden md:flex" />}
             <div className="ml-auto flex items-center space-x-4">
-              <NavigationLink to="/accessibility">Accessability</NavigationLink>
+              <NavigationLink to="/accessibility" className="mx-6 hidden md:flex">
+                Accessability
+              </NavigationLink>
               <ThemeToggleButton />
-              {isAuthenticated && <HeaderDropDown />}
+              {isAuthenticated && <AccountHeaderDropdown />}
             </div>
           </div>
         </div>

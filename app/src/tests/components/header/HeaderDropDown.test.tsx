@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
 import configureStore from "redux-mock-store";
 import thunk from "redux-thunk";
-import HeaderDropDown from "../../../app/components/header/HeaderDropDown";
+import AccountHeaderDropdown from "../../../app/components/header/AccountHeaderDropdown";
 import { LoginState } from "../../../types";
 import { mockLoginState } from "../../mocks";
 
@@ -30,7 +30,7 @@ describe("header drop down menu component", () => {
     return render(
       <Provider store={store}>
         <MemoryRouter>
-          <HeaderDropDown />
+          <AccountHeaderDropdown />
         </MemoryRouter>
       </Provider>
     );

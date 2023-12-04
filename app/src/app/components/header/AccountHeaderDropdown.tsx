@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger
 } from "../Base/DropdownMenu";
 
-export default function HeaderDropDown() {
+export default function AccountHeaderDropdown() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
