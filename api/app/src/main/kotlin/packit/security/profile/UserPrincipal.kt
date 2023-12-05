@@ -1,9 +1,7 @@
 package packit.security.profile
 
-import net.minidev.json.annotate.JsonIgnore
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.AuthorityUtils
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.oauth2.core.user.OAuth2User
 import packit.model.User
 
