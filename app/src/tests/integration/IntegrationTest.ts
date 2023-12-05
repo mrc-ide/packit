@@ -1,21 +1,5 @@
-import {createAsyncThunk} from "@reduxjs/toolkit";
-import {CurrentUser, CustomAsyncThunkOptions, UserLoginDetailProps} from "../../types";
-import {LoginMutationType} from "../../app/store/login/loginThunks";
-import {api} from "../../apiService";
-import store from "../../app/store/store";
-
-export const login = async (): Promise<CurrentUser> => {
-
-    const testUser = {email: "test.user@example.com", password: "password"};
-    const dispatch = jest.fn();
-    const fetchTokenThunk = createAsyncThunk<Record<string, any>, UserLoginDetailProps, CustomAsyncThunkOptions>(
-        LoginMutationType.GetToken,
-        async (prop, thunkAPI) => api(store)
-            .postAndReturn("/auth/login", prop, thunkAPI));
-    const fetchTokenAction = fetchTokenThunk(testUser);
-    await fetchTokenAction(dispatch, jest.fn(), jest.fn());
-    const result = dispatch.mock.calls[1][0];
-    expect(result["type"]).toBe("GetToken/fulfilled");
-
-    return result["payload"];
+// Long-lived JWT token for test backend configuration which we can use to authenticate in integration tests
+export const testUser = {
+    // eslint-disable-next-line max-len
+    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwYWNraXQiLCJpc3MiOiJwYWNraXQtYXBpIiwiZW1haWwiOiJudWxsIiwibmFtZSI6IkVtbWEgUnVzc2VsbCIsImRhdGV0aW1lIjoxNzAxNzY5Njk0LCJhdSI6WyJVU0VSIl0sImV4cCI6MjMzMjQ4OTY5NH0.916rRWeyyk4GAOwAOu0EgrgYd271GDib4pRbWAe_Gyk"
 };
