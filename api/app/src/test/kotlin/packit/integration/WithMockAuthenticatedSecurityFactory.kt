@@ -13,9 +13,8 @@ class WithMockAuthenticatedSecurityFactory : WithSecurityContextFactory<WithAuth
     {
         val principal = UserPrincipal(
             "test.user@example.com",
-            "password",
+            "Test User",
             mutableListOf(),
-            "",
             mutableMapOf()
         )
 

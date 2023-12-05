@@ -55,8 +55,8 @@ class GithubUserClientTest {
     {
         sut.authenticate(token)
         val user = sut.getUser()
-        assertEquals(user.name, "test name")
-        assertEquals(user.username, "test@login.com")
+        assertEquals(user.displayName, "test name")
+        assertEquals(user.name, "test@login.com")
     }
 
     @Test

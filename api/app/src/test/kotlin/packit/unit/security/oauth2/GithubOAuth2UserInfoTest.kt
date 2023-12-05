@@ -9,16 +9,14 @@ class GithubOAuth2UserInfoTest
     @Test
     fun `can get github profile attributes`()
     {
-        val email = "test@email.com"
-        val name = "testUser"
-        val id = "123"
+        val login = "testUser"
+        val name = "Test User"
 
-        val attributes = mutableMapOf<String, Any>("id" to id, "name" to name, "email" to email)
+        val attributes = mutableMapOf<String, Any>("login" to login, "name" to name)
 
         val userInfo = GithubOAuth2UserInfo(attributes)
 
-        assertEquals(userInfo.id(), id)
+        assertEquals(userInfo.userName(), login)
         assertEquals(userInfo.displayName(), name)
-        assertEquals(userInfo.email(), email)
     }
 }
