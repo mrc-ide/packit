@@ -26,7 +26,7 @@ class OAuth2UserService(private val githubUserClient: GithubUserClient) : Defaul
     {
         val githubInfo = GithubOAuth2UserInfo(oAuth2User.attributes)
 
-        if (githubInfo.username().isEmpty())
+        if (githubInfo.userName().isEmpty())
         {
             throw PackitException("Username not found from Github provider")
         }
@@ -34,12 +34,9 @@ class OAuth2UserService(private val githubUserClient: GithubUserClient) : Defaul
         // TODO check if user exists, if not, save user email to database
 
         val user = User(
-            1L,
-            githubInfo.email(),
-            "",
-            Role.USER,
-            githubInfo.name(),
-            oAuth2User.attributes
+            githubInfo.userName(),
+            githubInfo.displayName(),
+            listOf(Role.USER)
         )
 
         return UserPrincipal.create(user, oAuth2User.attributes)

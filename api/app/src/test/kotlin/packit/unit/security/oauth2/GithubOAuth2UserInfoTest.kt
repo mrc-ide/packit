@@ -18,7 +18,7 @@ class GithubOAuth2UserInfoTest
         val userInfo = GithubOAuth2UserInfo(attributes)
 
         assertEquals(userInfo.id(), id)
-        assertEquals(userInfo.name(), name)
+        assertEquals(userInfo.displayName(), name)
         assertEquals(userInfo.email(), email)
     }
 }

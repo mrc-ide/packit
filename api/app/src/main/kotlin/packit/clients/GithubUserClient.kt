@@ -28,12 +28,9 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
         val ghu = ghUser!!
 
         val user = User(
-            1L,
             ghu.login,
-            "",
-            Role.USER,
-            ghu.name ?: "",
-            mutableMapOf()
+            ghu.name,
+            listOf(Role.USER)
         )
         return UserPrincipal.create(user, mutableMapOf())
     }

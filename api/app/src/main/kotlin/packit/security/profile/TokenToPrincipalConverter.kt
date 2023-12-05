@@ -17,10 +17,9 @@ class TokenToPrincipalConverter : TokenToPrincipal
     override fun convert(jwt: DecodedJWT): UserPrincipal
     {
         return UserPrincipal(
-            jwt.getClaim("email").asString(),
-            "",
+            jwt.getClaim("userName").asString(),
+            jwt.getClaim("displayName").let{ if (it.isNull) null else it.asString() },
             extractAuthorities(jwt),
-            jwt.getClaim("name").asString(),
             mutableMapOf()
         )
     }
