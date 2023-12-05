@@ -1,7 +1,6 @@
 import mockAxios from "../../../../mockAxios";
 import {actions, LoginMutationType} from "../../../app/store/login/loginThunks";
 import { expectThunkActionWith } from "../testHelper";
-import {CurrentUser, UserLoginDetailProps} from "../../../types";
 import {saveCurrentUser} from "../../../localStorageManager";
 
 describe("login actions", () => {

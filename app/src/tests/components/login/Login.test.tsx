@@ -1,5 +1,5 @@
 import React from "react";
-import {LoginState, UserLoginDetailProps} from "../../../types";
+import {LoginState} from "../../../types";
 import thunk from "redux-thunk";
 import configureStore from "redux-mock-store";
 import {mockLoginState} from "../../mocks";
