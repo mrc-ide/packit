@@ -1,15 +1,16 @@
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 import { Packet } from "../../../../types";
 import { CheckSquare, X } from "lucide-react";
 import { Separator } from "../../Base/Separator";
 
-export const packetColumns: ColumnDef<Packet>[] = [
-  {
-    accessorKey: "id",
+const columnHelper = createColumnHelper<Packet>();
+
+export const packetColumns = [
+  columnHelper.accessor("id", {
     header: "Packet",
     cell: ({ getValue, row }) => {
-      const id = getValue() as string;
+      const id = getValue();
       const time = new Date(row.original.time * 1000); // convert from seconds to milliseconds
 
       return (
@@ -24,17 +25,15 @@ export const packetColumns: ColumnDef<Packet>[] = [
         </div>
       );
     }
-  },
-  {
-    accessorKey: "published",
+  }),
+  columnHelper.accessor("published", {
     header: "Published",
     cell: ({ getValue }) => (getValue() ? <CheckSquare size={20} className="ml-1" /> : <X size={20} className="ml-1" />)
-  },
-  {
-    accessorKey: "parameters",
+  }),
+  columnHelper.accessor("parameters", {
     header: "Parameters",
     cell: ({ getValue }) => {
-      const parameters = getValue() as Record<string, string>;
+      const parameters = getValue();
 
       return (
         <div className="flex space-x-1">
@@ -52,5 +51,5 @@ export const packetColumns: ColumnDef<Packet>[] = [
         </div>
       );
     }
-  }
+  })
 ];

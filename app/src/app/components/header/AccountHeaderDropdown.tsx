@@ -13,7 +13,6 @@ import {
   DropdownMenuTrigger
 } from "../Base/DropdownMenu";
 
-// TODO: get actual user details (from jwt most likely)
 export default function AccountHeaderDropdown() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();

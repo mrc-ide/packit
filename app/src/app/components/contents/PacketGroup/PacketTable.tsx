@@ -10,7 +10,7 @@ import { PageablePackets } from "../../../../types";
 import { ErrorComponent } from "../common/ErrorComponent";
 import { Skeleton } from "../../Base/Skeleton";
 
-// TODO: make table more feature rich (sorting, filter, hiding columns, etc.)
+// TODO: make table more feature rich (sorting, filter, etc). May need to fetch all data then and let tanstack handle
 export const PacketTable = () => {
   const { packetName } = useParams();
   const [pageNumber, setPageNumber] = useState(0);

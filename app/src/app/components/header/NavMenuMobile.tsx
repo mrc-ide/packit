@@ -6,7 +6,7 @@ import { LeftNavItems } from "./LeftNav";
 
 export const NavMenuMobile = () => (
   <DropdownMenu>
-    <DropdownMenuTrigger>
+    <DropdownMenuTrigger asChild>
       <Button variant="ghost" size="icon">
         <Menu />
       </Button>

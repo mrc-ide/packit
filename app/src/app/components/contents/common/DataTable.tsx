@@ -1,12 +1,12 @@
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../Base/Table";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+interface DataTableProps<TData> {
+  columns: ColumnDef<TData, any>[];
   data: TData[];
 }
 
-export const DataTable = <TData, TValue>({ data, columns }: DataTableProps<TData, TValue>) => {
+export const DataTable = <TData,>({ data, columns }: DataTableProps<TData>) => {
   const table = useReactTable({ columns, data, getCoreRowModel: getCoreRowModel() });
   const rows = table.getRowModel().rows;
 
