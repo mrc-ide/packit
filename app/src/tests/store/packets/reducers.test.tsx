@@ -18,6 +18,7 @@ describe("packetsSlice reducer", () => {
                     param1: "value1",
                     param2: "value2",
                 },
+                time: 1701694312,
             },
             {
                 id: "2",
@@ -29,6 +30,7 @@ describe("packetsSlice reducer", () => {
                     param2: "value2",
                     param3: "value3",
                 },
+                time: 1701694312
             }];
 
         const pageablePackets = {content: packets} as PageablePackets;

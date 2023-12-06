@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import { NotFound } from "../NotFound";
 import { PacketRunner, ProjectDocumentation, WorkflowRunner } from "../contents";
-import { PacketTable } from "../contents/PacketTable";
+import { PacketGroup } from "../contents/PacketGroup";
 import { Accessibility } from "../contents/accessibility";
 import { ChangeLogs } from "../contents/changelogs";
 import { Download } from "../contents/download";
@@ -28,8 +28,7 @@ export function Router() {
           <Route path="runner" element={<PacketRunner />} />
           <Route path="run-workflow" element={<WorkflowRunner />} />
           <Route path="documentation" element={<ProjectDocumentation />} />
-          <Route path="/:packetName" element={<PacketTable />} />
-          {/* // TODO: update show only when packet/:version is present */}
+          <Route path="/:packetName" element={<PacketGroup />} />
           <Route element={<Sidebar />} path="/:packetName/:packetId">
             <Route path="/:packetName/:packetId" element={<PacketDetails />} />
             <Route path="/:packetName/:packetId/metadata" element={<Metadata />} />

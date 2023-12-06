@@ -47,6 +47,7 @@ export interface Packet {
   displayName: string;
   published: boolean;
   parameters: Record<string, string>;
+  time: number;
 }
 
 export interface Header {

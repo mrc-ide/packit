@@ -29,7 +29,7 @@ export const mockPacketResponse = {
   custom: {} as Custom,
   files: [{ hash: "sha:234:50873fVFDSVSF4", path: "data.rds", size: 97 }],
   published: false,
-  time: {} as TimeMetadata
+  time: 1701694312
 };
 
 export const mockPacketGroupSummary: PageablePacketGroupSummary = {
