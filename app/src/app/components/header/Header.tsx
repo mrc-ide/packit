@@ -4,9 +4,10 @@ import { NavLink } from "react-router-dom";
 import { RootState } from "../../../types";
 import { NavigationLink } from "../Base/NavigationLink";
 import AccountHeaderDropdown from "./AccountHeaderDropdown";
-import { HeaderMenu } from "./HeaderMenu";
+
 import { LeftNav } from "./LeftNav";
 import { ThemeToggleButton } from "./ThemeToggleButton";
+import { NavMenuMobile } from "./NavMenuMobile";
 
 export default function Header() {
   const { isAuthenticated } = useSelector((state: RootState) => state.login);
@@ -22,13 +23,17 @@ export default function Header() {
                 Packit
               </div>
             </NavLink>
-            <div className="mx-3 flex items-center md:hidden">
-              <HeaderMenu />
-            </div>
-            {isAuthenticated && <LeftNav className="mx-6 hidden md:flex" />}
+            {isAuthenticated && (
+              <>
+                <div className="mx-3 flex items-center md:hidden">
+                  <NavMenuMobile />
+                </div>
+                <LeftNav className="mx-6 hidden md:flex" />
+              </>
+            )}
             <div className="ml-auto flex items-center space-x-4">
               <NavigationLink to="/accessibility" className="mx-6 hidden md:flex">
-                Accessability
+                Accessibility
               </NavigationLink>
               <ThemeToggleButton />
               {isAuthenticated && <AccountHeaderDropdown />}
