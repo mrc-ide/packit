@@ -36,7 +36,7 @@ export interface PageablePacketGroupSummary {
 }
 export interface PacketGroupSummary {
   name: string;
-  nameCount: number;
+  packetCount: number;
   latestId: string;
   latestTime: number;
 }

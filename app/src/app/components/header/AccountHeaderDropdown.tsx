@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../types";
 import { logout } from "../../store/login/login";
-import { Avatar, AvatarFallback, AvatarImage } from "../Base/Avatar";
+import { Avatar, AvatarFallback } from "../Base/Avatar";
 import { Button } from "../Base/Button";
 import {
   DropdownMenu,
@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger
 } from "../Base/DropdownMenu";
 
+// TODO: get actual user details (from jwt most likely)
 export default function AccountHeaderDropdown() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -27,7 +28,6 @@ export default function AccountHeaderDropdown() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded full">
           <Avatar className="h-8 w-8">
-            <AvatarImage src="/img/avatar.webp" alt="avatar" />
             <AvatarFallback>LA</AvatarFallback>
           </Avatar>
         </Button>

@@ -18,15 +18,15 @@ export const PacketGroupSummaryListItem = ({ packet }: PacketGroupSummaryListIte
       <div className="flex space-x-3 items-center">
         <Link
           to={`/${packet.name}/${packet.latestId}`}
-          className="text-muted-foreground text-xs flex items-center gap-[1px] 
-hover:text-blue-500"
+          className=" text-blue-500 text-xs flex items-center gap-[1px] 
+          hover:underline decoration-blue-500"
         >
           <ExternalLink size={16} />
           Latest
         </Link>
         <div className="text-muted-foreground text-xs flex items-center gap-[1px]">
           <History size={16} />
-          {packet.nameCount} Versions
+          {packet.packetCount} Packets
         </div>
         <div className="text-muted-foreground text-xs flex items-center gap-[1px]">
           <Hourglass size={16} />
