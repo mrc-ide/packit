@@ -36,7 +36,7 @@ export const packetColumns = [
       const parameters = getValue();
 
       return (
-        <div className="flex space-x-1">
+        <div className="flex flex-wrap gap-0.5">
           {Object.keys(parameters)?.length === 0 ? (
             <div className="italic text-xs">None</div>
           ) : (

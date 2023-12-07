@@ -11,7 +11,7 @@ export const PacketGroup = () => {
         <div className="flex items-center justify-between space-y-2">
           <div>
             <h2 className="text-2xl font-bold tracking-tight">{capitalizeFirstLetter(packetName ?? "")}</h2>
-            <p className="text-muted-foreground">Here&apos;s a list of all packets for the packet group</p>
+            <p className="text-muted-foreground">Here&apos;s a list of all packets for the {packetName} packet group</p>
           </div>
         </div>
         <PacketTable />
