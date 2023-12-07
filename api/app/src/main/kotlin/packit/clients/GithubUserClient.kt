@@ -37,6 +37,7 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
         return UserPrincipal.create(user, mutableMapOf())
     }
 
+    @Throws(PackitAuthenticationException::class)
     fun checkGithubMembership()
     {
         checkAuthenticated()
@@ -45,7 +46,7 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
         var userAllowed = userOrg != null
 
         val allowedTeam = config.authGithubAPITeam
-        if (userAllowed && !allowedTeam.isEmpty())
+        if (userAllowed && allowedTeam.isNotEmpty())
         {
             // We've confirmed user is in org, and required team is not empty, so we need to check team membership too
             val team = userOrg!!.teams[allowedTeam] ?: throw PackitAuthenticationException(
