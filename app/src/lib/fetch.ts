@@ -7,6 +7,7 @@ export interface Fetcher {
   json?: boolean;
   authRequired?: boolean;
 }
+
 export const fetcher = async ({ url, method = "GET", authRequired = false, json = true, body }: Fetcher) => {
   const token = authRequired ? getBearerToken() : null;
   const res = await fetch(url, {

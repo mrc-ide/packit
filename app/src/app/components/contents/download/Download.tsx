@@ -7,6 +7,8 @@ import { bytesToSize } from "../../../../helpers";
 import { FileMetadata, RootState, useAppDispatch } from "../../../../types";
 import { actions } from "../../../store/packets/packetThunks";
 import { PacketHeader } from "../packets";
+import {Button} from "../../Base/Button";
+import {download} from "../../../../lib/download";
 
 export default function Download() {
   const { packet } = useSelector((state: RootState) => state.packets);
@@ -21,13 +23,25 @@ export default function Download() {
     }
   }, [packetId]);
 
-  const download = (file: FileMetadata) => {
-    return `${appConfig.apiUrl()}/packets/file/${file.hash}?filename=${file.path}`;
+  const downloadFile = (file: FileMetadata) => {
+    //return `${appConfig.apiUrl()}/packets/file/${file.hash}?filename=${file.path}`;
+    const url = `${appConfig.apiUrl()}/packets/file/${file.hash}?filename=${file.path}`;
+    download(url, file.path);
   };
 
   if (Object.keys(packet).length === 0) {
     return <div>Loading...</div>;
   }
+
+  /*
+  <!--<Link className="card-text" to={download(data)}>
+    <span className="p-2">{data.path}</span>
+    <span className="sidebar-icon">
+                    <DownloadCloud />
+                  </span>
+  </Link>-->
+  */
+
 
   return (
     <div className="content packet-details">
@@ -38,12 +52,7 @@ export default function Download() {
             <div className="card custom-card">
               <div className="card-header">Download {data.path}</div>
               <div className="card-body">
-                <Link className="card-text" to={download(data)}>
-                  <span className="p-2">{data.path}</span>
-                  <span className="sidebar-icon">
-                    <DownloadCloud />
-                  </span>
-                </Link>
+                <Button onClick={() => downloadFile(data)}>{data.path}</Button>
                 <span className="small p-2 text-muted">({bytesToSize(data.size)})</span>
               </div>
             </div>
