@@ -5,8 +5,7 @@ import {
   PacketMetadata,
   PacketsState,
   PageablePacketGroupSummary,
-  PageablePackets,
-  TimeMetadata
+  PageablePackets
 } from "../types";
 
 export const mockPacketsState = (props: Partial<PacketsState> = {}): PacketsState => {
@@ -96,6 +95,74 @@ export const mockPacketGroupSummary: PageablePacketGroupSummary = {
   size: 50,
   number: 0,
   numberOfElements: 9
+};
+
+export const mockPacketGroupResponse: PageablePackets = {
+  content: [
+    {
+      id: "20231205-073715-6635e044",
+      name: "parameters",
+      displayName: "parameters",
+      parameters: {
+        a: 3,
+        b: 10,
+        c: 100000
+      },
+      published: false,
+      time: 1701761844
+    },
+    {
+      id: "20231205-073527-99db1138",
+      name: "parameters",
+      displayName: "parameters",
+      parameters: {},
+      published: false,
+      time: 1701761734
+    },
+    {
+      id: "20230427-150722-0ebd6545",
+      name: "parameters",
+      displayName: "parameters",
+      parameters: {
+        c: 30,
+        b: 2,
+        a: 10
+      },
+      published: true,
+      time: 1701694312
+    },
+    {
+      id: "20231127-133335-c8ced0bf",
+      name: "parameters",
+      displayName: "parameters",
+      parameters: {
+        a: 30,
+        c: 90,
+        b: 22
+      },
+      published: false,
+      time: 1701694312
+    },
+    {
+      id: "20231127-133612-c69df160",
+      name: "parameters",
+      displayName: "parameters",
+      parameters: {
+        b: 333,
+        c: 11,
+        a: 1
+      },
+      published: false,
+      time: 1701694312
+    }
+  ],
+  totalPages: 1,
+  totalElements: 5,
+  last: true,
+  first: true,
+  size: 50,
+  number: 0,
+  numberOfElements: 5
 };
 
 export const mockLoginState = (props: Partial<LoginState> = {}): LoginState => {

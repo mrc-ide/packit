@@ -13,8 +13,7 @@ export interface RejectedErrorValue {
   rejectValue: Error;
 }
 
-export interface PageablePackets {
-  content: Packet[];
+export interface Pageable {
   totalPages: number;
   totalElements: number;
   last: boolean;
@@ -23,16 +22,12 @@ export interface PageablePackets {
   number: number;
   first: boolean;
 }
+export interface PageablePackets extends Pageable {
+  content: Packet[];
+}
 
-export interface PageablePacketGroupSummary {
+export interface PageablePacketGroupSummary extends Pageable {
   content: PacketGroupSummary[];
-  totalPages: number;
-  totalElements: number;
-  last: boolean;
-  numberOfElements: number;
-  size: number;
-  number: number;
-  first: boolean;
 }
 export interface PacketGroupSummary {
   name: string;
@@ -46,7 +41,7 @@ export interface Packet {
   name: string;
   displayName: string;
   published: boolean;
-  parameters: Record<string, string>;
+  parameters: Record<string, string | number>;
   time: number;
 }
 
