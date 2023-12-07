@@ -10,7 +10,7 @@ export const download = async (url: string, filename: string) => {
     })
         .then(res => res.blob())
         .catch(() => {
-            throw new Error("API error");
+            throw new Error("Download error");
         });
 
     if (blob) {
