@@ -1,5 +1,5 @@
 import { DownloadCloud } from "lucide-react";
-import { useEffect } from "react";
+import {useEffect, useState} from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import appConfig from "../../../../config/appConfig";
@@ -12,10 +12,12 @@ import {download} from "../../../../lib/download";
 
 export default function Download() {
   const { packet } = useSelector((state: RootState) => state.packets);
+  const { isAuthenticated } = useSelector((state: RootState) => state.login);
 
   const dispatch = useAppDispatch();
 
   const { packetId } = useParams();
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (packetId) {
@@ -25,7 +27,13 @@ export default function Download() {
 
   const downloadFile = (file: FileMetadata) => {
     const url = `${appConfig.apiUrl()}/packets/file/${file.hash}?filename=${file.path}`;
-    download(url, file.path);
+    download(url, file.path, isAuthenticated)
+        .catch(e =>  {
+          console.log("ERROR")
+          console.log(JSON.stringify(e.message))
+          setError(e.message);
+        })
+        .then(() => setError(""));
   };
 
   if (Object.keys(packet).length === 0) {
@@ -48,6 +56,7 @@ export default function Download() {
                   </span>
                 </Button>
                 <span className="small p-2 text-muted">({bytesToSize(data.size)})</span>
+                <div className="text-red-500">{error}</div>
               </div>
             </div>
           </li>

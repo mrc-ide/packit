@@ -1,12 +1,12 @@
 import {getBearerToken} from "./getBearerToken";
 
-export const download = async (url: string, filename: string) => {
+export const download = async (url: string, filename: string, authRequired: boolean) => {
+    throw new Error("Download errorx");
     const token = getBearerToken();
+    const headers = authRequired ? { Authorization: `Bearer ${token}` } : undefined;
     const blob = await fetch(url, {
         method: "GET",
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
+        headers,
     })
         .then(res => res.blob())
         .catch(() => {
