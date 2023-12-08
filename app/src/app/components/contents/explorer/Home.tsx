@@ -5,8 +5,8 @@ import { fetcher } from "../../../../lib/fetch";
 import { PageablePacketIdCountsDTO } from "../../../../types";
 
 export const Home = () => {
-  const [pageNumber, setPageNumber] = useState(0);
-  const [filterByName, setFilterByName] = useState("");
+  const [pageNumber] = useState(0);
+  const [filterByName] = useState("");
 
   const { data, isLoading, error } = useSWR<PageablePacketIdCountsDTO>(
     `${appConfig.apiUrl()}/packets/packetGroupSummary?pageNumber=${pageNumber}&pageSize=10&filterName=${filterByName}`,
