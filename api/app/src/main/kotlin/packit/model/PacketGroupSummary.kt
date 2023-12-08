@@ -8,4 +8,3 @@ interface PacketGroupSummary
     fun getLatestId(): String
     fun getLatestTime(): Long
 }
-

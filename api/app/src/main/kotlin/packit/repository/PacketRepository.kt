@@ -39,4 +39,3 @@ interface PacketRepository : JpaRepository<Packet, String>
     )
     fun findPacketGroupSummaryByName(filterName: String, pageable: Pageable): Page<PacketGroupSummary>
 }
-

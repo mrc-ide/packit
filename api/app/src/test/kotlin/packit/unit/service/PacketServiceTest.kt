@@ -106,7 +106,6 @@ class PacketServiceTest
         assertEquals(result, oldPackets)
     }
 
-
     @Test
     fun `test getPacketIdCountDataByName`()
     {

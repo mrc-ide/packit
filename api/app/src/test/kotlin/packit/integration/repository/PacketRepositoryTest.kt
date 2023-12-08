@@ -9,12 +9,10 @@ import packit.repository.PacketRepository
 import java.time.Instant
 import kotlin.test.assertEquals
 
-
 class PacketRepositoryTest : RepositoryTest()
 {
     @Autowired
     lateinit var packetRepository: PacketRepository
-
 
     val now = Instant.now().epochSecond
 
@@ -25,8 +23,7 @@ class PacketRepositoryTest : RepositoryTest()
         Packet("20170819-164847-7574113a", "test4", "test name4", mapOf(), true, now + 4),
         Packet("20170819-164847-7574983b", "test4", "test name4", mapOf(), true, now + 2),
         Packet("20170819-164847-7574333b", "test1", "test name1", mapOf(), true, now + 5),
-
-        )
+    )
 
     @BeforeEach
     fun setup()
