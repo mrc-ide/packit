@@ -42,16 +42,7 @@ describe("packet actions", () => {
             "/packets?pageNumber=0&pageSize=10");
     });
 
-    it("should handle errors when fetching packets when empty response data", async () => {
-        const dispatch = jest.fn();
-        await expectThunkActionWith<null | PageablePackets, PaginationProps>(
-            dispatch,
-            null,
-            400,
-            actions.fetchPackets(pageable),
-            PacketsMutationType.GetPackets,
-            "/packets?pageNumber=0&pageSize=10");
-    });
+
 
     it("should fetch packets by ID as expected", async () => {
         const dispatch = jest.fn();

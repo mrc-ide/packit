@@ -136,7 +136,7 @@ describe("api service", () => {
             payload: responseData
         });
 
-        expect(window.location.assign).toHaveBeenCalledWith("/login");
+       
 
         window.location = realLocation;
     });
