@@ -33,8 +33,7 @@ interface PacketRepository : JpaRepository<Packet, String>
                 ) as RankedData 
                 WHERE row_num = 1 AND name ILIKE %?1% 
                 ORDER BY TIME DESC
-            """,
-
+         """,
         countQuery = "SELECT count(distinct name) from packet WHERE name ILIKE  %?1%",
         nativeQuery = true
     )

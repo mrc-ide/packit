@@ -5,9 +5,7 @@ interface PacketGroupSummary
 {
     fun getName(): String
     fun getPacketCount(): Int
-
     fun getLatestId(): String
     fun getLatestTime(): Long
-
 }
 
