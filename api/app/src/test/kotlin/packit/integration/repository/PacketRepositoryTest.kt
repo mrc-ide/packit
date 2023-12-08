@@ -9,12 +9,10 @@ import packit.repository.PacketRepository
 import java.time.Instant
 import kotlin.test.assertEquals
 
-
 class PacketRepositoryTest : RepositoryTest()
 {
     @Autowired
     lateinit var packetRepository: PacketRepository
-
 
     val now = Instant.now().epochSecond
 

@@ -77,7 +77,8 @@ class PacketServiceTest
             override fun getPacketCount(): Int = 10
             override fun getLatestId(): String = "20180818-164847-7574883b"
             override fun getLatestTime(): Long = 1690902034
-        })
+        }
+    )
 
     private val responseByte = "htmlContent".toByteArray() to HttpHeaders.EMPTY
     private val mockPacketIdCountsDTO = PageImpl(packetsIdCountsDTO)
@@ -104,7 +105,6 @@ class PacketServiceTest
 
         assertEquals(result, oldPackets)
     }
-
 
     @Test
     fun `test getPacketIdCountDataByName`()
@@ -135,8 +135,6 @@ class PacketServiceTest
 
         val result = sut.getChecksum()
 
-        // outpack:::hash_data(paste(c("20180203-120000-abdefg56",
-        // "20180403-120000-a5bde567"), collapse = ""), "sha256)
         val expected =
             "sha256:723cf37faa446c3d4cf11659b5e4eb7a8ad93d847c344846962a9ddefa37519e"
         assertEquals(result, expected)

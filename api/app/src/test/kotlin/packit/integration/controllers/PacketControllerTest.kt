@@ -9,7 +9,6 @@ import packit.integration.WithAuthenticatedUser
 
 class PacketControllerTest : IntegrationTest()
 {
-
     @Test
     @WithAuthenticatedUser
     fun `can get pageable packets`()
@@ -19,10 +18,8 @@ class PacketControllerTest : IntegrationTest()
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
-
         assertSuccess(result)
     }
-
 
     @Test
     fun `does not get pageable packets when not logged in`()
