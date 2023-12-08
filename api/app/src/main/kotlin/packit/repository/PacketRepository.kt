@@ -16,24 +16,27 @@ interface PacketRepository : JpaRepository<Packet, String>
     fun findTopByOrderByTimeDesc(): Packet?
 
     @Query(
-            value = "SELECT " +
-                    "    name as name, " +
-                    "    time as latestTime, " +
-                    "    id AS latestId, " +
-                    "    id_count as packetCount  " +
-                    "FROM ( " +
-                    "    SELECT " +
-                    "        name, " +
-                    "        time, " +
-                    "        id,     " +
-                    "        ROW_NUMBER() OVER (PARTITION BY name ORDER BY time DESC) AS row_num, " +
-                    "        COUNT(id) OVER (PARTITION BY name) AS id_count " +
-                    "    FROM packet " +
-                    ") as RankedData " +
-                    "WHERE row_num = 1 AND name ILIKE %?1% " +
-                    "ORDER BY TIME DESC",
-            countQuery = "SELECT count(distinct name) from Packet",
-            nativeQuery = true
+        value = """
+                SELECT 
+                    name as name, 
+                    time as latestTime, 
+                    id AS latestId, 
+                    id_count as packetCount  
+                FROM ( 
+                    SELECT 
+                        name, 
+                        time, 
+                        id,     
+                        ROW_NUMBER() OVER (PARTITION BY name ORDER BY time DESC) AS row_num, 
+                        COUNT(id) OVER (PARTITION BY name) AS id_count 
+                    FROM packet 
+                ) as RankedData 
+                WHERE row_num = 1 AND name ILIKE %?1% 
+                ORDER BY TIME DESC
+            """,
+
+        countQuery = "SELECT count(distinct name) from packet WHERE name ILIKE  %?1%",
+        nativeQuery = true
     )
     fun findPacketGroupSummaryByName(filterName: String, pageable: Pageable): Page<PacketGroupSummary>
 }
