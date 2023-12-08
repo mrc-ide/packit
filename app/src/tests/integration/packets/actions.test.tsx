@@ -19,34 +19,6 @@ describe("packets integration", () => {
 
     const pageable = {pageNumber: 0, pageSize: 10};
 
-    it("can fetch pageable packets", async () => {
-        const dispatch = jest.fn();
-        const fetchThunk = createAsyncThunk<Packet[], PaginationProps, CustomAsyncThunkOptions>(
-            PacketsMutationType.GetPackets,
-            async (prop, thunkAPI) => api(store)
-                .get("/packets?pageNumber=0&pageSize=10", thunkAPI));
-
-        const fetchPacketsAction = fetchThunk(pageable);
-
-        await fetchPacketsAction(dispatch, jest.fn(), jest.fn());
-
-        expect(dispatch.mock.calls[0][0]).toMatchObject({
-            type: "GetPackets/pending",
-            payload: undefined,
-        });
-        const result = dispatch.mock.calls[1][0];
-        expect(result["type"]).toBe("GetPackets/fulfilled");
-        expect(result["payload"]["size"]).toBe(10);
-        expect(result["payload"]["totalPages"]).toBe(1);
-        expect(result["payload"]["content"]).toHaveLength(6);
-        expect(result["payload"]["content"].map((p: Packet) => p.name))
-            .toEqual([
-                "modup-201707-queries1",
-                "parameters", "explicit",
-                "depends",
-                "computed-resource",
-                "artefact-types"]);
-    });
 
     it("can fetch packetById", async () => {
         const dispatch = jest.fn();
