@@ -4,6 +4,7 @@ import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import packit.exceptions.PackitException
 import packit.model.Packet
 import packit.model.PacketGroupSummary
 import packit.model.PacketMetadata
@@ -65,6 +66,7 @@ class PacketController(private val packetService: PacketService)
         @RequestParam filename: String,
     ): ResponseEntity<ByteArrayResource>
     {
+        throw PackitException("emptyGitToken")
         val response = packetService.getFileByHash(hash, inline, filename)
 
         return ResponseEntity
