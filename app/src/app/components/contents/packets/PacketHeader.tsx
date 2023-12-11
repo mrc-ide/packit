@@ -1,16 +1,15 @@
-import { PacketMetadata } from "../../../../types";
+import { capitalizeFirstLetter } from "../../../../lib/string/capitalizeFirstLetter";
 
 interface PacketHeaderProps {
-  packet: PacketMetadata;
+  packetName: string;
+  packetId: string;
 }
 
-export default function PacketHeader({ packet }: PacketHeaderProps) {
+export default function PacketHeader({ packetName, packetId }: PacketHeaderProps) {
   return (
-    <>
-      <div className="pb-3 d-flex flex-column align-items-start">
-        <span className="p-2 pb-0 h1">{packet.custom?.orderly.description.display || packet.name}</span>
-        <span className="p-2 pt-0 small">{packet.id}</span>
-      </div>
-    </>
+    <div>
+      <h2 className="text-2xl font-bold tracking-tight">{capitalizeFirstLetter(packetName)}</h2>
+      <p className="text-muted-foreground">{packetId}</p>
+    </div>
   );
 }

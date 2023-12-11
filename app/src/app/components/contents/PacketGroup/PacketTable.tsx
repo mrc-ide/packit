@@ -1,14 +1,11 @@
-import { useParams } from "react-router-dom";
-import appConfig from "../../../../config/appConfig";
-import { fetcher } from "../../../../lib/fetch";
-import { DataTable } from "../common/DataTable";
-import { Pagination } from "../common/Pagination";
-import { packetColumns } from "./packetColumns";
 import { useState } from "react";
-import useSWR from "swr";
-import { PageablePackets } from "../../../../types";
-import { ErrorComponent } from "../common/ErrorComponent";
+import { useParams } from "react-router-dom";
 import { Skeleton } from "../../Base/Skeleton";
+import { DataTable } from "../common/DataTable";
+import { ErrorComponent } from "../common/ErrorComponent";
+import { Pagination } from "../common/Pagination";
+import { useGetPacketGroups } from "./hooks/useGetPacketGroups";
+import { packetColumns } from "./packetColumns";
 
 // TODO: make table more feature rich (sorting, filter, etc). May need to fetch all data then and let tanstack handle
 export const PacketTable = () => {
@@ -16,10 +13,7 @@ export const PacketTable = () => {
   const [pageNumber, setPageNumber] = useState(0);
   const PAGE_SIZE = 50;
 
-  const { data, isLoading, error } = useSWR<PageablePackets>(
-    `${appConfig.apiUrl()}/packets/${packetName}?pageNumber=${pageNumber}&pageSize=${PAGE_SIZE}`,
-    (url: string) => fetcher({ url, authRequired: true })
-  );
+  const { packetGroups, error, isLoading } = useGetPacketGroups(packetName, pageNumber, PAGE_SIZE);
 
   if (error) return <ErrorComponent message="Error fetching packets" error={error} />;
 
@@ -41,15 +35,15 @@ export const PacketTable = () => {
 
   return (
     <>
-      {data && (
+      {packetGroups && (
         <div className="space-y-4">
-          <DataTable columns={packetColumns} data={data.content} />
+          <DataTable columns={packetColumns} data={packetGroups.content} />
           <div className="flex items-center justify-center">
             <Pagination
               currentPageNumber={pageNumber}
-              totalPages={data.totalPages}
-              isFirstPage={data.first}
-              isLastPage={data.last}
+              totalPages={packetGroups.totalPages}
+              isFirstPage={packetGroups.first}
+              isLastPage={packetGroups.last}
               setPageNumber={setPageNumber}
             />
           </div>

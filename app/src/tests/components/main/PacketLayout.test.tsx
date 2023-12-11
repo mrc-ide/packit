@@ -5,7 +5,7 @@ import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
 import configureStore from "redux-mock-store";
 import thunk from "redux-thunk";
-import { Sidebar } from "../../../app/components/main";
+import { PacketLayout } from "../../../app/components/main";
 import { Packet, PacketsState, PageablePackets, SideBarItems } from "../../../types";
 import { mockPacketResponse, mockPacketsState } from "../../mocks";
 
@@ -41,7 +41,7 @@ const expectSidebarItemIsSelected = async (itemIndex: SideBarItems, store: Store
     <Provider store={store}>
       {" "}
       <MemoryRouter>
-        <Sidebar />
+        <PacketLayout />
       </MemoryRouter>
     </Provider>
   );
