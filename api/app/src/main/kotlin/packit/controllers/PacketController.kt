@@ -10,6 +10,7 @@ import packit.model.PacketGroupSummary
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
 import packit.service.PacketService
+import kotlin.random.Random
 
 @RestController
 @RequestMapping("/packets")
@@ -66,7 +67,6 @@ class PacketController(private val packetService: PacketService)
         @RequestParam filename: String,
     ): ResponseEntity<ByteArrayResource>
     {
-        throw PackitException("emptyGitToken")
         val response = packetService.getFileByHash(hash, inline, filename)
 
         return ResponseEntity

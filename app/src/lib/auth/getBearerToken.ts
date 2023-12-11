@@ -1,4 +1,4 @@
-import { getCurrentUser } from "../localStorageManager";
+import { getCurrentUser } from "../../localStorageManager";
 
 export const getBearerToken = () => {
   const token = getCurrentUser()?.token;

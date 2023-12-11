@@ -1,13 +1,8 @@
-import {getBearerToken} from "./getBearerToken";
+import {getBearerToken} from "./auth/getBearerToken";
+import {getAuthHeader} from "./auth/getAuthHeader";
 
 export const download = async (url: string, filename: string, authRequired = true) => {
-    const token = getBearerToken();
-
-
-    // TODO: add lib method to add auth header if auth enabled (rename authRequired param and
-    //  don't do check in component)
-    // TODO: handle res error in lib method
-    const headers = authRequired ? { Authorization: `Bearer ${token}` } : undefined;
+    const headers = authRequired ? getAuthHeader(): undefined;
     const res = await fetch(url, {
         method: "GET",
         headers,
@@ -15,7 +10,8 @@ export const download = async (url: string, filename: string, authRequired = tru
 
     if (!res.ok) {
         const json = await res.json();
-        throw new Error(json.error?.detail || `Error downloading ${filename}`);
+        const msg = json.error?.detail ? `Error: ${json.error.detail}` : `Error downloading ${filename}`;
+        throw new Error(msg);
     }
 
     const blob = await res.blob();

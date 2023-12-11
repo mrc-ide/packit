@@ -9,7 +9,7 @@ beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-jest.mock("./lib/getBearerToken", () => ({
+jest.mock("./lib/auth/getBearerToken", () => ({
   getBearerToken: jest.fn(() => "fake-token")
 }));
 
