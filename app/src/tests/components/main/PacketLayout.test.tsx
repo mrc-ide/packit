@@ -1,64 +1,61 @@
-import { Store } from "@reduxjs/toolkit";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Provider } from "react-redux";
-import { MemoryRouter } from "react-router-dom";
-import configureStore from "redux-mock-store";
-import thunk from "redux-thunk";
+import { rest } from "msw";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { SWRConfig } from "swr";
+import { ChangeLogs, Download, Metadata } from "../../../app/components/contents";
+import { PacketDetails } from "../../../app/components/contents/packets";
 import { PacketLayout } from "../../../app/components/main";
-import { Packet, PacketsState, PageablePackets, SideBarItems } from "../../../types";
-import { mockPacketResponse, mockPacketsState } from "../../mocks";
+import { server } from "../../../msw/server";
+import { mockPacket } from "../../mocks";
 
-describe("sidebar component", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  const getStore = (
-    props: Partial<PacketsState> = {
-      pageablePackets: {
-        content: [mockPacketResponse] as Packet[]
-      } as PageablePackets
-    }
-  ) => {
-    const middlewares = [thunk];
-    const mockStore = configureStore(middlewares);
-    const initialRootStates = {
-      packets: mockPacketsState(props)
-    };
-
-    return mockStore(initialRootStates);
+describe("Packet Layout test", () => {
+  const renderComponent = () => {
+    render(
+      <SWRConfig value={{ dedupingInterval: 0 }}>
+        <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}`]}>
+          <Routes>
+            <Route element={<PacketLayout />} path="/:packetName/:packetId">
+              <Route path="/:packetName/:packetId" element={<PacketDetails />} />
+              <Route path="/:packetName/:packetId/metadata" element={<Metadata />} />
+              <Route path="/:packetName/:packetId/downloads" element={<Download />} />
+              <Route path="/:packetName/:packetId/changelogs" element={<ChangeLogs />} />
+            </Route>
+          </Routes>
+        </MemoryRouter>
+      </SWRConfig>
+    );
   };
 
-  // TODO: come back to test
-  it("should test", () => {
-    expect(true).toBe(true);
+  it("should show sidebar components and able to go through pages", async () => {
+    renderComponent();
+
+    expect(await screen.findByText(/fullscreen/i)).toBeVisible();
+
+    userEvent.click(screen.getByRole("link", { name: /metadata/i }));
+
+    expect(await screen.findByText(/git branch/i)).toBeVisible();
+
+    userEvent.click(screen.getByRole("link", { name: /downloads/i }));
+
+    expect((await screen.findAllByText(/downloads/i))[0]).toBeVisible();
+
+    userEvent.click(screen.getByRole("link", { name: /change logs/i }));
+
+    expect(await screen.findByText(/todo/i)).toBeVisible();
+  });
+
+  it("should render error component and sidebar when error fetching packet", async () => {
+    server.use(
+      rest.get("*", (req, res, ctx) => {
+        return res(ctx.status(400));
+      })
+    );
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText(/error fetching/i)).toBeVisible();
+    });
+    expect(screen.getByRole("link", { name: /metadata/i })).toBeVisible();
   });
 });
-
-const expectSidebarItemIsSelected = async (itemIndex: SideBarItems, store: Store) => {
-  render(
-    <Provider store={store}>
-      {" "}
-      <MemoryRouter>
-        <PacketLayout />
-      </MemoryRouter>
-    </Provider>
-  );
-
-  const sidebar = screen.getByTestId("sidebar");
-
-  const list = sidebar.querySelectorAll("li a");
-
-  expect(list.length).toBe(4);
-
-  if (itemIndex !== 0) {
-    expect(list[itemIndex].className).toBe("");
-  }
-
-  await waitFor(() => {
-    userEvent.click(list[itemIndex]);
-  });
-
-  expect(list[itemIndex].className).toBe("active");
-};

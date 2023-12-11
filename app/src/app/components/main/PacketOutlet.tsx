@@ -21,7 +21,7 @@ export const PacketOutlet = ({ packetId }: PacketOutletProps) => {
       </div>
     );
 
-  return <>{packet && <Outlet context={{ packet }} />}</>;
+  return packet ? <Outlet context={{ packet }} /> : null;
 };
 
 interface PacketOutletContext {

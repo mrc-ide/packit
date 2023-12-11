@@ -101,8 +101,8 @@ export interface Custom {
 }
 
 interface Description {
-  custom: Record<string, string>;
-  display: string;
+  custom: Record<string, string> | null;
+  display: string | null;
 }
 
 interface Artefact {
