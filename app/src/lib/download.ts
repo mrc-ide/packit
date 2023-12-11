@@ -1,4 +1,3 @@
-import {getBearerToken} from "./auth/getBearerToken";
 import {getAuthHeader} from "./auth/getAuthHeader";
 
 export const download = async (url: string, filename: string, authRequired = true) => {
@@ -23,5 +22,4 @@ export const download = async (url: string, filename: string, authRequired = tru
     fileLink.click();
     document.body.removeChild(fileLink);
     URL.revokeObjectURL(fileUrl)
-
 };

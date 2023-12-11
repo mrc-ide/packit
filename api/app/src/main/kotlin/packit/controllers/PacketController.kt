@@ -4,13 +4,11 @@ import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import packit.exceptions.PackitException
 import packit.model.Packet
 import packit.model.PacketGroupSummary
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
 import packit.service.PacketService
-import kotlin.random.Random
 
 @RestController
 @RequestMapping("/packets")

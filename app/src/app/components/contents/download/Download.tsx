@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { FileMetadata, RootState, useAppDispatch } from "../../../../types";
+import { RootState, useAppDispatch } from "../../../../types";
 import { actions } from "../../../store/packets/packetThunks";
 import { PacketHeader } from "../packets";
 import DownloadButton from "./DownloadButton";

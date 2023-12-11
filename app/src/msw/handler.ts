@@ -1,4 +1,5 @@
 import { rest } from "msw";
+import { downloadFileHandlers } from "./handlers/downloadFileHandlers";
 import { packetGroupSummaryHandlers } from "./handlers/packetGroupSummaryHandlers";
 import { packetGroupHandlers } from "./handlers/packetGroupHandlers";
 
@@ -10,4 +11,9 @@ const defaultHandlers = [
   rest.delete("*", (req, res, ctx) => res(ctx.status(204)))
 ];
 
-export const handlers = [...packetGroupSummaryHandlers, ...packetGroupHandlers, ...defaultHandlers];
+export const handlers = [
+    ...downloadFileHandlers,
+    ...packetGroupSummaryHandlers,
+    ...packetGroupHandlers,
+    ...defaultHandlers
+];
