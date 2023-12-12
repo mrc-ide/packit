@@ -45,6 +45,6 @@ class OAuth2UserService(private val githubUserClient: GithubUserClient) : Defaul
     fun checkGithubUserMembership(request: OAuth2UserRequest)
     {
         githubUserClient.authenticate(request.accessToken.tokenValue)
-        githubUserClient.checkGithubOrgMembership()
+        githubUserClient.checkGithubMembership()
     }
 }

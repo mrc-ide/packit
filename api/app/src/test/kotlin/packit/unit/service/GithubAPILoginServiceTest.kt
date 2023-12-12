@@ -30,7 +30,7 @@ class GithubAPILoginServiceTest {
         val token = sut.authenticateAndIssueToken(LoginWithGithubToken("fake token"))
         assertEquals(mapOf("token" to "fake jwt"), token)
         verify(mockGithubUserClient).authenticate("fake token")
-        verify(mockGithubUserClient).checkGithubOrgMembership()
+        verify(mockGithubUserClient).checkGithubMembership()
     }
 
     @Test

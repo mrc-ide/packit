@@ -14,7 +14,6 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
 
     private var github: GitHub? = null
     private var ghUser: GHMyself? = null
-    private val allowedOrgs = config.authGithubAPIOrgs.split(",")
 
     fun authenticate(token: String)
     {
@@ -35,14 +34,26 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
         return UserPrincipal.create(user, mutableMapOf())
     }
 
-    fun checkGithubOrgMembership()
+    @Throws(PackitAuthenticationException::class)
+    fun checkGithubMembership()
     {
         checkAuthenticated()
 
-        val userOrgs = ghUser!!.allOrganizations.map {org -> org.login}
-        val inAllowedOrg = allowedOrgs.any {allowed -> userOrgs.contains(allowed)}
+        val userOrg = ghUser!!.allOrganizations.firstOrNull { org -> org.login == config.authGithubAPIOrg }
+        var userOK = userOrg != null // Check if user passes in org check
 
-        if (!inAllowedOrg)
+        val allowedTeam = config.authGithubAPITeam
+        if (userOK && allowedTeam.isNotEmpty())
+        {
+            // We've confirmed user is in org, and required team is not empty, so we need to check team membership too
+            val team = userOrg!!.teams[allowedTeam] ?: throw PackitAuthenticationException(
+                "githubConfigTeamNotInOrg",
+                HttpStatus.UNAUTHORIZED
+            )
+            userOK = ghUser!!.isMemberOf(team) // Check if user passes in team check
+        }
+
+        if (!userOK)
         {
             throw PackitAuthenticationException("githubUserRestrictedAccess", HttpStatus.UNAUTHORIZED)
         }
