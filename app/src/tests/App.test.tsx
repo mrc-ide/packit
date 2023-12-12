@@ -1,5 +1,5 @@
 import { Store } from "@reduxjs/toolkit";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
 import configureStore from "redux-mock-store";
@@ -33,6 +33,14 @@ describe("app component", () => {
       </Provider>
     );
   };
+
+  it("renders reports page", async () => {
+    renderElement(getStore({ isAuthenticated: true }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/list of packet groups/i)).toBeVisible();
+    });
+  });
 
   it("renders app header", () => {
     renderElement();

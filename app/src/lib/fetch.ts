@@ -1,4 +1,4 @@
-import { getCurrentUser } from "../localStorageManager";
+import { getBearerToken } from "./getBearerToken";
 
 export interface Fetcher {
   url: string;
@@ -8,14 +8,7 @@ export interface Fetcher {
   authRequired?: boolean;
 }
 export const fetcher = async ({ url, method = "GET", authRequired = false, json = true, body }: Fetcher) => {
-  let token;
-  if (authRequired) {
-    token = getCurrentUser()?.token;
-    if (!token) {
-      throw new Error("No bearer token found");
-    }
-  }
-
+  const token = authRequired ? getBearerToken() : null;
   const res = await fetch(url, {
     method,
     ...(body && { body: JSON.stringify(body) }),

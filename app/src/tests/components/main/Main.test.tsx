@@ -1,5 +1,5 @@
 import { Store } from "@reduxjs/toolkit";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
 import configureStore from "redux-mock-store";
@@ -31,7 +31,22 @@ describe("main component", () => {
     );
   };
 
-  it("renders packet root page", () => {
-    expect(true).toBe(true);
+  it("renders active content", async () => {
+    renderElement();
+    const content = screen.getByTestId("content");
+
+    await waitFor(() => {
+      expect(content).toBeInTheDocument();
+    });
+  });
+
+  it("renders packet root page", async () => {
+    renderElement();
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("packet-runner")).toBeNull();
+    });
+    expect(screen.queryByTestId("workflow-runner")).toBeNull();
+    expect(screen.queryByTestId("project-documentation")).toBeNull();
   });
 });

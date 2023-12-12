@@ -2,30 +2,30 @@ import { Outlet, useParams } from "react-router-dom";
 import { SidebarNav } from "./SidebarNav";
 
 // TODO: update show only when packet/:version is present
-const getSideBarNavItems = (packetId: string) => [
+const getSideBarNavItems = (packetName: string, packetId: string) => [
   {
-    to: `/${packetId}`,
+    to: `/${packetName}/${packetId}`,
     title: "Report"
   },
   {
-    to: `/${packetId}/metadata`,
+    to: `/${packetName}/${packetId}/metadata`,
     title: "Metadata"
   },
   {
-    to: `/${packetId}/downloads`,
+    to: `/${packetName}/${packetId}/downloads`,
     title: "Downloads"
   },
   {
-    to: `/${packetId}/changelogs`,
+    to: `/${packetName}/${packetId}/changelogs`,
     title: "Change logs"
   }
 ];
 export const Sidebar = () => {
-  const { packetId } = useParams();
+  const { packetId, packetName } = useParams();
 
-  if (!packetId) return null;
+  if (!packetId || !packetName) return null;
 
-  const sidebarNavItems = getSideBarNavItems(packetId);
+  const sidebarNavItems = getSideBarNavItems(packetName, packetId);
 
   return (
     <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-10 lg:space-y-2">
