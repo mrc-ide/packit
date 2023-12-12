@@ -3,28 +3,17 @@ package packit.controllers
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import packit.model.LoginRequest
+import packit.AppConfig
 import packit.model.LoginWithGithubToken
 import packit.service.GithubAPILoginService
-import packit.service.LoginService
 
 @RestController
 @RequestMapping("/auth")
 class LoginController(
-    val basicLoginService: LoginService,
-    val gitApiLoginService: GithubAPILoginService
+    val gitApiLoginService: GithubAPILoginService,
+    val config: AppConfig
 )
 {
-    @PostMapping("/login")
-    @ResponseBody
-    fun login(
-        @RequestBody @Validated user: LoginRequest,
-    ): ResponseEntity<Map<String, String>>
-    {
-        val token = basicLoginService.authenticateAndIssueToken(user)
-        return ResponseEntity.ok(token)
-    }
-
     @PostMapping("/login/github")
     @ResponseBody
     fun loginWithGithub(
@@ -39,6 +28,10 @@ class LoginController(
     @ResponseBody
     fun authConfig(): ResponseEntity<Map<String, Any>>
     {
-        return ResponseEntity.ok(basicLoginService.authConfig())
+        val authConfig = mapOf(
+            "enableGithubLogin" to config.authEnableGithubLogin,
+            "enableAuth" to config.authEnabled
+        )
+        return ResponseEntity.ok(authConfig)
     }
 }

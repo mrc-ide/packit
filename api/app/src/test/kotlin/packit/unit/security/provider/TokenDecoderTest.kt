@@ -21,14 +21,13 @@ class TokenDecoderTest
     @Test
     fun `can decode JWT token`()
     {
-        val name = "fakeName"
-        val email = "test@email.com"
+        val userName = "fakeName"
+        val displayName = "Fake Name"
 
         val userPrincipal = UserPrincipal(
-            email,
-            "",
+            userName,
+            displayName,
             mutableListOf(),
-            name,
             mutableMapOf()
         )
 
@@ -48,8 +47,8 @@ class TokenDecoderTest
 
         assertEquals(listOf("packit"), result.audience)
         assertEquals("packit-api", result.issuer)
-        assertEquals("test@email.com", result.getClaim("email").asString())
-        assertEquals("fakeName", result.getClaim("name").asString())
+        assertEquals("Fake Name", result.getClaim("displayName").asString())
+        assertEquals("fakeName", result.getClaim("userName").asString())
         assertEquals(emptyList(), result.getClaim("au").asList(String::class.java))
         assertEquals(expectedExpiresAt, result.expiresAt)
     }

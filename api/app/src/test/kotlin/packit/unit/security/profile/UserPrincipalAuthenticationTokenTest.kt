@@ -10,14 +10,13 @@ class UserPrincipalAuthenticationTokenTest
     @Test
     fun `can get authenticated profile`()
     {
-        val name = "fakeName"
-        val email = "test@email.com"
+        val userName = "fakeName"
+        val displayName = "Fake Name"
 
         val userPrincipal = UserPrincipal(
-            email,
-            "",
+            userName,
+            displayName,
             mutableListOf(),
-            name,
             mutableMapOf()
         )
 
