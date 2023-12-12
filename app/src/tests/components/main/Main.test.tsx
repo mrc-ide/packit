@@ -8,6 +8,7 @@ import { Main } from "../../../app/components/main";
 import { PacketsState } from "../../../types";
 import { mockLoginState, mockPacketsState } from "../../mocks";
 
+// TODO: unit test this
 describe("main component", () => {
   const getStore = (props: Partial<PacketsState> = {}) => {
     const middlewares = [thunk];

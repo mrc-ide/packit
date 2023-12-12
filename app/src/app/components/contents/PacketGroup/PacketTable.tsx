@@ -20,7 +20,7 @@ export const PacketTable = () => {
   if (isLoading)
     return (
       <ul className="flex flex-col border rounded-md">
-        {[...Array(8)].map((_val, index) => (
+        {[...Array(2)].map((_val, index) => (
           <li key={index} className="p-4 flex border-b space-y-1 justify-between">
             <div className="flex flex-col space-y-1">
               <Skeleton className="h-4 w-64" />

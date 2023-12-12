@@ -49,7 +49,7 @@ export const PacketGroupSummaryList = ({
         </ul>
       )}
 
-      {packetGroupSummary && (
+      {packetGroupSummary?.content.length ? (
         <div className="flex items-center justify-center">
           <Pagination
             currentPageNumber={pageNumber}
@@ -59,7 +59,7 @@ export const PacketGroupSummaryList = ({
             setPageNumber={setPageNumber}
           />
         </div>
-      )}
+      ) : null}
     </>
   );
 };

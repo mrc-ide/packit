@@ -83,7 +83,6 @@ class BasePacketService(
         return packetRepository.findByName(name, pageable)
     }
 
-
     override fun getPackets(pageablePayload: PageablePayload): Page<Packet>
     {
         val pageable = PageRequest.of(

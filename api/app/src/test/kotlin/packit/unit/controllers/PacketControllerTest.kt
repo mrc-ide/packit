@@ -54,7 +54,8 @@ class PacketControllerTest
             override fun getPacketCount(): Int = 10
             override fun getLatestId(): String = "20180818-164847-7574883b"
             override fun getLatestTime(): Long = 1690902034
-        })
+        }
+    )
 
     private val packetMetadata = PacketMetadata(
         "3",

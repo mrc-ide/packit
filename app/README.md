@@ -53,3 +53,9 @@ security configuration is required here.
 1. `./app/scripts/build` builds a docker image.
 2. `./app/scripts/build-and-push` builds and pushes an image to dockerhub. This script is run on CI.
 3. `./app/scripts/run` runs a built image with the current branch name.
+
+
+### Mock Service Worker [MSW](https://mswjs.io/)
+MSW is currently used to mock API calls in tests. It is configured in `src/setupTests.js`.
+However, this can be used as a worker and be able to be if mocking of api is needed whilst development.
+Eg. if the api is not ready but you want to test the front end with that contract.
