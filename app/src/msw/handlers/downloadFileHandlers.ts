@@ -1,12 +1,11 @@
 import appConfig from "../../config/appConfig";
-import {http, HttpResponse} from "msw";
+import {rest} from "msw";
+import {mockFileBlob} from "../../tests/mocks";
 
-const downloadFileUri = `${appConfig.apiUrl()}/packets/file/sha:fakehash?filename=test.txt`;
+export const downloadFileUri = `${appConfig.apiUrl()}/packets/file/sha:fakehash?filename=test.txt`;
 
 export const downloadFileHandlers = [
-    http.get(downloadFileUri, () => {
-        return new HttpResponse(
-            new Blob(["test contents"]),
-        )
+    rest.get(downloadFileUri, (req, res, ctx) => {
+        return res(ctx.body(mockFileBlob));
     })
 ];

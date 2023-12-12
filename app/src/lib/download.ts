@@ -21,5 +21,5 @@ export const download = async (url: string, filename: string, authRequired = tru
     document.body.appendChild(fileLink);
     fileLink.click();
     document.body.removeChild(fileLink);
-    URL.revokeObjectURL(fileUrl)
+    window.URL.revokeObjectURL(fileUrl)
 };
