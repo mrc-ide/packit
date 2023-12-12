@@ -43,7 +43,7 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
         checkAuthenticated()
 
         val userOrg = ghUser!!.allOrganizations.firstOrNull { org -> org.login == config.authGithubAPIOrg }
-        var userOK = userOrg != null  // Check if user passes in org check
+        var userOK = userOrg != null // Check if user passes in org check
 
         val allowedTeam = config.authGithubAPITeam
         if (userOK && allowedTeam.isNotEmpty())
