@@ -14,7 +14,7 @@ export const download = async (url: string, filename: string, authRequired = tru
     }
 
     const blob = await res.blob();
-    const fileUrl = window.URL.createObjectURL(blob);
+    const fileUrl = URL.createObjectURL(blob);
     const fileLink = document.createElement("a");
     fileLink.href = fileUrl;
     fileLink.setAttribute("download", filename);
