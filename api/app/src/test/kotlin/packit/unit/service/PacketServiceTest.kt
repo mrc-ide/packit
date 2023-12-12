@@ -1,7 +1,5 @@
 package packit.unit.service
 
-import java.time.Instant
-import kotlin.test.assertEquals
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
@@ -18,6 +16,8 @@ import packit.model.*
 import packit.repository.PacketRepository
 import packit.service.BasePacketService
 import packit.service.OutpackServerClient
+import java.time.Instant
+import kotlin.test.assertEquals
 
 class PacketServiceTest {
     private val now = Instant.now().epochSecond
