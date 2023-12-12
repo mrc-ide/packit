@@ -1,11 +1,10 @@
+import { render, screen, waitFor } from "@testing-library/react";
+import { rest } from "msw";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
 import { PacketGroup } from "../../../../app/components/contents/PacketGroup";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { render, screen, waitFor } from "@testing-library/react";
-import { mockPacketGroupResponse } from "../../../mocks";
-import { capitalizeFirstLetter } from "../../../../lib/string/capitalizeFirstLetter";
 import { server } from "../../../../msw/server";
-import { rest } from "msw";
+import { mockPacketGroupResponse } from "../../../mocks";
 describe("PacketGroup", () => {
   const packetGroupName = mockPacketGroupResponse.content[0].name;
   const renderComponent = () =>
@@ -23,7 +22,7 @@ describe("PacketGroup", () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByRole("heading", { name: capitalizeFirstLetter(packetGroupName) })).toBeVisible();
+      expect(screen.getByRole("heading", { name: packetGroupName })).toBeVisible();
     });
   });
 

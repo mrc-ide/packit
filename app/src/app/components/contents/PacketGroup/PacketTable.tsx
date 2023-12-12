@@ -1,14 +1,14 @@
+import { useState } from "react";
 import { useParams } from "react-router-dom";
+import useSWR from "swr";
 import appConfig from "../../../../config/appConfig";
 import { fetcher } from "../../../../lib/fetch";
+import { PageablePackets } from "../../../../types";
+import { Skeleton } from "../../Base/Skeleton";
 import { DataTable } from "../common/DataTable";
+import { ErrorComponent } from "../common/ErrorComponent";
 import { Pagination } from "../common/Pagination";
 import { packetColumns } from "./packetColumns";
-import { useState } from "react";
-import useSWR from "swr";
-import { PageablePackets } from "../../../../types";
-import { ErrorComponent } from "../common/ErrorComponent";
-import { Skeleton } from "../../Base/Skeleton";
 
 // TODO: make table more feature rich (sorting, filter, etc). May need to fetch all data then and let tanstack handle
 export const PacketTable = () => {
@@ -26,7 +26,7 @@ export const PacketTable = () => {
   if (isLoading)
     return (
       <ul className="flex flex-col border rounded-md">
-        {[...Array(8)].map((_val, index) => (
+        {[...Array(2)].map((_val, index) => (
           <li key={index} className="p-4 flex border-b space-y-1 justify-between">
             <div className="flex flex-col space-y-1">
               <Skeleton className="h-4 w-64" />

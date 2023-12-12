@@ -1,8 +1,6 @@
-import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
+import { createColumnHelper } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 import { Packet } from "../../../../types";
-import { CheckSquare, X } from "lucide-react";
-import { Separator } from "../../Base/Separator";
 
 const columnHelper = createColumnHelper<Packet>();
 
@@ -12,6 +10,7 @@ export const packetColumns = [
     cell: ({ getValue, row }) => {
       const id = getValue();
       const time = new Date(row.original.time * 1000); // convert from seconds to milliseconds
+      const isPublished = row.original.published;
 
       return (
         <div className="flex flex-col">
@@ -21,14 +20,17 @@ export const packetColumns = [
           >
             {id}
           </Link>
-          <div className="text-xs text-muted-foreground">{time.toLocaleString()}</div>
+          <div className="flex space-x-2 items-center">
+            <div className="text-xs text-muted-foreground">{time.toLocaleString()}</div>
+            {isPublished ? (
+              <div className="text-xs text-green-500">Published</div>
+            ) : (
+              <div className="text-xs text-orange-500">internal</div>
+            )}
+          </div>
         </div>
       );
     }
-  }),
-  columnHelper.accessor("published", {
-    header: "Published",
-    cell: ({ getValue }) => (getValue() ? <CheckSquare size={20} className="ml-1" /> : <X size={20} className="ml-1" />)
   }),
   columnHelper.accessor("parameters", {
     header: "Parameters",
@@ -36,14 +38,13 @@ export const packetColumns = [
       const parameters = getValue();
 
       return (
-        <div className="flex flex-wrap gap-0.5">
+        <div className="flex flex-wrap gap-1">
           {Object.keys(parameters)?.length === 0 ? (
             <div className="italic text-xs">None</div>
           ) : (
             Object.entries(parameters).map(([key, val]) => (
-              <div key={key} className="border p-1 rounded-md flex space-x-1 text-xs">
-                <div>{key}</div>
-                <Separator orientation="vertical" />
+              <div key={key} className="border py-1 px-1.5 rounded-md flex space-x-1 text-xs">
+                <div>{key}: </div>
                 <div className="text-muted-foreground"> {val}</div>
               </div>
             ))

@@ -135,7 +135,7 @@ class PacketServiceTest {
     }
 
     @Test
-    fun `gets package groups summary`() {
+    fun `gets packet groups summary`() {
         val sut = BasePacketService(packetRepository, mock())
 
         val result = sut.getPacketGroupSummary(PageablePayload(0, 10), "random")
