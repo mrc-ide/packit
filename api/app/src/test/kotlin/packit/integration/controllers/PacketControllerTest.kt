@@ -9,7 +9,6 @@ import packit.integration.WithAuthenticatedUser
 
 class PacketControllerTest : IntegrationTest()
 {
-
     @Test
     @WithAuthenticatedUser
     fun `can get pageable packets`()
@@ -19,7 +18,6 @@ class PacketControllerTest : IntegrationTest()
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
-
         assertSuccess(result)
     }
 
@@ -27,6 +25,28 @@ class PacketControllerTest : IntegrationTest()
     fun `does not get pageable packets when not logged in`()
     {
         val result = restTemplate.getForEntity("/packets?pageNumber=3&pageSize=5", String::class.java)
+        assertUnauthorized(result)
+    }
+
+    @Test
+    @WithAuthenticatedUser
+    fun `test can get overview of packets if authenticated`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packets/packetGroupSummary?pageNumber=3&pageSize=5&filterName=hell",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+        assertSuccess(result)
+    }
+
+    @Test
+    fun `test can not get overview of packets if not authenticated`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packets/overview?pageNumber=3&pageSize=5&filterName=hell",
+            HttpMethod.GET
+        )
         assertUnauthorized(result)
     }
 

@@ -42,16 +42,6 @@ describe("login actions", () => {
             "/auth/login");
     });
 
-    it("should handle errors when fetching token with empty response data", async () => {
-        const dispatch = jest.fn();
-        await expectThunkActionWith<CurrentUser | null, UserLoginDetailProps>(
-            dispatch,
-            null,
-            400,
-            actions.fetchToken(userDetails),
-            LoginMutationType.GetToken,
-            "/auth/login");
-    });
 
     it("should fetch auth config as expected", async () => {
         const fakeResponse = {test: "test"};

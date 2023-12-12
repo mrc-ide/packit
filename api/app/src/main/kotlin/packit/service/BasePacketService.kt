@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service
 import packit.contentTypes
 import packit.exceptions.PackitException
 import packit.model.Packet
+import packit.model.PacketGroupSummary
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
 import packit.repository.PacketRepository
@@ -26,12 +27,14 @@ interface PacketService
     fun importPackets()
     fun getMetadataBy(id: String): PacketMetadata
     fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<ByteArrayResource, HttpHeaders>
+
+    fun getPacketGroupSummary(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroupSummary>
 }
 
 @Service
 class BasePacketService(
-        private val packetRepository: PacketRepository,
-        private val outpackServerClient: OutpackServer
+    private val packetRepository: PacketRepository,
+    private val outpackServerClient: OutpackServer
 ) : PacketService
 {
     override fun importPackets()
@@ -39,18 +42,32 @@ class BasePacketService(
         val mostRecent = packetRepository.findTopByOrderByTimeDesc()?.time
         val now = Instant.now().epochSecond
         val packets = outpackServerClient.getMetadata(mostRecent)
-                .map {
-                    Packet(
-                            it.id, it.name, it.name,
-                            it.parameters ?: mapOf(), false, now
-                    )
-                }
+            .map {
+                Packet(
+                    it.id, it.name, it.name,
+                    it.parameters ?: mapOf(), false, now
+                )
+            }
         packetRepository.saveAll(packets)
     }
 
     override fun getPackets(): List<Packet>
     {
         return packetRepository.findAll()
+    }
+
+    override fun getPacketGroupSummary(
+        pageablePayload: PageablePayload,
+        filteredName: String
+    ): Page<PacketGroupSummary>
+    {
+        return packetRepository.findPacketGroupSummaryByName(
+            filteredName,
+            PageRequest.of(
+                pageablePayload.pageNumber,
+                pageablePayload.pageSize
+            )
+        )
     }
 
     override fun getPackets(pageablePayload: PageablePayload): Page<Packet>
@@ -60,22 +77,23 @@ class BasePacketService(
             pageablePayload.pageSize,
             Sort.by("time").descending()
         )
+
         return packetRepository.findAll(pageable)
     }
 
     override fun getChecksum(): String
     {
         return packetRepository.findAllIds()
-                .joinToString("")
-                .toSHA256()
+            .joinToString("")
+            .toSHA256()
     }
 
     private fun String.toSHA256(): String
     {
         return "sha256:${
             MessageDigest
-                    .getInstance("SHA-256")
-                    .digest(this.toByteArray()).toHex()
+                .getInstance("SHA-256")
+                .digest(this.toByteArray()).toHex()
         }"
     }
 

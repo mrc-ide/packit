@@ -1,0 +1,175 @@
+{
+  "schema_version": "0.1.1",
+  "name": "parameters",
+  "id": "20231127-133335-c8ced0bf",
+  "time": {
+    "start": 1701092015.7862,
+    "end": 1701092015.8015
+  },
+  "parameters": {
+    "a": 30,
+    "b": 22,
+    "c": 90
+  },
+  "files": [
+    {
+      "path": "data.rds",
+      "size": 98,
+      "hash": "sha256:5869257a05a916970267cd8f3b14f564e0f9f5dd41261dcd1b7b6c2eaf442dfd"
+    },
+    {
+      "path": "orderly.R",
+      "size": 103,
+      "hash": "sha256:b4fab88c295bee191275d7aa8a1bcb38849b07a5792d61ce488895e4929755f5"
+    }
+  ],
+  "depends": [],
+  "git": {
+    "sha": "ec3807ead2d9e81e3521465e5188403f956f6e29",
+    "branch": "mrc-4720-page1-all-packets",
+    "url": [
+      "https://github.com/mrc-ide/packit.git"
+    ]
+  },
+  "custom": {
+    "orderly": {
+      "artefacts": [],
+      "role": [
+        {
+          "path": "orderly.R",
+          "role": "orderly"
+        }
+      ],
+      "description": {
+        "display": null,
+        "long": null,
+        "custom": null
+      },
+      "shared": [],
+      "session": {
+        "platform": {
+          "version": "R version 4.3.2 (2023-10-31)",
+          "os": "Ubuntu 22.04.3 LTS",
+          "system": "x86_64, linux-gnu"
+        },
+        "packages": [
+          {
+            "package": "orderly2",
+            "version": "1.99.10",
+            "attached": false
+          },
+          {
+            "package": "utf8",
+            "version": "1.2.4",
+            "attached": false
+          },
+          {
+            "package": "R6",
+            "version": "2.5.1",
+            "attached": false
+          },
+          {
+            "package": "gert",
+            "version": "2.0.0",
+            "attached": false
+          },
+          {
+            "package": "magrittr",
+            "version": "2.0.3",
+            "attached": false
+          },
+          {
+            "package": "glue",
+            "version": "1.6.2",
+            "attached": false
+          },
+          {
+            "package": "tibble",
+            "version": "3.2.1",
+            "attached": false
+          },
+          {
+            "package": "pkgconfig",
+            "version": "2.0.3",
+            "attached": false
+          },
+          {
+            "package": "lifecycle",
+            "version": "1.0.4",
+            "attached": false
+          },
+          {
+            "package": "cli",
+            "version": "3.6.1",
+            "attached": false
+          },
+          {
+            "package": "askpass",
+            "version": "1.2.0",
+            "attached": false
+          },
+          {
+            "package": "fansi",
+            "version": "1.0.5",
+            "attached": false
+          },
+          {
+            "package": "openssl",
+            "version": "2.1.1",
+            "attached": false
+          },
+          {
+            "package": "vctrs",
+            "version": "0.6.4",
+            "attached": false
+          },
+          {
+            "package": "withr",
+            "version": "2.5.2",
+            "attached": false
+          },
+          {
+            "package": "compiler",
+            "version": "4.3.2",
+            "attached": false
+          },
+          {
+            "package": "sys",
+            "version": "3.4.2",
+            "attached": false
+          },
+          {
+            "package": "credentials",
+            "version": "2.0.1",
+            "attached": false
+          },
+          {
+            "package": "pillar",
+            "version": "1.9.0",
+            "attached": false
+          },
+          {
+            "package": "yaml",
+            "version": "2.3.7",
+            "attached": false
+          },
+          {
+            "package": "rlang",
+            "version": "1.1.2",
+            "attached": false
+          },
+          {
+            "package": "jsonlite",
+            "version": "1.8.7",
+            "attached": false
+          },
+          {
+            "package": "fs",
+            "version": "1.6.3",
+            "attached": false
+          }
+        ]
+      }
+    }
+  }
+}

@@ -2,15 +2,17 @@ name: frontend-test
 run-name: ${{ github.actor }} is testing packit features
 on:
   workflow_run:
-    workflows: [ "backend-test" ]
+    workflows: ["backend-test"]
     types:
       - completed
   push:
     branches:
-      - 'main'
+      - "main"
   pull_request:
     branches:
-      - 'main'
+      - "main"
+      # TODO: remove wone 4716 is merged
+      - "mrc-4716-theme-update"
 
 env:
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
@@ -20,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [ 16.x ]
+        node-version: [16.x]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -48,7 +50,7 @@ jobs:
       - name: Run dependencies
         run: ./scripts/run-dependencies && ./api/scripts/run && ./api/scripts/smoke-test
       - name: Run integration tests
-        run : npm run integration-test --prefix=app
+        run: npm run integration-test --prefix=app
       - name: Upload coverage
         uses: codecov/codecov-action@v3
         with:

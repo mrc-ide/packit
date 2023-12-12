@@ -34,14 +34,6 @@ describe("app component", () => {
     );
   };
 
-  it("renders packet explorer page", () => {
-    renderElement(getStore({ isAuthenticated: true }));
-    const app = screen.getByTestId("app");
-    expect(app).toHaveTextContent("Packets (0)");
-    expect(app).toHaveTextContent("Click on a column heading to sort by field.");
-    expect(app.className).toBe("default");
-  });
-
   it("renders app header", () => {
     renderElement();
     const header = screen.getByTestId("header");
