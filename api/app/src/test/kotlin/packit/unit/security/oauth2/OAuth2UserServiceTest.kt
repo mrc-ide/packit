@@ -17,11 +17,11 @@ class OAuth2UserServiceTest
     @Test
     fun `can process oauth user attributes`()
     {
-        val fakeEmail = "test@example.com"
+        val fakeLogin = "jammy123"
         val fakeName = "Jammy"
 
         val mockOAuth2User = mock<OAuth2User> {
-            on { attributes } doReturn mapOf("email" to fakeEmail, "name" to fakeName)
+            on { attributes } doReturn mapOf("login" to fakeLogin, "name" to fakeName)
         }
 
         val sut = OAuth2UserService(mockGithubUserClient)
@@ -30,9 +30,8 @@ class OAuth2UserServiceTest
 
         assertTrue(result is UserPrincipal)
 
-        assertEquals(result.username, fakeEmail)
-
-        assertEquals(result.name, fakeName)
+        assertEquals(result.name, fakeLogin)
+        assertEquals(result.displayName, fakeName)
     }
 
     @Test

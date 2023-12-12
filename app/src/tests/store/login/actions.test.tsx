@@ -1,7 +1,6 @@
 import mockAxios from "../../../../mockAxios";
 import {actions, LoginMutationType} from "../../../app/store/login/loginThunks";
 import { expectThunkActionWith } from "../testHelper";
-import {CurrentUser, UserLoginDetailProps} from "../../../types";
 import {saveCurrentUser} from "../../../localStorageManager";
 
 describe("login actions", () => {
@@ -14,43 +13,6 @@ describe("login actions", () => {
 
     afterEach(() => {
         localStorage.clear();
-    });
-
-    const userDetails: UserLoginDetailProps = {email: "test@example.com", password: "test"};
-
-    it("should fetch token as expected", async () => {
-        const response: CurrentUser = {token: "fakeToken"};
-
-        const dispatch = jest.fn();
-        await expectThunkActionWith<CurrentUser, UserLoginDetailProps>(
-            dispatch,
-            response,
-            200,
-            actions.fetchToken(userDetails),
-            LoginMutationType.GetToken,
-            "/auth/login");
-    });
-
-    it("should handle errors when fetching token", async () => {
-        const dispatch = jest.fn();
-        await expectThunkActionWith<CurrentUser | string, UserLoginDetailProps>(
-            dispatch,
-            "ERROR",
-            400,
-            actions.fetchToken(userDetails),
-            LoginMutationType.GetToken,
-            "/auth/login");
-    });
-
-    it("should handle errors when fetching token with empty response data", async () => {
-        const dispatch = jest.fn();
-        await expectThunkActionWith<CurrentUser | null, UserLoginDetailProps>(
-            dispatch,
-            null,
-            400,
-            actions.fetchToken(userDetails),
-            LoginMutationType.GetToken,
-            "/auth/login");
     });
 
     it("should fetch auth config as expected", async () => {

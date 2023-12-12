@@ -38,15 +38,6 @@ export const loginSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(actions.fetchToken.fulfilled, (state, action) => {
-                state.user = action.payload;
-                saveCurrentUser(state.user);
-                state.isAuthenticated = validateToken(state.user);
-                state.userError = null;
-            })
-            .addCase(actions.fetchToken.rejected, (state, action) => {
-                state.userError = action.payload ?? null;
-            })
             .addCase(actions.fetchAuthConfig.fulfilled, (state, action) => {
                 state.authConfig = action.payload;
                 state.authConfigError = null;

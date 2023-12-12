@@ -36,14 +36,13 @@ class TokenToPrincipalConverterTest
     @Test
     fun `converts jwt to user principal`()
     {
-        val name = "fakeName"
-        val email = "test@email.com"
+        val userName = "fakeName"
+        val displayName = "Fake Name"
 
         val userPrincipal = UserPrincipal(
-            email,
-            "",
+            userName,
+            displayName,
             mutableListOf(),
-            name,
             mutableMapOf()
         )
 

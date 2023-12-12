@@ -1,14 +1,9 @@
 package packit.model
 
-import net.minidev.json.annotate.JsonIgnore
 import packit.security.Role
 
 data class User(
-    val id: Long,
-    val email: String,
-    @JsonIgnore
-    val password: String,
-    val role: Role,
-    val name: String,
-    val attributes: MutableMap<String, Any>,
+    val userName: String,
+    val displayName: String?,
+    val role: List<Role>
 )

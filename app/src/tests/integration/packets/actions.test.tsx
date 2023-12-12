@@ -4,16 +4,15 @@ import {api} from "../../../apiService";
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import store from "../../../app/store/store";
 import {saveCurrentUser} from "../../../localStorageManager";
-import {login} from "../IntegrationTest";
+import {testUser} from "../IntegrationTest";
 
 describe("packets integration", () => {
 
-    beforeEach(async () => {
-        const user = await login();
-        saveCurrentUser(user);
+    beforeAll(async () => {
+        saveCurrentUser(testUser);
     });
 
-    afterEach(() => {
+    afterAll(() => {
         localStorage.clear();
     });
 
