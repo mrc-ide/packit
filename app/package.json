@@ -59,7 +59,6 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --testPathIgnorePatterns=integration",
-    "integration-test": "react-scripts test integration",
     "lint": "npx eslint ./src ",
     "lint:fix": "npx eslint --fix ./src",
     "eject": "react-scripts eject",

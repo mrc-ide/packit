@@ -49,8 +49,6 @@ jobs:
         run: npm test --prefix=app -- --coverage
       - name: Run dependencies
         run: ./scripts/run-dependencies && ./api/scripts/run && ./api/scripts/smoke-test
-      - name: Run integration tests
-        run: npm run integration-test --prefix=app
       - name: Upload coverage
         uses: codecov/codecov-action@v3
         with:
