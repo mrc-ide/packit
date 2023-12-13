@@ -59,7 +59,8 @@ describe("DownloadButton", () => {
         renderComponent();
 
         userEvent.click(screen.getByRole("button"));
-        expect(mockDownload).toHaveBeenCalledWith("http://localhost:8080/packets/file/fakeHash?filename=test.txt", "test.txt", true);
+        const url = "http://localhost:8080/packets/file/fakeHash?filename=test.txt";
+        expect(mockDownload).toHaveBeenCalledWith(url, "test.txt", true);
     });
 
     it("shows download error, and resets on success", async () => {
