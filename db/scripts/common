@@ -13,6 +13,8 @@ else
     GIT_BRANCH=$(git symbolic-ref --short HEAD)
 fi
 
+GIT_BRANCH=main
+
 ORG=mrcide
 IMAGE_NAME=packit-db
 TAG_SHA="${ORG}/${IMAGE_NAME}:${GIT_ID}"
