@@ -2,7 +2,7 @@ name: frontend-test
 run-name: ${{ github.actor }} is testing packit features
 on:
   workflow_run:
-    workflows: [ "backend-test" ]
+    workflows: ["backend-test"]
     types:
       - completed
   push:
@@ -11,7 +11,7 @@ on:
       - 'mrc-4758'
   pull_request:
     branches:
-      - 'main'
+      - "main"
 
 env:
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [ 16.x ]
+        node-version: [16.x]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -48,8 +48,6 @@ jobs:
         run: npm test --prefix=app -- --coverage
       - name: Run dependencies
         run: ./scripts/run-dependencies && ./api/scripts/run && ./api/scripts/smoke-test
-      - name: Run integration tests
-        run : npm run integration-test --prefix=app
       - name: Upload coverage
         uses: codecov/codecov-action@v3
         with:

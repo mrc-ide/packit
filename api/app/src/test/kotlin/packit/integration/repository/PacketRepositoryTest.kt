@@ -9,12 +9,10 @@ import packit.repository.PacketRepository
 import java.time.Instant
 import kotlin.test.assertEquals
 
-
 class PacketRepositoryTest : RepositoryTest()
 {
     @Autowired
     lateinit var packetRepository: PacketRepository
-
 
     val now = Instant.now().epochSecond
 
@@ -55,7 +53,6 @@ class PacketRepositoryTest : RepositoryTest()
         assertEquals(result.content[1].name, "test1")
         assertEquals(result.content[0].id, "20180818-164847-7574833b")
         assertEquals(result.content[1].id, "20170819-164847-7574333b")
-
     }
 
     @Test
@@ -119,7 +116,6 @@ class PacketRepositoryTest : RepositoryTest()
         assertEquals(result.totalPages, 1)
         assertEquals(result.isFirst, true)
         assertEquals(result.isLast, true)
-
     }
 
     @Test

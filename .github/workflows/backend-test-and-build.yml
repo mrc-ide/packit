@@ -2,7 +2,7 @@ name: backend-test
 run-name: ${{ github.actor }} is testing packit backend features
 on:
   workflow_run:
-    workflows: [ "build-docker-db" ]
+    workflows: ["build-docker-db"]
     types:
       - completed
   push:
@@ -11,7 +11,7 @@ on:
       - 'mrc-4758'
   pull_request:
     branches:
-      - 'main'
+      - "main"
 
 env:
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java-version: [ 17 ]
+        java-version: [17]
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
