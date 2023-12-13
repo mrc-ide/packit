@@ -29,8 +29,8 @@ export default function DownloadButton({ file }: DownloadButtonProps) {
             <Button onClick={() => downloadFile(file)} variant="outline">
                 {file.path}
                 <span className="sidebar-icon p-2">
-                        <DownloadCloud />
-                      </span>
+                    <DownloadCloud />
+                </span>
             </Button>
             <span className="small p-2 text-muted">({bytesToSize(file.size)})</span>
             <div className="text-red-500 h-6">{error}</div>
