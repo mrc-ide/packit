@@ -42,7 +42,7 @@ class BasePacketService(
 {
     override fun importPackets()
     {
-        val mostRecent = packetRepository.findTopByOrderByImportTime()?.importTime
+        val mostRecent = packetRepository.findTopByOrderByImportTimeDesc()?.importTime
         val now = Instant.now().epochSecond
         val packets = outpackServerClient.getMetadata(mostRecent)
             .map {

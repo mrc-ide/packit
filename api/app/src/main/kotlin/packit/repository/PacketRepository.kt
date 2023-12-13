@@ -13,7 +13,7 @@ interface PacketRepository : JpaRepository<Packet, String>
 {
     @Query("select p.id from Packet p order by p.id asc")
     fun findAllIds(): List<String>
-    fun findTopByOrderByImportTime(): Packet?
+    fun findTopByOrderByImportTimeDesc(): Packet?
     fun findByName(name: String, pageable: Pageable): Page<Packet>
 
     @Query(

@@ -30,9 +30,11 @@ class PacketServiceTest
                 "test",
                 mapOf("alpha" to 1),
                 false,
-                now
+                now,
+                now.toDouble(),
+                now.toDouble()
             ),
-            Packet("20190403-120000-1234dfdf", "test2", "test2", mapOf(), false, now)
+            Packet("20190403-120000-1234dfdf", "test2", "test2", mapOf(), false, now, now.toDouble(), now.toDouble())
         )
 
     private val oldPackets =
@@ -43,7 +45,9 @@ class PacketServiceTest
                 "test name",
                 mapOf("name" to "value"),
                 false,
-                now - 1
+                now - 1,
+                (now - 1).toDouble(),
+                (now - 1).toDouble(),
             ),
             Packet(
                 "20180403-120000-a5bde567",
@@ -51,7 +55,9 @@ class PacketServiceTest
                 "test2 name",
                 mapOf("beta" to 1),
                 true,
-                now - 2
+                now - 2,
+                (now - 2).toDouble(),
+                (now - 2).toDouble(),
             )
         )
 
@@ -61,9 +67,14 @@ class PacketServiceTest
                 "20190203-120000-1234dada",
                 "test",
                 parameters = mapOf("alpha" to 1),
-                custom = mapOf("orderly" to true)
+                time = TimeMetadata(now.toDouble(), now.toDouble())
             ),
-            OutpackMetadata("20190403-120000-1234dfdf", "test2", null, null)
+            OutpackMetadata(
+                "20190403-120000-1234dfdf",
+                "test2",
+                null,
+                time = TimeMetadata(now.toDouble(), now.toDouble())
+            )
         )
 
     private val packetMetadata =
@@ -104,7 +115,7 @@ class PacketServiceTest
         mock<PacketRepository> {
             on { findAll() } doReturn oldPackets
             on { findAllIds() } doReturn oldPackets.map { it.id }
-            on { findTopByOrderByTimeDesc() } doReturn oldPackets.first()
+            on { findTopByOrderByImportTimeDesc() } doReturn oldPackets.first()
             on { findPacketGroupSummaryByName("random", PageRequest.of(0, 10)) } doReturn
                     mockPacketGroupSummaries
             on { findByName(anyString(), any()) } doReturn PageImpl(oldPackets)
