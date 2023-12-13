@@ -13,27 +13,27 @@ interface PacketRepository : JpaRepository<Packet, String>
 {
     @Query("select p.id from Packet p order by p.id asc")
     fun findAllIds(): List<String>
-    fun findTopByOrderByTimeDesc(): Packet?
+    fun findTopByOrderByImportTime(): Packet?
     fun findByName(name: String, pageable: Pageable): Page<Packet>
 
     @Query(
         value = """
                 SELECT 
                     name as name, 
-                    time as latestTime, 
+                    start_time as latestTime, 
                     id AS latestId, 
                     id_count as packetCount  
                 FROM ( 
                     SELECT 
                         name, 
-                        time, 
+                        start_time, 
                         id,     
-                        ROW_NUMBER() OVER (PARTITION BY name ORDER BY time DESC) AS row_num, 
+                        ROW_NUMBER() OVER (PARTITION BY name ORDER BY start_time DESC) AS row_num, 
                         COUNT(id) OVER (PARTITION BY name) AS id_count 
                     FROM packet 
                 ) as RankedData 
                 WHERE row_num = 1 AND name ILIKE %?1% 
-                ORDER BY TIME DESC
+                ORDER BY start_time DESC
          """,
         countQuery = "SELECT count(distinct name) from packet WHERE name ILIKE  %?1%",
         nativeQuery = true

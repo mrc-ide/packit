@@ -9,7 +9,7 @@ export const packetColumns = [
     header: "Packet",
     cell: ({ getValue, row }) => {
       const id = getValue();
-      const time = new Date(row.original.time * 1000); // convert from seconds to milliseconds
+      const startTime = new Date(row.original.startTime * 1000); // convert from seconds to milliseconds
       const isPublished = row.original.published;
 
       return (
@@ -21,7 +21,7 @@ export const packetColumns = [
             {id}
           </Link>
           <div className="flex space-x-2 items-center">
-            <div className="text-xs text-muted-foreground">{time.toLocaleString()}</div>
+            <div className="text-xs text-muted-foreground">{startTime.toLocaleString()}</div>
             {isPublished ? (
               <div className="text-xs text-green-500">Published</div>
             ) : (

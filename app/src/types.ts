@@ -42,7 +42,9 @@ export interface Packet {
   displayName: string;
   published: boolean;
   parameters: Record<string, string | number>;
-  time: number;
+  importTime: number;
+  startTime: number;
+  endTime: number;
 }
 
 export interface Header {
