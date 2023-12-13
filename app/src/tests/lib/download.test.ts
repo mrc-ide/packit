@@ -1,6 +1,8 @@
 import {downloadFileUri} from "../../msw/handlers/downloadFileHandlers";
 import {download} from "../../lib/download";
 import {mockFileBlob} from "../mocks";
+import {server} from "../../msw/server";
+import {rest} from "msw";
 
 describe("download test", () => {
     const fakeObjectUrl = "fakeObjectUrl";
@@ -25,13 +27,45 @@ describe("download test", () => {
         document.body.appendChild = mockAppendChild;
         document.body.removeChild = mockRemoveChild;
 
-        const url = downloadFileUri;
-        await download(url, "test.txt");
+        await download(downloadFileUri, "test.txt");
+
         expect(mockCreateObjectUrl).toHaveBeenCalledWith(mockFileBlob);
         expect(mockFileLink.setAttribute).toHaveBeenCalledWith("download", "test.txt");
         expect(mockAppendChild).toHaveBeenCalledWith(mockFileLink);
         expect(mockFileLink.click).toHaveBeenCalled();
         expect(mockRemoveChild).toHaveBeenCalledWith(mockFileLink);
         expect(mockRevokeObjectUrl).toHaveBeenCalledWith(fakeObjectUrl);
+    });
+
+    const setupUnsuccessfulResponse = (responseJson: object) => {
+        server.use(
+            rest.get(downloadFileUri, (req, res, ctx) => {
+                return res(
+                    ctx.status(500),
+                    ctx.json(responseJson)
+                );
+            })
+        );
+    };
+
+    it("throws error on unsuccessful response", async () => {
+        setupUnsuccessfulResponse({
+            error: {
+                error: "OTHER_ERROR",
+                detail: "test server error"
+            }
+        });
+
+        await expect(download(downloadFileUri, "test.txt")).rejects.toEqual(new Error("Error: test server error"));
+    });
+
+    it("throws error with default message on unsuccessful response", async () => {
+        setupUnsuccessfulResponse({
+            error: {
+                error: "OTHER_ERROR"
+            }
+        });
+
+        await expect(download(downloadFileUri, "test.txt")).rejects.toEqual(new Error("Error downloading test.txt"));
     });
 });
