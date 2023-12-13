@@ -8,6 +8,7 @@ on:
   push:
     branches:
       - 'main'
+      - 'mrc-4758'
   pull_request:
     branches:
       - 'main'
