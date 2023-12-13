@@ -1,4 +1,3 @@
-import { getBearerToken } from "./auth/getBearerToken";
 import {getAuthHeader} from "./auth/getAuthHeader";
 
 export interface Fetcher {
