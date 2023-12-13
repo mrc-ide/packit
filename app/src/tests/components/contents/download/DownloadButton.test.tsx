@@ -1,6 +1,6 @@
 const mockDownload = jest.fn();
 jest.mock("../../../../lib/download", () => ({
-        download: async (...args) => mockDownload(...args)
+        download: async (...args: any[]) => mockDownload(...args)
     })
 );
 
