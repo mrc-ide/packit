@@ -7,6 +7,8 @@ import {rest} from "msw";
 describe("download test", () => {
     const fakeObjectUrl = "fakeObjectUrl";
 
+    const url = `${downloadFileUri}?filename=test.txt`;
+
     it("downloads on successful response", async () => {
         const mockCreateObjectUrl = jest.fn(() => fakeObjectUrl);
         const mockRevokeObjectUrl = jest.fn();
@@ -27,7 +29,7 @@ describe("download test", () => {
         document.body.appendChild = mockAppendChild;
         document.body.removeChild = mockRemoveChild;
 
-        await download(downloadFileUri, "test.txt");
+        await download(url, "test.txt");
 
         expect(mockCreateObjectUrl).toHaveBeenCalledWith(mockFileBlob);
         expect(mockFileLink.setAttribute).toHaveBeenCalledWith("download", "test.txt");
@@ -56,7 +58,7 @@ describe("download test", () => {
             }
         });
 
-        await expect(download(downloadFileUri, "test.txt")).rejects.toEqual(new Error("Error: test server error"));
+        await expect(download(url, "test.txt")).rejects.toEqual(new Error("Error: test server error"));
     });
 
     it("throws error with default message on unsuccessful response", async () => {
@@ -66,6 +68,6 @@ describe("download test", () => {
             }
         });
 
-        await expect(download(downloadFileUri, "test.txt")).rejects.toEqual(new Error("Error downloading test.txt"));
+        await expect(download(url, "test.txt")).rejects.toEqual(new Error("Error downloading test.txt"));
     });
 });
