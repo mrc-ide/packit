@@ -11,8 +11,14 @@ import {rest} from "msw";
 
 const url = `${downloadFileUri}?filename=test.txt`;
 
-describe("download succeeds", () => {
+describe("download", () => {
     const fakeObjectUrl = "fakeObjectUrl";
+    const realFetch = window.fetch;
+
+    afterEach(() => {
+        window.fetch = realFetch;
+    });
+
     it("downloads on successful response", async () => {
         mockAuthHeader.mockImplementation(() => ({Authorization: "fakeAuthHeader"}));
 
@@ -53,9 +59,7 @@ describe("download succeeds", () => {
         expect(mockRemoveChild).toHaveBeenCalledWith(mockFileLink);
         expect(mockRevokeObjectUrl).toHaveBeenCalledWith(fakeObjectUrl);
     });
-});
 
-describe("download errors", () => {
     const setupUnsuccessfulResponse = (responseJson: object) => {
         server.use(
             rest.get(downloadFileUri, (req, res, ctx) => {
