@@ -5,7 +5,7 @@ import org.mockito.kotlin.mock
 import org.springframework.http.HttpStatus
 import packit.AppConfig
 import packit.controllers.LoginController
-import packit.model.LoginWithGithubToken
+import packit.model.LoginWithToken
 import packit.service.GithubAPILoginService
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -15,7 +15,7 @@ class LoginControllerTest
     @Test
     fun `can login with github api token and get packit token`()
     {
-        val request = LoginWithGithubToken("fakeToken")
+        val request = LoginWithToken("fakeToken")
 
         val mockLoginService = mock<GithubAPILoginService> {
             on { authenticateAndIssueToken(request) } doReturn mapOf("token" to "packitToken")
