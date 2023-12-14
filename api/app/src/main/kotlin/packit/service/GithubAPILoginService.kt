@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component
 import packit.AppConfig
 import packit.clients.GithubUserClient
 import packit.exceptions.PackitException
-import packit.model.LoginWithGithubToken
+import packit.model.LoginWithToken
 import packit.security.oauth2.GithubAuthentication
 import packit.security.provider.JwtIssuer
 
@@ -16,14 +16,14 @@ class GithubAPILoginService(
     val githubUserClient: GithubUserClient
 )
 {
-    fun authenticateAndIssueToken(loginRequest: LoginWithGithubToken): Map<String, String>
+    fun authenticateAndIssueToken(loginRequest: LoginWithToken): Map<String, String>
     {
-        if (loginRequest.githubtoken.isEmpty())
+        if (loginRequest.token.isEmpty())
         {
             throw PackitException("emptyGitToken", HttpStatus.BAD_REQUEST)
         }
 
-        githubUserClient.authenticate(loginRequest.githubtoken)
+        githubUserClient.authenticate(loginRequest.token)
         githubUserClient.checkGithubMembership()
         val userPrincipal = githubUserClient.getUser()
 
