@@ -38,7 +38,7 @@ class PackitExceptionHandlerTest : IntegrationTest()
     fun `throws bad request exception when request body is not correct`()
     {
         val headers = HttpHeaders()
-        val entity = HttpEntity(mapOf("token" to "xyz"), headers)
+        val entity = HttpEntity(mapOf("ghtoken" to "xyz"), headers)
 
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/auth/login/api",
