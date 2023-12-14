@@ -41,7 +41,7 @@ class PackitExceptionHandlerTest : IntegrationTest()
         val entity = HttpEntity(mapOf("token" to "xyz"), headers)
 
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/auth/login/github",
+            "/auth/login/api",
             HttpMethod.POST,
             entity
         )
@@ -57,7 +57,7 @@ class PackitExceptionHandlerTest : IntegrationTest()
 
         // NB this test will hit the real github api
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/auth/login/github",
+            "/auth/login/api",
             HttpMethod.POST,
             entity
         )

@@ -14,7 +14,7 @@ class LoginController(
     val config: AppConfig
 )
 {
-    @PostMapping("/login/github")
+    @PostMapping("/login/api")
     @ResponseBody
     fun loginWithGithub(
         @RequestBody @Validated user: LoginWithGithubToken,
