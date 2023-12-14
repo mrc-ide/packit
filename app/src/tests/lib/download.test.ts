@@ -9,13 +9,12 @@ import {mockFileBlob} from "../mocks";
 import {server} from "../../msw/server";
 import {rest} from "msw";
 
-describe("download test", () => {
+const url = `${downloadFileUri}?filename=test.txt`;
+
+describe("download succeeds", () => {
     const fakeObjectUrl = "fakeObjectUrl";
-
-    const url = `${downloadFileUri}?filename=test.txt`;
-
     it("downloads on successful response", async () => {
-        mockAuthHeader.mockImplementation(() => ({ Authorization: "fakeAuthHeader" }));
+        mockAuthHeader.mockImplementation(() => ({Authorization: "fakeAuthHeader"}));
 
         const mockCreateObjectUrl = jest.fn(() => fakeObjectUrl)
         const mockRevokeObjectUrl = jest.fn();
@@ -54,7 +53,9 @@ describe("download test", () => {
         expect(mockRemoveChild).toHaveBeenCalledWith(mockFileLink);
         expect(mockRevokeObjectUrl).toHaveBeenCalledWith(fakeObjectUrl);
     });
+});
 
+describe("download errors", () => {
     const setupUnsuccessfulResponse = (responseJson: object) => {
         server.use(
             rest.get(downloadFileUri, (req, res, ctx) => {

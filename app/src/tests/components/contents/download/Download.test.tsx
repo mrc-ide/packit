@@ -8,7 +8,7 @@ import thunk from "redux-thunk";
 import { Download } from "../../../../app/components/contents";
 import appConfig from "../../../../config/appConfig";
 import { PacketMetadata, PacketsState, TimeMetadata } from "../../../../types";
-import { mockPacketsState } from "../../../mocks";
+import {mockLoginState, mockPacketsState} from "../../../mocks";
 
 describe("download component", () => {
   const packet: PacketMetadata = {
@@ -35,7 +35,8 @@ describe("download component", () => {
     const middlewares = [thunk];
     const mockStore = configureStore(middlewares);
     const initialRootStates = {
-      packets: mockPacketsState(props)
+      packets: mockPacketsState(props),
+      login: mockLoginState({ isAuthenticated: true })
     };
 
     return mockStore(initialRootStates);
@@ -69,16 +70,12 @@ describe("download component", () => {
     expect(screen.getByText(packet.id)).toBeInTheDocument();
   });
 
-  it("render file and download link", async () => {
+  it("render file and download button", async () => {
     const store = getStore({ packet });
 
     renderElement(store);
 
-    const downloadLink = screen.getByRole("link", { name: "example.html" });
-    expect(downloadLink).toHaveAttribute(
-      "href",
-      `${appConfig.apiUrl()}/packets/file/example-hash?filename=example.html`
-    );
+    expect(screen.getByRole("button")).toHaveTextContent("example.html");
     expect(screen.getByText("(1 bytes)")).toBeInTheDocument();
     expect(screen.getByText("Download example.html")).toBeInTheDocument();
   });
