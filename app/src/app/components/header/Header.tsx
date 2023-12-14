@@ -6,8 +6,8 @@ import { NavigationLink } from "../Base/NavigationLink";
 import AccountHeaderDropdown from "./AccountHeaderDropdown";
 
 import { LeftNav } from "./LeftNav";
-import { ThemeToggleButton } from "./ThemeToggleButton";
 import { NavMenuMobile } from "./NavMenuMobile";
+import { ThemeToggleButton } from "./ThemeToggleButton";
 
 export default function Header() {
   const { isAuthenticated } = useSelector((state: RootState) => state.login);
@@ -23,14 +23,10 @@ export default function Header() {
                 Packit
               </div>
             </NavLink>
-            {isAuthenticated && (
-              <>
-                <div className="mx-3 flex items-center md:hidden">
-                  <NavMenuMobile />
-                </div>
-                <LeftNav className="mx-6 hidden md:flex" />
-              </>
-            )}
+            <div className="mx-3 flex items-center md:hidden">
+              <NavMenuMobile />
+            </div>
+            {isAuthenticated && <LeftNav className="mx-6 hidden md:flex" />}
             <div className="ml-auto flex items-center space-x-4">
               <NavigationLink to="/accessibility" className="mx-6 hidden md:flex">
                 Accessibility

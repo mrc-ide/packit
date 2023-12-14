@@ -1,6 +1,5 @@
 import { ChevronRight } from "lucide-react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { capitalizeFirstLetter } from "../../../lib/string/capitalizeFirstLetter";
 
 export const Breadcrumb = () => {
   const { pathname } = useLocation();
@@ -10,10 +9,10 @@ export const Breadcrumb = () => {
   return (
     <>
       <div className="flex-col mb-2 border-b-2 shadow-sm">
-        <div className="flex h-10 items-center px-4 justify-start space-x-1">
+        <div className="flex h-9 items-center px-4 justify-start space-x-1 text-sm">
           {pathNames.map((path, index) => {
             const routeTo = `${pathNames.slice(0, index + 1).join("/")}`;
-            const displayName = routeTo === "" ? "Home" : capitalizeFirstLetter(path);
+            const displayName = routeTo === "" ? "Home" : path;
 
             return index === pathNames.length - 1 ? (
               <div key={index}>{displayName}</div>

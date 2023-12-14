@@ -6,6 +6,7 @@ import { PageablePacketGroupSummary } from "../../../../types";
 import { Skeleton } from "../../Base/Skeleton";
 import { Pagination } from "../common/Pagination";
 import { PacketGroupSummaryListItem } from "./PacketGroupSummaryListItem";
+import { ErrorComponent } from "../common/ErrorComponent";
 
 interface PacketGroupSummaryListProps {
   filterByName: string;
@@ -25,13 +26,7 @@ export const PacketGroupSummaryList = ({
     (url: string) => fetcher({ url, authRequired: true })
   );
 
-  if (error)
-    return (
-      <div className="flex border rounded-md p-6 justify-center text-red-500 flex-col items-center">
-        <h3 className="scroll-m-20 text-lg font-semibold tracking-tight">Error fetching reports</h3>
-        <p className="italic">Please try again later. If the problem persists, contact RSE team.</p>
-      </div>
-    );
+  if (error) return <ErrorComponent message="Error fetching packet groups" error={error} />;
 
   if (isLoading)
     return (
@@ -59,7 +54,7 @@ export const PacketGroupSummaryList = ({
         </ul>
       )}
 
-      {data && (
+      {data?.content?.length ? (
         <div className="flex items-center justify-center">
           <Pagination
             currentPageNumber={pageNumber}
@@ -69,7 +64,7 @@ export const PacketGroupSummaryList = ({
             setPageNumber={setPageNumber}
           />
         </div>
-      )}
+      ) : null}
     </>
   );
 };

@@ -24,6 +24,22 @@ class PacketController(private val packetService: PacketService)
         return ResponseEntity.ok(packetService.getPackets(payload))
     }
 
+    @GetMapping("/{name}")
+    fun getPacketsByName(
+        @PathVariable name: String,
+        @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
+        @RequestParam(required = false, defaultValue = "50") pageSize: Int,
+    ): ResponseEntity<Page<Packet>>
+    {
+        val payload = PageablePayload(pageNumber, pageSize)
+        return ResponseEntity.ok(
+            packetService.getPacketsByName(
+                name,
+                payload
+            )
+        )
+    }
+
     @GetMapping("/packetGroupSummary")
     fun getPacketGroupSummary(
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,

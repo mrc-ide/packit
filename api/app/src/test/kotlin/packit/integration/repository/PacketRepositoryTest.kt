@@ -42,7 +42,21 @@ class PacketRepositoryTest : RepositoryTest()
     }
 
     @Test
-    fun `can get right order and data expected from findIdCountDataByName`()
+    fun `gets filtered by name packets when findByName called`()
+    {
+        packetRepository.saveAll(packet)
+
+        val result = packetRepository.findByName("test1", PageRequest.of(0, 10))
+
+        assertEquals(result.totalElements, 2)
+        assertEquals(result.content[0].name, "test1")
+        assertEquals(result.content[1].name, "test1")
+        assertEquals(result.content[0].id, "20180818-164847-7574833b")
+        assertEquals(result.content[1].id, "20170819-164847-7574333b")
+    }
+
+    @Test
+    fun `can get right order and data expected from findPacketGroupSummaryByName`()
     {
         packetRepository.saveAll(packet)
 
@@ -63,7 +77,7 @@ class PacketRepositoryTest : RepositoryTest()
     }
 
     @Test
-    fun `can filter correctly when calling findIdCountDataByName`()
+    fun `can filter correctly when calling findPacketGroupSummaryByName`()
     {
         packetRepository.saveAll(packet)
 
@@ -85,7 +99,7 @@ class PacketRepositoryTest : RepositoryTest()
     }
 
     @Test
-    fun `returns correct paging data when calling findIdCountDataByName`()
+    fun `returns correct paging data when calling findPacketGroupSummaryByName`()
     {
         packetRepository.saveAll(packet)
 
@@ -102,7 +116,6 @@ class PacketRepositoryTest : RepositoryTest()
         assertEquals(result.totalPages, 1)
         assertEquals(result.isFirst, true)
         assertEquals(result.isLast, true)
-
     }
 
     @Test

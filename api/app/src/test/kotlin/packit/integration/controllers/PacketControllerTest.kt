@@ -30,7 +30,7 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser
-    fun `test can get overview of packets if authenticated`()
+    fun `test can get packet group summary if authenticated`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets/packetGroupSummary?pageNumber=3&pageSize=5&filterName=hell",
@@ -41,10 +41,32 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `test can not get overview of packets if not authenticated`()
+    fun `test can not get packet group summary if not authenticated`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/overview?pageNumber=3&pageSize=5&filterName=hell",
+            "/packets/overview?packetGroupSummary=3&pageSize=5&filterName=hell",
+            HttpMethod.GET
+        )
+        assertUnauthorized(result)
+    }
+
+    @Test
+    @WithAuthenticatedUser
+    fun `test can get packets by name if authenticated`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packets/random?pageNumber=3&pageSize=5",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+        assertSuccess(result)
+    }
+
+    @Test
+    fun `test can not get packets by name if notauthenticated`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packets/random?pageNumber=3&pageSize=5",
             HttpMethod.GET
         )
         assertUnauthorized(result)
