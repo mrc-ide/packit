@@ -53,7 +53,7 @@ class PackitExceptionHandlerTest : IntegrationTest()
     fun `throws unauthorized exception when token is invalid`()
     {
         val headers = HttpHeaders()
-        val entity = HttpEntity(mapOf("githubtoken" to "xyz"), headers)
+        val entity = HttpEntity(mapOf("token" to "xyz"), headers)
 
         // NB this test will hit the real github api
         val result: ResponseEntity<String> = restTemplate.exchange(
