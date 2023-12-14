@@ -25,7 +25,7 @@ export const packetColumns = [
             {isPublished ? (
               <div className="text-xs text-green-500">Published</div>
             ) : (
-              <div className="text-xs text-orange-500">internal</div>
+              <div className="text-xs text-orange-500">Internal</div>
             )}
           </div>
         </div>
