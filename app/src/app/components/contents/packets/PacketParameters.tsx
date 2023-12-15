@@ -1,5 +1,3 @@
-import { Separator } from "../../Base/Separator";
-
 interface PacketParametersProps {
   parameters: Record<string, string>;
 }
@@ -13,8 +11,7 @@ export const PacketParameters = ({ parameters }: PacketParametersProps) => {
         ) : (
           Object.entries(parameters).map(([key, val]) => (
             <div key={key} className="border p-1 rounded-md flex space-x-1 text-sm">
-              <div>{key}</div>
-              <Separator orientation="vertical" />
+              <div>{key}: </div>
               <div className="text-muted-foreground"> {val}</div>
             </div>
           ))
