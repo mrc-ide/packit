@@ -4,7 +4,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import packit.AppConfig
-import packit.model.LoginWithGithubToken
+import packit.model.LoginWithToken
 import packit.service.GithubAPILoginService
 
 @RestController
@@ -14,10 +14,10 @@ class LoginController(
     val config: AppConfig
 )
 {
-    @PostMapping("/login/github")
+    @PostMapping("/login/api")
     @ResponseBody
     fun loginWithGithub(
-        @RequestBody @Validated user: LoginWithGithubToken,
+        @RequestBody @Validated user: LoginWithToken,
     ): ResponseEntity<Map<String, String>>
     {
         val token = gitApiLoginService.authenticateAndIssueToken(user)

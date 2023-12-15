@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus
 import packit.AppConfig
 import packit.clients.GithubUserClient
 import packit.exceptions.PackitException
-import packit.model.LoginWithGithubToken
+import packit.model.LoginWithToken
 import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
 import packit.service.GithubAPILoginService
@@ -27,7 +27,7 @@ class GithubAPILoginServiceTest {
     fun `can authenticate and issue token`()
     {
         val sut = GithubAPILoginService(mockConfig, mockIssuer, mockGithubUserClient)
-        val token = sut.authenticateAndIssueToken(LoginWithGithubToken("fake token"))
+        val token = sut.authenticateAndIssueToken(LoginWithToken("fake token"))
         assertEquals(mapOf("token" to "fake jwt"), token)
         verify(mockGithubUserClient).authenticate("fake token")
         verify(mockGithubUserClient).checkGithubMembership()
@@ -37,7 +37,7 @@ class GithubAPILoginServiceTest {
     fun `throws exception if token is empty`()
     {
         val sut = GithubAPILoginService(mockConfig, mockIssuer, mockGithubUserClient)
-        val ex = assertThrows<PackitException>{ sut.authenticateAndIssueToken(LoginWithGithubToken("")) }
+        val ex = assertThrows<PackitException>{ sut.authenticateAndIssueToken(LoginWithToken("")) }
         assertEquals("emptyGitToken", ex.key)
         assertEquals(HttpStatus.BAD_REQUEST, ex.httpStatus)
     }
