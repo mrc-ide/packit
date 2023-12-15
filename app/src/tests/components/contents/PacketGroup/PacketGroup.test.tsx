@@ -35,7 +35,7 @@ describe("PacketGroup", () => {
 
     mockPacketGroupResponse.content.forEach((packet) => {
       expect(screen.getByText(packet.id)).toHaveAttribute("href", `/${packetGroupName}/${packet.id}`);
-      expect(screen.getAllByText(new Date(packet.time * 1000).toLocaleString())[0]).toBeVisible();
+      expect(screen.getAllByText(new Date(packet.startTime * 1000).toLocaleString())[0]).toBeVisible();
     });
 
     expect(screen.getByText(/none/i)).toBeVisible();

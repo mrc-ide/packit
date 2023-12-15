@@ -28,7 +28,9 @@ export const mockPacketResponse = {
   custom: {} as Custom,
   files: [{ hash: "sha:234:50873fVFDSVSF4", path: "data.rds", size: 97 }],
   published: false,
-  time: 1701694312
+  importTime: 1701694312,
+  startTime: 1701694312,
+  endTime: 1701694312
 };
 
 export const mockPacketGroupSummary: PageablePacketGroupSummary = {
@@ -154,7 +156,9 @@ export const mockPacketGroupResponse: PageablePackets = {
         c: 100000
       },
       published: false,
-      time: 1701761844
+      importTime: 1701761844,
+      startTime: 1701761844,
+      endTime: 1701761844
     },
     {
       id: "20231205-073527-99db1138",
@@ -162,7 +166,9 @@ export const mockPacketGroupResponse: PageablePackets = {
       displayName: "parameters",
       parameters: {},
       published: false,
-      time: 1701761734
+      importTime: 1701761734,
+      startTime: 1701761734,
+      endTime: 1701761734
     },
     {
       id: "20230427-150722-0ebd6545",
@@ -174,7 +180,9 @@ export const mockPacketGroupResponse: PageablePackets = {
         a: 10
       },
       published: true,
-      time: 1701694312
+      importTime: 1701694312,
+      startTime: 1701694312,
+      endTime: 1701694312
     },
     {
       id: "20231127-133335-c8ced0bf",
@@ -186,7 +194,9 @@ export const mockPacketGroupResponse: PageablePackets = {
         b: 22
       },
       published: false,
-      time: 1701694312
+      importTime: 1701694312,
+      startTime: 1701694312,
+      endTime: 1701694312
     },
     {
       id: "20231127-133612-c69df160",
@@ -198,7 +208,9 @@ export const mockPacketGroupResponse: PageablePackets = {
         a: 1
       },
       published: false,
-      time: 1701694312
+      importTime: 1701694312,
+      startTime: 1701694312,
+      endTime: 1701694312
     }
   ],
   totalPages: 1,

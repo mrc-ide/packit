@@ -71,7 +71,8 @@ CREATE TABLE "packet"
     "display_name" TEXT NULL,
     "parameters" JSON NULL,
     "published" BOOLEAN NOT NULL DEFAULT FALSE,
-    "time" BIGINT NOT NULL
+    "import_time" BIGINT NOT NULL,
+    "start_time" DOUBLE PRECISION NOT NULL,
+    "end_time" DOUBLE PRECISION NOT NULL
 );
 CREATE INDEX idx_name ON packet (name);
-CREATE INDEX idx_name_time ON packet (name, time DESC);

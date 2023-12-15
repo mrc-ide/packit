@@ -29,6 +29,8 @@ class PacketControllerTest
             mapOf("name" to "value"),
             true,
             now,
+            now.toDouble(),
+            now.toDouble(),
         ),
         Packet(
             "20170819-164847-7574883b",
@@ -36,7 +38,10 @@ class PacketControllerTest
             "test name3",
             mapOf("alpha" to true),
             false,
-            1690902034
+            1690902034,
+            1690902034.0,
+            1690902034.0
+
         )
     )
 

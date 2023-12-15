@@ -23,7 +23,7 @@ export default function Metadata() {
               <MetadataListItem label="Git Branch" value={packet.git.branch} />
               <MetadataListItem label="Git Commit" value={packet.git.sha} />
               <li className="flex flex-col">
-                <span className="font-semibold mr-2">Git Remotes:</span>
+                <span className="font-semibold mr-2">Git Remotes</span>
                 <ul className="list-disc list-inside">
                   {packet.git.url?.map((url, index) => (
                     <li key={index} className="text-muted-foreground">
