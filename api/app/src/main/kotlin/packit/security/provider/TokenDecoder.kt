@@ -22,7 +22,7 @@ class TokenDecoder(val config: AppConfig) : JwtDecoder
     {
         try
         {
-            return JWT.require(Algorithm.HMAC256(config.authBasicSecret))
+            return JWT.require(Algorithm.HMAC256(config.authJWTSecret))
                 .build()
                 .verify(token)
         } catch (e: SignatureVerificationException)

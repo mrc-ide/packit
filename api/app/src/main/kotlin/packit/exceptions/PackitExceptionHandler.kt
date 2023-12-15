@@ -61,6 +61,24 @@ class PackitExceptionHandler
             .toResponseEntity()
     }
 
+    @ExceptionHandler(PackitAuthenticationException::class)
+    fun handlePackitAuthenticationException(
+        error: PackitAuthenticationException
+    ): ResponseEntity<String>
+    {
+        return errorDetailForPackitAuthenticationException(error)
+            .toResponseEntity()
+    }
+
+    fun errorDetailForPackitAuthenticationException(
+        error: PackitAuthenticationException
+    ): ErrorDetail
+    {
+        val resourceBundle = getBundle()
+
+        return ErrorDetail(error.httpStatus, resourceBundle.getString(error.key))
+    }
+
     private fun getBundle(): ResourceBundle
     {
         return ResourceBundle.getBundle("errorBundle", Locale.ENGLISH)

@@ -1,8 +1,8 @@
-import { CurrentUser, LoginState } from "../../../types";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { actions } from "./loginThunks";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { validateToken } from "../../../helpers";
 import { CURRENT_USER, saveCurrentUser } from "../../../localStorageManager";
+import { CurrentUser, LoginState } from "../../../types";
+import { actions } from "./loginThunks";
 
 export const initialLoginState: LoginState = {
   user: {} as CurrentUser,
@@ -26,19 +26,18 @@ export const loginSlice = createSlice({
       saveCurrentUser(state.user);
       state.isAuthenticated = validateToken(state.user);
       state.userError = null;
+    },
+    loginError: (state, action: PayloadAction<string>) => {
+      state.userError = {
+        error: {
+          error: "Login failed",
+          detail: action.payload
+        }
+      };
     }
   },
   extraReducers: (builder) => {
     builder
-      .addCase(actions.fetchToken.fulfilled, (state, action) => {
-        state.user = action.payload;
-        saveCurrentUser(state.user);
-        state.isAuthenticated = validateToken(state.user);
-        state.userError = null;
-      })
-      .addCase(actions.fetchToken.rejected, (state, action) => {
-        state.userError = action.payload ?? null;
-      })
       .addCase(actions.fetchAuthConfig.fulfilled, (state, action) => {
         state.authConfig = action.payload;
         state.authConfigError = null;
@@ -49,6 +48,6 @@ export const loginSlice = createSlice({
   }
 });
 
-export const { logout, saveUser } = loginSlice.actions;
+export const { logout, saveUser, loginError } = loginSlice.actions;
 
 export default loginSlice.reducer;

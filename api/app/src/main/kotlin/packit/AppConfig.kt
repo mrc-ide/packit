@@ -16,14 +16,13 @@ class AppConfig(private val props: PackitProperties = properties)
     val dbUrl: String = propString("db.url")
     val dbUser: String = propString("db.user")
     val dbPassword: String = propString("db.password")
-    val authBasicSecret: String = propString("auth.basic.secret")
+    val authJWTSecret: String = propString("auth.jwt.secret")
     val authRedirectUri: String = propString("auth.oauth2.redirect.url")
-    val authEnableFormLogin: Boolean = propString("auth.enableFormLogin").toBoolean()
     val authEnableGithubLogin: Boolean = propString("auth.enableGithubLogin").toBoolean()
     val authExpiryDays: Long = propString("auth.expiryDays").toLong()
     val authEnabled: Boolean = propString("auth.enabled").toBoolean()
-    val authGithubAPIBaseUrl: String = propString("auth.githubAPIBaseUrl")
-    val authGithubAPIOrgs: String = propString("auth.githubAPIOrgs")
+    val authGithubAPIOrg: String = propString("auth.githubAPIOrg")
+    val authGithubAPITeam: String = propString("auth.githubAPITeam")
 
     private fun propString(propName: String): String
     {
