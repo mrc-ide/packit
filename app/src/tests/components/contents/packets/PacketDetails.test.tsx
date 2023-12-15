@@ -22,12 +22,12 @@ describe("packet details component", () => {
     );
   };
 
-  it("renders parameters", async () => {
+  it("renders parameters correctly", async () => {
     renderComponent();
 
     await waitFor(() => {
       Object.keys(mockPacket.parameters as object).forEach((key) => {
-        expect(screen.getByText(key)).toBeVisible();
+        expect(screen.getByText(`${key}:`)).toBeVisible();
       });
     });
   });
