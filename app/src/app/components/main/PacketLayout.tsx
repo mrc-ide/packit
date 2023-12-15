@@ -5,7 +5,7 @@ import { PacketSidebarNav } from "./PacketSidebarNav";
 const getSideBarNavItems = (packetName = "", packetId = "") => [
   {
     to: `/${packetName}/${packetId}`,
-    title: "Report"
+    title: "Summary"
   },
   {
     to: `/${packetName}/${packetId}/metadata`,

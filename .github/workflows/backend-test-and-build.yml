@@ -11,8 +11,6 @@ on:
   pull_request:
     branches:
       - "main"
-      # TODO: remove wone 4716 is merged
-      - "mrc-4716-theme-update"
 
 env:
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
