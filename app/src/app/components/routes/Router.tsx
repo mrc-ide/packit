@@ -10,7 +10,7 @@ import { Metadata } from "../contents/metadata";
 import PacketDetails from "../contents/packets/PacketDetails";
 import { Login, Redirect } from "../login";
 import { Breadcrumb } from "../main/Breadcrumb";
-import { Sidebar } from "../main/Sidebar";
+import { PacketLayout } from "../main/PacketLayout";
 import ProtectedRoute from "./ProtectedRoute";
 
 export function Router() {
@@ -29,7 +29,7 @@ export function Router() {
           <Route path="run-workflow" element={<WorkflowRunner />} />
           <Route path="documentation" element={<ProjectDocumentation />} />
           <Route path="/:packetName" element={<PacketGroup />} />
-          <Route element={<Sidebar />} path="/:packetName/:packetId">
+          <Route element={<PacketLayout />} path="/:packetName/:packetId">
             <Route path="/:packetName/:packetId" element={<PacketDetails />} />
             <Route path="/:packetName/:packetId/metadata" element={<Metadata />} />
             <Route path="/:packetName/:packetId/downloads" element={<Download />} />

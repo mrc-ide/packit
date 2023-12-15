@@ -1,12 +1,9 @@
 import { Dispatch, SetStateAction } from "react";
-import useSWR from "swr";
-import appConfig from "../../../../config/appConfig";
-import { fetcher } from "../../../../lib/fetch";
-import { PageablePacketGroupSummary } from "../../../../types";
 import { Skeleton } from "../../Base/Skeleton";
+import { ErrorComponent } from "../common/ErrorComponent";
 import { Pagination } from "../common/Pagination";
 import { PacketGroupSummaryListItem } from "./PacketGroupSummaryListItem";
-import { ErrorComponent } from "../common/ErrorComponent";
+import { useGetPacketGroupSummary } from "./hooks/useGetPacketGroupSummary";
 
 interface PacketGroupSummaryListProps {
   filterByName: string;
@@ -20,11 +17,7 @@ export const PacketGroupSummaryList = ({
   pageSize,
   setPageNumber
 }: PacketGroupSummaryListProps) => {
-  const { data, isLoading, error } = useSWR<PageablePacketGroupSummary>(
-    `${appConfig.apiUrl()}/packets/packetGroupSummary?pageNumber=${pageNumber}&pageSize=${pageSize}\
-    &filterName=${filterByName}`,
-    (url: string) => fetcher({ url, authRequired: true })
-  );
+  const { packetGroupSummary, isLoading, error } = useGetPacketGroupSummary(pageNumber, pageSize, filterByName);
 
   if (error) return <ErrorComponent message="Error fetching packet groups" error={error} />;
 
@@ -46,21 +39,23 @@ export const PacketGroupSummaryList = ({
 
   return (
     <>
-      {data?.content?.length === 0 ? (
+      {packetGroupSummary?.content?.length === 0 ? (
         <div className="flex border rounded-md p-6 justify-center text-muted-foreground">No reports found</div>
       ) : (
         <ul className="flex flex-col border rounded-md">
-          {data?.content?.map((packet) => <PacketGroupSummaryListItem key={packet.latestId} packet={packet} />)}
+          {packetGroupSummary?.content?.map((packet) => (
+            <PacketGroupSummaryListItem key={packet.latestId} packet={packet} />
+          ))}
         </ul>
       )}
 
-      {data?.content?.length ? (
+      {packetGroupSummary?.content.length ? (
         <div className="flex items-center justify-center">
           <Pagination
             currentPageNumber={pageNumber}
-            totalPages={data.totalPages}
-            isFirstPage={data.first}
-            isLastPage={data.last}
+            totalPages={packetGroupSummary.totalPages}
+            isFirstPage={packetGroupSummary.first}
+            isLastPage={packetGroupSummary.last}
             setPageNumber={setPageNumber}
           />
         </div>

@@ -1,6 +1,7 @@
 import { rest } from "msw";
-import { packetGroupSummaryHandlers } from "./handlers/packetGroupSummaryHandlers";
 import { packetGroupHandlers } from "./handlers/packetGroupHandlers";
+import { packetGroupSummaryHandlers } from "./handlers/packetGroupSummaryHandlers";
+import { packetHandlers } from "./handlers/packetHandler";
 
 // catch any missed requests in tests
 const defaultHandlers = [
@@ -10,4 +11,4 @@ const defaultHandlers = [
   rest.delete("*", (req, res, ctx) => res(ctx.status(204)))
 ];
 
-export const handlers = [...packetGroupSummaryHandlers, ...packetGroupHandlers, ...defaultHandlers];
+export const handlers = [...packetGroupSummaryHandlers, ...packetGroupHandlers, ...packetHandlers, ...defaultHandlers];

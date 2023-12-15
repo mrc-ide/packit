@@ -1,63 +1,41 @@
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { getDateUTCString, getElapsedTime } from "../../../../helpers";
-import { RootState, useAppDispatch } from "../../../../types";
-import { actions } from "../../../store/packets/packetThunks";
+import { usePacketOutletContext } from "../../main/PacketOutlet";
 import { PacketHeader } from "../packets";
+import { MetadataListItem } from "./MetadataListItem";
 
 export default function Metadata() {
-  const { packet } = useSelector((state: RootState) => state.packets);
+  const { packetId, packetName } = useParams();
+  const { packet } = usePacketOutletContext();
 
-  const dispatch = useAppDispatch();
-
-  const { packetId } = useParams();
-
-  useEffect(() => {
-    if (packetId) {
-      dispatch(actions.fetchPacketById(packetId));
-    }
-  }, [packetId]);
-
-  if (Object.keys(packet).length === 0) {
-    return <div>Loading...</div>;
-  }
+  const startedTime = packet && getDateUTCString(packet.time);
+  const elapsedTime = packet && getElapsedTime(packet.time);
 
   return (
-    <div className="content packet-details">
-      <PacketHeader packet={packet} />
-      <div className="w-75">
-        <ul className="list-group">
-          <li className="list-group-item d-flex flex-wrap justify-content-between">
-            {getDateUTCString(packet.time) && (
-              <div className="col-md-6 p-2 justify-content-start d-flex">
-                <span className="p-2 fw-semibold">Started:</span>
-                <span className="p-2 text-muted">{getDateUTCString(packet.time)}</span>
-              </div>
-            )}
-            {getElapsedTime(packet.time) && (
-              <div data-testid="elapsed" className="col-md-6 p-2 d-flex">
-                <span className="p-2 fw-semibold">Elapsed:</span>
-                <span className="p-2 text-muted">{getElapsedTime(packet.time)}</span>
-              </div>
-            )}
-          </li>
-          <li className="list-group-item d-flex flex-wrap justify-content-between">
-            {packet.git?.branch && (
-              <div data-testid="git-branch" className="p-2 justify-content-start d-flex">
-                <span className="fw-semibold p-2">Git Branch:</span>
-                <span className="p-2 text-muted">{packet.git?.branch}</span>
-              </div>
-            )}
-            {packet.git?.sha && (
-              <div data-testid="git-sha" className="p-2 d-flex">
-                <span className="p-2 fw-semibold">Git Commit:</span>
-                <span className="p-2 text-muted">{packet.git?.sha}</span>
-              </div>
-            )}
-          </li>
+    <div className="h-full flex-1 flex-col space-y-4 pl-8 lg:pl-0 pr-8">
+      <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} />
+      {packet && (
+        <ul className="flex flex-col space-y-3">
+          {startedTime && <MetadataListItem label="Started" value={startedTime} />}
+          {elapsedTime && <MetadataListItem label="Elapsed" value={elapsedTime} />}
+          {packet.git && (
+            <>
+              <MetadataListItem label="Git Branch" value={packet.git.branch} />
+              <MetadataListItem label="Git Commit" value={packet.git.sha} />
+              <li className="flex flex-col">
+                <span className="font-semibold mr-2">Git Remotes</span>
+                <ul className="list-disc list-inside">
+                  {packet.git.url?.map((url, index) => (
+                    <li key={index} className="text-muted-foreground">
+                      {url}
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            </>
+          )}
         </ul>
-      </div>
+      )}
     </div>
   );
 }

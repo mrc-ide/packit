@@ -1,8 +1,8 @@
-import { Outlet, useParams } from "react-router-dom";
-import { SidebarNav } from "./SidebarNav";
+import { useParams } from "react-router-dom";
+import { PacketOutlet } from "./PacketOutlet";
+import { PacketSidebarNav } from "./PacketSidebarNav";
 
-// TODO: update show only when packet/:version is present
-const getSideBarNavItems = (packetName: string, packetId: string) => [
+const getSideBarNavItems = (packetName = "", packetId = "") => [
   {
     to: `/${packetName}/${packetId}`,
     title: "Report"
@@ -20,20 +20,18 @@ const getSideBarNavItems = (packetName: string, packetId: string) => [
     title: "Change logs"
   }
 ];
-export const Sidebar = () => {
+
+export const PacketLayout = () => {
   const { packetId, packetName } = useParams();
-
-  if (!packetId || !packetName) return null;
-
   const sidebarNavItems = getSideBarNavItems(packetName, packetId);
 
   return (
     <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-10 lg:space-y-2">
-      <aside data-testid="sidebar" className="lg:w-1/5 pl-2">
-        <SidebarNav items={sidebarNavItems} />
+      <aside data-testid="sidebar" className="lg:w-1/5 pl-1 lg:pl-2">
+        <PacketSidebarNav items={sidebarNavItems} />
       </aside>
       <div className="flex-1 lg:max-w-6xl">
-        <Outlet />
+        <PacketOutlet packetId={packetId} />
       </div>
     </div>
   );
