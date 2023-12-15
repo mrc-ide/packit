@@ -1,4 +1,3 @@
-import Explorer from "./Explorer";
-import Table from "./Table";
+import { Home } from "./Home";
 
-export {Explorer, Table};
+export { Home };

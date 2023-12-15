@@ -1,9 +1,12 @@
 package packit.unit.controllers
 
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers.*
+import org.mockito.ArgumentMatchers.anyBoolean
+import org.mockito.ArgumentMatchers.anyString
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.HttpHeaders
@@ -26,6 +29,8 @@ class PacketControllerTest
             mapOf("name" to "value"),
             true,
             now,
+            now.toDouble(),
+            now.toDouble(),
         ),
         Packet(
             "20170819-164847-7574883b",
@@ -33,8 +38,28 @@ class PacketControllerTest
             "test name3",
             mapOf("alpha" to true),
             false,
-            1690902034
+            1690902034,
+            1690902034.0,
+            1690902034.0
+
         )
+    )
+
+    private val packetGroupSummaries = listOf(
+        object : PacketGroupSummary
+        {
+            override fun getName(): String = ""
+            override fun getPacketCount(): Int = 10
+            override fun getLatestId(): String = "20180818-164847-7574883b"
+            override fun getLatestTime(): Long = 1690902034
+        },
+        object : PacketGroupSummary
+        {
+            override fun getName(): String = ""
+            override fun getPacketCount(): Int = 10
+            override fun getLatestId(): String = "20180818-164847-7574883b"
+            override fun getLatestTime(): Long = 1690902034
+        }
     )
 
     private val packetMetadata = PacketMetadata(
@@ -51,12 +76,15 @@ class PacketControllerTest
 
     private val inputStream = ByteArrayResource(htmlContentByteArray) to HttpHeaders.EMPTY
 
-    val mockPageablePackets = PageImpl(packets)
+    private val mockPageablePackets = PageImpl(packets)
+    private val mockPacketGroupsSummary = PageImpl(packetGroupSummaries)
 
     private val indexService = mock<PacketService> {
         on { getPackets(PageablePayload(0, 10)) } doReturn mockPageablePackets
         on { getMetadataBy(anyString()) } doReturn packetMetadata
         on { getFileByHash(anyString(), anyBoolean(), anyString()) } doReturn inputStream
+        on { getPacketGroupSummary(PageablePayload(0, 10), "") } doReturn mockPacketGroupsSummary
+        on { getPacketsByName(anyString(), any()) } doReturn mockPageablePackets
     }
 
     @Test
@@ -68,6 +96,28 @@ class PacketControllerTest
         assertEquals(result.body, mockPageablePackets)
         assertEquals(1, mockPageablePackets.totalPages)
         assertEquals(2, mockPageablePackets.totalElements)
+    }
+
+    @Test
+    fun `get packets by packet group name`()
+    {
+        val sut = PacketController(indexService)
+
+        val result = sut.getPacketsByName("pg1", 0, 10)
+
+        assertEquals(result.statusCode, HttpStatus.OK)
+        assertEquals(result.body, mockPageablePackets)
+        verify(indexService).getPacketsByName("pg1", PageablePayload(0, 10))
+    }
+
+    @Test
+    fun `get packet groups summary`()
+    {
+        val sut = PacketController(indexService)
+        val result = sut.getPacketGroupSummary(0, 10, "")
+        assertEquals(result.statusCode, HttpStatus.OK)
+        assertEquals(result.body, mockPacketGroupsSummary)
+        verify(indexService).getPacketGroupSummary(PageablePayload(0, 10), "")
     }
 
     @Test

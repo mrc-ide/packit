@@ -1,7 +1,9 @@
 package packit.integration.repository
 
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
 import packit.model.Packet
 import packit.repository.PacketRepository
 import java.time.Instant
@@ -14,72 +16,208 @@ class PacketRepositoryTest : RepositoryTest()
 
     val now = Instant.now().epochSecond
 
-    val packet = listOf(
-            Packet("20180818-164847-7574883b", "test1", "test name1", mapOf("name" to "value"), false, now),
-            Packet("20170818-164847-7574883b", "test2", "test name2", mapOf("a" to 1), false, now + 1),
-            Packet("20170819-164847-7574883b", "test3", "test name3", mapOf("alpha" to true), false, now),
-            Packet("20170819-164847-7574883a", "test4", "test name4", mapOf(), true, now)
+    val packets = listOf(
+        Packet(
+            "20180818-164847-7574833b",
+            "test1",
+            "test name1",
+            mapOf("name" to "value"),
+            false,
+            now,
+            now.toDouble(),
+            now.toDouble()
+        ),
+        Packet(
+            "20170818-164847-7574853b",
+            "test2",
+            "test name2",
+            mapOf("a" to 1),
+            false,
+            now + 1,
+            (now + 1).toDouble(),
+            (now + 1).toDouble()
+        ),
+        Packet(
+            "20170819-164847-7574823b",
+            "random",
+            "random",
+            mapOf("alpha" to true),
+            false,
+            now + 3,
+            (now + 3).toDouble(),
+            (now + 3).toDouble()
+        ),
+        Packet(
+            "20170819-164847-7574113a",
+            "test4",
+            "test name4",
+            mapOf(),
+            true,
+            now + 4,
+            (now + 4).toDouble(),
+            (now + 4).toDouble()
+        ),
+        Packet(
+            "20170819-164847-7574983b",
+            "test4",
+            "test name4",
+            mapOf(),
+            true,
+            now + 2,
+            (now + 2).toDouble(),
+            (now + 2).toDouble()
+        ),
+        Packet(
+            "20170819-164847-7574333b",
+            "test1",
+            "test name1",
+            mapOf(),
+            true,
+            now + 5,
+            (now + 5).toDouble(),
+            (now + 5).toDouble()
+        ),
     )
 
-    private fun saveAllPackets()
+    @BeforeEach
+    fun setup()
     {
-        packetRepository.saveAll(packet)
+        packetRepository.deleteAll()
     }
 
     @Test
     fun `can get packets from db`()
     {
-        saveAllPackets()
+        packetRepository.saveAll(packets)
 
         val result = packetRepository.findAll()
 
-        assertEquals(result, packet)
+        assertEquals(result, packets)
+    }
+
+    @Test
+    fun `gets filtered by name packets when findByName called`()
+    {
+        packetRepository.saveAll(packets)
+
+        val result = packetRepository.findByName("test1", PageRequest.of(0, 10))
+
+        assertEquals(result.totalElements, 2)
+        assertEquals(result.content[0].name, "test1")
+        assertEquals(result.content[1].name, "test1")
+        assertEquals(result.content[0].id, "20180818-164847-7574833b")
+        assertEquals(result.content[1].id, "20170819-164847-7574333b")
+    }
+
+    @Test
+    fun `can get right order and data expected from findPacketGroupSummaryByName`()
+    {
+        packetRepository.saveAll(packets)
+
+        val result = packetRepository.findPacketGroupSummaryByName("", PageRequest.of(0, 10)).map {
+            object
+            {
+                val name = it.getName()
+                val latestTime = it.getLatestTime()
+                val latestId = it.getLatestId()
+                val packetCount = it.getPacketCount()
+            }
+        }
+        assertEquals(result.totalElements, 4)
+        assertEquals(result.content[0].name, "test1")
+        assertEquals(result.content[0].latestId, "20170819-164847-7574333b")
+        assertEquals(result.content[0].latestTime, now + 5)
+        assertEquals(result.content[0].packetCount, 2)
+    }
+
+    @Test
+    fun `can filter correctly when calling findPacketGroupSummaryByName`()
+    {
+        packetRepository.saveAll(packets)
+
+        val result = packetRepository.findPacketGroupSummaryByName("4", PageRequest.of(0, 10)).map {
+            object
+            {
+                val name = it.getName()
+                val latestTime = it.getLatestTime()
+                val latestId = it.getLatestId()
+                val packetCount = it.getPacketCount()
+            }
+        }
+
+        assertEquals(result.totalElements, 1)
+        assertEquals(result.content[0].name, "test4")
+        assertEquals(result.content[0].latestId, "20170819-164847-7574113a")
+        assertEquals(result.content[0].latestTime, now + 4)
+        assertEquals(result.content[0].packetCount, 2)
+    }
+
+    @Test
+    fun `returns correct paging data when calling findPacketGroupSummaryByName`()
+    {
+        packetRepository.saveAll(packets)
+
+        val result = packetRepository.findPacketGroupSummaryByName("random", PageRequest.of(0, 10)).map {
+            object
+            {
+                val name = it.getName()
+                val latestTime = it.getLatestTime()
+                val latestId = it.getLatestId()
+                val packetCount = it.getPacketCount()
+            }
+        }
+
+        assertEquals(result.totalPages, 1)
+        assertEquals(result.isFirst, true)
+        assertEquals(result.isLast, true)
     }
 
     @Test
     fun `can get sorted packet ids from db`()
     {
-        saveAllPackets()
+        packetRepository.saveAll(packets)
 
         val result = packetRepository.findAllIds()
 
         assertEquals(
-                result,
-                listOf(
-                        "20170818-164847-7574883b",
-                        "20170819-164847-7574883a",
-                        "20170819-164847-7574883b",
-                        "20180818-164847-7574883b"
-                )
+            result,
+            listOf(
+                "20170818-164847-7574853b",
+                "20170819-164847-7574113a",
+                "20170819-164847-7574333b",
+                "20170819-164847-7574823b",
+                "20170819-164847-7574983b",
+                "20180818-164847-7574833b"
+            )
         )
     }
 
     @Test
     fun `most recent packet is null if no packets in db`()
     {
-        val result = packetRepository.findTopByOrderByTimeDesc()
+        val result = packetRepository.findTopByOrderByImportTimeDesc()
         assertEquals(result, null)
     }
 
     @Test
     fun `can get most recent packet from db`()
     {
-        saveAllPackets()
+        packetRepository.saveAll(packets)
 
-        val result = packetRepository.findTopByOrderByTimeDesc()
+        val result = packetRepository.findTopByOrderByImportTimeDesc()
 
-        assertEquals(result!!.id, "20170818-164847-7574883b")
+        assertEquals(result!!.id, "20170819-164847-7574333b")
     }
 
     @Test
     fun `can get packet by id`()
     {
-        saveAllPackets()
+        packetRepository.saveAll(packets)
 
-        val result = packetRepository.findById(packet[0].id)
+        val result = packetRepository.findById(packets[0].id)
 
         val id = result.orElseGet(null).id
 
-        assertEquals(id, "20180818-164847-7574883b")
+        assertEquals(id, "20180818-164847-7574833b")
     }
 }

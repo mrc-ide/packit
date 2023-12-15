@@ -1,17 +1,13 @@
-import React from "react";
-import {PacketMetadata} from "../../../../types";
-
 interface PacketHeaderProps {
-    packet: PacketMetadata
+  packetName: string;
+  packetId: string;
 }
 
-export default function PacketHeader({packet}: PacketHeaderProps) {
-    return (
-        <>
-            <div className="pb-3 d-flex flex-column align-items-start">
-                <span className="p-2 pb-0 h1">{packet.custom?.orderly.description.display || packet.name}</span>
-                <span className="p-2 pt-0 small">{packet.id}</span>
-            </div>
-        </>
-    );
+export default function PacketHeader({ packetName, packetId }: PacketHeaderProps) {
+  return (
+    <div>
+      <h2 className="text-2xl font-bold tracking-tight">{packetName}</h2>
+      <p className="text-muted-foreground">{packetId}</p>
+    </div>
+  );
 }

@@ -1,87 +1,36 @@
-import {render, screen} from "@testing-library/react";
-import {MemoryRouter} from "react-router-dom";
-import React from "react";
-import {Download} from "../../../../app/components/contents";
-import {PacketMetadata, PacketsState, TimeMetadata} from "../../../../types";
-import thunk from "redux-thunk";
-import configureStore from "redux-mock-store";
-import {mockPacketsState} from "../../../mocks";
-import {Store} from "@reduxjs/toolkit";
-import {Provider} from "react-redux";
+import { render, screen } from "@testing-library/react";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
+
+import { SWRConfig } from "swr";
+import { Download } from "../../../../app/components/contents";
+import { PacketLayout } from "../../../../app/components/main";
 import appConfig from "../../../../config/appConfig";
+import { mockPacket } from "../../../mocks";
 
 describe("download component", () => {
+  const renderComponent = () => {
+    render(
+      <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>
+        <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/downloads`]}>
+          <Routes>
+            <Route element={<PacketLayout />} path="/:packetName/:packetId">
+              <Route path="/:packetName/:packetId/downloads" element={<Download />} />
+            </Route>
+          </Routes>
+        </MemoryRouter>
+      </SWRConfig>
+    );
+  };
 
-    const packet: PacketMetadata = {
-        id: "123",
-        name: "Interim update",
-        parameters: {
-            "subset": "superset"
-        },
-        published: false,
-        files: [{hash: "example-hash", path: "example.html", size: 1}],
-        custom: {
-            orderly: {
-                artefacts: [],
-                description: {
-                    display: "Corn pack",
-                    custom: {}
-                }
-            },
+  it("render file and download link", async () => {
+    renderComponent();
 
-        },
-        time: {} as TimeMetadata
-    };
-
-    const getStore = (props: Partial<PacketsState> = {}) => {
-        const middlewares = [thunk];
-        const mockStore = configureStore(middlewares);
-        const initialRootStates = {
-            packets: mockPacketsState(props)
-        };
-
-        return mockStore(initialRootStates);
-    };
-
-    const renderElement = (store: Store = getStore()) => {
-        return render(
-            <Provider store={store}>
-                <MemoryRouter>
-                    <Download/>
-                </MemoryRouter>
-            </Provider>);
-    };
-
-    it("render loading message when packet is being fetched", async () => {
-        renderElement();
-
-        const loadingMessage = screen.getByText("Loading...");
-
-        expect(loadingMessage).toBeInTheDocument();
-    });
-
-    it("can render packet header", () => {
-
-        const store = getStore({packet});
-
-        renderElement(store);
-
-        expect(screen.getByText(packet.custom.orderly.description.display)).toBeInTheDocument();
-
-        expect(screen.getByText(packet.id)).toBeInTheDocument();
-    });
-
-    it("render file and download link", async () => {
-
-        const store = getStore({packet});
-
-        renderElement(store);
-
-        const downloadLink = screen.getByRole("link", { name: "example.html" });
-        expect(downloadLink).toHaveAttribute("href",
-            `${appConfig.apiUrl()}/packets/file/example-hash?filename=example.html`);
-        expect(screen.getByText("(1 bytes)")).toBeInTheDocument();
-        expect(screen.getByText("Download example.html")).toBeInTheDocument();
-    });
-
+    const downloadLink = await screen.findByRole("link", { name: /report.html/i });
+    expect(downloadLink).toHaveAttribute(
+      "href",
+      `${appConfig.apiUrl()}/packets/file/${mockPacket.files[1].hash}?filename=${mockPacket.files[1].path}`
+    );
+    expect(screen.getByText("(137 bytes)")).toBeInTheDocument();
+    expect(screen.getByText(`Download ${mockPacket.files[0].path}`)).toBeInTheDocument();
+  });
 });
