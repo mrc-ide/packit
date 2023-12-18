@@ -37,11 +37,11 @@ class TokenProvider(val config: AppConfig) : JwtIssuer
         return JWT.create()
             .withAudience(TOKEN_AUDIENCE)
             .withIssuer(TOKEN_ISSUER)
-            .withClaim("email", user.username)
-            .withClaim("name", user.name)
+            .withClaim("userName", user.name)
+            .withClaim("displayName", user.displayName)
             .withClaim("datetime", createdDate)
             .withClaim("au", roles)
             .withExpiresAt(expiredDate)
-            .sign(Algorithm.HMAC256(config.authBasicSecret))
+            .sign(Algorithm.HMAC256(config.authJWTSecret))
     }
 }

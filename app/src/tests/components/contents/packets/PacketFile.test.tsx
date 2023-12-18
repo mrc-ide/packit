@@ -36,17 +36,4 @@ describe("Packet file component", () => {
     const iframe = container.querySelector("iframe");
     expect(iframe).toHaveAttribute("src", `${appConfig.apiUrl()}/example.html`);
   });
-
-  it("does not render iframe when file is empty", () => {
-    const store = getStore();
-    const { container } = render(
-      <Provider store={store}>
-        <MemoryRouter>
-          <PacketFile path={null} />
-        </MemoryRouter>
-      </Provider>
-    );
-
-    expect(container.querySelector("iframe")).not.toBeInTheDocument();
-  });
 });

@@ -1,4 +1,4 @@
 import Main from "./Main";
-import { Sidebar } from "./Sidebar";
+import { PacketLayout } from "./PacketLayout";
 
-export { Main, Sidebar };
+export { Main, PacketLayout };

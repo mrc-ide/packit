@@ -1,33 +1,17 @@
-import {useEffect} from "react";
-import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { RootState, useAppDispatch } from "../../../../types";
-import { actions } from "../../../store/packets/packetThunks";
+import { usePacketOutletContext } from "../../main/PacketOutlet";
 import { PacketHeader } from "../packets";
 import DownloadButton from "./DownloadButton";
 
 export default function Download() {
-  const { packet } = useSelector((state: RootState) => state.packets);
-
-  const dispatch = useAppDispatch();
-
-  const { packetId } = useParams();
-
-  useEffect(() => {
-    if (packetId) {
-      dispatch(actions.fetchPacketById(packetId));
-    }
-  }, [packetId]);
-
-  if (Object.keys(packet).length === 0) {
-    return <div>Loading...</div>;
-  }
+  const { packetId, packetName } = useParams();
+  const { packet } = usePacketOutletContext();
 
   return (
     <div className="content packet-details">
-      <PacketHeader packet={packet} />
+      <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} />
       <ul className="list-unstyled">
-        {packet.files.map((data, key) => (
+        {packet?.files.map((data, key) => (
           <li key={key} className="pb-2">
             <div className="card custom-card">
               <div className="card-header">Download {data.path}</div>

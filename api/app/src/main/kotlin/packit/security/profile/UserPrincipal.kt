@@ -1,20 +1,16 @@
 package packit.security.profile
 
-import net.minidev.json.annotate.JsonIgnore
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.AuthorityUtils
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.oauth2.core.user.OAuth2User
 import packit.model.User
 
-class UserPrincipal(
-    private val email: String,
-    @JsonIgnore
-    private val password: String,
-    private val authorities: MutableCollection<out GrantedAuthority>,
+open class UserPrincipal(
     private val name: String,
+    val displayName: String?,
+    private val authorities: MutableCollection<out GrantedAuthority>,
     private val attributes: MutableMap<String, Any>,
-) : UserDetails, OAuth2User
+) : OAuth2User
 {
     companion object
     {
@@ -22,18 +18,12 @@ class UserPrincipal(
         {
             val authorities = AuthorityUtils.createAuthorityList(user.role.toString())
             return UserPrincipal(
-                user.email,
-                user.password,
+                user.userName,
+                user.displayName,
                 authorities,
-                user.name,
                 attributes
             )
         }
-    }
-
-    override fun getName(): String
-    {
-        return name
     }
 
     override fun getAttributes(): MutableMap<String, Any>
@@ -46,33 +36,8 @@ class UserPrincipal(
         return authorities
     }
 
-    override fun getPassword(): String
+    override fun getName(): String
     {
-        return password
-    }
-
-    override fun getUsername(): String
-    {
-        return email
-    }
-
-    override fun isAccountNonExpired(): Boolean
-    {
-        return true
-    }
-
-    override fun isAccountNonLocked(): Boolean
-    {
-        return true
-    }
-
-    override fun isCredentialsNonExpired(): Boolean
-    {
-        return true
-    }
-
-    override fun isEnabled(): Boolean
-    {
-        return true
+        return name
     }
 }

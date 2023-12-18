@@ -1,0 +1,55 @@
+<mxfile host="app.diagrams.net" modified="2023-11-15T10:44:07.313Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36" etag="QQ7KrSy80zWbJqSftVKx" version="22.1.1" type="google">
+  <diagram name="Page-1" id="YbWWawU359hzzddIAYQK">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t_uvjGSfQCdxycY0U7I7-1" value="&lt;div&gt;&lt;b&gt;WebSecurityConfig&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Entry point for security configuration &lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="270" y="40" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="t_uvjGSfQCdxycY0U7I7-2" value="&lt;div&gt;&lt;b&gt;TokenAuthenticationFilter&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;&lt;br&gt;&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Decodes and extracts user information from JWT token, and sets authentication in Security Context&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="270" y="150" width="245" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="t_uvjGSfQCdxycY0U7I7-3" value="" style="endArrow=none;html=1;rounded=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;startArrow=classic;startFill=1;" edge="1" parent="1" source="t_uvjGSfQCdxycY0U7I7-2" target="t_uvjGSfQCdxycY0U7I7-1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="370" as="sourcePoint" />
+            <mxPoint x="450" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t_uvjGSfQCdxycY0U7I7-4" value="configures" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" connectable="0" vertex="1" parent="t_uvjGSfQCdxycY0U7I7-3">
+          <mxGeometry x="0.1179" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t_uvjGSfQCdxycY0U7I7-5" value="&lt;div&gt;&lt;b&gt;TokenDecoder&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;&lt;br&gt;&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Validates and decodes JWT token&amp;nbsp;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="280" width="245" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="t_uvjGSfQCdxycY0U7I7-6" value="" style="endArrow=none;html=1;rounded=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;startArrow=classic;startFill=1;" edge="1" parent="1" source="t_uvjGSfQCdxycY0U7I7-5" target="t_uvjGSfQCdxycY0U7I7-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="340" y="280" as="sourcePoint" />
+            <mxPoint x="450" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t_uvjGSfQCdxycY0U7I7-7" value="uses" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" connectable="0" vertex="1" parent="t_uvjGSfQCdxycY0U7I7-6">
+          <mxGeometry x="0.1945" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t_uvjGSfQCdxycY0U7I7-8" value="&lt;div&gt;&lt;b&gt;TokenToPrincipalConverter&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;&lt;br&gt;&lt;/b&gt;&lt;/div&gt;&lt;div&gt;Returns a UserPrincipal given a decoded JWT token&amp;nbsp;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="280" width="245" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="t_uvjGSfQCdxycY0U7I7-9" value="" style="endArrow=none;html=1;rounded=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;startArrow=classic;startFill=1;" edge="1" parent="1" source="t_uvjGSfQCdxycY0U7I7-8" target="t_uvjGSfQCdxycY0U7I7-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="333" y="290" as="sourcePoint" />
+            <mxPoint x="341" y="240" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t_uvjGSfQCdxycY0U7I7-10" value="uses" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" connectable="0" vertex="1" parent="t_uvjGSfQCdxycY0U7I7-9">
+          <mxGeometry x="0.1945" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

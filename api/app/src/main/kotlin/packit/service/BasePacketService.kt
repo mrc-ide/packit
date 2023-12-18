@@ -42,13 +42,14 @@ class BasePacketService(
 {
     override fun importPackets()
     {
-        val mostRecent = packetRepository.findTopByOrderByTimeDesc()?.time
-        val now = Instant.now().epochSecond
+        val mostRecent = packetRepository.findTopByOrderByImportTimeDesc()?.importTime
+        val now = Instant.now().epochSecond.toDouble()
         val packets = outpackServerClient.getMetadata(mostRecent)
             .map {
                 Packet(
                     it.id, it.name, it.name,
-                    it.parameters ?: mapOf(), false, now
+                    it.parameters ?: mapOf(), false, now,
+                    it.time.start, it.time.end
                 )
             }
         packetRepository.saveAll(packets)
@@ -78,7 +79,7 @@ class BasePacketService(
         val pageable = PageRequest.of(
             payload.pageNumber,
             payload.pageSize,
-            Sort.by("time").descending()
+            Sort.by("startTime").descending()
         )
         return packetRepository.findByName(name, pageable)
     }
@@ -88,7 +89,7 @@ class BasePacketService(
         val pageable = PageRequest.of(
             pageablePayload.pageNumber,
             pageablePayload.pageSize,
-            Sort.by("time").descending()
+            Sort.by("startTime").descending()
         )
 
         return packetRepository.findAll(pageable)

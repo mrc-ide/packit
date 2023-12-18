@@ -28,7 +28,9 @@ export const mockPacketResponse = {
   custom: {} as Custom,
   files: [{ hash: "sha:234:50873fVFDSVSF4", path: "data.rds", size: 97 }],
   published: false,
-  time: 1701694312
+  importTime: 1701694312,
+  startTime: 1701694312,
+  endTime: 1701694312
 };
 
 export const mockPacketGroupSummary: PageablePacketGroupSummary = {
@@ -97,6 +99,51 @@ export const mockPacketGroupSummary: PageablePacketGroupSummary = {
   numberOfElements: 9
 };
 
+export const mockPacket: PacketMetadata = {
+  id: "20231205-073527-99db1138",
+  name: "parameters",
+  parameters: {
+    a: "3",
+    b: "10",
+    c: "100000"
+  },
+  files: [
+    {
+      path: "orderly.R",
+      size: 137,
+      hash: "sha256:642a63530122492327ace81e8e06f89954b5f339f8e64fff18db2a5b2cd4d088"
+    },
+    {
+      path: "report.html",
+      size: 40,
+      hash: "sha256:715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1"
+    }
+  ],
+  git: {
+    branch: "mrc-4721-packet-group",
+    sha: "86148e9a6d2cc23b9adb331eea8288ef8177cee6",
+    url: ["https://github.com/mrc-ide/packit.git"]
+  },
+  time: {
+    end: 1701761728.1994,
+    start: 1701761727.6453
+  },
+  custom: {
+    orderly: {
+      artefacts: [
+        {
+          description: "An HTMl report",
+          paths: ["report.html"]
+        }
+      ],
+      description: {
+        custom: null,
+        display: null
+      }
+    }
+  }
+};
+
 export const mockPacketGroupResponse: PageablePackets = {
   content: [
     {
@@ -109,7 +156,9 @@ export const mockPacketGroupResponse: PageablePackets = {
         c: 100000
       },
       published: false,
-      time: 1701761844
+      importTime: 1701761844,
+      startTime: 1701761844,
+      endTime: 1701761844
     },
     {
       id: "20231205-073527-99db1138",
@@ -117,7 +166,9 @@ export const mockPacketGroupResponse: PageablePackets = {
       displayName: "parameters",
       parameters: {},
       published: false,
-      time: 1701761734
+      importTime: 1701761734,
+      startTime: 1701761734,
+      endTime: 1701761734
     },
     {
       id: "20230427-150722-0ebd6545",
@@ -129,7 +180,9 @@ export const mockPacketGroupResponse: PageablePackets = {
         a: 10
       },
       published: true,
-      time: 1701694312
+      importTime: 1701694312,
+      startTime: 1701694312,
+      endTime: 1701694312
     },
     {
       id: "20231127-133335-c8ced0bf",
@@ -141,7 +194,9 @@ export const mockPacketGroupResponse: PageablePackets = {
         b: 22
       },
       published: false,
-      time: 1701694312
+      importTime: 1701694312,
+      startTime: 1701694312,
+      endTime: 1701694312
     },
     {
       id: "20231127-133612-c69df160",
@@ -153,7 +208,9 @@ export const mockPacketGroupResponse: PageablePackets = {
         a: 1
       },
       published: false,
-      time: 1701694312
+      importTime: 1701694312,
+      startTime: 1701694312,
+      endTime: 1701694312
     }
   ],
   totalPages: 1,

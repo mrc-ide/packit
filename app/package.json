@@ -52,7 +52,9 @@
     },
     "coveragePathIgnorePatterns": [
       "/node_modules/",
-      "tests"
+      "tests",
+      "msw",
+      "app/components/Base"
     ]
   },
   "scripts": {

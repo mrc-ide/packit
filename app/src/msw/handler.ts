@@ -2,6 +2,7 @@ import { rest } from "msw";
 import { downloadFileHandlers } from "./handlers/downloadFileHandlers";
 import { packetGroupSummaryHandlers } from "./handlers/packetGroupSummaryHandlers";
 import { packetGroupHandlers } from "./handlers/packetGroupHandlers";
+import { packetHandlers } from "./handlers/packetHandler";
 
 // catch any missed requests in tests
 const defaultHandlers = [
@@ -12,8 +13,10 @@ const defaultHandlers = [
 ];
 
 export const handlers = [
-    ...downloadFileHandlers,
     ...packetGroupSummaryHandlers,
     ...packetGroupHandlers,
+    ...packetHandlers,
+    ...downloadFileHandlers,
     ...defaultHandlers
 ];
+
