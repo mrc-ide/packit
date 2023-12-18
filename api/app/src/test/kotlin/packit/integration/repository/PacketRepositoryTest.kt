@@ -14,7 +14,7 @@ class PacketRepositoryTest : RepositoryTest()
     @Autowired
     lateinit var packetRepository: PacketRepository
 
-    val now = Instant.now().epochSecond
+    val now = Instant.now().epochSecond.toDouble()
 
     val packets = listOf(
         Packet(
@@ -24,8 +24,8 @@ class PacketRepositoryTest : RepositoryTest()
             mapOf("name" to "value"),
             false,
             now,
-            now.toDouble(),
-            now.toDouble()
+            now,
+            now
         ),
         Packet(
             "20170818-164847-7574853b",
@@ -34,8 +34,8 @@ class PacketRepositoryTest : RepositoryTest()
             mapOf("a" to 1),
             false,
             now + 1,
-            (now + 1).toDouble(),
-            (now + 1).toDouble()
+            (now + 1),
+            (now + 1)
         ),
         Packet(
             "20170819-164847-7574823b",
@@ -44,8 +44,8 @@ class PacketRepositoryTest : RepositoryTest()
             mapOf("alpha" to true),
             false,
             now + 3,
-            (now + 3).toDouble(),
-            (now + 3).toDouble()
+            (now + 3),
+            (now + 3)
         ),
         Packet(
             "20170819-164847-7574113a",
@@ -54,8 +54,8 @@ class PacketRepositoryTest : RepositoryTest()
             mapOf(),
             true,
             now + 4,
-            (now + 4).toDouble(),
-            (now + 4).toDouble()
+            (now + 4),
+            (now + 4)
         ),
         Packet(
             "20170819-164847-7574983b",
@@ -64,8 +64,8 @@ class PacketRepositoryTest : RepositoryTest()
             mapOf(),
             true,
             now + 2,
-            (now + 2).toDouble(),
-            (now + 2).toDouble()
+            (now + 2),
+            (now + 2)
         ),
         Packet(
             "20170819-164847-7574333b",
@@ -74,8 +74,8 @@ class PacketRepositoryTest : RepositoryTest()
             mapOf(),
             true,
             now + 5,
-            (now + 5).toDouble(),
-            (now + 5).toDouble()
+            (now + 5),
+            (now + 5)
         ),
     )
 

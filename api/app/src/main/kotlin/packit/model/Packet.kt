@@ -14,7 +14,7 @@ data class Packet(
     @Convert(converter = JsonMapConverter::class)
     val parameters: Map<String, Any>,
     val published: Boolean,
-    val importTime: Long,
+    val importTime: Double,
     val startTime: Double,
     val endTime: Double
 )

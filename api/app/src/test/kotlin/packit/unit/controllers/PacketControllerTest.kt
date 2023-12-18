@@ -19,7 +19,7 @@ import kotlin.test.assertEquals
 
 class PacketControllerTest
 {
-    val now = Instant.now().epochSecond
+    val now = Instant.now().epochSecond.toDouble()
 
     private val packets = listOf(
         Packet(
@@ -29,8 +29,8 @@ class PacketControllerTest
             mapOf("name" to "value"),
             true,
             now,
-            now.toDouble(),
-            now.toDouble(),
+            now,
+            now,
         ),
         Packet(
             "20170819-164847-7574883b",
@@ -38,7 +38,7 @@ class PacketControllerTest
             "test name3",
             mapOf("alpha" to true),
             false,
-            1690902034,
+            1690902034.0,
             1690902034.0,
             1690902034.0
 
@@ -51,14 +51,14 @@ class PacketControllerTest
             override fun getName(): String = ""
             override fun getPacketCount(): Int = 10
             override fun getLatestId(): String = "20180818-164847-7574883b"
-            override fun getLatestTime(): Long = 1690902034
+            override fun getLatestTime(): Double = 1690902034.0
         },
         object : PacketGroupSummary
         {
             override fun getName(): String = ""
             override fun getPacketCount(): Int = 10
             override fun getLatestId(): String = "20180818-164847-7574883b"
-            override fun getLatestTime(): Long = 1690902034
+            override fun getLatestTime(): Double = 1690902034.0
         }
     )
 
