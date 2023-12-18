@@ -1,7 +1,7 @@
 import {getAuthHeader} from "./auth/getAuthHeader";
 
-export const download = async (url: string, filename: string, authRequired = true) => {
-    const headers = authRequired ? getAuthHeader(): undefined;
+export const download = async (url: string, filename: string) => {
+    const headers = getAuthHeader();
     const res = await fetch(url, {
         method: "GET",
         headers,

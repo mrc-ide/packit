@@ -18,7 +18,7 @@ export const PacketTable = () => {
 
   const { data, isLoading, error } = useSWR<PageablePackets>(
     `${appConfig.apiUrl()}/packets/${packetName}?pageNumber=${pageNumber}&pageSize=${PAGE_SIZE}`,
-    (url: string) => fetcher({ url, authRequired: true })
+    (url: string) => fetcher({ url })
   );
 
   if (error) return <ErrorComponent message="Error fetching packets" error={error} />;

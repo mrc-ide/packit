@@ -1,11 +1,10 @@
-import {FileMetadata, RootState} from "../../../../types";
+import {FileMetadata} from "../../../../types";
 import {useState} from "react";
 import appConfig from "../../../../config/appConfig";
 import {download} from "../../../../lib/download";
 import {Button} from "../../Base/Button";
 import {DownloadCloud} from "lucide-react";
 import {bytesToSize} from "../../../../helpers";
-import {useSelector} from "react-redux";
 
 interface DownloadButtonProps {
     file: FileMetadata
@@ -13,11 +12,10 @@ interface DownloadButtonProps {
 
 export default function DownloadButton({ file }: DownloadButtonProps) {
     const [error, setError] = useState("");
-    const { isAuthenticated } = useSelector((state: RootState) => state.login );
 
     const downloadFile = (file: FileMetadata) => {
         const url = `${appConfig.apiUrl()}/packets/file/${file.hash}?filename=${file.path}`;
-        download(url, file.path, isAuthenticated)
+        download(url, file.path)
             .then(() => setError(""))
             .catch(e =>  {
                 setError(e.message);

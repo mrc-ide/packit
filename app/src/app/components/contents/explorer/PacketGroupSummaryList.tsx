@@ -23,7 +23,7 @@ export const PacketGroupSummaryList = ({
   const { data, isLoading, error } = useSWR<PageablePacketGroupSummary>(
     `${appConfig.apiUrl()}/packets/packetGroupSummary?pageNumber=${pageNumber}&pageSize=${pageSize}\
     &filterName=${filterByName}`,
-    (url: string) => fetcher({ url, authRequired: true })
+    (url: string) => fetcher({ url })
   );
 
   if (error) return <ErrorComponent message="Error fetching packet groups" error={error} />;

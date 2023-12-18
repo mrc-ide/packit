@@ -2,5 +2,5 @@ import {getBearerToken} from "./getBearerToken";
 
 export const getAuthHeader = () => {
     const token = getBearerToken();
-    return { Authorization: `Bearer ${token}` }
+    return token ? { Authorization: `Bearer ${token}` } : undefined;
 }
