@@ -1,6 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../../../types";
-import { logout } from "../../store/login/login";
 import { Avatar, AvatarFallback } from "../Base/Avatar";
 import { Button } from "../Base/Button";
 import {
@@ -12,13 +10,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "../Base/DropdownMenu";
+import { useUser } from "../providers/UserProvider";
 
 export default function AccountHeaderDropdown() {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  const { removeUser } = useUser();
 
   const handleLogout = () => {
-    dispatch(logout());
+    removeUser();
     navigate("/login");
   };
 

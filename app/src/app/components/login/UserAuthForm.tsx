@@ -3,29 +3,29 @@
 
 import { Github } from "lucide-react";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import appConfig from "../../../config/appConfig";
 import { cn } from "../../../lib/cn";
-import { RootState, useAppDispatch } from "../../../types";
-import { actions } from "../../store/login/loginThunks";
 import { buttonVariants } from "../Base/Button";
+import { useAuthConfig } from "../providers/AuthConfigProvider";
+import { useUser } from "../providers/UserProvider";
 
 type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>;
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
-  const dispatch = useAppDispatch();
-  const { isAuthenticated, userError, authConfig } = useSelector((state: RootState) => state.login);
   const navigate = useNavigate();
+  const authConfig = useAuthConfig();
+  const { user } = useUser();
+
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const error = searchParams.get("error");
 
   useEffect(() => {
-    dispatch(actions.fetchAuthConfig());
-  }, []);
-  useEffect(() => {
-    if (isAuthenticated) {
+    if (user?.token) {
       navigate("/");
     }
-  }, [isAuthenticated]);
+  }, [user]);
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>
@@ -40,7 +40,8 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           </Link>
         </>
       )}
-      {userError && <div className="text-xs text-red-500">{userError?.error?.detail}</div>}
+      {/* TODO get from search params  */}
+      {error && <div className="text-xs text-red-500">{error}</div>}
     </div>
   );
 }

@@ -1,16 +1,15 @@
 import { PackageOpen } from "lucide-react";
-import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
-import { RootState } from "../../../types";
 import { NavigationLink } from "../Base/NavigationLink";
 import AccountHeaderDropdown from "./AccountHeaderDropdown";
 
+import { useUser } from "../providers/UserProvider";
 import { LeftNav } from "./LeftNav";
 import { NavMenuMobile } from "./NavMenuMobile";
 import { ThemeToggleButton } from "./ThemeToggleButton";
 
 export default function Header() {
-  const { isAuthenticated } = useSelector((state: RootState) => state.login);
+  const { user } = useUser();
 
   return (
     <header>
@@ -26,13 +25,13 @@ export default function Header() {
             <div className="mx-3 flex items-center md:hidden">
               <NavMenuMobile />
             </div>
-            {isAuthenticated && <LeftNav className="mx-6 hidden md:flex" />}
+            {user && <LeftNav className="mx-6 hidden md:flex" />}
             <div className="ml-auto flex items-center space-x-4">
               <NavigationLink to="/accessibility" className="mx-6 hidden md:flex">
                 Accessibility
               </NavigationLink>
               <ThemeToggleButton />
-              {isAuthenticated && <AccountHeaderDropdown />}
+              {user && <AccountHeaderDropdown />}
             </div>
           </div>
         </div>
