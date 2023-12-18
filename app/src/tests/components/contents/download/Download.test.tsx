@@ -10,7 +10,7 @@ import { mockPacket } from "../../../mocks";
 describe("download component", () => {
   const renderComponent = () => {
     render(
-      <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>
+      <SWRConfig value={{ dedupingInterval: 0 }}>
         <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/downloads`]}>
           <Routes>
             <Route element={<PacketLayout />} path="/:packetName/:packetId">

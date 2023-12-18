@@ -19,7 +19,7 @@ import java.net.URI
 
 interface OutpackServer
 {
-    fun getMetadata(from: Long? = null): List<OutpackMetadata>
+    fun getMetadata(from: Double? = null): List<OutpackMetadata>
     fun getMetadataById(id: String): PacketMetadata?
     fun getFileByHash(hash: String): Pair<ByteArray, HttpHeaders>?
     fun proxyRequest(urlFragment: String, request: HttpServletRequest, response: HttpServletResponse)
@@ -41,22 +41,21 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
         try
         {
             restTemplate.execute(
-                    URI(url),
-                    HttpMethod.valueOf(method),
-                    { outpackServerRequest: ClientHttpRequest ->
-                        request.headerNames.asIterator().forEach {
-                            outpackServerRequest.headers.set(it, request.getHeader(it))
-                        }
-                        IOUtils.copy(request.inputStream, outpackServerRequest.body)
+                URI(url),
+                HttpMethod.valueOf(method),
+                { outpackServerRequest: ClientHttpRequest ->
+                    request.headerNames.asIterator().forEach {
+                        outpackServerRequest.headers.set(it, request.getHeader(it))
                     }
+                    IOUtils.copy(request.inputStream, outpackServerRequest.body)
+                }
             ) { outpackServerResponse ->
                 response.status = response.status
                 outpackServerResponse.headers.map { response.setHeader(it.key, it.value.first()) }
                 IOUtils.copy(outpackServerResponse.body, response.outputStream)
                 true
             }
-        }
-        catch (e: HttpStatusCodeException)
+        } catch (e: HttpStatusCodeException)
         {
             throw OutpackServerException(e)
         }
@@ -73,10 +72,10 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
         log.debug("Fetching {}", url)
 
         val response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                HttpEntity.EMPTY,
-                ByteArray::class.java
+            url,
+            HttpMethod.GET,
+            HttpEntity.EMPTY,
+            ByteArray::class.java
         )
         return handleFileResponse(response)
     }
@@ -95,7 +94,7 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
         return getEndpoint("checksum")
     }
 
-    override fun getMetadata(from: Long?): List<OutpackMetadata>
+    override fun getMetadata(from: Double?): List<OutpackMetadata>
     {
         var url = "packit/metadata"
         if (from != null)
@@ -111,11 +110,11 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
         log.debug("Fetching {}", url)
 
         val response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                HttpEntity.EMPTY,
-                object : ParameterizedTypeReference<OutpackResponse<T>>()
-                {}
+            url,
+            HttpMethod.GET,
+            HttpEntity.EMPTY,
+            object : ParameterizedTypeReference<OutpackResponse<T>>()
+            {}
         )
 
         return handleResponse(response)
@@ -129,8 +128,7 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
             // this is really just a placeholder
             @Suppress("TooGenericExceptionThrown")
             throw PackitException(response.body?.errors.toString())
-        }
-        else
+        } else
         {
             return response.body!!.data
         }

@@ -21,7 +21,7 @@ import kotlin.test.assertEquals
 
 class PacketServiceTest
 {
-    private val now = Instant.now().epochSecond
+    private val now = Instant.now().epochSecond.toDouble()
     private val newPackets =
         listOf(
             Packet(
@@ -31,10 +31,10 @@ class PacketServiceTest
                 mapOf("alpha" to 1),
                 false,
                 now,
-                now.toDouble(),
-                now.toDouble()
+                now,
+                now
             ),
-            Packet("20190403-120000-1234dfdf", "test2", "test2", mapOf(), false, now, now.toDouble(), now.toDouble())
+            Packet("20190403-120000-1234dfdf", "test2", "test2", mapOf(), false, now, now, now)
         )
 
     private val oldPackets =
@@ -46,8 +46,8 @@ class PacketServiceTest
                 mapOf("name" to "value"),
                 false,
                 now - 1,
-                (now - 1).toDouble(),
-                (now - 1).toDouble(),
+                (now - 1),
+                (now - 1),
             ),
             Packet(
                 "20180403-120000-a5bde567",
@@ -56,8 +56,8 @@ class PacketServiceTest
                 mapOf("beta" to 1),
                 true,
                 now - 2,
-                (now - 2).toDouble(),
-                (now - 2).toDouble(),
+                (now - 2),
+                (now - 2),
             )
         )
 
@@ -67,13 +67,13 @@ class PacketServiceTest
                 "20190203-120000-1234dada",
                 "test",
                 parameters = mapOf("alpha" to 1),
-                time = TimeMetadata(now.toDouble(), now.toDouble())
+                time = TimeMetadata(now, now)
             ),
             OutpackMetadata(
                 "20190403-120000-1234dfdf",
                 "test2",
                 null,
-                time = TimeMetadata(now.toDouble(), now.toDouble())
+                time = TimeMetadata(now, now)
             )
         )
 
@@ -97,14 +97,14 @@ class PacketServiceTest
                 override fun getName(): String = ""
                 override fun getPacketCount(): Int = 10
                 override fun getLatestId(): String = "20180818-164847-7574883b"
-                override fun getLatestTime(): Long = 1690902034
+                override fun getLatestTime(): Double = 1690902034.0
             },
             object : PacketGroupSummary
             {
                 override fun getName(): String = ""
                 override fun getPacketCount(): Int = 10
                 override fun getLatestId(): String = "20180818-164847-7574883b"
-                override fun getLatestTime(): Long = 1690902034
+                override fun getLatestTime(): Double = 1690902034.0
             }
         )
 

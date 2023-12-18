@@ -71,7 +71,7 @@ CREATE TABLE "packet"
     "display_name" TEXT NULL,
     "parameters" JSON NULL,
     "published" BOOLEAN NOT NULL DEFAULT FALSE,
-    "import_time" BIGINT NOT NULL,
+    "import_time" DOUBLE PRECISION NOT NULL,
     "start_time" DOUBLE PRECISION NOT NULL,
     "end_time" DOUBLE PRECISION NOT NULL
 );
