@@ -232,3 +232,5 @@ export const mockLoginState = (props: Partial<LoginState> = {}): LoginState => {
     ...props
   };
 };
+
+export const mockFileBlob = new Blob(["test contents"]);

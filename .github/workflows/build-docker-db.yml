@@ -3,7 +3,7 @@ name: build-docker-db
 on:
   push:
     branches:
-      - "main"
+      - 'main'
   pull_request:
     branches:
       - "main"
