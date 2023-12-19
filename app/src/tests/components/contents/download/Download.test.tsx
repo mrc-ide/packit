@@ -15,35 +15,29 @@ describe("download component", () => {
             <Route element={<PacketLayout />} path="/:packetName/:packetId">
               <Route path="/:packetName/:packetId/downloads" element={<Download />} />
             </Route>
-          </Routes>n
+          </Routes>
         </MemoryRouter>
       </SWRConfig>
     );
   };
 
-  it("render loading message when packet is being fetched", async () => {
+  it("can render packet header", async () => {
     renderComponent();
 
-    const loadingMessage = screen.getByText("Loading...");
-
-    expect(loadingMessage).toBeInTheDocument();
-  });
-
-  it("can render packet header", () => {
-    //const store = getStore({ packet });
-
-    renderComponent();
-
+    await screen.findAllByRole("button");
     expect(screen.getByText(mockPacket.id)).toBeInTheDocument();
   });
 
   it("render file and download button", async () => {
-    //const store = getStore({ packet });
-
     renderComponent();
 
-    expect(screen.getByRole("button")).toHaveTextContent("example.html");
-    expect(screen.getByText("(1 bytes)")).toBeInTheDocument();
-    expect(screen.getByText("Download example.html")).toBeInTheDocument();
+    const downloadButtons = await screen.findAllByRole("button");
+    expect(downloadButtons.length).toBe(2);
+    expect(downloadButtons[0]).toHaveTextContent("orderly.R");
+    expect(screen.getByText("(137 bytes)")).toBeInTheDocument();
+    expect(screen.getByText("Download orderly.R")).toBeInTheDocument();
+    expect(downloadButtons[1]).toHaveTextContent("report.html");
+    expect(screen.getByText("(40 bytes)")).toBeInTheDocument();
+    expect(screen.getByText("Download report.html")).toBeInTheDocument();
   });
 });
