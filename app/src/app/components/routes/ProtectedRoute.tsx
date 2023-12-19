@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
+import { isAuthenticated } from "../../../lib/isAuthenticated";
 import { useAuthConfig } from "../providers/AuthConfigProvider";
 import { useUser } from "../providers/UserProvider";
 
@@ -9,12 +10,10 @@ export default function ProtectedRoute() {
   const { user } = useUser();
 
   useEffect(() => {
-    if (authConfig?.enableAuth) {
-      if (!user?.token) {
-        navigate("/login");
-      }
+    if (!isAuthenticated(authConfig, user)) {
+      navigate("/login");
     }
-  }, [navigate, authConfig, user?.token]);
+  }, [navigate, authConfig, user]);
 
-  return <Outlet />;
+  return isAuthenticated(authConfig, user) ? <Outlet /> : null;
 }

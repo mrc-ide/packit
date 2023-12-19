@@ -1,17 +1,10 @@
-import { AsyncThunkOptions } from "@reduxjs/toolkit";
 import { JwtPayload } from "jwt-decode";
-import { useDispatch } from "react-redux";
-import store, { rootReducer } from "./app/store/store";
 
 export enum SideBarItems {
   explorer,
   packetRunner,
   workflowRunner,
   projectDoc
-}
-
-export interface RejectedErrorValue {
-  rejectValue: Error;
 }
 
 export interface Pageable {
@@ -48,29 +41,8 @@ export interface Packet {
   endTime: number;
 }
 
-export interface Header {
-  label: string;
-  accessor: keyof Packet;
-  sortable: boolean;
-}
-
 export interface PacketTableProps {
   data: Packet[];
-}
-
-export interface PacketsState {
-  pageablePackets: PageablePackets;
-  fetchPacketsError: null | Error;
-  packet: PacketMetadata;
-  packetError: null | Error;
-}
-
-export interface LoginState {
-  user: CurrentUser;
-  userError: null | Error;
-  isAuthenticated: boolean;
-  authConfig: Record<string, any>;
-  authConfigError: null | Error;
 }
 
 export interface PacketMetadata {
@@ -117,37 +89,6 @@ export interface FileMetadata {
   path: string;
   size: number;
   hash: string;
-}
-
-export interface Error {
-  error: {
-    detail: string;
-    error: string;
-  };
-}
-
-export interface PaginationProps {
-  pageNumber: number;
-  pageSize: number;
-}
-
-export interface UserLoginDetailProps {
-  email: string;
-  password: string;
-}
-
-export type RootState = ReturnType<typeof rootReducer>;
-
-export type AppDispatch = typeof store.dispatch;
-
-export const useAppDispatch = () => useDispatch<AppDispatch>();
-
-export interface CustomAsyncThunkOptions extends AsyncThunkOptions<void, RejectedErrorValue> {
-  rejectValue: Error;
-}
-
-export interface CurrentUser {
-  token: string;
 }
 
 export interface PacketJwtPayload extends JwtPayload {

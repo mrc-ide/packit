@@ -1,42 +1,17 @@
-import { Store } from "@reduxjs/toolkit";
 import { render, screen, waitFor } from "@testing-library/react";
-import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
-import configureStore from "redux-mock-store";
-import thunk from "redux-thunk";
 import App from "../app/App";
-import { LoginState } from "../types";
-import { mockLoginState, mockPacketsState } from "./mocks";
 
 describe("app component", () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
-  });
-
-  const getStore = (props: Partial<LoginState> = {}) => {
-    const middlewares = [thunk];
-    const mockStore = configureStore(middlewares);
-    const initialRootStates = {
-      packets: mockPacketsState(),
-      login: mockLoginState(props)
-    };
-
-    return mockStore(initialRootStates);
-  };
-
-  const renderElement = (store: Store = getStore()) => {
+  const renderElement = () => {
     return render(
-      <Provider store={store}>
-        <MemoryRouter initialEntries={["/login"]}>
-          <App />
-        </MemoryRouter>
-      </Provider>
+      <MemoryRouter initialEntries={["/login"]}>
+        <App />
+      </MemoryRouter>
     );
   };
 
   it("renders reports page", async () => {
-    renderElement(getStore({ isAuthenticated: true }));
-
     await waitFor(() => {
       expect(screen.getByText(/list of packet groups/i)).toBeVisible();
     });

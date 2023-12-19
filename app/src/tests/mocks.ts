@@ -1,22 +1,4 @@
-import {
-  CurrentUser,
-  Custom,
-  LoginState,
-  PacketMetadata,
-  PacketsState,
-  PageablePacketGroupSummary,
-  PageablePackets
-} from "../types";
-
-export const mockPacketsState = (props: Partial<PacketsState> = {}): PacketsState => {
-  return {
-    pageablePackets: {} as PageablePackets,
-    packet: {} as PacketMetadata,
-    fetchPacketsError: null,
-    packetError: null,
-    ...props
-  };
-};
+import { Custom, PacketMetadata, PageablePacketGroupSummary, PageablePackets } from "../types";
 
 export const mockPacketResponse = {
   id: "52fd88b2-8ee8-4ac0-a0e5-41b9a15554a4",
@@ -220,15 +202,4 @@ export const mockPacketGroupResponse: PageablePackets = {
   size: 50,
   number: 0,
   numberOfElements: 5
-};
-
-export const mockLoginState = (props: Partial<LoginState> = {}): LoginState => {
-  return {
-    user: {} as CurrentUser,
-    userError: null,
-    isAuthenticated: false,
-    authConfig: {},
-    authConfigError: null,
-    ...props
-  };
 };

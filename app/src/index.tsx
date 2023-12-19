@@ -1,28 +1,21 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
-import { injectStore } from "./apiService";
 import App from "./app/App";
 import { AuthConfigProvider } from "./app/components/providers/AuthConfigProvider";
 import { ThemeProvider } from "./app/components/providers/ThemeProvider";
 import { UserProvider } from "./app/components/providers/UserProvider";
-import store from "./app/store/store";
 import reportWebVitals from "./reportWebVitals";
 import "./styles/globals.css";
-
-injectStore(store);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <ThemeProvider>
       <AuthConfigProvider>
         <UserProvider>
-          <Provider store={store}>
-            <BrowserRouter>
-              <App />
-            </BrowserRouter>
-          </Provider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
         </UserProvider>
       </AuthConfigProvider>
     </ThemeProvider>

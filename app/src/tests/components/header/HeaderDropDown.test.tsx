@@ -1,12 +1,6 @@
-import { Store } from "@reduxjs/toolkit";
 import { render, screen } from "@testing-library/react";
-import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
-import configureStore from "redux-mock-store";
-import thunk from "redux-thunk";
 import AccountHeaderDropdown from "../../../app/components/header/AccountHeaderDropdown";
-import { LoginState } from "../../../types";
-import { mockLoginState } from "../../mocks";
 
 const mockedUsedNavigate = jest.fn();
 
@@ -16,23 +10,11 @@ jest.mock("react-router-dom", () => ({
 }));
 
 describe("header drop down menu component", () => {
-  const getStore = (props: Partial<LoginState> = {}) => {
-    const middlewares = [thunk];
-    const mockStore = configureStore(middlewares);
-    const initialRootStates = {
-      login: mockLoginState(props)
-    };
-
-    return mockStore(initialRootStates);
-  };
-
-  const renderElement = (store: Store = getStore()) => {
+  const renderElement = () => {
     return render(
-      <Provider store={store}>
-        <MemoryRouter>
-          <AccountHeaderDropdown />
-        </MemoryRouter>
-      </Provider>
+      <MemoryRouter>
+        <AccountHeaderDropdown />
+      </MemoryRouter>
     );
   };
 
