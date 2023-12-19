@@ -1,9 +1,3 @@
-const mockDownload = jest.fn();
-jest.mock("../../../../lib/download", () => ({
-        download: async (...args: any[]) => mockDownload(...args)
-    })
-);
-
 import { render, screen, waitFor } from "@testing-library/react";
 import DownloadButton from "../../../../app/components/contents/download/DownloadButton";
 import {LoginState} from "../../../../types";
@@ -11,6 +5,13 @@ import { Provider } from "react-redux";
 import configureStore from "redux-mock-store";
 import {mockLoginState} from "../../../mocks";
 import userEvent from "@testing-library/user-event";
+
+let errorOnDownload = false;
+const mockDownload = jest.fn();
+jest.mock("../../../../lib/download", () => ({
+        download: async (...args: any[]) => mockDownload(...args)
+    })
+);
 
 describe("DownloadButton", () => {
     const file = {
@@ -36,8 +37,6 @@ describe("DownloadButton", () => {
         );
     };
 
-    let errorOnDownload = false;
-
     beforeEach(() => {
         jest.clearAllMocks();
         mockDownload.mockImplementation(() => {
@@ -60,7 +59,7 @@ describe("DownloadButton", () => {
 
         userEvent.click(screen.getByRole("button"));
         const url = "http://localhost:8080/packets/file/fakeHash?filename=test.txt";
-        expect(mockDownload).toHaveBeenCalledWith(url, "test.txt", true);
+        expect(mockDownload).toHaveBeenCalledWith(url, "test.txt");
     });
 
     it("shows download error, and resets on success", async () => {

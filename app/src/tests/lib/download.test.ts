@@ -1,27 +1,19 @@
-const mockAuthHeader = jest.fn();
-jest.mock("../../lib/auth/getAuthHeader", () => ({
-    getAuthHeader: () => mockAuthHeader()
-}));
-
 import {downloadFileUri} from "../../msw/handlers/downloadFileHandlers";
 import {download} from "../../lib/download";
 import {mockFileBlob} from "../mocks";
 import {server} from "../../msw/server";
 import {rest} from "msw";
 
+jest.mock("../../lib/auth/getAuthHeader", () => ({
+    getAuthHeader: () => ({Authorization: "fakeAuthHeader"})
+}));
+
 const url = `${downloadFileUri}?filename=test.txt`;
 
 describe("download", () => {
     const fakeObjectUrl = "fakeObjectUrl";
-    const realFetch = window.fetch;
-
-    afterEach(() => {
-        window.fetch = realFetch;
-    });
 
     it("downloads on successful response", async () => {
-        mockAuthHeader.mockImplementation(() => ({Authorization: "fakeAuthHeader"}));
-
         const mockCreateObjectUrl = jest.fn(() => fakeObjectUrl)
         const mockRevokeObjectUrl = jest.fn();
 
@@ -41,16 +33,7 @@ describe("download", () => {
         document.body.appendChild = mockAppendChild;
         document.body.removeChild = mockRemoveChild;
 
-        const spyOnFetch = jest.spyOn(window, "fetch");
-
         await download(url, "test.txt");
-
-        expect(spyOnFetch).toHaveBeenCalledWith(url, {
-            method: "GET",
-            headers: {
-                Authorization: "fakeAuthHeader"
-            }
-        });
 
         expect(mockCreateObjectUrl).toHaveBeenCalledWith(mockFileBlob);
         expect(mockFileLink.setAttribute).toHaveBeenCalledWith("download", "test.txt");

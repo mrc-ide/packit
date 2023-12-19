@@ -1,12 +1,10 @@
-const mockGetBearerToken = jest.fn();
-jest.mock("../../../lib/auth/getBearerToken", () => ({
-    getBearerToken: () => mockGetBearerToken()
-}));
-
 import {getAuthHeader} from "../../../lib/auth/getAuthHeader";
 
+jest.mock("../../../lib/auth/getBearerToken", () => ({
+    getBearerToken: () => "12345"
+}));
+
 it("getAuthHeader", () => {
-    mockGetBearerToken.mockImplementation(() => "12345");
     const result = getAuthHeader();
     expect(result).toEqual({
         Authorization: "Bearer 12345"
