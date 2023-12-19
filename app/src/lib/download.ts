@@ -13,7 +13,7 @@ export const download = async (url: string, filename: string) => {
         throw new Error(msg);
     }
 
-    const blob = await res.blob();
+    const blob = await res.blob().catch(() => { throw new Error("Error retrieving data from response"); });
     const fileUrl = URL.createObjectURL(blob);
     const fileLink = document.createElement("a");
     fileLink.href = fileUrl;
