@@ -19,7 +19,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const error = searchParams.get("error");
+  const loginError = searchParams.get("error");
 
   useEffect(() => {
     if (user?.token) {
@@ -40,8 +40,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           </Link>
         </>
       )}
-      {/* TODO get from search params  */}
-      {error && <div className="text-xs text-red-500">{error}</div>}
+      {loginError && <div className="text-xs text-red-500">{loginError}</div>}
     </div>
   );
 }

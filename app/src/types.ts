@@ -1,4 +1,5 @@
 import { AsyncThunkOptions } from "@reduxjs/toolkit";
+import { JwtPayload } from "jwt-decode";
 import { useDispatch } from "react-redux";
 import store, { rootReducer } from "./app/store/store";
 
@@ -147,4 +148,10 @@ export interface CustomAsyncThunkOptions extends AsyncThunkOptions<void, Rejecte
 
 export interface CurrentUser {
   token: string;
+}
+
+export interface PacketJwtPayload extends JwtPayload {
+  displayName: string;
+  userName: string;
+  datetime: number;
 }

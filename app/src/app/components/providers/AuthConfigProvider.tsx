@@ -2,22 +2,20 @@ import { ReactNode, createContext, useContext, useEffect, useState } from "react
 import useSWR from "swr";
 import appConfig from "../../../config/appConfig";
 import { fetcher } from "../../../lib/fetch";
+import { LocalStorageKeys, getAuthConfigFromLocalStorage } from "../../../localStorageManager";
 import { ErrorComponent } from "../contents/common/ErrorComponent";
 import { AuthConfig } from "./types/AuthConfigTypes";
 
-const AuthConfigContext = createContext<AuthConfig | undefined>(undefined);
+const AuthConfigContext = createContext<AuthConfig | null>(null);
 
 export const useAuthConfig = () => useContext(AuthConfigContext);
 
 interface AuthConfigProviderProps {
   children: ReactNode;
-  storageKey?: string;
 }
 
-export const AuthConfigProvider = ({ children, storageKey = "authConfig" }: AuthConfigProviderProps) => {
-  const [authConfig, setAuthConfig] = useState<AuthConfig | undefined>(() =>
-    localStorage.getItem(storageKey) ? JSON.parse(localStorage.getItem(storageKey) ?? "{}") : undefined
-  );
+export const AuthConfigProvider = ({ children }: AuthConfigProviderProps) => {
+  const [authConfig, setAuthConfig] = useState<AuthConfig | null>(() => getAuthConfigFromLocalStorage());
 
   const { data, error } = useSWR<AuthConfig>(
     !authConfig ? `${appConfig.apiUrl()}/auth/config` : null,
@@ -28,7 +26,7 @@ export const AuthConfigProvider = ({ children, storageKey = "authConfig" }: Auth
   useEffect(() => {
     if (data) {
       setAuthConfig(data);
-      localStorage.setItem(storageKey, JSON.stringify(data));
+      localStorage.setItem(LocalStorageKeys.AUTH_CONFIG, JSON.stringify(data));
     }
   }, [data]);
 

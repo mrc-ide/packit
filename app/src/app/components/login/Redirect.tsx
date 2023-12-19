@@ -15,7 +15,7 @@ export default function Redirect() {
       navigate("/");
     }
     if (token) {
-      setUser({ token });
+      setUser(token);
       navigate("/");
     }
     if (error) {

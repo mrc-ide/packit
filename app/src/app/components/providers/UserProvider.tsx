@@ -1,6 +1,8 @@
+import { jwtDecode } from "jwt-decode";
 import { ReactNode, createContext, useContext, useState } from "react";
-import { CurrentUser } from "../../../types";
-import { UserProviderState } from "./types/UserTypes";
+import { LocalStorageKeys, getUserFromLocalStorage } from "../../../localStorageManager";
+import { PacketJwtPayload } from "../../../types";
+import { UserProviderState, UserState } from "./types/UserTypes";
 
 const UserContext = createContext<UserProviderState | undefined>(undefined);
 
@@ -14,23 +16,27 @@ export const useUser = () => {
 
 interface UserProviderProps {
   children: ReactNode;
-  storageKey?: string;
 }
 
-export const UserProvider = ({ children, storageKey = "user" }: UserProviderProps) => {
-  const [userState, setUserState] = useState<CurrentUser | undefined>(() =>
-    localStorage.getItem(storageKey) ? JSON.parse(localStorage.getItem(storageKey) ?? "{}") : undefined
-  );
+export const UserProvider = ({ children }: UserProviderProps) => {
+  const [userState, setUserState] = useState<UserState | null>(() => getUserFromLocalStorage());
 
   const value = {
     user: userState,
-    setUser(user: CurrentUser) {
+    setUser(jwt: string) {
+      const jwtPayload = jwtDecode<PacketJwtPayload>(jwt);
+      const user: UserState = {
+        token: jwt,
+        exp: jwtPayload.exp?.valueOf() ?? 0,
+        displayName: jwtPayload.displayName ?? "",
+        userName: jwtPayload.userName ?? ""
+      };
       setUserState(user);
-      localStorage.setItem(storageKey, JSON.stringify(user));
+      localStorage.setItem(LocalStorageKeys.USER, JSON.stringify(user));
     },
     removeUser() {
-      setUserState(undefined);
-      localStorage.removeItem(storageKey);
+      setUserState(null);
+      localStorage.removeItem(LocalStorageKeys.USER);
     }
   };
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

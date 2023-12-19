@@ -1,9 +1,11 @@
-import { CurrentUser } from "../../../../types";
-
-// TODO: just check if user in state?? user error can we put in search params?
-// add user details to user state from jwt
+export interface UserState {
+  token: string;
+  exp: number;
+  displayName: string;
+  userName: string;
+}
 export interface UserProviderState {
-  user: CurrentUser | undefined;
-  setUser: (user: CurrentUser) => void;
+  user: UserState | null;
+  setUser: (jwt: string) => void;
   removeUser: () => void;
 }
