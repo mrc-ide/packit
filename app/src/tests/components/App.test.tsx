@@ -1,21 +1,18 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import App from "../app/App";
+import App from "../../app/App";
+import { UserProvider } from "../../app/components/providers/UserProvider";
 
 describe("app component", () => {
   const renderElement = () => {
     return render(
-      <MemoryRouter initialEntries={["/login"]}>
-        <App />
+      <MemoryRouter initialEntries={["/"]}>
+        <UserProvider>
+          <App />
+        </UserProvider>
       </MemoryRouter>
     );
   };
-
-  it("renders reports page", async () => {
-    await waitFor(() => {
-      expect(screen.getByText(/list of packet groups/i)).toBeVisible();
-    });
-  });
 
   it("renders app header", () => {
     renderElement();

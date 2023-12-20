@@ -1,13 +1,16 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { Main } from "../../../app/components/main";
+import { UserProvider } from "../../../app/components/providers/UserProvider";
 
 // TODO: unit test this
 describe("main component", () => {
   const renderElement = () => {
     return render(
       <MemoryRouter>
-        <Main />
+        <UserProvider>
+          <Main />
+        </UserProvider>
       </MemoryRouter>
     );
   };

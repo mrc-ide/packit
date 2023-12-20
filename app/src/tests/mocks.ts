@@ -1,3 +1,5 @@
+import { AuthConfig } from "../app/components/providers/types/AuthConfigTypes";
+import { UserState } from "../app/components/providers/types/UserTypes";
 import { Custom, PacketMetadata, PageablePacketGroupSummary, PageablePackets } from "../types";
 
 export const mockPacketResponse = {
@@ -13,6 +15,20 @@ export const mockPacketResponse = {
   importTime: 1701694312,
   startTime: 1701694312,
   endTime: 1701694312
+};
+
+export const mockAuthConfig: AuthConfig = {
+  enableAuth: true,
+  enableGithubLogin: true
+};
+
+export const mockUserState: UserState = {
+  displayName: "LeBron James",
+  userName: "goat",
+  token:
+    // eslint-disable-next-line max-len
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwYWNraXQiLCJpc3MiOiJwYWNraXQtYXBpIiwidXNlck5hbWUiOiJhYnN0ZXJuYXRvciIsImRpc3BsYXlOYW1lIjoiQW5tb2wgVGhhcGFyIiwiZGF0ZXRpbWUiOjE3MDI5NzgyMjgsImF1IjpbIltVU0VSXSJdLCJleHAiOjE3MDMwNjQ2Mjh9.o3b4PzZX76nP2tUxndGvusx-rytOkApodZ-geVPH9Pg",
+  exp: 1703064628
 };
 
 export const mockPacketGroupSummary: PageablePacketGroupSummary = {

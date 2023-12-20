@@ -1,9 +1,7 @@
 import { ReactNode, createContext, useContext, useEffect, useState } from "react";
-import useSWR from "swr";
-import appConfig from "../../../config/appConfig";
-import { fetcher } from "../../../lib/fetch";
 import { LocalStorageKeys, getAuthConfigFromLocalStorage } from "../../../localStorageManager";
 import { ErrorComponent } from "../contents/common/ErrorComponent";
+import { useGetAuthConfig } from "./hooks/useGetAuthConfig";
 import { AuthConfig } from "./types/AuthConfigTypes";
 
 const AuthConfigContext = createContext<AuthConfig | null>(null);
@@ -16,12 +14,7 @@ interface AuthConfigProviderProps {
 
 export const AuthConfigProvider = ({ children }: AuthConfigProviderProps) => {
   const [authConfig, setAuthConfig] = useState<AuthConfig | null>(() => getAuthConfigFromLocalStorage());
-
-  const { data, error } = useSWR<AuthConfig>(
-    !authConfig ? `${appConfig.apiUrl()}/auth/config` : null,
-    (url: string) => fetcher({ url }),
-    { revalidateOnFocus: false }
-  );
+  const { data, error } = useGetAuthConfig(authConfig);
 
   useEffect(() => {
     if (data) {

@@ -1,7 +1,7 @@
 import { PackageOpen } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { NavigationLink } from "../Base/NavigationLink";
-import AccountHeaderDropdown from "./AccountHeaderDropdown";
+import { AccountHeaderDropdown } from "./AccountHeaderDropdown";
 
 import { useUser } from "../providers/UserProvider";
 import { LeftNav } from "./LeftNav";

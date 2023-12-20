@@ -1,20 +1,33 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import Header from "../../../app/components/header/Header";
-import { ThemeProvider } from "../../../app/components/providers/ThemeProvider";
+import { LeftNavItems } from "../../../app/components/header/LeftNav";
+import { UserProvider } from "../../../app/components/providers/UserProvider";
+import { UserState } from "../../../app/components/providers/types/UserTypes";
+import { mockUserState } from "../../mocks";
+
+const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
+jest.mock("../../../localStorageManager", () => ({
+  getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
+}));
 
 describe("header component", () => {
   const renderElement = () => {
     return render(
-      <ThemeProvider>
-        <MemoryRouter>
+      <MemoryRouter>
+        <UserProvider>
           <Header />
-        </MemoryRouter>
-      </ThemeProvider>
+        </UserProvider>
+      </MemoryRouter>
     );
   };
-  // TODO add tests
-  it("can render header", () => {
+  it("can render header user related items when authenticated", () => {
+    mockGetUserFromLocalStorage.mockReturnValue(mockUserState);
     renderElement();
+
+    for (const navItem of Object.values(LeftNavItems)) {
+      expect(screen.getByText(navItem)).toBeVisible();
+    }
+    expect(screen.getByText("LJ")).toBeInTheDocument();
   });
 });

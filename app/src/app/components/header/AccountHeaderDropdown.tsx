@@ -13,7 +13,7 @@ import {
 } from "../Base/DropdownMenu";
 import { useUser } from "../providers/UserProvider";
 
-export default function AccountHeaderDropdown() {
+export function AccountHeaderDropdown() {
   const navigate = useNavigate();
   const { removeUser, user } = useUser();
 
