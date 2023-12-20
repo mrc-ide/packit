@@ -1,25 +1,49 @@
-import { render } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import { render, screen, waitFor } from "@testing-library/react";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { UserProvider } from "../../../app/components/providers/UserProvider";
 import ProtectedRoute from "../../../app/components/routes/ProtectedRoute";
 
 const mockedUsedNavigate = jest.fn();
-
 jest.mock("react-router-dom", () => ({
   ...(jest.requireActual("react-router-dom") as any),
   useNavigate: () => mockedUsedNavigate
 }));
+const mockIsAuthenticated = jest.fn();
+jest.mock("../../../lib/isAuthenticated", () => ({
+  isAuthenticated: () => mockIsAuthenticated()
+}));
 
-// TODO : test !!
 describe("protected routes", () => {
   const renderElement = () => {
     return render(
-      <MemoryRouter initialEntries={["/packets"]}>
-        <ProtectedRoute />
-      </MemoryRouter>
+      <UserProvider>
+        <MemoryRouter>
+          <Routes>
+            <Route element={<ProtectedRoute />}>
+              <Route element={<div>Protected Content</div>} index />
+            </Route>
+          </Routes>
+        </MemoryRouter>
+      </UserProvider>
     );
   };
-  it(" renders", () => {
-    expect(true).toBe(true);
+
+  it("renders protected content when authenticated", async () => {
+    mockIsAuthenticated.mockReturnValue(true);
+    renderElement();
+
+    await waitFor(() => {
+      expect(screen.getByText("Protected Content")).toBeVisible();
+    });
+  });
+
+  it("should navigate to login when unauthenticated", async () => {
+    mockIsAuthenticated.mockReturnValue(false);
+    renderElement();
+
+    await waitFor(() => {
+      expect(mockedUsedNavigate).toHaveBeenCalledWith("/login");
+    });
   });
 
   // it("renders protected routes when auth is enabled and user is authenticated using access token", () => {

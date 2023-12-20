@@ -1,7 +1,6 @@
 import { AuthConfig } from "./app/components/providers/types/AuthConfigTypes";
 import { UserState } from "./app/components/providers/types/UserTypes";
 
-export const CURRENT_USER = "user"; // TODO: delete
 export const LocalStorageKeys = {
   AUTH_CONFIG: "authConfig",
   USER: "user",
