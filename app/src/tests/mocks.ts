@@ -219,3 +219,5 @@ export const mockPacketGroupResponse: PageablePackets = {
   number: 0,
   numberOfElements: 5
 };
+
+export const mockFileBlob = new Blob(["test contents"]);

@@ -1,5 +1,6 @@
 import { rest } from "msw";
 import { authConfigHandlers } from "./handlers/authConfigHandlers";
+import { downloadFileHandlers } from "./handlers/downloadFileHandlers";
 import { packetGroupHandlers } from "./handlers/packetGroupHandlers";
 import { packetGroupSummaryHandlers } from "./handlers/packetGroupSummaryHandlers";
 import { packetHandlers } from "./handlers/packetHandler";
@@ -17,5 +18,6 @@ export const handlers = [
   ...packetGroupHandlers,
   ...packetHandlers,
   ...authConfigHandlers,
+  ...downloadFileHandlers,
   ...defaultHandlers
 ];

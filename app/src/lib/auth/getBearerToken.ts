@@ -1,4 +1,4 @@
-import { LocalStorageKeys, getUserFromLocalStorage } from "../localStorageManager";
+import { LocalStorageKeys, getUserFromLocalStorage } from "../../localStorageManager";
 
 export const getBearerToken = () => {
   const user = getUserFromLocalStorage();
@@ -8,6 +8,5 @@ export const getBearerToken = () => {
     window.location.href = "/login";
     throw new Error("No bearer token found");
   }
-
   return user.token;
 };

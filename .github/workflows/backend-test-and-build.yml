@@ -7,11 +7,10 @@ on:
       - completed
   push:
     branches:
-      - "main"
+      - 'main'
   pull_request:
     branches:
       - "main"
-
 env:
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 
