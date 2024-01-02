@@ -17,7 +17,7 @@ describe("header component", () => {
   const renderElement = () => {
     return render(
       <MemoryRouter>
-        <ThemeProvider defaultTheme="dark">
+        <ThemeProvider>
           <UserProvider>
             <Header />
           </UserProvider>
@@ -39,12 +39,12 @@ describe("header component", () => {
     mockGetUserFromLocalStorage.mockReturnValue(mockUserState);
     renderElement();
 
-    const darkThemeButton = screen.getByRole("button", { name: "theme-dark" });
+    const darkThemeButton = screen.getByRole("button", { name: "theme-light" });
 
     await userEvent.click(darkThemeButton);
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: "theme-light" })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "theme-dark" })).toBeInTheDocument();
     });
   });
 });
