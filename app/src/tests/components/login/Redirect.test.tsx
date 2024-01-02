@@ -1,59 +1,66 @@
-import { render } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { Home } from "../../../app/components/contents/explorer";
 import { Login, Redirect } from "../../../app/components/login";
+import { UserProvider } from "../../../app/components/providers/UserProvider";
+import { UserState } from "../../../app/components/providers/types/UserTypes";
+import { mockUserState } from "../../mocks";
+
+const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
+jest.mock("../../../lib/localStorageManager", () => ({
+  getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
+}));
 
 describe("redirect", () => {
   const renderElement = (location = "/redirect?token=fakeToken") => {
     return render(
-      <MemoryRouter initialEntries={[location]}>
-        <Routes>
-          <Route path="/redirect" element={<Redirect />} />
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-        </Routes>
-      </MemoryRouter>
+      <UserProvider>
+        <MemoryRouter initialEntries={[location]}>
+          <Routes>
+            <Route path="/redirect" element={<Redirect />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+          </Routes>
+        </MemoryRouter>
+      </UserProvider>
     );
   };
 
-  it(" renders", () => {
-    expect(true).toBe(true);
+  it("renders redirecting if no token, user token or error", () => {
+    mockGetUserFromLocalStorage.mockReturnValue(null);
+    renderElement("/redirect");
+
+    expect(screen.getByText("Redirecting user ...")).toBeInTheDocument();
   });
-  // it("can render redirect correctly for successful login when store has not updated", () => {
-  //   const store = getStore();
-  //   const mockDispatch = jest.spyOn(store, "dispatch");
-  //   renderElement(store);
-  //   expect(screen.getByText("Redirecting...")).toBeInTheDocument();
-  //   expect(mockDispatch).toHaveBeenCalledTimes(1);
-  //   expect(mockDispatch).toHaveBeenCalledWith({ type: "login/saveUser", payload: { token: "fakeToken" } });
-  // });
 
-  // it("can render redirect correctly for failedlogin when store has not updated", () => {
-  //   const store = getStore();
-  //   const mockDispatch = jest.spyOn(store, "dispatch");
-  //   renderElement(store, "/redirect?error=bad token");
-  //   expect(screen.getByText("Redirecting...")).toBeInTheDocument();
-  //   expect(mockDispatch).toHaveBeenCalledTimes(1);
-  //   expect(mockDispatch).toHaveBeenCalledWith({ type: "login/loginError", payload: "bad token" });
-  // });
+  it("renders home page is user is logged in", async () => {
+    mockGetUserFromLocalStorage.mockReturnValue(mockUserState);
+    renderElement("/redirect");
 
-  // it("can redirect for successful login when store has updated", async () => {
-  //   const store = getStore({ isAuthenticated: true });
-  //   const mockDispatch = jest.spyOn(store, "dispatch");
-  //   renderElement(store);
+    await waitFor(() => {
+      expect(screen.getByText(/parameters/i)).toBeInTheDocument();
+      expect(screen.getByText(/manage packets/i)).toBeInTheDocument();
+    });
+  });
+  it("renders home page and set user if token is present", async () => {
+    mockGetUserFromLocalStorage.mockReturnValue(mockUserState);
+    renderElement(`/redirect?token=${mockUserState.token}`);
 
-  //   await waitFor(() => {
-  //     expect(screen.getByText(/manage packets/i)).toBeVisible();
-  //   });
-  //   expect(mockDispatch).toHaveBeenCalledTimes(1);
-  // });
+    await waitFor(() => {
+      expect(screen.getByText(/parameters/i)).toBeInTheDocument();
+      expect(screen.getByText(/manage packets/i)).toBeInTheDocument();
+    });
+  });
 
-  // it("can redirect for failed login when store has updated", () => {
-  //   const error = { error: "Login failed", detail: "bad token" };
-  //   const store = getStore({ userError: { error } });
-  //   const mockDispatch = jest.spyOn(store, "dispatch");
-  //   renderElement(store, "/redirect?error=bad token");
-  //   expect(screen.getByText("bad token")).toBeVisible();
-  //   expect(mockDispatch).toHaveBeenCalledTimes(2);
-  // });
+  it("renders login page if error is present", async () => {
+    mockGetUserFromLocalStorage.mockReturnValue(null);
+    renderElement("/redirect?error=invalid_token");
+
+    await waitFor(() => {
+      expect(screen.getByText(/login/i)).toBeInTheDocument();
+      expect(screen.getByText(/invalid_token/i)).toBeInTheDocument();
+    });
+
+    screen.debug();
+  });
 });
