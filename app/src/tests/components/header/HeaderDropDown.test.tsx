@@ -11,7 +11,7 @@ jest.mock("react-router-dom", () => ({
   useNavigate: () => mockedUsedNavigate
 }));
 const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
-jest.mock("../../../localStorageManager", () => ({
+jest.mock("../../../lib/localStorageManager", () => ({
   getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
 }));
 

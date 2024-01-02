@@ -1,11 +1,6 @@
-import { AuthConfig } from "./app/components/providers/types/AuthConfigTypes";
-import { UserState } from "./app/components/providers/types/UserTypes";
-
-export const LocalStorageKeys = {
-  AUTH_CONFIG: "authConfig",
-  USER: "user",
-  THEME: "ui-theme"
-};
+import { AuthConfig } from "../app/components/providers/types/AuthConfigTypes";
+import { UserState } from "../app/components/providers/types/UserTypes";
+import { LocalStorageKeys } from "./types/LocalStorageKeys";
 
 export const getUserFromLocalStorage = (): UserState | null => {
   const user = localStorage.getItem(LocalStorageKeys.USER);

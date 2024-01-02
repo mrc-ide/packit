@@ -7,7 +7,7 @@ import { UserState } from "../../../app/components/providers/types/UserTypes";
 import { mockUserState } from "../../mocks";
 
 const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
-jest.mock("../../../localStorageManager", () => ({
+jest.mock("../../../lib/localStorageManager", () => ({
   getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
 }));
 

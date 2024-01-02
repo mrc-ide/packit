@@ -1,5 +1,6 @@
 import { ReactNode, createContext, useContext, useEffect, useState } from "react";
-import { LocalStorageKeys, getAuthConfigFromLocalStorage } from "../../../localStorageManager";
+import { getAuthConfigFromLocalStorage } from "../../../lib/localStorageManager";
+import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
 import { ErrorComponent } from "../contents/common/ErrorComponent";
 import { useGetAuthConfig } from "./hooks/useGetAuthConfig";
 import { AuthConfig } from "./types/AuthConfigTypes";

@@ -1,4 +1,5 @@
-import { LocalStorageKeys, getUserFromLocalStorage } from "../../localStorageManager";
+import { getUserFromLocalStorage } from "../localStorageManager";
+import { LocalStorageKeys } from "../types/LocalStorageKeys";
 
 export const getBearerToken = () => {
   const user = getUserFromLocalStorage();

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { LocalStorageKeys } from "../../../localStorageManager";
+import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
 import { Theme, ThemeProviderProps, ThemeProviderState } from "./types/ThemeTypes";
 
 const ThemeProviderContext = createContext<ThemeProviderState>({
