@@ -1,4 +1,4 @@
-import {getAuthHeader} from "./auth/getAuthHeader";
+import { getBearerToken } from "./auth/getBearerToken";
 
 export interface Fetcher {
   url: string;
@@ -8,14 +8,16 @@ export interface Fetcher {
   authRequired?: boolean;
 }
 
-export const fetcher = async ({ url, method = "GET", json = true, body }: Fetcher) => {
+export const fetcher = async ({ url, method = "GET", json = true, authRequired = false, body }: Fetcher) => {
+  const token = authRequired ? getBearerToken() : null;
+
   const res = await fetch(url, {
     method,
     ...(body && { body: JSON.stringify(body) }),
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      ...getAuthHeader()
+      ...(authRequired && { Authorization: `Bearer ${token}` })
     }
   });
 

@@ -1,10 +1,14 @@
-import { getAuthHeader } from "./auth/getAuthHeader";
+import { getBearerToken } from "./auth/getBearerToken";
 
 export const download = async (url: string, filename: string) => {
-    const headers = getAuthHeader();
+
     const res = await fetch(url, {
         method: "GET",
-        headers,
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+             Authorization: `Bearer ${getBearerToken()}` 
+          },
     });
 
     if (!res.ok) {
