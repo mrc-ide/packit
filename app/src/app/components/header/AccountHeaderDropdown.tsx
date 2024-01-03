@@ -27,7 +27,7 @@ export function AccountHeaderDropdown() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded full">
           <Avatar className="h-8 w-8">
-            <AvatarFallback>{getInitials(user?.displayName ?? "X X")}</AvatarFallback>
+            <AvatarFallback>{getInitials(user?.displayName || "X X")}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>

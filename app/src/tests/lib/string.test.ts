@@ -1,20 +1,13 @@
 import { getInitials } from "../../lib/string";
 
 describe("getInitials", () => {
-  it("throws an error if name is empty", () => {
-    expect(() => {
-      getInitials("");
-    }).toThrowError("Name cannot be empty");
+  it("returns XX if name is empty", () => {
+    expect(getInitials("")).toBe("XX");
   });
 
-  it("throws an error if name format is invalid", () => {
-    expect(() => {
-      getInitials("John");
-    }).toThrowError("Invalid name format");
-
-    expect(() => {
-      getInitials("Doe");
-    }).toThrowError("Invalid name format");
+  it("returns XX if name format is invalid", () => {
+    expect(getInitials("John")).toBe("XX");
+    expect(getInitials("Doe")).toBe("XX");
   });
 
   it("returns the correct initials", () => {

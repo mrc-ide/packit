@@ -1,12 +1,12 @@
 export const getInitials = (name: string) => {
   const trimmedName = name.trim();
   if (trimmedName === "") {
-    throw new Error("Name cannot be empty");
+    return "XX";
   }
 
   const [firstName, lastName] = trimmedName.split(" ");
   if (!firstName || !lastName) {
-    throw new Error("Invalid name format");
+    return "XX";
   }
 
   return `${firstName[0]}${lastName[0]}`;

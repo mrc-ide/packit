@@ -25,7 +25,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     if (user?.token) {
       navigate("/");
     }
-  }, [user]);
+  }, [user?.token]);
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>
