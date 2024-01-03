@@ -8,7 +8,8 @@ import { mockUserState } from "../../mocks";
 
 const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
 jest.mock("../../../lib/localStorageManager", () => ({
-  getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
+  getUserFromLocalStorage: () => mockGetUserFromLocalStorage(),
+  getAuthConfigFromLocalStorage: jest.fn(() => ({ enableAuth: true }))
 }));
 
 describe("redirect", () => {

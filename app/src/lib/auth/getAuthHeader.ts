@@ -1,6 +1,12 @@
-import {getBearerToken} from "./getBearerToken";
+import { getAuthConfigFromLocalStorage } from "../localStorageManager";
+import { getBearerToken } from "./getBearerToken";
 
 export const getAuthHeader = () => {
-    const token = getBearerToken();
-    return token ? { Authorization: `Bearer ${token}` } : undefined;
-}
+  const authConfig = getAuthConfigFromLocalStorage();
+
+  if (!authConfig?.enableAuth) {
+    return undefined;
+  }
+
+  return { Authorization: `Bearer ${getBearerToken()}` };
+};
