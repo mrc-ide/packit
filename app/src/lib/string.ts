@@ -1,4 +1,4 @@
-export const getInitials = (name: string) => {
+export const getInitials = (name = "X X") => {
   const trimmedName = name.trim();
   if (trimmedName === "") {
     return "XX";
