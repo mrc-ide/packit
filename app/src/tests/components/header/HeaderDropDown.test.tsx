@@ -1,8 +1,10 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { AccountHeaderDropdown } from "../../../app/components/header/AccountHeaderDropdown";
 import { UserProvider } from "../../../app/components/providers/UserProvider";
 import { UserState } from "../../../app/components/providers/types/UserTypes";
+import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
 import { mockUserState } from "../../mocks";
 
 const mockedUsedNavigate = jest.fn();
@@ -37,5 +39,14 @@ describe("header drop down menu component", () => {
     renderElement();
 
     expect(await screen.findByText("LJ")).toBeInTheDocument();
+  });
+
+  it("deletes user local storage key when log out is clicked", async () => {
+    const DOWN_ARROW = { keyCode: 40 };
+    localStorage.setItem(LocalStorageKeys.USER, "mockUser");
+    renderElement();
+    fireEvent.keyDown(await screen.findByRole("button"), DOWN_ARROW);
+    userEvent.click(await screen.findByText("Log out"));
+    expect(localStorage.getItem(LocalStorageKeys.USER)).toBe(null)
   });
 });
