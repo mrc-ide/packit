@@ -1,12 +1,12 @@
 import useSWR from "swr";
-import { PacketMetadata } from "../../../../../types";
-import { fetcher } from "../../../../../lib/fetch";
 import appConfig from "../../../../../config/appConfig";
+import { fetcher } from "../../../../../lib/fetch";
+import { PacketMetadata } from "../../../../../types";
 
 export const useGetPacketById = (packetId: string | undefined) => {
   const { data, isLoading, error } = useSWR<PacketMetadata>(
     `${appConfig.apiUrl()}/packets/metadata/${packetId}`,
-    (url: string) => fetcher({ url, authRequired: true })
+    (url: string) => fetcher({ url })
   );
 
   return {

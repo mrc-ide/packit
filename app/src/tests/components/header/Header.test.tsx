@@ -1,38 +1,50 @@
-import { Store } from "@reduxjs/toolkit";
-import { render } from "@testing-library/react";
-import { Provider } from "react-redux";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
-import configureStore from "redux-mock-store";
-import thunk from "redux-thunk";
 import Header from "../../../app/components/header/Header";
+import { LeftNavItems } from "../../../app/components/header/LeftNav";
 import { ThemeProvider } from "../../../app/components/providers/ThemeProvider";
-import { LoginState } from "../../../types";
-import { mockLoginState } from "../../mocks";
+import { UserProvider } from "../../../app/components/providers/UserProvider";
+import { UserState } from "../../../app/components/providers/types/UserTypes";
+import { mockUserState } from "../../mocks";
+
+const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
+jest.mock("../../../lib/localStorageManager", () => ({
+  getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
+}));
 
 describe("header component", () => {
-  const getStore = (props: Partial<LoginState> = {}) => {
-    const middlewares = [thunk];
-    const mockStore = configureStore(middlewares);
-    const initialRootStates = {
-      login: mockLoginState(props)
-    };
-
-    return mockStore(initialRootStates);
-  };
-
-  const renderElement = (store: Store = getStore()) => {
+  const renderElement = () => {
     return render(
-      <Provider store={store}>
+      <MemoryRouter>
         <ThemeProvider>
-          <MemoryRouter>
+          <UserProvider>
             <Header />
-          </MemoryRouter>
+          </UserProvider>
         </ThemeProvider>
-      </Provider>
+      </MemoryRouter>
     );
   };
-  // TODO add tests
-  it("can render header", () => {
+  it("can render header user related items when authenticated", () => {
+    mockGetUserFromLocalStorage.mockReturnValue(mockUserState);
     renderElement();
+
+    for (const navItem of Object.values(LeftNavItems)) {
+      expect(screen.getByText(navItem)).toBeVisible();
+    }
+    expect(screen.getByText("LJ")).toBeInTheDocument();
+  });
+
+  it("should change theme when theme button is clicked", async () => {
+    mockGetUserFromLocalStorage.mockReturnValue(mockUserState);
+    renderElement();
+
+    const darkThemeButton = screen.getByRole("button", { name: "theme-light" });
+
+    await userEvent.click(darkThemeButton);
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "theme-dark" })).toBeInTheDocument();
+    });
   });
 });

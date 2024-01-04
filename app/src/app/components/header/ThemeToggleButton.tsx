@@ -13,11 +13,11 @@ export const ThemeToggleButton = () => {
       <Tooltip>
         <TooltipTrigger asChild>
           {darkOrLightTheme === "dark" ? (
-            <Button variant="ghost" size="icon" onClick={() => setTheme("light")}>
+            <Button aria-label="theme-dark" variant="ghost" size="icon" onClick={() => setTheme("light")}>
               <MoonStar />
             </Button>
           ) : (
-            <Button variant="ghost" size="icon" onClick={() => setTheme("dark")}>
+            <Button aria-label="theme-light" variant="ghost" size="icon" onClick={() => setTheme("dark")}>
               <Sun />
             </Button>
           )}

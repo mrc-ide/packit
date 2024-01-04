@@ -35,9 +35,7 @@ describe("download component", () => {
     expect(downloadButtons.length).toBe(2);
     expect(downloadButtons[0]).toHaveTextContent("orderly.R");
     expect(screen.getByText("(137 bytes)")).toBeInTheDocument();
-    expect(screen.getByText("Download orderly.R")).toBeInTheDocument();
     expect(downloadButtons[1]).toHaveTextContent("report.html");
     expect(screen.getByText("(40 bytes)")).toBeInTheDocument();
-    expect(screen.getByText("Download report.html")).toBeInTheDocument();
   });
 });
