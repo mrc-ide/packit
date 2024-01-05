@@ -1,83 +1,68 @@
-import { Store } from "@reduxjs/toolkit";
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { Provider } from "react-redux";
+import { rest } from "msw";
 import { MemoryRouter } from "react-router-dom";
-import configureStore from "redux-mock-store";
-import thunk from "redux-thunk";
+import { SWRConfig } from "swr";
 import { Login } from "../../../app/components/login";
-import { LoginState } from "../../../types";
-import { mockLoginState } from "../../mocks";
+import { AuthConfigProvider } from "../../../app/components/providers/AuthConfigProvider";
+import { UserProvider } from "../../../app/components/providers/UserProvider";
+import { UserState } from "../../../app/components/providers/types/UserTypes";
+import appConfig from "../../../config/appConfig";
+import { server } from "../../../msw/server";
+import { mockUserState } from "../../mocks";
+
+const mockedUsedNavigate = jest.fn();
+jest.mock("react-router-dom", () => ({
+  ...(jest.requireActual("react-router-dom") as any),
+  useNavigate: () => mockedUsedNavigate
+}));
+const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
+jest.mock("../../../lib/localStorageManager", () => ({
+  ...(jest.requireActual("../../../lib/localStorageManager") as any),
+  getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
+}));
 
 describe("login", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  const getStore = (props: Partial<LoginState> = {}) => {
-    const middlewares = [thunk];
-    const mockStore = configureStore(middlewares);
-    const initialRootStates = {
-      login: mockLoginState(props)
-    };
-
-    return mockStore(initialRootStates);
-  };
-
-  const renderElement = (store: Store = getStore()) => {
+  const renderElement = () => {
     return render(
-      <Provider store={store}>
-        <MemoryRouter initialEntries={["/login"]}>
-          <Login />
+      <SWRConfig value={{ dedupingInterval: 0 }}>
+        <MemoryRouter initialEntries={["/login?error=random"]}>
+          <UserProvider>
+            <AuthConfigProvider>
+              <Login />
+            </AuthConfigProvider>
+          </UserProvider>
         </MemoryRouter>
-      </Provider>
+      </SWRConfig>
     );
   };
 
-  it("can render github login", () => {
-    renderElement(
-      getStore({
-        authConfig: {
-          enableFormLogin: false,
-          enableGithubLogin: true
-        }
+  it("does not show github link when not in auth mode", async () => {
+    server.use(
+      rest.get("*", (req, res, ctx) => {
+        return res(ctx.json(null));
       })
     );
-    expect(screen.getByText(/login/i)).toBeInTheDocument();
+    renderElement();
+
+    await screen.findByText(/random/i);
+
+    expect(screen.queryByRole("link", { name: /github/i })).not.toBeInTheDocument();
   });
 
-  it("can render token error", () => {
-    renderElement(
-      getStore({
-        userError: { error: { detail: "ERROR DETAIL", error: "ERROR" } },
-        authConfig: {
-          enableFormLogin: true,
-          enableGithubLogin: true
-        }
-      })
-    );
+  it("can render github login button when authenticated and error from params", async () => {
+    renderElement();
 
-    expect(screen.getByText(/ERROR DETAIL/)).toBeInTheDocument();
+    const githubLink = await screen.findByRole("link", { name: /github/i });
+
+    expect(githubLink).toBeVisible();
+    expect(githubLink).toHaveAttribute("href", `${appConfig.apiUrl()}/oauth2/authorization/github`);
+    expect(screen.getByText(/random/)).toBeInTheDocument();
   });
 
-  it("can navigate to github login", () => {
-    const store = getStore({
-      authConfig: {
-        enableFormLogin: true,
-        enableGithubLogin: true
-      }
-    });
+  it("should navigate if user token is present", () => {
+    mockGetUserFromLocalStorage.mockReturnValue(mockUserState);
+    renderElement();
 
-    const mockDispatch = jest.spyOn(store, "dispatch");
-
-    renderElement(store);
-
-    expect(mockDispatch).toHaveBeenCalledTimes(1);
-
-    const githubLogin = screen.getByRole("link", { name: /github/i });
-
-    userEvent.click(githubLogin);
-
-    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(mockedUsedNavigate).toHaveBeenCalledWith("/");
   });
 });

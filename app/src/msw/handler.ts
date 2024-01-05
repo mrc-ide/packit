@@ -1,7 +1,8 @@
 import { rest } from "msw";
+import { authConfigHandlers } from "./handlers/authConfigHandlers";
 import { downloadFileHandlers } from "./handlers/downloadFileHandlers";
-import { packetGroupSummaryHandlers } from "./handlers/packetGroupSummaryHandlers";
 import { packetGroupHandlers } from "./handlers/packetGroupHandlers";
+import { packetGroupSummaryHandlers } from "./handlers/packetGroupSummaryHandlers";
 import { packetHandlers } from "./handlers/packetHandler";
 
 // catch any missed requests in tests
@@ -13,10 +14,10 @@ const defaultHandlers = [
 ];
 
 export const handlers = [
-    ...packetGroupSummaryHandlers,
-    ...packetGroupHandlers,
-    ...packetHandlers,
-    ...downloadFileHandlers,
-    ...defaultHandlers
+  ...packetGroupSummaryHandlers,
+  ...packetGroupHandlers,
+  ...packetHandlers,
+  ...authConfigHandlers,
+  ...downloadFileHandlers,
+  ...defaultHandlers
 ];
-

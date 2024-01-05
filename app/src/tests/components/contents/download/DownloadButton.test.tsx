@@ -1,10 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import DownloadButton from "../../../../app/components/contents/download/DownloadButton";
-import {LoginState} from "../../../../types";
-import { Provider } from "react-redux";
-import configureStore from "redux-mock-store";
-import {mockLoginState} from "../../../mocks";
 import userEvent from "@testing-library/user-event";
+import DownloadButton from "../../../../app/components/contents/download/DownloadButton";
 
 let errorOnDownload = false;
 const mockDownload = jest.fn();
@@ -20,20 +16,10 @@ describe("DownloadButton", () => {
         hash: "fakeHash"
     };
 
-    const getStore = (props: Partial<LoginState> = {isAuthenticated: true}) => {
-        const mockStore = configureStore([]);
-        const initialRootStates = {
-            login: mockLoginState(props)
-        };
 
-        return mockStore(initialRootStates);
-    };
-
-    const renderComponent = (store = getStore()) => {
+    const renderComponent = () => {
         render(
-            <Provider store={store}>
                 <DownloadButton file={ file } />
-            </Provider>
         );
     };
 

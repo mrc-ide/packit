@@ -8,17 +8,12 @@ export default function Download() {
   const { packet } = usePacketOutletContext();
 
   return (
-    <div className="content packet-details">
+    <div className="h-full flex-1 flex-col space-y-4 pl-8 lg:pl-0 pr-8">
       <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} />
-      <ul className="list-unstyled">
+      <ul>
         {packet?.files.map((data, key) => (
-          <li key={key} className="pb-2">
-            <div className="card custom-card">
-              <div className="card-header">Download {data.path}</div>
-              <div className="card-body">
-                <DownloadButton file={data}></DownloadButton>
-              </div>
-            </div>
+          <li key={key}>
+            <DownloadButton file={data}></DownloadButton>
           </li>
         ))}
       </ul>

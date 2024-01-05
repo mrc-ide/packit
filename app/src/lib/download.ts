@@ -1,4 +1,4 @@
-import {getAuthHeader} from "./auth/getAuthHeader";
+import { getAuthHeader } from "./auth/getAuthHeader";
 
 export const getFileObjectUrl = async (url: string, filename: string)=> {
     const headers = getAuthHeader();
