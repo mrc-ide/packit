@@ -15,8 +15,6 @@ describe("login actions", () => {
     localStorage.clear();
   });
 
-  const userDetails: UserLoginDetailProps = { email: "test@example.com", password: "test" };
-
   it("should fetch auth config as expected", async () => {
     const fakeResponse = { test: "test" };
     const dispatch = jest.fn();

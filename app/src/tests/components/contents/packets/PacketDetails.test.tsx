@@ -7,6 +7,11 @@ import { PacketLayout } from "../../../../app/components/main";
 import { server } from "../../../../msw/server";
 import { mockPacket } from "../../../mocks";
 
+jest.mock("../../../../lib/download", () => ({
+      getFileObjectUrl: () => "fakeObjectUrl"
+    })
+);
+
 describe("packet details component", () => {
   const renderComponent = () => {
     render(
@@ -34,7 +39,6 @@ describe("packet details component", () => {
 
   it("renders html file with link", async () => {
     renderComponent();
-
     await screen.findByRole("link", { name: /fullscreen/i });
   });
 
