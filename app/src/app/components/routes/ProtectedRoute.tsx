@@ -3,7 +3,7 @@ import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { isAuthenticated } from "../../../lib/isAuthenticated";
 import { useAuthConfig } from "../providers/AuthConfigProvider";
 import { useUser } from "../providers/UserProvider";
-import { useRedirectOnLogin } from "../providers/RedirectOnLogin";
+import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 
 export default function ProtectedRoute() {
   const navigate = useNavigate();

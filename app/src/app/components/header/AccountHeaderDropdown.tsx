@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger
 } from "../Base/DropdownMenu";
 import { useUser } from "../providers/UserProvider";
-import { useRedirectOnLogin } from "../providers/RedirectOnLogin";
+import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 
 export function AccountHeaderDropdown() {
   const navigate = useNavigate();

@@ -9,7 +9,7 @@ import { cn } from "../../../lib/cn";
 import { buttonVariants } from "../Base/Button";
 import { useAuthConfig } from "../providers/AuthConfigProvider";
 import { useUser } from "../providers/UserProvider";
-import { useRedirectOnLogin } from "../providers/RedirectOnLogin";
+import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 
 type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>;
 

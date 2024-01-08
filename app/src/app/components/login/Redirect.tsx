@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../providers/UserProvider";
-import { useRedirectOnLogin } from "../providers/RedirectOnLogin";
+import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 
 export default function Redirect() {
   const navigate = useNavigate();
