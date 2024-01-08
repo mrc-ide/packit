@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../providers/UserProvider";
+import { useRedirectOnLogin } from "../providers/RedirectOnLogin";
 
 export default function Redirect() {
   const navigate = useNavigate();
-  const { user, setUser, requestedUrl, setRequestedUrl } = useUser();
+  const { user, setUser } = useUser();
+  const { requestedUrl, setRequestedUrl } = useRedirectOnLogin();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const token = searchParams.get("token");

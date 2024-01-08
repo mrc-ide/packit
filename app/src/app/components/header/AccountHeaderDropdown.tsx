@@ -12,10 +12,12 @@ import {
   DropdownMenuTrigger
 } from "../Base/DropdownMenu";
 import { useUser } from "../providers/UserProvider";
+import { useRedirectOnLogin } from "../providers/RedirectOnLogin";
 
 export function AccountHeaderDropdown() {
   const navigate = useNavigate();
-  const { removeUser, user, setLoggingOut } = useUser();
+  const { removeUser, user } = useUser();
+  const { setLoggingOut } = useRedirectOnLogin();
 
   const handleLogout = () => {
     removeUser();

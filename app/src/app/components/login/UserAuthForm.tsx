@@ -9,13 +9,15 @@ import { cn } from "../../../lib/cn";
 import { buttonVariants } from "../Base/Button";
 import { useAuthConfig } from "../providers/AuthConfigProvider";
 import { useUser } from "../providers/UserProvider";
+import { useRedirectOnLogin } from "../providers/RedirectOnLogin";
 
 type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>;
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const navigate = useNavigate();
   const authConfig = useAuthConfig();
-  const { user, loggingOut, setLoggingOut } = useUser();
+  const { user } = useUser();
+  const { loggingOut, setLoggingOut } = useRedirectOnLogin();
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);

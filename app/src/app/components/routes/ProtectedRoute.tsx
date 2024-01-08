@@ -3,11 +3,13 @@ import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { isAuthenticated } from "../../../lib/isAuthenticated";
 import { useAuthConfig } from "../providers/AuthConfigProvider";
 import { useUser } from "../providers/UserProvider";
+import { useRedirectOnLogin } from "../providers/RedirectOnLogin";
 
 export default function ProtectedRoute() {
   const navigate = useNavigate();
   const authConfig = useAuthConfig();
-  const { user, setRequestedUrl, loggingOut } = useUser();
+  const { user } = useUser();
+  const { setRequestedUrl, loggingOut } = useRedirectOnLogin();
   const { pathname } = useLocation();
 
   useEffect(() => {
