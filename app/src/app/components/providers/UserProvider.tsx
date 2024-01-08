@@ -47,19 +47,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     setRequestedUrl(url: string | null) {
       setRequestedUrlState(url);
       const key = SessionStorageKeys.REQUESTED_URL;
-      if (url === null) {
-        //alert("removing item from session storage")
-        //console.log("removing item from session storage")
-        localStorage.removeItem(key)
-      } else {
-        //alert(`setting session storage value to ${url}`)
-        //console.log(`setting session storage value to ${url}`)
-        localStorage.setItem(key, url);
-        // Make sure it's saved the bloody thing
-        //const testVal = sessionStorage.getItem(key);
-        //console.log(`Retrieved session storage value is ${testVal}`)
-        //alert("SAVED IT!")
-      }
+      url === null ? localStorage.removeItem(key) : localStorage.setItem(key, url);
     },
     loggingOut,
     setLoggingOut

@@ -11,16 +11,10 @@ export default function ProtectedRoute() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    if (!authConfig ) {
-      // not initialised
-      //console.log("not initialised")
-      return;
-    } else if (!isAuthenticated(authConfig, user)) {
-      if (!loggingOut && pathname !== "/") {
-        // we will redirect to requested url on login, but avoid doing this if logging out after previous auth success
-        //console.log("setting requested url to " + pathname)
+    if (authConfig && !isAuthenticated(authConfig, user)) {
+      // we will redirect to requested url on login, but avoid doing this if logging out after previous auth success
+      if (!loggingOut) {
         setRequestedUrl(pathname);
-        //sessionStorage.setItem("requestedUrlDirect", pathname)
       }
       navigate("/login");
     }

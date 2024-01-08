@@ -11,17 +11,11 @@ export default function Redirect() {
   const error = searchParams.get("error");
 
   const navigateToRequestedUrl  = () => {
-
-
-    //console.log(`Requested Url in Redirect is ${requestedUrl}`);
-    //console.log(`Direct requested url in Redirect is ${sessionStorage.getItem("requestedUrlDirect")}`)
     const url = requestedUrl || "/";
 
     // reset requested url first
-    //console.log("Setting requested url to null")
     setRequestedUrl(null);
 
-    //console.log(`Doing redirect to ${url}`)
     navigate(url);
   };
 
@@ -30,7 +24,6 @@ export default function Redirect() {
       navigateToRequestedUrl();
     } else if (token) {
       setUser(token);
-      //navigateToRequestedUrl();
     }
     if (error) {
       navigate(`/login?error=${error}`);
