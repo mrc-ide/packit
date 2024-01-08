@@ -17,7 +17,7 @@ interface RedirectOnLoginProviderProps {
 }
 
 export const RedirectOnLoginProvider = ({ children }: RedirectOnLoginProviderProps) => {
-    // NB We use local storage to store requested url rather than SessionStorage as Chrome was unreliable at
+    // NB We use local storage to store requested url rather than SessionStorage as Chrome is unreliable at
     // maintaining session keys for lifetime of tab.
     const [requestedUrl, setRequestedUrlState] =
         useState<string | null>(() => localStorage.getItem(LocalStorageKeys.REQUESTED_URL));

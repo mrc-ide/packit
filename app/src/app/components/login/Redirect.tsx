@@ -14,10 +14,7 @@ export default function Redirect() {
 
   const navigateToRequestedUrl  = () => {
     const url = requestedUrl || "/";
-
-    // reset requested url first
-    setRequestedUrl(null);
-
+    setRequestedUrl(null); // reset requested url before redirecting
     navigate(url);
   };
 

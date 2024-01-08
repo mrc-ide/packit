@@ -38,7 +38,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       {authConfig?.enableGithubLogin && (
         <>
           <Link
-            to={`${appConfig.apiUrl()}/oauth2/authorization/github?redirect_uri=testred`}
+            to={`${appConfig.apiUrl()}/oauth2/authorization/github`}
             className={buttonVariants({ variant: "outline" })}
           >
             <Github className="mr-2 h-4 w-4" />

@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { AccountHeaderDropdown } from "../../../app/components/header/AccountHeaderDropdown";
 import { UserProvider } from "../../../app/components/providers/UserProvider";
+import { RedirectOnLoginProvider } from "../../../app/components/providers/RedirectOnLoginProvider";
 import { UserState } from "../../../app/components/providers/types/UserTypes";
 import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
 import { mockUserState } from "../../mocks";
@@ -17,6 +18,13 @@ jest.mock("../../../lib/localStorageManager", () => ({
   getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
 }));
 
+const mockSetLoggingOut = jest.fn();
+jest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
+  useRedirectOnLogin: () => ({
+    setLoggingOut: mockSetLoggingOut
+  })
+}));
+
 describe("header drop down menu component", () => {
   const renderElement = () => {
     return render(
@@ -27,6 +35,10 @@ describe("header drop down menu component", () => {
       </MemoryRouter>
     );
   };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   it("renders drop down menu without user info if not authenticated", async () => {
     renderElement();
@@ -47,6 +59,7 @@ describe("header drop down menu component", () => {
     renderElement();
     fireEvent.keyDown(await screen.findByRole("button"), DOWN_ARROW);
     userEvent.click(await screen.findByText("Log out"));
-    expect(localStorage.getItem(LocalStorageKeys.USER)).toBe(null)
+    expect(localStorage.getItem(LocalStorageKeys.USER)).toBe(null);
+    expect(mockSetLoggingOut).toHaveBeenCalledWith(true);
   });
 });
