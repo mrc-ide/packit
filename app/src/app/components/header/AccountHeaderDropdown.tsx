@@ -15,10 +15,11 @@ import { useUser } from "../providers/UserProvider";
 
 export function AccountHeaderDropdown() {
   const navigate = useNavigate();
-  const { removeUser, user } = useUser();
+  const { removeUser, user, setLoggingOut } = useUser();
 
   const handleLogout = () => {
     removeUser();
+    setLoggingOut(true);
     navigate("/login");
   };
 

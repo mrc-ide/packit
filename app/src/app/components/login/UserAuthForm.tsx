@@ -15,13 +15,17 @@ type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>;
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const navigate = useNavigate();
   const authConfig = useAuthConfig();
-  const { user } = useUser();
+  const { user, loggingOut, setLoggingOut } = useUser();
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const loginError = searchParams.get("error");
 
   useEffect(() => {
+    if (loggingOut) {
+      setLoggingOut(false);
+    }
+
     if (user?.token) {
       navigate("/");
     }
@@ -32,7 +36,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       {authConfig?.enableGithubLogin && (
         <>
           <Link
-            to={`${appConfig.apiUrl()}/oauth2/authorization/github`}
+            to={`${appConfig.apiUrl()}/oauth2/authorization/github?redirect_uri=testred`}
             className={buttonVariants({ variant: "outline" })}
           >
             <Github className="mr-2 h-4 w-4" />
