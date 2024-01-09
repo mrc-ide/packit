@@ -31,4 +31,13 @@ describe("Packet reports component", () => {
                 "http://localhost:8080/packets/file/sha256:12345?inline=true&filename=test.html", "");
         });
     });
+
+    it("renders error component if error fetching report data", async () => {
+        mockGetFileObjectUrl.mockImplementation(() => { throw new Error("test error"); });
+        renderComponent();
+        await waitFor(() => {
+            expect(screen.getByText(/Error loading report/i)).toBeVisible();
+            expect(screen.queryByTestId("report-iframe")).not.toBeInTheDocument();
+        });
+    });
 });

@@ -8,7 +8,7 @@ import { server } from "../../../../msw/server";
 import { mockPacket } from "../../../mocks";
 
 jest.mock("../../../../lib/download", () => ({
-      getFileObjectUrl: () => "fakeObjectUrl"
+      getFileObjectUrl: async () => "fakeObjectUrl"
     })
 );
 
@@ -39,7 +39,9 @@ describe("packet details component", () => {
 
   it("renders html file with link", async () => {
     renderComponent();
-    await screen.findByRole("link", { name: /fullscreen/i });
+    await waitFor(() => {
+      screen.findByRole("link", { name: /fullscreen/i });
+    });
   });
 
   it("should not render parameters or files when none", async () => {

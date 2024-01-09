@@ -4,6 +4,7 @@ import { PacketMetadata } from "../../../../types";
 import { getHtmlFilePath } from "./utils/getHtmlFilePath";
 import {getFileObjectUrl} from "../../../../lib/download";
 import {useEffect, useState} from "react";
+import {ErrorComponent} from "../common/ErrorComponent";
 
 interface PacketReportsProps {
   packet: PacketMetadata | undefined;
@@ -13,9 +14,17 @@ export const PacketReports = ({ packet }: PacketReportsProps) => {
   const htmlFilePath = packet ? getHtmlFilePath(packet) : null;
 
   const [htmlFileObjectUrl, setHtmlFileObjectUrl] = useState(undefined as string | undefined);
+  const [error, setError] = useState<null | Error>(null);
   const getHtmlFileObjectUrl = async () => {
     if (htmlFilePath) {
-      setHtmlFileObjectUrl(await getFileObjectUrl(`${appConfig.apiUrl()}/${htmlFilePath}`, ""));
+      getFileObjectUrl(`${appConfig.apiUrl()}/${htmlFilePath}`, "")
+          .then((url) => {
+            setError(null);
+            setHtmlFileObjectUrl(url);
+          })
+          .catch((e) => {
+            setError(e);
+          });
     }
   };
 
@@ -40,9 +49,12 @@ export const PacketReports = ({ packet }: PacketReportsProps) => {
             </a>
           </div>
         </div>
-      ) : (
-        <div className="italic text-sm">None</div>
-      )}
+      ) : error ? (
+            <ErrorComponent message="Error loading report" error={error} />
+          ) : (
+            <div className="italic text-sm">None</div>
+          )
+      }
     </div>
   );
 };

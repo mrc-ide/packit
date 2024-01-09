@@ -10,7 +10,7 @@ import { server } from "../../../msw/server";
 import { mockPacket } from "../../mocks";
 
 jest.mock("../../../lib/download", () => ({
-      getFileObjectUrl: () => "fakeObjectUrl"
+      getFileObjectUrl: async () => "fakeObjectUrl"
     })
 );
 
