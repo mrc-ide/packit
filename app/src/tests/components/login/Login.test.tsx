@@ -9,6 +9,7 @@ import { UserState } from "../../../app/components/providers/types/UserTypes";
 import appConfig from "../../../config/appConfig";
 import { server } from "../../../msw/server";
 import { mockUserState } from "../../mocks";
+import {RedirectOnLoginProvider} from "../../../app/components/providers/RedirectOnLoginProvider";
 
 const mockedUsedNavigate = jest.fn();
 jest.mock("react-router-dom", () => ({
@@ -27,9 +28,11 @@ describe("login", () => {
       <SWRConfig value={{ dedupingInterval: 0 }}>
         <MemoryRouter initialEntries={["/login?error=random"]}>
           <UserProvider>
-            <AuthConfigProvider>
-              <Login />
-            </AuthConfigProvider>
+            <RedirectOnLoginProvider>
+              <AuthConfigProvider>
+                <Login />
+              </AuthConfigProvider>
+            </RedirectOnLoginProvider>
           </UserProvider>
         </MemoryRouter>
       </SWRConfig>

@@ -1,5 +1,5 @@
 import {render} from "@testing-library/react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { MemoryRouter } from "react-router-dom";
 import {UserProvider} from "../../../app/components/providers/UserProvider";
 import {UserAuthForm} from "../../../app/components/login/UserAuthForm";
 

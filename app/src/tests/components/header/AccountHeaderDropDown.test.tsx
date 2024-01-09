@@ -3,7 +3,6 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { AccountHeaderDropdown } from "../../../app/components/header/AccountHeaderDropdown";
 import { UserProvider } from "../../../app/components/providers/UserProvider";
-import { RedirectOnLoginProvider } from "../../../app/components/providers/RedirectOnLoginProvider";
 import { UserState } from "../../../app/components/providers/types/UserTypes";
 import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
 import { mockUserState } from "../../mocks";
