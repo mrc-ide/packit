@@ -9,6 +9,11 @@ import { PacketLayout } from "../../../app/components/main";
 import { server } from "../../../msw/server";
 import { mockPacket } from "../../mocks";
 
+jest.mock("../../../lib/download", () => ({
+      getFileObjectUrl: async () => "fakeObjectUrl"
+    })
+);
+
 describe("Packet Layout test", () => {
   const renderComponent = () => {
     render(

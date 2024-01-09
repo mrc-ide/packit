@@ -1,5 +1,5 @@
 import {downloadFileUri} from "../../msw/handlers/downloadFileHandlers";
-import {download} from "../../lib/download";
+import {download, getFileObjectUrl} from "../../lib/download";
 import {mockFileBlob} from "../mocks";
 import {server} from "../../msw/server";
 import {rest} from "msw";
@@ -73,5 +73,15 @@ describe("download", () => {
         });
 
         await expect(download(url, "test.txt")).rejects.toEqual(new Error("Error downloading test.txt"));
+    });
+
+    it("can getFileObjectUrl", async () => {
+        const mockCreateObjectUrl = jest.fn(() => fakeObjectUrl)
+
+        URL.createObjectURL = mockCreateObjectUrl;
+
+        const result = await getFileObjectUrl(url, "test.txt");
+        expect(result).toBe(fakeObjectUrl);
+        expect(mockCreateObjectUrl).toHaveBeenCalledWith(mockFileBlob);
     });
 });

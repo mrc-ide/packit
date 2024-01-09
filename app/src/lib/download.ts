@@ -1,6 +1,6 @@
 import { getAuthHeader } from "./auth/getAuthHeader";
 
-export const download = async (url: string, filename: string) => {
+export const getFileObjectUrl = async (url: string, filename: string)=> {
     const headers = getAuthHeader();
     const res = await fetch(url, {
         method: "GET",
@@ -14,7 +14,11 @@ export const download = async (url: string, filename: string) => {
     }
 
     const blob = await res.blob().catch(() => { throw new Error("Error retrieving data from response"); });
-    const fileUrl = URL.createObjectURL(blob);
+    return URL.createObjectURL(blob);
+}
+
+export const download = async (url: string, filename: string) => {
+    const fileUrl = await getFileObjectUrl(url, filename);
     const fileLink = document.createElement("a");
     fileLink.href = fileUrl;
     fileLink.setAttribute("download", filename);
