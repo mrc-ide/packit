@@ -18,16 +18,16 @@ export const PacketReports = ({ packet }: PacketReportsProps) => {
   return (
     <div>
       <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Reports</h4>
-      {htmlFile ? (
+      {packet && htmlFile ? (
         <div className="h-screen">
           <div className="w-full h-2/3 border">
-            <PacketReport fileName={htmlFile.path}></PacketReport>
+            <PacketReport fileName={htmlFile.path} packet={packet}></PacketReport>
           </div>
           <div className="py-2 flex justify-end">
             <a
               className="text-blue-500 flex items-center gap-1
         hover:underline decoration-blue-500"
-              href={`${"/todo"}`}
+              href={`${packet.id}/file/${htmlFile.path}`}
             >
               <Fullscreen size={20} />
               View Fullscreen

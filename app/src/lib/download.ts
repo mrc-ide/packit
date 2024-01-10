@@ -13,10 +13,6 @@ export const getFileObjectUrl = async (url: string, filename: string)=> {
         throw new Error(msg);
     }
 
-    if (Math.random() > 0.5) {
-        throw new Error("test error");
-    }
-
     const blob = await res.blob().catch(() => { throw new Error("Error retrieving data from response"); });
     return URL.createObjectURL(blob);
 }

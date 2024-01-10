@@ -7,12 +7,12 @@ import appConfig from "../../../../config/appConfig";
 import {PacketMetadata} from "../../../../types";
 
 interface PacketReportProps {
+    packet: PacketMetadata;
     fileName: string;
 }
-export const PacketReport = ({ fileName }: PacketReportProps) => {
+export const PacketReport = ({ fileName, packet }: PacketReportProps) => {
     const [error, setError] = useState<null | Error>(null);
     const [htmlFileObjectUrl, setHtmlFileObjectUrl] = useState(undefined as string | undefined);
-    const {packet} = usePacketOutletContext();
 
     const getHtmlFileObjectUrl = async (packet: PacketMetadata) => {
         const htmlFilePath = getHtmlFilePath(packet);
@@ -28,20 +28,15 @@ export const PacketReport = ({ fileName }: PacketReportProps) => {
     };
 
     useEffect(() => {
-        // TODO: tidy this up!
-        if (!packet) {
-            setError(new Error("Packet not found"));
+        const file = getHtmlFileIfExists(packet);
+        if (file?.path != fileName) {
+            // NB Currently we only support displaying the first html file in a packet, but we may support multiple
+            // in future
+            setError(new Error("File name not found"));
         } else {
-            const file = getHtmlFileIfExists(packet);
-            if (file?.path != fileName) {
-                // NB Currently we only support displaying the first html file in a packet, but we may support multiple
-                // in future
-                setError(new Error("File name not found"));
-            } else {
-                getHtmlFileObjectUrl(packet);
-            }
+            getHtmlFileObjectUrl(packet);
         }
-    }, [fileName]);
+    }, []);
 
     return <>
         {htmlFileObjectUrl ? (
