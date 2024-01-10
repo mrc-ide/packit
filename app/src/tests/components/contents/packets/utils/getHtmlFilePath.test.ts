@@ -1,4 +1,4 @@
-import { getHtmlFilePath } from "../../../../../app/components/contents/packets/utils/getHtmlFilePath";
+import { getHtmlFilePath } from "../../../../../app/components/contents/packets/utils/htmlFile";
 import { PacketMetadata } from "../../../../../types";
 import { mockPacket } from "../../../../mocks";
 
