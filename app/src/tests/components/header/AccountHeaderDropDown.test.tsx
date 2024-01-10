@@ -17,6 +17,13 @@ jest.mock("../../../lib/localStorageManager", () => ({
   getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
 }));
 
+const mockSetLoggingOut = jest.fn();
+jest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
+  useRedirectOnLogin: () => ({
+    setLoggingOut: mockSetLoggingOut
+  })
+}));
+
 describe("header drop down menu component", () => {
   const renderElement = () => {
     return render(
@@ -27,6 +34,10 @@ describe("header drop down menu component", () => {
       </MemoryRouter>
     );
   };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   it("renders drop down menu without user info if not authenticated", async () => {
     renderElement();
@@ -47,6 +58,7 @@ describe("header drop down menu component", () => {
     renderElement();
     fireEvent.keyDown(await screen.findByRole("button"), DOWN_ARROW);
     userEvent.click(await screen.findByText("Log out"));
-    expect(localStorage.getItem(LocalStorageKeys.USER)).toBe(null)
+    expect(localStorage.getItem(LocalStorageKeys.USER)).toBe(null);
+    expect(mockSetLoggingOut).toHaveBeenCalledWith(true);
   });
 });

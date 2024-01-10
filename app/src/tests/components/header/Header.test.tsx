@@ -7,6 +7,7 @@ import { ThemeProvider } from "../../../app/components/providers/ThemeProvider";
 import { UserProvider } from "../../../app/components/providers/UserProvider";
 import { UserState } from "../../../app/components/providers/types/UserTypes";
 import { mockUserState } from "../../mocks";
+import {RedirectOnLoginProvider} from "../../../app/components/providers/RedirectOnLoginProvider";
 
 const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
 jest.mock("../../../lib/localStorageManager", () => ({
@@ -19,7 +20,9 @@ describe("header component", () => {
       <MemoryRouter>
         <ThemeProvider>
           <UserProvider>
-            <Header />
+            <RedirectOnLoginProvider>
+              <Header />
+            </RedirectOnLoginProvider>
           </UserProvider>
         </ThemeProvider>
       </MemoryRouter>

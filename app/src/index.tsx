@@ -5,6 +5,7 @@ import App from "./app/App";
 import { AuthConfigProvider } from "./app/components/providers/AuthConfigProvider";
 import { ThemeProvider } from "./app/components/providers/ThemeProvider";
 import { UserProvider } from "./app/components/providers/UserProvider";
+import { RedirectOnLoginProvider } from "./app/components/providers/RedirectOnLoginProvider";
 import reportWebVitals from "./reportWebVitals";
 import "./styles/globals.css";
 
@@ -13,9 +14,11 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <ThemeProvider>
       <AuthConfigProvider>
         <UserProvider>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
+          <RedirectOnLoginProvider>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </RedirectOnLoginProvider>
         </UserProvider>
       </AuthConfigProvider>
     </ThemeProvider>

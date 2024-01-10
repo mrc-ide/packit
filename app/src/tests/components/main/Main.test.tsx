@@ -2,13 +2,16 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { Main } from "../../../app/components/main";
 import { UserProvider } from "../../../app/components/providers/UserProvider";
+import {RedirectOnLoginProvider} from "../../../app/components/providers/RedirectOnLoginProvider";
 
 describe("main component", () => {
   const renderElement = () => {
     return render(
       <MemoryRouter>
         <UserProvider>
-          <Main />
+          <RedirectOnLoginProvider>
+            <Main />
+          </RedirectOnLoginProvider>
         </UserProvider>
       </MemoryRouter>
     );

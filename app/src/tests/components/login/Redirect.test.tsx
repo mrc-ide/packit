@@ -5,11 +5,21 @@ import { Login, Redirect } from "../../../app/components/login";
 import { UserProvider } from "../../../app/components/providers/UserProvider";
 import { UserState } from "../../../app/components/providers/types/UserTypes";
 import { mockUserState } from "../../mocks";
+import {Accessibility} from "../../../app/components/contents/accessibility";
 
 const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
 jest.mock("../../../lib/localStorageManager", () => ({
   getUserFromLocalStorage: () => mockGetUserFromLocalStorage(),
   getAuthConfigFromLocalStorage: jest.fn(() => ({ enableAuth: true }))
+}));
+
+const mockSetRequestedUrl = jest.fn();
+let mockRequestedUrl: string | null = null;
+jest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
+  useRedirectOnLogin: () => ({
+    setRequestedUrl: mockSetRequestedUrl,
+    requestedUrl: (() => mockRequestedUrl)()
+  })
 }));
 
 describe("redirect", () => {
@@ -20,12 +30,18 @@ describe("redirect", () => {
           <Routes>
             <Route path="/redirect" element={<Redirect />} />
             <Route path="/" element={<Home />} />
+            <Route path="/accessibility" element={<Accessibility />} />
             <Route path="/login" element={<Login />} />
           </Routes>
         </MemoryRouter>
       </UserProvider>
     );
   };
+
+  beforeEach(() => {
+    mockRequestedUrl = null;
+    jest.clearAllMocks();
+  });
 
   it("renders redirecting if no token, user token or error", () => {
     mockGetUserFromLocalStorage.mockReturnValue(null);
@@ -34,15 +50,17 @@ describe("redirect", () => {
     expect(screen.getByText("Redirecting user ...")).toBeInTheDocument();
   });
 
-  it("renders home page is user is logged in", async () => {
+  it("renders home page if user is logged in", async () => {
     mockGetUserFromLocalStorage.mockReturnValue(mockUserState);
     renderElement("/redirect");
 
     await waitFor(() => {
       expect(screen.getByText(/parameters/i)).toBeInTheDocument();
       expect(screen.getByText(/manage packets/i)).toBeInTheDocument();
+      expect(mockSetRequestedUrl).toHaveBeenCalledWith(null);
     });
   });
+
   it("renders home page and set user if token is present", async () => {
     mockGetUserFromLocalStorage.mockReturnValue(mockUserState);
     renderElement(`/redirect?token=${mockUserState.token}`);
@@ -50,6 +68,17 @@ describe("redirect", () => {
     await waitFor(() => {
       expect(screen.getByText(/parameters/i)).toBeInTheDocument();
       expect(screen.getByText(/manage packets/i)).toBeInTheDocument();
+      expect(mockSetRequestedUrl).toHaveBeenCalledWith(null);
+    });
+  });
+
+  it("renders requested url if present", async () => {
+    mockRequestedUrl = "/accessibility";
+    mockGetUserFromLocalStorage.mockReturnValue(mockUserState);
+    renderElement("/redirect");
+    await waitFor(() => {
+      expect(screen.getByText(/Accessibility Page/i)).toBeInTheDocument();
+      expect(mockSetRequestedUrl).toHaveBeenCalledWith(null);
     });
   });
 

@@ -9,3 +9,10 @@ export interface UserProviderState {
   setUser: (jwt: string) => void;
   removeUser: () => void;
 }
+
+export interface RedirectOnLoginProviderState {
+  requestedUrl: string | null;
+  setRequestedUrl: (url: string | null) => void;
+  loggingOut: boolean;
+  setLoggingOut: (value: boolean) => void;
+}

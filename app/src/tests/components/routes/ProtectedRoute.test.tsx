@@ -13,6 +13,19 @@ jest.mock("../../../lib/isAuthenticated", () => ({
   isAuthenticated: () => mockIsAuthenticated()
 }));
 
+const mockSetRequestedUrl = jest.fn();
+let mockLoggingOut = false;
+jest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
+  useRedirectOnLogin: () => ({
+    setRequestedUrl: mockSetRequestedUrl,
+    loggingOut: (() => mockLoggingOut)()
+  })
+}));
+
+jest.mock("../../../app/components/providers/AuthConfigProvider", () => ({
+  useAuthConfig: () => ({})
+}));
+
 describe("protected routes", () => {
   const renderElement = () => {
     return render(
@@ -37,12 +50,25 @@ describe("protected routes", () => {
     });
   });
 
-  it("should navigate to login when unauthenticated", async () => {
+  it("should navigate to login and set requested url when unauthenticated", async () => {
+    mockLoggingOut = false;
     mockIsAuthenticated.mockReturnValue(false);
     renderElement();
 
     await waitFor(() => {
       expect(mockedUsedNavigate).toHaveBeenCalledWith("/login");
+      expect(mockSetRequestedUrl).toHaveBeenCalledWith("/");
+    });
+  });
+
+  it("should not set requested url when logging out", async () => {
+    mockLoggingOut = true;
+    mockIsAuthenticated.mockReturnValue(false);
+    renderElement();
+
+    await waitFor(() => {
+      expect(mockedUsedNavigate).toHaveBeenCalledWith("/login");
+      expect(mockSetRequestedUrl).not.toHaveBeenCalled();
     });
   });
 
