@@ -8,6 +8,7 @@ import { UserProvider } from "./app/components/providers/UserProvider";
 import { RedirectOnLoginProvider } from "./app/components/providers/RedirectOnLoginProvider";
 import reportWebVitals from "./reportWebVitals";
 import "./styles/globals.css";
+import {Router} from "./app/components/routes/Router";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
@@ -16,7 +17,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         <UserProvider>
           <RedirectOnLoginProvider>
             <BrowserRouter>
-              <App />
+              <Router />
             </BrowserRouter>
           </RedirectOnLoginProvider>
         </UserProvider>

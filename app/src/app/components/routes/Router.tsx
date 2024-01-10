@@ -14,30 +14,35 @@ import { PacketLayout } from "../main/PacketLayout";
 import ProtectedRoute from "./ProtectedRoute";
 import {PacketOutlet} from "../main/PacketOutlet";
 import {PacketFileFullScreen} from "../contents/packets/PacketFileFullScreen";
+import App from "../../App";
 
 export function Router() {
   return (
     <Routes>
-      <Route path="login" element={<Login />} />
-      <Route path="accessibility" element={<Accessibility />} />
-      <Route path="redirect" element={<Redirect />} />
-      <Route element={<ProtectedRoute />}>
-        <Route path="*" element={<NotFound />} />
+      <Route element={<App />}>
+          <Route path="login" element={<Login />} />
+          <Route path="accessibility" element={<Accessibility />} />
+          <Route path="redirect" element={<Redirect />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="*" element={<NotFound />} />
+          </Route>
+          <Route element={<ProtectedRoute />}>
+            <Route element={<Breadcrumb />}>
+              <Route index element={<Home />} />
+              <Route path="runner" element={<PacketRunner />} />
+              <Route path="run-workflow" element={<WorkflowRunner />} />
+              <Route path="documentation" element={<ProjectDocumentation />} />
+              <Route path="/:packetName" element={<PacketGroup />} />
+              <Route element={<PacketLayout />} path="/:packetName/:packetId">
+                <Route path="/:packetName/:packetId" element={<PacketDetails />} />
+                <Route path="/:packetName/:packetId/metadata" element={<Metadata />} />
+                <Route path="/:packetName/:packetId/downloads" element={<Download />} />
+                <Route path="/:packetName/:packetId/changelogs" element={<ChangeLogs />} />
+              </Route>
+            </Route>
+          </Route>
       </Route>
       <Route element={<ProtectedRoute />}>
-        <Route element={<Breadcrumb />}>
-          <Route index element={<Home />} />
-          <Route path="runner" element={<PacketRunner />} />
-          <Route path="run-workflow" element={<WorkflowRunner />} />
-          <Route path="documentation" element={<ProjectDocumentation />} />
-          <Route path="/:packetName" element={<PacketGroup />} />
-          <Route element={<PacketLayout />} path="/:packetName/:packetId">
-            <Route path="/:packetName/:packetId" element={<PacketDetails />} />
-            <Route path="/:packetName/:packetId/metadata" element={<Metadata />} />
-            <Route path="/:packetName/:packetId/downloads" element={<Download />} />
-            <Route path="/:packetName/:packetId/changelogs" element={<ChangeLogs />} />
-          </Route>
-        </Route>
         <Route path="/:packetName/:packetId/file/:fileName" element={<PacketFileFullScreen />} />
       </Route>
     </Routes>
