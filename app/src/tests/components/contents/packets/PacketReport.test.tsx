@@ -12,11 +12,11 @@ describe("PacketReport component", () => {
         mockGetFileObjectUrl.mockImplementation(() => "fakeObjectUrl");
     });
 
-    const renderComponent = () => {
+    const renderComponent = (fileName = "test.html") => {
         const packet = {
             files: [{ path: "test.html", hash: "sha256:12345" }]
         } as any;
-        render(<PacketReport packet={ packet } fileName="test.html" />);
+        render(<PacketReport packet={ packet } fileName={ fileName } />);
     };
 
     it("gets file object url for report src", async () => {
@@ -33,6 +33,14 @@ describe("PacketReport component", () => {
     it("renders error component if error fetching report data", async () => {
         mockGetFileObjectUrl.mockImplementation(() => { throw new Error("test error"); });
         renderComponent();
+        await waitFor(() => {
+            expect(screen.getByText(/Error loading report/i)).toBeVisible();
+            expect(screen.queryByTestId("report-iframe")).not.toBeInTheDocument();
+        });
+    });
+
+    it("renders error component if fileName prop does not match packet report file", async () => {
+        renderComponent("wrong.html");
         await waitFor(() => {
             expect(screen.getByText(/Error loading report/i)).toBeVisible();
             expect(screen.queryByTestId("report-iframe")).not.toBeInTheDocument();
