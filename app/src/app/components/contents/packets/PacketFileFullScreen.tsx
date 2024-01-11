@@ -11,5 +11,9 @@ export const PacketFileFullScreen = () => {
         return <ErrorComponent error={error} message="Error Fetching Packet details" />;
     }
 
-    return packet && fileName ? <PacketReport packet={packet} fileName={fileName}/> : null;
+    return packet && fileName ?
+        <div className="h-screen">
+            <PacketReport packet={packet} fileName={fileName}/>
+        </div>
+        : null;
 };

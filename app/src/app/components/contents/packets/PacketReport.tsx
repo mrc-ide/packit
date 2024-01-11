@@ -35,7 +35,7 @@ export const PacketReport = ({ fileName, packet }: PacketReportProps) => {
         } else {
             getHtmlFileObjectUrl(packet);
         }
-    }, []);
+    }, [packet, fileName]);
 
     return <>
         {htmlFileObjectUrl ? (
