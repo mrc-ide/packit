@@ -12,7 +12,6 @@ import { Login, Redirect } from "../login";
 import { Breadcrumb } from "../main/Breadcrumb";
 import { PacketLayout } from "../main/PacketLayout";
 import ProtectedRoute from "./ProtectedRoute";
-import {PacketOutlet} from "../main/PacketOutlet";
 import {PacketFileFullScreen} from "../contents/packets/PacketFileFullScreen";
 import App from "../../App";
 

@@ -1,6 +1,6 @@
 import { Fullscreen } from "lucide-react";
 import {FileMetadata, PacketMetadata} from "../../../../types";
-import {getHtmlFileIfExists, getHtmlFilePath} from "./utils/htmlFile";
+import {getHtmlFileIfExists} from "./utils/htmlFile";
 import {useEffect, useState} from "react";
 import {PacketReport} from "./PacketReport";
 

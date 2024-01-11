@@ -1,4 +1,3 @@
-import {usePacketOutletContext} from "../../main/PacketOutlet";
 import {getHtmlFileIfExists, getHtmlFilePath} from "./utils/htmlFile";
 import {useEffect, useState} from "react";
 import {ErrorComponent} from "../common/ErrorComponent";
@@ -41,9 +40,8 @@ export const PacketReport = ({ fileName, packet }: PacketReportProps) => {
     return <>
         {htmlFileObjectUrl ? (
             <iframe className="w-full h-full" data-testid="report-iframe" src={htmlFileObjectUrl}></iframe>
-         ) : ""}
-         {error ? (
+        ) : error ? (
             <ErrorComponent message="Error loading report" error={error} />
-        ) : ""}
+        ) : null}
     </>;
 };
