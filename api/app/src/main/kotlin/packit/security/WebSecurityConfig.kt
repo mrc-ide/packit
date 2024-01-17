@@ -16,6 +16,8 @@ import packit.AppConfig
 import packit.exceptions.PackitExceptionHandler
 import packit.security.oauth2.*
 import packit.security.provider.JwtIssuer
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.env.Environment
 
 @EnableWebSecurity
 @Configuration
@@ -27,12 +29,18 @@ class WebSecurityConfig(
     val exceptionHandler: PackitExceptionHandler
 )
 {
+    @Autowired
+    lateinit var env:Environment
     @Bean
     fun securityFilterChain(
         httpSecurity: HttpSecurity,
         tokenAuthenticationFilter: TokenAuthenticationFilter,
     ): SecurityFilterChain
     {
+        println("GITHUB CONFIG")
+        println("id: ${env.getProperty("spring.security.oauth2.client.registration.github.client-id")}")
+        println("id: ${env.getProperty("spring.security.oauth2.client.registration.github.client-secret")}")
+
         httpSecurity
             .cors(withDefaults())
             .csrf().disable()
