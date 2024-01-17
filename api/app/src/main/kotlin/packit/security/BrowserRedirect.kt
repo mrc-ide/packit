@@ -15,6 +15,7 @@ class BrowserRedirect(private val config: AppConfig, val redirectStrategy: Redir
         response: HttpServletResponse,
         queryParams: MultiValueMap<String, String>
     ) {
+        println("DOING REDIRECT FROM BACK END")
         val url = UriComponentsBuilder
             .fromUriString(config.authRedirectUri)
             .queryParams(queryParams)
