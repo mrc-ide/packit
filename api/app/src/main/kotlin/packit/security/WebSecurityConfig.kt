@@ -30,7 +30,7 @@ class WebSecurityConfig(
 )
 {
     @Autowired
-    lateinit var env:Environment
+    lateinit var env: Environment
     @Bean
     fun securityFilterChain(
         httpSecurity: HttpSecurity,
