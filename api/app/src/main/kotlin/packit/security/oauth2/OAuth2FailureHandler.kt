@@ -23,8 +23,10 @@ class OAuth2FailureHandler(
         println("MESSAGE: ${exception.message}")
         println("HEADERS:")
         val headerNames = request.getHeaderNames()
-        for (h in headerNames) {
-            println("$h: ${request.getHeader("h")}")
+        if (headerNames != null) {
+            for (h in headerNames) {
+                println("$h: ${request.getHeader("h")}")
+            }
         }
 
         val message = if (exception is PackitAuthenticationException) {
