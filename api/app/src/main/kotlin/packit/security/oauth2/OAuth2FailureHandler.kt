@@ -25,7 +25,7 @@ class OAuth2FailureHandler(
         val headerNames = request.getHeaderNames()
         if (headerNames != null) {
             for (h in headerNames) {
-                println("$h: ${request.getHeader("h")}")
+                println("$h: ${request.getHeader(h)}")
             }
         }
 
