@@ -1,0 +1,1 @@
+PACKIT_API_ROOT=http://localhost:8080 ./gradlew app:run

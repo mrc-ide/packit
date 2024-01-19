@@ -10,8 +10,8 @@ Before you can start packit you need to run `./scripts/run-dependencies` from th
 to start database and `outpack_server` instances.
 
 ## Starting App
-Run up app on command line from the project root directory
-`./api/gradlew -p api/app :app:run`
+Run up app on command line from the /api directory
+`./scripts/run-dev`
 
 ## Testing
 Execute tests on the command line or through IntelliJ
