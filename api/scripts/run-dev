@@ -1,1 +1,2 @@
+# Run app with PACKIT_API_ROOT required for a local unproxied api so that Github OAuth redirect_uri is set correctly
 PACKIT_API_ROOT=http://localhost:8080 ./gradlew app:run
