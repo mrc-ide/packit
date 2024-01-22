@@ -49,6 +49,9 @@ jobs:
       - name: Build image
         working-directory: api
         run: ./scripts/build-and-push
+      - name: extra-diag
+        working-directory: api
+        run: ./scripts/run && docker logs packit-api
       - name: Smoke test
         working-directory: api
         run: ./scripts/run && ./scripts/smoke-test
