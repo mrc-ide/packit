@@ -1,9 +1,7 @@
 package packit.security
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus
 import org.springframework.security.config.Customizer.withDefaults
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -29,18 +27,12 @@ class WebSecurityConfig(
     val exceptionHandler: PackitExceptionHandler
 )
 {
-    @Autowired
-    lateinit var env: Environment
     @Bean
     fun securityFilterChain(
         httpSecurity: HttpSecurity,
         tokenAuthenticationFilter: TokenAuthenticationFilter,
     ): SecurityFilterChain
     {
-        println("GITHUB CONFIG")
-        println("id: ${env.getProperty("spring.security.oauth2.client.registration.github.client-id")}")
-        println("id: ${env.getProperty("spring.security.oauth2.client.registration.github.client-secret")}")
-
         httpSecurity
             .cors(withDefaults())
             .csrf().disable()

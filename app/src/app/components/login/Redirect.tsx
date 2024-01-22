@@ -4,7 +4,6 @@ import { useUser } from "../providers/UserProvider";
 import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 
 export default function Redirect() {
-  console.log("Redirecting...")
   const navigate = useNavigate();
   const { user, setUser } = useUser();
   const { requestedUrl, setRequestedUrl } = useRedirectOnLogin();

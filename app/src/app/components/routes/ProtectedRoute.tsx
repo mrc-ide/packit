@@ -18,7 +18,6 @@ export default function ProtectedRoute() {
       if (!loggingOut) {
         setRequestedUrl(pathname);
       }
-      console.log("NAVIGATING TO LOGIN FROM PROTECTED ROUTE: " + pathname)
       navigate("/login");
     }
   }, [navigate, authConfig, user]);
