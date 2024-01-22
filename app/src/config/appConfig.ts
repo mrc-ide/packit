@@ -17,3 +17,4 @@ if (process.env.NODE_ENV == "production") {
 }
 
 export default appConfig;
+export const githubAuthEndpoint = (config: AppConfig) => `${config.apiUrl()}/oauth2/authorization/github`;

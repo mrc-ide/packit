@@ -4,7 +4,7 @@
 import { Github } from "lucide-react";
 import { useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import appConfig from "../../../config/appConfig";
+import appConfig, { githubAuthEndpoint } from "../../../config/appConfig";
 import { cn } from "../../../lib/cn";
 import { buttonVariants } from "../Base/Button";
 import { useAuthConfig } from "../providers/AuthConfigProvider";
@@ -37,13 +37,13 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     <div className={cn("grid gap-6", className)} {...props}>
       {authConfig?.enableGithubLogin && (
         <>
-          <Link
-            to={`${appConfig.apiUrl()}/oauth2/authorization/github`}
+          <a
+            href={githubAuthEndpoint(appConfig)}
             className={buttonVariants({ variant: "outline" })}
           >
             <Github className="mr-2 h-4 w-4" />
             Github
-          </Link>
+          </a>
         </>
       )}
       {loginError && <div className="text-xs text-red-500">{loginError}</div>}
