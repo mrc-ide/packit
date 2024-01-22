@@ -3,7 +3,7 @@
 
 import { Github } from "lucide-react";
 import { useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import appConfig, { githubAuthEndpoint } from "../../../config/appConfig";
 import { cn } from "../../../lib/cn";
 import { buttonVariants } from "../Base/Button";
