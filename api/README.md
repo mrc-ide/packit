@@ -10,6 +10,11 @@ Before you can start packit you need to run `./scripts/run-dependencies` from th
 to start database and `outpack_server` instances.
 
 ## Starting App
+The default dev configuration enables Github auth, but you will need to set environment variables GITHUB_CLIENT_ID and
+GITHUB_CLIENT_SECRET with the details of an OAuth app which you can use to log in. You can use the details held in the 
+mrc vault at `VAULT:secret/auth/githubclient/id:value` and `VAULT:secret/auth/githubclient/secret:value`. Alternatively,
+switch off `auth.enabled` in `config.properties`.
+
 Run up app on command line from the /api directory
 `./scripts/run-dev`
 
