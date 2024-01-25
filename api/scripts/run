@@ -10,4 +10,5 @@ docker run --rm -d \
   --network=host \
   --name packit-api \
   --volume $PACKAGE_ROOT/app/src/main/resources/config.properties:/etc/packit/config.properties \
+  -e PACKIT_API_ROOT=http://localhost:8080 \
   "$TAG_BRANCH"
