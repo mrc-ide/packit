@@ -1,11 +1,8 @@
 import { PackageOpen } from "lucide-react";
 import { NavLink } from "react-router-dom";
-import { NavigationLink } from "../Base/NavigationLink";
 import { AccountHeaderDropdown } from "./AccountHeaderDropdown";
 
 import { useUser } from "../providers/UserProvider";
-import { LeftNav } from "./LeftNav";
-import { NavMenuMobile } from "./NavMenuMobile";
 import { ThemeToggleButton } from "./ThemeToggleButton";
 
 export default function Header() {
@@ -22,14 +19,14 @@ export default function Header() {
                 Packit
               </div>
             </NavLink>
-            <div className="mx-3 flex items-center md:hidden">
+            {/* <div className="mx-3 flex items-center md:hidden">
               <NavMenuMobile />
-            </div>
-            {user && <LeftNav className="mx-6 hidden md:flex" />}
+            </div> */}
+            {/* {user && <LeftNav className="mx-6 hidden md:flex" />} */}
             <div className="ml-auto flex items-center space-x-4">
-              <NavigationLink to="/accessibility" className="mx-6 hidden md:flex">
+              {/* <NavigationLink to="/accessibility" className="mx-6 hidden md:flex">
                 Accessibility
-              </NavigationLink>
+              </NavigationLink> */}
               <ThemeToggleButton />
               {user && <AccountHeaderDropdown />}
             </div>
