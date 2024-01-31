@@ -14,11 +14,11 @@ const getSideBarNavItems = (packetName = "", packetId = "") => [
   {
     to: `/${packetName}/${packetId}/downloads`,
     title: "Downloads"
-  },
-  {
-    to: `/${packetName}/${packetId}/changelogs`,
-    title: "Change logs"
   }
+  // {
+  //   to: `/${packetName}/${packetId}/changelogs`,
+  //   title: "Change logs"
+  // }
 ];
 
 export const PacketLayout = () => {

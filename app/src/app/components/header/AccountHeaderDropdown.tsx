@@ -5,14 +5,13 @@ import { Button } from "../Base/Button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "../Base/DropdownMenu";
-import { useUser } from "../providers/UserProvider";
 import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
+import { useUser } from "../providers/UserProvider";
 
 export function AccountHeaderDropdown() {
   const navigate = useNavigate();
@@ -42,11 +41,11 @@ export function AccountHeaderDropdown() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuGroup>
+        {/* <DropdownMenuGroup>
           <DropdownMenuItem className="text-base">Manage Access</DropdownMenuItem>
           <DropdownMenuItem className="text-base">Publish Packets</DropdownMenuItem>
         </DropdownMenuGroup>
-        <DropdownMenuSeparator />
+        <DropdownMenuSeparator /> */}
         <DropdownMenuItem className="text-base" onClick={handleLogout}>
           Log out
         </DropdownMenuItem>
