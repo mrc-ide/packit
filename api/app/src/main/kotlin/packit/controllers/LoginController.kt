@@ -11,6 +11,7 @@ import packit.service.GithubAPILoginService
 @RequestMapping("/auth")
 class LoginController(
     val gitApiLoginService: GithubAPILoginService,
+    val basicLoginSerice: BasicLoginService,
     val config: AppConfig
 )
 {
@@ -21,6 +22,17 @@ class LoginController(
     ): ResponseEntity<Map<String, String>>
     {
         val token = gitApiLoginService.authenticateAndIssueToken(user)
+        return ResponseEntity.ok(token)
+    }
+
+    @PostMapping("/login/basic")
+    @ResponseBody
+    fun loginBasic(
+        @RequestBody @Validated user: LoginWithPassword
+    ): ResponseEntity<Map<String, String>>
+    {
+        // TODO: Error if basic auth not supported. Should do the same for github api login
+        val token = basicLoginService.authenticateAndIssueToken(use)
         return ResponseEntity.ok(token)
     }
 
