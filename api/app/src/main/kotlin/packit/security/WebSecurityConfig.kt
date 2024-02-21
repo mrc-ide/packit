@@ -16,11 +16,13 @@ import packit.AppConfig
 import packit.exceptions.PackitExceptionHandler
 import packit.security.oauth2.*
 import packit.security.provider.JwtIssuer
+import packit.service.BasicUserDetailsService
 
 @EnableWebSecurity
 @Configuration
 class WebSecurityConfig(
     val customOauth2UserService: OAuth2UserService,
+    val customBasicUserService: BasicUserDetailsService,
     val config: AppConfig,
     val jwtIssuer: JwtIssuer,
     val browserRedirect: BrowserRedirect,
@@ -90,4 +92,15 @@ class WebSecurityConfig(
     {
         return BCryptPasswordEncoder()
     }
+
+    @Bean
+    fun authenticationManager(httpSecurity: HttpSecurity): AuthenticationManager
+    {
+        return httpSecurity.getSharedObject(AuthenticationManagerBuilder::class.java)
+            .userDetailsService(customBasicUserService)
+            .passwordEncoder(passwordEncoder())
+            .and()
+            .build()
+    }
+}
 }
