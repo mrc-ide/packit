@@ -46,6 +46,11 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           </a>
         </>
       )}
+      {authConfig?.enableBasicLogin && (
+          <div>Basic login coming soon!</div>
+      )
+
+      }
       {loginError && <div className="text-xs text-red-500">{loginError}</div>}
     </div>
   );
