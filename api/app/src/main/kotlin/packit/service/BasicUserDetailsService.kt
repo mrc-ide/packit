@@ -1,12 +1,14 @@
-package packit.security.oauth2
+package packit.service
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Component
 import packit.exceptions.PackitException
+import packit.model.BasicUser
+import packit.security.Role
+import packit.security.profile.BasicUserDetails
 import packit.security.profile.UserPrincipal
-import packit.service.UserService
 
 @Component
 class BasicUserDetailsService() : UserDetailsService
@@ -14,37 +16,33 @@ class BasicUserDetailsService() : UserDetailsService
     // TODO: replace this with fetching real user details from a repo
     companion object
     {
-        const val USER = "test.user@example.com"
+        const val USERNAME = "test.user@example.com"
         const val PASSWORD = "$2a$12$676UJYz9Geh5Ki1jPMwMg.kI6HcYw94uWRs39mEWZbOP8KDx0gOHu"
+        const val DISPLAYNAME = "Test User"
     }
 
     override fun loadUserByUsername(username: String): UserDetails
     {
         val user = findByEmail(username)
-            .orElseThrow { PackitException("User $username does not exist") }
 
-        return UserPrincipal(
-            user.email,
-            user.password,
-            mutableListOf(SimpleGrantedAuthority(user.role.toString())),
-            user.name,
-            user.attributes
+        return BasicUserDetails(
+            UserPrincipal(user.userName, user.displayName, mutableListOf(SimpleGrantedAuthority(user.role.toString())), user.attributes),
+            user.password
         )
     }
 
-    private fun findByEmail(username: string): User?
+    private fun findByEmail(email: String): BasicUser
     {
-        if (!USER.equals(email, ignoreCase = true))
+        if (!USERNAME.equals(email, ignoreCase = true))
         {
-            return null
+            throw PackitException("User $email does not exist")
         }
 
-        return  User(
-                1L,
-                USER,
+        return  BasicUser(
+                USERNAME,
                 PASSWORD,
-                Role.USER,
-                "TEST_USER",
+                DISPLAYNAME,
+                listOf(Role.USER),
                 mutableMapOf()
             )
     }

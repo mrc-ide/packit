@@ -6,9 +6,10 @@ import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.stereotype.Component
 import packit.clients.GithubUserClient
 import packit.exceptions.PackitException
-import packit.model.User
 import packit.security.Role
+import packit.security.profile.PackitOAuth2User
 import packit.security.profile.UserPrincipal
+import org.springframework.security.core.authority.AuthorityUtils
 
 @Component
 class OAuth2UserService(private val githubUserClient: GithubUserClient) : DefaultOAuth2UserService()
@@ -33,13 +34,21 @@ class OAuth2UserService(private val githubUserClient: GithubUserClient) : Defaul
 
         // TODO check if user exists, if not, save user email to database
 
-        val user = User(
+        /*val user = User(
             githubInfo.userName(),
             githubInfo.displayName(),
             listOf(Role.USER)
-        )
+        )*/
 
-        return UserPrincipal.create(user, oAuth2User.attributes)
+        //return PackitOAuth2User.create(user, oAuth2User.attributes)
+
+        val principal = UserPrincipal(
+            githubInfo.userName(),
+            githubInfo.displayName(),
+            AuthorityUtils.createAuthorityList(listOf(Role.USER).toString()),
+            oAuth2User.attributes
+        )
+        return PackitOAuth2User(principal)
     }
 
     fun checkGithubUserMembership(request: OAuth2UserRequest)

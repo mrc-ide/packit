@@ -4,14 +4,16 @@ import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import packit.AppConfig
+import packit.model.LoginWithPassword
 import packit.model.LoginWithToken
+import packit.service.BasicLoginService
 import packit.service.GithubAPILoginService
 
 @RestController
 @RequestMapping("/auth")
 class LoginController(
     val gitApiLoginService: GithubAPILoginService,
-    val basicLoginSerice: BasicLoginService,
+    val basicLoginService: BasicLoginService,
     val config: AppConfig
 )
 {
@@ -32,7 +34,7 @@ class LoginController(
     ): ResponseEntity<Map<String, String>>
     {
         // TODO: Error if basic auth not supported. Should do the same for github api login
-        val token = basicLoginService.authenticateAndIssueToken(use)
+        val token = basicLoginService.authenticateAndIssueToken(user)
         return ResponseEntity.ok(token)
     }
 

@@ -1,12 +1,12 @@
 package packit.service
 
 import org.springframework.http.HttpStatus
+import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.stereotype.Component
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import packit.AppConfig
-import packit.clients.GithubUserClient
 import packit.exceptions.PackitException
-import packit.model.LoginWithToken
-import packit.security.oauth2.GithubAuthentication
+import packit.model.LoginWithPassword
 import packit.security.provider.JwtIssuer
 
 @Component
@@ -19,7 +19,7 @@ class BasicLoginService(
     {
         if (loginRequest.email.isEmpty() && loginRequest.password.isEmpty())
         {
-            throw PackitException("Empty user details", 400) // TODO: use a key here
+            throw PackitException("Empty user details", HttpStatus.BAD_REQUEST) // TODO: use a key here
         }
 
         val authentication = authenticationManager.authenticate(
