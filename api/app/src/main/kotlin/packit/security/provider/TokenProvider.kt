@@ -12,7 +12,7 @@ import java.time.temporal.ChronoUnit
 
 interface JwtIssuer
 {
-    fun issue(authentication: Authentication): String
+    fun issue(user: UserPrincipal): String
 }
 
 @Component
@@ -24,9 +24,9 @@ class TokenProvider(val config: AppConfig) : JwtIssuer
         const val TOKEN_AUDIENCE = "packit"
     }
 
-    override fun issue(authentication: Authentication): String
+    override fun issue(user: UserPrincipal): String
     {
-        val user = authentication.principal as UserPrincipal
+        //val user = authentication.principal as UserPrincipal
 
         val roles = user.authorities.map { it.authority }
 

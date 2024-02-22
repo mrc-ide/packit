@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.authority.AuthorityUtils
 
 class BasicUserDetails(
-    private val principal: UserPrincipal,
+    val principal: UserPrincipal,
     @JsonIgnore
     private val password: String
 ) : UserDetails

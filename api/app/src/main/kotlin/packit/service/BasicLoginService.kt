@@ -8,6 +8,7 @@ import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.model.LoginWithPassword
 import packit.security.provider.JwtIssuer
+import packit.security.profile.BasicUserDetails
 
 @Component
 class BasicLoginService(
@@ -32,7 +33,8 @@ class BasicLoginService(
         // I don't think we need this
         //SecurityContextHolder.getContext().authentication = authentication
 
-        val token = jwtIssuer.issue(authentication)
+        val userDetails = (authentication.principal as BasicUserDetails)
+        val token = jwtIssuer.issue(userDetails.principal)
 
         return mapOf("token" to token)
     }

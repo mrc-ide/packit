@@ -5,7 +5,7 @@ import org.springframework.security.core.authority.AuthorityUtils
 import org.springframework.security.oauth2.core.user.OAuth2User
 
 class PackitOAuth2User(
-    private val principal: UserPrincipal
+    val principal: UserPrincipal
 ) : OAuth2User
 {
     /*companion object
