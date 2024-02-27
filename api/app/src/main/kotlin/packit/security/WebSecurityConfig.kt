@@ -38,7 +38,7 @@ class WebSecurityConfig(
     ): SecurityFilterChain
     {
         httpSecurity
-            .cors(withDefaults())
+            //.cors{ cors -> cors.disable() }
             .csrf().disable()
             .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
