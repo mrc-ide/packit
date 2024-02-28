@@ -21,8 +21,8 @@ class LoginControllerTest : IntegrationTest()
     @Test
     fun `can login with API`()
     {
-        val token = env.getProperty("GITHUB_ACCESS_TOKEN")
-        val postBody = LoginWithToken(token")
+        val token = env.getProperty("GITHUB_ACCESS_TOKEN")!!
+        val postBody = LoginWithToken(token)
 
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_JSON
