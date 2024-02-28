@@ -24,6 +24,7 @@ class LoginControllerTest : IntegrationTest()
     fun `can login with API`()
     {
         val token = env.getProperty("GITHUB_ACCESS_TOKEN")!!
+        assertThat(token.count()).isEqualTo(40) // check access token correctly saved in environment
         val postBody = LoginWithToken(token)
 
         val headers = HttpHeaders()
