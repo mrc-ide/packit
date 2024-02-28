@@ -1,6 +1,8 @@
 package packit.integration.controllers
 
+import org.assertj.core.api.Assertions.assertThat
 import com.fasterxml.jackson.databind.ObjectMapper
+import kotlin.test.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -27,10 +29,13 @@ class LoginControllerTest : IntegrationTest()
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_JSON
 
-        val jsonString = ObjectMapper().writeValueAsString(postBody)
+        val objectMapper = ObjectMapper()
+        val jsonString = objectMapper.writeValueAsString(postBody)
         val postEntity =  HttpEntity(jsonString, headers)
-        val result = restTemplate.postForEntity<String>("/auth/login/api/", postEntity, String::class.java)
+        val result = restTemplate.postForEntity<String>("/auth/login/api", postEntity, String::class.java)
 
         assertSuccess(result)
+        val packitToken = objectMapper.readTree(result.body).get("token").asText()
+        assertThat(packitToken.count()).isGreaterThan(0)
     }
 }
