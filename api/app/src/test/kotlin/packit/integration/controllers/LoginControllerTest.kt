@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.*
 import packit.integration.IntegrationTest
 import packit.model.LoginWithToken
-import kotlin.test.assertEquals
 
 class LoginControllerTest : IntegrationTest()
 {
@@ -34,7 +33,7 @@ class LoginControllerTest : IntegrationTest()
     fun `can receive 401 response when login to API with invalid token`()
     {
         val result = getLoginResponse("badtoken")
-        assertEquals(result.statusCode, HttpStatus.UNAUTHORIZED)
+        assertUnauthorized(result)
     }
 
     private fun getLoginResponse(token: String): ResponseEntity<String>
