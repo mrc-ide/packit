@@ -30,7 +30,7 @@ class LoginControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `can receive 401 response when login to API with invalid token`()
+    fun `can receive 401 response when request login to API with invalid token`()
     {
         val result = getLoginResponse("badtoken")
         assertUnauthorized(result)
