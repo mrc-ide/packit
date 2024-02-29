@@ -24,7 +24,7 @@ internal class NoRedirectHttpRequestFactory : SimpleClientHttpRequestFactory() {
 
 class BrowserRedirectStrategyTest : IntegrationTest() {
     @BeforeEach
-    fun setup()
+    override fun setup()
     {
         restTemplate.restTemplate.requestFactory = NoRedirectHttpRequestFactory()
     }
