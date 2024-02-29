@@ -1,8 +1,7 @@
 package packit.integration.controllers
 
-import org.assertj.core.api.Assertions.assertThat
 import com.fasterxml.jackson.databind.ObjectMapper
-import kotlin.test.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -24,7 +23,7 @@ class LoginControllerTest : IntegrationTest()
     fun `can login with API`()
     {
         val token = env.getProperty("GITHUB_ACCESS_TOKEN")!!
-        assertThat(token.count()).isEqualTo(40) // check access token correctly saved in environment
+        assertThat(token.count()).isEqualTo(40) // sanity check access token correctly saved in environment
         val postBody = LoginWithToken(token)
 
         val headers = HttpHeaders()
@@ -32,7 +31,7 @@ class LoginControllerTest : IntegrationTest()
 
         val objectMapper = ObjectMapper()
         val jsonString = objectMapper.writeValueAsString(postBody)
-        val postEntity =  HttpEntity(jsonString, headers)
+        val postEntity = HttpEntity(jsonString, headers)
         val result = restTemplate.postForEntity<String>("/auth/login/api", postEntity, String::class.java)
 
         assertSuccess(result)
