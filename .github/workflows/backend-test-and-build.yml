@@ -43,6 +43,10 @@ jobs:
       - name: Test backend
         working-directory: api
         run: ./gradlew :app:test --stacktrace --rerun
+        env:
+          GITHUB_CLIENT_ID: ${{ secrets.PACKIT_GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.PACKIT_GITHUB_CLIENT_SECRET }}
+          GITHUB_ACCESS_TOKEN: ${{ secrets.PACKIT_GITHUB_ACCESS_TOKEN }}
       - name: Lint
         working-directory: api
         run: ./gradlew :app:detekt

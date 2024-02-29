@@ -80,7 +80,7 @@ class PacketRepositoryTest : RepositoryTest()
     )
 
     @BeforeEach
-    fun setup()
+    override fun setup()
     {
         packetRepository.deleteAll()
     }
