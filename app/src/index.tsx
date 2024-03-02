@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
 import { AuthConfigProvider } from "./app/components/providers/AuthConfigProvider";
 import { ThemeProvider } from "./app/components/providers/ThemeProvider";
 import { UserProvider } from "./app/components/providers/UserProvider";
@@ -8,21 +7,23 @@ import { RedirectOnLoginProvider } from "./app/components/providers/RedirectOnLo
 import reportWebVitals from "./reportWebVitals";
 import "./styles/globals.css";
 import {Router} from "./app/components/routes/Router";
+import {PackitBrowserRouter} from "./app/components/routes/PackitBrowserRouter";
+import {BrowserRouter} from "react-router-dom";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
-    <ThemeProvider>
-      <AuthConfigProvider>
-        <UserProvider>
-          <RedirectOnLoginProvider>
-            <BrowserRouter>
-              <Router />
-            </BrowserRouter>
-          </RedirectOnLoginProvider>
-        </UserProvider>
-      </AuthConfigProvider>
-    </ThemeProvider>
-  </React.StrictMode>
+    <React.StrictMode>
+      <ThemeProvider>
+        <AuthConfigProvider>
+          <UserProvider>
+            <RedirectOnLoginProvider>
+              <PackitBrowserRouter>
+                <Router/>
+              </PackitBrowserRouter>
+            </RedirectOnLoginProvider>
+          </UserProvider>
+        </AuthConfigProvider>
+      </ThemeProvider>
+    </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

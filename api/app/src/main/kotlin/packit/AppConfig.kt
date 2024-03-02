@@ -16,6 +16,7 @@ class AppConfig(private val props: PackitProperties = properties)
     val dbUrl: String = propString("db.url")
     val dbUser: String = propString("db.user")
     val dbPassword: String = propString("db.password")
+    val appRoute: String = propString("app.route")
     val authJWTSecret: String = propString("auth.jwt.secret")
     val authRedirectUri: String = propString("auth.oauth2.redirect.url")
     val authEnableGithubLogin: Boolean = propString("auth.method") == "github"
