@@ -8,7 +8,6 @@ import reportWebVitals from "./reportWebVitals";
 import "./styles/globals.css";
 import {Router} from "./app/components/routes/Router";
 import {PackitBrowserRouter} from "./app/components/routes/PackitBrowserRouter";
-import {BrowserRouter} from "react-router-dom";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <React.StrictMode>

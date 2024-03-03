@@ -21,7 +21,10 @@ export function AccountHeaderDropdown() {
   const handleLogout = () => {
     removeUser();
     setLoggingOut(true);
-    navigate("/login");
+    // Force round trip to server (rather than using react routing) so montagu nginx config can redirect to montagu
+    // index for login
+    window.location.href = "/login";
+    //navigate("/login");
   };
 
   return (
