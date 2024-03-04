@@ -17,11 +17,15 @@ export default function ProtectedRoute() {
       // we will redirect to requested url on login, but avoid doing this if logging out after previous auth success
       if (!loggingOut) {
         setRequestedUrl(pathname);
+
+        // Force round trip to server (rather than using react routing) so montagu nginx config can redirect to montagu
+        // index for login
+        // Only do this if not logging out, as that causes double request to backend, and only the request from AccountHeaderDropdown
+        // has the loggingOut qs param that montagu needs...
+        window.location.href = `${authConfig.appRoute || ""}/login`;
+        //navigate("/login");
       }
-      // Force round trip to server (rather than using react routing) so montagu nginx config can redirect to montagu
-      // index for login
-      window.location.href = `${authConfig.appRoute || ""}/login`;
-      //navigate("/login");
+
     }
   }, [navigate, authConfig, user]);
 

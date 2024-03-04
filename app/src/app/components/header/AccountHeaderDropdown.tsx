@@ -25,7 +25,9 @@ export function AccountHeaderDropdown() {
     setLoggingOut(true);
     // Force round trip to server (rather than using react routing) so montagu nginx config can redirect to montagu
     // index for login
-    window.location.href = `${authConfig?.appRoute || ""}/login`; // TODO: wait til appRoute definitely available
+    // TODO: wait til appRoute definitely available
+    // NB We also add loggingOut param here, so montagu knows it has to log out too (packit will just ignore this)
+    window.location.href = `${authConfig?.appRoute || ""}/login?loggingOut=1`;
     //navigate("/login");
   };
 
