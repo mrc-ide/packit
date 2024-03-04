@@ -17,6 +17,7 @@ class CorsConfig
         config.allowCredentials = true
         config.addAllowedOrigin("http://localhost:3000")
         config.addAllowedOrigin("http://localhost")
+        config.addAllowedOrigin("https://localhost") // TODO: Pull from config?
         config.addAllowedHeader("*")
         config.addAllowedMethod("*")
         source.registerCorsConfiguration("/**", config)

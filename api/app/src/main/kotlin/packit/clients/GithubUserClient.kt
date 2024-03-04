@@ -3,9 +3,9 @@ package packit.clients
 import org.kohsuke.github.*
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
+import org.springframework.security.core.authority.AuthorityUtils
 import packit.AppConfig
 import packit.exceptions.PackitAuthenticationException
-import packit.model.User
 import packit.security.Role
 import packit.security.profile.UserPrincipal
 
@@ -21,17 +21,13 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
         ghUser = getGitHubUser()
     }
 
-    fun getUser(): UserPrincipal
+    fun getUserPrincipal(): UserPrincipal
     {
         checkAuthenticated()
         val ghu = ghUser!!
 
-        val user = User(
-            ghu.login,
-            ghu.name,
-            listOf(Role.USER)
-        )
-        return UserPrincipal.create(user, mutableMapOf())
+        val authorities = AuthorityUtils.createAuthorityList(listOf(Role.USER).toString())
+        return UserPrincipal(ghu.login, ghu.name, authorities, mutableMapOf())
     }
 
     @Throws(PackitAuthenticationException::class)

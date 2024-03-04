@@ -24,9 +24,9 @@ Relevant `config.properties` values:
 - `auth.basic.secret` Secret used to encode and decode JWT tokens
 - `auth.oauth2.redirect.url` The front end API Packit url to redirect to on successful user authentication - this should
 be of form `[FRONT END BASE URL}/redirect`
-- `auth.enableGithubLogin` true if GitHub auth should be enabled for this instance
+- `auth.method` "github" or "basic"
 - `auth.enableFormLogin` true if Basic auth should be enabled for this instance
-- `auth.expiryDays` Number of days before a JWT token shoul expire
+- `auth.expiryDays` Number of days before a JWT token should expire
 - `auth.enabled` true if auth is enabled - if false, all data is visible to any user, and no login is required
 - `auth.githubAPIBaseUrl` Base URL for querying GitHub API to verify PAT and check user Org membership - this is unlikely to change!
 - `auth.githubAPIOrgs` Comma separated list of authorized GitHub Organizations - a GitHub user must be a member 
