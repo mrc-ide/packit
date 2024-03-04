@@ -26,8 +26,6 @@ class TokenProvider(val config: AppConfig) : JwtIssuer
 
     override fun issue(user: UserPrincipal): String
     {
-        //val user = authentication.principal as UserPrincipal
-
         val roles = user.authorities.map { it.authority }
 
         val createdDate = Instant.now()

@@ -34,14 +34,6 @@ class OAuth2UserService(private val githubUserClient: GithubUserClient) : Defaul
 
         // TODO check if user exists, if not, save user email to database
 
-        /*val user = User(
-            githubInfo.userName(),
-            githubInfo.displayName(),
-            listOf(Role.USER)
-        )*/
-
-        //return PackitOAuth2User.create(user, oAuth2User.attributes)
-
         val principal = UserPrincipal(
             githubInfo.userName(),
             githubInfo.displayName(),

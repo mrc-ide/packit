@@ -8,17 +8,6 @@ class PackitOAuth2User(
     val principal: UserPrincipal
 ) : OAuth2User
 {
-    /*companion object
-    {
-        fun create(user: User, attributes: MutableMap<String, Any>): PackitOAuth2User
-        {
-            val authorities = AuthorityUtils.createAuthorityList(user.role.toString())
-            return PackitOAuth2User(
-                UserPrincipal(user.userName, user.displayName, authorities, attributes)
-            )
-        }
-    }*/
-
     override fun getAttributes(): MutableMap<String, Any>
     {
         return principal.attributes

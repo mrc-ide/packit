@@ -30,9 +30,6 @@ class BasicLoginService(
             )
         )
 
-        // I don't think we need this
-        //SecurityContextHolder.getContext().authentication = authentication
-
         val userDetails = (authentication.principal as BasicUserDetails)
         val token = jwtIssuer.issue(userDetails.principal)
 

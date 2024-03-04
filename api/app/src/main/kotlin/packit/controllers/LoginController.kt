@@ -42,6 +42,9 @@ class LoginController(
     @ResponseBody
     fun authConfig(): ResponseEntity<Map<String, Any>>
     {
+        // TODO: 'appRoute' is needed by the front end to prepend routes, which may be needed if Packit is to be deployed
+        // under a route within the domain (e.g. /packit in the case of Montagu deploy). It isn't *really* auth config
+        // as such (though related), so consider if this is the right place to return it
         val authConfig = mapOf(
             "enableGithubLogin" to config.authEnableGithubLogin,
             "enableBasicLogin" to config.authEnableBasicLogin,

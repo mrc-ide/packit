@@ -11,28 +11,6 @@ class BasicUserDetails(
     private val password: String
 ) : UserDetails
 {
-    /*companion object
-    {
-        fun create(user: User, attributes: MutableMap<String, Any>): BasicUserDetails
-        {
-            val authorities = AuthorityUtils.createAuthorityList(user.role.toString())
-            return BasicUserDetails(
-                UserPrincipal(user.userName, user.displayName, authorities, attributes),
-                user.password
-            )
-        }
-    }*/
-
-    /*override fun getName(): String
-    {
-        return principal.displayName
-    }*/
-
-    /*override fun getAttributes(): MutableMap<String, Any>
-    {
-        return principal.attributes
-    }*/
-
     override fun getAuthorities(): MutableCollection<out GrantedAuthority>
     {
         return principal.authorities

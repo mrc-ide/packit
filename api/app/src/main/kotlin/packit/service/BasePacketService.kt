@@ -42,8 +42,6 @@ class BasePacketService(
 {
     override fun importPackets()
     {
-        // TODO: remove debug
-        println("importing packets")
         val mostRecent = packetRepository.findTopByOrderByImportTimeDesc()?.importTime
         val now = Instant.now().epochSecond.toDouble()
         val packets = outpackServerClient.getMetadata(mostRecent)
@@ -54,7 +52,6 @@ class BasePacketService(
                     it.time.start, it.time.end
                 )
             }
-        println("found packets: " + packets.count())
         packetRepository.saveAll(packets)
     }
 
