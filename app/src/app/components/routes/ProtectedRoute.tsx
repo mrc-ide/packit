@@ -20,7 +20,7 @@ export default function ProtectedRoute() {
       }
       // Force round trip to server (rather than using react routing) so montagu nginx config can redirect to montagu
       // index for login
-      window.location.href = "/login";
+      window.location.href = `${authConfig.appRoute || ""}/login`;
       //navigate("/login");
     }
   }, [navigate, authConfig, user]);

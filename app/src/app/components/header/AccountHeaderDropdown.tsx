@@ -12,18 +12,20 @@ import {
 } from "../Base/DropdownMenu";
 import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 import { useUser } from "../providers/UserProvider";
+import {useAuthConfig} from "../providers/AuthConfigProvider";
 
 export function AccountHeaderDropdown() {
   const navigate = useNavigate();
   const { removeUser, user } = useUser();
   const { setLoggingOut } = useRedirectOnLogin();
+  const authConfig = useAuthConfig();
 
   const handleLogout = () => {
     removeUser();
     setLoggingOut(true);
     // Force round trip to server (rather than using react routing) so montagu nginx config can redirect to montagu
     // index for login
-    window.location.href = "/login";
+    window.location.href = `${authConfig?.appRoute || ""}/login`; // TODO: wait til appRoute definitely available
     //navigate("/login");
   };
 
