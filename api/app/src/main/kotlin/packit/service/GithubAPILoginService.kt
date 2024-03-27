@@ -6,7 +6,6 @@ import packit.AppConfig
 import packit.clients.GithubUserClient
 import packit.exceptions.PackitException
 import packit.model.LoginWithToken
-import packit.security.oauth2.GithubAuthentication
 import packit.security.provider.JwtIssuer
 
 @Component
@@ -25,13 +24,11 @@ class GithubAPILoginService(
 
         githubUserClient.authenticate(loginRequest.token)
         githubUserClient.checkGithubMembership()
-        val userPrincipal = githubUserClient.getUser()
+        val userPrincipal = githubUserClient.getUserPrincipal()
 
         // TODO add user to db if not already there
 
-        val authentication = GithubAuthentication(userPrincipal, listOf())
-
-        val token = jwtIssuer.issue(authentication)
+        val token = jwtIssuer.issue(userPrincipal)
 
         return mapOf("token" to token)
     }
