@@ -1,8 +1,5 @@
 {
   "r.lsp.promptToInstall": false,
   "cSpell.words": ["clsx"],
-  "editor.formatOnSave": true,
-  "editor.codeActionsOnSave": {
-    "source.organizeImports": true
-  }
+  "editor.formatOnSave": true
 }

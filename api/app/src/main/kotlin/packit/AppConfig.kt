@@ -18,7 +18,8 @@ class AppConfig(private val props: PackitProperties = properties)
     val dbPassword: String = propString("db.password")
     val authJWTSecret: String = propString("auth.jwt.secret")
     val authRedirectUri: String = propString("auth.oauth2.redirect.url")
-    val authEnableGithubLogin: Boolean = propString("auth.enableGithubLogin").toBoolean()
+    val authEnableGithubLogin: Boolean = propString("auth.method") == "github"
+    val authEnableBasicLogin: Boolean = propString("auth.method") == "basic"
     val authExpiryDays: Long = propString("auth.expiryDays").toLong()
     val authEnabled: Boolean = propString("auth.enabled").toBoolean()
     val authGithubAPIOrg: String = propString("auth.githubAPIOrg")
@@ -28,6 +29,7 @@ class AppConfig(private val props: PackitProperties = properties)
     {
         return props[propName].toString()
     }
+
     companion object
     {
 
@@ -54,8 +56,7 @@ fun getResource(path: String): URL
     if (url != null)
     {
         return url
-    }
-    else
+    } else
     {
         throw FileNotFoundException("Unable to load '$path' as a resource steam")
     }
