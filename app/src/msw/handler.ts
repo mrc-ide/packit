@@ -4,6 +4,7 @@ import { downloadFileHandlers } from "./handlers/downloadFileHandlers";
 import { packetGroupHandlers } from "./handlers/packetGroupHandlers";
 import { packetGroupSummaryHandlers } from "./handlers/packetGroupSummaryHandlers";
 import { packetHandlers } from "./handlers/packetHandler";
+import { loginHandlers } from "./handlers/loginHandlers";
 
 // catch any missed requests in tests
 const defaultHandlers = [
@@ -19,5 +20,6 @@ export const handlers = [
   ...packetHandlers,
   ...authConfigHandlers,
   ...downloadFileHandlers,
+  ...loginHandlers,
   ...defaultHandlers
 ];

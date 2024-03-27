@@ -20,7 +20,7 @@ export const mockPacketResponse = {
 export const mockAuthConfig: AuthConfig = {
   enableAuth: true,
   enableGithubLogin: true,
-  enableBasicLogin: false
+  enableBasicLogin: true
 };
 
 export const mockUserState: UserState = {
