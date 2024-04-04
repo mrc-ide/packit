@@ -23,6 +23,10 @@ class LoginController(
         @RequestBody @Validated user: LoginWithToken,
     ): ResponseEntity<Map<String, String>>
     {
+        if (!config.authEnableGithubLogin)
+        {
+            return ResponseEntity.badRequest().body(mapOf("error" to "Github login is not enabled"))
+        }
         val token = gitApiLoginService.authenticateAndIssueToken(user)
         return ResponseEntity.ok(token)
     }
@@ -33,7 +37,10 @@ class LoginController(
         @RequestBody @Validated user: LoginWithPassword
     ): ResponseEntity<Map<String, String>>
     {
-        // TODO: Error if basic auth not supported. Should do the same for github api login
+        if (!config.authEnableBasicLogin)
+        {
+            return ResponseEntity.badRequest().body(mapOf("error" to "Basic login is not enabled"))
+        }
         val token = basicLoginService.authenticateAndIssueToken(user)
         return ResponseEntity.ok(token)
     }
