@@ -1,43 +1,51 @@
+-- to allow for the use of generating UUIDs
+CREATE EXTENSION
+IF NOT EXISTS pgcrypto;
+
+
 CREATE TABLE "user"
 (
-    "username" TEXT,
-    "display_name" TEXT,
-    "email" TEXT,
+    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "username" TEXT NOT NULL,
+    "display_name" TEXT NOT NULL,
+    "password" TEXT,
+    "email" TEXT NOT NULL,
+    -- todo: unsure if need below data
     "disabled" BOOLEAN NOT NULL DEFAULT FALSE,
     "user_source" TEXT,
-    "last_logged_in" TEXT,
-    PRIMARY KEY ("email")
+    "last_logged_in" TEXT
 );
 
 CREATE TABLE "user_group"
 (
-    "id" TEXT,
-    PRIMARY KEY ("id")
+    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "role" TEXT NOT NULL
 );
 
 CREATE TABLE "user_group_user"
 (
-    "email" TEXT NOT NULL,
-    "user_group" TEXT NOT NULL,
-    FOREIGN KEY ("email") REFERENCES "user" ("email"),
-    FOREIGN KEY ("user_group") REFERENCES "user_group" ("id")
+    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "user_id" UUID NOT NULL,
+    "user_group_id" UUID NOT NULL,
+    FOREIGN KEY ("user_id") REFERENCES "user" ("id"),
+    FOREIGN KEY ("user_group_id") REFERENCES "user_group" ("id")
 );
 
 CREATE TABLE "permission"
 (
-    "id" TEXT,
-    PRIMARY KEY ("id")
+    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "name" TEXT NOT NULL
 );
 
 CREATE TABLE "user_group_permission"
 (
-    "id" INTEGER PRIMARY KEY NOT NULL,
-    "user_group" TEXT NOT NULL,
-    "permission" TEXT NOT NULL,
+    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "user_group_id" UUID NOT NULL,
+    "permission_id" UUID NOT NULL,
     "scope_prefix" TEXT NOT NULL,
     "scope_id" TEXT NULL,
-    FOREIGN KEY ("user_group") REFERENCES "user_group" ("id"),
-    FOREIGN KEY ("permission") REFERENCES "permission" ("id")
+    FOREIGN KEY ("user_group_id") REFERENCES "user_group" ("id"),
+    FOREIGN KEY ("permission_id") REFERENCES "permission" ("id")
 );
 
 CREATE TABLE "pinned_packet_global"

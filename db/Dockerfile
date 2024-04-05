@@ -10,13 +10,13 @@ ENV PGDATA /pgdata
 
 COPY conf /etc/packit
 COPY schema /packit-schema
+COPY schema/schema.sql /docker-entrypoint-initdb.d/
 
 RUN cat /etc/packit/postgresql.conf /etc/packit/postgresql.test.conf.in > \
         /etc/packit/postgresql.test.conf
 RUN cat /etc/packit/postgresql.conf /etc/packit/postgresql.production.conf.in > \
         /etc/packit/postgresql.production.conf
 RUN chown -R postgres:postgres /etc/packit
-RUN ./docker-entrypoint.sh --version
 
 ENTRYPOINT ["/packit-bin/start-with-config.sh"]
 CMD ["/etc/packit/postgresql.conf"]
