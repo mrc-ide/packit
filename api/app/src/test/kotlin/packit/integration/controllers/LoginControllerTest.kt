@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity
 import packit.integration.IntegrationTest
 import packit.model.LoginWithToken
 
-
 class LoginControllerTest : IntegrationTest()
 {
 
@@ -40,7 +39,6 @@ class LoginControllerTest : IntegrationTest()
     fun `can receive 401 response when request login to API with invalid token`()
     {
         val result = getLoginResponse("badtoken")
-        val x = env;
         assertUnauthorized(result)
     }
 

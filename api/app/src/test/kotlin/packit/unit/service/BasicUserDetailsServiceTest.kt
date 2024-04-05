@@ -6,7 +6,6 @@ import packit.exceptions.PackitException
 import packit.service.BasicUserDetailsService
 import kotlin.test.Test
 
-
 class BasicUserDetailsServiceTest
 {
 

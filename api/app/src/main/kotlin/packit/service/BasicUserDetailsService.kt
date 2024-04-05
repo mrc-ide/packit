@@ -11,7 +11,7 @@ import packit.security.profile.BasicUserDetails
 import packit.security.profile.UserPrincipal
 
 @Component
-class BasicUserDetailsService() : UserDetailsService
+class BasicUserDetailsService : UserDetailsService
 {
     companion object
     {
@@ -34,7 +34,7 @@ class BasicUserDetailsService() : UserDetailsService
             user.password
         )
     }
-    
+
     // TODO: replace this with fetching real user details from a repo
     private fun findByEmail(email: String): BasicUser
     {

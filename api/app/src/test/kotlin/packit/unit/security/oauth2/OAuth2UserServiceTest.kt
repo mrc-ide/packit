@@ -10,7 +10,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User
 import packit.clients.GithubUserClient
 import packit.security.oauth2.OAuth2UserService
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class OAuth2UserServiceTest
 {
@@ -29,7 +28,7 @@ class OAuth2UserServiceTest
         val sut = OAuth2UserService(mockGithubUserClient)
 
         val result = sut.processOAuth2User(mockOAuth2User)
-        
+
         assertEquals(result.name, fakeLogin)
         assertEquals(result.getAttribute("login"), fakeLogin)
         assertEquals(result.getAttribute("name"), fakeName)

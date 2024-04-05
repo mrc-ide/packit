@@ -43,7 +43,6 @@ class OAuth2UserService(private val githubUserClient: GithubUserClient) : Defaul
         return PackitOAuth2User(principal)
     }
 
-
     fun checkGithubUserMembership(request: OAuth2UserRequest)
     {
         githubUserClient.authenticate(request.accessToken.tokenValue)
