@@ -21,9 +21,9 @@ describe("BasicUserAuthForm", () => {
       </MemoryRouter>
     );
 
-    await userEvent.type(screen.getByLabelText(/email/i), "invalid-email");
-    await userEvent.type(screen.getByLabelText(/password/i), "short");
-    await userEvent.click(screen.getByRole("button", { name: /login/i }));
+    userEvent.type(screen.getByLabelText(/email/i), "invalid-email");
+    userEvent.type(screen.getByLabelText(/password/i), "short");
+    userEvent.click(screen.getByRole("button", { name: /login/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/invalid email/i)).toBeInTheDocument();
