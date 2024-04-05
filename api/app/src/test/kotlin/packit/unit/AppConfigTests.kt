@@ -39,7 +39,7 @@ class AppConfigTests
         val expiryDays = 1L
         val enableAuth = true
         val redirectUrl = "http://redirect"
-        val enableGithubLogin = true
+        val authMethod = "github"
 
         val props = PackitProperties()
 
@@ -50,7 +50,7 @@ class AppConfigTests
         props["auth.expiryDays"] = expiryDays
         props["auth.jwt.secret"] = authSecret
         props["outpack.server.url"] = "outpackServerUrl"
-        props["auth.enableGithubLogin"] = enableGithubLogin
+        props["auth.method"] = authMethod
         props["auth.oauth2.redirect.url"] = redirectUrl
 
         val sut = AppConfig(props)
@@ -63,6 +63,6 @@ class AppConfigTests
         assertEquals(sut.authJWTSecret, authSecret)
         assertEquals(sut.authRedirectUri, redirectUrl)
         assertEquals(sut.outpackServerUrl, "outpackServerUrl")
-        assertEquals(sut.authEnableGithubLogin, enableGithubLogin)
+        assertEquals(sut.authEnableGithubLogin, true)
     }
 }

@@ -37,7 +37,7 @@ class TokenDecoderTest
 
         val provider = TokenProvider(AppConfig())
 
-        val jwtToken = provider.issue(mockAuthentication)
+        val jwtToken = provider.issue(mockAuthentication.principal as UserPrincipal)
 
         val result = TokenDecoder(AppConfig()).decode(jwtToken)
 

@@ -3,7 +3,10 @@ package packit.unit.clients
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.kohsuke.github.*
 import org.mockito.ArgumentMatchers.anyString
-import org.mockito.kotlin.*
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doThrow
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.springframework.http.HttpStatus
 import packit.AppConfig
 import packit.clients.GithubUserClient
@@ -11,7 +14,8 @@ import packit.exceptions.PackitAuthenticationException
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class GithubUserClientTest {
+class GithubUserClientTest
+{
 
     private val mockConfig = mock<AppConfig> {
         on { authGithubAPIOrg } doReturn "mrc-ide"
@@ -21,7 +25,7 @@ class GithubUserClientTest {
     private val mockTeam = mock<GHTeam>()
     private val anotherMockTeam = mock<GHTeam>()
 
-    private val mockOrg = mock<GHOrganization>{
+    private val mockOrg = mock<GHOrganization> {
         on { login } doReturn "mrc-ide"
         on { teams } doReturn mapOf("packit" to mockTeam, "another-team" to anotherMockTeam)
     }
@@ -58,12 +62,12 @@ class GithubUserClientTest {
     }
 
     @Test
-    fun `can getUser`()
+    fun `can getUserUserPrincipal`()
     {
         sut.authenticate(token)
-        val user = sut.getUser()
-        assertEquals(user.displayName, "test name")
-        assertEquals(user.name, "test@login.com")
+        val userPrincipal = sut.getUserPrincipal()
+        assertEquals(userPrincipal.displayName, "test name")
+        assertEquals(userPrincipal.name, "test@login.com")
     }
 
     @Test
@@ -169,7 +173,7 @@ class GithubUserClientTest {
     @Test
     fun `handles not authenticated on getUser`()
     {
-        assertThrowsUserNotAutheticated { sut.getUser() }
+        assertThrowsUserNotAutheticated { sut.getUserPrincipal() }
     }
 
     @Test

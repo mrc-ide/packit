@@ -13,7 +13,6 @@ import packit.security.profile.UserPrincipal
 @Component
 class BasicUserDetailsService() : UserDetailsService
 {
-    // TODO: replace this with fetching real user details from a repo
     companion object
     {
         const val USERNAME = "test.user@example.com"
@@ -35,7 +34,8 @@ class BasicUserDetailsService() : UserDetailsService
             user.password
         )
     }
-
+    
+    // TODO: replace this with fetching real user details from a repo
     private fun findByEmail(email: String): BasicUser
     {
         if (!USERNAME.equals(email, ignoreCase = true))
