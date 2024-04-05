@@ -27,8 +27,8 @@ describe("BasicUserAuthForm", () => {
 
     await waitFor(() => {
       expect(screen.getByText(/invalid email/i)).toBeInTheDocument();
+      expect(screen.getByText(/string must contain/i)).toBeInTheDocument();
     });
-    expect(screen.getByText(/string must contain/i)).toBeInTheDocument();
   });
 
   it("should submit and navigate to home page if successful submission", async () => {
