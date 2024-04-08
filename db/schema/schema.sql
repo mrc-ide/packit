@@ -87,7 +87,7 @@ CREATE TABLE "packet"
 -- indexes
 CREATE INDEX idx_packet_name ON "packet" ("name");
 CREATE INDEX idx_user_email ON "user" ("email");
-CREATE INDEX idx_packet_name ON "packet" ("username");
+CREATE INDEX idx_user_username ON "user" ("username");
 -- add role enums 
 INSERT INTO "user_group"
     ("role")

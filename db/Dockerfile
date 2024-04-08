@@ -17,6 +17,7 @@ RUN cat /etc/packit/postgresql.conf /etc/packit/postgresql.test.conf.in > \
 RUN cat /etc/packit/postgresql.conf /etc/packit/postgresql.production.conf.in > \
         /etc/packit/postgresql.production.conf
 RUN chown -R postgres:postgres /etc/packit
+RUN ./docker-entrypoint.sh --version
 
 ENTRYPOINT ["/packit-bin/start-with-config.sh"]
 CMD ["/etc/packit/postgresql.conf"]
