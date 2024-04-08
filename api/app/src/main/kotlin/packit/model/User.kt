@@ -4,20 +4,20 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "`user`")
-data class User(
+class User(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: String,
     val username: String,
     val email: String,
     val displayName: String,
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "user_group_user",
         joinColumns = [JoinColumn(name = "user_id")],
         inverseJoinColumns = [JoinColumn(name = "user_group_id")]
     )
-    val userGroups: List<UserGroup>,
+    val userGroups: List<UserGroup> = listOf(),
     val disabled: Boolean,
     val password: String?,
     val userSource: String?,

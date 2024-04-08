@@ -5,12 +5,12 @@ import packit.security.Role
 
 @Entity
 @Table(name = "user_group")
-data class UserGroup(
+class UserGroup(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int,
     @Enumerated(EnumType.STRING)
     val role: Role,
     @ManyToMany(mappedBy = "userGroups")
-    val users: List<User>
+    val users: List<User> = listOf()
 )
