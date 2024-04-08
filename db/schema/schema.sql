@@ -2,7 +2,6 @@
 CREATE EXTENSION
 IF NOT EXISTS pgcrypto;
 
-
 CREATE TABLE "user"
 (
     "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -10,38 +9,39 @@ CREATE TABLE "user"
     "display_name" TEXT NOT NULL,
     "password" TEXT,
     "email" TEXT NOT NULL,
-    -- todo: unsure if need below data
+    -- todo: unsure if need columns below can remove maybe
     "disabled" BOOLEAN NOT NULL DEFAULT FALSE,
     "user_source" TEXT,
     "last_logged_in" TEXT
 );
 
+
 CREATE TABLE "user_group"
 (
-    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    "role" TEXT NOT NULL
+    "id" SERIAL PRIMARY KEY,
+    "role" TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE "user_group_user"
 (
-    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "id" SERIAL PRIMARY KEY,
     "user_id" UUID NOT NULL,
-    "user_group_id" UUID NOT NULL,
+    "user_group_id" INTEGER NOT NULL,
     FOREIGN KEY ("user_id") REFERENCES "user" ("id"),
     FOREIGN KEY ("user_group_id") REFERENCES "user_group" ("id")
 );
 
 CREATE TABLE "permission"
 (
-    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "id" SERIAL PRIMARY KEY,
     "name" TEXT NOT NULL
 );
 
 CREATE TABLE "user_group_permission"
 (
-    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    "user_group_id" UUID NOT NULL,
-    "permission_id" UUID NOT NULL,
+    "id" SERIAL PRIMARY KEY,
+    "user_group_id" INTEGER NOT NULL,
+    "permission_id" INTEGER NOT NULL,
     "scope_prefix" TEXT NOT NULL,
     "scope_id" TEXT NULL,
     FOREIGN KEY ("user_group_id") REFERENCES "user_group" ("id"),
@@ -83,4 +83,14 @@ CREATE TABLE "packet"
     "start_time" DOUBLE PRECISION NOT NULL,
     "end_time" DOUBLE PRECISION NOT NULL
 );
-CREATE INDEX idx_name ON packet (name);
+
+-- indexes
+CREATE INDEX idx_packet_name ON "packet" ("name");
+CREATE INDEX idx_user_email ON "user" ("email");
+CREATE INDEX idx_packet_name ON "packet" ("username");
+-- add role enums 
+INSERT INTO "user_group"
+    ("role")
+VALUES
+    ('ADMIN'),
+    ('USER');
