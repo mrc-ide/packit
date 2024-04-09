@@ -5,21 +5,21 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "`user`")
 class User(
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    val id: String,
     val username: String,
-    val email: String,
-    val displayName: String,
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "user_group_user",
         joinColumns = [JoinColumn(name = "user_id")],
         inverseJoinColumns = [JoinColumn(name = "user_group_id")]
     )
-    val userGroups: List<UserGroup> = listOf(),
+    var userGroups: MutableList<UserGroup> = mutableListOf(),
     val disabled: Boolean,
-    val password: String?,
-    val userSource: String?,
-    val lastLoggedIn: String?,
+    val userSource: String,
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    val id: String? = null,
+    val displayName: String?,
+    val email: String? = null,
+    val password: String? = null,
+    val lastLoggedIn: String? = null,
 )

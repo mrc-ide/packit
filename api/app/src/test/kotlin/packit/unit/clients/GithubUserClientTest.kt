@@ -16,7 +16,6 @@ import kotlin.test.assertEquals
 
 class GithubUserClientTest
 {
-
     private val mockConfig = mock<AppConfig> {
         on { authGithubAPIOrg } doReturn "mrc-ide"
         on { authGithubAPITeam } doReturn "packit"
@@ -34,8 +33,9 @@ class GithubUserClientTest
     }
 
     private val mockMyself = mock<GHMyself> {
-        on { login } doReturn "test@login.com"
+        on { login } doReturn "test username"
         on { name } doReturn "test name"
+        on { email } doReturn "test@login.com"
         on { allOrganizations } doReturn mockOrgs
         on { isMemberOf(mockTeam) } doReturn true
         on { isMemberOf(anotherMockTeam) } doReturn false
@@ -62,12 +62,15 @@ class GithubUserClientTest
     }
 
     @Test
-    fun `can getUserUserPrincipal`()
+    fun `can getUser`()
     {
         sut.authenticate(token)
-        val userPrincipal = sut.getUserPrincipal()
-        assertEquals(userPrincipal.displayName, "test name")
-        assertEquals(userPrincipal.name, "test@login.com")
+
+        val githubUser = sut.getGithubUser()
+
+        assertEquals(githubUser.login, "test username")
+        assertEquals(githubUser.email, "test@login.com")
+        assertEquals(githubUser.name, "test name")
     }
 
     @Test
@@ -173,7 +176,7 @@ class GithubUserClientTest
     @Test
     fun `handles not authenticated on getUser`()
     {
-        assertThrowsUserNotAutheticated { sut.getUserPrincipal() }
+        assertThrowsUserNotAutheticated { sut.getGithubUser() }
     }
 
     @Test

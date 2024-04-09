@@ -6,9 +6,9 @@ CREATE TABLE "user"
 (
     "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     "username" TEXT NOT NULL,
-    "display_name" TEXT NOT NULL,
+    "display_name" TEXT,
     "password" TEXT,
-    "email" TEXT NOT NULL,
+    "email" TEXT,
     -- todo: unsure if need columns below can remove maybe
     "disabled" BOOLEAN NOT NULL DEFAULT FALSE,
     "user_source" TEXT,

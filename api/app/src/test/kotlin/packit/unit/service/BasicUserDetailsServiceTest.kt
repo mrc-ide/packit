@@ -15,14 +15,14 @@ class BasicUserDetailsServiceTest
     private val mockUserRepository = mock<UserRepository>()
     private val service = BasicUserDetailsService(mockUserRepository)
     private val mockUser = User(
-        "id",
         "username",
-        "email",
-        "displayName",
-        listOf(),
+        mutableListOf(),
         false,
+        "basic",
+        "id",
+        "displayName",
+        "email",
         "password",
-        "userSource",
         "lastLoggedIn"
     )
 
