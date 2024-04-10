@@ -5,7 +5,7 @@ IF NOT EXISTS pgcrypto;
 CREATE TABLE "user"
 (
     "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    "username" TEXT NOT NULL,
+    "username" TEXT NOT NULL UNIQUE,
     "display_name" TEXT,
     "password" TEXT,
     "email" TEXT,
@@ -27,8 +27,8 @@ CREATE TABLE "user_group_user"
     "id" SERIAL PRIMARY KEY,
     "user_id" UUID NOT NULL,
     "user_group_id" INTEGER NOT NULL,
-    FOREIGN KEY ("user_id") REFERENCES "user" ("id"),
-    FOREIGN KEY ("user_group_id") REFERENCES "user_group" ("id")
+    FOREIGN KEY ("user_id") REFERENCES "user" ("id") ON DELETE CASCADE,
+    FOREIGN KEY ("user_group_id") REFERENCES "user_group" ("id") ON DELETE CASCADE
 );
 
 CREATE TABLE "permission"

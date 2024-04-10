@@ -4,9 +4,9 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
+import packit.model.CreateBasicUser
 import packit.model.User
 import packit.model.UserGroup
-import packit.model.CreateBasicUser
 import packit.repository.UserGroupRepository
 import packit.repository.UserRepository
 import packit.security.Role
@@ -35,7 +35,6 @@ class BaseUserService(
         {
             return user
         }
-
         val userRoleUserGroup = getUserRoleUserGroup()
         val newUser = User(
             username = username,
@@ -53,14 +52,13 @@ class BaseUserService(
 
     override fun createBasicUser(createBasicUser: CreateBasicUser)
     {
-        val allUserGroups = userGroupRepository.findAll()
-        val foundUserRoles = createBasicUser.userRoles.mapNotNull { role -> allUserGroups.find { it.role == role } }
-        
-        if (foundUserRoles.size != createBasicUser.userRoles.size)
+        val existingUser = userRepository.findByUsername(createBasicUser.email)
+        if (existingUser != null)
         {
-            throw PackitException("Invalid roles provided", HttpStatus.BAD_REQUEST)
+            throw PackitException("username already exists", HttpStatus.BAD_REQUEST)
         }
 
+        val foundUserGroups = getFoundUserGroups(createBasicUser)
         val newUser = User(
             username = createBasicUser.email,
             displayName = createBasicUser.displayName,
@@ -68,13 +66,24 @@ class BaseUserService(
             email = createBasicUser.email,
             userSource = "basic",
             lastLoggedIn = Instant.now().toString(),
-            userGroups = foundUserRoles.toMutableList(),
+            userGroups = foundUserGroups.toMutableList(),
             password = passwordEncoder.encode(createBasicUser.password)
         );
         userRepository.save(newUser)
     }
 
+    private fun getFoundUserGroups(createBasicUser: CreateBasicUser): List<UserGroup>
+    {
+        val allUserGroups = userGroupRepository.findAll()
+        val foundUserRoles = createBasicUser.userRoles.mapNotNull { role -> allUserGroups.find { it.role == role } }
+
+        if (foundUserRoles.size != createBasicUser.userRoles.size)
+        {
+            throw PackitException("Invalid roles provided", HttpStatus.BAD_REQUEST)
+        }
+        return foundUserRoles
+    }
+
     override fun getUserRoleUserGroup() = userGroupRepository.findByRole(Role.USER)!!
     override fun getAdminRoleUserGroup() = userGroupRepository.findByRole(Role.ADMIN)!!
-
 }
