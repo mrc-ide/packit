@@ -14,7 +14,7 @@ import packit.service.UserService
 @Component
 class OAuth2UserService(
     private val githubUserClient: GithubUserClient,
-    val userService: UserService
+    private val userService: UserService,
 ) :
     DefaultOAuth2UserService()
 {

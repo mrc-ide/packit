@@ -9,8 +9,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
@@ -55,6 +53,7 @@ class WebSecurityConfig(
         return httpSecurity.build()
     }
 
+
     fun HttpSecurity.handleOauth2Login(): HttpSecurity
     {
         if (config.authEnableGithubLogin)
@@ -91,18 +90,13 @@ class WebSecurityConfig(
         return this
     }
 
-    @Bean
-    fun passwordEncoder(): PasswordEncoder
-    {
-        return BCryptPasswordEncoder()
-    }
 
     @Bean
     fun authenticationManager(httpSecurity: HttpSecurity): AuthenticationManager
     {
         return httpSecurity.getSharedObject(AuthenticationManagerBuilder::class.java)
             .userDetailsService(customBasicUserService)
-            .passwordEncoder(passwordEncoder())
+            .passwordEncoder(config.passwordEncoder())
             .and()
             .build()
     }

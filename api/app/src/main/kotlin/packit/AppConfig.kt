@@ -1,5 +1,8 @@
 package packit
 
+import org.springframework.context.annotation.Bean
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
 import java.io.File
 import java.io.FileNotFoundException
@@ -30,6 +33,7 @@ class AppConfig(private val props: PackitProperties = properties)
         return props[propName].toString()
     }
 
+
     companion object
     {
 
@@ -47,6 +51,12 @@ class AppConfig(private val props: PackitProperties = properties)
 
         var configPath = "/etc/packit/config.properties"
         val properties = readProperties(configPath)
+    }
+
+    @Bean
+    fun passwordEncoder(): PasswordEncoder
+    {
+        return BCryptPasswordEncoder()
     }
 }
 
