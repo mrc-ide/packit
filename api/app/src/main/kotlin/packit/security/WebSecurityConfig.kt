@@ -53,7 +53,6 @@ class WebSecurityConfig(
         return httpSecurity.build()
     }
 
-
     fun HttpSecurity.handleOauth2Login(): HttpSecurity
     {
         if (config.authEnableGithubLogin)
@@ -89,7 +88,6 @@ class WebSecurityConfig(
 
         return this
     }
-
 
     @Bean
     fun authenticationManager(httpSecurity: HttpSecurity): AuthenticationManager

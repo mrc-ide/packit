@@ -16,7 +16,7 @@ class BasicUserDetailsService(
 {
     override fun loadUserByUsername(username: String): UserDetails
     {
-        val user = userRepository.findByUsername(username) ?: throw PackitException("User $username does not exist");
+        val user = userRepository.findByUsername(username) ?: throw PackitException("User $username does not exist")
         return BasicUserDetails(
             UserPrincipal(
                 user.username,
@@ -27,5 +27,4 @@ class BasicUserDetailsService(
             user.password!!
         )
     }
-
 }

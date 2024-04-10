@@ -80,13 +80,12 @@ class UserServiceTest
             userSource = "github",
             lastLoggedIn = Instant.now().toString(),
             userGroups = mutableListOf(userGroups[0]),
-        );
+        )
         `when`(mockUserRepository.findByUsername(newUser.username)).doReturn(null)
         `when`(mockUserRepository.save(newUser)).doReturn(newUser)
         val service = BaseUserService(mockUserRepository, mockUserGroupRepository, passwordEncoder)
 
         val user = service.saveUserFromGithub(newUser.username, "displayName", "email")
-
 
         assertEquals(user.displayName, newUser.displayName)
         verify(mockUserGroupRepository).findByRole(Role.USER)
@@ -137,7 +136,8 @@ class UserServiceTest
         verify(mockUserRepository).findByUsername(createBasicUser.email)
         verify(mockUserGroupRepository).findAll()
         verify(passwordEncoder).encode(createBasicUser.password)
-        verify(mockUserRepository).save(argThat {
+        verify(mockUserRepository).save(
+            argThat {
             this.username == createBasicUser.email
             this.password == "encodedPassword"
             !this.disabled
@@ -146,6 +146,7 @@ class UserServiceTest
             this.userSource == "basic"
             this.lastLoggedIn == Instant.now().toString()
             this.userGroups == userGroups
-        })
+        }
+        )
     }
 }

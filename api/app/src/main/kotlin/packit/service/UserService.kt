@@ -10,7 +10,6 @@ import packit.repository.UserRepository
 import packit.security.Role
 import java.time.Instant
 
-
 interface UserService
 {
     fun saveUserFromGithub(username: String, displayName: String?, email: String?): User
@@ -42,7 +41,7 @@ class BaseUserService(
             userSource = "github",
             lastLoggedIn = Instant.now().toString(),
             userGroups = mutableListOf(userRoleUserGroup),
-        );
+        )
         userRepository.save(newUser)
 
         return newUser
@@ -51,10 +50,7 @@ class BaseUserService(
     override fun createBasicUser(createBasicUser: CreateBasicUser)
     {
         val existingUser = userRepository.findByUsername(createBasicUser.email)
-        if (existingUser != null)
-        {
-            throw IllegalArgumentException("username already exists")
-        }
+        require(existingUser == null) { "username already exists" }
 
         val foundUserGroups = getFoundUserGroups(createBasicUser)
         val newUser = User(
@@ -66,7 +62,7 @@ class BaseUserService(
             lastLoggedIn = Instant.now().toString(),
             userGroups = foundUserGroups.toMutableList(),
             password = passwordEncoder.encode(createBasicUser.password)
-        );
+        )
         userRepository.save(newUser)
     }
 
@@ -75,10 +71,8 @@ class BaseUserService(
         val allUserGroups = userGroupRepository.findAll()
         val foundUserRoles = createBasicUser.userRoles.mapNotNull { role -> allUserGroups.find { it.role == role } }
 
-        if (foundUserRoles.size != createBasicUser.userRoles.size)
-        {
-            throw IllegalArgumentException("Invalid roles provided")
-        }
+        require(foundUserRoles.size == createBasicUser.userRoles.size) { "Invalid roles provided" }
+
         return foundUserRoles
     }
 

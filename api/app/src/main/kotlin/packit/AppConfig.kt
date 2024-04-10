@@ -33,7 +33,6 @@ class AppConfig(private val props: PackitProperties = properties)
         return props[propName].toString()
     }
 
-
     companion object
     {
 
