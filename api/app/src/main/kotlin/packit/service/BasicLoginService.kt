@@ -19,7 +19,7 @@ class BasicLoginService(
     {
         if (loginRequest.email.isEmpty() && loginRequest.password.isEmpty())
         {
-            throw PackitException("Empty user details", HttpStatus.BAD_REQUEST) // TODO: use a key here
+            throw PackitException("emptyCredentials", HttpStatus.BAD_REQUEST)
         }
 
         val authentication = authenticationManager.authenticate(

@@ -43,7 +43,7 @@ describe("redirect", () => {
 
   beforeEach(() => {
     mockRequestedUrl = null;
-    // jest.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   it("renders redirecting if no token, user token or error", () => {
