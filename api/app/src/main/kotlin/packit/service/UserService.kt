@@ -70,7 +70,7 @@ class BaseUserService(
         userRepository.save(newUser)
     }
 
-    private fun getFoundUserGroups(createBasicUser: CreateBasicUser): List<UserGroup>
+    internal fun getFoundUserGroups(createBasicUser: CreateBasicUser): List<UserGroup>
     {
         val allUserGroups = userGroupRepository.findAll()
         val foundUserRoles = createBasicUser.userRoles.mapNotNull { role -> allUserGroups.find { it.role == role } }
