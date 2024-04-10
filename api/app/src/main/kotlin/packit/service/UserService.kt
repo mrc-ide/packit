@@ -38,7 +38,7 @@ class BaseUserService(
             userSource = "github",
             lastLoggedIn = Instant.now().toString(),
             userGroups = mutableListOf(userRoleUserGroup),
-        );
+        )
         userRepository.save(newUser)
 
         return newUser
@@ -46,5 +46,4 @@ class BaseUserService(
 
     override fun getUserRoleUserGroup() = userGroupRepository.findByRole(Role.USER)!!
     override fun getAdminRoleUserGroup() = userGroupRepository.findByRole(Role.ADMIN)!!
-
 }

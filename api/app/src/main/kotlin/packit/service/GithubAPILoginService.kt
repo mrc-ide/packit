@@ -42,5 +42,4 @@ class GithubAPILoginService(
 
         return mapOf("token" to token)
     }
-
 }

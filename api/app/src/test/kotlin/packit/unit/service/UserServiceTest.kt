@@ -65,13 +65,12 @@ class UserServiceTest
             userSource = "github",
             lastLoggedIn = Instant.now().toString(),
             userGroups = mutableListOf(userGroups[0]),
-        );
+        )
         whenever(mockUserRepository.findByUsername(newUser.username)).doReturn(null)
         whenever(mockUserRepository.save(newUser)).doReturn(newUser)
         val service = BaseUserService(mockUserRepository, mockUserGroupRepository)
 
         val user = service.saveUserFromGithub(newUser.username, "displayName", "email")
-
 
         assertEquals(user.displayName, newUser.displayName)
         verify(mockUserGroupRepository).findByRole(Role.USER)
