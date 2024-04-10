@@ -21,7 +21,7 @@ class UserController(private val config: AppConfig, private val userService: Use
     fun createBasicUser(
         @RequestBody @Validated createBasicUser: CreateBasicUser,
         authentication: Authentication,
-    ): ResponseEntity<Map<String, String>>
+    ): ResponseEntity<Map<String, String?>>
     {
         if (authentication.authorities.none { it.authority.contains(Role.ADMIN.toString()) })
         {
@@ -32,8 +32,13 @@ class UserController(private val config: AppConfig, private val userService: Use
             return ResponseEntity.badRequest().body(mapOf("error" to "Basic login is not enabled"))
         }
 
-        userService.createBasicUser(createBasicUser)
-
+        try
+        {
+            userService.createBasicUser(createBasicUser)
+        } catch (e: IllegalArgumentException)
+        {
+            return ResponseEntity.badRequest().body(mapOf("error" to e.message))
+        }
         return ResponseEntity.ok(mapOf("message" to "User created"))
     }
 }

@@ -1,9 +1,7 @@
 package packit.service
 
-import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import packit.exceptions.PackitException
 import packit.model.CreateBasicUser
 import packit.model.User
 import packit.model.UserGroup
@@ -55,7 +53,7 @@ class BaseUserService(
         val existingUser = userRepository.findByUsername(createBasicUser.email)
         if (existingUser != null)
         {
-            throw PackitException("username already exists", HttpStatus.BAD_REQUEST)
+            throw IllegalArgumentException("username already exists")
         }
 
         val foundUserGroups = getFoundUserGroups(createBasicUser)
@@ -79,7 +77,7 @@ class BaseUserService(
 
         if (foundUserRoles.size != createBasicUser.userRoles.size)
         {
-            throw PackitException("Invalid roles provided", HttpStatus.BAD_REQUEST)
+            throw IllegalArgumentException("Invalid roles provided")
         }
         return foundUserRoles
     }
