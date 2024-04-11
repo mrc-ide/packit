@@ -5,12 +5,13 @@ import { Login, Redirect } from "../../../app/components/login";
 import { UserProvider } from "../../../app/components/providers/UserProvider";
 import { UserState } from "../../../app/components/providers/types/UserTypes";
 import { mockUserState } from "../../mocks";
-import {Accessibility} from "../../../app/components/contents/accessibility";
+import { Accessibility } from "../../../app/components/contents/accessibility";
+import { AuthConfigProvider } from "../../../app/components/providers/AuthConfigProvider";
 
 const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
 jest.mock("../../../lib/localStorageManager", () => ({
   getUserFromLocalStorage: () => mockGetUserFromLocalStorage(),
-  getAuthConfigFromLocalStorage: jest.fn(() => ({ enableAuth: true }))
+  getAuthConfigFromLocalStorage: jest.fn().mockReturnValue({ authEnabled: true, enableGithubLogin: true })
 }));
 
 const mockSetRequestedUrl = jest.fn();
@@ -25,16 +26,18 @@ jest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
 describe("redirect", () => {
   const renderElement = (location = "/redirect?token=fakeToken") => {
     return render(
-      <UserProvider>
-        <MemoryRouter initialEntries={[location]}>
-          <Routes>
-            <Route path="/redirect" element={<Redirect />} />
-            <Route path="/" element={<Home />} />
-            <Route path="/accessibility" element={<Accessibility />} />
-            <Route path="/login" element={<Login />} />
-          </Routes>
-        </MemoryRouter>
-      </UserProvider>
+      <AuthConfigProvider>
+        <UserProvider>
+          <MemoryRouter initialEntries={[location]}>
+            <Routes>
+              <Route path="/redirect" element={<Redirect />} />
+              <Route path="/" element={<Home />} />
+              <Route path="/accessibility" element={<Accessibility />} />
+              <Route path="/login" element={<Login />} />
+            </Routes>
+          </MemoryRouter>
+        </UserProvider>
+      </AuthConfigProvider>
     );
   };
 
@@ -87,10 +90,8 @@ describe("redirect", () => {
     renderElement("/redirect?error=invalid_token");
 
     await waitFor(() => {
-      expect(screen.getByText(/login/i)).toBeInTheDocument();
+      expect(screen.getByText(/login to account/i)).toBeInTheDocument();
       expect(screen.getByText(/invalid_token/i)).toBeInTheDocument();
     });
-
-    screen.debug();
   });
 });

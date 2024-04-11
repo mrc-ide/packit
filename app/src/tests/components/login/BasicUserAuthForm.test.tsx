@@ -1,0 +1,73 @@
+import { render, screen, waitFor } from "@testing-library/react";
+import { BasicUserAuthForm } from "../../../app/components/login/BasicUserAuthForm";
+import { MemoryRouter } from "react-router-dom";
+import { UserProvider } from "../../../app/components/providers/UserProvider";
+import userEvent from "@testing-library/user-event";
+import { server } from "../../../msw/server";
+import { rest } from "msw";
+
+const mockedUsedNavigate = jest.fn();
+jest.mock("react-router-dom", () => ({
+  ...(jest.requireActual("react-router-dom") as any),
+  useNavigate: () => mockedUsedNavigate
+}));
+describe("BasicUserAuthForm", () => {
+  it("should validate both email and password by showing errors if fails schema", async () => {
+    render(
+      <MemoryRouter>
+        <UserProvider>
+          <BasicUserAuthForm />
+        </UserProvider>
+      </MemoryRouter>
+    );
+
+    userEvent.type(screen.getByLabelText(/email/i), "invalid-email");
+    userEvent.type(screen.getByLabelText(/password/i), "short");
+    userEvent.click(screen.getByRole("button", { name: /login/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/invalid email/i)).toBeInTheDocument();
+      expect(screen.getByText(/string must contain/i)).toBeInTheDocument();
+    });
+  });
+
+  it("should submit and navigate to home page if successful submission", async () => {
+    render(
+      <MemoryRouter>
+        <UserProvider>
+          <BasicUserAuthForm />
+        </UserProvider>
+      </MemoryRouter>
+    );
+
+    userEvent.type(screen.getByLabelText(/email/i), "test@gmail.com");
+    userEvent.type(screen.getByLabelText(/password/i), "password");
+    userEvent.click(screen.getByRole("button", { name: /login/i }));
+
+    await waitFor(() => {
+      expect(mockedUsedNavigate).toHaveBeenCalledWith("/");
+    });
+  });
+  it("should show error message on email and password fields if api returns 401", async () => {
+    server.use(
+      rest.post("*", (req, res, ctx) => {
+        return res(ctx.status(401));
+      })
+    );
+    render(
+      <MemoryRouter>
+        <UserProvider>
+          <BasicUserAuthForm />
+        </UserProvider>
+      </MemoryRouter>
+    );
+
+    userEvent.type(screen.getByLabelText(/email/i), "test@gmail.com");
+    userEvent.type(screen.getByLabelText(/password/i), "password");
+    userEvent.click(screen.getByRole("button", { name: /login/i }));
+
+    await waitFor(() => {
+      expect(screen.getAllByText(/invalid email or password/i).length).toBe(2);
+    });
+  });
+});

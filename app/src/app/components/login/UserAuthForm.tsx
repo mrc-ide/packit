@@ -1,15 +1,13 @@
 /* eslint-disable react/prop-types */
 "use client";
-
-import { Github } from "lucide-react";
 import { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import appConfig, { githubAuthEndpoint } from "../../../config/appConfig";
+import { useNavigate } from "react-router-dom";
 import { cn } from "../../../lib/cn";
-import { buttonVariants } from "../Base/Button";
 import { useAuthConfig } from "../providers/AuthConfigProvider";
-import { useUser } from "../providers/UserProvider";
 import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
+import { useUser } from "../providers/UserProvider";
+import { BasicUserAuthForm } from "./BasicUserAuthForm";
+import { GithubAuthForm } from "./GithubAuthForm";
 
 type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -19,15 +17,10 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const { user } = useUser();
   const { loggingOut, setLoggingOut } = useRedirectOnLogin();
 
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const loginError = searchParams.get("error");
-
   useEffect(() => {
     if (loggingOut) {
       setLoggingOut(false);
     }
-
     if (user?.token) {
       navigate("/");
     }
@@ -35,18 +28,8 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>
-      {authConfig?.enableGithubLogin && (
-        <>
-          <a
-            href={githubAuthEndpoint(appConfig)}
-            className={buttonVariants({ variant: "outline" })}
-          >
-            <Github className="mr-2 h-4 w-4" />
-            Github
-          </a>
-        </>
-      )}
-      {loginError && <div className="text-xs text-red-500">{loginError}</div>}
+      {authConfig?.enableBasicLogin && <BasicUserAuthForm />}
+      {authConfig?.enableGithubLogin && <GithubAuthForm />}
     </div>
   );
 }

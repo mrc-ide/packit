@@ -3,12 +3,16 @@ package packit.integration.controllers
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.http.*
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import packit.integration.IntegrationTest
 import packit.model.LoginWithToken
 
 class LoginControllerTest : IntegrationTest()
 {
+
     @Test
     fun `can get config`()
     {
@@ -18,9 +22,11 @@ class LoginControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `can login with API`()
+    fun `can login with github API`()
     {
+
         val token = env.getProperty("GITHUB_ACCESS_TOKEN")!!
+
         assertThat(token.count()).isEqualTo(40) // sanity check access token correctly saved in environment
         val result = getLoginResponse(token)
 

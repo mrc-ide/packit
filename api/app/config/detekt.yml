@@ -45,6 +45,8 @@ style:
     active: false
   SerialVersionUIDInSerializableClass:
     active: false
+  ForbiddenComment:
+    active: false
 
 naming:
   NoNameShadowing:

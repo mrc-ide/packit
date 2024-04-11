@@ -9,6 +9,7 @@ import org.springframework.core.env.Environment
 import org.springframework.http.*
 import org.springframework.http.client.SimpleClientHttpRequestFactory
 import org.springframework.security.core.context.SecurityContextHolder
+import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
 import kotlin.test.assertEquals
 
@@ -16,7 +17,8 @@ import kotlin.test.assertEquals
 abstract class IntegrationTest
 {
     @BeforeEach
-    fun setup() {
+    fun setup()
+    {
         // Default test rest template settings throw when examine
         // status of 401 responses, using alternative factory fixes this
         // https://stackoverflow.com/questions/16748969
@@ -43,7 +45,7 @@ abstract class IntegrationTest
     {
         val authentication = SecurityContextHolder.getContext().authentication
 
-        val tokens = jwtIssuer.issue(authentication)
+        val tokens = jwtIssuer.issue(authentication.principal as UserPrincipal)
 
         val headers = HttpHeaders()
 

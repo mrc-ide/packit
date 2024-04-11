@@ -2,7 +2,6 @@ package packit.security.provider
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Component
 import packit.AppConfig
 import packit.security.profile.UserPrincipal
@@ -12,7 +11,7 @@ import java.time.temporal.ChronoUnit
 
 interface JwtIssuer
 {
-    fun issue(authentication: Authentication): String
+    fun issue(userPrincipal: UserPrincipal): String
 }
 
 @Component
@@ -24,11 +23,10 @@ class TokenProvider(val config: AppConfig) : JwtIssuer
         const val TOKEN_AUDIENCE = "packit"
     }
 
-    override fun issue(authentication: Authentication): String
+    override fun issue(userPrincipal: UserPrincipal): String
     {
-        val user = authentication.principal as UserPrincipal
 
-        val roles = user.authorities.map { it.authority }
+        val roles = userPrincipal.authorities.map { it.authority }
 
         val createdDate = Instant.now()
 
@@ -37,8 +35,8 @@ class TokenProvider(val config: AppConfig) : JwtIssuer
         return JWT.create()
             .withAudience(TOKEN_AUDIENCE)
             .withIssuer(TOKEN_ISSUER)
-            .withClaim("userName", user.name)
-            .withClaim("displayName", user.displayName)
+            .withClaim("userName", userPrincipal.name)
+            .withClaim("displayName", userPrincipal.displayName)
             .withClaim("datetime", createdDate)
             .withClaim("au", roles)
             .withExpiresAt(expiredDate)

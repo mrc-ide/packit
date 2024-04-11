@@ -52,7 +52,7 @@ class TokenToPrincipalConverterTest
 
         val provider = TokenProvider(AppConfig())
 
-        val jwtToken = provider.issue(mockAuthentication)
+        val jwtToken = provider.issue(mockAuthentication.principal as UserPrincipal)
 
         val tokenDecoder = TokenDecoder(AppConfig())
 

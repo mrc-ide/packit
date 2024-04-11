@@ -2,15 +2,16 @@ package packit.clients
 
 import org.kohsuke.github.*
 import org.springframework.http.HttpStatus
+import org.springframework.security.core.authority.AuthorityUtils
 import org.springframework.stereotype.Component
 import packit.AppConfig
 import packit.exceptions.PackitAuthenticationException
-import packit.model.User
 import packit.security.Role
 import packit.security.profile.UserPrincipal
 
 @Component
-class GithubUserClient(private val config: AppConfig, private val githubBuilder: GitHubBuilder = GitHubBuilder()) {
+class GithubUserClient(private val config: AppConfig, private val githubBuilder: GitHubBuilder = GitHubBuilder())
+{
 
     private var github: GitHub? = null
     private var ghUser: GHMyself? = null
@@ -21,17 +22,13 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
         ghUser = getGitHubUser()
     }
 
-    fun getUser(): UserPrincipal
+    fun getUserPrincipal(): UserPrincipal
     {
         checkAuthenticated()
         val ghu = ghUser!!
 
-        val user = User(
-            ghu.login,
-            ghu.name,
-            listOf(Role.USER)
-        )
-        return UserPrincipal.create(user, mutableMapOf())
+        val authorities = AuthorityUtils.createAuthorityList(listOf(Role.USER).toString())
+        return UserPrincipal(ghu.login, ghu.name, authorities, mutableMapOf())
     }
 
     @Throws(PackitAuthenticationException::class)
@@ -66,7 +63,7 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
 
     private fun connectToClient(token: String)
     {
-       github = githubBuilder.withOAuthToken(token).build()
+        github = githubBuilder.withOAuthToken(token).build()
     }
 
     private fun getGitHubUser(): GHMyself
@@ -74,8 +71,7 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
         try
         {
             return github!!.myself
-        }
-        catch(e: HttpException)
+        } catch (e: HttpException)
         {
             throw throwOnHttpException(e)
         }
@@ -83,10 +79,11 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
 
     private fun throwOnHttpException(e: HttpException): Exception
     {
-        val errorCode = if (e.responseCode == HttpStatus.UNAUTHORIZED.value()) {
+        val errorCode = if (e.responseCode == HttpStatus.UNAUTHORIZED.value())
+        {
             "githubTokenInsufficientPermissions"
-        }
-        else {
+        } else
+        {
             "githubTokenUnexpectedError"
         }
         return PackitAuthenticationException(errorCode, HttpStatus.valueOf(e.responseCode))
