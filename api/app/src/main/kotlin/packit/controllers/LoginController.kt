@@ -1,9 +1,11 @@
 package packit.controllers
 
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import packit.AppConfig
+import packit.exceptions.PackitException
 import packit.model.LoginWithPassword
 import packit.model.LoginWithToken
 import packit.service.BasicLoginService
@@ -25,7 +27,7 @@ class LoginController(
     {
         if (!config.authEnableGithubLogin)
         {
-            return ResponseEntity.badRequest().body(mapOf("error" to "Github login is not enabled"))
+            throw PackitException("githubLoginDisabled", HttpStatus.FORBIDDEN)
         }
         val token = gitApiLoginService.authenticateAndIssueToken(user)
         return ResponseEntity.ok(token)
@@ -39,7 +41,7 @@ class LoginController(
     {
         if (!config.authEnableBasicLogin)
         {
-            return ResponseEntity.badRequest().body(mapOf("error" to "Basic login is not enabled"))
+            throw PackitException("basicLoginDisabled", HttpStatus.FORBIDDEN)
         }
         val token = basicLoginService.authenticateAndIssueToken(user)
         return ResponseEntity.ok(token)

@@ -29,12 +29,12 @@ export const BasicUserAuthForm = () => {
   });
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const data = (await fetcher({
+      const data: { token: string } = await fetcher({
         url: `${appConfig.apiUrl()}/auth/login/basic`,
         body: values,
         method: "POST",
         noAuth: true
-      })) as { token: string };
+      });
 
       setUser(data.token);
       navigate("/");

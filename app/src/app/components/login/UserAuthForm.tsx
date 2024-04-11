@@ -21,7 +21,6 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     if (loggingOut) {
       setLoggingOut(false);
     }
-
     if (user?.token) {
       navigate("/");
     }

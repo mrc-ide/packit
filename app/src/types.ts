@@ -96,3 +96,12 @@ export interface PacketJwtPayload extends JwtPayload {
   userName: string;
   datetime: number;
 }
+
+export interface PacketErrorBody {
+  data: Record<string, unknown>;
+  error: {
+    detail: string;
+    error: string;
+  };
+  status: string;
+}

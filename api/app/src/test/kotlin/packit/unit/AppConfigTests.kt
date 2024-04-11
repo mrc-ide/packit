@@ -65,6 +65,7 @@ class AppConfigTests
         assertEquals(sut.authRedirectUri, redirectUrl)
         assertEquals(sut.outpackServerUrl, "outpackServerUrl")
         assertEquals(sut.authEnableGithubLogin, true)
+        assertEquals(sut.authEnableBasicLogin, false)
     }
 
     @Test

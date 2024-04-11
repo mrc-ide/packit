@@ -1,3 +1,4 @@
+import { PacketErrorBody } from "../types";
 import { getAuthHeader } from "./auth/getAuthHeader";
 import { ApiError } from "./errors";
 
@@ -9,7 +10,7 @@ export interface Fetcher {
   noAuth?: boolean;
 }
 
-export const fetcher = async ({ url, method = "GET", json = true, body, noAuth }: Fetcher) => {
+export const fetcher = async ({ url, method = "GET", body, noAuth }: Fetcher) => {
   const res = await fetch(url, {
     method,
     ...(body && { body: JSON.stringify(body) }),
@@ -19,13 +20,13 @@ export const fetcher = async ({ url, method = "GET", json = true, body, noAuth }
       ...(!noAuth && getAuthHeader())
     }
   });
+  const isJson = res.headers.get("content-type")?.includes("application/json");
+  const data = isJson ? await res.json() : null;
 
-  if (!res.ok) {
-    throw new ApiError("API error", res.status);
-  }
-
-  if (json) {
-    const data = await res.json();
+  if (res.ok) {
     return data;
   }
+
+  const packetErrorMessage = (data as PacketErrorBody)?.error?.detail;
+  throw new ApiError(packetErrorMessage, res.status);
 };
