@@ -55,7 +55,7 @@ class BasicLoginServiceTest
         val sut = BasicLoginService(mockIssuer, mockAuthenticationManager)
 
         val ex = assertThrows<PackitException> { sut.authenticateAndIssueToken(LoginWithPassword("", "")) }
-        assertEquals("Empty user details", ex.key)
+        assertEquals("emptyCredentials", ex.key)
         assertEquals(HttpStatus.BAD_REQUEST, ex.httpStatus)
     }
 }

@@ -1,10 +1,12 @@
 package packit.unit.controllers
 
+import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.springframework.http.HttpStatus
 import packit.AppConfig
 import packit.controllers.LoginController
+import packit.exceptions.PackitException
 import packit.model.LoginWithPassword
 import packit.model.LoginWithToken
 import packit.service.BasicLoginService
@@ -36,7 +38,7 @@ class LoginControllerTest
     }
 
     @Test
-    fun `returns bad request if github login is not enabled`()
+    fun `throws packit exception  if github login is not enabled`()
     {
         val request = LoginWithToken("fakeToken")
 
@@ -46,11 +48,11 @@ class LoginControllerTest
 
         val sut = LoginController(mock(), mock(), mockAppConfig)
 
-        val result = sut.loginWithGithub(request)
+        val ex = assertThrows<PackitException> {
+            sut.loginWithGithub(request)
+        }
 
-        assertEquals(result.statusCode, HttpStatus.BAD_REQUEST)
-
-        assertEquals(result.body, mapOf("error" to "Github login is not enabled"))
+        assertEquals(ex.httpStatus, HttpStatus.FORBIDDEN)
     }
 
     @Test
@@ -75,7 +77,7 @@ class LoginControllerTest
     }
 
     @Test
-    fun `returns bad request if basic login is not enabled`()
+    fun `throws packit exception if basic login is not enabled`()
     {
         val request = LoginWithPassword("test@email.com", "password")
         val mockAppConfig = mock<AppConfig> {
@@ -84,10 +86,11 @@ class LoginControllerTest
 
         val sut = LoginController(mock(), mock(), mockAppConfig)
 
-        val result = sut.loginBasic(request)
+        val ex = assertThrows<PackitException> {
+            sut.loginBasic(request)
+        }
 
-        assertEquals(result.statusCode, HttpStatus.BAD_REQUEST)
-        assertEquals(result.body, mapOf("error" to "Basic login is not enabled"))
+        assertEquals(ex.httpStatus, HttpStatus.FORBIDDEN)
     }
 
     @Test
