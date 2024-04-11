@@ -47,8 +47,6 @@ style:
     active: false
   ForbiddenComment:
     active: false
-  ReturnCount:
-    active: false
 
 naming:
   NoNameShadowing:

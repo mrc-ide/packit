@@ -37,7 +37,7 @@ class UserControllerTest
     {
         `when`(mockAuthentication.authorities).doReturn(mutableListOf(SimpleGrantedAuthority(Role.USER.toString())))
         val sut = UserController(mockConfig, mockUserService)
-        
+
         val ex = assertThrows<PackitException> {
             sut.createBasicUser(testUser, mockAuthentication)
         }
@@ -57,7 +57,6 @@ class UserControllerTest
         assertEquals(ex.httpStatus, HttpStatus.FORBIDDEN)
         assertEquals(ex.key, "basicLoginDisabled")
     }
-
 
     @Test
     fun `createBasicUser returns ok if user is created`()

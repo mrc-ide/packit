@@ -54,7 +54,7 @@ class BaseUserService(
         val existingUser = userRepository.findByUsername(createBasicUser.email)
         if (existingUser != null)
         {
-            throw PackitException("userAlreadyExists", HttpStatus.BAD_REQUEST);
+            throw PackitException("userAlreadyExists", HttpStatus.BAD_REQUEST)
         }
 
         val foundUserGroups = getFoundUserGroups(createBasicUser)
