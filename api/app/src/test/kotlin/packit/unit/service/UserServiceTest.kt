@@ -7,7 +7,9 @@ import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
+import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.password.PasswordEncoder
+import packit.exceptions.PackitException
 import packit.model.CreateBasicUser
 import packit.model.User
 import packit.model.UserGroup
@@ -99,9 +101,10 @@ class UserServiceTest
         `when`(mockUserGroupRepository.findAll()).doReturn(listOf(userGroups[0]))
         val service = BaseUserService(mockUserRepository, mockUserGroupRepository, passwordEncoder)
 
-        val exception = assertThrows<IllegalArgumentException> { service.getFoundUserGroups(createBasicUser) }
+        val exception = assertThrows<PackitException> { service.getFoundUserGroups(createBasicUser) }
 
-        assertEquals(exception.message, "Invalid roles provided")
+        assertEquals(exception.key, "invalidRolesProvided")
+        assertEquals(exception.httpStatus, HttpStatus.BAD_REQUEST)
     }
 
     @Test
@@ -120,8 +123,11 @@ class UserServiceTest
         `when`(mockUserRepository.findByUsername(createBasicUser.email)).doReturn(mock())
         val service = BaseUserService(mockUserRepository, mockUserGroupRepository, passwordEncoder)
 
-        assertThrows<java.lang.IllegalArgumentException> { service.createBasicUser(createBasicUser) }
+        val ex = assertThrows<PackitException> { service.createBasicUser(createBasicUser) }
+
         verify(mockUserRepository).findByUsername(createBasicUser.email)
+        assertEquals(ex.key, "userAlreadyExists")
+        assertEquals(ex.httpStatus, HttpStatus.BAD_REQUEST)
     }
 
     @Test
@@ -138,15 +144,15 @@ class UserServiceTest
         verify(passwordEncoder).encode(createBasicUser.password)
         verify(mockUserRepository).save(
             argThat {
-            this.username == createBasicUser.email
-            this.password == "encodedPassword"
-            !this.disabled
-            this.displayName == createBasicUser.displayName
-            this.email == createBasicUser.email
-            this.userSource == "basic"
-            this.lastLoggedIn == Instant.now().toString()
-            this.userGroups == userGroups
-        }
+                this.username == createBasicUser.email
+                this.password == "encodedPassword"
+                !this.disabled
+                this.displayName == createBasicUser.displayName
+                this.email == createBasicUser.email
+                this.userSource == "basic"
+                this.lastLoggedIn == Instant.now().toString()
+                this.userGroups == userGroups
+            }
         )
     }
 }

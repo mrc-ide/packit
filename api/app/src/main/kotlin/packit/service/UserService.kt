@@ -1,7 +1,9 @@
 package packit.service
 
+import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import packit.exceptions.PackitException
 import packit.model.CreateBasicUser
 import packit.model.User
 import packit.model.UserGroup
@@ -50,7 +52,10 @@ class BaseUserService(
     override fun createBasicUser(createBasicUser: CreateBasicUser)
     {
         val existingUser = userRepository.findByUsername(createBasicUser.email)
-        require(existingUser == null) { "username already exists" }
+        if (existingUser != null)
+        {
+            throw PackitException("userAlreadyExists", HttpStatus.BAD_REQUEST);
+        }
 
         val foundUserGroups = getFoundUserGroups(createBasicUser)
         val newUser = User(
@@ -71,7 +76,10 @@ class BaseUserService(
         val allUserGroups = userGroupRepository.findAll()
         val foundUserRoles = createBasicUser.userRoles.mapNotNull { role -> allUserGroups.find { it.role == role } }
 
-        require(foundUserRoles.size == createBasicUser.userRoles.size) { "Invalid roles provided" }
+        if (foundUserRoles.size != createBasicUser.userRoles.size)
+        {
+            throw PackitException("invalidRolesProvided", HttpStatus.BAD_REQUEST)
+        }
 
         return foundUserRoles
     }

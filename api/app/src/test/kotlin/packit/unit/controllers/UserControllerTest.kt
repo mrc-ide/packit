@@ -1,5 +1,6 @@
 package packit.unit.controllers
 
+import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -8,6 +9,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import packit.AppConfig
 import packit.controllers.UserController
+import packit.exceptions.PackitException
 import packit.model.CreateBasicUser
 import packit.security.Role
 import packit.service.UserService
@@ -35,36 +37,27 @@ class UserControllerTest
     {
         `when`(mockAuthentication.authorities).doReturn(mutableListOf(SimpleGrantedAuthority(Role.USER.toString())))
         val sut = UserController(mockConfig, mockUserService)
-
-        val result = sut.createBasicUser(testUser, mockAuthentication)
-
-        assertEquals(result.statusCode, HttpStatus.FORBIDDEN)
-        assertEquals(result.body, mapOf("error" to "Only admins can create users"))
+        
+        val ex = assertThrows<PackitException> {
+            sut.createBasicUser(testUser, mockAuthentication)
+        }
+        assertEquals(ex.httpStatus, HttpStatus.FORBIDDEN)
+        assertEquals(ex.key, "insufficientPrivileges")
     }
 
     @Test
-    fun `createBasicUser returns bad request if basic login is not enabled`()
+    fun `createBasicUser throws packit exception if basic login is not enabled`()
     {
         `when`(mockConfig.authEnableBasicLogin).doReturn(false)
         val sut = UserController(mockConfig, mockUserService)
 
-        val result = sut.createBasicUser(testUser, mockAuthentication)
-
-        assertEquals(result.statusCode, HttpStatus.BAD_REQUEST)
-        assertEquals(result.body, mapOf("error" to "Basic login is not enabled"))
+        val ex = assertThrows<PackitException> {
+            sut.createBasicUser(testUser, mockAuthentication)
+        }
+        assertEquals(ex.httpStatus, HttpStatus.FORBIDDEN)
+        assertEquals(ex.key, "basicLoginDisabled")
     }
 
-    @Test
-    fun `createBasicUser returns bad request if user creation fails`()
-    {
-        `when`(mockUserService.createBasicUser(testUser)).thenThrow(IllegalArgumentException("User already exists"))
-        val sut = UserController(mockConfig, mockUserService)
-
-        val result = sut.createBasicUser(testUser, mockAuthentication)
-
-        assertEquals(result.statusCode, HttpStatus.BAD_REQUEST)
-        assertEquals(result.body, mapOf("error" to "User already exists"))
-    }
 
     @Test
     fun `createBasicUser returns ok if user is created`()
