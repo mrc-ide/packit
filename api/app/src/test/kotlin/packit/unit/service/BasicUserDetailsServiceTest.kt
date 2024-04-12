@@ -2,11 +2,9 @@ package packit.unit.service
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import org.springframework.security.core.userdetails.UserDetails
-import packit.exceptions.PackitException
 import packit.model.User
 import packit.service.BasicUserDetailsService
 import packit.service.UserService
@@ -40,5 +38,4 @@ class BasicUserDetailsServiceTest
         assertEquals(mockUser.password, userDetails.password)
         assertTrue(userDetails.isEnabled)
     }
-    
 }
