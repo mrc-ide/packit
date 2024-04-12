@@ -1,3 +1,5 @@
+package packit.unit.service
+
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.assertThrows
@@ -6,14 +8,14 @@ import org.mockito.kotlin.whenever
 import org.springframework.security.core.userdetails.UserDetails
 import packit.exceptions.PackitException
 import packit.model.User
-import packit.repository.UserRepository
 import packit.service.BasicUserDetailsService
+import packit.service.UserService
 import kotlin.test.Test
 
 class BasicUserDetailsServiceTest
 {
-    private val mockUserRepository = mock<UserRepository>()
-    private val service = BasicUserDetailsService(mockUserRepository)
+    private val mockUserService = mock<UserService>()
+    private val service = BasicUserDetailsService(mockUserService)
     private val mockUser = User(
         "username",
         mutableListOf(),
@@ -29,7 +31,7 @@ class BasicUserDetailsServiceTest
     @Test
     fun `loadUserByUsername returns correct UserDetails for valid username`()
     {
-        whenever(mockUserRepository.findByUsername(mockUser.username)).thenReturn(
+        whenever(mockUserService.getUserForLogin(mockUser.username)).thenReturn(
             mockUser
         )
         val userDetails: UserDetails = service.loadUserByUsername(mockUser.username)
@@ -38,14 +40,5 @@ class BasicUserDetailsServiceTest
         assertEquals(mockUser.password, userDetails.password)
         assertTrue(userDetails.isEnabled)
     }
-
-    @Test
-    fun `loadUserByUsername throws PacketException if repository does not return user`()
-    {
-        val invalidUsername = "invalid@example.com"
-        whenever(mockUserRepository.findByUsername(invalidUsername)).thenReturn(null)
-        assertThrows<PackitException> {
-            service.loadUserByUsername(invalidUsername)
-        }
-    }
+    
 }

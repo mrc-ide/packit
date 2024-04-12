@@ -18,6 +18,8 @@ interface UserService
     fun createBasicUser(createBasicUser: CreateBasicUser)
     fun getUserRoleUserGroup(): UserGroup
     fun getAdminRoleUserGroup(): UserGroup
+    fun updateUserLastLoggedIn(user: User, lastLoggedIn: String): User
+    fun getUserForLogin(username: String): User
 }
 
 @Service
@@ -32,7 +34,7 @@ class BaseUserService(
         val user = userRepository.findByUsername(username)
         if (user != null)
         {
-            return user
+            return updateUserLastLoggedIn(user, Instant.now().toString())
         }
         val userRoleUserGroup = getUserRoleUserGroup()
         val newUser = User(
@@ -86,4 +88,15 @@ class BaseUserService(
 
     override fun getUserRoleUserGroup() = userGroupRepository.findByRole(Role.USER)!!
     override fun getAdminRoleUserGroup() = userGroupRepository.findByRole(Role.ADMIN)!!
+    override fun updateUserLastLoggedIn(user: User, lastLoggedIn: String): User
+    {
+        user.lastLoggedIn = lastLoggedIn
+        return userRepository.save(user)
+    }
+
+    override fun getUserForLogin(username: String): User
+    {
+        val user = userRepository.findByUsername(username) ?: throw PackitException("userNotFound")
+        return updateUserLastLoggedIn(user, Instant.now().toString())
+    }
 }

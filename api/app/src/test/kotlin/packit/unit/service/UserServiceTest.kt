@@ -18,6 +18,7 @@ import packit.repository.UserRepository
 import packit.security.Role
 import packit.service.BaseUserService
 import java.time.Instant
+import java.time.LocalDate
 import kotlin.test.assertEquals
 
 class UserServiceTest
@@ -35,6 +36,15 @@ class UserServiceTest
         password = "password",
         displayName = "displayName",
         userRoles = listOf(Role.USER, Role.ADMIN)
+    )
+    private val mockUser = User(
+        username = "username",
+        displayName = "displayName",
+        disabled = false,
+        email = "email",
+        userSource = "github",
+        lastLoggedIn = LocalDate.parse("2018-12-12").toString(),
+        userGroups = mutableListOf(userGroups[0]),
     )
 
     @Test
@@ -58,17 +68,17 @@ class UserServiceTest
     }
 
     @Test
-    fun `getAdminRoleUserGroup returns user from repository if found`()
+    fun `findByUsername returns user from repository if found & updates latest time`()
     {
-        val existingUser = "username"
-        val mockUser = mock<User>()
-        `when`(mockUserRepository.findByUsername(existingUser)).doReturn(mockUser)
+        `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
+        `when`(mockUserRepository.save(mockUser)).doReturn(mockUser)
         val service = BaseUserService(mockUserRepository, mockUserGroupRepository, passwordEncoder)
 
         val user = service.saveUserFromGithub("username", "displayName", "email")
 
         assertEquals(user, mockUser)
-        verify(mockUserRepository).findByUsername(existingUser)
+        verify(mockUserRepository).findByUsername(mockUser.username)
+        verify(mockUserRepository).save(argThat { this == mockUser })
     }
 
     @Test
@@ -87,12 +97,52 @@ class UserServiceTest
         `when`(mockUserRepository.save(newUser)).doReturn(newUser)
         val service = BaseUserService(mockUserRepository, mockUserGroupRepository, passwordEncoder)
 
-        val user = service.saveUserFromGithub(newUser.username, "displayName", "email")
+        val user = service.saveUserFromGithub(mockUser.username, "displayName", "email")
 
-        assertEquals(user.displayName, newUser.displayName)
+        assertEquals(user.displayName, mockUser.displayName)
         verify(mockUserGroupRepository).findByRole(Role.USER)
-        verify(mockUserRepository).findByUsername(newUser.username)
-        verify(mockUserRepository).save(argThat { this.username == newUser.username })
+        verify(mockUserRepository).findByUsername(mockUser.username)
+        verify(mockUserRepository).save(argThat { this.username == mockUser.username })
+    }
+
+    @Test
+    fun `updateUserLastLoggedIn updates lastLoggedIn field of user`()
+    {
+        mockUser.lastLoggedIn = LocalDate.parse("2018-12-12").toString()
+        `when`(mockUserRepository.save(mockUser)).doReturn(mockUser)
+        val lastLoggedIn = Instant.now().toString()
+        val service = BaseUserService(mockUserRepository, mockUserGroupRepository, passwordEncoder)
+
+        val updatedUser = service.updateUserLastLoggedIn(mockUser, lastLoggedIn)
+
+        assertEquals(updatedUser.lastLoggedIn, lastLoggedIn)
+        verify(mockUserRepository).save(mockUser)
+    }
+
+    @Test
+    fun `getUserForLogin gets user from repository & updates latest time`()
+    {
+        `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
+        `when`(mockUserRepository.save(mockUser)).doReturn(mockUser)
+        val service = BaseUserService(mockUserRepository, mockUserGroupRepository, passwordEncoder)
+
+        val user = service.getUserForLogin(mockUser.username)
+
+        assertEquals(user, mockUser)
+        verify(mockUserRepository).findByUsername(mockUser.username)
+        verify(mockUserRepository).save(argThat { this == mockUser })
+    }
+
+    @Test
+    fun `getUserForLogin throws exception if user not found`()
+    {
+        `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(null)
+        val service = BaseUserService(mockUserRepository, mockUserGroupRepository, passwordEncoder)
+
+        val ex = assertThrows<PackitException> { service.getUserForLogin(mockUser.username) }
+
+        assertEquals(ex.key, "userNotFound")
+        verify(mockUserRepository).findByUsername(mockUser.username)
     }
 
     @Test
