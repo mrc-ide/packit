@@ -1,6 +1,7 @@
 package packit.service
 
 import org.springframework.stereotype.Service
+import packit.exceptions.PackitException
 import packit.model.User
 import packit.model.UserGroup
 import packit.repository.UserGroupRepository
@@ -13,6 +14,8 @@ interface UserService
     fun saveUserFromGithub(username: String, displayName: String?, email: String?): User
     fun getUserRoleUserGroup(): UserGroup
     fun getAdminRoleUserGroup(): UserGroup
+    fun updateUserLastLoggedIn(user: User, lastLoggedIn: String): User
+    fun getUserForLogin(username: String): User
 }
 
 @Service
@@ -26,7 +29,7 @@ class BaseUserService(
         val user = userRepository.findByUsername(username)
         if (user != null)
         {
-            return user
+            return updateUserLastLoggedIn(user, Instant.now().toString())
         }
 
         val userRoleUserGroup = getUserRoleUserGroup()
@@ -46,4 +49,15 @@ class BaseUserService(
 
     override fun getUserRoleUserGroup() = userGroupRepository.findByRole(Role.USER)!!
     override fun getAdminRoleUserGroup() = userGroupRepository.findByRole(Role.ADMIN)!!
+    override fun updateUserLastLoggedIn(user: User, lastLoggedIn: String): User
+    {
+        user.lastLoggedIn = lastLoggedIn
+        return userRepository.save(user)
+    }
+
+    override fun getUserForLogin(username: String): User
+    {
+        val user = userRepository.findByUsername(username) ?: throw PackitException("userNotFound")
+        return updateUserLastLoggedIn(user, Instant.now().toString())
+    }
 }

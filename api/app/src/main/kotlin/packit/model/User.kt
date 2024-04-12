@@ -21,5 +21,5 @@ class User(
     val displayName: String?,
     val email: String? = null,
     val password: String? = null,
-    val lastLoggedIn: String? = null,
+    var lastLoggedIn: String? = null,
 )
