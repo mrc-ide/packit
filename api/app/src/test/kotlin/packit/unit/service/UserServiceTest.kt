@@ -41,7 +41,7 @@ class UserServiceTest
     }
 
     @Test
-    fun `getAdminRoleUserGroup returns user from repository if found`()
+    fun `findByUsername returns user from repository if found`()
     {
         val existingUser = "username"
         val mockUser = mock<User>()
