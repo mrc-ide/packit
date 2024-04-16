@@ -96,7 +96,8 @@ class BaseUserService(
 
     override fun getUserForLogin(username: String): User
     {
-        val user = userRepository.findByUsername(username) ?: throw PackitException("userNotFound")
+        val user =
+            userRepository.findByUsername(username) ?: throw PackitException("userNotFound", HttpStatus.UNAUTHORIZED)
         return updateUserLastLoggedIn(user, Instant.now().toString())
     }
 }

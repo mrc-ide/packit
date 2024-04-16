@@ -44,7 +44,7 @@ class LoginControllerTestGithub : IntegrationTest()
     }
 
     @Test
-    fun `throws forbidden exception when basic login is disabled`()
+    fun `returns forbidden when basic login is disabled`()
     {
         val result =
             LoginTestHelpers.getBasicLoginResponse(LoginWithPassword("email@email.com", "password"), restTemplate)
@@ -67,10 +67,28 @@ class LoginControllerTestBasic : IntegrationTest()
     }
 
     @Test
-    fun `throws forbidden exception when github login is disabled`()
+    fun `returns forbidden when github login is disabled`()
     {
         val result = LoginTestHelpers.getGithubLoginResponse(LoginWithToken("token"), restTemplate)
         assertForbidden(result)
+    }
+
+    @Test
+    fun `returns unauthorized when user user is not found`()
+    {
+        val result =
+            LoginTestHelpers.getBasicLoginResponse(LoginWithPassword("notexists@example.com", "password"), restTemplate)
+
+        assertUnauthorized(result)
+    }
+
+    @Test
+    fun `returns unauthorized when password is incorrect`()
+    {
+        val result =
+            LoginTestHelpers.getBasicLoginResponse(LoginWithPassword("admin@example.com", "notcorrect"), restTemplate)
+
+        assertUnauthorized(result)
     }
 }
 
