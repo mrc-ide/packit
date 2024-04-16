@@ -92,35 +92,30 @@ class LoginControllerTestBasic : IntegrationTest()
     }
 }
 
-class LoginTestHelpers
+object LoginTestHelper
 {
-    companion object
+    fun getBasicLoginResponse(body: LoginWithPassword, restTemplate: TestRestTemplate): ResponseEntity<String>
     {
-        fun getBasicLoginResponse(body: LoginWithPassword, restTemplate: TestRestTemplate): ResponseEntity<String>
-        {
-            val jsonBody = ObjectMapper().writeValueAsString(body)
-            return getLoginResponse(jsonBody, restTemplate, "/auth/login/basic")
-        }
-
-        fun getGithubLoginResponse(body: LoginWithToken, restTemplate: TestRestTemplate): ResponseEntity<String>
-        {
-            val jsonBody = ObjectMapper().writeValueAsString(body)
-            return getLoginResponse(jsonBody, restTemplate, "/auth/login/api")
-        }
-
-        private fun getLoginResponse(
-            jsonBody: String,
-            restTemplate: TestRestTemplate,
-            url: String
-        ): ResponseEntity<String>
-        {
-            val headers = HttpHeaders()
-            headers.contentType = MediaType.APPLICATION_JSON
-
-            val postEntity = HttpEntity(jsonBody, headers)
-            return restTemplate.postForEntity<String>(url, postEntity, String::class.java)
-        }
+        val jsonBody = ObjectMapper().writeValueAsString(body)
+        return getLoginResponse(jsonBody, restTemplate, "/auth/login/basic")
     }
 
-}
+    fun getGithubLoginResponse(body: LoginWithToken, restTemplate: TestRestTemplate): ResponseEntity<String>
+    {
+        val jsonBody = ObjectMapper().writeValueAsString(body)
+        return getLoginResponse(jsonBody, restTemplate, "/auth/login/api")
+    }
 
+    private fun getLoginResponse(
+        jsonBody: String,
+        restTemplate: TestRestTemplate,
+        url: String
+    ): ResponseEntity<String>
+    {
+        val headers = HttpHeaders()
+        headers.contentType = MediaType.APPLICATION_JSON
+
+        val postEntity = HttpEntity(jsonBody, headers)
+        return restTemplate.postForEntity<String>(url, postEntity, String::class.java)
+    }
+}
