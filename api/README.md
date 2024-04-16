@@ -21,8 +21,8 @@ There are two ways to start the app:
    GITHUB_CLIENT_SECRET with the details of an OAuth app which you can use to log in. You can use the details held in
    the
    mrc vault at `VAULT:secret/auth/githubclient/id:value` and `VAULT:secret/auth/githubclient/secret:value`.
-2. The other configuration is to use basic auth. This is enabled by setting `auth.method=basic` in `config.properties`.
-3. No auth mode. This is enabled by setting `auth.enabled=false` in `config.properties`.
+2. The other configuration is to use basic auth. This is enabled by setting `auth.method=basic` in `appliation.properties`.
+3. No auth mode. This is enabled by setting `auth.enabled=false` in `appliation.properties`.
    Run up app on command line from the /api directory
    `./scripts/run-dev`
 

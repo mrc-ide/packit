@@ -17,10 +17,10 @@ Authentication for API access uses a bespoke approach where the `LoginController
 `GithubAPILoginService` class.
 
 ### Auth configuration in Packit
-Configuration relevant to auth can be found in both `config.properties` (custom Packit config) and `application.properties`
+Configuration relevant to auth can be found in both `application.properties` (custom Packit config) and `application.properties`
 (Spring Boot configuration). Development versions of both files can be found in `api/app/src/main/resources`.
 
-Relevant `config.properties` values:
+Relevant `application.properties` values:
 - `auth.basic.secret` Secret used to encode and decode JWT tokens
 - `auth.oauth2.redirect.url` The front end API Packit url to redirect to on successful user authentication - this should
 be of form `[FRONT END BASE URL}/redirect`
@@ -52,7 +52,7 @@ Update `api/app/src/main/resources/application.properties` by setting the values
 
 Be sure not to push these config changes!
 
-Make sure you also have `auth.enabled` and `auth.enableGithubLogin` set to `true` in `config.properties`.
+Make sure you also have `auth.enabled` and `auth.enableGithubLogin` set to `true` in `application.properties`.
 
 
 ### WebSecurityConfig
