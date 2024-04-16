@@ -29,7 +29,7 @@ class LoginControllerTestGithub : IntegrationTest()
         val token = env.getProperty("GITHUB_ACCESS_TOKEN")!!
 
         assertThat(token.count()).isEqualTo(40) // sanity check access token correctly saved in environment
-        val result = LoginTestHelpers.getGithubLoginResponse(LoginWithToken(token), restTemplate)
+        val result = LoginTestHelper.getGithubLoginResponse(LoginWithToken(token), restTemplate)
 
         assertSuccess(result)
         val packitToken = ObjectMapper().readTree(result.body).get("token").asText()
@@ -39,7 +39,7 @@ class LoginControllerTestGithub : IntegrationTest()
     @Test
     fun `can receive 401 response when request login to API with invalid token`()
     {
-        val result = LoginTestHelpers.getGithubLoginResponse(LoginWithToken("badtoken"), restTemplate)
+        val result = LoginTestHelper.getGithubLoginResponse(LoginWithToken("badtoken"), restTemplate)
         assertUnauthorized(result)
     }
 
@@ -47,7 +47,7 @@ class LoginControllerTestGithub : IntegrationTest()
     fun `returns forbidden when basic login is disabled`()
     {
         val result =
-            LoginTestHelpers.getBasicLoginResponse(LoginWithPassword("email@email.com", "password"), restTemplate)
+            LoginTestHelper.getBasicLoginResponse(LoginWithPassword("email@email.com", "password"), restTemplate)
         assertForbidden(result)
     }
 }
@@ -60,7 +60,7 @@ class LoginControllerTestBasic : IntegrationTest()
     fun `returns token on successful basic login`()
     {
         val result =
-            LoginTestHelpers.getBasicLoginResponse(LoginWithPassword("admin@example.com", "password"), restTemplate)
+            LoginTestHelper.getBasicLoginResponse(LoginWithPassword("admin@example.com", "password"), restTemplate)
 
         assertEquals(result.statusCode, HttpStatus.OK)
         assertThat(result.body).contains("token")
@@ -69,7 +69,7 @@ class LoginControllerTestBasic : IntegrationTest()
     @Test
     fun `returns forbidden when github login is disabled`()
     {
-        val result = LoginTestHelpers.getGithubLoginResponse(LoginWithToken("token"), restTemplate)
+        val result = LoginTestHelper.getGithubLoginResponse(LoginWithToken("token"), restTemplate)
         assertForbidden(result)
     }
 
@@ -77,7 +77,7 @@ class LoginControllerTestBasic : IntegrationTest()
     fun `returns unauthorized when user user is not found`()
     {
         val result =
-            LoginTestHelpers.getBasicLoginResponse(LoginWithPassword("notexists@example.com", "password"), restTemplate)
+            LoginTestHelper.getBasicLoginResponse(LoginWithPassword("notexists@example.com", "password"), restTemplate)
 
         assertUnauthorized(result)
     }
@@ -86,7 +86,7 @@ class LoginControllerTestBasic : IntegrationTest()
     fun `returns unauthorized when password is incorrect`()
     {
         val result =
-            LoginTestHelpers.getBasicLoginResponse(LoginWithPassword("admin@example.com", "notcorrect"), restTemplate)
+            LoginTestHelper.getBasicLoginResponse(LoginWithPassword("admin@example.com", "notcorrect"), restTemplate)
 
         assertUnauthorized(result)
     }
