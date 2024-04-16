@@ -9,7 +9,3 @@ docker run --rm -d \
  --name packit-db \
  -p 5432:5432 \
  "$TAG_BRANCH"
-
-# Need to give the database a little time to initialise before we can run the migration
-docker exec packit-db wait-for-db
-docker exec packit-db psql -U packituser -d packit -a -f /packit-schema/schema.sql
