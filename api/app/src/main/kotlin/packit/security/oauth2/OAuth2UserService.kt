@@ -7,12 +7,16 @@ import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.stereotype.Component
 import packit.clients.GithubUserClient
 import packit.exceptions.PackitException
-import packit.security.Role
 import packit.security.profile.PackitOAuth2User
 import packit.security.profile.UserPrincipal
+import packit.service.UserService
 
 @Component
-class OAuth2UserService(private val githubUserClient: GithubUserClient) : DefaultOAuth2UserService()
+class OAuth2UserService(
+    private val githubUserClient: GithubUserClient,
+    val userService: UserService
+) :
+    DefaultOAuth2UserService()
 {
     override fun loadUser(userRequest: OAuth2UserRequest): OAuth2User
     {
@@ -32,12 +36,12 @@ class OAuth2UserService(private val githubUserClient: GithubUserClient) : Defaul
             throw PackitException("Username not found from Github provider")
         }
 
-        // TODO check if user exists, if not, save user email to database
+        var user = userService.saveUserFromGithub(githubInfo.userName(), githubInfo.displayName(), githubInfo.email())
 
         val principal = UserPrincipal(
-            githubInfo.userName(),
-            githubInfo.displayName(),
-            AuthorityUtils.createAuthorityList(listOf(Role.USER).toString()),
+            user.username,
+            user.displayName,
+            AuthorityUtils.createAuthorityList(user.userGroups.map { it.role }.toString()),
             oAuth2User.attributes
         )
         return PackitOAuth2User(principal)
