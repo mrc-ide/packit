@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -e
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --email)
+            ADMIN_EMAIL="$2"
+            shift 2
+            ;;
+        --password)
+            ADMIN_PASSWORD_ENCODED="$2"
+            shift 2
+            ;;
+        --uuid)
+            ADMIN_UUID="$2"
+            shift 2
+            ;;
+        *)
+            echo "Invalid argument: $1"
+            exit 1
+            ;;
+    esac
+done
+
+psql -U packituser -d packit -c \
+"INSERT INTO \"user\" (\"id\", \"username\", \"display_name\", \"password\", \"email\", \"disabled\", \"user_source\", \"last_logged_in\") 
+VALUES ('$ADMIN_UUID', '$ADMIN_EMAIL', 'Super Admin', '$ADMIN_PASSWORD_ENCODED', '$ADMIN_EMAIL', FALSE, 'basic', NOW());
+INSERT INTO user_group_user (\"user_id\", \"user_group_id\") values ('$ADMIN_UUID', 1)"
