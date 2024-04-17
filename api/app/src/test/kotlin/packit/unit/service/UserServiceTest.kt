@@ -146,12 +146,12 @@ class UserServiceTest
     }
 
     @Test
-    fun ` throws error if CreateBasicUser roles dont match db`()
+    fun `throws error if CreateBasicUser roles dont match db`()
     {
         `when`(mockUserGroupRepository.findAll()).doReturn(listOf(userGroups[0]))
         val service = BaseUserService(mockUserRepository, mockUserGroupRepository, passwordEncoder)
 
-        val exception = assertThrows<PackitException> { service.getFoundUserGroups(createBasicUser) }
+        val exception = assertThrows<PackitException> { service.getMatchedUserGroups(createBasicUser) }
 
         assertEquals(exception.key, "invalidRolesProvided")
         assertEquals(exception.httpStatus, HttpStatus.BAD_REQUEST)
@@ -162,7 +162,7 @@ class UserServiceTest
     {
         val service = BaseUserService(mockUserRepository, mockUserGroupRepository, passwordEncoder)
 
-        val foundUserGroups = service.getFoundUserGroups(createBasicUser)
+        val foundUserGroups = service.getMatchedUserGroups(createBasicUser)
 
         assertEquals(foundUserGroups, userGroups)
     }
@@ -200,7 +200,7 @@ class UserServiceTest
                 this.displayName == createBasicUser.displayName
                 this.email == createBasicUser.email
                 this.userSource == "basic"
-                this.lastLoggedIn == Instant.now().toString()
+                this.lastLoggedIn == null
                 this.userGroups == userGroups
             }
         )

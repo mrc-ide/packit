@@ -59,21 +59,20 @@ class BaseUserService(
             throw PackitException("userAlreadyExists", HttpStatus.BAD_REQUEST)
         }
 
-        val foundUserGroups = getFoundUserGroups(createBasicUser)
+        val foundUserGroups = getMatchedUserGroups(createBasicUser)
         val newUser = User(
             username = createBasicUser.email,
             displayName = createBasicUser.displayName,
             disabled = false,
             email = createBasicUser.email,
             userSource = "basic",
-            lastLoggedIn = Instant.now().toString(),
             userGroups = foundUserGroups.toMutableList(),
             password = passwordEncoder.encode(createBasicUser.password)
         )
         userRepository.save(newUser)
     }
 
-    internal fun getFoundUserGroups(createBasicUser: CreateBasicUser): List<UserGroup>
+    internal fun getMatchedUserGroups(createBasicUser: CreateBasicUser): List<UserGroup>
     {
         val allUserGroups = userGroupRepository.findAll()
         val foundUserRoles = createBasicUser.userRoles.mapNotNull { role -> allUserGroups.find { it.role == role } }
