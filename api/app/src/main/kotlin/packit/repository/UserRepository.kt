@@ -9,6 +9,8 @@ import java.util.*
 interface UserRepository : JpaRepository<User, UUID>
 {
     fun findByUsername(username: String): User?
+
+    fun deleteByEmail(email: String)
     fun findByEmail(email: String): User?
     fun existsByUsername(username: String): Boolean
     fun existsByEmail(email: String): Boolean

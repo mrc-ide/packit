@@ -1,18 +1,24 @@
 package packit.integration.controllers
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.jdbc.Sql
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
 import packit.model.CreateBasicUser
+import packit.repository.UserRepository
 import kotlin.test.Test
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 @TestPropertySource(properties = ["auth.method=basic"])
-@Sql("/test-users.sql")
+@Sql("/delete-test-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class UserControllerTest : IntegrationTest()
 {
+    @Autowired
+    lateinit var userRepository: UserRepository
+
     private val testCreateUserBody = ObjectMapper().writeValueAsString(
         CreateBasicUser(
             email = "random@email",
@@ -32,6 +38,7 @@ class UserControllerTest : IntegrationTest()
         )
 
         assertSuccess(result)
+        assertNotNull(userRepository.findByUsername("random@email"))
     }
 
     @Test

@@ -4,8 +4,17 @@ set -e
 HERE=$(dirname $0)
 . $HERE/common
 
-docker run --rm -d \
-  --network=host \
-  --name packit-api \
-  -e PACKIT_API_ROOT=http://localhost:8080 \
-  "$TAG_BRANCH"
+if [ "$1" == "basicauth" ]; then
+  docker run --rm -d \
+    --network=host \
+    --name packit-api \
+    -e PACKIT_AUTH_METHOD=basic \
+    "$TAG_BRANCH"
+
+else 
+  docker run --rm -d \
+    --network=host \
+    --name packit-api \
+    -e PACKIT_API_ROOT=http://localhost:8080 \
+    "$TAG_BRANCH"
+fi

@@ -53,7 +53,8 @@ class LoginControllerTestGithub : IntegrationTest()
 }
 
 @TestPropertySource(properties = ["auth.method=basic"])
-@Sql("/test-users.sql")
+@Sql("/set-test-users.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql("/delete-test-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class LoginControllerTestBasic : IntegrationTest()
 {
     @Test
