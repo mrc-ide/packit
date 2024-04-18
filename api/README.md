@@ -16,9 +16,9 @@ to start database and `outpack_server` instances.
 
 There are two ways to start the app:
 
-1. The default dev configuration enables Github auth, but you will need to set environment variables GITHUB_CLIENT_ID
+1. The default dev configuration enables Github auth, but you will need to set environment variables PACKIT_GITHUB_CLIENT_ID
    and
-   GITHUB_CLIENT_SECRET with the details of an OAuth app which you can use to log in. You can use the details held in
+   PACKIT_GITHUB_CLIENT_SECRET with the details of an OAuth app which you can use to log in. You can use the details held in
    the
    mrc vault at `VAULT:secret/auth/githubclient/id:value` and `VAULT:secret/auth/githubclient/secret:value`.
 2. The other configuration is to use basic auth. This is enabled by setting `auth.method=basic` in `application.properties`.
