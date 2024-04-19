@@ -1,7 +1,10 @@
 package packit.service
 
+import org.springframework.http.HttpStatus
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
+import packit.model.CreateBasicUser
 import packit.model.User
 import packit.model.UserGroup
 import packit.repository.UserGroupRepository
@@ -12,6 +15,7 @@ import java.time.Instant
 interface UserService
 {
     fun saveUserFromGithub(username: String, displayName: String?, email: String?): User
+    fun createBasicUser(createBasicUser: CreateBasicUser)
     fun getUserRoleUserGroup(): UserGroup
     fun getAdminRoleUserGroup(): UserGroup
     fun updateUserLastLoggedIn(user: User, lastLoggedIn: String): User
@@ -21,7 +25,8 @@ interface UserService
 @Service
 class BaseUserService(
     private val userRepository: UserRepository,
-    private val userGroupRepository: UserGroupRepository
+    private val userGroupRepository: UserGroupRepository,
+    private val passwordEncoder: PasswordEncoder
 ) : UserService
 {
     override fun saveUserFromGithub(username: String, displayName: String?, email: String?): User
@@ -31,7 +36,6 @@ class BaseUserService(
         {
             return updateUserLastLoggedIn(user, Instant.now().toString())
         }
-
         val userRoleUserGroup = getUserRoleUserGroup()
         val newUser = User(
             username = username,
@@ -45,6 +49,40 @@ class BaseUserService(
         userRepository.save(newUser)
 
         return newUser
+    }
+
+    override fun createBasicUser(createBasicUser: CreateBasicUser)
+    {
+        val existingUser = userRepository.findByUsername(createBasicUser.email)
+        if (existingUser != null)
+        {
+            throw PackitException("userAlreadyExists", HttpStatus.BAD_REQUEST)
+        }
+
+        val foundUserGroups = getMatchedUserGroups(createBasicUser)
+        val newUser = User(
+            username = createBasicUser.email,
+            displayName = createBasicUser.displayName,
+            disabled = false,
+            email = createBasicUser.email,
+            userSource = "basic",
+            userGroups = foundUserGroups.toMutableList(),
+            password = passwordEncoder.encode(createBasicUser.password)
+        )
+        userRepository.save(newUser)
+    }
+
+    internal fun getMatchedUserGroups(createBasicUser: CreateBasicUser): List<UserGroup>
+    {
+        val allUserGroups = userGroupRepository.findAll()
+        val foundUserRoles = createBasicUser.userRoles.mapNotNull { role -> allUserGroups.find { it.role == role } }
+
+        if (foundUserRoles.size != createBasicUser.userRoles.size)
+        {
+            throw PackitException("invalidRolesProvided", HttpStatus.BAD_REQUEST)
+        }
+
+        return foundUserRoles
     }
 
     override fun getUserRoleUserGroup() = userGroupRepository.findByRole(Role.USER)!!

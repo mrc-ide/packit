@@ -3,6 +3,7 @@ package packit.unit
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import packit.AppConfig
 import packit.PackitProperties
 import java.io.File
@@ -65,5 +66,16 @@ class AppConfigTests
         assertEquals(sut.outpackServerUrl, "outpackServerUrl")
         assertEquals(sut.authEnableGithubLogin, true)
         assertEquals(sut.authEnableBasicLogin, false)
+    }
+
+    @Test
+    fun `passwordEncoder returns instance of BCryptPasswordEncoder`()
+    {
+        val props = PackitProperties()
+        props["auth.expiryDays"] = 1L
+
+        val sut = AppConfig(props)
+
+        assert(sut.passwordEncoder() is BCryptPasswordEncoder)
     }
 }
