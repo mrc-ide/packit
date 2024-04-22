@@ -55,10 +55,17 @@ class WebSecurityConfig(
         return httpSecurity.build()
     }
 
+    /**
+     * This is used to allow the frontend to make requests to the backend.
+     * The allowed origins are the local development server and the production server.
+     * The allowed methods are GET, POST, PUT, DELETE, and OPTIONS.
+     * The allowed headers are all headers.
+     * @return CorsConfigurationSource
+     */
     private fun getCorsConfigurationSource(): CorsConfigurationSource
     {
         val corsConfig = CorsConfiguration()
-        corsConfig.allowedOriginPatterns = listOf("http://localhost*", "https://localhost*")
+        corsConfig.allowedOriginPatterns = config.allowedOrigins
         corsConfig.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
         corsConfig.allowedHeaders = listOf("*")
         return CorsConfigurationSource { corsConfig }

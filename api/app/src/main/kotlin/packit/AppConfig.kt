@@ -35,4 +35,5 @@ class AppConfig(private val enviroment: Environment)
     val authEnabled: Boolean = requiredEnvValue("auth.enabled").toBoolean()
     val authGithubAPIOrg: String = requiredEnvValue("auth.githubAPIOrg")
     val authGithubAPITeam: String = requiredEnvValue("auth.githubAPITeam")
+    val allowedOrigins: List<String> = requiredEnvValue("cors.allowedOrigins").split(",").map { it.trim() }
 }

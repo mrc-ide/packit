@@ -13,7 +13,7 @@ import kotlin.test.assertTrue
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AppConfigTest
 {
-    val environmentVariables = mapOf(
+    private val environmentVariables = mapOf(
         "outpack.server.url" to "url",
         "db.url" to "url",
         "db.user" to "user",
@@ -24,7 +24,8 @@ class AppConfigTest
         "auth.expiryDays" to "1",
         "auth.enabled" to "true",
         "auth.githubAPIOrg" to "githubAPIOrg",
-        "auth.githubAPITeam" to "githubAPITeam"
+        "auth.githubAPITeam" to "githubAPITeam",
+        "cors.allowedOrigins" to "http://localhost, https://production"
     )
     private val mockEnv = MockEnvironment()
 
@@ -61,6 +62,7 @@ class AppConfigTest
         assert(sut.authEnabled)
         assert(sut.authGithubAPIOrg == "githubAPIOrg")
         assert(sut.authGithubAPITeam == "githubAPITeam")
+        assert(sut.allowedOrigins == listOf("http://localhost", "https://production"))
     }
 
     @Test
