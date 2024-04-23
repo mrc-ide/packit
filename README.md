@@ -9,9 +9,11 @@ export VAULT_ADDR=https://vault.dide.ic.ac.uk:8200
 vault login -method=github
 ```
 ## Quick start
-To run the whole app:
-1. `./scripts/run-dependencies` to run the database and `outpack_server` 
+To run the whole app (default is github auth):
+1. `./scripts/run-dependencies` to run the database and `outpack_server`
+    i. If wanting to run in basic auth mode, run `./scripts/run-dependencies basicauth`. This will create a superadmin user that can be used.
 2. `./api/scripts/run` to run the API
+    i. If wanting to run in basic auth mode, run `./api/scripts/run basicauth`
 3. `npm start --prefix=app` to run the React app on port 3000.
 
 

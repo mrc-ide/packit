@@ -1,55 +1,19 @@
 package packit
 
 import org.springframework.context.annotation.Bean
+import org.springframework.core.env.Environment
+import org.springframework.core.env.get
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
-import java.io.File
-import java.io.FileNotFoundException
-import java.net.URL
-import java.util.*
-
-// prevent auto-wiring of default Properties
-class PackitProperties : Properties()
 
 @Component
-class AppConfig(private val props: PackitProperties = properties)
+class AppConfig(private val enviroment: Environment)
 {
-    val outpackServerUrl: String = propString("outpack.server.url")
-    val dbUrl: String = propString("db.url")
-    val dbUser: String = propString("db.user")
-    val dbPassword: String = propString("db.password")
-    val authJWTSecret: String = propString("auth.jwt.secret")
-    val authRedirectUri: String = propString("auth.oauth2.redirect.url")
-    val authEnableGithubLogin: Boolean = propString("auth.method") == "github"
-    val authEnableBasicLogin: Boolean = propString("auth.method") == "basic"
-    val authExpiryDays: Long = propString("auth.expiryDays").toLong()
-    val authEnabled: Boolean = propString("auth.enabled").toBoolean()
-    val authGithubAPIOrg: String = propString("auth.githubAPIOrg")
-    val authGithubAPITeam: String = propString("auth.githubAPITeam")
 
-    private fun propString(propName: String): String
+    internal fun requiredEnvValue(key: String): String
     {
-        return props[propName].toString()
-    }
-
-    companion object
-    {
-
-        fun readProperties(configPath: String): PackitProperties
-        {
-            return PackitProperties().apply {
-                load(getResource("config.properties").openStream())
-                val global = File(configPath)
-                if (global.exists())
-                {
-                    global.inputStream().use { load(it) }
-                }
-            }
-        }
-
-        var configPath = "/etc/packit/config.properties"
-        val properties = readProperties(configPath)
+        return enviroment[key] ?: throw IllegalArgumentException("$key not set")
     }
 
     @Bean
@@ -57,16 +21,19 @@ class AppConfig(private val props: PackitProperties = properties)
     {
         return BCryptPasswordEncoder()
     }
-}
 
-fun getResource(path: String): URL
-{
-    val url: URL? = AppConfig::class.java.classLoader.getResource(path)
-    if (url != null)
-    {
-        return url
-    } else
-    {
-        throw FileNotFoundException("Unable to load '$path' as a resource steam")
-    }
+    val outpackServerUrl: String =
+        requiredEnvValue("outpack.server.url")
+    val dbUrl: String = requiredEnvValue("db.url")
+    val dbUser: String = requiredEnvValue("db.user")
+    val dbPassword: String = requiredEnvValue("db.password")
+    val authJWTSecret: String = requiredEnvValue("auth.jwt.secret")
+    val authRedirectUri: String = requiredEnvValue("auth.oauth2.redirect.url")
+    val authEnableGithubLogin: Boolean = requiredEnvValue("auth.method") == "github"
+    val authEnableBasicLogin: Boolean = requiredEnvValue("auth.method") == "basic"
+    val authExpiryDays: Long = requiredEnvValue("auth.expiryDays").toLong()
+    val authEnabled: Boolean = requiredEnvValue("auth.enabled").toBoolean()
+    val authGithubAPIOrg: String = requiredEnvValue("auth.githubAPIOrg")
+    val authGithubAPITeam: String = requiredEnvValue("auth.githubAPITeam")
+    val allowedOrigins: List<String> = requiredEnvValue("cors.allowedOrigins").split(",").map { it.trim() }
 }

@@ -18,6 +18,11 @@ import kotlin.test.assertEquals
 
 class TokenDecoderTest
 {
+    private val mockAppConfig = mock<AppConfig> {
+        on { authJWTSecret } doReturn "changesecretkey"
+        on { authExpiryDays } doReturn 1
+    }
+
     @Test
     fun `can decode JWT token`()
     {
@@ -35,11 +40,11 @@ class TokenDecoderTest
             on { principal } doReturn userPrincipal
         }
 
-        val provider = TokenProvider(AppConfig())
+        val provider = TokenProvider(mockAppConfig)
 
         val jwtToken = provider.issue(mockAuthentication.principal as UserPrincipal)
 
-        val result = TokenDecoder(AppConfig()).decode(jwtToken)
+        val result = TokenDecoder(mockAppConfig).decode(jwtToken)
 
         val expectedDatetime = result.getClaim("datetime").asDate().toInstant()
 
@@ -59,7 +64,7 @@ class TokenDecoderTest
         val jwtToken =
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQ4bOcs5YPybdtYZbp3Dijr6_EIMpQ0"
 
-        val tokenDecoder = TokenDecoder(AppConfig())
+        val tokenDecoder = TokenDecoder(mockAppConfig)
 
         val errorThrown = assertThrows<PackitException> { tokenDecoder.decode(jwtToken) }
 
@@ -79,7 +84,7 @@ class TokenDecoderTest
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE" +
                     "2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
 
-        val tokenDecoder = TokenDecoder(AppConfig())
+        val tokenDecoder = TokenDecoder(mockAppConfig)
 
         val errorThrown = assertThrows<PackitException> { tokenDecoder.decode(jwtToken) }
 
@@ -100,7 +105,7 @@ class TokenDecoderTest
                     "iJ0ZXN0QGVtYWlsLmNvbSIsIm5hbWUiOiJmYWtlTmFtZSIsImRhdGV0aW1lIjoxNjk1MzA0MzU4LCJhdSI6W10sImV" +
                     "4cCI6MTY5NTM5MDc1OH0.8MkhkfOZfeKPssUw2h65JkE-i9LgbjRFEqZJl9hcgKw"
 
-        val tokenDecoder = TokenDecoder(AppConfig())
+        val tokenDecoder = TokenDecoder(mockAppConfig)
 
         val errorThrown = assertThrows<PackitException> { tokenDecoder.decode(jwtToken) }
 

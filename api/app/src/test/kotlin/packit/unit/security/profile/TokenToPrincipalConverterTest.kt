@@ -38,6 +38,10 @@ class TokenToPrincipalConverterTest
     {
         val userName = "fakeName"
         val displayName = "Fake Name"
+        val mockAppConfig = mock<AppConfig> {
+            on { authJWTSecret } doReturn "changesecretkey"
+            on { authExpiryDays } doReturn 1
+        }
 
         val userPrincipal = UserPrincipal(
             userName,
@@ -50,11 +54,11 @@ class TokenToPrincipalConverterTest
             on { principal } doReturn userPrincipal
         }
 
-        val provider = TokenProvider(AppConfig())
+        val provider = TokenProvider(mockAppConfig)
 
         val jwtToken = provider.issue(mockAuthentication.principal as UserPrincipal)
 
-        val tokenDecoder = TokenDecoder(AppConfig())
+        val tokenDecoder = TokenDecoder(mockAppConfig)
 
         val decodedJwt = tokenDecoder.decode(jwtToken)
 

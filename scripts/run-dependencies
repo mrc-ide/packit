@@ -5,8 +5,14 @@ set -e
 HERE=$(realpath "$(dirname $0)")
 . "$HERE"/common
 
+
 ## Start database
-"$HERE"/../db/scripts/run
+if [ "$1" == "basicauth" ]; then
+    "$HERE"/../db/scripts/run basicauth
+else
+    "$HERE"/../db/scripts/run 
+fi
+
 
 # Start outpack_server
 docker pull $OUTPACK_SERVER_TAG

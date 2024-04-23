@@ -15,11 +15,13 @@ class BasicUserDetailsService(
     override fun loadUserByUsername(username: String): UserDetails
     {
         val user = userService.getUserForLogin(username)
+        val grantedAuthorities =
+            user.userGroups.map { it.role.toString() }.map { SimpleGrantedAuthority(it) }.toMutableList()
         return BasicUserDetails(
             UserPrincipal(
                 user.username,
                 user.displayName,
-                mutableListOf(SimpleGrantedAuthority(user.userGroups.map { it.role }.toString())),
+                grantedAuthorities,
                 mutableMapOf()
             ),
             user.password!!

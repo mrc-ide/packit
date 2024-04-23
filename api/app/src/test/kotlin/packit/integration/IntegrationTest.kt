@@ -14,6 +14,7 @@ import packit.security.provider.JwtIssuer
 import kotlin.test.assertEquals
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+
 abstract class IntegrationTest
 {
     @BeforeEach
@@ -66,6 +67,11 @@ abstract class IntegrationTest
     protected fun assertUnauthorized(responseEntity: ResponseEntity<String>)
     {
         assertEquals(responseEntity.statusCode, HttpStatus.UNAUTHORIZED)
+    }
+
+    protected fun assertForbidden(responseEntity: ResponseEntity<String>)
+    {
+        assertEquals(responseEntity.statusCode, HttpStatus.FORBIDDEN)
     }
 
     protected fun assertHtmlFileSuccess(responseEntity: ResponseEntity<String>)

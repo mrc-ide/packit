@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.config.Customizer.withDefaults
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -12,6 +11,8 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
 import packit.AppConfig
 import packit.exceptions.PackitExceptionHandler
 import packit.security.oauth2.OAuth2FailureHandler
@@ -38,7 +39,8 @@ class WebSecurityConfig(
     ): SecurityFilterChain
     {
         httpSecurity
-            .cors(withDefaults())
+            .cors().configurationSource(getCorsConfigurationSource())
+            .and()
             .csrf().disable()
             .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -51,6 +53,22 @@ class WebSecurityConfig(
             }
 
         return httpSecurity.build()
+    }
+
+    /**
+     * This is used to allow the frontend to make requests to the backend.
+     * The allowed origins are the local development server and the production server.
+     * The allowed methods are GET, POST, PUT, DELETE, and OPTIONS.
+     * The allowed headers are all headers.
+     * @return CorsConfigurationSource
+     */
+    private fun getCorsConfigurationSource(): CorsConfigurationSource
+    {
+        val corsConfig = CorsConfiguration()
+        corsConfig.allowedOriginPatterns = config.allowedOrigins
+        corsConfig.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
+        corsConfig.allowedHeaders = listOf("*")
+        return CorsConfigurationSource { corsConfig }
     }
 
     fun HttpSecurity.handleOauth2Login(): HttpSecurity
