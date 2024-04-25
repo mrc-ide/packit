@@ -5,23 +5,23 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "role_permission")
 class RolePermission(
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", nullable = false)
     var role: Role,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "permission_id", nullable = false)
     var permission: Permission,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "packet_id")
     var packet: Packet? = null,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "packet_group_id")
     var packetGroup: PacketGroup? = null,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tag_id")
     var tag: Tag? = null,
 

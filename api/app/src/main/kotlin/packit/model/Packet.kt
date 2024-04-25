@@ -1,22 +1,24 @@
 package packit.model
 
 import jakarta.persistence.*
-import packit.helpers.JsonMapConverter
+import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.type.SqlTypes
+import packit.model.dto.PacketDto
 
 @Entity
 @Table(name = "packet")
-data class Packet(
+class Packet(
     @Id
     val id: String,
     val name: String,
     val displayName: String,
-    @Convert(converter = JsonMapConverter::class)
+    @JdbcTypeCode(SqlTypes.JSON)
     val parameters: Map<String, Any>,
     val published: Boolean,
     val importTime: Double,
     val startTime: Double,
     val endTime: Double,
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "packet_tag",
         joinColumns = [JoinColumn(name = "packet_id")],
@@ -26,4 +28,8 @@ data class Packet(
 
     @OneToMany(mappedBy = "packet")
     var rolePermissions: MutableList<RolePermission> = mutableListOf()
+)
+
+fun Packet.toDto() = PacketDto(
+    id, name, displayName, parameters, published, importTime, startTime, endTime
 )

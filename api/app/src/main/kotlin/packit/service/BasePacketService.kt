@@ -55,7 +55,15 @@ class BasePacketService(
             .map { PacketGroup(it.key) }
 
         packetRepository.saveAll(packets)
-        packetGroupRepository.saveAllUnique(packetGroups)
+        saveUniquePacketGroups(packetGroups)
+    }
+
+    internal fun saveUniquePacketGroups(packetGroups: List<PacketGroup>)
+    {
+        val existingPacketGroupNames = packetGroupRepository.findAll().map { it.name }
+        val newPacketGroups =
+            packetGroups.filter { !existingPacketGroupNames.contains(it.name) }
+        packetGroupRepository.saveAll(newPacketGroups)
     }
 
     override fun getPackets(): List<Packet>

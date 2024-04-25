@@ -11,9 +11,9 @@ vault login -method=github
 ## Quick start
 To run the whole app (default is github auth):
 1. `./scripts/run-dependencies` to run the database and `outpack_server`
-    i. If wanting to run in basic auth mode, run `./scripts/run-dependencies basicauth`. This will create a superadmin user that can be used.
+    i. If wanting to run in basic auth mode, run `./scripts/basic-create-super-user`. This will create a superadmin user that can be used. Ensure api has ran and created all tables.
 2. `./api/scripts/run` to run the API
-    i. If wanting to run in basic auth mode, run `./api/scripts/run basicauth`
+    i. To create superadmin as above for basic auth, run `./scripts/basic-create-super-user`
 3. `npm start --prefix=app` to run the React app on port 3000.
 
 

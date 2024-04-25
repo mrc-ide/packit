@@ -2,6 +2,7 @@ package packit.model
 
 import jakarta.persistence.*
 import java.time.Instant
+import java.util.*
 
 @Entity
 @Table(name = "`user`")
@@ -22,5 +23,5 @@ class User(
     var lastLoggedIn: Instant? = null,
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    val id: String? = null
+    val id: UUID? = null
 )

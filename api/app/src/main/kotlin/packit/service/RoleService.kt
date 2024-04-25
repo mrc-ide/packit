@@ -66,6 +66,13 @@ class BaseRoleService(
         return foundRoles
     }
 
+    /**
+     * Authorizes constructed as combination of role names and permission names.
+     * This allows for more granular control over permissions.
+     *
+     * @param roles List of roles to be converted to GrantedAuthorities
+     * @return List of GrantedAuthorities
+     */
     override fun getGrantedAuthorities(roles: List<Role>): MutableList<GrantedAuthority>
     {
         val grantedAuthorities = mutableListOf<GrantedAuthority>()
