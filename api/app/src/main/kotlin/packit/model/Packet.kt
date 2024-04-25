@@ -1,11 +1,10 @@
 package packit.model
 
-import jakarta.persistence.Convert
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
+import jakarta.persistence.*
 import packit.helpers.JsonMapConverter
 
 @Entity
+@Table(name = "packet")
 data class Packet(
     @Id
     val id: String,
@@ -16,5 +15,15 @@ data class Packet(
     val published: Boolean,
     val importTime: Double,
     val startTime: Double,
-    val endTime: Double
+    val endTime: Double,
+    @ManyToMany
+    @JoinTable(
+        name = "packet_tag",
+        joinColumns = [JoinColumn(name = "packet_id")],
+        inverseJoinColumns = [JoinColumn(name = "tag_id")]
+    )
+    var tags: MutableList<Tag> = mutableListOf(),
+
+    @OneToMany(mappedBy = "packet")
+    var rolePermissions: MutableList<RolePermission> = mutableListOf()
 )

@@ -9,8 +9,6 @@ import org.springframework.security.oauth2.core.OAuth2AccessToken
 import org.springframework.security.oauth2.core.user.OAuth2User
 import packit.clients.GithubUserClient
 import packit.model.User
-import packit.model.UserGroup
-import packit.security.Role
 import packit.security.oauth2.OAuth2UserService
 import packit.service.UserService
 import kotlin.test.assertEquals

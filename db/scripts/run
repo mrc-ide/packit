@@ -10,6 +10,7 @@ docker run --rm -d \
  -p 5432:5432 \
  "$TAG_BRANCH"
 
+# TODO: need to move all this later as flyways migration is first
 docker exec packit-db wait-for-db
 
 if [ "$1" == "basicauth" ]; then

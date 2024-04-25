@@ -7,6 +7,7 @@ plugins {
     kotlin("plugin.allopen") version "1.7.22"
 
     // Spring plugins
+    id("org.flywaydb.flyway") version "10.11.1"
     id("org.springframework.boot") version "3.0.2"
     id("io.spring.dependency-management") version "1.1.0"
     kotlin("plugin.spring") version "1.7.22"
@@ -52,6 +53,7 @@ dependencies {
     implementation("org.kohsuke:github-api:1.315")
     implementation("com.auth0:java-jwt:4.4.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("org.flywaydb:flyway-core")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.postgresql:postgresql")
 

@@ -1,6 +1,5 @@
 package packit.service
 
-import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Component
@@ -9,22 +8,23 @@ import packit.security.profile.UserPrincipal
 
 @Component
 class BasicUserDetailsService(
-    private val userService: UserService
+    private val userService: UserService,
+    private val roleService: RoleService
 ) : UserDetailsService
 {
     override fun loadUserByUsername(username: String): UserDetails
     {
         val user = userService.getUserForLogin(username)
-        val grantedAuthorities =
-            user.userGroups.map { it.role.toString() }.map { SimpleGrantedAuthority(it) }.toMutableList()
         return BasicUserDetails(
             UserPrincipal(
                 user.username,
                 user.displayName,
-                grantedAuthorities,
+                roleService.getGrantedAuthorities(user.roles),
                 mutableMapOf()
             ),
             user.password!!
         )
     }
+
+
 }

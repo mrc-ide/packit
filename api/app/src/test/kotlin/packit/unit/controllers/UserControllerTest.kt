@@ -9,7 +9,6 @@ import packit.AppConfig
 import packit.controllers.UserController
 import packit.exceptions.PackitException
 import packit.model.CreateBasicUser
-import packit.security.Role
 import packit.service.UserService
 import kotlin.test.Test
 import kotlin.test.assertEquals

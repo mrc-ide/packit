@@ -14,8 +14,6 @@ import packit.clients.GithubUserClient
 import packit.exceptions.PackitException
 import packit.model.LoginWithToken
 import packit.model.User
-import packit.model.UserGroup
-import packit.security.Role
 import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
 import packit.service.GithubAPILoginService

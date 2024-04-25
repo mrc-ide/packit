@@ -12,10 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import packit.exceptions.PackitException
 import packit.model.CreateBasicUser
 import packit.model.User
-import packit.model.UserGroup
-import packit.repository.UserGroupRepository
+import packit.repository.RoleRepository
 import packit.repository.UserRepository
-import packit.security.Role
 import packit.service.BaseUserService
 import java.time.Instant
 import java.time.LocalDate
@@ -26,7 +24,7 @@ class UserServiceTest
     private val userGroups = listOf(UserGroup(Role.USER), UserGroup(Role.ADMIN))
     private val mockUserRepository = mock<UserRepository>()
     private val passwordEncoder = mock<PasswordEncoder>()
-    private val mockUserGroupRepository = mock<UserGroupRepository> {
+    private val mockRoleRepository = mock<RoleRepository> {
         on { findByRole(Role.USER) } doReturn userGroups[0]
         on { findByRole(Role.ADMIN) } doReturn userGroups[1]
         on { findAll() } doReturn userGroups
@@ -50,9 +48,9 @@ class UserServiceTest
     @Test
     fun `getUserRoleUserGroup gets user role user group`()
     {
-        val service = BaseUserService(mockUserRepository, mockUserGroupRepository, passwordEncoder)
+        val service = BaseUserService(mockUserRepository, mockRoleRepository, passwordEncoder)
 
-        val userRoleUserGroup = service.getUserRoleUserGroup()
+        val userRoleUserGroup = service.getUsersRole()
 
         assertEquals(userRoleUserGroup, userGroups[0])
     }
@@ -60,7 +58,7 @@ class UserServiceTest
     @Test
     fun `getAdminRoleUserGroup gets admin role user group`()
     {
-        val service = BaseUserService(mockUserRepository, mockUserGroupRepository, passwordEncoder)
+        val service = BaseUserService(mockUserRepository, mockRoleRepository, passwordEncoder)
 
         val adminRoleUserGroup = service.getAdminRoleUserGroup()
 
@@ -72,7 +70,7 @@ class UserServiceTest
     {
         `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
         `when`(mockUserRepository.save(mockUser)).doReturn(mockUser)
-        val service = BaseUserService(mockUserRepository, mockUserGroupRepository, passwordEncoder)
+        val service = BaseUserService(mockUserRepository, mockRoleRepository, passwordEncoder)
 
         val user = service.saveUserFromGithub("username", "displayName", "email")
 
@@ -95,12 +93,12 @@ class UserServiceTest
         )
         `when`(mockUserRepository.findByUsername(newUser.username)).doReturn(null)
         `when`(mockUserRepository.save(newUser)).doReturn(newUser)
-        val service = BaseUserService(mockUserRepository, mockUserGroupRepository, passwordEncoder)
+        val service = BaseUserService(mockUserRepository, mockRoleRepository, passwordEncoder)
 
         val user = service.saveUserFromGithub(mockUser.username, "displayName", "email")
 
         assertEquals(user.displayName, mockUser.displayName)
-        verify(mockUserGroupRepository).findByRole(Role.USER)
+        verify(mockRoleRepository).findByRole(Role.USER)
         verify(mockUserRepository).findByUsername(mockUser.username)
         verify(mockUserRepository).save(argThat { this.username == mockUser.username })
     }
@@ -111,7 +109,7 @@ class UserServiceTest
         mockUser.lastLoggedIn = LocalDate.parse("2018-12-12").toString()
         `when`(mockUserRepository.save(mockUser)).doReturn(mockUser)
         val lastLoggedIn = Instant.now().toString()
-        val service = BaseUserService(mockUserRepository, mockUserGroupRepository, passwordEncoder)
+        val service = BaseUserService(mockUserRepository, mockRoleRepository, passwordEncoder)
 
         val updatedUser = service.updateUserLastLoggedIn(mockUser, lastLoggedIn)
 
@@ -124,7 +122,7 @@ class UserServiceTest
     {
         `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
         `when`(mockUserRepository.save(mockUser)).doReturn(mockUser)
-        val service = BaseUserService(mockUserRepository, mockUserGroupRepository, passwordEncoder)
+        val service = BaseUserService(mockUserRepository, mockRoleRepository, passwordEncoder)
 
         val user = service.getUserForLogin(mockUser.username)
 
@@ -137,7 +135,7 @@ class UserServiceTest
     fun `getUserForLogin throws exception if user not found`()
     {
         `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(null)
-        val service = BaseUserService(mockUserRepository, mockUserGroupRepository, passwordEncoder)
+        val service = BaseUserService(mockUserRepository, mockRoleRepository, passwordEncoder)
 
         val ex = assertThrows<PackitException> { service.getUserForLogin(mockUser.username) }
 
@@ -148,10 +146,10 @@ class UserServiceTest
     @Test
     fun `throws error if CreateBasicUser roles dont match db`()
     {
-        `when`(mockUserGroupRepository.findAll()).doReturn(listOf(userGroups[0]))
-        val service = BaseUserService(mockUserRepository, mockUserGroupRepository, passwordEncoder)
+        `when`(mockRoleRepository.findAll()).doReturn(listOf(userGroups[0]))
+        val service = BaseUserService(mockUserRepository, mockRoleRepository, passwordEncoder)
 
-        val exception = assertThrows<PackitException> { service.getMatchedUserGroups(createBasicUser) }
+        val exception = assertThrows<PackitException> { service.getMatchedRoles(createBasicUser) }
 
         assertEquals(exception.key, "invalidRolesProvided")
         assertEquals(exception.httpStatus, HttpStatus.BAD_REQUEST)
@@ -160,9 +158,9 @@ class UserServiceTest
     @Test
     fun `getFoundUserGroups returns found user groups when no conflicts with roles`()
     {
-        val service = BaseUserService(mockUserRepository, mockUserGroupRepository, passwordEncoder)
+        val service = BaseUserService(mockUserRepository, mockRoleRepository, passwordEncoder)
 
-        val foundUserGroups = service.getMatchedUserGroups(createBasicUser)
+        val foundUserGroups = service.getMatchedRoles(createBasicUser)
 
         assertEquals(foundUserGroups, userGroups)
     }
@@ -171,7 +169,7 @@ class UserServiceTest
     fun `createBasicUser throws error if user already exists`()
     {
         `when`(mockUserRepository.findByUsername(createBasicUser.email)).doReturn(mock())
-        val service = BaseUserService(mockUserRepository, mockUserGroupRepository, passwordEncoder)
+        val service = BaseUserService(mockUserRepository, mockRoleRepository, passwordEncoder)
 
         val ex = assertThrows<PackitException> { service.createBasicUser(createBasicUser) }
 
@@ -185,12 +183,12 @@ class UserServiceTest
     {
 
         `when`(passwordEncoder.encode(createBasicUser.password)).doReturn("encodedPassword")
-        val service = BaseUserService(mockUserRepository, mockUserGroupRepository, passwordEncoder)
+        val service = BaseUserService(mockUserRepository, mockRoleRepository, passwordEncoder)
 
         service.createBasicUser(createBasicUser)
 
         verify(mockUserRepository).findByUsername(createBasicUser.email)
-        verify(mockUserGroupRepository).findAll()
+        verify(mockRoleRepository).findAll()
         verify(passwordEncoder).encode(createBasicUser.password)
         verify(mockUserRepository).save(
             argThat {
