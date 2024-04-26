@@ -2,15 +2,21 @@ package packit.integration.controllers
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
+import org.springframework.http.*
+import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.test.context.TestPropertySource
 import packit.integration.IntegrationTest
 import packit.model.LoginWithPassword
 import packit.model.LoginWithToken
+import packit.model.User
+import packit.repository.UserRepository
+import kotlin.test.assertEquals
 
 class LoginControllerTestGithub : IntegrationTest()
 {
@@ -52,6 +58,77 @@ class LoginControllerTestGithub : IntegrationTest()
     }
 }
 
+@TestPropertySource(properties = ["auth.method=basic"])
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class LoginControllerTestBasic : IntegrationTest()
+{
+    @Autowired
+    lateinit var userRepository: UserRepository
+
+    @Autowired
+    lateinit var passwordEncoder: PasswordEncoder
+
+    private lateinit var testUser: User
+
+    @BeforeAll
+    fun setupData()
+    {
+        testUser = User(
+            username = "test@email.com",
+            displayName = "test user",
+            disabled = false,
+            email = "test@email.com",
+            userSource = "basic",
+            roles = mutableListOf(),
+            password = passwordEncoder.encode("password")
+        )
+        userRepository.save(testUser)
+    }
+
+    @AfterAll
+    fun cleanupData()
+    {
+        userRepository.delete(testUser)
+    }
+
+    @Test
+    fun `returns token on successful basic login`()
+    {
+        val result =
+            LoginTestHelper.getBasicLoginResponse(
+                LoginWithPassword(testUser.username, "password"),
+                restTemplate
+            )
+
+        assertEquals(result.statusCode, HttpStatus.OK)
+        assertThat(result.body).contains("token")
+    }
+
+    @Test
+    fun `returns forbidden when github login is disabled`()
+    {
+        val result = LoginTestHelper.getGithubLoginResponse(LoginWithToken("token"), restTemplate)
+        assertForbidden(result)
+    }
+
+    @Test
+    fun `returns unauthorized when user user is not found`()
+    {
+        val result =
+            LoginTestHelper.getBasicLoginResponse(LoginWithPassword("notexists@example.com", "password"), restTemplate)
+
+        assertUnauthorized(result)
+    }
+
+    @Test
+    fun `returns unauthorized when password is incorrect`()
+    {
+        val result =
+            LoginTestHelper.getBasicLoginResponse(LoginWithPassword("admin@example.com", "notcorrect"), restTemplate)
+
+        assertUnauthorized(result)
+    }
+}
 
 object LoginTestHelper
 {
