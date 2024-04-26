@@ -6,5 +6,3 @@ import packit.model.Tag
 
 @Repository
 interface TagRepository : JpaRepository<Tag, Int>
-{
-}

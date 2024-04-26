@@ -90,9 +90,11 @@ class RoleServiceTest
 
         roleService.saveRole("roleName")
 
-        verify(roleRepository).save(argThat {
+        verify(roleRepository).save(
+            argThat {
             this.name == "roleName"
-        })
+        }
+        )
     }
 
     @Test

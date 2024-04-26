@@ -17,8 +17,6 @@ import packit.service.BasePacketService
 import packit.service.OutpackServerClient
 import java.time.Instant
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-
 
 class PacketServiceTest
 {
@@ -192,7 +190,6 @@ class PacketServiceTest
         verify(packetRepository).saveAll(argumentCaptor.capture())
         val packets = argumentCaptor.allValues.flatten()
         assertEquals(packets.size, 3)
-        assertTrue(packets.all { it is Packet })
     }
 
     @Test
@@ -206,7 +203,6 @@ class PacketServiceTest
         verify(packetGroupRepository).saveAll(argumentCaptor.capture())
         val packetGroups = argumentCaptor.allValues.flatten()
         assertEquals(packetGroups.size, 2)
-        assertTrue(packetGroups.all { it is PacketGroup })
     }
 
     @Test
@@ -249,5 +245,4 @@ class PacketServiceTest
             .isInstanceOf(PackitException::class.java)
             .hasMessageContaining("PackitException with key doesNotExist")
     }
-
 }

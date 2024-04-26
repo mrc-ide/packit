@@ -66,7 +66,6 @@ class BaseUserService(
         userRepository.save(newUser)
     }
 
-
     override fun updateUserLastLoggedIn(user: User, lastLoggedIn: Instant): User
     {
         user.lastLoggedIn = lastLoggedIn

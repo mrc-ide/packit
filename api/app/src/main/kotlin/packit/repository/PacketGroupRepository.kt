@@ -6,5 +6,3 @@ import packit.model.PacketGroup
 
 @Repository
 interface PacketGroupRepository : JpaRepository<PacketGroup, Int>
-{
-}

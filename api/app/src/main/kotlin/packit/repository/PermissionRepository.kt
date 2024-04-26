@@ -6,5 +6,3 @@ import packit.model.Permission
 
 @Repository
 interface PermissionRepository : JpaRepository<Permission, Int>
-{
-}

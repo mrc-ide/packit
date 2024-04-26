@@ -25,6 +25,4 @@ class BasicUserDetailsService(
             user.password!!
         )
     }
-
-
 }
