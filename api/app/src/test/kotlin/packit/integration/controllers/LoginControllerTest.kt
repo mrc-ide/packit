@@ -4,13 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
+import org.springframework.http.*
+import org.springframework.test.context.TestPropertySource
+import org.springframework.test.context.jdbc.Sql
 import packit.integration.IntegrationTest
 import packit.model.LoginWithPassword
 import packit.model.LoginWithToken
+import kotlin.test.assertEquals
 
 class LoginControllerTestGithub : IntegrationTest()
 {
