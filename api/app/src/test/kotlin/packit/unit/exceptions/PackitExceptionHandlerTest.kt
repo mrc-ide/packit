@@ -5,7 +5,8 @@ import packit.exceptions.PackitAuthenticationException
 import packit.exceptions.PackitExceptionHandler
 import kotlin.test.assertEquals
 
-class PackitExceptionHandlerTest {
+class PackitExceptionHandlerTest
+{
     @Test
     fun `returns error details for PackitAuthenticationException`()
     {

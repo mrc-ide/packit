@@ -4,4 +4,6 @@ import org.springframework.security.test.context.support.WithSecurityContext
 
 @Retention(AnnotationRetention.RUNTIME)
 @WithSecurityContext(factory = WithMockAuthenticatedSecurityFactory::class)
-annotation class WithAuthenticatedUser
+annotation class WithAuthenticatedUser(
+    val roles: Array<String> = ["ADMIN"]
+)

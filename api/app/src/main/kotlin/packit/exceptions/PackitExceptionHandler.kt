@@ -3,6 +3,9 @@ package packit.exceptions
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.security.access.AccessDeniedException
+import org.springframework.security.core.AuthenticationException
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.client.HttpClientErrorException
@@ -33,12 +36,27 @@ class PackitExceptionHandler
     @ExceptionHandler(HttpClientErrorException::class, HttpServerErrorException::class)
     fun handleHttpClientErrorException(e: Exception): ResponseEntity<String>
     {
-        val status = when (e) {
+        val status = when (e)
+        {
             is HttpClientErrorException.Unauthorized -> HttpStatus.UNAUTHORIZED
             is HttpClientErrorException.BadRequest -> HttpStatus.BAD_REQUEST
             else -> HttpStatus.INTERNAL_SERVER_ERROR
         }
         return ErrorDetail(status, e.message ?: "")
+            .toResponseEntity()
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handleMethodArgumentNotValidException(e: Exception): ResponseEntity<String>
+    {
+        return ErrorDetail(HttpStatus.BAD_REQUEST, e.message ?: "Invalid argument")
+            .toResponseEntity()
+    }
+
+    @ExceptionHandler(AccessDeniedException::class, AuthenticationException::class)
+    fun handleAccessDenied(e: Exception): ResponseEntity<String>
+    {
+        return ErrorDetail(HttpStatus.UNAUTHORIZED, e.message ?: "Unauthorized")
             .toResponseEntity()
     }
 

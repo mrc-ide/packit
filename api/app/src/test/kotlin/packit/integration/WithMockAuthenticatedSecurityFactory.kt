@@ -4,7 +4,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.test.context.support.WithSecurityContextFactory
-import packit.security.Role
 import packit.security.profile.UserPrincipal
 import packit.security.profile.UserPrincipalAuthenticationToken
 
@@ -16,7 +15,7 @@ class WithMockAuthenticatedSecurityFactory : WithSecurityContextFactory<WithAuth
         val principal = UserPrincipal(
             "test.user@example.com",
             "Test User",
-            mutableListOf(SimpleGrantedAuthority(Role.ADMIN.toString())),
+            annotation.roles.map { SimpleGrantedAuthority(it) }.toMutableList(),
             mutableMapOf()
         )
 
