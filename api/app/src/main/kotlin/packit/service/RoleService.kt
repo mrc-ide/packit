@@ -6,6 +6,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
 import packit.model.Role
+import packit.model.RolePermission
 import packit.repository.RoleRepository
 
 interface RoleService
@@ -69,19 +70,29 @@ class BaseRoleService(
     /**
      * Authorizes constructed as combination of role names and permission names.
      * This allows for more granular control over permissions.
-     *
-     * @param roles List of roles to be converted to GrantedAuthorities
-     * @return List of GrantedAuthorities
      */
     override fun getGrantedAuthorities(roles: List<Role>): MutableList<GrantedAuthority>
     {
         val grantedAuthorities = mutableListOf<GrantedAuthority>()
         roles.forEach { role ->
             grantedAuthorities.add(SimpleGrantedAuthority(role.name))
-            role.rolePermissions.forEach { rolePermission ->
-                grantedAuthorities.add(SimpleGrantedAuthority(rolePermission.permission.name))
+            role.rolePermissions.forEach {
+                grantedAuthorities.add(SimpleGrantedAuthority(getPermissionScoped(it)))
             }
         }
         return grantedAuthorities
+    }
+
+    internal fun getPermissionScoped(rolePermission: RolePermission): String
+    {
+        val scopeString = when
+        {
+            rolePermission.packet != null -> ":packet:${rolePermission.packet!!.id}"
+            rolePermission.packetGroup != null -> ":packetGroup:${rolePermission.packetGroup!!.id}"
+            rolePermission.tag != null -> ":tag:${rolePermission.tag!!.id}"
+            else -> ""
+        }
+
+        return rolePermission.permission.name + scopeString
     }
 }

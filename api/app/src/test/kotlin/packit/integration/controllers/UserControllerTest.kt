@@ -33,7 +33,7 @@ class UserControllerTest : IntegrationTest()
     fun `admin user can create basic users`()
     {
         val result = restTemplate.postForEntity(
-            "/user/basic",
+            "/user/basic/create",
             getTokenizedHttpEntity(data = testCreateUserBody),
             String::class.java
         )
@@ -47,7 +47,7 @@ class UserControllerTest : IntegrationTest()
     fun `non-admin user cannot create basic users`()
     {
         val result = restTemplate.postForEntity(
-            "/user/basic",
+            "/user/basic/create",
             getTokenizedHttpEntity(data = testCreateUserBody),
             String::class.java
         )
@@ -67,7 +67,7 @@ class UserControllerTest : IntegrationTest()
             )
         )
         val result = restTemplate.postForEntity(
-            "/user/basic",
+            "/user/basic/create",
             getTokenizedHttpEntity(data = invalidEmailAndPasswordBody),
             String::class.java
         )

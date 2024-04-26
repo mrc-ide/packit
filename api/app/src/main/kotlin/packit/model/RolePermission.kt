@@ -13,15 +13,15 @@ class RolePermission(
     @JoinColumn(name = "permission_id", nullable = false)
     var permission: Permission,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "packet_id")
     var packet: Packet? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "packet_group_id")
     var packetGroup: PacketGroup? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tag_id")
     var tag: Tag? = null,
 
