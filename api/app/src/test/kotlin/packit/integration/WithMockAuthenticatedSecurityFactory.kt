@@ -15,7 +15,7 @@ class WithMockAuthenticatedSecurityFactory : WithSecurityContextFactory<WithAuth
         val principal = UserPrincipal(
             "test.user@example.com",
             "Test User",
-            annotation.roles.map { SimpleGrantedAuthority(it) }.toMutableList(),
+            annotation.authorities.map { SimpleGrantedAuthority(it) }.toMutableList(),
             mutableMapOf()
         )
 

@@ -24,7 +24,7 @@ class UserControllerTest
         email = "test@email.com",
         password = "password",
         displayName = "displayname",
-        userRoles = listOf(Role.USER, Role.ADMIN)
+        userRoles = listOf("ADMIN")
     )
 
     @Test
