@@ -5,22 +5,26 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
+import packit.model.Permission
 import packit.model.Role
 import packit.model.RolePermission
+import packit.model.dto.CreateRole
 import packit.repository.RoleRepository
 
 interface RoleService
 {
     fun getUsernameRole(username: String): Role
     fun getAdminRole(): Role
-    fun saveRole(roleName: String)
+    fun saveRole(roleName: String, permissions: List<Permission>)
     fun checkMatchingRoles(rolesToCheck: List<String>): List<Role>
     fun getGrantedAuthorities(roles: List<Role>): MutableList<GrantedAuthority>
+    fun createRole(createRole: CreateRole)
 }
 
 @Service
 class BaseRoleService(
-    private val roleRepository: RoleRepository
+    private val roleRepository: RoleRepository,
+    private val permissionService: PermissionService
 ) : RoleService
 {
     override fun getUsernameRole(username: String): Role
@@ -45,26 +49,34 @@ class BaseRoleService(
         return roleRepository.save(Role(name = "ADMIN"))
     }
 
-    override fun saveRole(roleName: String)
+    override fun createRole(createRole: CreateRole)
+    {
+        val permissions = permissionService.checkMatchingPermissions(createRole.permissions)
+
+        saveRole(createRole.name, permissions)
+    }
+
+    override fun saveRole(roleName: String, permissions: List<Permission>)
     {
         if (roleRepository.existsByName(roleName))
         {
             throw PackitException("roleAlreadyExists")
         }
         val role = Role(name = roleName)
+        role.rolePermissions = permissions.map { RolePermission(permission = it, role = role) }
+            .toMutableList()
         roleRepository.save(role)
     }
 
     override fun checkMatchingRoles(rolesToCheck: List<String>): List<Role>
     {
-        val allRoles = roleRepository.findAll()
-        val foundRoles = rolesToCheck.mapNotNull { name -> allRoles.find { it.name == name } }
+        val matchedRoles = roleRepository.findByNameIn(rolesToCheck)
 
-        if (foundRoles.size != rolesToCheck.size)
+        if (matchedRoles.size != rolesToCheck.size)
         {
             throw PackitException("invalidRolesProvided", HttpStatus.BAD_REQUEST)
         }
-        return foundRoles
+        return matchedRoles
     }
 
     /**

@@ -79,7 +79,7 @@ class RoleServiceTest
         whenever(roleRepository.existsByName("roleName")).thenReturn(true)
 
         assertThrows(PackitException::class.java) {
-            roleService.saveRole("roleName")
+            roleService.saveRole("roleName", listOf())
         }
     }
 
@@ -88,12 +88,12 @@ class RoleServiceTest
     {
         whenever(roleRepository.existsByName("roleName")).thenReturn(false)
 
-        roleService.saveRole("roleName")
+        roleService.saveRole("roleName", listOf())
 
         verify(roleRepository).save(
             argThat {
-            this.name == "roleName"
-        }
+                this.name == "roleName"
+            }
         )
     }
 

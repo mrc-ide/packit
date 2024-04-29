@@ -7,9 +7,9 @@ import org.mockito.kotlin.*
 import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.password.PasswordEncoder
 import packit.exceptions.PackitException
-import packit.model.CreateBasicUser
 import packit.model.Role
 import packit.model.User
+import packit.model.dto.CreateBasicUser
 import packit.repository.UserRepository
 import packit.service.BaseUserService
 import packit.service.RoleService

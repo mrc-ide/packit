@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import packit.AppConfig
 import packit.exceptions.PackitException
-import packit.model.CreateBasicUser
+import packit.model.dto.CreateBasicUser
 import packit.service.UserService
 
 @Controller

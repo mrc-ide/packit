@@ -6,7 +6,7 @@ import jakarta.persistence.*
 @Table(name = "`role`")
 class Role(
     var name: String,
-    @OneToMany(mappedBy = "role", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "role", fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     var rolePermissions: MutableList<RolePermission> = mutableListOf(),
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
     var users: MutableList<User> = mutableListOf(),

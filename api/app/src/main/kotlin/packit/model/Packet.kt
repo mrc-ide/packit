@@ -25,8 +25,7 @@ class Packet(
         inverseJoinColumns = [JoinColumn(name = "tag_id")]
     )
     var tags: MutableList<Tag> = mutableListOf(),
-
-    @OneToMany(mappedBy = "packet")
+    @OneToMany(mappedBy = "packet", cascade = [CascadeType.ALL])
     var rolePermissions: MutableList<RolePermission> = mutableListOf()
 )
 

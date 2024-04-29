@@ -4,8 +4,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
-import packit.model.CreateBasicUser
 import packit.model.User
+import packit.model.dto.CreateBasicUser
 import packit.repository.UserRepository
 import java.time.Instant
 
