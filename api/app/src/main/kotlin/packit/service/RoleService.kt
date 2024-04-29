@@ -15,7 +15,6 @@ interface RoleService
 {
     fun getUsernameRole(username: String): Role
     fun getAdminRole(): Role
-    fun saveRole(roleName: String, permissions: List<Permission>)
     fun checkMatchingRoles(rolesToCheck: List<String>): List<Role>
     fun getGrantedAuthorities(roles: List<Role>): MutableList<GrantedAuthority>
     fun createRole(createRole: CreateRole)
@@ -56,7 +55,7 @@ class BaseRoleService(
         saveRole(createRole.name, permissions)
     }
 
-    override fun saveRole(roleName: String, permissions: List<Permission>)
+    internal fun saveRole(roleName: String, permissions: List<Permission> = listOf())
     {
         if (roleRepository.existsByName(roleName))
         {

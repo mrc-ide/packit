@@ -11,20 +11,24 @@ import packit.model.Packet
 import packit.model.Permission
 import packit.model.Role
 import packit.model.RolePermission
+import packit.model.dto.CreateRole
 import packit.repository.RoleRepository
 import packit.service.BaseRoleService
+import packit.service.PermissionService
 import kotlin.test.assertTrue
 
 class RoleServiceTest
 {
     private lateinit var roleRepository: RoleRepository
     private lateinit var roleService: BaseRoleService
+    private lateinit var permissionService: PermissionService
 
     @BeforeEach
     fun setup()
     {
         roleRepository = mock()
-        roleService = BaseRoleService(roleRepository)
+        permissionService = mock()
+        roleService = BaseRoleService(roleRepository, permissionService)
     }
 
     @Test
@@ -74,6 +78,25 @@ class RoleServiceTest
     }
 
     @Test
+    fun `createRole creates role with matching permissions`()
+    {
+        val createRole = CreateRole(name = "newRole", permissions = listOf("p1", "p2"))
+        val permissions =
+            listOf(Permission(name = "p1", description = "d1"), Permission(name = "p2", description = "d2"))
+        whenever(permissionService.checkMatchingPermissions(createRole.permissions)).thenReturn(permissions)
+        whenever(roleRepository.existsByName(createRole.name)).thenReturn(false)
+
+        roleService.createRole(createRole)
+
+        verify(roleRepository).save(
+            argThat {
+                this.name == createRole.name
+                this.rolePermissions.size == 2
+            }
+        )
+    }
+
+    @Test
     fun `saveRole throws exception if role already exists`()
     {
         whenever(roleRepository.existsByName("roleName")).thenReturn(true)
@@ -84,15 +107,19 @@ class RoleServiceTest
     }
 
     @Test
-    fun `saveRole saves role when does not exist`()
+    fun `saveRole saves role with permissions when does not exist`()
     {
+        val roleName = "roleName"
+        val permissions =
+            listOf(Permission(name = "p1", description = "d1"), Permission(name = "p2", description = "d2"))
         whenever(roleRepository.existsByName("roleName")).thenReturn(false)
 
-        roleService.saveRole("roleName", listOf())
+        roleService.saveRole(roleName, permissions)
 
         verify(roleRepository).save(
             argThat {
-                this.name == "roleName"
+                this.name == roleName
+                this.rolePermissions.size == 2
             }
         )
     }
@@ -102,7 +129,7 @@ class RoleServiceTest
     {
         val rolesToCheck = listOf("role1", "role2")
         val allRoles = listOf(Role(name = "role1"))
-        whenever(roleRepository.findAll()).thenReturn(allRoles)
+        whenever(roleRepository.findByNameIn(rolesToCheck)).thenReturn(allRoles)
 
         assertThrows(PackitException::class.java) {
             roleService.checkMatchingRoles(rolesToCheck)
@@ -114,7 +141,7 @@ class RoleServiceTest
     {
         val rolesToCheck = listOf("role1", "role2")
         val allRoles = listOf(Role(name = "role1"), Role(name = "role2"))
-        whenever(roleRepository.findAll()).thenReturn(allRoles)
+        whenever(roleRepository.findByNameIn(rolesToCheck)).thenReturn(allRoles)
 
         val result = roleService.checkMatchingRoles(rolesToCheck)
 
