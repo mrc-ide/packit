@@ -1,4 +1,6 @@
-package packit.model
+package packit.model.dto
+
+import packit.model.TimeMetadata
 
 data class OutpackMetadata(
     val id: String,

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component
 import packit.AppConfig
 import packit.clients.GithubUserClient
 import packit.exceptions.PackitException
-import packit.model.LoginWithToken
+import packit.model.dto.LoginWithToken
 import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
 

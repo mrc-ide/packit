@@ -5,7 +5,7 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.stereotype.Component
 import packit.exceptions.PackitException
-import packit.model.LoginWithPassword
+import packit.model.dto.LoginWithPassword
 import packit.security.profile.BasicUserDetails
 import packit.security.provider.JwtIssuer
 

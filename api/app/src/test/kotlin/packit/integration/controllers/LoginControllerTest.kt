@@ -12,9 +12,9 @@ import org.springframework.http.*
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.TestPropertySource
 import packit.integration.IntegrationTest
-import packit.model.LoginWithPassword
-import packit.model.LoginWithToken
 import packit.model.User
+import packit.model.dto.LoginWithPassword
+import packit.model.dto.LoginWithToken
 import packit.repository.UserRepository
 import kotlin.test.assertEquals
 

@@ -13,6 +13,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import packit.controllers.PacketController
 import packit.model.*
+import packit.model.dto.PacketGroupSummary
 import packit.service.PacketService
 import java.time.Instant
 import kotlin.test.assertEquals

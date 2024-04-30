@@ -12,9 +12,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import packit.AppConfig
 import packit.clients.GithubUserClient
 import packit.exceptions.PackitException
-import packit.model.LoginWithToken
 import packit.model.Role
 import packit.model.User
+import packit.model.dto.LoginWithToken
 import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
 import packit.service.GithubAPILoginService

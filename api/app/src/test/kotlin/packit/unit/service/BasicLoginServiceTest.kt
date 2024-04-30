@@ -7,7 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import packit.exceptions.PackitException
-import packit.model.LoginWithPassword
+import packit.model.dto.LoginWithPassword
 import packit.security.profile.BasicUserDetails
 import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
