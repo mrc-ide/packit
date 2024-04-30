@@ -1,4 +1,8 @@
--- delete all users except super admin
+-- delete all users and roles except super admin
 DELETE
 FROM "user"
-WHERE display_name NOT IN ('Super Admin');
+WHERE display_name != 'Super Admin';
+
+DELETE
+FROM "role"
+WHERE name != 'ADMIN'

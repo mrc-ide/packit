@@ -46,5 +46,4 @@ class PermissionServiceTest
             basePermissionService.checkMatchingPermissions(permissionsToCheck)
         }
     }
-
 }

@@ -11,7 +11,6 @@ interface PermissionService
     fun checkMatchingPermissions(permissionsToCheck: List<String>): List<Permission>
 }
 
-
 @Service
 class BasePermissionService(
     private val permissionRepository: PermissionRepository
@@ -27,5 +26,4 @@ class BasePermissionService(
         }
         return matchedPermissions
     }
-
 }

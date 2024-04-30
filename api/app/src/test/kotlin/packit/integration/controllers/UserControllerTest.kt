@@ -44,7 +44,7 @@ class UserControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["none"])
-    fun `non-admin user cannot create basic users`()
+    fun `user without user manage permission cannot create basic users`()
     {
         val result = restTemplate.postForEntity(
             "/user/basic/create",
