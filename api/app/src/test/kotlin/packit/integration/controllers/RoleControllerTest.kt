@@ -7,10 +7,12 @@ import org.springframework.http.HttpStatus
 import org.springframework.test.context.jdbc.Sql
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
+import packit.model.Role
 import packit.model.dto.CreateRole
 import packit.repository.RoleRepository
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 @Sql("/delete-test-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class RoleControllerTest : IntegrationTest()
@@ -62,5 +64,21 @@ class RoleControllerTest : IntegrationTest()
         )
 
         assertEquals(result.statusCode, HttpStatus.BAD_REQUEST)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["user.manage"])
+    fun `users with manage authority can delete roles`()
+    {
+        roleRepository.save(Role(name = "testRole"))
+
+        val result = restTemplate.postForEntity(
+            "/role/delete/testRole",
+            getTokenizedHttpEntity(),
+            String::class.java
+        )
+
+        assertSuccess(result)
+        assertNull(roleRepository.findByName("testRole"))
     }
 }
