@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import packit.exceptions.PackitException
 import packit.model.Permission
 import packit.model.Role
@@ -18,6 +19,7 @@ interface RoleService
     fun checkMatchingRoles(rolesToCheck: List<String>): List<Role>
     fun getGrantedAuthorities(roles: List<Role>): MutableList<GrantedAuthority>
     fun createRole(createRole: CreateRole)
+    fun deleteRole(roleName: String)
 }
 
 @Service
@@ -55,11 +57,22 @@ class BaseRoleService(
         saveRole(createRole.name, permissions)
     }
 
+    @Transactional
+    override fun deleteRole(roleName: String)
+    {
+
+        if (!roleRepository.existsByName(roleName))
+        {
+            throw PackitException("roleNotFound", HttpStatus.BAD_REQUEST)
+        }
+        roleRepository.deleteByName(roleName)
+    }
+
     internal fun saveRole(roleName: String, permissions: List<Permission> = listOf())
     {
         if (roleRepository.existsByName(roleName))
         {
-            throw PackitException("roleAlreadyExists")
+            throw PackitException("roleAlreadyExists", HttpStatus.BAD_REQUEST)
         }
         val role = Role(name = roleName)
         role.rolePermissions = permissions.map { RolePermission(permission = it, role = role) }
