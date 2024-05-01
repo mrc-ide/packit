@@ -32,7 +32,7 @@ class RoleControllerTest : IntegrationTest()
     fun `users with manage authority can create roles`()
     {
         val result = restTemplate.postForEntity(
-            "/role/create",
+            "/role",
             getTokenizedHttpEntity(data = createTestRoleBody),
             String::class.java
         )
@@ -46,7 +46,7 @@ class RoleControllerTest : IntegrationTest()
     fun `user without user manage permission cannot create roles`()
     {
         val result = restTemplate.postForEntity(
-            "/role/create",
+            "/role",
             getTokenizedHttpEntity(data = createTestRoleBody),
             String::class.java
         )
@@ -59,7 +59,7 @@ class RoleControllerTest : IntegrationTest()
     fun `reject request if createRole body is invalid`()
     {
         val result = restTemplate.postForEntity(
-            "/role/create",
+            "/role",
             getTokenizedHttpEntity(data = "{}"),
             String::class.java
         )
