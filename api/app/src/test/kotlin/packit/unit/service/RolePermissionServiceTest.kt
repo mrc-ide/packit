@@ -179,5 +179,4 @@ class RolePermissionServiceTest
             assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
         }
     }
-
 }

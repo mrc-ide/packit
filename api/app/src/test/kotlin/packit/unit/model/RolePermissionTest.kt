@@ -8,7 +8,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 
-
 class RolePermissionTest
 {
     private val mockRoles = listOf(
@@ -69,7 +68,6 @@ class RolePermissionTest
         assertNotEquals(rolePermission1, rolePermission2)
     }
 
-
     @Test
     fun `equals returns false when packetGroup ids are different`()
     {
@@ -79,7 +77,6 @@ class RolePermissionTest
             RolePermission(mockRoles.first(), mockPermissions.first(), null, mock<PacketGroup> { on { id } doReturn 2 })
         assertNotEquals(rolePermission1, rolePermission2)
     }
-
 
     @Test
     fun `equals returns false when tag ids are different`()
@@ -91,4 +88,57 @@ class RolePermissionTest
         assertNotEquals(rolePermission1, rolePermission2)
     }
 
+    @Test
+    fun `hashCode returns same hashcode for identical RolePermission instances`()
+    {
+        val rolePermission1 = RolePermission(mockRoles.first(), mockPermissions.first())
+        val rolePermission2 = RolePermission(mockRoles.first(), mockPermissions.first())
+        assertEquals(rolePermission1.hashCode(), rolePermission2.hashCode())
+    }
+
+    @Test
+    fun `hashCode returns different hash codes for RolePermission instances with different roles`()
+    {
+        val rolePermission1 = RolePermission(mockRoles.first(), mockPermissions.first())
+        val rolePermission2 = RolePermission(mockRoles.last(), mockPermissions.first())
+        assertNotEquals(rolePermission1.hashCode(), rolePermission2.hashCode())
+    }
+
+    @Test
+    fun `hashCode returns different hash codes for RolePermission instances with different permissions`()
+    {
+        val rolePermission1 = RolePermission(mockRoles.first(), mockPermissions.first())
+        val rolePermission2 = RolePermission(mockRoles.first(), mockPermissions.last())
+        assertNotEquals(rolePermission1.hashCode(), rolePermission2.hashCode())
+    }
+
+    @Test
+    fun `hashCode returns different hash codes for RolePermission instances with different packets`()
+    {
+        val rolePermission1 =
+            RolePermission(mockRoles.first(), mockPermissions.first(), mock<Packet> { on { id } doReturn "2024111" })
+        val rolePermission2 =
+            RolePermission(mockRoles.first(), mockPermissions.first(), mock<Packet> { on { id } doReturn "2023344" })
+        assertNotEquals(rolePermission1.hashCode(), rolePermission2.hashCode())
+    }
+
+    @Test
+    fun `hashCode returns different hash codes for RolePermission instances with different packetGroups`()
+    {
+        val rolePermission1 =
+            RolePermission(mockRoles.first(), mockPermissions.first(), null, mock<PacketGroup> { on { id } doReturn 1 })
+        val rolePermission2 =
+            RolePermission(mockRoles.first(), mockPermissions.first(), null, mock<PacketGroup> { on { id } doReturn 2 })
+        assertNotEquals(rolePermission1.hashCode(), rolePermission2.hashCode())
+    }
+
+    @Test
+    fun `hashCode returns different hash codes for RolePermission instances with different tags`()
+    {
+        val rolePermission1 =
+            RolePermission(mockRoles.first(), mockPermissions.first(), null, null, mock<Tag> { on { id } doReturn 1 })
+        val rolePermission2 =
+            RolePermission(mockRoles.first(), mockPermissions.first(), null, null, mock<Tag> { on { id } doReturn 2 })
+        assertNotEquals(rolePermission1.hashCode(), rolePermission2.hashCode())
+    }
 }

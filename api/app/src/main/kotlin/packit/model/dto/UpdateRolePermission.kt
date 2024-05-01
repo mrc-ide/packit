@@ -17,5 +17,4 @@ data class UpdateRolePermission(
             "Either all of packetId, tagId, packetGroupId should be null or only one of them should be not null"
         }
     }
-
 }

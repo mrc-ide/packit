@@ -289,10 +289,12 @@ class RoleServiceTest
 
         roleService.addPermissionsToRole(roleName, listOf())
 
-        verify(roleRepository).save(argThat {
+        verify(roleRepository).save(
+            argThat {
             this == role
             this.rolePermissions.size == 2
-        })
+        }
+        )
     }
 
     @Test

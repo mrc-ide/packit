@@ -44,4 +44,15 @@ class RolePermission(
             else -> true
         }
     }
+
+    override fun hashCode(): Int
+    {
+        val prime = 31
+        var result = role.name.hashCode()
+        result = prime * result + permission.name.hashCode()
+        result = prime * result + packet?.id.hashCode()
+        result = prime * result + packetGroup?.id.hashCode()
+        result = prime * result + tag?.id.hashCode()
+        return result
+    }
 }

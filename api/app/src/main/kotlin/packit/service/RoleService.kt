@@ -84,7 +84,6 @@ class BaseRoleService(
         roleRepository.save(role)
     }
 
-
     override fun removePermissionsFromRole(roleName: String, removeRolePermissions: List<UpdateRolePermission>)
     {
         val role = roleRepository.findByName(roleName)

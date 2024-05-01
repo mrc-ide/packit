@@ -8,7 +8,6 @@ import packit.model.RolePermission
 import packit.model.dto.UpdateRolePermission
 import packit.repository.*
 
-
 interface RolePermissionService
 {
     fun getRolePermissionsToUpdate(role: Role, addRolePermissions: List<UpdateRolePermission>): List<RolePermission>
@@ -49,7 +48,6 @@ class BaseRolePermissionService(
             )
         }
     }
-
 
     override fun removeRolePermissionsFromRole(role: Role, removeRolePermissions: List<UpdateRolePermission>)
     {
