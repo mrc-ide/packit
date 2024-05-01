@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import packit.model.dto.CreateRole
+import packit.model.dto.UpdateRolePermission
 import packit.service.RoleService
 
 @Controller
@@ -24,13 +25,35 @@ class RoleController(private val roleService: RoleService)
         return ResponseEntity.ok(mapOf("message" to "Role created"))
     }
 
-    @PostMapping("/delete/{name}")
+    @PostMapping("/delete/{roleName}")
     fun deleteRole(
-        @PathVariable name: String
+        @PathVariable roleName: String
     ): ResponseEntity<Map<String, String?>>
     {
-        roleService.deleteRole(name)
+        roleService.deleteRole(roleName)
 
         return ResponseEntity.ok(mapOf("message" to "Role deleted"))
+    }
+
+    @PostMapping("/add-permissions/{roleName}")
+    fun addPermissionsToRole(
+        @RequestBody @Validated addRolePermissions: List<UpdateRolePermission>,
+        @PathVariable roleName: String
+    ): ResponseEntity<Map<String, String>>
+    {
+        roleService.addPermissionsToRole(roleName, addRolePermissions)
+
+        return ResponseEntity.ok(mapOf("message" to "Permissions added"))
+    }
+
+    @PostMapping("/remove-permissions/{roleName}")
+    fun removePermissionsFromRole(
+        @RequestBody @Validated removeRolePermissions: List<UpdateRolePermission>,
+        @PathVariable roleName: String
+    ): ResponseEntity<Map<String, String>>
+    {
+        roleService.removePermissionsFromRole(roleName, removeRolePermissions)
+
+        return ResponseEntity.ok(mapOf("message" to "Permissions removed"))
     }
 }

@@ -10,6 +10,7 @@ import packit.model.Permission
 import packit.model.Role
 import packit.model.RolePermission
 import packit.model.dto.CreateRole
+import packit.model.dto.UpdateRolePermission
 import packit.repository.RoleRepository
 
 interface RoleService
@@ -20,12 +21,15 @@ interface RoleService
     fun getGrantedAuthorities(roles: List<Role>): MutableList<GrantedAuthority>
     fun createRole(createRole: CreateRole)
     fun deleteRole(roleName: String)
+    fun addPermissionsToRole(roleName: String, addRolePermissions: List<UpdateRolePermission>)
+    fun removePermissionsFromRole(roleName: String, removeRolePermissions: List<UpdateRolePermission>)
 }
 
 @Service
 class BaseRoleService(
     private val roleRepository: RoleRepository,
-    private val permissionService: PermissionService
+    private val permissionService: PermissionService,
+    private val rolePermissionService: BaseRolePermissionService
 ) : RoleService
 {
     override fun getUsernameRole(username: String): Role
@@ -56,16 +60,46 @@ class BaseRoleService(
 
         saveRole(createRole.name, permissions)
     }
-
-    @Transactional
+    
     override fun deleteRole(roleName: String)
     {
-
         if (!roleRepository.existsByName(roleName))
         {
             throw PackitException("roleNotFound", HttpStatus.BAD_REQUEST)
         }
         roleRepository.deleteByName(roleName)
+    }
+
+    override fun addPermissionsToRole(roleName: String, addRolePermissions: List<UpdateRolePermission>)
+    {
+        val role = roleRepository.findByName(roleName)
+            ?: throw PackitException("roleNotFound", HttpStatus.BAD_REQUEST)
+
+        val rolePermissionsToAdd = rolePermissionService.getRolePermissionsToUpdate(role, addRolePermissions)
+        if (rolePermissionsToAdd.any { role.rolePermissions.contains(it) })
+        {
+            throw PackitException("rolePermissionAlreadyExists", HttpStatus.BAD_REQUEST)
+        }
+
+        role.rolePermissions.addAll(rolePermissionsToAdd)
+        roleRepository.save(role)
+    }
+
+
+    override fun removePermissionsFromRole(roleName: String, removeRolePermissions: List<UpdateRolePermission>)
+    {
+        val role = roleRepository.findByName(roleName)
+            ?: throw PackitException("roleNotFound", HttpStatus.BAD_REQUEST)
+//        match them to role permissions and then delete those ones!!!
+        rolePermissionService.removeRolePermissionsFromRole(role, removeRolePermissions)
+
+//        if (rolePermissionsToRemove.any { !role.rolePermissions.contains(it) })
+//        {
+//            throw PackitException("rolePermissionDoesNotExist", HttpStatus.BAD_REQUEST)
+//        }
+//
+//        role.rolePermissions.removeAll(rolePermissionsToRemove)
+//        roleRepository.save(role)
     }
 
     internal fun saveRole(roleName: String, permissions: List<Permission> = listOf())

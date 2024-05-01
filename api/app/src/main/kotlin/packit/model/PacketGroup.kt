@@ -6,7 +6,7 @@ import jakarta.persistence.*
 @Table(name = "packet_group")
 class PacketGroup(
     var name: String,
-    @OneToMany(mappedBy = "packetGroup")
+    @OneToMany(mappedBy = "packetGroup", cascade = [CascadeType.ALL])
     var rolePermissions: MutableList<RolePermission> = mutableListOf(),
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

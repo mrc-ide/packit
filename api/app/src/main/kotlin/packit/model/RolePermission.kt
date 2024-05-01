@@ -29,3 +29,19 @@ class RolePermission(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null,
 )
+{
+    override fun equals(other: Any?): Boolean
+    {
+        return when
+        {
+            this === other -> true
+            other !is RolePermission -> false
+            role.name != other.role.name -> false
+            permission.name != other.permission.name -> false
+            packet?.id != other.packet?.id -> false
+            packetGroup?.id != other.packetGroup?.id -> false
+            tag?.id != other.tag?.id -> false
+            else -> true
+        }
+    }
+}
