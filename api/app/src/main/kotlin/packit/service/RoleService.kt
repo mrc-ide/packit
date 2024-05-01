@@ -92,7 +92,7 @@ class BaseRoleService(
     }
 
     /**
-     * Authorizes constructed as combination of role names and permission names.
+     * Authorities constructed as combination of role names and permission names.
      * This allows for more granular control over permissions.
      */
     override fun getGrantedAuthorities(roles: List<Role>): MutableList<GrantedAuthority>

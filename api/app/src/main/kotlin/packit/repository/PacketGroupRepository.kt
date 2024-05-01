@@ -6,3 +6,6 @@ import packit.model.PacketGroup
 
 @Repository
 interface PacketGroupRepository : JpaRepository<PacketGroup, Int>
+{
+    fun findByNameIn(names: List<String>): List<PacketGroup>
+}

@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS "user"
     "email"          TEXT,
     "disabled"       BOOLEAN NOT NULL DEFAULT FALSE,
     "user_source"    TEXT,
-    "last_logged_in" TIMESTAMP        DEFAULT CURRENT_TIMESTAMP
+    "last_logged_in" TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS "role"
