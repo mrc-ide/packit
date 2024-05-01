@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import packit.exceptions.PackitException
 import packit.model.Permission
 import packit.model.Role
@@ -60,7 +59,7 @@ class BaseRoleService(
 
         saveRole(createRole.name, permissions)
     }
-    
+
     override fun deleteRole(roleName: String)
     {
         if (!roleRepository.existsByName(roleName))
@@ -90,16 +89,7 @@ class BaseRoleService(
     {
         val role = roleRepository.findByName(roleName)
             ?: throw PackitException("roleNotFound", HttpStatus.BAD_REQUEST)
-//        match them to role permissions and then delete those ones!!!
         rolePermissionService.removeRolePermissionsFromRole(role, removeRolePermissions)
-
-//        if (rolePermissionsToRemove.any { !role.rolePermissions.contains(it) })
-//        {
-//            throw PackitException("rolePermissionDoesNotExist", HttpStatus.BAD_REQUEST)
-//        }
-//
-//        role.rolePermissions.removeAll(rolePermissionsToRemove)
-//        roleRepository.save(role)
     }
 
     internal fun saveRole(roleName: String, permissions: List<Permission> = listOf())
