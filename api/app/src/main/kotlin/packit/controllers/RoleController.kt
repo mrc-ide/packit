@@ -22,7 +22,7 @@ class RoleController(private val roleService: RoleService)
         return ResponseEntity.ok(mapOf("message" to "Role created"))
     }
 
-    @DeleteMapping("/{name}")
+    @DeleteMapping("/{roleName}")
     fun deleteRole(
         @PathVariable roleName: String
     ): ResponseEntity<Map<String, String?>>
@@ -32,7 +32,7 @@ class RoleController(private val roleService: RoleService)
         return ResponseEntity.ok(mapOf("message" to "Role deleted"))
     }
 
-    @PostMapping("/add-permissions/{roleName}")
+    @PutMapping("/add-permissions/{roleName}")
     fun addPermissionsToRole(
         @RequestBody @Validated addRolePermissions: List<UpdateRolePermission>,
         @PathVariable roleName: String
@@ -43,7 +43,7 @@ class RoleController(private val roleService: RoleService)
         return ResponseEntity.ok(mapOf("message" to "Permissions added"))
     }
 
-    @PostMapping("/remove-permissions/{roleName}")
+    @PutMapping("/remove-permissions/{roleName}")
     fun removePermissionsFromRole(
         @RequestBody @Validated removeRolePermissions: List<UpdateRolePermission>,
         @PathVariable roleName: String
