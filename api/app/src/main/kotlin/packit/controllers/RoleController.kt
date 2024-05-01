@@ -15,7 +15,7 @@ import packit.service.RoleService
 @RequestMapping("/role")
 class RoleController(private val roleService: RoleService)
 {
-    @PostMapping("/create")
+    @PostMapping()
     fun createRole(@RequestBody @Validated createRole: CreateRole): ResponseEntity<Map<String, String?>>
     {
         roleService.createRole(createRole)
