@@ -210,14 +210,18 @@ class PacketServiceTest
     @Test
     fun `saveUniquePacketGroups saves unique packet groups`()
     {
-        `when`(packetGroupRepository.findAll()).doReturn(listOf(PacketGroup("test2")))
+        val packetGroupNames = listOf("test", "test2")
+        `when`(packetGroupRepository.findByNameIn(packetGroupNames)).doReturn(listOf(PacketGroup("test2")))
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
-        val packetGroups = listOf(PacketGroup("test"), PacketGroup("test2"))
+        val argumentCaptor = argumentCaptor<List<PacketGroup>>()
 
-        sut.saveUniquePacketGroups(packetGroups)
+        sut.saveUniquePacketGroups(packetGroupNames)
 
-        verify(packetGroupRepository).findAll()
-        verify(packetGroupRepository).saveAll(packetGroups.subList(0, 1))
+        verify(packetGroupRepository).findByNameIn(packetGroupNames)
+        verify(packetGroupRepository).saveAll(argumentCaptor.capture())
+        val packetGroups = argumentCaptor.firstValue
+        assertEquals(packetGroups.size, 1)
+        assertEquals(packetGroups.first().name, "test")
     }
 
     @Test
