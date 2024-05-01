@@ -54,3 +54,4 @@ For example, `V1__create_table.sql`. The version number should be the next avail
 The config `spring.jpa.hibernate.ddl-auto=validate` in application.properties will ensure Entity classes are in sync with the database schema.
 
 Note: A intelliJ called [JpaBuddy](https://jpa-buddy.com/) can be used to generate entity classes from a database schema and visa versa.
+This [tutorial](https://www.youtube.com/watch?v=9wEJ29QIDyM&t=51s) is a good starting point on how flyway and jpabuddy can be used together.
