@@ -3,6 +3,7 @@ package packit.integration.controllers
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.jdbc.Sql
 import packit.integration.IntegrationTest
@@ -72,8 +73,9 @@ class RoleControllerTest : IntegrationTest()
     {
         roleRepository.save(Role(name = "testRole"))
 
-        val result = restTemplate.postForEntity(
-            "/role/delete/testRole",
+        val result = restTemplate.exchange(
+            "/role/testRole",
+            HttpMethod.DELETE,
             getTokenizedHttpEntity(),
             String::class.java
         )
