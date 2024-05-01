@@ -51,19 +51,19 @@ class BasePacketService(
                     it.time.start, it.time.end
                 )
             }
-        val packetGroups = packets.groupBy { it.name }
-            .map { PacketGroup(it.key) }
+        val packetGroupNames = packets.groupBy { it.name }
+            .map { it.key }
 
         packetRepository.saveAll(packets)
-        saveUniquePacketGroups(packetGroups)
+        saveUniquePacketGroups(packetGroupNames)
     }
 
-    internal fun saveUniquePacketGroups(packetGroups: List<PacketGroup>)
+    internal fun saveUniquePacketGroups(packetGroupNames: List<String>)
     {
-        val existingPacketGroupNames = packetGroupRepository.findAll().map { it.name }
+        val matchedPacketGroupNames = packetGroupRepository.findByNameIn(packetGroupNames).map { it.name }
         val newPacketGroups =
-            packetGroups.filter { !existingPacketGroupNames.contains(it.name) }
-        packetGroupRepository.saveAll(newPacketGroups)
+            packetGroupNames.filter { it !in matchedPacketGroupNames }
+        packetGroupRepository.saveAll(newPacketGroups.map { PacketGroup(name = it) })
     }
 
     override fun getPackets(): List<Packet>

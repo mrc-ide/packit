@@ -44,3 +44,13 @@ Dependencies must be running for integration tests to pass.
 1. `./api/scripts/build` builds a docker image.
 2. `./api/scripts/build-and-push` builds and pushes an image to dockerhub. This script is run on CI.
 3. `./api/scripts/run` runs a built image with the current branch name.
+
+## Migrations
+
+For database migrations, we use [Flyway](https://flywaydb.org/). Flyway will look in the `db/migration` directory for SQL scripts to run.
+A table called `flyway_schema_history` will be created in the database to keep track of which scripts have been run. To create a new migration
+script, create a new file in the `db/migration` directory with the following naming convention: `V{version}__{description}.sql`.
+For example, `V1__create_table.sql`. The version number should be the next available integer. Flyway will run the scripts in order of version number.
+The config `spring.jpa.hibernate.ddl-auto=validate` in application.properties will ensure Entity classes are in sync with the database schema.
+
+Note: A intelliJ called [JpaBuddy](https://jpa-buddy.com/) can be used to generate entity classes from a database schema and visa versa.
