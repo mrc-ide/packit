@@ -28,7 +28,7 @@ interface RoleService
 class BaseRoleService(
     private val roleRepository: RoleRepository,
     private val permissionService: PermissionService,
-    private val rolePermissionService: BaseRolePermissionService
+    private val rolePermissionService: RolePermissionService
 ) : RoleService
 {
     override fun getUsernameRole(username: String): Role
