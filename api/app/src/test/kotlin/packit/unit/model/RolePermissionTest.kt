@@ -1,5 +1,7 @@
 package packit.unit.model
 
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import packit.model.*
@@ -140,5 +142,29 @@ class RolePermissionTest
         val rolePermission2 =
             RolePermission(mockRoles.first(), mockPermissions.first(), null, null, mock<Tag> { on { id } doReturn 2 })
         assertNotEquals(rolePermission1.hashCode(), rolePermission2.hashCode())
+    }
+
+    @Test
+    fun `constructor throws when more than one scope field is non-null`()
+    {
+        assertThrows<IllegalArgumentException> {
+            RolePermission(Role("r1"), Permission("p1", "d1"), mock<Packet>(), mock<PacketGroup>())
+        }
+    }
+
+    @Test
+    fun `constructor does not throw when all scope fields are null`()
+    {
+        assertDoesNotThrow {
+            RolePermission(Role("r1"), Permission("p1", "d1"))
+        }
+    }
+
+    @Test
+    fun `constructor does not throw when only single scope field is non-null`()
+    {
+        assertDoesNotThrow {
+            RolePermission(Role("r1"), Permission("p1", "d1"), mock<Packet>())
+        }
     }
 }

@@ -30,6 +30,14 @@ class RolePermission(
     var id: Int? = null,
 )
 {
+    init
+    {
+        val nonNullFields = listOf(packet, tag, packetGroup).count { it != null }
+        require(nonNullFields <= 1) {
+            "Either all of packet, tag, packetGroup should be null or only one of them should be not null"
+        }
+    }
+
     override fun equals(other: Any?): Boolean
     {
         return when
