@@ -23,7 +23,7 @@ class Role(
         if (other !is Role) return false
 
         if (name != other.name) return false
-        if (id != other.id) return false
+        if (isUsername != other.isUsername) return false
 
         return true
     }
@@ -31,7 +31,7 @@ class Role(
     override fun hashCode(): Int
     {
         var result = name.hashCode()
-        result = 31 * result + (id ?: 0)
+        result = 31 * result + isUsername.hashCode()
         return result
     }
 }
