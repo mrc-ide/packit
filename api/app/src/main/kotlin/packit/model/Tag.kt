@@ -1,6 +1,7 @@
 package packit.model
 
 import jakarta.persistence.*
+import packit.model.dto.TagDto
 
 @Entity
 @Table(name = "tag")
@@ -14,3 +15,5 @@ class Tag(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int? = null,
 )
+
+fun Tag.toDto() = TagDto(name, id!!)

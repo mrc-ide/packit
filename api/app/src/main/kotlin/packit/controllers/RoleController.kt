@@ -6,7 +6,9 @@ import org.springframework.stereotype.Controller
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import packit.model.dto.CreateRole
+import packit.model.dto.RoleDto
 import packit.model.dto.UpdateRolePermission
+import packit.model.toDto
 import packit.service.RoleService
 
 @Controller
@@ -52,5 +54,25 @@ class RoleController(private val roleService: RoleService)
         roleService.removePermissionsFromRole(roleName, removeRolePermissions)
 
         return ResponseEntity.ok(mapOf("message" to "Permissions removed"))
+    }
+
+    @GetMapping
+    fun getRoleNames(): ResponseEntity<List<String>>
+    {
+        return ResponseEntity.ok(roleService.getRoleNames())
+    }
+
+    @GetMapping("/complete")
+    fun getRolesWithRelationships(): ResponseEntity<List<RoleDto>>
+    {
+        val roles = roleService.getRolesWithRelationships()
+        return ResponseEntity.ok(roles.map { it.toDto() })
+    }
+
+    @GetMapping("/{roleName}")
+    fun getRole(@PathVariable roleName: String): ResponseEntity<RoleDto>
+    {
+        val role = roleService.getRole(roleName)
+        return ResponseEntity.ok(role.toDto())
     }
 }

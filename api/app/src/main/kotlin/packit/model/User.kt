@@ -1,6 +1,7 @@
 package packit.model
 
 import jakarta.persistence.*
+import packit.model.dto.UserDto
 import java.time.Instant
 import java.util.*
 
@@ -25,3 +26,5 @@ class User(
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: UUID? = null
 )
+
+fun User.toDto() = UserDto(username, id!!)
