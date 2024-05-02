@@ -85,7 +85,7 @@ class BaseUserService(
     override fun addRolesToUser(username: String, roleNames: List<String>)
     {
         val (user, rolesToAdd) = getUserAndRole(username, roleNames)
-        if (rolesToAdd.any { user.roles.any { userRole -> userRole.name == it.name } })
+        if (rolesToAdd.any { user.roles.contains(it) })
         {
             throw PackitException("userRoleExists", HttpStatus.BAD_REQUEST)
         }
@@ -98,11 +98,13 @@ class BaseUserService(
     {
         val (user, rolesToRemove) = getUserAndRole(username, roleNames)
 
-        if (rolesToRemove.any { user.roles.none { userRole -> userRole.name == it.name } })
-        {
-            throw PackitException("userRoleNotExists", HttpStatus.BAD_REQUEST)
+        val matchedRolesToRemove = rolesToRemove.map { roleToRemove ->
+            val matchedPermission = user.roles.find { roleToRemove == it }
+                ?: throw PackitException("userRoleNotExists", HttpStatus.BAD_REQUEST)
+            matchedPermission
         }
-        user.roles.removeAll(rolesToRemove)
+
+        user.roles.removeAll(matchedRolesToRemove)
         userRepository.save(user)
     }
 
