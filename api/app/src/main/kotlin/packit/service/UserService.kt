@@ -84,7 +84,7 @@ class BaseUserService(
 
     override fun addRolesToUser(username: String, roleNames: List<String>)
     {
-        val (user, rolesToAdd) = getUserAndRole(username, roleNames)
+        val (user, rolesToAdd) = getUserAndRolesForUpdate(username, roleNames)
         if (rolesToAdd.any { user.roles.contains(it) })
         {
             throw PackitException("userRoleExists", HttpStatus.BAD_REQUEST)
@@ -96,7 +96,7 @@ class BaseUserService(
 
     override fun removeRolesFromUser(username: String, roleNames: List<String>)
     {
-        val (user, rolesToRemove) = getUserAndRole(username, roleNames)
+        val (user, rolesToRemove) = getUserAndRolesForUpdate(username, roleNames)
 
         val matchedRolesToRemove = rolesToRemove.map { roleToRemove ->
             val matchedPermission = user.roles.find { roleToRemove == it }
@@ -108,11 +108,16 @@ class BaseUserService(
         userRepository.save(user)
     }
 
-    internal fun getUserAndRole(username: String, roleNames: List<String>): Pair<User, List<Role>>
+    internal fun getUserAndRolesForUpdate(username: String, roleNames: List<String>): Pair<User, List<Role>>
     {
         val user = userRepository.findByUsername(username)
             ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
         val roles = roleService.getRolesWithRelationships(roleNames)
+        if (roles.any { it.isUsername })
+        {
+            throw PackitException("cannotUpdateUsernameRoles", HttpStatus.BAD_REQUEST)
+        }
+
         return Pair(user, roles)
     }
 }
