@@ -16,8 +16,9 @@ CREATE TABLE IF NOT EXISTS "user"
 
 CREATE TABLE IF NOT EXISTS "role"
 (
-    "id"   SERIAL PRIMARY KEY,
-    "name" text NOT NULL UNIQUE
+    "id"          SERIAL PRIMARY KEY,
+    "name"        text    NOT NULL UNIQUE,
+    "is_username" BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS "permission"
