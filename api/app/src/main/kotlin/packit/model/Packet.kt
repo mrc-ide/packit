@@ -34,4 +34,4 @@ fun Packet.toDto() = PacketDto(
     id, name, displayName, parameters, published, importTime, startTime, endTime
 )
 
-fun Packet.toBasicDto() = BasicPacketDto(id, name)
+fun Packet.toBasicDto() = BasicPacketDto(name, id)

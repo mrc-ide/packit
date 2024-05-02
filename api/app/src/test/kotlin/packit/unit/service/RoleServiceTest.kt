@@ -291,9 +291,9 @@ class RoleServiceTest
 
         verify(roleRepository).save(
             argThat {
-            this == role
-            this.rolePermissions.size == 2
-        }
+                this == role
+                this.rolePermissions.size == 2
+            }
         )
     }
 
@@ -321,6 +321,42 @@ class RoleServiceTest
         roleService.removePermissionsFromRole(roleName, listOf())
 
         verify(rolePermissionService).removeRolePermissionsFromRole(role, listOf())
+    }
+
+    @Test
+    fun `getRoleNames returns role names`()
+    {
+        val roles = listOf(Role(name = "role1"), Role(name = "role2"))
+        whenever(roleRepository.findAll()).thenReturn(roles)
+
+        val result = roleService.getRoleNames()
+
+        assertEquals(2, result.size)
+        assertTrue(result.containsAll(listOf("role1", "role2")))
+    }
+
+    @Test
+    fun `getRolesWithRelationships returns all roles`()
+    {
+        val roles = listOf(Role(name = "role1"), Role(name = "role2"))
+        whenever(roleRepository.findAll()).thenReturn(roles)
+
+        val result = roleService.getRolesWithRelationships()
+
+        assertEquals(2, result.size)
+        assertTrue(result.containsAll(roles))
+    }
+
+    @Test
+    fun `getRole returns role by name`()
+    {
+        val roleName = "roleName"
+        val role = Role(name = roleName)
+        whenever(roleRepository.findByName(roleName)).thenReturn(role)
+
+        val result = roleService.getRole(roleName)
+
+        assertEquals(role, result)
     }
 
     private fun createRoleWithPermission(

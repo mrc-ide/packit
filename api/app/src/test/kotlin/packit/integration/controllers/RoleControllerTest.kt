@@ -12,6 +12,7 @@ import packit.model.Role
 import packit.model.RolePermission
 import packit.model.dto.CreateRole
 import packit.model.dto.UpdateRolePermission
+import packit.model.toDto
 import packit.repository.PermissionRepository
 import packit.repository.RoleRepository
 import kotlin.test.assertEquals
@@ -142,5 +143,57 @@ class RoleControllerTest : IntegrationTest()
         assertSuccess(result)
         val role = roleRepository.findByName("testRole")!!
         assertEquals(0, role.rolePermissions.size)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["user.manage"])
+    fun `users with manage authority can get role names`()
+    {
+        roleRepository.save(Role(name = "testRole"))
+
+        val result = restTemplate.exchange(
+            "/role",
+            HttpMethod.GET,
+            getTokenizedHttpEntity(),
+            String::class.java
+        )
+
+        assertSuccess(result)
+
+        assertEquals(ObjectMapper().writeValueAsString(listOf("ADMIN", "testRole")), result.body)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["user.manage"])
+    fun `users can get roles with relationships`()
+    {
+        val roleDto = roleRepository.findByName("ADMIN")!!.toDto()
+        val result = restTemplate.exchange(
+            "/role/complete",
+            HttpMethod.GET,
+            getTokenizedHttpEntity(),
+            String::class.java
+        )
+
+        assertSuccess(result)
+
+        assertEquals(ObjectMapper().writeValueAsString(listOf(roleDto)), result.body)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["user.manage"])
+    fun `users can get specific with relationships`()
+    {
+        val roleDto = roleRepository.findByName("ADMIN")!!.toDto()
+        val result = restTemplate.exchange(
+            "/role/ADMIN",
+            HttpMethod.GET,
+            getTokenizedHttpEntity(),
+            String::class.java
+        )
+
+        assertSuccess(result)
+
+        assertEquals(ObjectMapper().writeValueAsString(roleDto), result.body)
     }
 }
