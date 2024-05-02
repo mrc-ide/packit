@@ -123,8 +123,7 @@ CREATE TABLE IF NOT EXISTS "settings"
 CREATE INDEX ON "packet" ("name");
 CREATE INDEX ON "user" ("username");
 CREATE INDEX ON "user" ("email");
-CREATE INDEX ON "user_role" ("user_id");
-CREATE INDEX ON "user_role" ("role_id");
+CREATE INDEX ON "user_role" ("user_id", "role_id");
 CREATE INDEX ON "role_permission" ("role_id");
 CREATE INDEX ON "role_permission" ("permission_id");
 CREATE INDEX ON "role_permission" ("packet_id");
