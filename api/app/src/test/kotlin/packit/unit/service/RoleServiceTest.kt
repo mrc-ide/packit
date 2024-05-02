@@ -39,7 +39,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getUsernameRole creates new role if not exists`()
+    fun `getUsernameRole creates new role with is_username flag if not exists`()
     {
         whenever(roleRepository.findByName("username")).thenReturn(null)
         whenever(roleRepository.save(any<Role>())).thenAnswer { it.getArgument(0) }
@@ -47,6 +47,7 @@ class RoleServiceTest
         val result = roleService.getUsernameRole("username")
 
         assertEquals("username", result.name)
+        assertEquals(true, result.isUsername)
         verify(roleRepository).save(any<Role>())
     }
 
@@ -92,8 +93,8 @@ class RoleServiceTest
 
         verify(roleRepository).save(
             argThat {
-            this.name == "roleName"
-        }
+                this.name == "roleName"
+            }
         )
     }
 
