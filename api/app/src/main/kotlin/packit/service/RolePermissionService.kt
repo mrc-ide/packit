@@ -53,8 +53,8 @@ class BaseRolePermissionService(
     {
         val rolePermissionsToRemove = getRolePermissionsToUpdate(role, removeRolePermissions)
 
-        val matchedRolePermissionsToRemove = rolePermissionsToRemove.map { rolePermissionsToRemove ->
-            val matchedPermission = role.rolePermissions.find { rolePermissionsToRemove == it }
+        val matchedRolePermissionsToRemove = rolePermissionsToRemove.map { rolePermissionToRemove ->
+            val matchedPermission = role.rolePermissions.find { rolePermissionToRemove == it }
                 ?: throw PackitException("rolePermissionDoesNotExist", HttpStatus.BAD_REQUEST)
             matchedPermission
         }
