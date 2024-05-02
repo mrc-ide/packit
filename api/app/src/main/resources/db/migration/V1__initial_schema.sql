@@ -58,7 +58,8 @@ CREATE TABLE IF NOT EXISTS "user_role"
     "user_id" UUID NOT NULL,
     "role_id" INT  NOT NULL,
     FOREIGN KEY ("user_id") REFERENCES "user" ("id") ON DELETE CASCADE,
-    FOREIGN KEY ("role_id") REFERENCES "role" ("id") ON DELETE CASCADE
+    FOREIGN KEY ("role_id") REFERENCES "role" ("id") ON DELETE CASCADE,
+    CONSTRAINT user_role_unique UNIQUE ("user_id", "role_id")
 );
 
 CREATE TABLE IF NOT EXISTS "role_permission"
