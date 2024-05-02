@@ -5,9 +5,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.*
 import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.model.dto.CreateBasicUser
@@ -31,5 +29,27 @@ class UserController(private val config: AppConfig, private val userService: Use
         userService.createBasicUser(createBasicUser)
 
         return ResponseEntity.ok(mapOf("message" to "User created"))
+    }
+
+    @PutMapping("add-roles/{username}")
+    fun addRoleToUser(
+        @RequestBody @Validated roleNames: List<String>,
+        @PathVariable username: String
+    ): ResponseEntity<Map<String, String?>>
+    {
+        userService.addRolesToUser(username, roleNames)
+
+        return ResponseEntity.ok(mapOf("message" to "Role added"))
+    }
+
+    @PutMapping("remove-roles/{username}")
+    fun removeRoleFromUser(
+        @RequestBody @Validated roleNames: List<String>,
+        @PathVariable username: String
+    ): ResponseEntity<Map<String, String?>>
+    {
+        userService.removeRolesFromUser(username, roleNames)
+
+        return ResponseEntity.ok(mapOf("message" to "Role removed"))
     }
 }

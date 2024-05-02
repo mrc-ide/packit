@@ -24,6 +24,7 @@ interface RoleService
     fun removePermissionsFromRole(roleName: String, removeRolePermissions: List<UpdateRolePermission>)
     fun getRoleNames(): List<String>
     fun getRolesWithRelationships(): List<Role>
+    fun getRolesWithRelationships(roleNames: List<String>): List<Role>
     fun getRole(roleName: String): Role
 }
 
@@ -102,6 +103,16 @@ class BaseRoleService(
     override fun getRolesWithRelationships(): List<Role>
     {
         return roleRepository.findAll()
+    }
+
+    override fun getRolesWithRelationships(roleNames: List<String>): List<Role>
+    {
+        val foundRoles = roleRepository.findByNameIn(roleNames)
+        if (foundRoles.size != roleNames.size)
+        {
+            throw PackitException("invalidRolesProvided", HttpStatus.BAD_REQUEST)
+        }
+        return foundRoles
     }
 
     override fun getRole(roleName: String): Role
