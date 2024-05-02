@@ -39,7 +39,7 @@ class BaseRoleService(
         {
             return userRole
         }
-        return roleRepository.save(Role(name = username))
+        return roleRepository.save(Role(name = username, isUsername = true))
     }
 
     override fun getAdminRole(): Role
