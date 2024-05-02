@@ -58,7 +58,8 @@ CREATE TABLE IF NOT EXISTS "user_role"
     "user_id" UUID NOT NULL,
     "role_id" INT  NOT NULL,
     FOREIGN KEY ("user_id") REFERENCES "user" ("id") ON DELETE CASCADE,
-    FOREIGN KEY ("role_id") REFERENCES "role" ("id") ON DELETE CASCADE
+    FOREIGN KEY ("role_id") REFERENCES "role" ("id") ON DELETE CASCADE,
+    CONSTRAINT user_role_unique UNIQUE ("user_id", "role_id")
 );
 
 CREATE TABLE IF NOT EXISTS "role_permission"
@@ -123,8 +124,7 @@ CREATE TABLE IF NOT EXISTS "settings"
 CREATE INDEX ON "packet" ("name");
 CREATE INDEX ON "user" ("username");
 CREATE INDEX ON "user" ("email");
-CREATE INDEX ON "user_role" ("user_id");
-CREATE INDEX ON "user_role" ("role_id");
+CREATE INDEX ON "user_role" ("user_id", "role_id");
 CREATE INDEX ON "role_permission" ("role_id");
 CREATE INDEX ON "role_permission" ("permission_id");
 CREATE INDEX ON "role_permission" ("packet_id");
