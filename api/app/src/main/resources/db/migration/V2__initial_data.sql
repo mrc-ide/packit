@@ -1,7 +1,7 @@
 -- add base roles
 INSERT INTO "role"
-    ("name")
-VALUES ('ADMIN');
+    ("name", is_username)
+VALUES ('ADMIN', false);
 
 -- add base permissions
 INSERT INTO "permission"
