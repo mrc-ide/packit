@@ -150,7 +150,7 @@ class UserControllerTest : IntegrationTest()
         )
 
         val result = restTemplate.exchange(
-            "/user/${username}",
+            "/user/$username",
             HttpMethod.DELETE,
             getTokenizedHttpEntity(),
             String::class.java
