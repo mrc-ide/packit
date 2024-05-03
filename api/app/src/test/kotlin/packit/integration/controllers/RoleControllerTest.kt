@@ -184,7 +184,8 @@ class RoleControllerTest : IntegrationTest()
     @WithAuthenticatedUser(authorities = ["user.manage"])
     fun `users can get username roles with relationships `()
     {
-        val usernameRole = roleRepository.save(Role("username", isUsername = true))
+        roleRepository.save(Role("username", isUsername = true))
+        val allUsernameRoles = roleRepository.findAllByIsUsername(true).map { it.toDto() }
         val result = restTemplate.exchange(
             "/role/complete/usernames",
             HttpMethod.GET,
@@ -194,7 +195,7 @@ class RoleControllerTest : IntegrationTest()
 
         assertSuccess(result)
 
-        assertEquals(ObjectMapper().writeValueAsString(listOf(usernameRole.toDto())), result.body)
+        assertEquals(ObjectMapper().writeValueAsString(allUsernameRoles), result.body)
     }
 
     @Test
