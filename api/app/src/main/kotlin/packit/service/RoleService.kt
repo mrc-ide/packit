@@ -44,13 +44,8 @@ class BaseRoleService(
 
     override fun getAdminRole(): Role
     {
-        val userRole = roleRepository.findByName("ADMIN")
-
-        if (userRole != null)
-        {
-            return userRole
-        }
-        return roleRepository.save(Role(name = "ADMIN"))
+        return roleRepository.findByName("ADMIN")
+            ?: throw PackitException("adminRoleNotFound", HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
     override fun createRole(createRole: CreateRole)
