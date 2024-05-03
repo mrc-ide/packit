@@ -4,7 +4,9 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.*
+import org.springframework.http.HttpStatus
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import packit.exceptions.PackitException
 import packit.model.Packet
@@ -63,15 +65,16 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getAdminRole() creates new role if not exists`()
+    fun `getAdminRole() throws exception if not exists`()
     {
         whenever(roleRepository.findByName("ADMIN")).thenReturn(null)
-        whenever(roleRepository.save(any<Role>())).thenAnswer { it.getArgument(0) }
 
-        val result = roleService.getAdminRole()
-
-        assertEquals("ADMIN", result.name)
-        verify(roleRepository).save(any<Role>())
+        assertThrows<PackitException> {
+            roleService.getAdminRole()
+        }.apply {
+            assertEquals("adminRoleNotFound", key)
+            assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, httpStatus)
+        }
     }
 
     @Test
