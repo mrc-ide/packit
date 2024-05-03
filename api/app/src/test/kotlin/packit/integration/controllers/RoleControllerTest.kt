@@ -199,7 +199,7 @@ class RoleControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `users can get non username roles with relationships `()
+    fun `users can get non username roles with relationships`()
     {
         roleRepository.save(Role("randomUser", isUsername = true)).toDto()
         val adminRole = roleRepository.findByName("ADMIN")!!.toDto()
@@ -211,6 +211,8 @@ class RoleControllerTest : IntegrationTest()
         )
 
         assertSuccess(result)
+
+        print(result.body)
 
         assertEquals(ObjectMapper().writeValueAsString(listOf(adminRole)), result.body)
     }
