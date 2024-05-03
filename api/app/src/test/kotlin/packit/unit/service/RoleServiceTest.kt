@@ -72,15 +72,16 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getAdminRole() creates new role if not exists`()
+    fun `getAdminRole() throws exception if not exists`()
     {
         whenever(roleRepository.findByName("ADMIN")).thenReturn(null)
-        whenever(roleRepository.save(any<Role>())).thenAnswer { it.getArgument(0) }
 
-        val result = roleService.getAdminRole()
-
-        assertEquals("ADMIN", result.name)
-        verify(roleRepository).save(any<Role>())
+        assertThrows<PackitException> {
+            roleService.getAdminRole()
+        }.apply {
+            assertEquals("adminRoleNotFound", key)
+            assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, httpStatus)
+        }
     }
 
     @Test
