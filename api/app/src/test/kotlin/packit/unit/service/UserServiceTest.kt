@@ -275,4 +275,31 @@ class UserServiceTest
         assertEquals(ex.key, "cannotUpdateUsernameRoles")
         assertEquals(ex.httpStatus, HttpStatus.BAD_REQUEST)
     }
+
+    @Test
+    fun `deleteUser removes user when user exists in repository`()
+    {
+        val username = "existingUser"
+        val user = User(username = username, displayName = "displayName", disabled = false, userSource = "github")
+        whenever(mockUserRepository.findByUsername(username)).thenReturn(user)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        service.deleteUser(username)
+
+        verify(mockUserRepository).delete(user)
+        verify(mockRoleService).deleteRole(username)
+    }
+
+    @Test
+    fun `deleteUser throws exception when user does not exist in repository`()
+    {
+        val username = "nonExistingUser"
+        whenever(mockUserRepository.findByUsername(username)).thenReturn(null)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        assertThrows<PackitException> { service.deleteUser(username) }.apply {
+            assertEquals("userNotFound", key)
+            assertEquals(HttpStatus.NOT_FOUND, httpStatus)
+        }
+    }
 }

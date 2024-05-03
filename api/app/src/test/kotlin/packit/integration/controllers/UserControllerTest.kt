@@ -132,4 +132,32 @@ class UserControllerTest : IntegrationTest()
         assertSuccess(result)
         assertEquals(userRepository.findByUsername(testUser.username)?.roles?.size, 0)
     }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["user.manage"])
+    fun `deleteUser deletes user and username role`()
+    {
+        val username = "testUsername"
+        val testRole = roleRepository.save(Role(name = username))
+        val testUser = userRepository.save(
+            User(
+                username = username,
+                disabled = false,
+                userSource = "basic",
+                displayName = "test user",
+                roles = mutableListOf(testRole)
+            )
+        )
+
+        val result = restTemplate.exchange(
+            "/user/${username}",
+            HttpMethod.DELETE,
+            getTokenizedHttpEntity(),
+            String::class.java
+        )
+
+        assertSuccess(result)
+        assertEquals(userRepository.findByUsername(testUser.username), null)
+        assertEquals(roleRepository.findByName(username), null)
+    }
 }

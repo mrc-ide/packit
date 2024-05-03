@@ -52,4 +52,14 @@ class UserController(private val config: AppConfig, private val userService: Use
 
         return ResponseEntity.ok(mapOf("message" to "Role removed"))
     }
+
+    @DeleteMapping("/{username}")
+    fun deleteUser(
+        @PathVariable username: String
+    ): ResponseEntity<Map<String, String?>>
+    {
+        userService.deleteUser(username)
+
+        return ResponseEntity.ok(mapOf("message" to "User deleted"))
+    }
 }

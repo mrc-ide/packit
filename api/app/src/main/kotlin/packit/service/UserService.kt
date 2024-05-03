@@ -18,6 +18,7 @@ interface UserService
     fun getUserForLogin(username: String): User
     fun addRolesToUser(username: String, roleNames: List<String>)
     fun removeRolesFromUser(username: String, roleNames: List<String>)
+    fun deleteUser(username: String)
 }
 
 @Service
@@ -106,6 +107,15 @@ class BaseUserService(
 
         user.roles.removeAll(matchedRolesToRemove)
         userRepository.save(user)
+    }
+
+    override fun deleteUser(username: String)
+    {
+        val user = userRepository.findByUsername(username)
+            ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
+
+        userRepository.delete(user)
+        roleService.deleteRole(username)
     }
 
     internal fun getUserAndRolesForUpdate(username: String, roleNames: List<String>): Pair<User, List<Role>>
