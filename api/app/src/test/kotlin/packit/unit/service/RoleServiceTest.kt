@@ -72,15 +72,16 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getAdminRole() creates new role if not exists`()
+    fun `getAdminRole() throws exception if not exists`()
     {
         whenever(roleRepository.findByName("ADMIN")).thenReturn(null)
-        whenever(roleRepository.save(any<Role>())).thenAnswer { it.getArgument(0) }
 
-        val result = roleService.getAdminRole()
-
-        assertEquals("ADMIN", result.name)
-        verify(roleRepository).save(any<Role>())
+        assertThrows<PackitException> {
+            roleService.getAdminRole()
+        }.apply {
+            assertEquals("adminRoleNotFound", key)
+            assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, httpStatus)
+        }
     }
 
     @Test
@@ -337,7 +338,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getRolesWithRelationships returns all roles`()
+    fun `getRolesWithRelationships returns all roles when no isUsernamesflag set`()
     {
         val roles = listOf(Role(name = "role1"), Role(name = "role2"))
         whenever(roleRepository.findAll()).thenReturn(roles)
@@ -387,6 +388,18 @@ class RoleServiceTest
             assertEquals("invalidRolesProvided", key)
             assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
         }
+    }
+
+    @Test
+    fun `getRolesWithRelationships returns roles with isUsername flag`()
+    {
+        val roles = listOf(Role(name = "username1", isUsername = true), Role(name = "username2", isUsername = true))
+        whenever(roleRepository.findAllByIsUsername(true)).thenReturn(roles)
+
+        val result = roleService.getRolesWithRelationships(true)
+
+        assertEquals(roles, result)
+        verify(roleRepository).findAllByIsUsername(true)
     }
 
     @Test

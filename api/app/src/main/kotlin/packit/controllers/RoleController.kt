@@ -69,6 +69,20 @@ class RoleController(private val roleService: RoleService)
         return ResponseEntity.ok(roles.map { it.toDto() })
     }
 
+    @GetMapping("/complete/usernames")
+    fun getUsernameRoles(): ResponseEntity<List<RoleDto>>
+    {
+        val roles = roleService.getRolesWithRelationships(true)
+        return ResponseEntity.ok(roles.map { it.toDto() })
+    }
+
+    @GetMapping("/complete/non-usernames")
+    fun getNonUsernameRoles(): ResponseEntity<List<RoleDto>>
+    {
+        val roles = roleService.getRolesWithRelationships(false)
+        return ResponseEntity.ok(roles.map { it.toDto() })
+    }
+
     @GetMapping("/{roleName}")
     fun getRole(@PathVariable roleName: String): ResponseEntity<RoleDto>
     {

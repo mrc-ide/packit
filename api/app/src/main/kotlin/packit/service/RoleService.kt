@@ -25,6 +25,8 @@ interface RoleService
     fun getRoleNames(): List<String>
     fun getRolesWithRelationships(): List<Role>
     fun getRolesWithRelationships(roleNames: List<String>): List<Role>
+    fun getRolesWithRelationships(isUsernames: Boolean): List<Role>
+
     fun getRole(roleName: String): Role
 }
 
@@ -48,13 +50,8 @@ class BaseRoleService(
 
     override fun getAdminRole(): Role
     {
-        val userRole = roleRepository.findByName("ADMIN")
-
-        if (userRole != null)
-        {
-            return userRole
-        }
-        return roleRepository.save(Role(name = "ADMIN"))
+        return roleRepository.findByName("ADMIN")
+            ?: throw PackitException("adminRoleNotFound", HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
     override fun createRole(createRole: CreateRole)
@@ -113,6 +110,10 @@ class BaseRoleService(
             throw PackitException("invalidRolesProvided", HttpStatus.BAD_REQUEST)
         }
         return foundRoles
+    }
+    override fun getRolesWithRelationships(isUsernames: Boolean): List<Role>
+    {
+        return roleRepository.findAllByIsUsername(isUsernames)
     }
 
     override fun getRole(roleName: String): Role
