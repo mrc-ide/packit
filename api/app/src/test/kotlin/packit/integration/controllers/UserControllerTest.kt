@@ -8,8 +8,10 @@ import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.jdbc.Sql
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
+import packit.model.Role
 import packit.model.User
 import packit.model.dto.CreateBasicUser
+import packit.repository.RoleRepository
 import packit.repository.UserRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -19,6 +21,9 @@ import kotlin.test.assertNotNull
 @Sql("/delete-test-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class UserControllerTest : IntegrationTest()
 {
+    @Autowired
+    private lateinit var roleRepository: RoleRepository
+
     @Autowired
     lateinit var userRepository: UserRepository
 
@@ -86,6 +91,7 @@ class UserControllerTest : IntegrationTest()
                 username = "test",
                 disabled = false,
                 userSource = "basic",
+                displayName = "test user"
             )
         )
         val result = restTemplate.exchange(
@@ -97,5 +103,34 @@ class UserControllerTest : IntegrationTest()
 
         assertSuccess(result)
         assertEquals(userRepository.findByUsername("test")?.roles?.first()?.name, "ADMIN")
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["user.manage"])
+    fun `removeRoleFromUser removes roles from user`()
+    {
+        val testRole = roleRepository.save(Role(name = "TEST_ROLE"))
+        val testUser = userRepository.save(
+            User(
+                username = "test",
+                disabled = false,
+                userSource = "basic",
+                displayName = "test user",
+                roles = mutableListOf(testRole)
+            )
+        )
+
+        assertEquals(userRepository.findByUsername(testUser.username)?.roles?.size, 1)
+
+        val result = restTemplate.exchange(
+            "/user/remove-roles/${testUser.username}",
+            HttpMethod.PUT,
+            getTokenizedHttpEntity(data = listOf(testRole.name)),
+            String::class.java
+        )
+
+        assertSuccess(result)
+        assertEquals(userRepository.findByUsername(testUser.username)?.roles?.size, 0)
+
     }
 }
