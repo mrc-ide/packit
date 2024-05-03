@@ -1,6 +1,5 @@
 package packit.model.dto
 
-
 data class RolePermissionDto(
     val permission: String,
     val packet: BasicPacketDto? = null,
@@ -8,5 +7,3 @@ data class RolePermissionDto(
     val packetGroup: PacketGroupDto? = null,
     val id: Int,
 )
-
-
