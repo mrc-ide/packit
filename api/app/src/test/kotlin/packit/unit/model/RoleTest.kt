@@ -1,17 +1,23 @@
 package packit.unit.model
 
-import packit.model.*
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
+import packit.model.*
 
-class RoleTest
-{
+class RoleTest {
     @Test
-    fun `toDto returns correct RoleDto for given Role`()
-    {
-        val user = User("user1", mutableListOf(), false, "source1", "displayName", id = UUID.randomUUID())
+    fun `toDto returns correct RoleDto for given Role`() {
+        val user =
+                User(
+                        "user1",
+                        mutableListOf(),
+                        false,
+                        "source1",
+                        "displayName",
+                        id = UUID.randomUUID()
+                )
         val role = Role("role1", users = mutableListOf(user), id = 1)
         val permission = Permission("permission1", "d1")
         val tag = Tag("tag1", id = 1)
@@ -29,8 +35,7 @@ class RoleTest
     }
 
     @Test
-    fun `equals returns true for same Role instances`()
-    {
+    fun `equals returns true for same Role instances`() {
         val role1 = Role("role1", false)
         val role2 = role1
 
@@ -38,8 +43,7 @@ class RoleTest
     }
 
     @Test
-    fun `equals returns true for Role instances with same properties`()
-    {
+    fun `equals returns true for Role instances with same properties`() {
         val role1 = Role("role1", false)
         val role2 = Role("role1", false)
 
@@ -47,8 +51,7 @@ class RoleTest
     }
 
     @Test
-    fun `equals returns false for Role instances with different names`()
-    {
+    fun `equals returns false for Role instances with different names`() {
         val role1 = Role("role1", false)
         val role2 = Role("role2", false)
 
@@ -56,8 +59,7 @@ class RoleTest
     }
 
     @Test
-    fun `equals returns false for Role instances with different isUsername values`()
-    {
+    fun `equals returns false for Role instances with different isUsername values`() {
         val role1 = Role("role1", false)
         val role2 = Role("role1", true)
 
@@ -65,8 +67,7 @@ class RoleTest
     }
 
     @Test
-    fun `hashCode returns same value for Role instances with same properties`()
-    {
+    fun `hashCode returns same value for Role instances with same properties`() {
         val role1 = Role("role1", false)
         val role2 = Role("role1", false)
 
@@ -74,8 +75,7 @@ class RoleTest
     }
 
     @Test
-    fun `hashCode returns different value for Role instances with different properties`()
-    {
+    fun `hashCode returns different value for Role instances with different properties`() {
         val role1 = Role("role1", false)
         val role2 = Role("role2", true)
 
