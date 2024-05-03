@@ -2,11 +2,13 @@ package packit.integration.controllers
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.jdbc.Sql
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
+import packit.model.User
 import packit.model.dto.CreateBasicUser
 import packit.repository.UserRepository
 import kotlin.test.Test
@@ -73,5 +75,27 @@ class UserControllerTest : IntegrationTest()
         )
 
         assertEquals(result.statusCode, HttpStatus.BAD_REQUEST)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["user.manage"])
+    fun `addRoleToUser adds roles to user`()
+    {
+        val testUser = userRepository.save(
+            User(
+                username = "test",
+                disabled = false,
+                userSource = "basic",
+            )
+        )
+        val result = restTemplate.exchange(
+            "/user/add-roles/${testUser.username}",
+            HttpMethod.PUT,
+            getTokenizedHttpEntity(data = listOf("ADMIN")),
+            String::class.java
+        )
+
+        assertSuccess(result)
+        assertEquals(userRepository.findByUsername("test")?.roles?.first()?.name, "ADMIN")
     }
 }

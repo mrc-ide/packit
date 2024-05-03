@@ -159,4 +159,120 @@ class UserServiceTest
             }
         )
     }
+
+    @Test
+    fun `addRolesToUser adds roles to user when roles do not exist`()
+    {
+        val newRoles = listOf(Role("NEW_ROLE"))
+        `when`(mockRoleService.getRolesWithRelationships(any())).doReturn(newRoles)
+        `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
+        `when`(mockUserRepository.save(any<User>())).thenAnswer { it.getArgument(0) }
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        service.addRolesToUser(mockUser.username, newRoles.map { it.name })
+
+        verify(mockUserRepository).save(argThat { this.roles.containsAll(newRoles) })
+    }
+
+    @Test
+    fun `addRolesToUser throws exception when role already exists`()
+    {
+        `when`(mockRoleService.getRolesWithRelationships(any())).doReturn(mockUser.roles)
+        `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        val ex =
+            assertThrows<PackitException> { service.addRolesToUser(mockUser.username, mockUser.roles.map { it.name }) }
+
+        assertEquals(ex.key, "userRoleExists")
+        assertEquals(ex.httpStatus, HttpStatus.BAD_REQUEST)
+    }
+
+    @Test
+    fun `addRolesToUser throws exception when user not found`()
+    {
+        `when`(mockUserRepository.findByUsername(any())).doReturn(null)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        val ex = assertThrows<PackitException> { service.addRolesToUser("nonexistent", listOf("USER")) }
+
+        assertEquals(ex.key, "userNotFound")
+        assertEquals(ex.httpStatus, HttpStatus.NOT_FOUND)
+    }
+
+    @Test
+    fun `addRolesToUser throws exception when trying to add username role`()
+    {
+        val usernameRole = Role(mockUser.username, isUsername = true)
+        `when`(mockRoleService.getRolesWithRelationships(any())).doReturn(listOf(usernameRole))
+        `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        val ex = assertThrows<PackitException> { service.addRolesToUser(mockUser.username, listOf(usernameRole.name)) }
+
+        assertEquals(ex.key, "cannotUpdateUsernameRoles")
+        assertEquals(ex.httpStatus, HttpStatus.BAD_REQUEST)
+    }
+
+    @Test
+    fun `removeRolesFromUser removes roles from user when roles exist`()
+    {
+        val rolesToRemove = listOf(Role("EXISTING_ROLE"))
+        mockUser.roles.addAll(rolesToRemove)
+        `when`(mockRoleService.getRolesWithRelationships(any())).doReturn(rolesToRemove)
+        `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
+        `when`(mockUserRepository.save(any<User>())).thenAnswer { it.getArgument(0) }
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        service.removeRolesFromUser(mockUser.username, rolesToRemove.map { it.name })
+
+        verify(mockUserRepository).save(argThat { !this.roles.containsAll(rolesToRemove) })
+    }
+
+    @Test
+    fun `removeRolesFromUser throws exception when role does not exist`()
+    {
+        val nonExistentRole = Role("NON_EXISTENT_ROLE")
+        `when`(mockRoleService.getRolesWithRelationships(any())).doReturn(listOf(nonExistentRole))
+        `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        val ex =
+            assertThrows<PackitException> {
+                service.removeRolesFromUser(
+                    mockUser.username,
+                    listOf(nonExistentRole.name)
+                )
+            }
+
+        assertEquals(ex.key, "userRoleNotExists")
+        assertEquals(ex.httpStatus, HttpStatus.BAD_REQUEST)
+    }
+
+    @Test
+    fun `removeRolesFromUser throws exception when user not found`()
+    {
+        `when`(mockUserRepository.findByUsername(any())).doReturn(null)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        val ex = assertThrows<PackitException> { service.removeRolesFromUser("nonexistent", listOf("USER")) }
+
+        assertEquals(ex.key, "userNotFound")
+        assertEquals(ex.httpStatus, HttpStatus.NOT_FOUND)
+    }
+
+    @Test
+    fun `removeRolesFromUser throws exception when trying to remove username role`()
+    {
+        val usernameRole = Role(mockUser.username, isUsername = true)
+        `when`(mockRoleService.getRolesWithRelationships(any())).doReturn(listOf(usernameRole))
+        `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        val ex =
+            assertThrows<PackitException> { service.removeRolesFromUser(mockUser.username, listOf(usernameRole.name)) }
+
+        assertEquals(ex.key, "cannotUpdateUsernameRoles")
+        assertEquals(ex.httpStatus, HttpStatus.BAD_REQUEST)
+    }
 }

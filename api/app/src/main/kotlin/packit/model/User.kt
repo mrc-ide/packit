@@ -18,7 +18,7 @@ class User(
     var roles: MutableList<Role> = mutableListOf(),
     var disabled: Boolean,
     val userSource: String,
-    val displayName: String?,
+    val displayName: String? = null,
     val email: String? = null,
     val password: String? = null,
     var lastLoggedIn: Instant? = null,
