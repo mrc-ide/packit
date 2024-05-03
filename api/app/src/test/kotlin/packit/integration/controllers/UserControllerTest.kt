@@ -131,6 +131,5 @@ class UserControllerTest : IntegrationTest()
 
         assertSuccess(result)
         assertEquals(userRepository.findByUsername(testUser.username)?.roles?.size, 0)
-
     }
 }

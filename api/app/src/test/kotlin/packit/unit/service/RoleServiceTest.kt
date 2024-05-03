@@ -389,7 +389,6 @@ class RoleServiceTest
         }
     }
 
-
     @Test
     fun `getRole returns role by name`()
     {

@@ -1,10 +1,10 @@
 package packit.unit.model
 
+import packit.model.*
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
-import packit.model.*
 
 class RoleTest {
     @Test
