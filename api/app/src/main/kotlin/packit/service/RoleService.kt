@@ -24,6 +24,8 @@ interface RoleService
     fun removePermissionsFromRole(roleName: String, removeRolePermissions: List<UpdateRolePermission>)
     fun getRoleNames(): List<String>
     fun getRolesWithRelationships(): List<Role>
+    fun getRolesWithRelationships(isUsernames: Boolean): List<Role>
+
     fun getRole(roleName: String): Role
 }
 
@@ -102,6 +104,11 @@ class BaseRoleService(
     override fun getRolesWithRelationships(): List<Role>
     {
         return roleRepository.findAll()
+    }
+
+    override fun getRolesWithRelationships(isUsernames: Boolean): List<Role>
+    {
+        return roleRepository.findAllByIsUsername(isUsernames)
     }
 
     override fun getRole(roleName: String): Role

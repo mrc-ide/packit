@@ -182,6 +182,41 @@ class RoleControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
+    fun `users can get username roles with relationships `()
+    {
+        val roleDto = roleRepository.save(Role("randomUser", isUsername = true))!!.toDto()
+        val result = restTemplate.exchange(
+            "/role/complete/usernames",
+            HttpMethod.GET,
+            getTokenizedHttpEntity(),
+            String::class.java
+        )
+
+        assertSuccess(result)
+
+        assertEquals(ObjectMapper().writeValueAsString(listOf(roleDto)), result.body)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["user.manage"])
+    fun `users can get non username roles with relationships `()
+    {
+        roleRepository.save(Role("randomUser", isUsername = true))!!.toDto()
+        val adminRole = roleRepository.findByName("ADMIN")!!.toDto()
+        val result = restTemplate.exchange(
+            "/role/complete/non-usernames",
+            HttpMethod.GET,
+            getTokenizedHttpEntity(),
+            String::class.java
+        )
+
+        assertSuccess(result)
+
+        assertEquals(ObjectMapper().writeValueAsString(listOf(adminRole)), result.body)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["user.manage"])
     fun `users can get specific with relationships`()
     {
         val roleDto = roleRepository.findByName("ADMIN")!!.toDto()
