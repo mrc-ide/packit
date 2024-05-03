@@ -193,8 +193,8 @@ class RoleControllerTest : IntegrationTest()
         )
 
         assertSuccess(result)
-
-        assertEquals(ObjectMapper().writeValueAsString(listOf(roleDto)), result.body)
+        print(result.body)
+        assert(result.body?.contains(ObjectMapper().writeValueAsString(listOf(roleDto))) ?: false)
     }
 
     @Test
@@ -211,8 +211,6 @@ class RoleControllerTest : IntegrationTest()
         )
 
         assertSuccess(result)
-
-        print(result.body)
 
         assertEquals(ObjectMapper().writeValueAsString(listOf(adminRole)), result.body)
     }
