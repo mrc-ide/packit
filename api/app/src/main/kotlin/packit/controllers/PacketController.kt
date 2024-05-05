@@ -4,10 +4,11 @@ import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import packit.model.Packet
 import packit.model.PacketGroupSummary
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
+import packit.model.dto.PacketDto
+import packit.model.toDto
 import packit.service.PacketService
 
 @RestController
@@ -18,10 +19,10 @@ class PacketController(private val packetService: PacketService)
     fun pageableIndex(
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
         @RequestParam(required = false, defaultValue = "50") pageSize: Int
-    ): ResponseEntity<Page<Packet>>
+    ): ResponseEntity<Page<PacketDto>>
     {
         val payload = PageablePayload(pageNumber, pageSize)
-        return ResponseEntity.ok(packetService.getPackets(payload))
+        return ResponseEntity.ok(packetService.getPackets(payload).map { it.toDto() })
     }
 
     @GetMapping("/{name}")
@@ -29,14 +30,11 @@ class PacketController(private val packetService: PacketService)
         @PathVariable name: String,
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
         @RequestParam(required = false, defaultValue = "50") pageSize: Int,
-    ): ResponseEntity<Page<Packet>>
+    ): ResponseEntity<Page<PacketDto>>
     {
         val payload = PageablePayload(pageNumber, pageSize)
         return ResponseEntity.ok(
-            packetService.getPacketsByName(
-                name,
-                payload
-            )
+            packetService.getPacketsByName(name, payload).map { it.toDto() }
         )
     }
 

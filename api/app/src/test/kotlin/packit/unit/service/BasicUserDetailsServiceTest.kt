@@ -7,23 +7,27 @@ import org.mockito.kotlin.whenever
 import org.springframework.security.core.userdetails.UserDetails
 import packit.model.User
 import packit.service.BasicUserDetailsService
+import packit.service.RoleService
 import packit.service.UserService
+import java.time.Instant
+import java.util.*
 import kotlin.test.Test
 
 class BasicUserDetailsServiceTest
 {
     private val mockUserService = mock<UserService>()
-    private val service = BasicUserDetailsService(mockUserService)
+    private val mockRoleService = mock<RoleService>()
+    private val service = BasicUserDetailsService(mockUserService, mockRoleService)
     private val mockUser = User(
         "username",
         mutableListOf(),
         false,
         "basic",
-        "id",
         "displayName",
         "email",
         "password",
-        "lastLoggedIn"
+        Instant.now(),
+        UUID.randomUUID()
     )
 
     @Test

@@ -9,8 +9,6 @@ ENV POSTGRES_PASSWORD changeme
 ENV PGDATA /pgdata
 
 COPY conf /etc/packit
-COPY schema /packit-schema
-COPY schema/schema.sql /docker-entrypoint-initdb.d/
 
 RUN cat /etc/packit/postgresql.conf /etc/packit/postgresql.test.conf.in > \
         /etc/packit/postgresql.test.conf

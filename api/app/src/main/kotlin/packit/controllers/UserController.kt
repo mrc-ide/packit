@@ -14,11 +14,11 @@ import packit.model.CreateBasicUser
 import packit.service.UserService
 
 @Controller
+@PreAuthorize("hasAuthority('user.manage')")
 @RequestMapping("/user")
 class UserController(private val config: AppConfig, private val userService: UserService)
 {
     @PostMapping("/basic")
-    @PreAuthorize("hasAuthority('ADMIN')")
     fun createBasicUser(
         @RequestBody @Validated createBasicUser: CreateBasicUser
     ): ResponseEntity<Map<String, String?>>

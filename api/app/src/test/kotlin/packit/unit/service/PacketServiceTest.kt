@@ -3,16 +3,15 @@ package packit.unit.service
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
-import org.mockito.kotlin.any
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
+import org.mockito.Mockito.`when`
+import org.mockito.kotlin.*
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpHeaders
 import packit.exceptions.PackitException
 import packit.model.*
+import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
 import packit.service.BasePacketService
 import packit.service.OutpackServerClient
@@ -30,6 +29,16 @@ class PacketServiceTest
                 "test",
                 mapOf("alpha" to 1),
                 false,
+                now,
+                now,
+                now
+            ),
+            Packet(
+                "20190203-120000-1234dada",
+                "test",
+                "test",
+                mapOf("beta" to 1),
+                true,
                 now,
                 now,
                 now
@@ -62,21 +71,7 @@ class PacketServiceTest
         )
 
     private val metadata =
-        listOf(
-            OutpackMetadata(
-                "20190203-120000-1234dada",
-                "test",
-                parameters = mapOf("alpha" to 1),
-                time = TimeMetadata(now, now)
-            ),
-            OutpackMetadata(
-                "20190403-120000-1234dfdf",
-                "test2",
-                null,
-                time = TimeMetadata(now, now)
-            )
-        )
-
+        newPackets.map { OutpackMetadata(it.id, it.name, it.parameters, TimeMetadata(now, now)) }
     private val packetMetadata =
         PacketMetadata(
             "3",
@@ -127,11 +122,12 @@ class PacketServiceTest
             on { getMetadataById(anyString()) } doReturn packetMetadata
             on { getFileByHash(anyString()) } doReturn responseByte
         }
+    private val packetGroupRepository = mock<PacketGroupRepository>()
 
     @Test
     fun `gets packets`()
     {
-        val sut = BasePacketService(packetRepository, mock())
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
 
         val result = sut.getPackets()
 
@@ -141,7 +137,7 @@ class PacketServiceTest
     @Test
     fun `gets packets by name`()
     {
-        val sut = BasePacketService(packetRepository, mock())
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
 
         val result = sut.getPacketsByName("pg1", PageablePayload(0, 10))
 
@@ -153,7 +149,7 @@ class PacketServiceTest
     @Test
     fun `gets packet groups summary`()
     {
-        val sut = BasePacketService(packetRepository, mock())
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
 
         val result = sut.getPacketGroupSummary(PageablePayload(0, 10), "random")
 
@@ -165,7 +161,7 @@ class PacketServiceTest
     @Test
     fun `throws exception if packet metadata does not exist`()
     {
-        val sut = BasePacketService(packetRepository, mock())
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
 
         assertThatThrownBy { sut.getMetadataBy("123") }
             .isInstanceOf(PackitException::class.java)
@@ -175,7 +171,7 @@ class PacketServiceTest
     @Test
     fun `gets checksum of packet ids`()
     {
-        val sut = BasePacketService(packetRepository, mock())
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
 
         val result = sut.getChecksum()
 
@@ -184,18 +180,52 @@ class PacketServiceTest
     }
 
     @Test
-    fun `imports packets`()
+    fun `imports packets and saves`()
     {
-        val sut = BasePacketService(packetRepository, outpackServerClient)
+        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+        val argumentCaptor = argumentCaptor<List<Packet>>()
+
         sut.importPackets()
 
-        verify(packetRepository).saveAll(newPackets)
+        verify(packetRepository).saveAll(argumentCaptor.capture())
+        val packets = argumentCaptor.allValues.flatten()
+        assertEquals(packets.size, 3)
+    }
+
+    @Test
+    fun `importPackets saves unique packet groups`()
+    {
+        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+        val argumentCaptor = argumentCaptor<List<PacketGroup>>()
+
+        sut.importPackets()
+
+        verify(packetGroupRepository).saveAll(argumentCaptor.capture())
+        val packetGroups = argumentCaptor.allValues.flatten()
+        assertEquals(packetGroups.size, 2)
+    }
+
+    @Test
+    fun `saveUniquePacketGroups saves unique packet groups`()
+    {
+        val packetGroupNames = listOf("test", "test2")
+        `when`(packetGroupRepository.findByNameIn(packetGroupNames)).doReturn(listOf(PacketGroup("test2")))
+        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+        val argumentCaptor = argumentCaptor<List<PacketGroup>>()
+
+        sut.saveUniquePacketGroups(packetGroupNames)
+
+        verify(packetGroupRepository).findByNameIn(packetGroupNames)
+        verify(packetGroupRepository).saveAll(argumentCaptor.capture())
+        val packetGroups = argumentCaptor.firstValue
+        assertEquals(packetGroups.size, 1)
+        assertEquals(packetGroups.first().name, "test")
     }
 
     @Test
     fun `can get packet metadata`()
     {
-        val sut = BasePacketService(packetRepository, outpackServerClient)
+        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
         val result = sut.getMetadataBy("123")
 
         assertEquals(result, packetMetadata)
@@ -204,7 +234,7 @@ class PacketServiceTest
     @Test
     fun `can get packet file`()
     {
-        val sut = BasePacketService(packetRepository, outpackServerClient)
+        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
         val result = sut.getFileByHash("sha123", true, "test.html")
 
         assertEquals(result.first.isReadable, true)
@@ -213,7 +243,7 @@ class PacketServiceTest
     @Test
     fun `throws exception if client could not get file from outpack`()
     {
-        val sut = BasePacketService(packetRepository, mock())
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
 
         assertThatThrownBy { sut.getFileByHash("123", true, "test.html") }
             .isInstanceOf(PackitException::class.java)

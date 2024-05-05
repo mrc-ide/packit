@@ -92,7 +92,13 @@ class PacketRepositoryTest : RepositoryTest()
 
         val result = packetRepository.findAll()
 
-        assertEquals(result, packets)
+        for (i in packets.indices)
+        {
+            assertEquals(result[i].id, packets[i].id)
+            assertEquals(result[i].name, packets[i].name)
+            assertEquals(result[i].importTime, packets[i].importTime)
+            assertEquals(result[i].displayName, packets[i].displayName)
+        }
     }
 
     @Test

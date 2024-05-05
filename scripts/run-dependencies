@@ -5,14 +5,9 @@ set -e
 HERE=$(realpath "$(dirname $0)")
 . "$HERE"/common
 
+"$HERE"/../db/scripts/run 
 
-## Start database
-if [ "$1" == "basicauth" ]; then
-    "$HERE"/../db/scripts/run basicauth
-else
-    "$HERE"/../db/scripts/run 
-fi
-
+docker exec packit-db wait-for-db
 
 # Start outpack_server
 docker pull $OUTPACK_SERVER_TAG

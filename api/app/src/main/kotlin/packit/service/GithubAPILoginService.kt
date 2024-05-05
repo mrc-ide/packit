@@ -1,7 +1,6 @@
 package packit.service
 
 import org.springframework.http.HttpStatus
-import org.springframework.security.core.authority.AuthorityUtils
 import org.springframework.stereotype.Component
 import packit.AppConfig
 import packit.clients.GithubUserClient
@@ -16,6 +15,7 @@ class GithubAPILoginService(
     val jwtIssuer: JwtIssuer,
     val githubUserClient: GithubUserClient,
     val userService: UserService,
+    val roleService: RoleService
 )
 {
     fun authenticateAndIssueToken(loginRequest: LoginWithToken): Map<String, String>
@@ -35,7 +35,7 @@ class GithubAPILoginService(
             UserPrincipal(
                 user.username,
                 user.displayName,
-                AuthorityUtils.createAuthorityList(user.userGroups.map { it.role }.toString()),
+                roleService.getGrantedAuthorities(user.roles),
                 mutableMapOf()
             )
         )

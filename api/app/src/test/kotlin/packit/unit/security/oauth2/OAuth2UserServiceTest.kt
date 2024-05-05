@@ -8,10 +8,10 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest
 import org.springframework.security.oauth2.core.OAuth2AccessToken
 import org.springframework.security.oauth2.core.user.OAuth2User
 import packit.clients.GithubUserClient
+import packit.model.Role
 import packit.model.User
-import packit.model.UserGroup
-import packit.security.Role
 import packit.security.oauth2.OAuth2UserService
+import packit.service.RoleService
 import packit.service.UserService
 import kotlin.test.assertEquals
 
@@ -22,11 +22,12 @@ class OAuth2UserServiceTest
     private val fakeName = "Jammy"
     private val fakeUser = User(
         username = fakeLogin, displayName = fakeName, disabled = false,
-        userSource = "github", userGroups = mutableListOf(UserGroup(role = Role.USER))
+        userSource = "github", roles = mutableListOf(Role(name = "USER"))
     )
     private val mockUserService = mock<UserService> {
         on { saveUserFromGithub(fakeLogin, fakeName, null) } doReturn fakeUser
     }
+    private val mockRoleService = mock<RoleService>()
 
     @Test
     fun `can process oauth user attributes`()
@@ -35,7 +36,7 @@ class OAuth2UserServiceTest
             on { attributes } doReturn mapOf("login" to fakeLogin, "name" to fakeName)
         }
 
-        val sut = OAuth2UserService(mockGithubUserClient, mockUserService)
+        val sut = OAuth2UserService(mockGithubUserClient, mockUserService, mockRoleService)
 
         val result = sut.processOAuth2User(mockOAuth2User)
 
@@ -55,7 +56,7 @@ class OAuth2UserServiceTest
             on { accessToken } doReturn mockAccessToken
         }
 
-        val sut = OAuth2UserService(mockGithubUserClient, mockUserService)
+        val sut = OAuth2UserService(mockGithubUserClient, mockUserService, mockRoleService)
 
         sut.checkGithubUserMembership(mockRequest)
         verify(mockGithubUserClient).authenticate("fakeToken")

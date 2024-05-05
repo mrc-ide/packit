@@ -11,10 +11,8 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import packit.contentTypes
 import packit.exceptions.PackitException
-import packit.model.Packet
-import packit.model.PacketGroupSummary
-import packit.model.PacketMetadata
-import packit.model.PageablePayload
+import packit.model.*
+import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
 import java.security.MessageDigest
 import java.time.Instant
@@ -37,6 +35,7 @@ interface PacketService
 @Service
 class BasePacketService(
     private val packetRepository: PacketRepository,
+    private val packetGroupRepository: PacketGroupRepository,
     private val outpackServerClient: OutpackServer
 ) : PacketService
 {
@@ -52,7 +51,19 @@ class BasePacketService(
                     it.time.start, it.time.end
                 )
             }
+        val packetGroupNames = packets.groupBy { it.name }
+            .map { it.key }
+
         packetRepository.saveAll(packets)
+        saveUniquePacketGroups(packetGroupNames)
+    }
+
+    internal fun saveUniquePacketGroups(packetGroupNames: List<String>)
+    {
+        val matchedPacketGroupNames = packetGroupRepository.findByNameIn(packetGroupNames).map { it.name }
+        val newPacketGroups =
+            packetGroupNames.filter { it !in matchedPacketGroupNames }
+        packetGroupRepository.saveAll(newPacketGroups.map { PacketGroup(name = it) })
     }
 
     override fun getPackets(): List<Packet>

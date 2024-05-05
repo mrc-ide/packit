@@ -93,7 +93,7 @@ class PacketControllerTest
         val sut = PacketController(indexService)
         val result = sut.pageableIndex(0, 10)
         assertEquals(result.statusCode, HttpStatus.OK)
-        assertEquals(result.body, mockPageablePackets)
+        assertEquals(result.body, mockPageablePackets.map { it.toDto() })
         assertEquals(1, mockPageablePackets.totalPages)
         assertEquals(2, mockPageablePackets.totalElements)
     }
@@ -106,7 +106,7 @@ class PacketControllerTest
         val result = sut.getPacketsByName("pg1", 0, 10)
 
         assertEquals(result.statusCode, HttpStatus.OK)
-        assertEquals(result.body, mockPageablePackets)
+        assertEquals(result.body, mockPageablePackets.map { it.toDto() })
         verify(indexService).getPacketsByName("pg1", PageablePayload(0, 10))
     }
 

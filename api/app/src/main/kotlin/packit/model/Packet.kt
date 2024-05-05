@@ -1,20 +1,35 @@
 package packit.model
 
-import jakarta.persistence.Convert
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import packit.helpers.JsonMapConverter
+import jakarta.persistence.*
+import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.type.SqlTypes
+import packit.model.dto.PacketDto
 
 @Entity
-data class Packet(
+@Table(name = "packet")
+class Packet(
     @Id
     val id: String,
     val name: String,
     val displayName: String,
-    @Convert(converter = JsonMapConverter::class)
+    @JdbcTypeCode(SqlTypes.JSON)
     val parameters: Map<String, Any>,
     val published: Boolean,
     val importTime: Double,
     val startTime: Double,
-    val endTime: Double
+    val endTime: Double,
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "packet_tag",
+        joinColumns = [JoinColumn(name = "packet_id")],
+        inverseJoinColumns = [JoinColumn(name = "tag_id")]
+    )
+    var tags: MutableList<Tag> = mutableListOf(),
+
+    @OneToMany(mappedBy = "packet")
+    var rolePermissions: MutableList<RolePermission> = mutableListOf()
+)
+
+fun Packet.toDto() = PacketDto(
+    id, name, displayName, parameters, published, importTime, startTime, endTime
 )

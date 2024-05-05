@@ -9,13 +9,3 @@ docker run --rm -d \
  --name packit-db \
  -p 5432:5432 \
  "$TAG_BRANCH"
-
-docker exec packit-db wait-for-db
-
-if [ "$1" == "basicauth" ]; then
-    # assuming already logged into vault then create super user 
-    ADMIN_EMAIL=$(vault read -field=superUserEmail secret/packit/basicauth)
-    ADMIN_PASSWORD_ENCODED=$(vault read -field=superUserEncodedPassword secret/packit/basicauth)
-    ADMIN_UUID=$(vault read -field=superAdminUUID secret/packit/basicauth)
-    docker exec packit-db create-super-user --email $ADMIN_EMAIL --password $ADMIN_PASSWORD_ENCODED --uuid $ADMIN_UUID
-fi
