@@ -242,6 +242,17 @@ class RoleServiceTest
     }
 
     @Test
+    fun `deleteRole throws exception if ADMIN role is being deleted`()
+    {
+        val roleName = "ADMIN"
+        whenever(roleRepository.existsByName(roleName)).thenReturn(true)
+
+        assertThrows<PackitException> {
+            roleService.deleteRole(roleName)
+        }
+    }
+
+    @Test
     fun `addPermissionsToRole throws exception when role does not exist`()
     {
         val roleName = "nonExistingRole"

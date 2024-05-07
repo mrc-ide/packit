@@ -61,7 +61,7 @@ class BaseRoleService(
 
     override fun deleteRole(roleName: String)
     {
-        if (!roleRepository.existsByName(roleName))
+        if (!roleRepository.existsByName(roleName) || roleName == "ADMIN")
         {
             throw PackitException("roleNotFound", HttpStatus.BAD_REQUEST)
         }
