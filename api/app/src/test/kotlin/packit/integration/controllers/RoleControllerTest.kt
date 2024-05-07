@@ -213,7 +213,6 @@ class RoleControllerTest : IntegrationTest()
         assertEquals(ObjectMapper().writeValueAsString(listOf("ADMIN", "testRole")), result.body)
     }
 
-
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
     fun `users can get roles with relationships`()
@@ -287,5 +286,4 @@ class RoleControllerTest : IntegrationTest()
 
         assertEquals(ObjectMapper().writeValueAsString(roleDto), result.body)
     }
-
 }
