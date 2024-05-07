@@ -80,7 +80,7 @@ class RoleControllerTest : IntegrationTest()
             String::class.java
         )
 
-        assertSuccess(result)
+        assertEquals(result.statusCode, HttpStatus.NO_CONTENT)
         assertNull(roleRepository.findByName("testRole"))
     }
 }
