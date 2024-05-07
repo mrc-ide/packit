@@ -179,4 +179,36 @@ class RolePermissionServiceTest
             assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
         }
     }
+
+    @Test
+    fun `getAddRolePermissionsFromRole returns role permissions to add when they do not exist in role`()
+    {
+        val role = Role("role1")
+        val permission1 = Permission("permission1", "d1")
+        val addRolePermissions = listOf(UpdateRolePermission(permission1.name))
+        whenever(permissionRepository.findByName(any())).thenReturn(permission1)
+
+        val result = service.getAddRolePermissionsFromRole(role, addRolePermissions)
+
+        assertEquals(1, result.size)
+        assertEquals(role, result[0].role)
+        assertEquals(permission1, result[0].permission)
+    }
+
+    @Test
+    fun `getAddRolePermissionsFromRole throws exception when role permission already exists in role`()
+    {
+        val role = Role("role1")
+        val permission1 = Permission("permission1", "d1")
+        val addRolePermissions = listOf(UpdateRolePermission(permission1.name))
+        role.rolePermissions = mutableListOf(RolePermission(role, permission1, id = 1))
+        whenever(permissionRepository.findByName(any())).thenReturn(permission1)
+
+        assertThrows<PackitException> {
+            service.getAddRolePermissionsFromRole(role, addRolePermissions)
+        }.apply {
+            assertEquals("rolePermissionAlreadyExists", key)
+            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+        }
+    }
 }

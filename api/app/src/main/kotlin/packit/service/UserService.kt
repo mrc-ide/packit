@@ -102,6 +102,7 @@ class BaseUserService(
         val matchedRolesToRemove = rolesToRemove.map { roleToRemove ->
             val matchedPermission = user.roles.find { roleToRemove == it }
                 ?: throw PackitException("userRoleNotExists", HttpStatus.BAD_REQUEST)
+
             matchedPermission
         }
 
@@ -122,7 +123,7 @@ class BaseUserService(
     {
         val user = userRepository.findByUsername(username)
             ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
-        val roles = roleService.getRolesWithRelationships(roleNames)
+        val roles = roleService.getRolesByRoleNames(roleNames)
         if (roles.any { it.isUsername })
         {
             throw PackitException("cannotUpdateUsernameRoles", HttpStatus.BAD_REQUEST)

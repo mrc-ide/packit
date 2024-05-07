@@ -5,5 +5,5 @@ import org.jetbrains.annotations.NotNull
 data class CreateRole(
     @field:NotNull
     val name: String,
-    val permissions: List<String> = listOf()
+    val permissionNames: List<String> = listOf()
 )

@@ -23,10 +23,8 @@ interface RoleService
     fun addPermissionsToRole(roleName: String, addRolePermissions: List<UpdateRolePermission>)
     fun removePermissionsFromRole(roleName: String, removeRolePermissions: List<UpdateRolePermission>)
     fun getRoleNames(): List<String>
-    fun getRolesWithRelationships(): List<Role>
-    fun getRolesWithRelationships(roleNames: List<String>): List<Role>
-    fun getRolesWithRelationships(isUsernames: Boolean): List<Role>
-
+    fun getRolesByRoleNames(roleNames: List<String>): List<Role>
+    fun getAllRoles(isUsernames: Boolean?): List<Role>
     fun getRole(roleName: String): Role
 }
 
@@ -56,7 +54,7 @@ class BaseRoleService(
 
     override fun createRole(createRole: CreateRole)
     {
-        val permissions = permissionService.checkMatchingPermissions(createRole.permissions)
+        val permissions = permissionService.checkMatchingPermissions(createRole.permissionNames)
 
         saveRole(createRole.name, permissions)
     }
@@ -75,11 +73,7 @@ class BaseRoleService(
         val role = roleRepository.findByName(roleName)
             ?: throw PackitException("roleNotFound", HttpStatus.BAD_REQUEST)
 
-        val rolePermissionsToAdd = rolePermissionService.getRolePermissionsToUpdate(role, addRolePermissions)
-        if (rolePermissionsToAdd.any { role.rolePermissions.contains(it) })
-        {
-            throw PackitException("rolePermissionAlreadyExists", HttpStatus.BAD_REQUEST)
-        }
+        val rolePermissionsToAdd = rolePermissionService.getAddRolePermissionsFromRole(role, addRolePermissions)
 
         role.rolePermissions.addAll(rolePermissionsToAdd)
         roleRepository.save(role)
@@ -97,12 +91,16 @@ class BaseRoleService(
         return roleRepository.findAll().map { it.name }
     }
 
-    override fun getRolesWithRelationships(): List<Role>
+    override fun getAllRoles(isUsernames: Boolean?): List<Role>
     {
-        return roleRepository.findAll()
+        if (isUsernames == null)
+        {
+            return roleRepository.findAll()
+        }
+        return roleRepository.findAllByIsUsername(isUsernames)
     }
 
-    override fun getRolesWithRelationships(roleNames: List<String>): List<Role>
+    override fun getRolesByRoleNames(roleNames: List<String>): List<Role>
     {
         val foundRoles = roleRepository.findByNameIn(roleNames)
         if (foundRoles.size != roleNames.size)
@@ -110,10 +108,6 @@ class BaseRoleService(
             throw PackitException("invalidRolesProvided", HttpStatus.BAD_REQUEST)
         }
         return foundRoles
-    }
-    override fun getRolesWithRelationships(isUsernames: Boolean): List<Role>
-    {
-        return roleRepository.findAllByIsUsername(isUsernames)
     }
 
     override fun getRole(roleName: String): Role

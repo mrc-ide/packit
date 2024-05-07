@@ -31,7 +31,7 @@ class RoleController(private val roleService: RoleService)
     {
         roleService.deleteRole(roleName)
 
-        return ResponseEntity.ok(mapOf("message" to "Role deleted"))
+        return ResponseEntity.noContent().build()
     }
 
     @PutMapping("/add-permissions/{roleName}")
@@ -56,30 +56,16 @@ class RoleController(private val roleService: RoleService)
         return ResponseEntity.ok(mapOf("message" to "Permissions removed"))
     }
 
-    @GetMapping
+    @GetMapping("/names")
     fun getRoleNames(): ResponseEntity<List<String>>
     {
         return ResponseEntity.ok(roleService.getRoleNames())
     }
 
-    @GetMapping("/complete")
-    fun getRolesWithRelationships(): ResponseEntity<List<RoleDto>>
+    @GetMapping
+    fun getRolesWithRelationships(@RequestParam isUsername: Boolean?): ResponseEntity<List<RoleDto>>
     {
-        val roles = roleService.getRolesWithRelationships()
-        return ResponseEntity.ok(roles.map { it.toDto() })
-    }
-
-    @GetMapping("/complete/usernames")
-    fun getUsernameRoles(): ResponseEntity<List<RoleDto>>
-    {
-        val roles = roleService.getRolesWithRelationships(true)
-        return ResponseEntity.ok(roles.map { it.toDto() })
-    }
-
-    @GetMapping("/complete/non-usernames")
-    fun getNonUsernameRoles(): ResponseEntity<List<RoleDto>>
-    {
-        val roles = roleService.getRolesWithRelationships(false)
+        val roles = roleService.getAllRoles(isUsername)
         return ResponseEntity.ok(roles.map { it.toDto() })
     }
 
