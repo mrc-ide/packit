@@ -84,10 +84,10 @@ class RoleServiceTest
     @Test
     fun `createRole creates role with matching permissions`()
     {
-        val createRole = CreateRole(name = "newRole", permissions = listOf("p1", "p2"))
+        val createRole = CreateRole(name = "newRole", permissionNames = listOf("p1", "p2"))
         val permissions =
             listOf(Permission(name = "p1", description = "d1"), Permission(name = "p2", description = "d2"))
-        whenever(permissionService.checkMatchingPermissions(createRole.permissions)).thenReturn(permissions)
+        whenever(permissionService.checkMatchingPermissions(createRole.permissionNames)).thenReturn(permissions)
         whenever(roleRepository.existsByName(createRole.name)).thenReturn(false)
 
         roleService.createRole(createRole)

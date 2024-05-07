@@ -20,7 +20,7 @@ class RoleControllerTest : IntegrationTest()
     private val createTestRoleBody = ObjectMapper().writeValueAsString(
         CreateRole(
             name = "testRole",
-            permissions = listOf("packet.run", "packet.read")
+            permissionNames = listOf("packet.run", "packet.read")
         )
     )
 
