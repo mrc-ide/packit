@@ -99,6 +99,21 @@ class RoleControllerTest : IntegrationTest()
     }
 
     @Test
+    @WithAuthenticatedUser(authorities = ["none"])
+    fun `user without user manage permission cannot delete roles`()
+    {
+        roleRepository.save(Role(name = "testRole"))
+
+        val result = restTemplate.postForEntity(
+            "/role/testRole",
+            getTokenizedHttpEntity(data = createTestRoleBody),
+            String::class.java
+        )
+
+        assertEquals(result.statusCode, HttpStatus.UNAUTHORIZED)
+    }
+
+    @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
     fun `users with manage authority can add permissions to roles`()
     {
@@ -144,18 +159,35 @@ class RoleControllerTest : IntegrationTest()
         assertEquals(0, role.rolePermissions.size)
     }
 
+    @Test
     @WithAuthenticatedUser(authorities = ["none"])
-    fun `user without user manage permission cannot delete roles`()
+    fun `user without user manage permission cannot add roles to permissions`()
     {
         roleRepository.save(Role(name = "testRole"))
 
-        val result = restTemplate.postForEntity(
-            "/role/testRole",
-            getTokenizedHttpEntity(data = createTestRoleBody),
+        val result = restTemplate.exchange(
+            "/role/add-permissions/testRole",
+            HttpMethod.PUT,
+            getTokenizedHttpEntity(data = updateRolePermission),
             String::class.java
         )
 
         assertEquals(result.statusCode, HttpStatus.UNAUTHORIZED)
+    }
 
+    @Test
+    @WithAuthenticatedUser(authorities = ["none"])
+    fun `user without user manage permission cannot remove roles from permissions`()
+    {
+        roleRepository.save(Role(name = "testRole"))
+
+        val result = restTemplate.exchange(
+            "/role/remove-permissions/testRole",
+            HttpMethod.PUT,
+            getTokenizedHttpEntity(data = updateRolePermission),
+            String::class.java
+        )
+
+        assertEquals(result.statusCode, HttpStatus.UNAUTHORIZED)
     }
 }

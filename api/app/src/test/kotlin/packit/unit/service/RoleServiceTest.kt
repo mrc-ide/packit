@@ -256,34 +256,13 @@ class RoleServiceTest
     }
 
     @Test
-    fun `addPermissionsToRole throws exception when role permission already exists`()
+    fun `addPermissionsToRole calls getAddRolePermissionsFromRole and saves role with added role permission`()
     {
         val roleName = "roleName"
         val permissionName = "permission1"
         val role = createRoleWithPermission(roleName, permissionName)
         whenever(roleRepository.findByName(roleName)).thenReturn(role)
-        whenever(rolePermissionService.getRolePermissionsToUpdate(role, listOf())).thenReturn(
-            listOf(
-                createRoleWithPermission(roleName, permissionName).rolePermissions.first()
-            )
-        )
-
-        assertThrows<PackitException> {
-            roleService.addPermissionsToRole(roleName, listOf())
-        }.apply {
-            assertEquals("rolePermissionAlreadyExists", key)
-            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
-        }
-    }
-
-    @Test
-    fun `addPermissionsToRole calls getRolePermissionsToUpdate and saves role with added role permission`()
-    {
-        val roleName = "roleName"
-        val permissionName = "permission1"
-        val role = createRoleWithPermission(roleName, permissionName)
-        whenever(roleRepository.findByName(roleName)).thenReturn(role)
-        whenever(rolePermissionService.getRolePermissionsToUpdate(role, listOf())).thenReturn(
+        whenever(rolePermissionService.getAddRolePermissionsFromRole(role, listOf())).thenReturn(
             listOf(
                 createRoleWithPermission(roleName, "differentPermission").rolePermissions.first()
             )
@@ -293,9 +272,9 @@ class RoleServiceTest
 
         verify(roleRepository).save(
             argThat {
-            this == role
-            this.rolePermissions.size == 2
-        }
+                this == role
+                this.rolePermissions.size == 2
+            }
         )
     }
 

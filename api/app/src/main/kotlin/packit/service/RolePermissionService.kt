@@ -12,6 +12,7 @@ interface RolePermissionService
 {
     fun getRolePermissionsToUpdate(role: Role, addRolePermissions: List<UpdateRolePermission>): List<RolePermission>
     fun removeRolePermissionsFromRole(role: Role, removeRolePermissions: List<UpdateRolePermission>)
+    fun getAddRolePermissionsFromRole(role: Role, addRolePermissions: List<UpdateRolePermission>): List<RolePermission>
 }
 
 @Service
@@ -31,6 +32,7 @@ class BaseRolePermissionService(
         return addRolePermissions.map { addRolePermission ->
             val permission = permissionRepository.findByName(addRolePermission.permission)
                 ?: throw PackitException("permissionNotFound", HttpStatus.BAD_REQUEST)
+
             RolePermission(
                 role = role,
                 permission = permission,
@@ -56,9 +58,24 @@ class BaseRolePermissionService(
         val matchedRolePermissionsToRemove = rolePermissionsToRemove.map { rolePermissionToRemove ->
             val matchedPermission = role.rolePermissions.find { rolePermissionToRemove == it }
                 ?: throw PackitException("rolePermissionDoesNotExist", HttpStatus.BAD_REQUEST)
+
             matchedPermission
         }
 
         rolePermissionRepository.deleteAllByIdIn(matchedRolePermissionsToRemove.map { it.id!! })
+    }
+
+    override fun getAddRolePermissionsFromRole(
+        role: Role,
+        addRolePermissions: List<UpdateRolePermission>
+    ): List<RolePermission>
+    {
+        val rolePermissionsToAdd = getRolePermissionsToUpdate(role, addRolePermissions)
+        if (rolePermissionsToAdd.any { role.rolePermissions.contains(it) })
+        {
+            throw PackitException("rolePermissionAlreadyExists", HttpStatus.BAD_REQUEST)
+        }
+
+        return rolePermissionsToAdd
     }
 }

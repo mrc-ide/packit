@@ -69,11 +69,7 @@ class BaseRoleService(
         val role = roleRepository.findByName(roleName)
             ?: throw PackitException("roleNotFound", HttpStatus.BAD_REQUEST)
 
-        val rolePermissionsToAdd = rolePermissionService.getRolePermissionsToUpdate(role, addRolePermissions)
-        if (rolePermissionsToAdd.any { role.rolePermissions.contains(it) })
-        {
-            throw PackitException("rolePermissionAlreadyExists", HttpStatus.BAD_REQUEST)
-        }
+        val rolePermissionsToAdd = rolePermissionService.getAddRolePermissionsFromRole(role, addRolePermissions)
 
         role.rolePermissions.addAll(rolePermissionsToAdd)
         roleRepository.save(role)
