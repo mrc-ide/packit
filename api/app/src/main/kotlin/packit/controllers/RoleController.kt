@@ -29,7 +29,7 @@ class RoleController(private val roleService: RoleService)
     {
         roleService.deleteRole(roleName)
 
-        return ResponseEntity.ok(mapOf("message" to "Role deleted"))
+        return ResponseEntity.noContent().build()
     }
 
     @PutMapping("/add-permissions/{roleName}")

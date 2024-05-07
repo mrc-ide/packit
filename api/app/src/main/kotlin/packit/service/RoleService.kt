@@ -50,7 +50,7 @@ class BaseRoleService(
 
     override fun createRole(createRole: CreateRole)
     {
-        val permissions = permissionService.checkMatchingPermissions(createRole.permissions)
+        val permissions = permissionService.checkMatchingPermissions(createRole.permissionNames)
 
         saveRole(createRole.name, permissions)
     }

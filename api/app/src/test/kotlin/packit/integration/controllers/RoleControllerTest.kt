@@ -30,7 +30,7 @@ class RoleControllerTest : IntegrationTest()
     private val createTestRoleBody = ObjectMapper().writeValueAsString(
         CreateRole(
             name = "testRole",
-            permissions = listOf("packet.run", "packet.read")
+            permissionNames = listOf("packet.run", "packet.read")
         )
     )
     private val updateRolePermission = ObjectMapper().writeValueAsString(
@@ -94,7 +94,7 @@ class RoleControllerTest : IntegrationTest()
             String::class.java
         )
 
-        assertSuccess(result)
+        assertEquals(result.statusCode, HttpStatus.NO_CONTENT)
         assertNull(roleRepository.findByName("testRole"))
     }
 
