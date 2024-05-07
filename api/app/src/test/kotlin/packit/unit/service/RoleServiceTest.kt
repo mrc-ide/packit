@@ -87,10 +87,10 @@ class RoleServiceTest
     @Test
     fun `createRole creates role with matching permissions`()
     {
-        val createRole = CreateRole(name = "newRole", permissions = listOf("p1", "p2"))
+        val createRole = CreateRole(name = "newRole", permissionNames = listOf("p1", "p2"))
         val permissions =
             listOf(Permission(name = "p1", description = "d1"), Permission(name = "p2", description = "d2"))
-        whenever(permissionService.checkMatchingPermissions(createRole.permissions)).thenReturn(permissions)
+        whenever(permissionService.checkMatchingPermissions(createRole.permissionNames)).thenReturn(permissions)
         whenever(roleRepository.existsByName(createRole.name)).thenReturn(false)
 
         roleService.createRole(createRole)
@@ -256,34 +256,13 @@ class RoleServiceTest
     }
 
     @Test
-    fun `addPermissionsToRole throws exception when role permission already exists`()
+    fun `addPermissionsToRole calls getAddRolePermissionsFromRole and saves role with added role permission`()
     {
         val roleName = "roleName"
         val permissionName = "permission1"
         val role = createRoleWithPermission(roleName, permissionName)
         whenever(roleRepository.findByName(roleName)).thenReturn(role)
-        whenever(rolePermissionService.getRolePermissionsToUpdate(role, listOf())).thenReturn(
-            listOf(
-                createRoleWithPermission(roleName, permissionName).rolePermissions.first()
-            )
-        )
-
-        assertThrows<PackitException> {
-            roleService.addPermissionsToRole(roleName, listOf())
-        }.apply {
-            assertEquals("rolePermissionAlreadyExists", key)
-            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
-        }
-    }
-
-    @Test
-    fun `addPermissionsToRole calls getRolePermissionsToUpdate and saves role with added role permission`()
-    {
-        val roleName = "roleName"
-        val permissionName = "permission1"
-        val role = createRoleWithPermission(roleName, permissionName)
-        whenever(roleRepository.findByName(roleName)).thenReturn(role)
-        whenever(rolePermissionService.getRolePermissionsToUpdate(role, listOf())).thenReturn(
+        whenever(rolePermissionService.getAddRolePermissionsFromRole(role, listOf())).thenReturn(
             listOf(
                 createRoleWithPermission(roleName, "differentPermission").rolePermissions.first()
             )
@@ -343,7 +322,7 @@ class RoleServiceTest
         val roles = listOf(Role(name = "role1"), Role(name = "role2"))
         whenever(roleRepository.findAll()).thenReturn(roles)
 
-        val result = roleService.getRolesWithRelationships()
+        val result = roleService.getRoles(null)
 
         assertEquals(2, result.size)
         assertTrue(result.containsAll(roles))
@@ -396,7 +375,7 @@ class RoleServiceTest
         val roles = listOf(Role(name = "username1", isUsername = true), Role(name = "username2", isUsername = true))
         whenever(roleRepository.findAllByIsUsername(true)).thenReturn(roles)
 
-        val result = roleService.getRolesWithRelationships(true)
+        val result = roleService.getRoles(true)
 
         assertEquals(roles, result)
         verify(roleRepository).findAllByIsUsername(true)
