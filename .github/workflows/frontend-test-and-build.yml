@@ -37,6 +37,9 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build image
+        working-directory: app
+        run: ./scripts/build-and-push
       - name: Installing dependencies
         run: npm ci --prefix=app
       - name: Building app
@@ -52,9 +55,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
-      - name: Build image
-        working-directory: app
-        run: ./scripts/build-and-push
+
       - name: Smoke test
         working-directory: app
         run: ./scripts/run && ./scripts/smoke-test
