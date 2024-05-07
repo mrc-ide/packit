@@ -202,7 +202,7 @@ class RoleControllerTest : IntegrationTest()
 
         val result =
             restTemplate.exchange(
-                "/role",
+                "/role/names",
                 HttpMethod.GET,
                 getTokenizedHttpEntity(),
                 String::class.java
@@ -221,7 +221,7 @@ class RoleControllerTest : IntegrationTest()
         val roleDto = roleRepository.findByName("ADMIN")!!.toDto()
         val result =
             restTemplate.exchange(
-                "/role/complete",
+                "/role",
                 HttpMethod.GET,
                 getTokenizedHttpEntity(),
                 String::class.java
@@ -240,7 +240,7 @@ class RoleControllerTest : IntegrationTest()
         val allUsernameRoles = roleRepository.findAllByIsUsername(true).map { it.toDto() }
         val result =
             restTemplate.exchange(
-                "/role/complete/usernames",
+                "/role?isUsername=true",
                 HttpMethod.GET,
                 getTokenizedHttpEntity(),
                 String::class.java
@@ -259,7 +259,7 @@ class RoleControllerTest : IntegrationTest()
         val adminRole = roleRepository.findByName("ADMIN")!!.toDto()
         val result =
             restTemplate.exchange(
-                "/role/complete/non-usernames",
+                "/role?isUsername=false",
                 HttpMethod.GET,
                 getTokenizedHttpEntity(),
                 String::class.java

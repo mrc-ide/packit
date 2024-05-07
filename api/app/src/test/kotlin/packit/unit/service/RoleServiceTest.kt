@@ -322,7 +322,7 @@ class RoleServiceTest
         val roles = listOf(Role(name = "role1"), Role(name = "role2"))
         whenever(roleRepository.findAll()).thenReturn(roles)
 
-        val result = roleService.getRolesWithRelationships()
+        val result = roleService.getRoles(null)
 
         assertEquals(2, result.size)
         assertTrue(result.containsAll(roles))
@@ -334,7 +334,7 @@ class RoleServiceTest
         val roles = listOf(Role(name = "username1", isUsername = true), Role(name = "username2", isUsername = true))
         whenever(roleRepository.findAllByIsUsername(true)).thenReturn(roles)
 
-        val result = roleService.getRolesWithRelationships(true)
+        val result = roleService.getRoles(true)
 
         assertEquals(roles, result)
         verify(roleRepository).findAllByIsUsername(true)
