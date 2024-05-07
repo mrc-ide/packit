@@ -110,7 +110,6 @@ class BaseRoleService(
         return foundRoles
     }
 
-
     override fun getRole(roleName: String): Role
     {
         return roleRepository.findByName(roleName)

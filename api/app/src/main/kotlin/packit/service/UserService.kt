@@ -101,6 +101,7 @@ class BaseUserService(
         val matchedRolesToRemove = rolesToRemove.map { roleToRemove ->
             val matchedPermission = user.roles.find { roleToRemove == it }
                 ?: throw PackitException("userRoleNotExists", HttpStatus.BAD_REQUEST)
+
             matchedPermission
         }
 
