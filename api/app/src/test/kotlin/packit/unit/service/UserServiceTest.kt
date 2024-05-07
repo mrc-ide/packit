@@ -165,7 +165,7 @@ class UserServiceTest
     fun `addRolesToUser adds roles to user when roles do not exist`()
     {
         val newRoles = listOf(Role("NEW_ROLE"))
-        `when`(mockRoleService.getRolesWithRelationships(anyList())).doReturn(newRoles)
+        `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(newRoles)
         `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
         `when`(mockUserRepository.save(any<User>())).thenAnswer { it.getArgument(0) }
         val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
@@ -178,7 +178,7 @@ class UserServiceTest
     @Test
     fun `addRolesToUser throws exception when role already exists`()
     {
-        `when`(mockRoleService.getRolesWithRelationships(anyList())).doReturn(mockUser.roles)
+        `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(mockUser.roles)
         `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
         val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
 
@@ -205,7 +205,7 @@ class UserServiceTest
     fun `addRolesToUser throws exception when trying to add username role`()
     {
         val usernameRole = Role(mockUser.username, isUsername = true)
-        `when`(mockRoleService.getRolesWithRelationships(anyList())).doReturn(listOf(usernameRole))
+        `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(listOf(usernameRole))
         `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
         val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
 
@@ -220,7 +220,7 @@ class UserServiceTest
     {
         val rolesToRemove = listOf(Role("EXISTING_ROLE"))
         mockUser.roles.addAll(rolesToRemove)
-        `when`(mockRoleService.getRolesWithRelationships(anyList())).doReturn(rolesToRemove)
+        `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(rolesToRemove)
         `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
         `when`(mockUserRepository.save(any<User>())).thenAnswer { it.getArgument(0) }
         val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
@@ -234,7 +234,7 @@ class UserServiceTest
     fun `removeRolesFromUser throws exception when role does not exist`()
     {
         val nonExistentRole = Role("NON_EXISTENT_ROLE")
-        `when`(mockRoleService.getRolesWithRelationships(anyList())).doReturn(listOf(nonExistentRole))
+        `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(listOf(nonExistentRole))
         `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
         val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
 
@@ -266,7 +266,7 @@ class UserServiceTest
     fun `removeRolesFromUser throws exception when trying to remove username role`()
     {
         val usernameRole = Role(mockUser.username, isUsername = true)
-        `when`(mockRoleService.getRolesWithRelationships(anyList())).doReturn(listOf(usernameRole))
+        `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(listOf(usernameRole))
         `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
         val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
 

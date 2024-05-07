@@ -322,7 +322,7 @@ class RoleServiceTest
         val roles = listOf(Role(name = "role1"), Role(name = "role2"))
         whenever(roleRepository.findAll()).thenReturn(roles)
 
-        val result = roleService.getRoles(null)
+        val result = roleService.getAllRoles(null)
 
         assertEquals(2, result.size)
         assertTrue(result.containsAll(roles))
@@ -335,7 +335,7 @@ class RoleServiceTest
         val roles = listOf(Role(name = "role1"), Role(name = "role2"))
         whenever(roleRepository.findByNameIn(roleNames)).thenReturn(roles)
 
-        val result = roleService.getRolesWithRelationships(roleNames)
+        val result = roleService.getRolesByRoleNames(roleNames)
 
         assertEquals(roles, result)
     }
@@ -348,7 +348,7 @@ class RoleServiceTest
         whenever(roleRepository.findByNameIn(roleNames)).thenReturn(roles)
 
         assertThrows<PackitException> {
-            roleService.getRolesWithRelationships(roleNames)
+            roleService.getRolesByRoleNames(roleNames)
         }.apply {
             assertEquals("invalidRolesProvided", key)
             assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
@@ -362,7 +362,7 @@ class RoleServiceTest
         whenever(roleRepository.findByNameIn(roleNames)).thenReturn(emptyList())
 
         assertThrows<PackitException> {
-            roleService.getRolesWithRelationships(roleNames)
+            roleService.getRolesByRoleNames(roleNames)
         }.apply {
             assertEquals("invalidRolesProvided", key)
             assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
@@ -375,7 +375,7 @@ class RoleServiceTest
         val roles = listOf(Role(name = "username1", isUsername = true), Role(name = "username2", isUsername = true))
         whenever(roleRepository.findAllByIsUsername(true)).thenReturn(roles)
 
-        val result = roleService.getRoles(true)
+        val result = roleService.getAllRoles(true)
 
         assertEquals(roles, result)
         verify(roleRepository).findAllByIsUsername(true)

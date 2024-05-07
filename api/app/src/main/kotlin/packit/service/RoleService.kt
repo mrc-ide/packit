@@ -23,14 +23,8 @@ interface RoleService
     fun addPermissionsToRole(roleName: String, addRolePermissions: List<UpdateRolePermission>)
     fun removePermissionsFromRole(roleName: String, removeRolePermissions: List<UpdateRolePermission>)
     fun getRoleNames(): List<String>
-<<<<<<< HEAD
-    fun getRolesWithRelationships(): List<Role>
-    fun getRolesWithRelationships(roleNames: List<String>): List<Role>
-    fun getRolesWithRelationships(isUsernames: Boolean): List<Role>
-
-=======
-    fun getRoles(isUsernames: Boolean?): List<Role>
->>>>>>> 30d168bfa40c6b07415bce13e07d215bc69848e2
+    fun getRolesByRoleNames(roleNames: List<String>): List<Role>
+    fun getAllRoles(isUsernames: Boolean?): List<Role>
     fun getRole(roleName: String): Role
 }
 
@@ -97,15 +91,25 @@ class BaseRoleService(
         return roleRepository.findAll().map { it.name }
     }
 
-    override fun getRoles(isUsernames: Boolean?): List<Role>
+    override fun getAllRoles(isUsernames: Boolean?): List<Role>
     {
         if (isUsernames == null)
         {
             return roleRepository.findAll()
         }
-
         return roleRepository.findAllByIsUsername(isUsernames)
     }
+
+    override fun getRolesByRoleNames(roleNames: List<String>): List<Role>
+    {
+        val foundRoles = roleRepository.findByNameIn(roleNames)
+        if (foundRoles.size != roleNames.size)
+        {
+            throw PackitException("invalidRolesProvided", HttpStatus.BAD_REQUEST)
+        }
+        return foundRoles
+    }
+
 
     override fun getRole(roleName: String): Role
     {

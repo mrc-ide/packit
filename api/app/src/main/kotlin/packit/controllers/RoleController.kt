@@ -65,7 +65,7 @@ class RoleController(private val roleService: RoleService)
     @GetMapping
     fun getRolesWithRelationships(@RequestParam isUsername: Boolean?): ResponseEntity<List<RoleDto>>
     {
-        val roles = roleService.getRoles(isUsername)
+        val roles = roleService.getAllRoles(isUsername)
         return ResponseEntity.ok(roles.map { it.toDto() })
     }
 
