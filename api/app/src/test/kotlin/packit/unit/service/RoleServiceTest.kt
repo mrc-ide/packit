@@ -124,15 +124,18 @@ class RoleServiceTest
         val permissions =
             listOf(Permission(name = "p1", description = "d1"), Permission(name = "p2", description = "d2"))
         whenever(roleRepository.existsByName("roleName")).thenReturn(false)
+        whenever(roleRepository.save(any<Role>())).thenAnswer { it.getArgument(0) }
 
-        roleService.saveRole(roleName, permissions)
+        val savedRole = roleService.saveRole(roleName, permissions)
 
         verify(roleRepository).save(
             argThat {
                 this.name == roleName
-                this.rolePermissions.size == 2
+                this.rolePermissions.size == permissions.size
             }
         )
+        assertEquals(roleName, savedRole.name)
+        assertEquals(permissions.size, savedRole.rolePermissions.size)
     }
 
     @Test
