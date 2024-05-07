@@ -83,4 +83,19 @@ class RoleControllerTest : IntegrationTest()
         assertEquals(result.statusCode, HttpStatus.NO_CONTENT)
         assertNull(roleRepository.findByName("testRole"))
     }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["none"])
+    fun `user without user manage permission cannot delete roles`()
+    {
+        roleRepository.save(Role(name = "testRole"))
+        
+        val result = restTemplate.postForEntity(
+            "/role/testRole",
+            getTokenizedHttpEntity(data = createTestRoleBody),
+            String::class.java
+        )
+
+        assertEquals(result.statusCode, HttpStatus.UNAUTHORIZED)
+    }
 }
