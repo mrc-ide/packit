@@ -76,7 +76,7 @@ class BaseRoleService(
         val rolePermissionsToAdd = rolePermissionService.getAddRolePermissionsFromRole(role, addRolePermissions)
 
         role.rolePermissions.addAll(rolePermissionsToAdd)
-        
+
         return roleRepository.save(role)
     }
 
