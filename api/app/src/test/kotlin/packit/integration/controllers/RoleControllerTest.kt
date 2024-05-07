@@ -89,7 +89,7 @@ class RoleControllerTest : IntegrationTest()
     fun `user without user manage permission cannot delete roles`()
     {
         roleRepository.save(Role(name = "testRole"))
-        
+
         val result = restTemplate.postForEntity(
             "/role/testRole",
             getTokenizedHttpEntity(data = createTestRoleBody),
