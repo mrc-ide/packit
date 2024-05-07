@@ -33,9 +33,6 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Build image
-        working-directory: api
-        run: ./scripts/build-and-push
       - name: Run dependencies
         run: ./scripts/run-dependencies
       - name: Set up Java JDK ${{ matrix.java-version }}
@@ -54,6 +51,9 @@ jobs:
       - name: Lint
         working-directory: api
         run: ./gradlew :app:detekt
+      - name: Build image
+        working-directory: api
+        run: ./scripts/build-and-push
       - name: Smoke test
         working-directory: api
         run: ./scripts/run && ./scripts/smoke-test
