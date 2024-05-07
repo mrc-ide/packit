@@ -27,13 +27,12 @@ class UserControllerTest : IntegrationTest()
     @Autowired
     lateinit var userRepository: UserRepository
 
-    private val testCreateUserBody = ObjectMapper().writeValueAsString(
-        CreateBasicUser(
-            email = "random@email",
-            password = "password",
-            displayName = "Random User",
-        )
+    private val testCreateUser = CreateBasicUser(
+        email = "random@email",
+        password = "password",
+        displayName = "Random User",
     )
+    private val testCreateUserBody = ObjectMapper().writeValueAsString(testCreateUser)
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
@@ -45,7 +44,9 @@ class UserControllerTest : IntegrationTest()
             String::class.java
         )
 
-        assertSuccess(result)
+        assertEquals(HttpStatus.CREATED, result.statusCode)
+        assertEquals(testCreateUser.email, ObjectMapper().readTree(result.body).get("username").asText())
+        assertEquals(testCreateUser.displayName, ObjectMapper().readTree(result.body).get("displayName").asText())
         assertNotNull(userRepository.findByUsername("random@email"))
     }
 
@@ -84,7 +85,7 @@ class UserControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `addRoleToUser adds roles to user`()
+    fun `addRolesToUser adds roles to user`()
     {
         val testUser = userRepository.save(
             User(
@@ -103,6 +104,7 @@ class UserControllerTest : IntegrationTest()
 
         assertSuccess(result)
         assertEquals(userRepository.findByUsername("test")?.roles?.first()?.name, "ADMIN")
+        assertEquals("test", ObjectMapper().readTree(result.body).get("username").asText())
     }
 
     @Test
@@ -129,7 +131,7 @@ class UserControllerTest : IntegrationTest()
             String::class.java
         )
 
-        assertSuccess(result)
+        assertEquals(HttpStatus.NO_CONTENT, result.statusCode)
         assertEquals(userRepository.findByUsername(testUser.username)?.roles?.size, 0)
     }
 
@@ -156,7 +158,7 @@ class UserControllerTest : IntegrationTest()
             String::class.java
         )
 
-        assertSuccess(result)
+        assertEquals(HttpStatus.NO_CONTENT, result.statusCode)
         assertEquals(userRepository.findByUsername(testUser.username), null)
         assertEquals(roleRepository.findByName(username), null)
     }

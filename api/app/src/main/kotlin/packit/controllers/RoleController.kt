@@ -10,6 +10,7 @@ import packit.model.dto.RoleDto
 import packit.model.dto.UpdateRolePermission
 import packit.model.toDto
 import packit.service.RoleService
+import java.net.URI
 
 @Controller
 @PreAuthorize("hasAuthority('user.manage')")
@@ -17,11 +18,11 @@ import packit.service.RoleService
 class RoleController(private val roleService: RoleService)
 {
     @PostMapping()
-    fun createRole(@RequestBody @Validated createRole: CreateRole): ResponseEntity<Map<String, String?>>
+    fun createRole(@RequestBody @Validated createRole: CreateRole): ResponseEntity<RoleDto>
     {
-        roleService.createRole(createRole)
+        val role = roleService.createRole(createRole)
 
-        return ResponseEntity.ok(mapOf("message" to "Role created"))
+        return ResponseEntity.created(URI.create("/role/${role.id}")).body(role.toDto())
     }
 
     @DeleteMapping("/{roleName}")
@@ -38,22 +39,22 @@ class RoleController(private val roleService: RoleService)
     fun addPermissionsToRole(
         @RequestBody @Validated addRolePermissions: List<UpdateRolePermission>,
         @PathVariable roleName: String
-    ): ResponseEntity<Map<String, String>>
+    ): ResponseEntity<RoleDto?>
     {
-        roleService.addPermissionsToRole(roleName, addRolePermissions)
+        val updatedRole = roleService.addPermissionsToRole(roleName, addRolePermissions)
 
-        return ResponseEntity.ok(mapOf("message" to "Permissions added"))
+        return ResponseEntity.ok(updatedRole.toDto())
     }
 
     @PutMapping("/remove-permissions/{roleName}")
     fun removePermissionsFromRole(
         @RequestBody @Validated removeRolePermissions: List<UpdateRolePermission>,
         @PathVariable roleName: String
-    ): ResponseEntity<Map<String, String>>
+    ): ResponseEntity<RoleDto?>
     {
         roleService.removePermissionsFromRole(roleName, removeRolePermissions)
 
-        return ResponseEntity.ok(mapOf("message" to "Permissions removed"))
+        return ResponseEntity.noContent().build()
     }
 
     @GetMapping("/names")

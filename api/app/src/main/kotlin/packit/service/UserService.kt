@@ -13,10 +13,10 @@ import java.time.Instant
 interface UserService
 {
     fun saveUserFromGithub(username: String, displayName: String?, email: String?): User
-    fun createBasicUser(createBasicUser: CreateBasicUser)
+    fun createBasicUser(createBasicUser: CreateBasicUser): User
     fun updateUserLastLoggedIn(user: User, lastLoggedIn: Instant): User
     fun getUserForLogin(username: String): User
-    fun addRolesToUser(username: String, roleNames: List<String>)
+    fun addRolesToUser(username: String, roleNames: List<String>): User
     fun removeRolesFromUser(username: String, roleNames: List<String>)
     fun deleteUser(username: String)
 }
@@ -50,7 +50,7 @@ class BaseUserService(
         return newUser
     }
 
-    override fun createBasicUser(createBasicUser: CreateBasicUser)
+    override fun createBasicUser(createBasicUser: CreateBasicUser): User
     {
         if (userRepository.existsByUsername(createBasicUser.email))
         {
@@ -67,7 +67,8 @@ class BaseUserService(
             roles = matchingRoles.apply { add(roleService.getUsernameRole(createBasicUser.email)) },
             password = passwordEncoder.encode(createBasicUser.password)
         )
-        userRepository.save(newUser)
+
+        return userRepository.save(newUser)
     }
 
     override fun updateUserLastLoggedIn(user: User, lastLoggedIn: Instant): User
@@ -83,7 +84,7 @@ class BaseUserService(
         return updateUserLastLoggedIn(user, Instant.now())
     }
 
-    override fun addRolesToUser(username: String, roleNames: List<String>)
+    override fun addRolesToUser(username: String, roleNames: List<String>): User
     {
         val (user, rolesToAdd) = getUserAndRolesForUpdate(username, roleNames)
         if (rolesToAdd.any { user.roles.contains(it) })
@@ -92,7 +93,7 @@ class BaseUserService(
         }
 
         user.roles.addAll(rolesToAdd)
-        userRepository.save(user)
+        return userRepository.save(user)
     }
 
     override fun removeRolesFromUser(username: String, roleNames: List<String>)

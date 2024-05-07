@@ -18,9 +18,9 @@ interface RoleService
     fun getAdminRole(): Role
     fun checkMatchingRoles(rolesToCheck: List<String>): List<Role>
     fun getGrantedAuthorities(roles: List<Role>): MutableList<GrantedAuthority>
-    fun createRole(createRole: CreateRole)
+    fun createRole(createRole: CreateRole): Role
     fun deleteRole(roleName: String)
-    fun addPermissionsToRole(roleName: String, addRolePermissions: List<UpdateRolePermission>)
+    fun addPermissionsToRole(roleName: String, addRolePermissions: List<UpdateRolePermission>): Role
     fun removePermissionsFromRole(roleName: String, removeRolePermissions: List<UpdateRolePermission>)
     fun getRoleNames(): List<String>
     fun getRolesByRoleNames(roleNames: List<String>): List<Role>
@@ -52,11 +52,11 @@ class BaseRoleService(
             ?: throw PackitException("adminRoleNotFound", HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
-    override fun createRole(createRole: CreateRole)
+    override fun createRole(createRole: CreateRole): Role
     {
         val permissions = permissionService.checkMatchingPermissions(createRole.permissionNames)
 
-        saveRole(createRole.name, permissions)
+        return saveRole(createRole.name, permissions)
     }
 
     override fun deleteRole(roleName: String)
@@ -68,7 +68,7 @@ class BaseRoleService(
         roleRepository.deleteByName(roleName)
     }
 
-    override fun addPermissionsToRole(roleName: String, addRolePermissions: List<UpdateRolePermission>)
+    override fun addPermissionsToRole(roleName: String, addRolePermissions: List<UpdateRolePermission>): Role
     {
         val role = roleRepository.findByName(roleName)
             ?: throw PackitException("roleNotFound", HttpStatus.BAD_REQUEST)
@@ -76,7 +76,8 @@ class BaseRoleService(
         val rolePermissionsToAdd = rolePermissionService.getAddRolePermissionsFromRole(role, addRolePermissions)
 
         role.rolePermissions.addAll(rolePermissionsToAdd)
-        roleRepository.save(role)
+        
+        return roleRepository.save(role)
     }
 
     override fun removePermissionsFromRole(roleName: String, removeRolePermissions: List<UpdateRolePermission>)
@@ -116,7 +117,7 @@ class BaseRoleService(
             ?: throw PackitException("roleNotFound", HttpStatus.BAD_REQUEST)
     }
 
-    internal fun saveRole(roleName: String, permissions: List<Permission> = listOf())
+    internal fun saveRole(roleName: String, permissions: List<Permission> = listOf()): Role
     {
         if (roleRepository.existsByName(roleName))
         {
@@ -125,7 +126,7 @@ class BaseRoleService(
         val role = Role(name = roleName)
         role.rolePermissions = permissions.map { RolePermission(permission = it, role = role) }
             .toMutableList()
-        roleRepository.save(role)
+        return roleRepository.save(role)
     }
 
     override fun checkMatchingRoles(rolesToCheck: List<String>): List<Role>

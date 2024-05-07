@@ -28,13 +28,14 @@ class RoleControllerTest : IntegrationTest()
     @Autowired
     private lateinit var permissionsRepository: PermissionRepository
 
+    private val testCreateRole = CreateRole(
+        name = "testRole",
+        permissionNames = listOf("packet.run", "packet.read")
+    )
     private val createTestRoleBody =
         ObjectMapper()
             .writeValueAsString(
-                CreateRole(
-                    name = "testRole",
-                    permissionNames = listOf("packet.run", "packet.read")
-                )
+                testCreateRole
             )
     private val updateRolePermission =
         ObjectMapper()
@@ -51,7 +52,12 @@ class RoleControllerTest : IntegrationTest()
                 String::class.java
             )
 
-        assertSuccess(result)
+        assertEquals(result.statusCode, HttpStatus.CREATED)
+        assertEquals(testCreateRole.name, ObjectMapper().readTree(result.body).get("name").asText())
+        assertEquals(
+            testCreateRole.permissionNames.size,
+            ObjectMapper().readTree(result.body).get("rolePermissions").size()
+        )
         assertNotNull(roleRepository.findByName("testRole"))
     }
 
@@ -131,7 +137,9 @@ class RoleControllerTest : IntegrationTest()
                 String::class.java
             )
 
-        assertSuccess(result)
+        assertEquals(result.statusCode, HttpStatus.OK)
+        assertEquals("testRole", ObjectMapper().readTree(result.body).get("name").asText())
+        assertEquals(1, ObjectMapper().readTree(result.body).get("rolePermissions").size())
         val role = roleRepository.findByName("testRole")!!
         assertEquals(1, role.rolePermissions.size)
         assertEquals("packet.run", role.rolePermissions.first().permission.name)
@@ -155,7 +163,7 @@ class RoleControllerTest : IntegrationTest()
                 String::class.java
             )
 
-        assertSuccess(result)
+        assertEquals(HttpStatus.NO_CONTENT, result.statusCode)
         val role = roleRepository.findByName("testRole")!!
         assertEquals(0, role.rolePermissions.size)
     }

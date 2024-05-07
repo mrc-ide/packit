@@ -8,24 +8,34 @@ import org.springframework.http.HttpStatus
 import packit.AppConfig
 import packit.controllers.UserController
 import packit.exceptions.PackitException
+import packit.model.User
 import packit.model.dto.CreateBasicUser
 import packit.service.UserService
+import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class UserControllerTest
 {
-    private val mockConfig = mock<AppConfig> {
-        on { authEnableBasicLogin } doReturn true
-    }
-    private val mockUserService = mock<UserService>()
-
+    private val testUUID = UUID.randomUUID()
     private val testCreateUser = CreateBasicUser(
         email = "test@email.com",
         password = "password",
         displayName = "displayname",
         userRoles = listOf("ADMIN")
     )
+    private val mockConfig = mock<AppConfig> {
+        on { authEnableBasicLogin } doReturn true
+    }
+    private val mockUserService = mock<UserService> {
+        on { createBasicUser(testCreateUser) } doReturn User(
+            username = testCreateUser.email,
+            displayName = testCreateUser.displayName,
+            disabled = false,
+            userSource = "basic",
+            id = testUUID
+        )
+    }
 
     @Test
     fun `createBasicUser throws packit exception if basic login is not enabled`()
@@ -41,13 +51,14 @@ class UserControllerTest
     }
 
     @Test
-    fun `createBasicUser returns ok if user is created`()
+    fun `createBasicUser returns created with user when created`()
     {
         val sut = UserController(mockConfig, mockUserService)
 
         val result = sut.createBasicUser(testCreateUser)
 
-        assertEquals(result.statusCode, HttpStatus.OK)
-        assertEquals(result.body, mapOf("message" to "User created"))
+        assertEquals(result.statusCode, HttpStatus.CREATED)
+        assertEquals(testCreateUser.email, result.body?.username)
+        assertEquals(testUUID, result.body?.id)
     }
 }

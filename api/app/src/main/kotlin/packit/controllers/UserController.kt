@@ -9,7 +9,10 @@ import org.springframework.web.bind.annotation.*
 import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.model.dto.CreateBasicUser
+import packit.model.dto.UserDto
+import packit.model.toDto
 import packit.service.UserService
+import java.net.URI
 
 @Controller
 @PreAuthorize("hasAuthority('user.manage')")
@@ -19,47 +22,47 @@ class UserController(private val config: AppConfig, private val userService: Use
     @PostMapping("/basic")
     fun createBasicUser(
         @RequestBody @Validated createBasicUser: CreateBasicUser
-    ): ResponseEntity<Map<String, String?>>
+    ): ResponseEntity<UserDto?>
     {
         if (!config.authEnableBasicLogin)
         {
             throw PackitException("basicLoginDisabled", HttpStatus.FORBIDDEN)
         }
 
-        userService.createBasicUser(createBasicUser)
+        val user = userService.createBasicUser(createBasicUser)
 
-        return ResponseEntity.ok(mapOf("message" to "User created"))
+        return ResponseEntity.created(URI.create("/user/${user.id}")).body(user.toDto())
     }
 
     @PutMapping("add-roles/{username}")
-    fun addRoleToUser(
+    fun addRolesToUser(
         @RequestBody @Validated roleNames: List<String>,
         @PathVariable username: String
-    ): ResponseEntity<Map<String, String?>>
+    ): ResponseEntity<UserDto>
     {
-        userService.addRolesToUser(username, roleNames)
+        val updatedUser = userService.addRolesToUser(username, roleNames)
 
-        return ResponseEntity.ok(mapOf("message" to "Role added"))
+        return ResponseEntity.ok(updatedUser.toDto())
     }
 
     @PutMapping("remove-roles/{username}")
-    fun removeRoleFromUser(
+    fun removeRolesFromUser(
         @RequestBody @Validated roleNames: List<String>,
         @PathVariable username: String
-    ): ResponseEntity<Map<String, String?>>
+    ): ResponseEntity<Unit>
     {
         userService.removeRolesFromUser(username, roleNames)
 
-        return ResponseEntity.ok(mapOf("message" to "Role removed"))
+        return ResponseEntity.noContent().build()
     }
 
     @DeleteMapping("/{username}")
     fun deleteUser(
         @PathVariable username: String
-    ): ResponseEntity<Map<String, String?>>
+    ): ResponseEntity<Unit>
     {
         userService.deleteUser(username)
 
-        return ResponseEntity.ok(mapOf("message" to "User deleted"))
+        return ResponseEntity.noContent().build()
     }
 }

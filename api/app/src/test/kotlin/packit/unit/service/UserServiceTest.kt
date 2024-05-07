@@ -140,9 +140,10 @@ class UserServiceTest
 
         `when`(passwordEncoder.encode(createBasicUser.password)).doReturn("encodedPassword")
         `when`(mockUserRepository.existsByUsername(createBasicUser.email)).doReturn(false)
+        `when`(mockUserRepository.save(any<User>())).thenAnswer { it.getArgument(0) }
         val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
 
-        service.createBasicUser(createBasicUser)
+        val result = service.createBasicUser(createBasicUser)
 
         verify(mockRoleService).checkMatchingRoles(createBasicUser.userRoles)
         verify(mockRoleService).getUsernameRole(createBasicUser.email)
@@ -159,6 +160,7 @@ class UserServiceTest
                 this.roles.map { it.name }.containsAll(testRoles.map { it.name }.plus(createBasicUser.email))
             }
         )
+        assertEquals(result.username, createBasicUser.email)
     }
 
     @Test
@@ -170,9 +172,10 @@ class UserServiceTest
         `when`(mockUserRepository.save(any<User>())).thenAnswer { it.getArgument(0) }
         val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
 
-        service.addRolesToUser(mockUser.username, newRoles.map { it.name })
+        val result = service.addRolesToUser(mockUser.username, newRoles.map { it.name })
 
         verify(mockUserRepository).save(argThat { this.roles.containsAll(newRoles) })
+        assertEquals(mockUser.roles, result.roles)
     }
 
     @Test

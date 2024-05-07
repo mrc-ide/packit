@@ -92,8 +92,9 @@ class RoleServiceTest
             listOf(Permission(name = "p1", description = "d1"), Permission(name = "p2", description = "d2"))
         whenever(permissionService.checkMatchingPermissions(createRole.permissionNames)).thenReturn(permissions)
         whenever(roleRepository.existsByName(createRole.name)).thenReturn(false)
+        whenever(roleRepository.save(any<Role>())).thenAnswer { it.getArgument(0) }
 
-        roleService.createRole(createRole)
+        val result = roleService.createRole(createRole)
 
         verify(roleRepository).save(
             argThat {
@@ -101,6 +102,9 @@ class RoleServiceTest
                 this.rolePermissions.size == 2
             }
         )
+
+        assertEquals(createRole.name, result.name)
+        assertEquals(2, result.rolePermissions.size)
     }
 
     @Test
@@ -278,8 +282,9 @@ class RoleServiceTest
                 createRoleWithPermission(roleName, "differentPermission").rolePermissions.first()
             )
         )
+        whenever(roleRepository.save(any<Role>())).thenAnswer { it.getArgument(0) }
 
-        roleService.addPermissionsToRole(roleName, listOf())
+        val result = roleService.addPermissionsToRole(roleName, listOf())
 
         verify(roleRepository).save(
             argThat {
@@ -287,6 +292,7 @@ class RoleServiceTest
                 this.rolePermissions.size == 2
             }
         )
+        assertEquals(role, result)
     }
 
     @Test
