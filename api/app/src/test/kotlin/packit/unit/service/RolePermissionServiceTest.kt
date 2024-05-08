@@ -90,7 +90,7 @@ class RolePermissionServiceTest
         assertThrows<PackitException> {
             service.getRolePermissionsToUpdate(role, listOf(updateRolePermission))
         }.apply {
-            assertEquals("permissionNotFound", key)
+            assertEquals("invalidPermissionsProvided", key)
             assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
         }
     }

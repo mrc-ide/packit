@@ -14,6 +14,7 @@ import packit.model.Permission
 import packit.model.Role
 import packit.model.RolePermission
 import packit.model.dto.CreateRole
+import packit.model.dto.UpdateRolePermissions
 import packit.repository.RoleRepository
 import packit.service.BaseRoleService
 import packit.service.PermissionService
@@ -242,33 +243,20 @@ class RoleServiceTest
     }
 
     @Test
-    fun `addPermissionsToRole throws exception when role does not exist`()
-    {
-        val roleName = "nonExistingRole"
-        whenever(roleRepository.findByName(roleName)).thenReturn(null)
-
-        assertThrows<PackitException> {
-            roleService.addPermissionsToRole(roleName, listOf())
-        }.apply {
-            assertEquals("roleNotFound", key)
-            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
-        }
-    }
-
-    @Test
-    fun `addPermissionsToRole calls getAddRolePermissionsFromRole and saves role with added role permission`()
+    fun `updatePermissionsToRole calls correct methods and saves role`()
     {
         val roleName = "roleName"
         val permissionName = "permission1"
         val role = createRoleWithPermission(roleName, permissionName)
         whenever(roleRepository.findByName(roleName)).thenReturn(role)
+        whenever(roleRepository.save(any<Role>())).thenAnswer { it.getArgument(0) }
         whenever(rolePermissionService.getAddRolePermissionsFromRole(role, listOf())).thenReturn(
             listOf(
                 createRoleWithPermission(roleName, "differentPermission").rolePermissions.first()
             )
         )
 
-        roleService.addPermissionsToRole(roleName, listOf())
+        roleService.updatePermissionsToRole(roleName, UpdateRolePermissions())
 
         verify(roleRepository).save(
             argThat {
@@ -276,32 +264,22 @@ class RoleServiceTest
                 this.rolePermissions.size == 2
             }
         )
+        verify(rolePermissionService).removeRolePermissionsFromRole(role, listOf())
+        verify(rolePermissionService).getAddRolePermissionsFromRole(role, listOf())
     }
 
     @Test
-    fun `removePermissionsFromRole throws exception when role does not exist`()
+    fun `updatePermissionsToRole throws exception when role does not exist`()
     {
         val roleName = "nonExistingRole"
         whenever(roleRepository.findByName(roleName)).thenReturn(null)
 
         assertThrows<PackitException> {
-            roleService.removePermissionsFromRole(roleName, listOf())
+            roleService.updatePermissionsToRole(roleName, UpdateRolePermissions())
         }.apply {
             assertEquals("roleNotFound", key)
             assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
         }
-    }
-
-    @Test
-    fun `removePermissionsFromRole calls removeRolePermissionsFromRole`()
-    {
-        val roleName = "roleName"
-        val role = Role(name = roleName)
-        whenever(roleRepository.findByName(roleName)).thenReturn(role)
-
-        roleService.removePermissionsFromRole(roleName, listOf())
-
-        verify(rolePermissionService).removeRolePermissionsFromRole(role, listOf())
     }
 
     private fun createRoleWithPermission(
