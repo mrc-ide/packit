@@ -2,6 +2,11 @@ package packit.model.dto
 
 import org.jetbrains.annotations.NotNull
 
+data class UpdateRolePermissions(
+    val addPermissions: List<UpdateRolePermission> = listOf(),
+    val removePermissions: List<UpdateRolePermission> = listOf()
+)
+
 data class UpdateRolePermission(
     @field:NotNull
     val permission: String,
