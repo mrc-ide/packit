@@ -39,7 +39,7 @@ class UserController(private val config: AppConfig, private val userService: Use
     fun updateUserRoles(
         @RequestBody @Validated updateUserRoles: UpdateUserRoles,
         @PathVariable username: String
-    ): ResponseEntity<UserDto>
+    ): ResponseEntity<UserDto?>
     {
         val updatedUser = userService.updateUserRoles(username, updateUserRoles)
 
