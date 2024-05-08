@@ -175,10 +175,12 @@ class UserServiceTest
 
         service.updateUserRoles(mockUser.username, updateUserRoles)
 
-        verify(mockUserRepository).save(argThat {
+        verify(mockUserRepository).save(
+            argThat {
             roles.containsAll(roleToAdd)
             roles.size == 1
-        })
+        }
+        )
     }
 
     @Test
@@ -230,7 +232,6 @@ class UserServiceTest
         assertEquals(ex.key, "cannotUpdateUsernameRoles")
         assertEquals(ex.httpStatus, HttpStatus.BAD_REQUEST)
     }
-
 
     @Test
     fun `updateUserRoles throws exception when trying to remove role that does not exist`()

@@ -82,7 +82,6 @@ class BaseUserService(
         return updateUserLastLoggedIn(user, Instant.now())
     }
 
-
     override fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles)
     {
         val user = userRepository.findByUsername(username)

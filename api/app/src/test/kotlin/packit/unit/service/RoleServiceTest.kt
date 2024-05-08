@@ -131,7 +131,7 @@ class RoleServiceTest
             }
         )
     }
-    
+
     @Test
     fun `getGrantedAuthorities returns authorities for roles and permissions`()
     {
