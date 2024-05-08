@@ -11,6 +11,7 @@ import packit.integration.WithAuthenticatedUser
 import packit.model.Role
 import packit.model.User
 import packit.model.dto.CreateBasicUser
+import packit.model.dto.UpdateUserRoles
 import packit.repository.RoleRepository
 import packit.repository.UserRepository
 import kotlin.test.Test
@@ -85,31 +86,7 @@ class UserControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `addRolesToUser adds roles to user`()
-    {
-        val testUser = userRepository.save(
-            User(
-                username = "test",
-                disabled = false,
-                userSource = "basic",
-                displayName = "test user"
-            )
-        )
-        val result = restTemplate.exchange(
-            "/user/add-roles/${testUser.username}",
-            HttpMethod.PUT,
-            getTokenizedHttpEntity(data = listOf("ADMIN")),
-            String::class.java
-        )
-
-        assertSuccess(result)
-        assertEquals(userRepository.findByUsername("test")?.roles?.first()?.name, "ADMIN")
-        assertEquals("test", ObjectMapper().readTree(result.body).get("username").asText())
-    }
-
-    @Test
-    @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `removeRoleFromUser removes roles from user`()
+    fun `updateUserRoles can add and remove roles from users`()
     {
         val testRole = roleRepository.save(Role(name = "TEST_ROLE"))
         val testUser = userRepository.save(
@@ -121,18 +98,22 @@ class UserControllerTest : IntegrationTest()
                 roles = mutableListOf(testRole)
             )
         )
-
-        assertEquals(userRepository.findByUsername(testUser.username)?.roles?.size, 1)
+        val updateUserRolesJSON = ObjectMapper().writeValueAsString(
+            UpdateUserRoles(
+                roleNamesToAdd = listOf("ADMIN"),
+                roleNamesToRemove = listOf(testRole.name)
+            )
+        )
 
         val result = restTemplate.exchange(
-            "/user/remove-roles/${testUser.username}",
+            "/user/update-roles/${testUser.username}",
             HttpMethod.PUT,
-            getTokenizedHttpEntity(data = listOf(testRole.name)),
+            getTokenizedHttpEntity(data = updateUserRolesJSON),
             String::class.java
         )
 
         assertEquals(HttpStatus.NO_CONTENT, result.statusCode)
-        assertEquals(userRepository.findByUsername(testUser.username)?.roles?.size, 0)
+        assertEquals(userRepository.findByUsername("test")?.roles?.map { it.name }, listOf("ADMIN"))
     }
 
     @Test

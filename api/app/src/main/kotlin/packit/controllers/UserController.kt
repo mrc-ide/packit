@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*
 import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.model.dto.CreateBasicUser
+import packit.model.dto.UpdateUserRoles
 import packit.model.dto.UserDto
 import packit.model.toDto
 import packit.service.UserService
@@ -34,24 +35,13 @@ class UserController(private val config: AppConfig, private val userService: Use
         return ResponseEntity.created(URI.create("/user/${user.id}")).body(user.toDto())
     }
 
-    @PutMapping("add-roles/{username}")
-    fun addRolesToUser(
-        @RequestBody @Validated roleNames: List<String>,
-        @PathVariable username: String
-    ): ResponseEntity<UserDto>
-    {
-        val updatedUser = userService.addRolesToUser(username, roleNames)
-
-        return ResponseEntity.ok(updatedUser.toDto())
-    }
-
-    @PutMapping("remove-roles/{username}")
-    fun removeRolesFromUser(
-        @RequestBody @Validated roleNames: List<String>,
+    @PutMapping("/update-roles/{username}")
+    fun updateUserRoles(
+        @RequestBody @Validated updateUserRoles: UpdateUserRoles,
         @PathVariable username: String
     ): ResponseEntity<Unit>
     {
-        userService.removeRolesFromUser(username, roleNames)
+        userService.updateUserRoles(username, updateUserRoles)
 
         return ResponseEntity.noContent().build()
     }

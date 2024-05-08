@@ -7,7 +7,7 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import packit.model.dto.CreateRole
 import packit.model.dto.RoleDto
-import packit.model.dto.UpdateRolePermission
+import packit.model.dto.UpdateRolePermissions
 import packit.model.toDto
 import packit.service.RoleService
 import java.net.URI
@@ -35,24 +35,13 @@ class RoleController(private val roleService: RoleService)
         return ResponseEntity.noContent().build()
     }
 
-    @PutMapping("/add-permissions/{roleName}")
-    fun addPermissionsToRole(
-        @RequestBody @Validated addRolePermissions: List<UpdateRolePermission>,
+    @PutMapping("/update-permissions/{roleName}")
+    fun updatePermissionsToRole(
+        @RequestBody @Validated updateRolePermissions: UpdateRolePermissions,
         @PathVariable roleName: String
-    ): ResponseEntity<RoleDto?>
+    ): ResponseEntity<Unit>
     {
-        val updatedRole = roleService.addPermissionsToRole(roleName, addRolePermissions)
-
-        return ResponseEntity.ok(updatedRole.toDto())
-    }
-
-    @PutMapping("/remove-permissions/{roleName}")
-    fun removePermissionsFromRole(
-        @RequestBody @Validated removeRolePermissions: List<UpdateRolePermission>,
-        @PathVariable roleName: String
-    ): ResponseEntity<RoleDto?>
-    {
-        roleService.removePermissionsFromRole(roleName, removeRolePermissions)
+        roleService.updatePermissionsToRole(roleName, updateRolePermissions)
 
         return ResponseEntity.noContent().build()
     }

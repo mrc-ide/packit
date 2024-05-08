@@ -14,6 +14,7 @@ import packit.model.Permission
 import packit.model.Role
 import packit.model.RolePermission
 import packit.model.dto.CreateRole
+import packit.model.dto.UpdateRolePermissions
 import packit.repository.RoleRepository
 import packit.service.BaseRoleService
 import packit.service.PermissionService
@@ -139,31 +140,6 @@ class RoleServiceTest
     }
 
     @Test
-    fun `checkMatchingRoles throws exception if roles do not match`()
-    {
-        val rolesToCheck = listOf("role1", "role2")
-        val allRoles = listOf(Role(name = "role1"))
-        whenever(roleRepository.findByNameIn(rolesToCheck)).thenReturn(allRoles)
-
-        assertThrows(PackitException::class.java) {
-            roleService.checkMatchingRoles(rolesToCheck)
-        }
-    }
-
-    @Test
-    fun `checkMatchingRoles returns matching roles`()
-    {
-        val rolesToCheck = listOf("role1", "role2")
-        val allRoles = listOf(Role(name = "role1"), Role(name = "role2"))
-        whenever(roleRepository.findByNameIn(rolesToCheck)).thenReturn(allRoles)
-
-        val result = roleService.checkMatchingRoles(rolesToCheck)
-
-        assertEquals(2, result.size)
-        assertEquals(allRoles, result)
-    }
-
-    @Test
     fun `getGrantedAuthorities returns authorities for roles and permissions`()
     {
         val role1 =
@@ -258,28 +234,13 @@ class RoleServiceTest
             roleService.deleteRole(roleName)
         }
     }
-
-    @Test
-    fun `addPermissionsToRole throws exception when role does not exist`()
-    {
-        val roleName = "nonExistingRole"
-        whenever(roleRepository.findByName(roleName)).thenReturn(null)
-
-        assertThrows<PackitException> {
-            roleService.addPermissionsToRole(roleName, listOf())
-        }.apply {
-            assertEquals("roleNotFound", key)
-            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
-        }
-    }
-
-    @Test
-    fun `addPermissionsToRole calls getAddRolePermissionsFromRole and saves role with added role permission`()
+    fun `updatePermissionsToRole calls correct methods and saves role`()
     {
         val roleName = "roleName"
         val permissionName = "permission1"
         val role = createRoleWithPermission(roleName, permissionName)
         whenever(roleRepository.findByName(roleName)).thenReturn(role)
+        whenever(roleRepository.save(any<Role>())).thenAnswer { it.getArgument(0) }
         whenever(rolePermissionService.getAddRolePermissionsFromRole(role, listOf())).thenReturn(
             listOf(
                 createRoleWithPermission(roleName, "differentPermission").rolePermissions.first()
@@ -287,7 +248,7 @@ class RoleServiceTest
         )
         whenever(roleRepository.save(any<Role>())).thenAnswer { it.getArgument(0) }
 
-        val result = roleService.addPermissionsToRole(roleName, listOf())
+        roleService.updatePermissionsToRole(roleName, UpdateRolePermissions())
 
         verify(roleRepository).save(
             argThat {
@@ -295,33 +256,22 @@ class RoleServiceTest
                 this.rolePermissions.size == 2
             }
         )
-        assertEquals(role, result)
+        verify(rolePermissionService).removeRolePermissionsFromRole(role, listOf())
+        verify(rolePermissionService).getAddRolePermissionsFromRole(role, listOf())
     }
 
     @Test
-    fun `removePermissionsFromRole throws exception when role does not exist`()
+    fun `updatePermissionsToRole throws exception when role does not exist`()
     {
         val roleName = "nonExistingRole"
         whenever(roleRepository.findByName(roleName)).thenReturn(null)
 
         assertThrows<PackitException> {
-            roleService.removePermissionsFromRole(roleName, listOf())
+            roleService.updatePermissionsToRole(roleName, UpdateRolePermissions())
         }.apply {
             assertEquals("roleNotFound", key)
             assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
         }
-    }
-
-    @Test
-    fun `removePermissionsFromRole calls removeRolePermissionsFromRole`()
-    {
-        val roleName = "roleName"
-        val role = Role(name = roleName)
-        whenever(roleRepository.findByName(roleName)).thenReturn(role)
-
-        roleService.removePermissionsFromRole(roleName, listOf())
-
-        verify(rolePermissionService).removeRolePermissionsFromRole(role, listOf())
     }
 
     @Test
