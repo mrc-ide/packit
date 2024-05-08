@@ -7,9 +7,8 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import packit.model.dto.CreateRole
 import packit.model.dto.RoleDto
-import packit.model.dto.UpdateRolePermission
-import packit.model.toDto
 import packit.model.dto.UpdateRolePermissions
+import packit.model.toDto
 import packit.service.RoleService
 
 @Controller
