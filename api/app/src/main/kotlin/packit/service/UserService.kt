@@ -7,6 +7,7 @@ import packit.exceptions.PackitException
 import packit.model.Role
 import packit.model.User
 import packit.model.dto.CreateBasicUser
+import packit.model.dto.UpdateUserRoles
 import packit.repository.UserRepository
 import java.time.Instant
 
@@ -16,9 +17,8 @@ interface UserService
     fun createBasicUser(createBasicUser: CreateBasicUser)
     fun updateUserLastLoggedIn(user: User, lastLoggedIn: Instant): User
     fun getUserForLogin(username: String): User
-    fun addRolesToUser(username: String, roleNames: List<String>)
-    fun removeRolesFromUser(username: String, roleNames: List<String>)
     fun deleteUser(username: String)
+    fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles)
 }
 
 @Service
@@ -57,7 +57,7 @@ class BaseUserService(
             throw PackitException("userAlreadyExists", HttpStatus.BAD_REQUEST)
         }
 
-        val matchingRoles = roleService.checkMatchingRoles(createBasicUser.userRoles).toMutableList()
+        val matchingRoles = roleService.getRolesByRoleNames(createBasicUser.userRoles).toMutableList()
         val newUser = User(
             username = createBasicUser.email,
             displayName = createBasicUser.displayName,
@@ -83,30 +83,15 @@ class BaseUserService(
         return updateUserLastLoggedIn(user, Instant.now())
     }
 
-    override fun addRolesToUser(username: String, roleNames: List<String>)
+    override fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles)
     {
-        val (user, rolesToAdd) = getUserAndRolesForUpdate(username, roleNames)
-        if (rolesToAdd.any { user.roles.contains(it) })
-        {
-            throw PackitException("userRoleExists", HttpStatus.BAD_REQUEST)
-        }
+        val user = userRepository.findByUsername(username)
+            ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
 
-        user.roles.addAll(rolesToAdd)
-        userRepository.save(user)
-    }
+        val rolesToUpdate = getRolesForUpdate(updateUserRoles.roleNamesToAdd + updateUserRoles.roleNamesToRemove)
+        addRolesToUser(user, rolesToUpdate.filter { it.name in updateUserRoles.roleNamesToAdd })
+        removeRolesFromUser(user, rolesToUpdate.filter { it.name in updateUserRoles.roleNamesToRemove })
 
-    override fun removeRolesFromUser(username: String, roleNames: List<String>)
-    {
-        val (user, rolesToRemove) = getUserAndRolesForUpdate(username, roleNames)
-
-        val matchedRolesToRemove = rolesToRemove.map { roleToRemove ->
-            val matchedPermission = user.roles.find { roleToRemove == it }
-                ?: throw PackitException("userRoleNotExists", HttpStatus.BAD_REQUEST)
-
-            matchedPermission
-        }
-
-        user.roles.removeAll(matchedRolesToRemove)
         userRepository.save(user)
     }
 
@@ -119,16 +104,33 @@ class BaseUserService(
         roleService.deleteRole(username)
     }
 
-    internal fun getUserAndRolesForUpdate(username: String, roleNames: List<String>): Pair<User, List<Role>>
+    internal fun addRolesToUser(user: User, rolesToAdd: List<Role>)
     {
-        val user = userRepository.findByUsername(username)
-            ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
+        if (rolesToAdd.any { user.roles.contains(it) })
+        {
+            throw PackitException("userRoleExists", HttpStatus.BAD_REQUEST)
+        }
+        user.roles.addAll(rolesToAdd)
+    }
+
+    internal fun removeRolesFromUser(user: User, rolesToRemove: List<Role>)
+    {
+        val matchedRolesToRemove = rolesToRemove.map { roleToRemove ->
+            val matchedPermission = user.roles.find { roleToRemove == it }
+                ?: throw PackitException("userRoleNotExists", HttpStatus.BAD_REQUEST)
+
+            matchedPermission
+        }
+        user.roles.removeAll(matchedRolesToRemove)
+    }
+
+    internal fun getRolesForUpdate(roleNames: List<String>): List<Role>
+    {
         val roles = roleService.getRolesByRoleNames(roleNames)
         if (roles.any { it.isUsername })
         {
             throw PackitException("cannotUpdateUsernameRoles", HttpStatus.BAD_REQUEST)
         }
-
-        return Pair(user, roles)
+        return roles
     }
 }
