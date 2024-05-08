@@ -9,6 +9,7 @@ import packit.model.dto.CreateRole
 import packit.model.dto.RoleDto
 import packit.model.dto.UpdateRolePermission
 import packit.model.toDto
+import packit.model.dto.UpdateRolePermissions
 import packit.service.RoleService
 
 @Controller
@@ -34,26 +35,15 @@ class RoleController(private val roleService: RoleService)
         return ResponseEntity.noContent().build()
     }
 
-    @PutMapping("/add-permissions/{roleName}")
-    fun addPermissionsToRole(
-        @RequestBody @Validated addRolePermissions: List<UpdateRolePermission>,
+    @PutMapping("/update-permissions/{roleName}")
+    fun updatePermissionsToRole(
+        @RequestBody @Validated updateRolePermissions: UpdateRolePermissions,
         @PathVariable roleName: String
-    ): ResponseEntity<Map<String, String>>
+    ): ResponseEntity<Unit>
     {
-        roleService.addPermissionsToRole(roleName, addRolePermissions)
+        roleService.updatePermissionsToRole(roleName, updateRolePermissions)
 
-        return ResponseEntity.ok(mapOf("message" to "Permissions added"))
-    }
-
-    @PutMapping("/remove-permissions/{roleName}")
-    fun removePermissionsFromRole(
-        @RequestBody @Validated removeRolePermissions: List<UpdateRolePermission>,
-        @PathVariable roleName: String
-    ): ResponseEntity<Map<String, String>>
-    {
-        roleService.removePermissionsFromRole(roleName, removeRolePermissions)
-
-        return ResponseEntity.ok(mapOf("message" to "Permissions removed"))
+        return ResponseEntity.noContent().build()
     }
 
     @GetMapping("/names")

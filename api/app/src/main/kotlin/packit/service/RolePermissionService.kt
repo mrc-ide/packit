@@ -31,7 +31,7 @@ class BaseRolePermissionService(
     {
         return addRolePermissions.map { addRolePermission ->
             val permission = permissionRepository.findByName(addRolePermission.permission)
-                ?: throw PackitException("permissionNotFound", HttpStatus.BAD_REQUEST)
+                ?: throw PackitException("invalidPermissionsProvided", HttpStatus.BAD_REQUEST)
 
             RolePermission(
                 role = role,

@@ -13,6 +13,7 @@ import packit.model.RolePermission
 import packit.model.dto.CreateRole
 import packit.model.dto.UpdateRolePermission
 import packit.model.toDto
+import packit.model.dto.UpdateRolePermissions
 import packit.repository.PermissionRepository
 import packit.repository.RoleRepository
 import kotlin.test.assertEquals
@@ -28,18 +29,27 @@ class RoleControllerTest : IntegrationTest()
     @Autowired
     private lateinit var permissionsRepository: PermissionRepository
 
-    private val createTestRoleBody =
-        ObjectMapper()
-            .writeValueAsString(
-                CreateRole(
-                    name = "testRole",
-                    permissionNames = listOf("packet.run", "packet.read")
+    private val createTestRoleBody = ObjectMapper().writeValueAsString(
+        CreateRole(
+            name = "testRole",
+            permissionNames = listOf("packet.run", "packet.read")
+        )
+    )
+    private val updateRolePermissions = ObjectMapper().writeValueAsString(
+        UpdateRolePermissions(
+            addPermissions = listOf(
+                UpdateRolePermission(
+                    permission = "packet.read"
+                )
+            ),
+            removePermissions = listOf(
+                UpdateRolePermission(
+                    permission = "packet.run"
                 )
             )
-    private val updateRolePermission =
-        ObjectMapper()
-            .writeValueAsString(listOf(UpdateRolePermission(permission = "packet.run")))
-
+        )
+    )
+    
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
     fun `users with manage authority can create roles`()
@@ -119,27 +129,7 @@ class RoleControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `users with manage authority can add permissions to roles`()
-    {
-        roleRepository.save(Role(name = "testRole"))
-
-        val result =
-            restTemplate.exchange(
-                "/role/add-permissions/testRole",
-                HttpMethod.PUT,
-                getTokenizedHttpEntity(data = updateRolePermission),
-                String::class.java
-            )
-
-        assertSuccess(result)
-        val role = roleRepository.findByName("testRole")!!
-        assertEquals(1, role.rolePermissions.size)
-        assertEquals("packet.run", role.rolePermissions.first().permission.name)
-    }
-
-    @Test
-    @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `users with manage authority can remove permissions from roles`()
+    fun `users with manage authority can update role permissions`()
     {
         val roleName = "testRole"
         val baseRole = roleRepository.save(Role(name = roleName))
@@ -147,49 +137,31 @@ class RoleControllerTest : IntegrationTest()
         baseRole.rolePermissions = mutableListOf(RolePermission(baseRole, permission))
         roleRepository.save(baseRole)
 
-        val result =
-            restTemplate.exchange(
-                "/role/remove-permissions/testRole",
-                HttpMethod.PUT,
-                getTokenizedHttpEntity(data = updateRolePermission),
-                String::class.java
-            )
+        val result = restTemplate.exchange(
+            "/role/update-permissions/testRole",
+            HttpMethod.PUT,
+            getTokenizedHttpEntity(data = updateRolePermissions),
+            String::class.java
+        )
 
         assertSuccess(result)
         val role = roleRepository.findByName("testRole")!!
-        assertEquals(0, role.rolePermissions.size)
+        assertEquals(1, role.rolePermissions.size)
+        assertEquals("packet.read", role.rolePermissions.first().permission.name)
     }
 
     @Test
     @WithAuthenticatedUser(authorities = ["none"])
-    fun `user without user manage permission cannot remove roles from permissions`()
+    fun `user without user manage permission cannot update role permissions`()
     {
         roleRepository.save(Role(name = "testRole"))
 
-        val result =
-            restTemplate.exchange(
-                "/role/remove-permissions/testRole",
-                HttpMethod.PUT,
-                getTokenizedHttpEntity(data = updateRolePermission),
-                String::class.java
-            )
-
-        assertEquals(result.statusCode, HttpStatus.UNAUTHORIZED)
-    }
-
-    @Test
-    @WithAuthenticatedUser(authorities = ["none"])
-    fun `user without user manage permission cannot add roles to permissions`()
-    {
-        roleRepository.save(Role(name = "testRole"))
-
-        val result =
-            restTemplate.exchange(
-                "/role/add-permissions/testRole",
-                HttpMethod.PUT,
-                getTokenizedHttpEntity(data = updateRolePermission),
-                String::class.java
-            )
+        val result = restTemplate.exchange(
+            "/role/update-permissions/testRole",
+            HttpMethod.PUT,
+            getTokenizedHttpEntity(data = updateRolePermissions),
+            String::class.java
+        )
 
         assertEquals(result.statusCode, HttpStatus.UNAUTHORIZED)
     }
