@@ -12,8 +12,8 @@ import packit.model.Role
 import packit.model.RolePermission
 import packit.model.dto.CreateRole
 import packit.model.dto.UpdateRolePermission
-import packit.model.toDto
 import packit.model.dto.UpdateRolePermissions
+import packit.model.toDto
 import packit.repository.PermissionRepository
 import packit.repository.RoleRepository
 import kotlin.test.assertEquals
@@ -49,7 +49,7 @@ class RoleControllerTest : IntegrationTest()
             )
         )
     )
-    
+
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
     fun `users with manage authority can create roles`()
@@ -144,7 +144,7 @@ class RoleControllerTest : IntegrationTest()
             String::class.java
         )
 
-        assertSuccess(result)
+        assertEquals(result.statusCode, HttpStatus.NO_CONTENT)
         val role = roleRepository.findByName("testRole")!!
         assertEquals(1, role.rolePermissions.size)
         assertEquals("packet.read", role.rolePermissions.first().permission.name)
