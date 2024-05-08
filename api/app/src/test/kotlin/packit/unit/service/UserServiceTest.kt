@@ -175,14 +175,16 @@ class UserServiceTest
         `when`(mockUserRepository.save(any<User>())).thenAnswer { it.getArgument(0) }
         val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
 
-        service.updateUserRoles(mockUser.username, updateUserRoles)
+        val result = service.updateUserRoles(mockUser.username, updateUserRoles)
 
         verify(mockUserRepository).save(
             argThat {
-            roles.containsAll(roleToAdd)
-            roles.size == 1
-        }
+                roles.containsAll(roleToAdd)
+                roles.size == 1
+            }
         )
+        assertEquals(1, result.roles.size)
+        assertEquals(mockUser.username, result.username)
     }
 
     @Test

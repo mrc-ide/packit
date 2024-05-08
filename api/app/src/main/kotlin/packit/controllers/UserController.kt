@@ -39,11 +39,11 @@ class UserController(private val config: AppConfig, private val userService: Use
     fun updateUserRoles(
         @RequestBody @Validated updateUserRoles: UpdateUserRoles,
         @PathVariable username: String
-    ): ResponseEntity<Unit>
+    ): ResponseEntity<UserDto>
     {
-        userService.updateUserRoles(username, updateUserRoles)
+        val updatedUser = userService.updateUserRoles(username, updateUserRoles)
 
-        return ResponseEntity.noContent().build()
+        return ResponseEntity.ok(updatedUser.toDto())
     }
 
     @DeleteMapping("/{username}")

@@ -112,8 +112,11 @@ class UserControllerTest : IntegrationTest()
             String::class.java
         )
 
-        assertEquals(HttpStatus.NO_CONTENT, result.statusCode)
+        assertSuccess(result)
         assertEquals(userRepository.findByUsername("test")?.roles?.map { it.name }, listOf("ADMIN"))
+        assertEquals(testUser.username, ObjectMapper().readTree(result.body).get("username").asText())
+        assertEquals(testUser.displayName, ObjectMapper().readTree(result.body).get("displayName").asText())
+        assertEquals(1, ObjectMapper().readTree(result.body).get("roles").size())
     }
 
     @Test

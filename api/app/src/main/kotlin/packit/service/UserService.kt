@@ -18,7 +18,7 @@ interface UserService
     fun updateUserLastLoggedIn(user: User, lastLoggedIn: Instant): User
     fun getUserForLogin(username: String): User
     fun deleteUser(username: String)
-    fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles)
+    fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles): User
 }
 
 @Service
@@ -84,7 +84,7 @@ class BaseUserService(
         return updateUserLastLoggedIn(user, Instant.now())
     }
 
-    override fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles)
+    override fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles): User
     {
         val user = userRepository.findByUsername(username)
             ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
@@ -93,7 +93,7 @@ class BaseUserService(
         addRolesToUser(user, rolesToUpdate.filter { it.name in updateUserRoles.roleNamesToAdd })
         removeRolesFromUser(user, rolesToUpdate.filter { it.name in updateUserRoles.roleNamesToRemove })
 
-        userRepository.save(user)
+        return userRepository.save(user)
     }
 
     override fun deleteUser(username: String)
