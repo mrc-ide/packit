@@ -17,7 +17,6 @@ interface RoleService
 {
     fun getUsernameRole(username: String): Role
     fun getAdminRole(): Role
-    fun checkMatchingRoles(rolesToCheck: List<String>): List<Role>
     fun getGrantedAuthorities(roles: List<Role>): MutableList<GrantedAuthority>
     fun createRole(createRole: CreateRole)
     fun deleteRole(roleName: String)
@@ -106,7 +105,7 @@ class BaseRoleService(
     override fun getRolesByRoleNames(roleNames: List<String>): List<Role>
     {
         val foundRoles = roleRepository.findByNameIn(roleNames)
-        if (foundRoles.size != roleNames.size)
+        if (foundRoles.size != roleNames.toSet().size)
         {
             throw PackitException("invalidRolesProvided", HttpStatus.BAD_REQUEST)
         }
@@ -129,17 +128,6 @@ class BaseRoleService(
         role.rolePermissions = permissions.map { RolePermission(permission = it, role = role) }
             .toMutableList()
         roleRepository.save(role)
-    }
-
-    override fun checkMatchingRoles(rolesToCheck: List<String>): List<Role>
-    {
-        val matchedRoles = roleRepository.findByNameIn(rolesToCheck)
-
-        if (matchedRoles.size != rolesToCheck.size)
-        {
-            throw PackitException("invalidRolesProvided", HttpStatus.BAD_REQUEST)
-        }
-        return matchedRoles
     }
 
     /**

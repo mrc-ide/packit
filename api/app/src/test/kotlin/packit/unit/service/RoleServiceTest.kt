@@ -131,32 +131,7 @@ class RoleServiceTest
             }
         )
     }
-
-    @Test
-    fun `checkMatchingRoles throws exception if roles do not match`()
-    {
-        val rolesToCheck = listOf("role1", "role2")
-        val allRoles = listOf(Role(name = "role1"))
-        whenever(roleRepository.findByNameIn(rolesToCheck)).thenReturn(allRoles)
-
-        assertThrows(PackitException::class.java) {
-            roleService.checkMatchingRoles(rolesToCheck)
-        }
-    }
-
-    @Test
-    fun `checkMatchingRoles returns matching roles`()
-    {
-        val rolesToCheck = listOf("role1", "role2")
-        val allRoles = listOf(Role(name = "role1"), Role(name = "role2"))
-        whenever(roleRepository.findByNameIn(rolesToCheck)).thenReturn(allRoles)
-
-        val result = roleService.checkMatchingRoles(rolesToCheck)
-
-        assertEquals(2, result.size)
-        assertEquals(allRoles, result)
-    }
-
+    
     @Test
     fun `getGrantedAuthorities returns authorities for roles and permissions`()
     {
