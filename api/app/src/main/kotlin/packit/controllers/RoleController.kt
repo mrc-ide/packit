@@ -8,14 +8,16 @@ import org.springframework.web.bind.annotation.*
 import packit.model.dto.CreateRole
 import packit.model.dto.RoleDto
 import packit.model.dto.UpdateRolePermissions
+import packit.model.dto.UpdateRoleUsers
 import packit.model.toDto
 import packit.service.RoleService
+import packit.service.UserRoleService
 import java.net.URI
 
 @Controller
 @PreAuthorize("hasAuthority('user.manage')")
 @RequestMapping("/role")
-class RoleController(private val roleService: RoleService)
+class RoleController(private val roleService: RoleService, private val userRoleService: UserRoleService)
 {
     @PostMapping()
     fun createRole(@RequestBody @Validated createRole: CreateRole): ResponseEntity<RoleDto>
@@ -44,6 +46,17 @@ class RoleController(private val roleService: RoleService)
         roleService.updatePermissionsToRole(roleName, updateRolePermissions)
 
         return ResponseEntity.noContent().build()
+    }
+
+    @PutMapping("/update-users/{roleName}")
+    fun updateUsersToRole(
+        @RequestBody @Validated usersToUpdate: UpdateRoleUsers,
+        @PathVariable roleName: String
+    ): ResponseEntity<RoleDto?>
+    {
+        val updatedRole = userRoleService.updateRoleUsers(roleName, usersToUpdate)
+
+        return ResponseEntity.ok(updatedRole.toDto())
     }
 
     @GetMapping("/names")

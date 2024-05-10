@@ -2,7 +2,7 @@ package packit.unit.service
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.mockito.Mockito.anyList
+import org.mockito.ArgumentMatchers.anyList
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.*
 import org.springframework.http.HttpStatus
@@ -11,12 +11,12 @@ import packit.exceptions.PackitException
 import packit.model.Role
 import packit.model.User
 import packit.model.dto.CreateBasicUser
-import packit.model.dto.UpdateUserRoles
 import packit.repository.UserRepository
 import packit.service.BaseUserService
 import packit.service.RoleService
 import java.time.Instant
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class UserServiceTest
 {
@@ -165,115 +165,104 @@ class UserServiceTest
     }
 
     @Test
-    fun `updateUserRoles adds and remove roles from user`()
+    fun `getUsersByUsernames returns all users when all usernames exist in repository`()
     {
-        val roleToAdd = listOf(Role("NEW_ROLE"))
-        val rolesToRemove = listOf(Role("USER"))
-        val updateUserRoles = UpdateUserRoles(roleToAdd.map { it.name }, rolesToRemove.map { it.name })
-        `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(roleToAdd + rolesToRemove)
-        `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
-        `when`(mockUserRepository.save(any<User>())).thenAnswer { it.getArgument(0) }
+        val usernames = listOf("user1", "user2", "user3")
+        val users =
+            usernames.map { User(username = it, displayName = "displayName", disabled = false, userSource = "github") }
+        whenever(mockUserRepository.findByUsernameIn(usernames)).thenReturn(users)
         val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
 
-        val result = service.updateUserRoles(mockUser.username, updateUserRoles)
+        val result = service.getUsersByUsernames(usernames)
 
-        verify(mockUserRepository).save(
-            argThat {
-                roles.containsAll(roleToAdd)
-                roles.size == 1
-            }
+        assertEquals(users, result)
+    }
+
+    @Test
+    fun `getUsersByUsernames throws exception when some usernames do not exist in repository`()
+    {
+        val existingUsernames = listOf("user1", "user2")
+        val nonExistingUsernames = listOf("user3", "user4")
+        val users = existingUsernames.map {
+            User(
+                username = it,
+                displayName = "displayName",
+                disabled = false,
+                userSource = "github"
+            )
+        }
+        whenever(mockUserRepository.findByUsernameIn(anyList())).thenReturn(users)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        assertThrows<PackitException> { service.getUsersByUsernames(existingUsernames + nonExistingUsernames) }.apply {
+            assertEquals("invalidUsersProvided", key)
+            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+        }
+    }
+
+    @Test
+    fun `getUsersByUsernames throws exception when no usernames exist in repository`()
+    {
+        val usernames = listOf("user1", "user2", "user3")
+        whenever(mockUserRepository.findByUsernameIn(anyList())).thenReturn(emptyList())
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        assertThrows<PackitException> { service.getUsersByUsernames(usernames) }.apply {
+            assertEquals("invalidUsersProvided", key)
+            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+        }
+    }
+
+    @Test
+    fun `getByUsername returns user when user exists in repository`()
+    {
+        val username = "existingUser"
+        val user = User(username = username, displayName = "displayName", disabled = false, userSource = "github")
+        whenever(mockUserRepository.findByUsername(username)).thenReturn(user)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        val result = service.getByUsername(username)
+
+        assertEquals(user, result)
+    }
+
+    @Test
+    fun `getByUsername returns null when user does not exist in repository`()
+    {
+        val username = "nonExistingUser"
+        whenever(mockUserRepository.findByUsername(username)).thenReturn(null)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        val result = service.getByUsername(username)
+
+        assertNull(result)
+    }
+
+    @Test
+    fun `saveUser saves and returns user`()
+    {
+        val user = User(username = "username", displayName = "displayName", disabled = false, userSource = "github")
+        whenever(mockUserRepository.save(user)).thenReturn(user)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        val result = service.saveUser(user)
+
+        assertEquals(user, result)
+    }
+
+    @Test
+    fun `saveUsers saves and returns all users`()
+    {
+        val users = listOf(
+            User(username = "user1", displayName = "displayName1", disabled = false, userSource = "github"),
+            User(username = "user2", displayName = "displayName2", disabled = false, userSource = "github")
         )
-        assertEquals(1, result.roles.size)
-        assertEquals(mockUser.username, result.username)
-    }
-
-    @Test
-    fun `updateUserRoles throws exception when adding role that  already exists`()
-    {
-        `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(mockUser.roles)
-        `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
+        whenever(mockUserRepository.saveAll(users)).thenReturn(users)
         val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
 
-        val ex =
-            assertThrows<PackitException> {
-                service.updateUserRoles(
-                    mockUser.username,
-                    UpdateUserRoles(roleNamesToAdd = mockUser.roles.map { it.name })
-                )
-            }
+        val result = service.saveUsers(users)
 
-        assertEquals(ex.key, "userRoleExists")
-        assertEquals(ex.httpStatus, HttpStatus.BAD_REQUEST)
-    }
-
-    @Test
-    fun `updateUserRoles throws exception when user not found`()
-    {
-        `when`(mockUserRepository.findByUsername(any())).doReturn(null)
-        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
-
-        val ex = assertThrows<PackitException> { service.updateUserRoles("nonexistent", UpdateUserRoles()) }
-
-        assertEquals(ex.key, "userNotFound")
-        assertEquals(ex.httpStatus, HttpStatus.NOT_FOUND)
-    }
-
-    @Test
-    fun `updateUserRoles throws exception when trying to add username role`()
-    {
-        val usernameRole = Role(mockUser.username, isUsername = true)
-        `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(listOf(usernameRole))
-        `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
-        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
-
-        val ex = assertThrows<PackitException> {
-            service.updateUserRoles(
-                mockUser.username,
-                UpdateUserRoles(roleNamesToAdd = listOf(usernameRole.name))
-            )
-        }
-
-        assertEquals(ex.key, "cannotUpdateUsernameRoles")
-        assertEquals(ex.httpStatus, HttpStatus.BAD_REQUEST)
-    }
-
-    @Test
-    fun `updateUserRoles throws exception when trying to remove role that does not exist`()
-    {
-        val nonExistentRole = Role("NON_EXISTENT_ROLE")
-        `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(listOf(nonExistentRole))
-        `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
-        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
-
-        val ex =
-            assertThrows<PackitException> {
-                service.updateUserRoles(
-                    mockUser.username,
-                    UpdateUserRoles(roleNamesToRemove = listOf(nonExistentRole.name))
-                )
-            }
-
-        assertEquals(ex.key, "userRoleNotExists")
-        assertEquals(ex.httpStatus, HttpStatus.BAD_REQUEST)
-    }
-
-    @Test
-    fun `updateUserRoles throws exception when trying to remove username role`()
-    {
-        val usernameRole = Role(mockUser.username, isUsername = true)
-        `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(listOf(usernameRole))
-        `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
-        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
-
-        val ex = assertThrows<PackitException> {
-            service.updateUserRoles(
-                mockUser.username,
-                UpdateUserRoles(roleNamesToRemove = listOf(usernameRole.name))
-            )
-        }
-
-        assertEquals(ex.key, "cannotUpdateUsernameRoles")
-        assertEquals(ex.httpStatus, HttpStatus.BAD_REQUEST)
+        assertEquals(users, result)
     }
 
     @Test

@@ -10,6 +10,7 @@ import packit.controllers.UserController
 import packit.exceptions.PackitException
 import packit.model.User
 import packit.model.dto.CreateBasicUser
+import packit.service.UserRoleService
 import packit.service.UserService
 import java.util.*
 import kotlin.test.Test
@@ -36,12 +37,13 @@ class UserControllerTest
             id = testUUID
         )
     }
+    private val mockUserRoleService = mock<UserRoleService>()
 
     @Test
     fun `createBasicUser throws packit exception if basic login is not enabled`()
     {
         `when`(mockConfig.authEnableBasicLogin) doReturn false
-        val sut = UserController(mockConfig, mockUserService)
+        val sut = UserController(mockConfig, mockUserService, mockUserRoleService)
 
         val ex = assertThrows<PackitException> {
             sut.createBasicUser(testCreateUser)
@@ -53,7 +55,7 @@ class UserControllerTest
     @Test
     fun `createBasicUser returns created with user when created`()
     {
-        val sut = UserController(mockConfig, mockUserService)
+        val sut = UserController(mockConfig, mockUserService, mockUserRoleService)
 
         val result = sut.createBasicUser(testCreateUser)
 

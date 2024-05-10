@@ -10,12 +10,15 @@ import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
 import packit.model.Role
 import packit.model.RolePermission
+import packit.model.User
 import packit.model.dto.CreateRole
 import packit.model.dto.UpdateRolePermission
 import packit.model.dto.UpdateRolePermissions
+import packit.model.dto.UpdateRoleUsers
 import packit.model.toDto
 import packit.repository.PermissionRepository
 import packit.repository.RoleRepository
+import packit.repository.UserRepository
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -23,6 +26,9 @@ import kotlin.test.assertNull
 @Sql("/delete-test-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class RoleControllerTest : IntegrationTest()
 {
+    @Autowired
+    private lateinit var userRepository: UserRepository
+
     @Autowired
     private lateinit var roleRepository: RoleRepository
 
@@ -263,5 +269,62 @@ class RoleControllerTest : IntegrationTest()
         assertSuccess(result)
 
         assertEquals(ObjectMapper().writeValueAsString(roleDto), result.body)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["none"])
+    fun `user without user manage permission cannot update role users`()
+    {
+        val result =
+            restTemplate.exchange(
+                "/role/update-users/ADMIN",
+                HttpMethod.PUT,
+                getTokenizedHttpEntity(data = "{}"),
+                String::class.java
+            )
+
+        assertEquals(result.statusCode, HttpStatus.UNAUTHORIZED)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["user.manage"])
+    fun `users with manage authority can update role users`()
+    {
+        val testRole = roleRepository.save(Role(name = "TEST_ROLE"))
+        val userToRemove = User(
+            username = "test",
+            disabled = false,
+            userSource = "basic",
+            displayName = "test user",
+            roles = mutableListOf(testRole)
+        )
+        val userToAdd = User(
+            username = "test2",
+            disabled = false,
+            userSource = "github",
+            displayName = "test user",
+        )
+        userRepository.saveAll(listOf(userToRemove, userToAdd))
+        val updateRoleUsers = ObjectMapper().writeValueAsString(
+            UpdateRoleUsers(
+                usernamesToAdd = listOf(userToAdd.username),
+                usernamesToRemove = listOf(userToRemove.username)
+            )
+        )
+
+        val result = restTemplate.exchange(
+            "/role/update-users/${testRole.name}",
+            HttpMethod.PUT,
+            getTokenizedHttpEntity(data = updateRoleUsers),
+            String::class.java
+        )
+
+        assertSuccess(result)
+        assertEquals(1, ObjectMapper().readTree(result.body).get("users").size())
+        assertEquals(
+            userToAdd.username,
+            ObjectMapper().readTree(result.body).get("users").first().get("username").asText()
+        )
+        assertEquals(1, roleRepository.findByName(testRole.name)!!.users.size)
     }
 }

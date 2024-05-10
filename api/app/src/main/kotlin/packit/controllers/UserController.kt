@@ -12,13 +12,18 @@ import packit.model.dto.CreateBasicUser
 import packit.model.dto.UpdateUserRoles
 import packit.model.dto.UserDto
 import packit.model.toDto
+import packit.service.UserRoleService
 import packit.service.UserService
 import java.net.URI
 
 @Controller
 @PreAuthorize("hasAuthority('user.manage')")
 @RequestMapping("/user")
-class UserController(private val config: AppConfig, private val userService: UserService)
+class UserController(
+    private val config: AppConfig,
+    private val userService: UserService,
+    private val userRoleService: UserRoleService
+)
 {
     @PostMapping("/basic")
     fun createBasicUser(
@@ -41,7 +46,7 @@ class UserController(private val config: AppConfig, private val userService: Use
         @PathVariable username: String
     ): ResponseEntity<UserDto?>
     {
-        val updatedUser = userService.updateUserRoles(username, updateUserRoles)
+        val updatedUser = userRoleService.updateUserRoles(username, updateUserRoles)
 
         return ResponseEntity.ok(updatedUser.toDto())
     }

@@ -25,13 +25,14 @@ interface RoleService
     fun getAllRoles(isUsernames: Boolean?): List<Role>
     fun getRole(roleName: String): Role
     fun updatePermissionsToRole(roleName: String, updateRolePermissions: UpdateRolePermissions)
+    fun getByRoleName(roleName: String): Role?
 }
 
 @Service
 class BaseRoleService(
     private val roleRepository: RoleRepository,
     private val permissionService: PermissionService,
-    private val rolePermissionService: RolePermissionService
+    private val rolePermissionService: RolePermissionService,
 ) : RoleService
 {
     override fun getUsernameRole(username: String): Role
@@ -78,6 +79,11 @@ class BaseRoleService(
             roleAfterPermissionAdd,
             updateRolePermissions.removePermissions
         )
+    }
+
+    override fun getByRoleName(roleName: String): Role?
+    {
+        return roleRepository.findByName(roleName)
     }
 
     internal fun addRolePermissionsToRole(role: Role, addRolePermissions: List<UpdateRolePermission>): Role

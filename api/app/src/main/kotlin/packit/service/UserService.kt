@@ -4,10 +4,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
-import packit.model.Role
 import packit.model.User
 import packit.model.dto.CreateBasicUser
-import packit.model.dto.UpdateUserRoles
 import packit.repository.UserRepository
 import java.time.Instant
 
@@ -18,7 +16,10 @@ interface UserService
     fun updateUserLastLoggedIn(user: User, lastLoggedIn: Instant): User
     fun getUserForLogin(username: String): User
     fun deleteUser(username: String)
-    fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles): User
+    fun getUsersByUsernames(usernames: List<String>): List<User>
+    fun getByUsername(username: String): User?
+    fun saveUser(user: User): User
+    fun saveUsers(users: List<User>): List<User>
 }
 
 @Service
@@ -67,7 +68,6 @@ class BaseUserService(
             roles = matchingRoles.apply { add(roleService.getUsernameRole(createBasicUser.email)) },
             password = passwordEncoder.encode(createBasicUser.password)
         )
-
         return userRepository.save(newUser)
     }
 
@@ -84,16 +84,30 @@ class BaseUserService(
         return updateUserLastLoggedIn(user, Instant.now())
     }
 
-    override fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles): User
+    override fun getUsersByUsernames(usernames: List<String>): List<User>
     {
-        val user = userRepository.findByUsername(username)
-            ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
+        val foundUsers = userRepository.findByUsernameIn(usernames)
 
-        val rolesToUpdate = getRolesForUpdate(updateUserRoles.roleNamesToAdd + updateUserRoles.roleNamesToRemove)
-        addRolesToUser(user, rolesToUpdate.filter { it.name in updateUserRoles.roleNamesToAdd })
-        removeRolesFromUser(user, rolesToUpdate.filter { it.name in updateUserRoles.roleNamesToRemove })
+        if (foundUsers.size != usernames.toSet().size)
+        {
+            throw PackitException("invalidUsersProvided", HttpStatus.BAD_REQUEST)
+        }
+        return foundUsers
+    }
 
+    override fun getByUsername(username: String): User?
+    {
+        return userRepository.findByUsername(username)
+    }
+
+    override fun saveUser(user: User): User
+    {
         return userRepository.save(user)
+    }
+
+    override fun saveUsers(users: List<User>): List<User>
+    {
+        return userRepository.saveAll(users)
     }
 
     override fun deleteUser(username: String)
@@ -103,35 +117,5 @@ class BaseUserService(
 
         userRepository.delete(user)
         roleService.deleteRole(username)
-    }
-
-    internal fun addRolesToUser(user: User, rolesToAdd: List<Role>)
-    {
-        if (rolesToAdd.any { user.roles.contains(it) })
-        {
-            throw PackitException("userRoleExists", HttpStatus.BAD_REQUEST)
-        }
-        user.roles.addAll(rolesToAdd)
-    }
-
-    internal fun removeRolesFromUser(user: User, rolesToRemove: List<Role>)
-    {
-        val matchedRolesToRemove = rolesToRemove.map { roleToRemove ->
-            val matchedPermission = user.roles.find { roleToRemove == it }
-                ?: throw PackitException("userRoleNotExists", HttpStatus.BAD_REQUEST)
-
-            matchedPermission
-        }
-        user.roles.removeAll(matchedRolesToRemove)
-    }
-
-    internal fun getRolesForUpdate(roleNames: List<String>): List<Role>
-    {
-        val roles = roleService.getRolesByRoleNames(roleNames)
-        if (roles.any { it.isUsername })
-        {
-            throw PackitException("cannotUpdateUsernameRoles", HttpStatus.BAD_REQUEST)
-        }
-        return roles
     }
 }

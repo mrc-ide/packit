@@ -19,6 +19,7 @@ import packit.repository.RoleRepository
 import packit.service.BaseRoleService
 import packit.service.PermissionService
 import packit.service.RolePermissionService
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class RoleServiceTest
@@ -234,6 +235,7 @@ class RoleServiceTest
             roleService.deleteRole(roleName)
         }
     }
+
     fun `updatePermissionsToRole calls correct methods and saves role`()
     {
         val roleName = "roleName"
@@ -361,6 +363,29 @@ class RoleServiceTest
         val result = roleService.getRole(roleName)
 
         assertEquals(role, result)
+    }
+
+    @Test
+    fun `getByRoleName returns role when role exists in repository`()
+    {
+        val roleName = "existingRole"
+        val role = Role(name = roleName)
+        whenever(roleRepository.findByName(roleName)).thenReturn(role)
+
+        val result = roleService.getByRoleName(roleName)
+
+        assertEquals(role, result)
+    }
+
+    @Test
+    fun `getByRoleName returns null when role does not exist in repository`()
+    {
+        val roleName = "nonExistingRole"
+        whenever(roleRepository.findByName(roleName)).thenReturn(null)
+
+        val result = roleService.getByRoleName(roleName)
+
+        assertNull(result)
     }
 
     private fun createRoleWithPermission(
