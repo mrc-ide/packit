@@ -225,7 +225,7 @@ class RoleServiceTest
         val role = createRoleWithPermission(roleName, permissionName)
         whenever(roleRepository.findByName(roleName)).thenReturn(role)
         whenever(roleRepository.save(any<Role>())).thenAnswer { it.getArgument(0) }
-        whenever(rolePermissionService.getAddRolePermissionsFromRole(role, listOf())).thenReturn(
+        whenever(rolePermissionService.getRolePermissionsToAdd(role, listOf())).thenReturn(
             listOf(
                 createRoleWithPermission(roleName, "differentPermission").rolePermissions.first()
             )
@@ -240,7 +240,7 @@ class RoleServiceTest
             }
         )
         verify(rolePermissionService).removeRolePermissionsFromRole(role, listOf())
-        verify(rolePermissionService).getAddRolePermissionsFromRole(role, listOf())
+        verify(rolePermissionService).getRolePermissionsToAdd(role, listOf())
     }
 
     @Test
