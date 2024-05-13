@@ -188,7 +188,7 @@ class RolePermissionServiceTest
         val addRolePermissions = listOf(UpdateRolePermission(permission1.name))
         whenever(permissionRepository.findByName(any())).thenReturn(permission1)
 
-        val result = service.getAddRolePermissionsFromRole(role, addRolePermissions)
+        val result = service.getRolePermissionsToAdd(role, addRolePermissions)
 
         assertEquals(1, result.size)
         assertEquals(role, result[0].role)
@@ -205,7 +205,7 @@ class RolePermissionServiceTest
         whenever(permissionRepository.findByName(any())).thenReturn(permission1)
 
         assertThrows<PackitException> {
-            service.getAddRolePermissionsFromRole(role, addRolePermissions)
+            service.getRolePermissionsToAdd(role, addRolePermissions)
         }.apply {
             assertEquals("rolePermissionAlreadyExists", key)
             assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
