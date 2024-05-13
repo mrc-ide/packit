@@ -83,7 +83,7 @@ class BaseRoleService(
     internal fun addRolePermissionsToRole(role: Role, addRolePermissions: List<UpdateRolePermission>): Role
     {
         val rolePermissionsToAdd =
-            rolePermissionService.getAddRolePermissionsFromRole(role, addRolePermissions)
+            rolePermissionService.getRolePermissionsToAdd(role, addRolePermissions)
         role.rolePermissions.addAll(rolePermissionsToAdd)
         return roleRepository.save(role)
     }
