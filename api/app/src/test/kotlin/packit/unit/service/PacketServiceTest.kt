@@ -11,6 +11,8 @@ import org.springframework.data.domain.Sort
 import org.springframework.http.HttpHeaders
 import packit.exceptions.PackitException
 import packit.model.*
+import packit.model.dto.OutpackMetadata
+import packit.model.dto.PacketGroupSummary
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
 import packit.service.BasePacketService

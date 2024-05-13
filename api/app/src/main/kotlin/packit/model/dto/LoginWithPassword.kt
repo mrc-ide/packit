@@ -1,4 +1,4 @@
-package packit.model
+package packit.model.dto
 
 import org.jetbrains.annotations.NotNull
 

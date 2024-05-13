@@ -8,7 +8,7 @@ class Tag(
     val name: String,
     @ManyToMany(mappedBy = "tags")
     var packets: MutableList<Packet> = mutableListOf(),
-    @OneToMany(mappedBy = "tag")
+    @OneToMany(mappedBy = "tag", cascade = [CascadeType.ALL])
     var rolePermissions: MutableList<RolePermission> = mutableListOf(),
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

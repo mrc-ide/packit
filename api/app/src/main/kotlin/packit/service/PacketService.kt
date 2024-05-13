@@ -11,7 +11,11 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import packit.contentTypes
 import packit.exceptions.PackitException
-import packit.model.*
+import packit.model.Packet
+import packit.model.PacketGroup
+import packit.model.PacketMetadata
+import packit.model.PageablePayload
+import packit.model.dto.PacketGroupSummary
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
 import java.security.MessageDigest

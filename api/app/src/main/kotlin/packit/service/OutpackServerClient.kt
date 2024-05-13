@@ -12,9 +12,9 @@ import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate
 import packit.AppConfig
 import packit.exceptions.PackitException
-import packit.model.OutpackMetadata
 import packit.model.OutpackResponse
 import packit.model.PacketMetadata
+import packit.model.dto.OutpackMetadata
 import java.net.URI
 
 interface OutpackServer

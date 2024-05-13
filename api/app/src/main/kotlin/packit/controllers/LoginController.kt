@@ -6,8 +6,8 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import packit.AppConfig
 import packit.exceptions.PackitException
-import packit.model.LoginWithPassword
-import packit.model.LoginWithToken
+import packit.model.dto.LoginWithPassword
+import packit.model.dto.LoginWithToken
 import packit.service.BasicLoginService
 import packit.service.GithubAPILoginService
 

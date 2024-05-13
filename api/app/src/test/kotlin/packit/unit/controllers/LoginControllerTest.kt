@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus
 import packit.AppConfig
 import packit.controllers.LoginController
 import packit.exceptions.PackitException
-import packit.model.LoginWithPassword
-import packit.model.LoginWithToken
+import packit.model.dto.LoginWithPassword
+import packit.model.dto.LoginWithToken
 import packit.service.BasicLoginService
 import packit.service.GithubAPILoginService
 import kotlin.test.Test

@@ -7,7 +7,7 @@ import jakarta.persistence.*
 class Permission(
     var name: String,
     var description: String,
-    @OneToMany(mappedBy = "permission")
+    @OneToMany(mappedBy = "permission", cascade = [CascadeType.ALL])
     var rolePermissions: MutableList<RolePermission> = mutableListOf(),
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

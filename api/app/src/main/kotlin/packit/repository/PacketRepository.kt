@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
 import packit.model.Packet
-import packit.model.PacketGroupSummary
+import packit.model.dto.PacketGroupSummary
 
 @Repository
 interface PacketRepository : JpaRepository<Packet, String>

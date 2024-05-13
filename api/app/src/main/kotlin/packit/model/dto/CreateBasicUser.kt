@@ -1,4 +1,4 @@
-package packit.model
+package packit.model.dto
 
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.Size

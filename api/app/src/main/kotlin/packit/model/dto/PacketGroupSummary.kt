@@ -1,4 +1,4 @@
-package packit.model
+package packit.model.dto
 
 // Projection class for PacketRepository.findPacketGroupSummaryByName
 interface PacketGroupSummary

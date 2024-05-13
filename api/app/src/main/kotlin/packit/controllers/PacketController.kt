@@ -4,10 +4,10 @@ import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import packit.model.PacketGroupSummary
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
 import packit.model.dto.PacketDto
+import packit.model.dto.PacketGroupSummary
 import packit.model.toDto
 import packit.service.PacketService
 
