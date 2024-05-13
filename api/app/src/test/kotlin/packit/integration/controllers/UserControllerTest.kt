@@ -106,7 +106,7 @@ class UserControllerTest : IntegrationTest()
         )
 
         val result = restTemplate.exchange(
-            "/user/update-roles/${testUser.username}",
+            "/user/${testUser.username}/roles",
             HttpMethod.PUT,
             getTokenizedHttpEntity(data = updateUserRolesJSON),
             String::class.java

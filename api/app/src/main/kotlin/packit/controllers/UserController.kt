@@ -40,7 +40,7 @@ class UserController(
         return ResponseEntity.created(URI.create("/user/${user.id}")).body(user.toDto())
     }
 
-    @PutMapping("/update-roles/{username}")
+    @PutMapping("/{username}/roles")
     fun updateUserRoles(
         @RequestBody @Validated updateUserRoles: UpdateUserRoles,
         @PathVariable username: String

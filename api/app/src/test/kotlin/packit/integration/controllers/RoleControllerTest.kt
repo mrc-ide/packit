@@ -150,7 +150,7 @@ class RoleControllerTest : IntegrationTest()
         roleRepository.save(baseRole)
 
         val result = restTemplate.exchange(
-            "/role/update-permissions/testRole",
+            "/role/testRole/permissions",
             HttpMethod.PUT,
             getTokenizedHttpEntity(data = updateRolePermissions),
             String::class.java
@@ -169,7 +169,7 @@ class RoleControllerTest : IntegrationTest()
         roleRepository.save(Role(name = "testRole"))
 
         val result = restTemplate.exchange(
-            "/role/update-permissions/testRole",
+            "/role/testRole/permissions",
             HttpMethod.PUT,
             getTokenizedHttpEntity(data = updateRolePermissions),
             String::class.java
@@ -277,7 +277,7 @@ class RoleControllerTest : IntegrationTest()
     {
         val result =
             restTemplate.exchange(
-                "/role/update-users/ADMIN",
+                "/role/ADMIN/users",
                 HttpMethod.PUT,
                 getTokenizedHttpEntity(data = "{}"),
                 String::class.java
@@ -313,7 +313,7 @@ class RoleControllerTest : IntegrationTest()
         )
 
         val result = restTemplate.exchange(
-            "/role/update-users/${testRole.name}",
+            "/role/${testRole.name}/users",
             HttpMethod.PUT,
             getTokenizedHttpEntity(data = updateRoleUsers),
             String::class.java

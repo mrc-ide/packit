@@ -37,7 +37,7 @@ class RoleController(private val roleService: RoleService, private val userRoleS
         return ResponseEntity.noContent().build()
     }
 
-    @PutMapping("/update-permissions/{roleName}")
+    @PutMapping("/{roleName}/permissions")
     fun updatePermissionsToRole(
         @RequestBody @Validated updateRolePermissions: UpdateRolePermissions,
         @PathVariable roleName: String
@@ -48,7 +48,7 @@ class RoleController(private val roleService: RoleService, private val userRoleS
         return ResponseEntity.noContent().build()
     }
 
-    @PutMapping("/update-users/{roleName}")
+    @PutMapping("{roleName}/users")
     fun updateUsersToRole(
         @RequestBody @Validated usersToUpdate: UpdateRoleUsers,
         @PathVariable roleName: String
