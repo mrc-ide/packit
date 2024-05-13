@@ -282,6 +282,54 @@ class RoleServiceTest
         }
     }
 
+    @Test
+    fun `getRoleNames returns role names`()
+    {
+        val roles = listOf(Role(name = "role1"), Role(name = "role2"))
+        whenever(roleRepository.findAll()).thenReturn(roles)
+
+        val result = roleService.getRoleNames()
+
+        assertEquals(2, result.size)
+        assertTrue(result.containsAll(listOf("role1", "role2")))
+    }
+
+    @Test
+    fun `getRolesWithRelationships returns all roles when no isUsernamesflag set`()
+    {
+        val roles = listOf(Role(name = "role1"), Role(name = "role2"))
+        whenever(roleRepository.findAll()).thenReturn(roles)
+
+        val result = roleService.getRoles(null)
+
+        assertEquals(2, result.size)
+        assertTrue(result.containsAll(roles))
+    }
+
+    @Test
+    fun `getRolesWithRelationships returns roles with isUsername flag`()
+    {
+        val roles = listOf(Role(name = "username1", isUsername = true), Role(name = "username2", isUsername = true))
+        whenever(roleRepository.findAllByIsUsername(true)).thenReturn(roles)
+
+        val result = roleService.getRoles(true)
+
+        assertEquals(roles, result)
+        verify(roleRepository).findAllByIsUsername(true)
+    }
+
+    @Test
+    fun `getRole returns role by name`()
+    {
+        val roleName = "roleName"
+        val role = Role(name = roleName)
+        whenever(roleRepository.findByName(roleName)).thenReturn(role)
+
+        val result = roleService.getRole(roleName)
+
+        assertEquals(role, result)
+    }
+
     private fun createRoleWithPermission(
         roleName: String,
         permissionName: String,

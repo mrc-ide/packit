@@ -1,6 +1,7 @@
 package packit.model
 
 import jakarta.persistence.*
+import packit.model.dto.RolePermissionDto
 
 @Entity
 @Table(name = "role_permission")
@@ -64,3 +65,11 @@ class RolePermission(
         return result
     }
 }
+
+fun RolePermission.toDto() = RolePermissionDto(
+    permission.name,
+    packet?.toBasicDto(),
+    tag?.toDto(),
+    packetGroup?.toDto(),
+    id!!
+)

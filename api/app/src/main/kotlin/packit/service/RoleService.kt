@@ -21,6 +21,9 @@ interface RoleService
     fun getGrantedAuthorities(roles: List<Role>): MutableList<GrantedAuthority>
     fun createRole(createRole: CreateRole)
     fun deleteRole(roleName: String)
+    fun getRoleNames(): List<String>
+    fun getRoles(isUsernames: Boolean?): List<Role>
+    fun getRole(roleName: String): Role
     fun updatePermissionsToRole(roleName: String, updateRolePermissions: UpdateRolePermissions)
 }
 
@@ -83,6 +86,27 @@ class BaseRoleService(
             rolePermissionService.getRolePermissionsToAdd(role, addRolePermissions)
         role.rolePermissions.addAll(rolePermissionsToAdd)
         return roleRepository.save(role)
+    }
+
+    override fun getRoleNames(): List<String>
+    {
+        return roleRepository.findAll().map { it.name }
+    }
+
+    override fun getRoles(isUsernames: Boolean?): List<Role>
+    {
+        if (isUsernames == null)
+        {
+            return roleRepository.findAll()
+        }
+
+        return roleRepository.findAllByIsUsername(isUsernames)
+    }
+
+    override fun getRole(roleName: String): Role
+    {
+        return roleRepository.findByName(roleName)
+            ?: throw PackitException("roleNotFound", HttpStatus.BAD_REQUEST)
     }
 
     internal fun saveRole(roleName: String, permissions: List<Permission> = listOf())

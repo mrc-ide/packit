@@ -3,6 +3,7 @@ package packit.model
 import jakarta.persistence.*
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.type.SqlTypes
+import packit.model.dto.BasicPacketDto
 import packit.model.dto.PacketDto
 
 @Entity
@@ -32,3 +33,5 @@ class Packet(
 fun Packet.toDto() = PacketDto(
     id, name, displayName, parameters, published, importTime, startTime, endTime
 )
+
+fun Packet.toBasicDto() = BasicPacketDto(name, id)

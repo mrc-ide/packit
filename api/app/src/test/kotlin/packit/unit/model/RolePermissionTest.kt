@@ -167,4 +167,19 @@ class RolePermissionTest
             RolePermission(Role("r1"), Permission("p1", "d1"), mock<Packet>())
         }
     }
+
+    @Test
+    fun `toDto returns correct RolePermissionDto for given RolePermission`()
+    {
+        val permission = Permission("permission1", "d1")
+        val tag = Tag("tag1", id = 1)
+        val rolePermission = RolePermission(Role("roleName"), permission, tag = tag, id = 1)
+
+        val rolePermissionDto = rolePermission.toDto()
+
+        assertEquals("permission1", rolePermissionDto.permission)
+        assertEquals("tag1", rolePermissionDto.tag!!.name)
+        assertEquals(1, rolePermissionDto.tag!!.id)
+        assertEquals(1, rolePermissionDto.id)
+    }
 }
