@@ -216,6 +216,28 @@ class RoleServiceTest
         assertEquals("permission", result)
     }
 
+    @Test
+    fun `deleteRole deletes existing role`()
+    {
+        val roleName = "existingRole"
+        whenever(roleRepository.existsByName(roleName)).thenReturn(true)
+
+        roleService.deleteRole(roleName)
+
+        verify(roleRepository).deleteByName(roleName)
+    }
+
+    @Test
+    fun `deleteRole throws exception if role does not exist`()
+    {
+        val roleName = "nonExistingRole"
+        whenever(roleRepository.existsByName(roleName)).thenReturn(false)
+
+        assertThrows(PackitException::class.java) {
+            roleService.deleteRole(roleName)
+        }
+    }
+
     private fun createRoleWithPermission(
         roleName: String,
         permissionName: String,

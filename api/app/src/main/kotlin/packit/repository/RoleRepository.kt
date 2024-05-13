@@ -10,4 +10,5 @@ interface RoleRepository : JpaRepository<Role, Int>
     fun findByName(name: String): Role?
     fun existsByName(name: String): Boolean
     fun findByNameIn(names: List<String>): List<Role>
+    fun deleteByName(name: String)
 }

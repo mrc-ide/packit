@@ -4,9 +4,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.*
 import packit.model.dto.CreateRole
 import packit.service.RoleService
 
@@ -21,5 +19,15 @@ class RoleController(private val roleService: RoleService)
         roleService.createRole(createRole)
 
         return ResponseEntity.ok(mapOf("message" to "Role created"))
+    }
+
+    @DeleteMapping("/{name}")
+    fun deleteRole(
+        @PathVariable name: String
+    ): ResponseEntity<Unit>
+    {
+        roleService.deleteRole(name)
+
+        return ResponseEntity.noContent().build()
     }
 }
