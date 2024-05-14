@@ -206,33 +206,81 @@ class RoleServiceTest
     @Test
     fun `deleteRole deletes existing role`()
     {
-        val roleName = "existingRole"
-        whenever(roleRepository.existsByName(roleName)).thenReturn(true)
+        val role = Role("existingRole")
+        whenever(roleRepository.findByName(role.name)).thenReturn(role)
 
-        roleService.deleteRole(roleName)
+        roleService.deleteRole(role.name)
 
-        verify(roleRepository).deleteByName(roleName)
+        verify(roleRepository).deleteByName(role.name)
     }
 
     @Test
     fun `deleteRole throws exception if role does not exist`()
     {
-        val roleName = "nonExistingRole"
-        whenever(roleRepository.existsByName(roleName)).thenReturn(false)
+        val role = Role("nonExistingRole")
+        whenever(roleRepository.findByName(role.name)).thenReturn(null)
 
         assertThrows<PackitException> {
-            roleService.deleteRole(roleName)
+            roleService.deleteRole(role.name)
         }
     }
 
     @Test
     fun `deleteRole throws exception if ADMIN role is being deleted`()
     {
-        val roleName = "ADMIN"
-        whenever(roleRepository.existsByName(roleName)).thenReturn(true)
+        val role = Role("ADMIN")
+        whenever(roleRepository.findByName(role.name)).thenReturn(role)
 
         assertThrows<PackitException> {
-            roleService.deleteRole(roleName)
+            roleService.deleteRole(role.name)
+        }
+    }
+
+    @Test
+    fun `deleteRole throws exception if role is username role`()
+    {
+        val role = Role("username", isUsername = true)
+        whenever(roleRepository.findByName(role.name)).thenReturn(role)
+
+        assertThrows<PackitException> {
+            roleService.deleteRole(role.name)
+        }
+    }
+
+    @Test
+    fun `deleteUsernameRole deletes role when role is username role`()
+    {
+        val username = "username"
+        val role = Role(name = username, isUsername = true)
+        whenever(roleRepository.findByName(username)).thenReturn(role)
+
+        roleService.deleteUsernameRole(username)
+
+        verify(roleRepository).deleteByName(username)
+    }
+
+    @Test
+    fun `deleteUsernameRole throws exception when role does not exist`()
+    {
+        val username = "nonExistingUser"
+        whenever(roleRepository.findByName(username)).thenReturn(null)
+
+        assertThrows<PackitException> { roleService.deleteUsernameRole(username) }.apply {
+            assertEquals("roleNotFound", key)
+            assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, httpStatus)
+        }
+    }
+
+    @Test
+    fun `deleteUsernameRole throws exception when role is not username role`()
+    {
+        val username = "username"
+        val role = Role(name = username, isUsername = false)
+        whenever(roleRepository.findByName(username)).thenReturn(role)
+
+        assertThrows<PackitException> { roleService.deleteUsernameRole(username) }.apply {
+            assertEquals("roleIsNotUsername", key)
+            assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, httpStatus)
         }
     }
 
@@ -243,7 +291,7 @@ class RoleServiceTest
         val role = createRoleWithPermission(roleName, permissionName)
         whenever(roleRepository.findByName(roleName)).thenReturn(role)
         whenever(roleRepository.save(any<Role>())).thenAnswer { it.getArgument(0) }
-        whenever(rolePermissionService.getAddRolePermissionsFromRole(role, listOf())).thenReturn(
+        whenever(rolePermissionService.getRolePermissionsToAdd(role, listOf())).thenReturn(
             listOf(
                 createRoleWithPermission(roleName, "differentPermission").rolePermissions.first()
             )
@@ -259,7 +307,7 @@ class RoleServiceTest
             }
         )
         verify(rolePermissionService).removeRolePermissionsFromRole(role, listOf())
-        verify(rolePermissionService).getAddRolePermissionsFromRole(role, listOf())
+        verify(rolePermissionService).getRolePermissionsToAdd(role, listOf())
     }
 
     @Test

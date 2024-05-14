@@ -276,7 +276,7 @@ class UserServiceTest
         service.deleteUser(username)
 
         verify(mockUserRepository).delete(user)
-        verify(mockRoleService).deleteRole(username)
+        verify(mockRoleService).deleteUsernameRole(username)
     }
 
     @Test

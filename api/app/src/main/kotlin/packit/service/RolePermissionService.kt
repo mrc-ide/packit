@@ -10,9 +10,8 @@ import packit.repository.*
 
 interface RolePermissionService
 {
-    fun getRolePermissionsToUpdate(role: Role, addRolePermissions: List<UpdateRolePermission>): List<RolePermission>
     fun removeRolePermissionsFromRole(role: Role, removeRolePermissions: List<UpdateRolePermission>)
-    fun getAddRolePermissionsFromRole(role: Role, addRolePermissions: List<UpdateRolePermission>): List<RolePermission>
+    fun getRolePermissionsToAdd(role: Role, addRolePermissions: List<UpdateRolePermission>): List<RolePermission>
 }
 
 @Service
@@ -24,12 +23,12 @@ class BaseRolePermissionService(
     private val rolePermissionRepository: RolePermissionRepository
 ) : RolePermissionService
 {
-    override fun getRolePermissionsToUpdate(
+    internal fun getRolePermissionsToUpdate(
         role: Role,
-        addRolePermissions: List<UpdateRolePermission>
+        updateRolePermissions: List<UpdateRolePermission>
     ): List<RolePermission>
     {
-        return addRolePermissions.map { addRolePermission ->
+        return updateRolePermissions.map { addRolePermission ->
             val permission = permissionRepository.findByName(addRolePermission.permission)
                 ?: throw PackitException("invalidPermissionsProvided", HttpStatus.BAD_REQUEST)
 
@@ -65,7 +64,7 @@ class BaseRolePermissionService(
         rolePermissionRepository.deleteAllByIdIn(matchedRolePermissionsToRemove.map { it.id!! })
     }
 
-    override fun getAddRolePermissionsFromRole(
+    override fun getRolePermissionsToAdd(
         role: Role,
         addRolePermissions: List<UpdateRolePermission>
     ): List<RolePermission>

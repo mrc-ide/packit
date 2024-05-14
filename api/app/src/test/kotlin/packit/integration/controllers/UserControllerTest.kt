@@ -124,7 +124,7 @@ class UserControllerTest : IntegrationTest()
     fun `deleteUser deletes user and username role`()
     {
         val username = "testUsername"
-        val testRole = roleRepository.save(Role(name = username))
+        val testRole = roleRepository.save(Role(name = username, isUsername = true))
         val testUser = userRepository.save(
             User(
                 username = username,

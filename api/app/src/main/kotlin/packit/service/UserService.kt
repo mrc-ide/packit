@@ -116,6 +116,6 @@ class BaseUserService(
             ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
 
         userRepository.delete(user)
-        roleService.deleteRole(username)
+        roleService.deleteUsernameRole(username)
     }
 }
