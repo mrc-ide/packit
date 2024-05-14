@@ -17,12 +17,12 @@ interface RoleService
 {
     fun getUsernameRole(username: String): Role
     fun getAdminRole(): Role
-    fun checkMatchingRoles(rolesToCheck: List<String>): List<Role>
     fun getGrantedAuthorities(roles: List<Role>): MutableList<GrantedAuthority>
     fun createRole(createRole: CreateRole)
     fun deleteRole(roleName: String)
     fun getRoleNames(): List<String>
-    fun getRoles(isUsernames: Boolean?): List<Role>
+    fun getRolesByRoleNames(roleNames: List<String>): List<Role>
+    fun getAllRoles(isUsernames: Boolean?): List<Role>
     fun getRole(roleName: String): Role
     fun updatePermissionsToRole(roleName: String, updateRolePermissions: UpdateRolePermissions)
 }
@@ -93,14 +93,23 @@ class BaseRoleService(
         return roleRepository.findAll().map { it.name }
     }
 
-    override fun getRoles(isUsernames: Boolean?): List<Role>
+    override fun getAllRoles(isUsernames: Boolean?): List<Role>
     {
         if (isUsernames == null)
         {
             return roleRepository.findAll()
         }
-
         return roleRepository.findAllByIsUsername(isUsernames)
+    }
+
+    override fun getRolesByRoleNames(roleNames: List<String>): List<Role>
+    {
+        val foundRoles = roleRepository.findByNameIn(roleNames)
+        if (foundRoles.size != roleNames.toSet().size)
+        {
+            throw PackitException("invalidRolesProvided", HttpStatus.BAD_REQUEST)
+        }
+        return foundRoles
     }
 
     override fun getRole(roleName: String): Role
@@ -119,17 +128,6 @@ class BaseRoleService(
         role.rolePermissions = permissions.map { RolePermission(permission = it, role = role) }
             .toMutableList()
         roleRepository.save(role)
-    }
-
-    override fun checkMatchingRoles(rolesToCheck: List<String>): List<Role>
-    {
-        val matchedRoles = roleRepository.findByNameIn(rolesToCheck)
-
-        if (matchedRoles.size != rolesToCheck.size)
-        {
-            throw PackitException("invalidRolesProvided", HttpStatus.BAD_REQUEST)
-        }
-        return matchedRoles
     }
 
     /**

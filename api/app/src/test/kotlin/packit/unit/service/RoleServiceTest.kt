@@ -133,31 +133,6 @@ class RoleServiceTest
     }
 
     @Test
-    fun `checkMatchingRoles throws exception if roles do not match`()
-    {
-        val rolesToCheck = listOf("role1", "role2")
-        val allRoles = listOf(Role(name = "role1"))
-        whenever(roleRepository.findByNameIn(rolesToCheck)).thenReturn(allRoles)
-
-        assertThrows(PackitException::class.java) {
-            roleService.checkMatchingRoles(rolesToCheck)
-        }
-    }
-
-    @Test
-    fun `checkMatchingRoles returns matching roles`()
-    {
-        val rolesToCheck = listOf("role1", "role2")
-        val allRoles = listOf(Role(name = "role1"), Role(name = "role2"))
-        whenever(roleRepository.findByNameIn(rolesToCheck)).thenReturn(allRoles)
-
-        val result = roleService.checkMatchingRoles(rolesToCheck)
-
-        assertEquals(2, result.size)
-        assertEquals(allRoles, result)
-    }
-
-    @Test
     fun `getGrantedAuthorities returns authorities for roles and permissions`()
     {
         val role1 =
@@ -300,10 +275,51 @@ class RoleServiceTest
         val roles = listOf(Role(name = "role1"), Role(name = "role2"))
         whenever(roleRepository.findAll()).thenReturn(roles)
 
-        val result = roleService.getRoles(null)
+        val result = roleService.getAllRoles(null)
 
         assertEquals(2, result.size)
         assertTrue(result.containsAll(roles))
+    }
+
+    @Test
+    fun `getRolesWithRelationships returns matching roles when all role names exist`()
+    {
+        val roleNames = listOf("role1", "role2")
+        val roles = listOf(Role(name = "role1"), Role(name = "role2"))
+        whenever(roleRepository.findByNameIn(roleNames)).thenReturn(roles)
+
+        val result = roleService.getRolesByRoleNames(roleNames)
+
+        assertEquals(roles, result)
+    }
+
+    @Test
+    fun `getRolesWithRelationships throws exception when some role names do not exist`()
+    {
+        val roleNames = listOf("role1", "role2")
+        val roles = listOf(Role(name = "role1"))
+        whenever(roleRepository.findByNameIn(roleNames)).thenReturn(roles)
+
+        assertThrows<PackitException> {
+            roleService.getRolesByRoleNames(roleNames)
+        }.apply {
+            assertEquals("invalidRolesProvided", key)
+            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+        }
+    }
+
+    @Test
+    fun `getRolesWithRelationships throws exception when no role names exist`()
+    {
+        val roleNames = listOf("role1", "role2")
+        whenever(roleRepository.findByNameIn(roleNames)).thenReturn(emptyList())
+
+        assertThrows<PackitException> {
+            roleService.getRolesByRoleNames(roleNames)
+        }.apply {
+            assertEquals("invalidRolesProvided", key)
+            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+        }
     }
 
     @Test
@@ -312,7 +328,7 @@ class RoleServiceTest
         val roles = listOf(Role(name = "username1", isUsername = true), Role(name = "username2", isUsername = true))
         whenever(roleRepository.findAllByIsUsername(true)).thenReturn(roles)
 
-        val result = roleService.getRoles(true)
+        val result = roleService.getAllRoles(true)
 
         assertEquals(roles, result)
         verify(roleRepository).findAllByIsUsername(true)

@@ -2,12 +2,17 @@ package packit.integration.controllers
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.jdbc.Sql
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
+import packit.model.Role
+import packit.model.User
 import packit.model.dto.CreateBasicUser
+import packit.model.dto.UpdateUserRoles
+import packit.repository.RoleRepository
 import packit.repository.UserRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -17,6 +22,9 @@ import kotlin.test.assertNotNull
 @Sql("/delete-test-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class UserControllerTest : IntegrationTest()
 {
+    @Autowired
+    private lateinit var roleRepository: RoleRepository
+
     @Autowired
     lateinit var userRepository: UserRepository
 
@@ -73,5 +81,37 @@ class UserControllerTest : IntegrationTest()
         )
 
         assertEquals(result.statusCode, HttpStatus.BAD_REQUEST)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["user.manage"])
+    fun `updateUserRoles can add and remove roles from users`()
+    {
+        val testRole = roleRepository.save(Role(name = "TEST_ROLE"))
+        val testUser = userRepository.save(
+            User(
+                username = "test",
+                disabled = false,
+                userSource = "basic",
+                displayName = "test user",
+                roles = mutableListOf(testRole)
+            )
+        )
+        val updateUserRolesJSON = ObjectMapper().writeValueAsString(
+            UpdateUserRoles(
+                roleNamesToAdd = listOf("ADMIN"),
+                roleNamesToRemove = listOf(testRole.name)
+            )
+        )
+
+        val result = restTemplate.exchange(
+            "/user/update-roles/${testUser.username}",
+            HttpMethod.PUT,
+            getTokenizedHttpEntity(data = updateUserRolesJSON),
+            String::class.java
+        )
+
+        assertEquals(HttpStatus.NO_CONTENT, result.statusCode)
+        assertEquals(userRepository.findByUsername("test")?.roles?.map { it.name }, listOf("ADMIN"))
     }
 }

@@ -5,12 +5,11 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.*
 import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.model.dto.CreateBasicUser
+import packit.model.dto.UpdateUserRoles
 import packit.service.UserService
 
 @Controller
@@ -31,5 +30,16 @@ class UserController(private val config: AppConfig, private val userService: Use
         userService.createBasicUser(createBasicUser)
 
         return ResponseEntity.ok(mapOf("message" to "User created"))
+    }
+
+    @PutMapping("/update-roles/{username}")
+    fun updateUserRoles(
+        @RequestBody @Validated updateUserRoles: UpdateUserRoles,
+        @PathVariable username: String
+    ): ResponseEntity<Unit>
+    {
+        userService.updateUserRoles(username, updateUserRoles)
+
+        return ResponseEntity.noContent().build()
     }
 }

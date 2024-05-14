@@ -2,6 +2,7 @@ package packit.unit.service
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.mockito.Mockito.anyList
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.*
 import org.springframework.http.HttpStatus
@@ -10,6 +11,7 @@ import packit.exceptions.PackitException
 import packit.model.Role
 import packit.model.User
 import packit.model.dto.CreateBasicUser
+import packit.model.dto.UpdateUserRoles
 import packit.repository.UserRepository
 import packit.service.BaseUserService
 import packit.service.RoleService
@@ -37,7 +39,7 @@ class UserServiceTest
         roles = mutableListOf(testRoles[0]),
     )
     private val mockRoleService = mock<RoleService> {
-        on { checkMatchingRoles(createBasicUser.userRoles) } doReturn testRoles
+        on { getRolesByRoleNames(createBasicUser.userRoles) } doReturn testRoles
         on { getUsernameRole(createBasicUser.email) } doReturn Role(createBasicUser.email)
     }
 
@@ -143,7 +145,7 @@ class UserServiceTest
 
         service.createBasicUser(createBasicUser)
 
-        verify(mockRoleService).checkMatchingRoles(createBasicUser.userRoles)
+        verify(mockRoleService).getRolesByRoleNames(createBasicUser.userRoles)
         verify(mockRoleService).getUsernameRole(createBasicUser.email)
         verify(passwordEncoder).encode(createBasicUser.password)
         verify(mockUserRepository).save(
@@ -158,5 +160,115 @@ class UserServiceTest
                 this.roles.map { it.name }.containsAll(testRoles.map { it.name }.plus(createBasicUser.email))
             }
         )
+    }
+
+    @Test
+    fun `updateUserRoles adds and remove roles from user`()
+    {
+        val roleToAdd = listOf(Role("NEW_ROLE"))
+        val rolesToRemove = listOf(Role("USER"))
+        val updateUserRoles = UpdateUserRoles(roleToAdd.map { it.name }, rolesToRemove.map { it.name })
+        `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(roleToAdd + rolesToRemove)
+        `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
+        `when`(mockUserRepository.save(any<User>())).thenAnswer { it.getArgument(0) }
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        service.updateUserRoles(mockUser.username, updateUserRoles)
+
+        verify(mockUserRepository).save(
+            argThat {
+            roles.containsAll(roleToAdd)
+            roles.size == 1
+        }
+        )
+    }
+
+    @Test
+    fun `updateUserRoles throws exception when adding role that  already exists`()
+    {
+        `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(mockUser.roles)
+        `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        val ex =
+            assertThrows<PackitException> {
+                service.updateUserRoles(
+                    mockUser.username,
+                    UpdateUserRoles(roleNamesToAdd = mockUser.roles.map { it.name })
+                )
+            }
+
+        assertEquals(ex.key, "userRoleExists")
+        assertEquals(ex.httpStatus, HttpStatus.BAD_REQUEST)
+    }
+
+    @Test
+    fun `updateUserRoles throws exception when user not found`()
+    {
+        `when`(mockUserRepository.findByUsername(any())).doReturn(null)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        val ex = assertThrows<PackitException> { service.updateUserRoles("nonexistent", UpdateUserRoles()) }
+
+        assertEquals(ex.key, "userNotFound")
+        assertEquals(ex.httpStatus, HttpStatus.NOT_FOUND)
+    }
+
+    @Test
+    fun `updateUserRoles throws exception when trying to add username role`()
+    {
+        val usernameRole = Role(mockUser.username, isUsername = true)
+        `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(listOf(usernameRole))
+        `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        val ex = assertThrows<PackitException> {
+            service.updateUserRoles(
+                mockUser.username,
+                UpdateUserRoles(roleNamesToAdd = listOf(usernameRole.name))
+            )
+        }
+
+        assertEquals(ex.key, "cannotUpdateUsernameRoles")
+        assertEquals(ex.httpStatus, HttpStatus.BAD_REQUEST)
+    }
+
+    @Test
+    fun `updateUserRoles throws exception when trying to remove role that does not exist`()
+    {
+        val nonExistentRole = Role("NON_EXISTENT_ROLE")
+        `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(listOf(nonExistentRole))
+        `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        val ex =
+            assertThrows<PackitException> {
+                service.updateUserRoles(
+                    mockUser.username,
+                    UpdateUserRoles(roleNamesToRemove = listOf(nonExistentRole.name))
+                )
+            }
+
+        assertEquals(ex.key, "userRoleNotExists")
+        assertEquals(ex.httpStatus, HttpStatus.BAD_REQUEST)
+    }
+
+    @Test
+    fun `updateUserRoles throws exception when trying to remove username role`()
+    {
+        val usernameRole = Role(mockUser.username, isUsername = true)
+        `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(listOf(usernameRole))
+        `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        val ex = assertThrows<PackitException> {
+            service.updateUserRoles(
+                mockUser.username,
+                UpdateUserRoles(roleNamesToRemove = listOf(usernameRole.name))
+            )
+        }
+
+        assertEquals(ex.key, "cannotUpdateUsernameRoles")
+        assertEquals(ex.httpStatus, HttpStatus.BAD_REQUEST)
     }
 }
