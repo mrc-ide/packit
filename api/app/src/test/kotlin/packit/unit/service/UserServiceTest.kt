@@ -177,9 +177,9 @@ class UserServiceTest
 
         verify(mockUserRepository).save(
             argThat {
-            roles.containsAll(roleToAdd)
-            roles.size == 1
-        }
+                roles.containsAll(roleToAdd)
+                roles.size == 1
+            }
         )
     }
 
@@ -283,7 +283,7 @@ class UserServiceTest
         service.deleteUser(username)
 
         verify(mockUserRepository).delete(user)
-        verify(mockRoleService).deleteRole(username)
+        verify(mockRoleService).deleteUsernameRole(username)
     }
 
     @Test

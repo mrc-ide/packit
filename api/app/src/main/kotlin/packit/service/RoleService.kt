@@ -20,6 +20,7 @@ interface RoleService
     fun getGrantedAuthorities(roles: List<Role>): MutableList<GrantedAuthority>
     fun createRole(createRole: CreateRole)
     fun deleteRole(roleName: String)
+    fun deleteUsernameRole(username: String)
     fun getRoleNames(): List<String>
     fun getRolesByRoleNames(roleNames: List<String>): List<Role>
     fun getAllRoles(isUsernames: Boolean?): List<Role>
@@ -60,15 +61,26 @@ class BaseRoleService(
 
     override fun deleteRole(roleName: String)
     {
-        if (!roleRepository.existsByName(roleName))
+        val roleToDelete = roleRepository.findByName(roleName)
+            ?: throw PackitException("roleNotFound", HttpStatus.BAD_REQUEST)
+
+        if (roleToDelete.name == "ADMIN" || roleToDelete.isUsername)
         {
-            throw PackitException("roleNotFound", HttpStatus.BAD_REQUEST)
-        }
-        if (roleName == "ADMIN")
-        {
-            throw PackitException("cannotDeleteAdminRole", HttpStatus.BAD_REQUEST)
+            throw PackitException("cannotDeleteAdminOrUsernameRole", HttpStatus.BAD_REQUEST)
         }
         roleRepository.deleteByName(roleName)
+    }
+
+    override fun deleteUsernameRole(username: String)
+    {
+        val roleToDelete = roleRepository.findByName(username)
+            ?: throw PackitException("roleNotFound", HttpStatus.INTERNAL_SERVER_ERROR)
+
+        if (!roleToDelete.isUsername)
+        {
+            throw PackitException("roleIsNotUsername", HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+        roleRepository.deleteByName(username)
     }
 
     override fun updatePermissionsToRole(roleName: String, updateRolePermissions: UpdateRolePermissions)
