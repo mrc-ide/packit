@@ -6,6 +6,9 @@ import org.springframework.stereotype.Controller
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import packit.model.dto.CreateRole
+import packit.model.dto.RoleDto
+import packit.model.dto.UpdateRolePermissions
+import packit.model.toDto
 import packit.service.RoleService
 
 @Controller
@@ -21,13 +24,44 @@ class RoleController(private val roleService: RoleService)
         return ResponseEntity.ok(mapOf("message" to "Role created"))
     }
 
-    @DeleteMapping("/{name}")
+    @DeleteMapping("/{roleName}")
     fun deleteRole(
-        @PathVariable name: String
-    ): ResponseEntity<Unit>
+        @PathVariable roleName: String
+    ): ResponseEntity<Map<String, String?>>
     {
-        roleService.deleteRole(name)
+        roleService.deleteRole(roleName)
 
         return ResponseEntity.noContent().build()
+    }
+
+    @PutMapping("/update-permissions/{roleName}")
+    fun updatePermissionsToRole(
+        @RequestBody @Validated updateRolePermissions: UpdateRolePermissions,
+        @PathVariable roleName: String
+    ): ResponseEntity<Unit>
+    {
+        roleService.updatePermissionsToRole(roleName, updateRolePermissions)
+
+        return ResponseEntity.noContent().build()
+    }
+
+    @GetMapping("/names")
+    fun getRoleNames(): ResponseEntity<List<String>>
+    {
+        return ResponseEntity.ok(roleService.getRoleNames())
+    }
+
+    @GetMapping
+    fun getRolesWithRelationships(@RequestParam isUsername: Boolean?): ResponseEntity<List<RoleDto>>
+    {
+        val roles = roleService.getRoles(isUsername)
+        return ResponseEntity.ok(roles.map { it.toDto() })
+    }
+
+    @GetMapping("/{roleName}")
+    fun getRole(@PathVariable roleName: String): ResponseEntity<RoleDto>
+    {
+        val role = roleService.getRole(roleName)
+        return ResponseEntity.ok(role.toDto())
     }
 }

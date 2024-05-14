@@ -8,4 +8,5 @@ import packit.model.Permission
 interface PermissionRepository : JpaRepository<Permission, Int>
 {
     fun findByNameIn(names: List<String>): List<Permission>
+    fun findByName(name: String): Permission?
 }

@@ -53,6 +53,13 @@ class PackitExceptionHandler
             .toResponseEntity()
     }
 
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handleIllegalArgumentException(e: Exception): ResponseEntity<String>
+    {
+        return ErrorDetail(HttpStatus.BAD_REQUEST, e.message ?: "Invalid argument")
+            .toResponseEntity()
+    }
+
     @ExceptionHandler(AccessDeniedException::class, AuthenticationException::class)
     fun handleAccessDenied(e: Exception): ResponseEntity<String>
     {
