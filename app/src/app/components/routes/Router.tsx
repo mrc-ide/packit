@@ -11,12 +11,14 @@ import { Login, Redirect } from "../login";
 import { Breadcrumb } from "../main/Breadcrumb";
 import { PacketLayout } from "../main/PacketLayout";
 import ProtectedRoute from "./ProtectedRoute";
+import { UpdatePassword } from "../login/UpdatePassword";
 
 export function Router() {
   return (
     <Routes>
       <Route element={<App />}>
         <Route path="login" element={<Login />} />
+        <Route path="update-password" element={<UpdatePassword />} />
         {/* <Route path="accessibility" element={<Accessibility />} /> */}
         <Route path="redirect" element={<Redirect />} />
         <Route element={<ProtectedRoute />}>

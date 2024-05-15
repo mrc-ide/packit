@@ -40,23 +40,7 @@ class UserController(
 
         return ResponseEntity.created(URI.create("/user/${user.id}")).body(user.toDto())
     }
-
-    @PutMapping("/{username}/basic/password")
-    fun updatePassword(
-        @PathVariable username: String,
-        @RequestBody @Validated updatePassword: UpdatePassword
-    ): ResponseEntity<Unit>
-    {
-        if (!config.authEnableBasicLogin)
-        {
-            throw PackitException("basicLoginDisabled", HttpStatus.FORBIDDEN)
-        }
-
-        userService.updatePassword(username, updatePassword)
-
-        return ResponseEntity.noContent().build()
-    }
-
+    
     @PutMapping("/{username}/roles")
     fun updateUserRoles(
         @RequestBody @Validated updateUserRoles: UpdateUserRoles,
