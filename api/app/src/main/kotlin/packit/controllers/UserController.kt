@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*
 import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.model.dto.CreateBasicUser
+import packit.model.dto.UpdatePassword
 import packit.model.dto.UpdateUserRoles
 import packit.model.dto.UserDto
 import packit.model.toDto
@@ -38,6 +39,22 @@ class UserController(
         val user = userService.createBasicUser(createBasicUser)
 
         return ResponseEntity.created(URI.create("/user/${user.id}")).body(user.toDto())
+    }
+
+    @PutMapping("/{username}/basic/password")
+    fun updatePassword(
+        @PathVariable username: String,
+        @RequestBody @Validated updatePassword: UpdatePassword
+    ): ResponseEntity<Unit>
+    {
+        if (!config.authEnableBasicLogin)
+        {
+            throw PackitException("basicLoginDisabled", HttpStatus.FORBIDDEN)
+        }
+
+        userService.updatePassword(username, updatePassword)
+
+        return ResponseEntity.noContent().build()
     }
 
     @PutMapping("/{username}/roles")

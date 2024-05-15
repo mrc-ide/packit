@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
 import packit.model.User
 import packit.model.dto.CreateBasicUser
+import packit.model.dto.UpdatePassword
 import packit.repository.UserRepository
 import java.time.Instant
 import javax.naming.AuthenticationException
@@ -21,6 +22,7 @@ interface UserService
     fun getByUsername(username: String): User?
     fun saveUser(user: User): User
     fun saveUsers(users: List<User>): List<User>
+    fun updatePassword(username: String, updatePassword: UpdatePassword)
 }
 
 @Service
@@ -84,7 +86,7 @@ class BaseUserService(
             userRepository.findByUsername(username) ?: throw AuthenticationException()
         if (user.lastLoggedIn == null)
         {
-            throw AuthenticationException("You must reset your password before logging in.")
+            throw AuthenticationException("You must change your password before logging in.")
         }
         return updateUserLastLoggedIn(user, Instant.now())
     }
@@ -113,6 +115,20 @@ class BaseUserService(
     override fun saveUsers(users: List<User>): List<User>
     {
         return userRepository.saveAll(users)
+    }
+
+    override fun updatePassword(username: String, updatePassword: UpdatePassword)
+    {
+        val user = userRepository.findByUsername(username)
+            ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
+
+        if (!passwordEncoder.matches(updatePassword.currentPassword, user.password))
+        {
+            throw PackitException("invalidPassword", HttpStatus.BAD_REQUEST)
+        }
+
+        user.password = passwordEncoder.encode(updatePassword.newPassword)
+        updateUserLastLoggedIn(user, Instant.now())
     }
 
     override fun deleteUser(username: String)

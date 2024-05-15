@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.jdbc.Sql
 import packit.integration.IntegrationTest
@@ -145,5 +146,31 @@ class UserControllerTest : IntegrationTest()
         assertEquals(HttpStatus.NO_CONTENT, result.statusCode)
         assertEquals(userRepository.findByUsername(testUser.username), null)
         assertEquals(roleRepository.findByName(username), null)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["user.manage"])
+    fun `updatePassword can update a user's password`()
+    {
+        val currentPassword = "password"
+        val newPassword = "newPassword"
+        val passwordEncoder = BCryptPasswordEncoder()
+        val testUser = userRepository.save(
+            User(
+                username = "testUser",
+                password = passwordEncoder.encode(currentPassword),
+                userSource = "basic",
+                disabled = false,
+                displayName = "displayName"
+            )
+        )
+
+        val result = restTemplate.exchange(
+            "/user/${testUser.username}/basic/password",
+            HttpMethod.PUT,
+            getTokenizedHttpEntity(data = ObjectMapper().writeValueAsString(testUser)),
+            String::class.java
+        )
+
     }
 }

@@ -4,12 +4,14 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.springframework.http.HttpStatus
 import packit.AppConfig
 import packit.controllers.UserController
 import packit.exceptions.PackitException
 import packit.model.User
 import packit.model.dto.CreateBasicUser
+import packit.model.dto.UpdatePassword
 import packit.service.UserRoleService
 import packit.service.UserService
 import java.util.*
@@ -62,5 +64,29 @@ class UserControllerTest
         assertEquals(result.statusCode, HttpStatus.CREATED)
         assertEquals(testCreateUser.email, result.body?.username)
         assertEquals(testUUID, result.body?.id)
+    }
+
+    @Test
+    fun `updatePassword throws packit exception if basic login is not enabled`()
+    {
+        `when`(mockConfig.authEnableBasicLogin) doReturn false
+        val sut = UserController(mockConfig, mockUserService, mockUserRoleService)
+
+        val ex = assertThrows<PackitException> {
+            sut.updatePassword(testCreateUser.email, UpdatePassword("current", "newpassword"))
+        }
+        assertEquals(ex.httpStatus, HttpStatus.FORBIDDEN)
+        assertEquals(ex.key, "basicLoginDisabled")
+    }
+
+    @Test
+    fun `updatePassword calls userService updatePassword`()
+    {
+        val updatePassword = UpdatePassword("current", "newpassword")
+        val sut = UserController(mockConfig, mockUserService, mockUserRoleService)
+
+        sut.updatePassword(testCreateUser.email, updatePassword)
+
+        verify(mockUserService).updatePassword(testCreateUser.email, updatePassword)
     }
 }
