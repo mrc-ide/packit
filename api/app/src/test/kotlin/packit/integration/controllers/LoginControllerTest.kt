@@ -16,6 +16,7 @@ import packit.model.User
 import packit.model.dto.LoginWithPassword
 import packit.model.dto.LoginWithToken
 import packit.repository.UserRepository
+import java.time.Instant
 import kotlin.test.assertEquals
 
 class LoginControllerTestGithub : IntegrationTest()
@@ -80,7 +81,8 @@ class LoginControllerTestBasic : IntegrationTest()
             email = "test@email.com",
             userSource = "basic",
             roles = mutableListOf(),
-            password = passwordEncoder.encode("password")
+            password = passwordEncoder.encode("password"),
+            lastLoggedIn = Instant.now()
         )
         userRepository.save(testUser)
     }

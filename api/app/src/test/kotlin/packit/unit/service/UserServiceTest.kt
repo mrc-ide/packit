@@ -15,6 +15,7 @@ import packit.repository.UserRepository
 import packit.service.BaseUserService
 import packit.service.RoleService
 import java.time.Instant
+import javax.naming.AuthenticationException
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
@@ -97,7 +98,7 @@ class UserServiceTest
     }
 
     @Test
-    fun `getUserForLogin gets user from repository & updates latest time`()
+    fun `getUserForLogin gets user from repository & updates latest time if not null`()
     {
         `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
         `when`(mockUserRepository.save(mockUser)).doReturn(mockUser)
@@ -116,10 +117,30 @@ class UserServiceTest
         `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(null)
         val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
 
-        val ex = assertThrows<PackitException> { service.getUserForLogin(mockUser.username) }
+        val ex = assertThrows<AuthenticationException> { service.getUserForLogin(mockUser.username) }
 
-        assertEquals(ex.key, "userNotFound")
         verify(mockUserRepository).findByUsername(mockUser.username)
+    }
+
+    @Test
+    fun `getUserForLogin throws exception if user lastLoggedIn is null`()
+    {
+        val user = User(
+            username = "username",
+            displayName = "displayName",
+            disabled = false,
+            email = "email",
+            userSource = "github",
+            lastLoggedIn = null,
+            roles = mutableListOf(testRoles[0]),
+        )
+        `when`(mockUserRepository.findByUsername(user.username)).doReturn(user)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        val ex = assertThrows<AuthenticationException> { service.getUserForLogin(user.username) }
+
+        verify(mockUserRepository).findByUsername(user.username)
+        assertEquals("You must reset your password before logging in.", ex.message)
     }
 
     @Test

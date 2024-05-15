@@ -8,6 +8,7 @@ import packit.model.User
 import packit.model.dto.CreateBasicUser
 import packit.repository.UserRepository
 import java.time.Instant
+import javax.naming.AuthenticationException
 
 interface UserService
 {
@@ -80,7 +81,11 @@ class BaseUserService(
     override fun getUserForLogin(username: String): User
     {
         val user =
-            userRepository.findByUsername(username) ?: throw PackitException("userNotFound", HttpStatus.UNAUTHORIZED)
+            userRepository.findByUsername(username) ?: throw AuthenticationException()
+        if (user.lastLoggedIn == null)
+        {
+            throw AuthenticationException("You must reset your password before logging in.")
+        }
         return updateUserLastLoggedIn(user, Instant.now())
     }
 
