@@ -284,7 +284,8 @@ class RoleServiceTest
         }
     }
 
-    fun `updatePermissionsToRole calls correct methods and saves role`()
+    @Test
+    fun `updatePermissionsToRole calls correct methods and saves role & returns new role`()
     {
         val roleName = "roleName"
         val permissionName = "permission1"
@@ -297,8 +298,9 @@ class RoleServiceTest
             )
         )
         whenever(roleRepository.save(any<Role>())).thenAnswer { it.getArgument(0) }
+        whenever(rolePermissionService.removeRolePermissionsFromRole(role, listOf())).thenReturn(role)
 
-        roleService.updatePermissionsToRole(roleName, UpdateRolePermissions())
+        val updatedRole = roleService.updatePermissionsToRole(roleName, UpdateRolePermissions())
 
         verify(roleRepository).save(
             argThat {
@@ -308,6 +310,8 @@ class RoleServiceTest
         )
         verify(rolePermissionService).removeRolePermissionsFromRole(role, listOf())
         verify(rolePermissionService).getRolePermissionsToAdd(role, listOf())
+        assertEquals(role, updatedRole)
+        assertEquals(2, updatedRole.rolePermissions.size)
     }
 
     @Test
@@ -445,6 +449,7 @@ class RoleServiceTest
     ): Role
     {
         return Role(
+            id = 1,
             name = roleName,
             rolePermissions = mutableListOf(
                 RolePermission(

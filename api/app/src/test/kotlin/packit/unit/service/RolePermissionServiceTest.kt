@@ -148,16 +148,19 @@ class RolePermissionServiceTest
     {
         val role = Role("role1")
         val permission1 = Permission("permission1", "d1")
-        val updateRolePermissions = listOf(UpdateRolePermission(permission1.name))
+        val removeRolePermissions = listOf(UpdateRolePermission(permission1.name))
         role.rolePermissions = mutableListOf(
             RolePermission(role, permission1, id = 1),
             RolePermission(role, Permission("permission2", "d2"), id = 2)
         )
         whenever(permissionRepository.findByName(any())).thenReturn(permission1)
 
-        service.removeRolePermissionsFromRole(role, updateRolePermissions)
+        val result = service.removeRolePermissionsFromRole(role, removeRolePermissions)
 
-        verify(rolePermissionRepository).deleteAllByIdIn(listOf(role.rolePermissions.first().id!!))
+        verify(rolePermissionRepository).deleteAllByIdIn(listOf(1))
+        assertEquals(role, result)
+        assertEquals(1, result.rolePermissions.size)
+        assertEquals("permission2", result.rolePermissions[0].permission.name)
     }
 
     @Test

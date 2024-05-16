@@ -25,7 +25,7 @@ interface RoleService
     fun getRolesByRoleNames(roleNames: List<String>): List<Role>
     fun getAllRoles(isUsernames: Boolean?): List<Role>
     fun getRole(roleName: String): Role
-    fun updatePermissionsToRole(roleName: String, updateRolePermissions: UpdateRolePermissions)
+    fun updatePermissionsToRole(roleName: String, updateRolePermissions: UpdateRolePermissions): Role
     fun getByRoleName(roleName: String): Role?
 }
 
@@ -84,14 +84,14 @@ class BaseRoleService(
         roleRepository.deleteByName(username)
     }
 
-    override fun updatePermissionsToRole(roleName: String, updateRolePermissions: UpdateRolePermissions)
+    override fun updatePermissionsToRole(roleName: String, updateRolePermissions: UpdateRolePermissions): Role
     {
         val role = roleRepository.findByName(roleName)
             ?: throw PackitException("roleNotFound", HttpStatus.BAD_REQUEST)
 
         val roleAfterPermissionAdd = addRolePermissionsToRole(role, updateRolePermissions.addPermissions)
 
-        rolePermissionService.removeRolePermissionsFromRole(
+        return rolePermissionService.removeRolePermissionsFromRole(
             roleAfterPermissionAdd,
             updateRolePermissions.removePermissions
         )

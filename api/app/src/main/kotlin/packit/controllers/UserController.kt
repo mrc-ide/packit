@@ -28,7 +28,7 @@ class UserController(
     @PostMapping("/basic")
     fun createBasicUser(
         @RequestBody @Validated createBasicUser: CreateBasicUser
-    ): ResponseEntity<UserDto?>
+    ): ResponseEntity<UserDto>
     {
         if (!config.authEnableBasicLogin)
         {
@@ -44,7 +44,7 @@ class UserController(
     fun updateUserRoles(
         @RequestBody @Validated updateUserRoles: UpdateUserRoles,
         @PathVariable username: String
-    ): ResponseEntity<UserDto?>
+    ): ResponseEntity<UserDto>
     {
         val updatedUser = userRoleService.updateUserRoles(username, updateUserRoles)
 

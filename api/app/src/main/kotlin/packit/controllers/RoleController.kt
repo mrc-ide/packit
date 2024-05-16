@@ -41,18 +41,18 @@ class RoleController(private val roleService: RoleService, private val userRoleS
     fun updatePermissionsToRole(
         @RequestBody @Validated updateRolePermissions: UpdateRolePermissions,
         @PathVariable roleName: String
-    ): ResponseEntity<Unit>
+    ): ResponseEntity<RoleDto>
     {
-        roleService.updatePermissionsToRole(roleName, updateRolePermissions)
+        val updatedRole = roleService.updatePermissionsToRole(roleName, updateRolePermissions)
 
-        return ResponseEntity.noContent().build()
+        return ResponseEntity.ok(updatedRole.toDto())
     }
 
     @PutMapping("{roleName}/users")
     fun updateUsersToRole(
         @RequestBody @Validated usersToUpdate: UpdateRoleUsers,
         @PathVariable roleName: String
-    ): ResponseEntity<RoleDto?>
+    ): ResponseEntity<RoleDto>
     {
         val updatedRole = userRoleService.updateRoleUsers(roleName, usersToUpdate)
 
