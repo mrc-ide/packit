@@ -26,7 +26,7 @@ export const UpdatePasswordForm = ({ email }: UpdatePasswordFormProps) => {
         method: "POST",
         noAuth: true
       });
-      navigate(`/login?email=${email}`);
+      navigate(`/login?email=${email}&success=Password updated successfully. Please login.`);
     } catch (error) {
       console.error(error);
       if (error instanceof ApiError) {
