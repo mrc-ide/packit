@@ -3,8 +3,15 @@ run-name: ${{ github.actor }} is testing packit features
 on:
   workflow_run:
     workflows: ["backend-test"]
-    branches: ["*"]
-    types: [completed]
+    types:
+      - completed
+  push:
+    branches:
+      - "main"
+  pull_request:
+    branches:
+      - "main"
+      - "mrc-*"
 env:
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 
