@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.jdbc.Sql
 import packit.integration.IntegrationTest
@@ -147,5 +146,4 @@ class UserControllerTest : IntegrationTest()
         assertEquals(userRepository.findByUsername(testUser.username), null)
         assertEquals(roleRepository.findByName(username), null)
     }
-    
 }

@@ -140,7 +140,6 @@ class LoginControllerTestBasic : IntegrationTest()
         val result = LoginTestHelper.getUpdatePasswordResponse(updatePassword, restTemplate, testUser.username)
 
         assertEquals(result.statusCode, HttpStatus.NO_CONTENT)
-
     }
 }
 
@@ -165,7 +164,7 @@ object LoginTestHelper
     ): ResponseEntity<String>
     {
         val jsonBody = ObjectMapper().writeValueAsString(body)
-        return getLoginResponse(jsonBody, restTemplate, "/auth/${username}/basic/password")
+        return getLoginResponse(jsonBody, restTemplate, "/auth/$username/basic/password")
     }
 
     private fun getLoginResponse(

@@ -63,5 +63,4 @@ class UserControllerTest
         assertEquals(testCreateUser.email, result.body?.username)
         assertEquals(testUUID, result.body?.id)
     }
-
 }

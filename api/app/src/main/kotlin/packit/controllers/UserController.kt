@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*
 import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.model.dto.CreateBasicUser
-import packit.model.dto.UpdatePassword
 import packit.model.dto.UpdateUserRoles
 import packit.model.dto.UserDto
 import packit.model.toDto
@@ -40,7 +39,7 @@ class UserController(
 
         return ResponseEntity.created(URI.create("/user/${user.id}")).body(user.toDto())
     }
-    
+
     @PutMapping("/{username}/roles")
     fun updateUserRoles(
         @RequestBody @Validated updateUserRoles: UpdateUserRoles,
