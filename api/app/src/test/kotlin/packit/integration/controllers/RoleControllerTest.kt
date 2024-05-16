@@ -157,10 +157,11 @@ class RoleControllerTest : IntegrationTest()
             String::class.java
         )
 
-        assertEquals(result.statusCode, HttpStatus.NO_CONTENT)
+        assertSuccess(result)
         val role = roleRepository.findByName("testRole")!!
         assertEquals(1, role.rolePermissions.size)
         assertEquals("packet.read", role.rolePermissions.first().permission.name)
+        assertEquals(1, ObjectMapper().readTree(result.body).get("rolePermissions").size())
     }
 
     @Test
