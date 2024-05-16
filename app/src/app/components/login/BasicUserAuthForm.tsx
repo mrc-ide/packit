@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { z } from "zod";
 import appConfig from "../../../config/appConfig";
 import { ApiError } from "../../../lib/errors";
@@ -10,10 +10,13 @@ import { Button } from "../Base/Button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../Base/Form";
 import { Input } from "../Base/Input";
 import { useUser } from "../providers/UserProvider";
+import { HttpStatus } from "../../../lib/types/HttpStatus";
 
 export const BasicUserAuthForm = () => {
   const navigate = useNavigate();
   const { setUser } = useUser();
+  const [searchParams] = useSearchParams();
+  const email = searchParams.get("email");
 
   const formSchema = z.object({
     email: z.string().email(),
@@ -23,7 +26,7 @@ export const BasicUserAuthForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
+      email: email || "",
       password: ""
     }
   });
@@ -40,7 +43,7 @@ export const BasicUserAuthForm = () => {
       navigate("/");
     } catch (error) {
       console.error(error);
-      if (error instanceof ApiError && error.status === 401) {
+      if (error instanceof ApiError && error.status === HttpStatus.Unauthorized) {
         if (error.message.includes("must change your password")) {
           return navigate(`/update-password?email=${values.email}&error=${error.message}`);
         }
