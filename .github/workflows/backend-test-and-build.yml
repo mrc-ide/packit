@@ -3,15 +3,8 @@ run-name: ${{ github.actor }} is testing packit backend features
 on:
   workflow_run:
     workflows: ["build-docker-db"]
-    types:
-      - completed
-  push:
-    branches:
-      - "main"
-  pull_request:
-    branches:
-      - "main"
-      - "mrc-*"
+    branches: ["*"]
+    types: [completed]
 env:
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 
