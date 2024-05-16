@@ -4,6 +4,8 @@ import { AccountHeaderDropdown } from "./AccountHeaderDropdown";
 
 import { useUser } from "../providers/UserProvider";
 import { ThemeToggleButton } from "./ThemeToggleButton";
+import { cn } from "../../../lib/cn";
+import { buttonVariants } from "../Base/Button";
 
 export default function Header() {
   const { user } = useUser();
@@ -27,6 +29,11 @@ export default function Header() {
               {/* <NavigationLink to="/accessibility" className="mx-6 hidden md:flex">
                 Accessibility
               </NavigationLink> */}
+              {user?.authorities.includes("user.manage") && (
+                <NavLink to="/manage-roles" className={cn(buttonVariants({ variant: "ghost" }), "justify-start")}>
+                  Manage Access
+                </NavLink>
+              )}
               <ThemeToggleButton />
               {user && <AccountHeaderDropdown />}
             </div>

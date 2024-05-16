@@ -29,7 +29,8 @@ export const mockUserState: UserState = {
   token:
     // eslint-disable-next-line max-len
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwYWNraXQiLCJpc3MiOiJwYWNraXQtYXBpIiwidXNlck5hbWUiOiJhYnN0ZXJuYXRvciIsImRpc3BsYXlOYW1lIjoiQW5tb2wgVGhhcGFyIiwiZGF0ZXRpbWUiOjE3MDI5NzgyMjgsImF1IjpbIltVU0VSXSJdLCJleHAiOjE3MDMwNjQ2Mjh9.o3b4PzZX76nP2tUxndGvusx-rytOkApodZ-geVPH9Pg",
-  exp: 1703064628
+  exp: 1703064628,
+  authorities: ["user.manage", "packet.read"]
 };
 
 export const mockPacketGroupSummary: PageablePacketGroupSummary = {
