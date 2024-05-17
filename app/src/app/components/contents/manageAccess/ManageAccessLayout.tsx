@@ -1,6 +1,8 @@
 import { Outlet } from "react-router-dom";
 import { Sidebar } from "../common/Sidebar";
 import { SidebarItem } from "../../../../lib/types/SidebarItem";
+import { useUser } from "../../providers/UserProvider";
+import { Unauthorized } from "../../Unauthorized";
 
 const sidebarItems: SidebarItem[] = [
   {
@@ -14,6 +16,11 @@ const sidebarItems: SidebarItem[] = [
 ];
 
 export const ManageAccessLayout = () => {
+  const { user } = useUser();
+
+  if (!user?.authorities.includes("user.manage")) {
+    return <Unauthorized />;
+  }
   return (
     <Sidebar sidebarItems={sidebarItems}>
       <Outlet />
