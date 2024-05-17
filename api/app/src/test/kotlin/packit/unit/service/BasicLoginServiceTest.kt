@@ -12,6 +12,7 @@ import packit.security.profile.BasicUserDetails
 import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
 import packit.service.BasicLoginService
+import packit.service.UserService
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -32,27 +33,30 @@ class BasicLoginServiceTest
     private val mockAuthenticationManager = mock<AuthenticationManager> {
         on { authenticate(any<UsernamePasswordAuthenticationToken>()) } doReturn mockAuthentication
     }
+    private val mockUserService = mock<UserService>()
 
     @Test
     fun `can authenticate and issue token`()
     {
-        val sut = BasicLoginService(mockIssuer, mockAuthenticationManager)
+        val loginWithPassword = LoginWithPassword("fake email", "fake password")
+        val sut = BasicLoginService(mockIssuer, mockAuthenticationManager, mockUserService)
 
-        val token = sut.authenticateAndIssueToken(LoginWithPassword("fake email", "fake password"))
+        val token = sut.authenticateAndIssueToken(loginWithPassword)
 
         verify(mockAuthenticationManager).authenticate(
             UsernamePasswordAuthenticationToken(
-                "fake email",
-                "fake password"
+                loginWithPassword.email,
+                loginWithPassword.password
             )
         )
         assertEquals(mapOf("token" to "fake jwt"), token)
+        verify(mockUserService).checkAndUpdateLastLoggedIn(loginWithPassword.email)
     }
 
     @Test
     fun `throws if email and password are empty`()
     {
-        val sut = BasicLoginService(mockIssuer, mockAuthenticationManager)
+        val sut = BasicLoginService(mockIssuer, mockAuthenticationManager, mockUserService)
 
         val ex = assertThrows<PackitException> { sut.authenticateAndIssueToken(LoginWithPassword("", "")) }
         assertEquals("emptyCredentials", ex.key)
