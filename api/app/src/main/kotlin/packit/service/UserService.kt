@@ -81,7 +81,6 @@ class BaseUserService(
         return userRepository.save(user)
     }
 
-
     override fun getUserForLogin(username: String): User
     {
         return userRepository.findByUsername(username) ?: throw AuthenticationException()
