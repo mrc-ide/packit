@@ -3,22 +3,27 @@ package packit.service
 import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import packit.exceptions.PackitAuthenticationException
 import packit.exceptions.PackitException
-import packit.model.Role
 import packit.model.User
 import packit.model.dto.CreateBasicUser
-import packit.model.dto.UpdateUserRoles
+import packit.model.dto.UpdatePassword
 import packit.repository.UserRepository
 import java.time.Instant
+import javax.naming.AuthenticationException
 
 interface UserService
 {
     fun saveUserFromGithub(username: String, displayName: String?, email: String?): User
-    fun createBasicUser(createBasicUser: CreateBasicUser)
-    fun updateUserLastLoggedIn(user: User, lastLoggedIn: Instant): User
+    fun createBasicUser(createBasicUser: CreateBasicUser): User
     fun getUserForLogin(username: String): User
     fun deleteUser(username: String)
-    fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles)
+    fun getUsersByUsernames(usernames: List<String>): List<User>
+    fun getByUsername(username: String): User?
+    fun saveUser(user: User): User
+    fun saveUsers(users: List<User>): List<User>
+    fun updatePassword(username: String, updatePassword: UpdatePassword)
+    fun checkAndUpdateLastLoggedIn(username: String)
 }
 
 @Service
@@ -50,7 +55,7 @@ class BaseUserService(
         return newUser
     }
 
-    override fun createBasicUser(createBasicUser: CreateBasicUser)
+    override fun createBasicUser(createBasicUser: CreateBasicUser): User
     {
         if (userRepository.existsByUsername(createBasicUser.email))
         {
@@ -67,10 +72,10 @@ class BaseUserService(
             roles = matchingRoles.apply { add(roleService.getUsernameRole(createBasicUser.email)) },
             password = passwordEncoder.encode(createBasicUser.password)
         )
-        userRepository.save(newUser)
+        return userRepository.save(newUser)
     }
 
-    override fun updateUserLastLoggedIn(user: User, lastLoggedIn: Instant): User
+    internal fun updateUserLastLoggedIn(user: User, lastLoggedIn: Instant): User
     {
         user.lastLoggedIn = lastLoggedIn
         return userRepository.save(user)
@@ -78,21 +83,59 @@ class BaseUserService(
 
     override fun getUserForLogin(username: String): User
     {
-        val user =
-            userRepository.findByUsername(username) ?: throw PackitException("userNotFound", HttpStatus.UNAUTHORIZED)
-        return updateUserLastLoggedIn(user, Instant.now())
+        return userRepository.findByUsername(username) ?: throw AuthenticationException()
     }
 
-    override fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles)
+    override fun getUsersByUsernames(usernames: List<String>): List<User>
+    {
+        val foundUsers = userRepository.findByUsernameIn(usernames)
+
+        if (foundUsers.size != usernames.toSet().size)
+        {
+            throw PackitException("invalidUsersProvided", HttpStatus.BAD_REQUEST)
+        }
+        return foundUsers
+    }
+
+    override fun getByUsername(username: String): User?
+    {
+        return userRepository.findByUsername(username)
+    }
+
+    override fun saveUser(user: User): User
+    {
+        return userRepository.save(user)
+    }
+
+    override fun saveUsers(users: List<User>): List<User>
+    {
+        return userRepository.saveAll(users)
+    }
+
+    override fun updatePassword(username: String, updatePassword: UpdatePassword)
     {
         val user = userRepository.findByUsername(username)
             ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
 
-        val rolesToUpdate = getRolesForUpdate(updateUserRoles.roleNamesToAdd + updateUserRoles.roleNamesToRemove)
-        addRolesToUser(user, rolesToUpdate.filter { it.name in updateUserRoles.roleNamesToAdd })
-        removeRolesFromUser(user, rolesToUpdate.filter { it.name in updateUserRoles.roleNamesToRemove })
+        if (!passwordEncoder.matches(updatePassword.currentPassword, user.password))
+        {
+            throw PackitException("invalidPassword", HttpStatus.BAD_REQUEST)
+        }
 
-        userRepository.save(user)
+        user.password = passwordEncoder.encode(updatePassword.newPassword)
+        updateUserLastLoggedIn(user, Instant.now())
+    }
+
+    override fun checkAndUpdateLastLoggedIn(username: String)
+    {
+        val user = userRepository.findByUsername(username)
+            ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
+        if (user.lastLoggedIn == null)
+        {
+            throw PackitAuthenticationException("updatePassword", HttpStatus.FORBIDDEN)
+        }
+
+        updateUserLastLoggedIn(user, Instant.now())
     }
 
     override fun deleteUser(username: String)
@@ -102,35 +145,5 @@ class BaseUserService(
 
         userRepository.delete(user)
         roleService.deleteUsernameRole(username)
-    }
-
-    internal fun addRolesToUser(user: User, rolesToAdd: List<Role>)
-    {
-        if (rolesToAdd.any { user.roles.contains(it) })
-        {
-            throw PackitException("userRoleExists", HttpStatus.BAD_REQUEST)
-        }
-        user.roles.addAll(rolesToAdd)
-    }
-
-    internal fun removeRolesFromUser(user: User, rolesToRemove: List<Role>)
-    {
-        val matchedRolesToRemove = rolesToRemove.map { roleToRemove ->
-            val matchedPermission = user.roles.find { roleToRemove == it }
-                ?: throw PackitException("userRoleNotExists", HttpStatus.BAD_REQUEST)
-
-            matchedPermission
-        }
-        user.roles.removeAll(matchedRolesToRemove)
-    }
-
-    internal fun getRolesForUpdate(roleNames: List<String>): List<Role>
-    {
-        val roles = roleService.getRolesByRoleNames(roleNames)
-        if (roles.any { it.isUsername })
-        {
-            throw PackitException("cannotUpdateUsernameRoles", HttpStatus.BAD_REQUEST)
-        }
-        return roles
     }
 }

@@ -10,46 +10,54 @@ import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.model.dto.CreateBasicUser
 import packit.model.dto.UpdateUserRoles
+import packit.model.dto.UserDto
+import packit.model.toDto
+import packit.service.UserRoleService
 import packit.service.UserService
+import java.net.URI
 
 @Controller
 @PreAuthorize("hasAuthority('user.manage')")
 @RequestMapping("/user")
-class UserController(private val config: AppConfig, private val userService: UserService)
+class UserController(
+    private val config: AppConfig,
+    private val userService: UserService,
+    private val userRoleService: UserRoleService
+)
 {
     @PostMapping("/basic")
     fun createBasicUser(
         @RequestBody @Validated createBasicUser: CreateBasicUser
-    ): ResponseEntity<Map<String, String?>>
+    ): ResponseEntity<UserDto>
     {
         if (!config.authEnableBasicLogin)
         {
             throw PackitException("basicLoginDisabled", HttpStatus.FORBIDDEN)
         }
 
-        userService.createBasicUser(createBasicUser)
+        val user = userService.createBasicUser(createBasicUser)
 
-        return ResponseEntity.ok(mapOf("message" to "User created"))
+        return ResponseEntity.created(URI.create("/user/${user.id}")).body(user.toDto())
     }
 
-    @PutMapping("/update-roles/{username}")
+    @PutMapping("/{username}/roles")
     fun updateUserRoles(
         @RequestBody @Validated updateUserRoles: UpdateUserRoles,
         @PathVariable username: String
-    ): ResponseEntity<Unit>
+    ): ResponseEntity<UserDto>
     {
-        userService.updateUserRoles(username, updateUserRoles)
+        val updatedUser = userRoleService.updateUserRoles(username, updateUserRoles)
 
-        return ResponseEntity.noContent().build()
+        return ResponseEntity.ok(updatedUser.toDto())
     }
 
     @DeleteMapping("/{username}")
     fun deleteUser(
         @PathVariable username: String
-    ): ResponseEntity<Map<String, String?>>
+    ): ResponseEntity<Unit>
     {
         userService.deleteUser(username)
 
-        return ResponseEntity.ok(mapOf("message" to "User deleted"))
+        return ResponseEntity.noContent().build()
     }
 }

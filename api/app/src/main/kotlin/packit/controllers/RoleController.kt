@@ -8,41 +8,55 @@ import org.springframework.web.bind.annotation.*
 import packit.model.dto.CreateRole
 import packit.model.dto.RoleDto
 import packit.model.dto.UpdateRolePermissions
+import packit.model.dto.UpdateRoleUsers
 import packit.model.toDto
 import packit.service.RoleService
+import packit.service.UserRoleService
+import java.net.URI
 
 @Controller
 @PreAuthorize("hasAuthority('user.manage')")
 @RequestMapping("/role")
-class RoleController(private val roleService: RoleService)
+class RoleController(private val roleService: RoleService, private val userRoleService: UserRoleService)
 {
     @PostMapping()
-    fun createRole(@RequestBody @Validated createRole: CreateRole): ResponseEntity<Map<String, String?>>
+    fun createRole(@RequestBody @Validated createRole: CreateRole): ResponseEntity<RoleDto>
     {
-        roleService.createRole(createRole)
+        val role = roleService.createRole(createRole)
 
-        return ResponseEntity.ok(mapOf("message" to "Role created"))
+        return ResponseEntity.created(URI.create("/role/${role.id}")).body(role.toDto())
     }
 
     @DeleteMapping("/{roleName}")
     fun deleteRole(
         @PathVariable roleName: String
-    ): ResponseEntity<Map<String, String?>>
+    ): ResponseEntity<Unit>
     {
         roleService.deleteRole(roleName)
 
         return ResponseEntity.noContent().build()
     }
 
-    @PutMapping("/update-permissions/{roleName}")
+    @PutMapping("/{roleName}/permissions")
     fun updatePermissionsToRole(
         @RequestBody @Validated updateRolePermissions: UpdateRolePermissions,
         @PathVariable roleName: String
-    ): ResponseEntity<Unit>
+    ): ResponseEntity<RoleDto>
     {
-        roleService.updatePermissionsToRole(roleName, updateRolePermissions)
+        val updatedRole = roleService.updatePermissionsToRole(roleName, updateRolePermissions)
 
-        return ResponseEntity.noContent().build()
+        return ResponseEntity.ok(updatedRole.toDto())
+    }
+
+    @PutMapping("{roleName}/users")
+    fun updateUsersToRole(
+        @RequestBody @Validated usersToUpdate: UpdateRoleUsers,
+        @PathVariable roleName: String
+    ): ResponseEntity<RoleDto>
+    {
+        val updatedRole = userRoleService.updateRoleUsers(roleName, usersToUpdate)
+
+        return ResponseEntity.ok(updatedRole.toDto())
     }
 
     @GetMapping("/names")

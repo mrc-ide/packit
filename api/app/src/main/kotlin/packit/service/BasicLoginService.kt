@@ -12,7 +12,8 @@ import packit.security.provider.JwtIssuer
 @Component
 class BasicLoginService(
     val jwtIssuer: JwtIssuer,
-    val authenticationManager: AuthenticationManager
+    val authenticationManager: AuthenticationManager,
+    val userService: UserService
 )
 {
     fun authenticateAndIssueToken(loginRequest: LoginWithPassword): Map<String, String>
@@ -28,6 +29,7 @@ class BasicLoginService(
                 loginRequest.password
             )
         )
+        userService.checkAndUpdateLastLoggedIn(loginRequest.email)
 
         val userDetails = (authentication.principal as BasicUserDetails)
         val token = jwtIssuer.issue(userDetails.principal)

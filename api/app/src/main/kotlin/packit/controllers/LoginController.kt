@@ -8,15 +8,18 @@ import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.model.dto.LoginWithPassword
 import packit.model.dto.LoginWithToken
+import packit.model.dto.UpdatePassword
 import packit.service.BasicLoginService
 import packit.service.GithubAPILoginService
+import packit.service.UserService
 
 @RestController
 @RequestMapping("/auth")
 class LoginController(
     val gitApiLoginService: GithubAPILoginService,
     val basicLoginService: BasicLoginService,
-    val config: AppConfig
+    val config: AppConfig,
+    val userService: UserService,
 )
 {
     @PostMapping("/login/api")
@@ -57,5 +60,21 @@ class LoginController(
             "enableAuth" to config.authEnabled
         )
         return ResponseEntity.ok(authConfig)
+    }
+
+    @PostMapping("/{username}/basic/password")
+    fun updatePassword(
+        @PathVariable username: String,
+        @RequestBody @Validated updatePassword: UpdatePassword
+    ): ResponseEntity<Unit>
+    {
+        if (!config.authEnableBasicLogin)
+        {
+            throw PackitException("basicLoginDisabled", HttpStatus.FORBIDDEN)
+        }
+
+        userService.updatePassword(username, updatePassword)
+
+        return ResponseEntity.noContent().build()
     }
 }

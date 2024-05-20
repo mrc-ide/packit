@@ -19,6 +19,7 @@ import packit.repository.RoleRepository
 import packit.service.BaseRoleService
 import packit.service.PermissionService
 import packit.service.RolePermissionService
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class RoleServiceTest
@@ -93,8 +94,9 @@ class RoleServiceTest
             listOf(Permission(name = "p1", description = "d1"), Permission(name = "p2", description = "d2"))
         whenever(permissionService.checkMatchingPermissions(createRole.permissionNames)).thenReturn(permissions)
         whenever(roleRepository.existsByName(createRole.name)).thenReturn(false)
+        whenever(roleRepository.save(any<Role>())).thenAnswer { it.getArgument(0) }
 
-        roleService.createRole(createRole)
+        val result = roleService.createRole(createRole)
 
         verify(roleRepository).save(
             argThat {
@@ -102,6 +104,9 @@ class RoleServiceTest
                 this.rolePermissions.size == 2
             }
         )
+
+        assertEquals(createRole.name, result.name)
+        assertEquals(2, result.rolePermissions.size)
     }
 
     @Test
@@ -121,15 +126,18 @@ class RoleServiceTest
         val permissions =
             listOf(Permission(name = "p1", description = "d1"), Permission(name = "p2", description = "d2"))
         whenever(roleRepository.existsByName("roleName")).thenReturn(false)
+        whenever(roleRepository.save(any<Role>())).thenAnswer { it.getArgument(0) }
 
-        roleService.saveRole(roleName, permissions)
+        val savedRole = roleService.saveRole(roleName, permissions)
 
         verify(roleRepository).save(
             argThat {
                 this.name == roleName
-                this.rolePermissions.size == 2
+                this.rolePermissions.size == permissions.size
             }
         )
+        assertEquals(roleName, savedRole.name)
+        assertEquals(permissions.size, savedRole.rolePermissions.size)
     }
 
     @Test
@@ -276,7 +284,8 @@ class RoleServiceTest
         }
     }
 
-    fun `updatePermissionsToRole calls correct methods and saves role`()
+    @Test
+    fun `updatePermissionsToRole calls correct methods and saves role & returns new role`()
     {
         val roleName = "roleName"
         val permissionName = "permission1"
@@ -288,8 +297,10 @@ class RoleServiceTest
                 createRoleWithPermission(roleName, "differentPermission").rolePermissions.first()
             )
         )
+        whenever(roleRepository.save(any<Role>())).thenAnswer { it.getArgument(0) }
+        whenever(rolePermissionService.removeRolePermissionsFromRole(role, listOf())).thenReturn(role)
 
-        roleService.updatePermissionsToRole(roleName, UpdateRolePermissions())
+        val updatedRole = roleService.updatePermissionsToRole(roleName, UpdateRolePermissions())
 
         verify(roleRepository).save(
             argThat {
@@ -299,6 +310,8 @@ class RoleServiceTest
         )
         verify(rolePermissionService).removeRolePermissionsFromRole(role, listOf())
         verify(rolePermissionService).getRolePermissionsToAdd(role, listOf())
+        assertEquals(role, updatedRole)
+        assertEquals(2, updatedRole.rolePermissions.size)
     }
 
     @Test
@@ -404,6 +417,29 @@ class RoleServiceTest
         assertEquals(role, result)
     }
 
+    @Test
+    fun `getByRoleName returns role when role exists in repository`()
+    {
+        val roleName = "existingRole"
+        val role = Role(name = roleName)
+        whenever(roleRepository.findByName(roleName)).thenReturn(role)
+
+        val result = roleService.getByRoleName(roleName)
+
+        assertEquals(role, result)
+    }
+
+    @Test
+    fun `getByRoleName returns null when role does not exist in repository`()
+    {
+        val roleName = "nonExistingRole"
+        whenever(roleRepository.findByName(roleName)).thenReturn(null)
+
+        val result = roleService.getByRoleName(roleName)
+
+        assertNull(result)
+    }
+
     private fun createRoleWithPermission(
         roleName: String,
         permissionName: String,
@@ -413,6 +449,7 @@ class RoleServiceTest
     ): Role
     {
         return Role(
+            id = 1,
             name = roleName,
             rolePermissions = mutableListOf(
                 RolePermission(

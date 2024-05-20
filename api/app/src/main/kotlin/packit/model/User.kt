@@ -1,6 +1,7 @@
 package packit.model
 
 import jakarta.persistence.*
+import packit.model.dto.BasicUserDto
 import packit.model.dto.UserDto
 import java.time.Instant
 import java.util.*
@@ -20,11 +21,14 @@ class User(
     val userSource: String,
     val displayName: String?,
     val email: String? = null,
-    val password: String? = null,
+    var password: String? = null,
     var lastLoggedIn: Instant? = null,
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: UUID? = null
 )
 
-fun User.toDto() = UserDto(username, id!!)
+fun User.toBasicDto() = BasicUserDto(username, id!!)
+
+fun User.toDto() =
+    UserDto(username, roles.map { it.toBasicDto() }, disabled, userSource, displayName, email, id!!)

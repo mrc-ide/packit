@@ -28,13 +28,12 @@ class UserControllerTest : IntegrationTest()
     @Autowired
     lateinit var userRepository: UserRepository
 
-    private val testCreateUserBody = ObjectMapper().writeValueAsString(
-        CreateBasicUser(
-            email = "random@email",
-            password = "password",
-            displayName = "Random User",
-        )
+    private val testCreateUser = CreateBasicUser(
+        email = "test@email",
+        password = "password",
+        displayName = "Random User",
     )
+    private val testCreateUserBody = ObjectMapper().writeValueAsString(testCreateUser)
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
@@ -46,8 +45,10 @@ class UserControllerTest : IntegrationTest()
             String::class.java
         )
 
-        assertSuccess(result)
-        assertNotNull(userRepository.findByUsername("random@email"))
+        assertEquals(HttpStatus.CREATED, result.statusCode)
+        assertEquals(testCreateUser.email, ObjectMapper().readTree(result.body).get("username").asText())
+        assertEquals(testCreateUser.displayName, ObjectMapper().readTree(result.body).get("displayName").asText())
+        assertNotNull(userRepository.findByUsername(testCreateUser.email))
     }
 
     @Test
@@ -90,7 +91,7 @@ class UserControllerTest : IntegrationTest()
         val testRole = roleRepository.save(Role(name = "TEST_ROLE"))
         val testUser = userRepository.save(
             User(
-                username = "test",
+                username = "test@email.com",
                 disabled = false,
                 userSource = "basic",
                 displayName = "test user",
@@ -105,21 +106,24 @@ class UserControllerTest : IntegrationTest()
         )
 
         val result = restTemplate.exchange(
-            "/user/update-roles/${testUser.username}",
+            "/user/${testUser.username}/roles",
             HttpMethod.PUT,
             getTokenizedHttpEntity(data = updateUserRolesJSON),
             String::class.java
         )
 
-        assertEquals(HttpStatus.NO_CONTENT, result.statusCode)
-        assertEquals(userRepository.findByUsername("test")?.roles?.map { it.name }, listOf("ADMIN"))
+        assertSuccess(result)
+        assertEquals(userRepository.findByUsername("test@email.com")?.roles?.map { it.name }, listOf("ADMIN"))
+        assertEquals(testUser.username, ObjectMapper().readTree(result.body).get("username").asText())
+        assertEquals(testUser.displayName, ObjectMapper().readTree(result.body).get("displayName").asText())
+        assertEquals(1, ObjectMapper().readTree(result.body).get("roles").size())
     }
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
     fun `deleteUser deletes user and username role`()
     {
-        val username = "testUsername"
+        val username = "test@email.com"
         val testRole = roleRepository.save(Role(name = username, isUsername = true))
         val testUser = userRepository.save(
             User(
@@ -138,7 +142,7 @@ class UserControllerTest : IntegrationTest()
             String::class.java
         )
 
-        assertSuccess(result)
+        assertEquals(HttpStatus.NO_CONTENT, result.statusCode)
         assertEquals(userRepository.findByUsername(testUser.username), null)
         assertEquals(roleRepository.findByName(username), null)
     }

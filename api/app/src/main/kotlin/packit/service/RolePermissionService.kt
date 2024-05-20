@@ -10,7 +10,7 @@ import packit.repository.*
 
 interface RolePermissionService
 {
-    fun removeRolePermissionsFromRole(role: Role, removeRolePermissions: List<UpdateRolePermission>)
+    fun removeRolePermissionsFromRole(role: Role, removeRolePermissions: List<UpdateRolePermission>): Role
     fun getRolePermissionsToAdd(role: Role, addRolePermissions: List<UpdateRolePermission>): List<RolePermission>
 }
 
@@ -50,18 +50,22 @@ class BaseRolePermissionService(
         }
     }
 
-    override fun removeRolePermissionsFromRole(role: Role, removeRolePermissions: List<UpdateRolePermission>)
+    override fun removeRolePermissionsFromRole(role: Role, removeRolePermissions: List<UpdateRolePermission>): Role
     {
         val rolePermissionsToRemove = getRolePermissionsToUpdate(role, removeRolePermissions)
+        var rolePermissionsToRemoveIds = mutableListOf<Int>()
 
-        val matchedRolePermissionsToRemove = rolePermissionsToRemove.map { rolePermissionToRemove ->
-            val matchedPermission = role.rolePermissions.find { rolePermissionToRemove == it }
+        for (rolePermission in rolePermissionsToRemove)
+        {
+            val matchedRolePermission = role.rolePermissions.find { rolePermission == it }
                 ?: throw PackitException("rolePermissionDoesNotExist", HttpStatus.BAD_REQUEST)
 
-            matchedPermission
+            rolePermissionsToRemoveIds.add(matchedRolePermission.id!!)
+            role.rolePermissions.remove(matchedRolePermission)
         }
 
-        rolePermissionRepository.deleteAllByIdIn(matchedRolePermissionsToRemove.map { it.id!! })
+        rolePermissionRepository.deleteAllByIdIn(rolePermissionsToRemoveIds)
+        return role
     }
 
     override fun getRolePermissionsToAdd(
