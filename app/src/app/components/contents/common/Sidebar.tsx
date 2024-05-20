@@ -28,7 +28,7 @@ export const Sidebar = ({ sidebarItems, children }: SidebarProps) => {
           ))}
         </nav>
       </aside>
-      <div className="flex-1 lg:max-w-6xl">{children}</div>
+      <div className="flex-1 lg:max-w-7xl h-full flex-col space-y-4 pl-8 lg:pl-0 pr-8">{children}</div>
     </div>
   );
 };
