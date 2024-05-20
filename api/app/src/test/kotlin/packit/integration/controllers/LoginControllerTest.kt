@@ -2,10 +2,9 @@ package packit.integration.controllers
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.*
@@ -15,7 +14,9 @@ import packit.integration.IntegrationTest
 import packit.model.User
 import packit.model.dto.LoginWithPassword
 import packit.model.dto.LoginWithToken
+import packit.model.dto.UpdatePassword
 import packit.repository.UserRepository
+import java.time.Instant
 import kotlin.test.assertEquals
 
 class LoginControllerTestGithub : IntegrationTest()
@@ -59,7 +60,6 @@ class LoginControllerTestGithub : IntegrationTest()
 }
 
 @TestPropertySource(properties = ["auth.method=basic"])
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class LoginControllerTestBasic : IntegrationTest()
 {
     @Autowired
@@ -69,8 +69,9 @@ class LoginControllerTestBasic : IntegrationTest()
     lateinit var passwordEncoder: PasswordEncoder
 
     private lateinit var testUser: User
+    val userPassword = "password"
 
-    @BeforeAll
+    @BeforeEach
     fun setupData()
     {
         testUser = User(
@@ -80,12 +81,13 @@ class LoginControllerTestBasic : IntegrationTest()
             email = "test@email.com",
             userSource = "basic",
             roles = mutableListOf(),
-            password = passwordEncoder.encode("password")
+            password = passwordEncoder.encode(userPassword),
+            lastLoggedIn = Instant.now()
         )
         userRepository.save(testUser)
     }
 
-    @AfterAll
+    @AfterEach
     fun cleanupData()
     {
         userRepository.delete(testUser)
@@ -128,6 +130,17 @@ class LoginControllerTestBasic : IntegrationTest()
 
         assertUnauthorized(result)
     }
+
+    @Test
+    fun `updatePassword can update a user's password`()
+    {
+        val newPassword = "newPassword"
+        val updatePassword = UpdatePassword(userPassword, newPassword)
+
+        val result = LoginTestHelper.getUpdatePasswordResponse(updatePassword, restTemplate, testUser.username)
+
+        assertEquals(result.statusCode, HttpStatus.NO_CONTENT)
+    }
 }
 
 object LoginTestHelper
@@ -142,6 +155,16 @@ object LoginTestHelper
     {
         val jsonBody = ObjectMapper().writeValueAsString(body)
         return getLoginResponse(jsonBody, restTemplate, "/auth/login/api")
+    }
+
+    fun getUpdatePasswordResponse(
+        body: UpdatePassword,
+        restTemplate: TestRestTemplate,
+        username: String
+    ): ResponseEntity<String>
+    {
+        val jsonBody = ObjectMapper().writeValueAsString(body)
+        return getLoginResponse(jsonBody, restTemplate, "/auth/$username/basic/password")
     }
 
     private fun getLoginResponse(

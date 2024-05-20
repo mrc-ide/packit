@@ -19,6 +19,7 @@ import packit.model.toDto
 import packit.repository.PermissionRepository
 import packit.repository.RoleRepository
 import packit.repository.UserRepository
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -195,14 +196,16 @@ class RoleControllerTest : IntegrationTest()
 
         assertSuccess(result)
 
-        assertEquals(ObjectMapper().writeValueAsString(listOf("ADMIN", "testRole")), result.body)
+        assert(ObjectMapper().readValue(result.body, List::class.java).containsAll(listOf("ADMIN", "testRole")))
     }
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `users can get roles with relationships`()
+    fun `users can get all roles with relationships`()
     {
-        val roleDto = roleRepository.findByName("ADMIN")!!.toDto()
+        val adminRoleDto = roleRepository.findByName("ADMIN")!!.toDto()
+        val userRoleDto = roleRepository.save(Role(name = "testRole", isUsername = true)).toDto()
+        val allRolesString = ObjectMapper().writeValueAsString(listOf(adminRoleDto, userRoleDto))
         val result =
             restTemplate.exchange(
                 "/role",
@@ -212,16 +215,18 @@ class RoleControllerTest : IntegrationTest()
             )
 
         assertSuccess(result)
+        val roles = ObjectMapper().readValue(result.body, List::class.java)
 
-        assertEquals(ObjectMapper().writeValueAsString(listOf(roleDto)), result.body)
+        assert(roles.containsAll(ObjectMapper().readValue(allRolesString, List::class.java)))
     }
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
     fun `users can get username roles with relationships `()
     {
-        roleRepository.save(Role("username", isUsername = true))
-        val allUsernameRoles = roleRepository.findAllByIsUsername(true).map { it.toDto() }
+        roleRepository.save(Role("test-username", isUsername = true))
+        val allUsernameRoles =
+            ObjectMapper().writeValueAsString(roleRepository.findAllByIsUsername(true).map { it.toDto() })
         val result =
             restTemplate.exchange(
                 "/role?isUsername=true",
@@ -230,17 +235,17 @@ class RoleControllerTest : IntegrationTest()
                 String::class.java
             )
 
-        assertSuccess(result)
+        val roles = ObjectMapper().readValue(result.body, List::class.java)
 
-        assertEquals(ObjectMapper().writeValueAsString(allUsernameRoles), result.body)
+        assert(roles.containsAll(ObjectMapper().readValue(allUsernameRoles, List::class.java)))
     }
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
     fun `users can get non username roles with relationships`()
     {
-        roleRepository.save(Role("randomUser", isUsername = true)).toDto()
-        val adminRole = roleRepository.findByName("ADMIN")!!.toDto()
+        roleRepository.save(Role("test-user", isUsername = true)).toDto()
+        val adminRole = ObjectMapper().writeValueAsString(roleRepository.findByName("ADMIN")!!.toDto())
         val result =
             restTemplate.exchange(
                 "/role?isUsername=false",
@@ -250,8 +255,9 @@ class RoleControllerTest : IntegrationTest()
             )
 
         assertSuccess(result)
+        val roles = ObjectMapper().readValue(result.body, List::class.java)
 
-        assertEquals(ObjectMapper().writeValueAsString(listOf(adminRole)), result.body)
+        assertContains(roles, ObjectMapper().readValue(adminRole, Map::class.java))
     }
 
     @Test

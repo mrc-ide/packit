@@ -1,6 +1,7 @@
 import { PacketErrorBody } from "../types";
 import { getAuthHeader } from "./auth/getAuthHeader";
 import { ApiError } from "./errors";
+import { HttpStatus } from "./types/HttpStatus";
 
 export interface Fetcher {
   url: string;
@@ -28,5 +29,5 @@ export const fetcher = async ({ url, method = "GET", body, noAuth }: Fetcher) =>
   }
 
   const packetErrorMessage = (data as PacketErrorBody)?.error?.detail;
-  throw new ApiError(packetErrorMessage, res.status);
+  throw new ApiError(packetErrorMessage, res.status as HttpStatus);
 };

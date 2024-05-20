@@ -70,4 +70,44 @@ describe("BasicUserAuthForm", () => {
       expect(screen.getAllByText(/invalid email or password/i).length).toBe(2);
     });
   });
+
+  it("should navigate to update password page if api returns 403 forbidden with update password message", async () => {
+    const errorMessage = "must change your password";
+    const email = "test@email.com";
+    server.use(
+      rest.post("*", (req, res, ctx) => {
+        return res(ctx.status(403), ctx.json({ error: { detail: errorMessage } }));
+      })
+    );
+    render(
+      <MemoryRouter>
+        <UserProvider>
+          <BasicUserAuthForm />
+        </UserProvider>
+      </MemoryRouter>
+    );
+
+    userEvent.type(screen.getByLabelText(/email/i), email);
+    userEvent.type(screen.getByLabelText(/password/i), "password");
+    userEvent.click(screen.getByRole("button", { name: /login/i }));
+
+    await waitFor(() => {
+      expect(mockedUsedNavigate).toHaveBeenCalledWith(`/update-password?email=${email}&error=${errorMessage}`);
+    });
+  });
+
+  it("should fill in email and success message if update password success message is in search params", async () => {
+    const successMessage = "Password updated successfully. Please login.";
+    const email = "test@email.com";
+    render(
+      <MemoryRouter initialEntries={[`/login?email=${email}&success=${successMessage}`]}>
+        <UserProvider>
+          <BasicUserAuthForm />
+        </UserProvider>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByLabelText(/email/i)).toHaveValue(email);
+    expect(screen.getByText(successMessage)).toBeVisible();
+  });
 });
