@@ -39,7 +39,7 @@ class Role(
 
 fun Role.toDto() =
     RoleDto(
-        name, rolePermissions.map { it.toDto() }, users.map { it.toBasicDto() }, id!!, isUsername
+        name, rolePermissions.map { it.toDto() }, users.map { it.toBasicDto() }, id!!
     )
 
 fun Role.toBasicDto() = BasicRoleDto(name, id!!)
