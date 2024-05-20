@@ -30,7 +30,7 @@ class RoleController(private val roleService: RoleService, private val userRoleS
     @DeleteMapping("/{roleName}")
     fun deleteRole(
         @PathVariable roleName: String
-    ): ResponseEntity<Map<String, String?>>
+    ): ResponseEntity<Unit>
     {
         roleService.deleteRole(roleName)
 
