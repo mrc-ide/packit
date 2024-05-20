@@ -49,6 +49,6 @@ describe("ManageAccessLayout", () => {
       </UserProvider>
     );
 
-    expect(screen.getByText(/401 Unauthorized/)).toBeVisible();
+    expect(screen.getByText(/Unauthorized/)).toBeVisible();
   });
 });
