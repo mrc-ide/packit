@@ -7,15 +7,19 @@ import org.mockito.Mockito.`when`
 import org.mockito.kotlin.*
 import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.password.PasswordEncoder
+import packit.exceptions.PackitAuthenticationException
 import packit.exceptions.PackitException
 import packit.model.Role
 import packit.model.User
 import packit.model.dto.CreateBasicUser
+import packit.model.dto.UpdatePassword
 import packit.repository.UserRepository
 import packit.service.BaseUserService
 import packit.service.RoleService
 import java.time.Instant
+import javax.naming.AuthenticationException
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 class UserServiceTest
@@ -97,17 +101,15 @@ class UserServiceTest
     }
 
     @Test
-    fun `getUserForLogin gets user from repository & updates latest time`()
+    fun `getUserForLogin gets user from repository`()
     {
         `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(mockUser)
-        `when`(mockUserRepository.save(mockUser)).doReturn(mockUser)
         val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
 
         val user = service.getUserForLogin(mockUser.username)
 
         assertEquals(user, mockUser)
         verify(mockUserRepository).findByUsername(mockUser.username)
-        verify(mockUserRepository).save(argThat { this == mockUser })
     }
 
     @Test
@@ -116,9 +118,8 @@ class UserServiceTest
         `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(null)
         val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
 
-        val ex = assertThrows<PackitException> { service.getUserForLogin(mockUser.username) }
+        val ex = assertThrows<AuthenticationException> { service.getUserForLogin(mockUser.username) }
 
-        assertEquals(ex.key, "userNotFound")
         verify(mockUserRepository).findByUsername(mockUser.username)
     }
 
@@ -289,6 +290,133 @@ class UserServiceTest
         assertThrows<PackitException> { service.deleteUser(username) }.apply {
             assertEquals("userNotFound", key)
             assertEquals(HttpStatus.NOT_FOUND, httpStatus)
+        }
+    }
+
+    @Test
+    fun `updatePassword updates password when current password is correct`()
+    {
+        val username = "existingUser"
+        val currentPassword = "currentPassword"
+        val newPassword = "newPassword"
+        val user = User(
+            username = username,
+            password = passwordEncoder.encode(currentPassword),
+            userSource = "basic",
+            disabled = false,
+            displayName = "displayName"
+        )
+        whenever(mockUserRepository.findByUsername(username)).thenReturn(user)
+        whenever(passwordEncoder.matches(currentPassword, user.password)).thenReturn(true)
+        whenever(mockUserRepository.save(user)).thenAnswer { it.getArgument(0) }
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        service.updatePassword(username, UpdatePassword(currentPassword, newPassword))
+
+        verify(passwordEncoder).encode(newPassword)
+        verify(mockUserRepository).save(user)
+        assertNotNull(user.lastLoggedIn)
+    }
+
+    @Test
+    fun `updatePassword throws exception when user does not exist`()
+    {
+        val username = "nonExistingUser"
+        val currentPassword = "currentPassword"
+        val newPassword = "newPassword"
+        whenever(mockUserRepository.findByUsername(username)).thenReturn(null)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        assertThrows<PackitException> {
+            service.updatePassword(
+                username,
+                UpdatePassword(currentPassword, newPassword)
+            )
+        }.apply {
+            assertEquals("userNotFound", key)
+            assertEquals(HttpStatus.NOT_FOUND, httpStatus)
+        }
+    }
+
+    @Test
+    fun `updatePassword throws exception when current password is incorrect`()
+    {
+        val username = "existingUser"
+        val currentPassword = "incorrectPassword"
+        val newPassword = "newPassword"
+        val user = User(
+            username = username,
+            password = passwordEncoder.encode("correctPassword"),
+            userSource = "basic",
+            disabled = false,
+            displayName = "displayName"
+        )
+        whenever(mockUserRepository.findByUsername(username)).thenReturn(user)
+        whenever(passwordEncoder.matches(currentPassword, user.password)).thenReturn(false)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        assertThrows<PackitException> {
+            service.updatePassword(
+                username,
+                UpdatePassword(currentPassword, newPassword)
+            )
+        }.apply {
+            assertEquals("invalidPassword", key)
+            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+        }
+    }
+
+    @Test
+    fun `checkAndUpdateLastLoggedIn updates lastLoggedIn when user exists and lastLoggedIn is not null`()
+    {
+        val username = "existingUser"
+        val user = User(
+            username = username,
+            displayName = "displayName",
+            disabled = false,
+            userSource = "github",
+            lastLoggedIn = Instant.now()
+        )
+        whenever(mockUserRepository.findByUsername(username)).thenReturn(user)
+        whenever(mockUserRepository.save(any<User>())).thenReturn(user)
+
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        service.checkAndUpdateLastLoggedIn(username)
+
+        verify(mockUserRepository).save(user)
+    }
+
+    @Test
+    fun `checkAndUpdateLastLoggedIn throws exception when user does not exist`()
+    {
+        val username = "nonExistingUser"
+        whenever(mockUserRepository.findByUsername(username)).thenReturn(null)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        assertThrows<PackitException> { service.checkAndUpdateLastLoggedIn(username) }.apply {
+            assertEquals("userNotFound", key)
+            assertEquals(HttpStatus.NOT_FOUND, httpStatus)
+        }
+    }
+
+    @Test
+    fun `checkAndUpdateLastLoggedIn throws exception when lastLoggedIn is null`()
+    {
+        val username = "existingUser"
+        val user = User(
+            username = username,
+            displayName = "displayName",
+            disabled = false,
+            userSource = "github",
+            lastLoggedIn = null
+        )
+        whenever(mockUserRepository.findByUsername(username)).thenReturn(user)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        assertThrows<PackitAuthenticationException> { service.checkAndUpdateLastLoggedIn(username) }.apply {
+            assertEquals("updatePassword", key)
+            assertEquals(HttpStatus.FORBIDDEN, httpStatus)
         }
     }
 }

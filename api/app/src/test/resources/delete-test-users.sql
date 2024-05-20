@@ -1,8 +1,8 @@
--- delete all users and roles except super admin
+-- delete all setup test users and roles after each test
 DELETE
 FROM "user"
-WHERE display_name != 'Super Admin';
+WHERE username ILIKE '%test%';
 
 DELETE
 FROM "role"
-WHERE name != 'ADMIN'
+WHERE name ILIKE '%test%'
