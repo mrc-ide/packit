@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import { Sidebar } from "../common/Sidebar";
 import { SidebarItem } from "../../../../lib/types/SidebarItem";
 import { useUser } from "../../providers/UserProvider";
-import { Unauthorized } from "../../Unauthorized";
+import { Unauthorized } from "../common/Unauthorized";
 
 const sidebarItems: SidebarItem[] = [
   {
