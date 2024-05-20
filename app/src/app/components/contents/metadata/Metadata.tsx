@@ -12,7 +12,7 @@ export default function Metadata() {
   const elapsedTime = packet && getElapsedTime(packet.time);
 
   return (
-    <div className="h-full flex-1 flex-col space-y-4 pl-8 lg:pl-0 pr-8">
+    <>
       <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} />
       {packet && (
         <ul className="flex flex-col space-y-3">
@@ -36,6 +36,6 @@ export default function Metadata() {
           )}
         </ul>
       )}
-    </div>
+    </>
   );
 }
