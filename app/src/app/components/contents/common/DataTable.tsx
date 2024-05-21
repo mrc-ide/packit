@@ -1,6 +1,7 @@
 import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../Base/Table";
 import { Pagination } from "./Pagination";
+import { PAGE_SIZE } from "../../../../lib/constants";
 
 interface DataTableProps<TData> {
   columns: ColumnDef<TData, any>[];
@@ -16,7 +17,7 @@ export const DataTable = <TData,>({ data, columns, enablePagination }: DataTable
     ...(enablePagination && { getPaginationRowModel: getPaginationRowModel() }),
     initialState: {
       pagination: {
-        pageSize: 2 // TODO: set to 50
+        pageSize: PAGE_SIZE
       }
     },
     manualFiltering: true

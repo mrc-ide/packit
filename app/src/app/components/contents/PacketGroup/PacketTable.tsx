@@ -6,12 +6,12 @@ import { ErrorComponent } from "../common/ErrorComponent";
 import { Pagination } from "../common/Pagination";
 import { useGetPacketGroups } from "./hooks/useGetPacketGroups";
 import { packetColumns } from "./packetColumns";
+import { PAGE_SIZE } from "../../../../lib/constants";
 
 // TODO: make table more feature rich (sorting, filter, etc). May need to fetch all data then and let tanstack handle
 export const PacketTable = () => {
   const { packetName } = useParams();
   const [pageNumber, setPageNumber] = useState(0);
-  const PAGE_SIZE = 50;
 
   const { packetGroups, error, isLoading } = useGetPacketGroups(packetName, pageNumber, PAGE_SIZE);
 
