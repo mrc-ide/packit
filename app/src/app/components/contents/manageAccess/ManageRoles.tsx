@@ -7,8 +7,6 @@ import { manageRolesColumns } from "./manageRolesColumns";
 export const ManageRoles = () => {
   const { roles, isLoading, error } = useGetRolesWithRelationships();
 
-  console.log(roles);
-
   if (error) return <ErrorComponent message="Error fetching Roles" error={error} />;
 
   if (isLoading)
@@ -30,7 +28,7 @@ export const ManageRoles = () => {
         <h2 className="text-2xl font-bold tracking-tight">Manage Roles</h2>
         <p className="text-muted-foreground">Add roles, update users and permissions on roles</p>
       </div>
-      {roles && <DataTable columns={manageRolesColumns} data={roles.filter((role) => !role.isUsername)} />}
+      {roles && <DataTable columns={manageRolesColumns} data={roles} enablePagination />}
     </>
   );
 };

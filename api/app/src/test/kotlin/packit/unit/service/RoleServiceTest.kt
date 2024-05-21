@@ -9,10 +9,7 @@ import org.mockito.kotlin.*
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import packit.exceptions.PackitException
-import packit.model.Packet
-import packit.model.Permission
-import packit.model.Role
-import packit.model.RolePermission
+import packit.model.*
 import packit.model.dto.CreateRole
 import packit.model.dto.UpdateRolePermissions
 import packit.repository.RoleRepository
@@ -438,6 +435,42 @@ class RoleServiceTest
         val result = roleService.getByRoleName(roleName)
 
         assertNull(result)
+    }
+
+    @Test
+    fun `getSortedByBasePermissionsRoleDtos returns roles sorted by base permissions`()
+    {
+        val role1 = Role(name = "role1", id = 1).apply {
+            rolePermissions = mutableListOf(
+                RolePermission(permission = Permission("permission1", "d1"), role = this, id = 10),
+                RolePermission(
+                    permission = Permission("permission2", "d2"),
+                    role = this,
+                    packetGroup = PacketGroup("pg1", id = 20),
+                    id = 11
+                ),
+                RolePermission(permission = Permission("permission3", "d3"), role = this, id = 12),
+            )
+        }
+        val role2 = Role(name = "role2", id = 2).apply {
+            rolePermissions = mutableListOf(
+                RolePermission(
+                    permission = Permission("permission5", "d5"),
+                    role = this,
+                    tag = Tag("tag1", id = 21),
+                    id = 13
+                ),
+                RolePermission(permission = Permission("permission4", "d4"), role = this, id = 14),
+            )
+        }
+        val roles = listOf(role1, role2)
+
+        val result = roleService.getSortedByBasePermissionsRoleDtos(roles)
+
+        assertEquals(2, result.size)
+        assertEquals("permission1", result[0].rolePermissions[0].permission)
+        assertEquals("permission3", result[0].rolePermissions[1].permission)
+        assertEquals("permission4", result[1].rolePermissions[0].permission)
     }
 
     private fun createRoleWithPermission(

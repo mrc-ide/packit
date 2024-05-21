@@ -4,8 +4,9 @@ import appConfig from "../../../../../config/appConfig";
 import { fetcher } from "../../../../../lib/fetch";
 
 export const useGetRolesWithRelationships = () => {
-  const { data, isLoading, error } = useSWR<RoleWithRelationships[]>(`${appConfig.apiUrl()}/role`, (url: string) =>
-    fetcher({ url })
+  const { data, isLoading, error } = useSWR<RoleWithRelationships[]>(
+    `${appConfig.apiUrl()}/role?isUsername=false`,
+    (url: string) => fetcher({ url })
   );
 
   return {

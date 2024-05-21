@@ -9,8 +9,10 @@ import packit.model.Permission
 import packit.model.Role
 import packit.model.RolePermission
 import packit.model.dto.CreateRole
+import packit.model.dto.RoleDto
 import packit.model.dto.UpdateRolePermission
 import packit.model.dto.UpdateRolePermissions
+import packit.model.toDto
 import packit.repository.RoleRepository
 
 interface RoleService
@@ -27,6 +29,7 @@ interface RoleService
     fun getRole(roleName: String): Role
     fun updatePermissionsToRole(roleName: String, updateRolePermissions: UpdateRolePermissions): Role
     fun getByRoleName(roleName: String): Role?
+    fun getSortedByBasePermissionsRoleDtos(roles: List<Role>): List<RoleDto>
 }
 
 @Service
@@ -100,6 +103,16 @@ class BaseRoleService(
     override fun getByRoleName(roleName: String): Role?
     {
         return roleRepository.findByName(roleName)
+    }
+
+    override fun getSortedByBasePermissionsRoleDtos(roles: List<Role>): List<RoleDto>
+    {
+        return roles.map { role ->
+            val roleDto = role.toDto()
+            roleDto.rolePermissions =
+                roleDto.rolePermissions.sortedByDescending { it.tag == null && it.packet == null && it.packetGroup == null }
+            roleDto
+        }
     }
 
     internal fun addRolePermissionsToRole(role: Role, addRolePermissions: List<UpdateRolePermission>): Role

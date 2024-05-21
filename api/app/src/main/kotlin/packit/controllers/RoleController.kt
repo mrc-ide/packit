@@ -69,7 +69,8 @@ class RoleController(private val roleService: RoleService, private val userRoleS
     fun getRolesWithRelationships(@RequestParam isUsername: Boolean?): ResponseEntity<List<RoleDto>>
     {
         val roles = roleService.getAllRoles(isUsername)
-        return ResponseEntity.ok(roles.map { it.toDto() })
+
+        return ResponseEntity.ok(roleService.getSortedByBasePermissionsRoleDtos(roles))
     }
 
     @GetMapping("/{roleName}")
