@@ -18,7 +18,8 @@ export const DataTable = <TData,>({ data, columns, enablePagination }: DataTable
       pagination: {
         pageSize: 2 // TODO: set to 50
       }
-    }
+    },
+    manualFiltering: true
   });
   const rows = table.getRowModel().rows;
 
