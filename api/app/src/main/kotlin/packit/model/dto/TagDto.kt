@@ -1,3 +1,10 @@
 package packit.model.dto
 
-data class TagDto(val name: String, val id: Int)
+import com.fasterxml.jackson.annotation.JsonProperty
+
+data class TagDto(
+    @JsonProperty("name")
+    val name: String,
+    @JsonProperty("id")
+    val id: Int
+)

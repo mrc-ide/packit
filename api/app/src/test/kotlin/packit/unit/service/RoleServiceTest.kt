@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.*
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import packit.exceptions.PackitException
@@ -329,7 +330,7 @@ class RoleServiceTest
     fun `getRoleNames returns role names`()
     {
         val roles = listOf(Role(name = "role1"), Role(name = "role2"))
-        whenever(roleRepository.findAll()).thenReturn(roles)
+        whenever(roleRepository.findAll(Sort.by("name").ascending())).thenReturn(roles)
 
         val result = roleService.getRoleNames()
 
@@ -341,7 +342,7 @@ class RoleServiceTest
     fun `getRolesWithRelationships returns all roles when no isUsernamesflag set`()
     {
         val roles = listOf(Role(name = "role1"), Role(name = "role2"))
-        whenever(roleRepository.findAll()).thenReturn(roles)
+        whenever(roleRepository.findAll(Sort.by("name").ascending())).thenReturn(roles)
 
         val result = roleService.getAllRoles(null)
 
@@ -394,12 +395,12 @@ class RoleServiceTest
     fun `getRolesWithRelationships returns roles with isUsername flag`()
     {
         val roles = listOf(Role(name = "username1", isUsername = true), Role(name = "username2", isUsername = true))
-        whenever(roleRepository.findAllByIsUsername(true)).thenReturn(roles)
+        whenever(roleRepository.findAllByIsUsernameOrderByName(true)).thenReturn(roles)
 
         val result = roleService.getAllRoles(true)
 
         assertEquals(roles, result)
-        verify(roleRepository).findAllByIsUsername(true)
+        verify(roleRepository).findAllByIsUsernameOrderByName(true)
     }
 
     @Test

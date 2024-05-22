@@ -1,5 +1,6 @@
 package packit.service
 
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -125,16 +126,16 @@ class BaseRoleService(
 
     override fun getRoleNames(): List<String>
     {
-        return roleRepository.findAll().map { it.name }
+        return roleRepository.findAll(Sort.by("name").ascending()).map { it.name }
     }
 
     override fun getAllRoles(isUsernames: Boolean?): List<Role>
     {
         if (isUsernames == null)
         {
-            return roleRepository.findAll()
+            return roleRepository.findAll(Sort.by("name").ascending())
         }
-        return roleRepository.findAllByIsUsername(isUsernames)
+        return roleRepository.findAllByIsUsernameOrderByName(isUsernames)
     }
 
     override fun getRolesByRoleNames(roleNames: List<String>): List<Role>

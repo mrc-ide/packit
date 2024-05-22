@@ -1,5 +1,6 @@
 package packit.integration.controllers
 
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,14 +12,12 @@ import packit.integration.WithAuthenticatedUser
 import packit.model.Role
 import packit.model.RolePermission
 import packit.model.User
-import packit.model.dto.CreateRole
-import packit.model.dto.UpdateRolePermission
-import packit.model.dto.UpdateRolePermissions
-import packit.model.dto.UpdateRoleUsers
+import packit.model.dto.*
 import packit.model.toDto
 import packit.repository.PermissionRepository
 import packit.repository.RoleRepository
 import packit.repository.UserRepository
+import packit.service.RoleService
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -35,6 +34,9 @@ class RoleControllerTest : IntegrationTest()
 
     @Autowired
     private lateinit var permissionsRepository: PermissionRepository
+
+    @Autowired
+    private lateinit var roleService: RoleService
 
     private val testCreateRole = CreateRole(
         name = "testRole",
@@ -203,9 +205,8 @@ class RoleControllerTest : IntegrationTest()
     @WithAuthenticatedUser(authorities = ["user.manage"])
     fun `users can get all roles with relationships`()
     {
-        val adminRoleDto = roleRepository.findByName("ADMIN")!!.toDto()
-        val userRoleDto = roleRepository.save(Role(name = "testRole", isUsername = true)).toDto()
-        val allRolesString = ObjectMapper().writeValueAsString(listOf(adminRoleDto, userRoleDto))
+        val adminRole = roleRepository.findByName("ADMIN")!!
+        val userRole = roleRepository.save(Role(name = "testRole", isUsername = true))
         val result =
             restTemplate.exchange(
                 "/role",
@@ -215,9 +216,20 @@ class RoleControllerTest : IntegrationTest()
             )
 
         assertSuccess(result)
-        val roles = ObjectMapper().readValue(result.body, List::class.java)
+        val roles = ObjectMapper().readValue(result.body,
+            object : TypeReference<List<RoleDto>>()
+            {})
 
-        assert(roles.containsAll(ObjectMapper().readValue(allRolesString, List::class.java)))
+        assert(
+            roles.containsAll(
+                roleService.getSortedByBasePermissionsRoleDtos(
+                    listOf(
+                        adminRole,
+                        userRole
+                    )
+                )
+            )
+        )
     }
 
     @Test
@@ -225,8 +237,6 @@ class RoleControllerTest : IntegrationTest()
     fun `users can get username roles with relationships `()
     {
         roleRepository.save(Role("test-username", isUsername = true))
-        val allUsernameRoles =
-            ObjectMapper().writeValueAsString(roleRepository.findAllByIsUsername(true).map { it.toDto() })
         val result =
             restTemplate.exchange(
                 "/role?isUsername=true",
@@ -234,10 +244,14 @@ class RoleControllerTest : IntegrationTest()
                 getTokenizedHttpEntity(),
                 String::class.java
             )
+        val usernameRoleDtos = roleService.getSortedByBasePermissionsRoleDtos(
+            roleRepository.findAllByIsUsernameOrderByName(true)
+        )
 
-        val roles = ObjectMapper().readValue(result.body, List::class.java)
+        val roles = ObjectMapper().readValue(result.body, object : TypeReference<List<RoleDto>>()
+        {})
 
-        assert(roles.containsAll(ObjectMapper().readValue(allUsernameRoles, List::class.java)))
+        assertEquals(roles.size, usernameRoleDtos.size)
     }
 
     @Test
@@ -245,7 +259,7 @@ class RoleControllerTest : IntegrationTest()
     fun `users can get non username roles with relationships`()
     {
         roleRepository.save(Role("test-user", isUsername = true)).toDto()
-        val adminRole = ObjectMapper().writeValueAsString(roleRepository.findByName("ADMIN")!!.toDto())
+        val adminRole = roleRepository.findByName("ADMIN")!!
         val result =
             restTemplate.exchange(
                 "/role?isUsername=false",
@@ -255,9 +269,10 @@ class RoleControllerTest : IntegrationTest()
             )
 
         assertSuccess(result)
-        val roles = ObjectMapper().readValue(result.body, List::class.java)
+        val roles = ObjectMapper().readValue(result.body, object : TypeReference<List<RoleDto>>()
+        {})
 
-        assertContains(roles, ObjectMapper().readValue(adminRole, Map::class.java))
+        assertContains(roles, adminRole.toDto())
     }
 
     @Test
@@ -273,9 +288,11 @@ class RoleControllerTest : IntegrationTest()
                 String::class.java
             )
 
+        val roleResult = ObjectMapper().readValue(result.body, object : TypeReference<RoleDto>()
+        {})
         assertSuccess(result)
 
-        assertEquals(ObjectMapper().writeValueAsString(roleDto), result.body)
+        assertEquals(roleDto, roleResult)
     }
 
     @Test

@@ -119,7 +119,7 @@ class UserServiceTest
         `when`(mockUserRepository.findByUsername(mockUser.username)).doReturn(null)
         val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
 
-        val ex = assertThrows<AuthenticationException> { service.getUserForLogin(mockUser.username) }
+        assertThrows<AuthenticationException> { service.getUserForLogin(mockUser.username) }
 
         verify(mockUserRepository).findByUsername(mockUser.username)
     }

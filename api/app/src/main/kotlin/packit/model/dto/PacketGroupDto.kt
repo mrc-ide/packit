@@ -1,3 +1,10 @@
 package packit.model.dto
 
-data class PacketGroupDto(val name: String, val id: Int)
+import com.fasterxml.jackson.annotation.JsonProperty
+
+data class PacketGroupDto(
+    @JsonProperty("name")
+    val name: String,
+    @JsonProperty("id")
+    val id: Int
+)

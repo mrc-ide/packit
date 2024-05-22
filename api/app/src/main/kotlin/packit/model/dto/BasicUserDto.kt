@@ -1,5 +1,11 @@
 package packit.model.dto
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.*
 
-data class BasicUserDto(val username: String, val id: UUID)
+data class BasicUserDto(
+    @JsonProperty("username")
+    val username: String,
+    @JsonProperty("id")
+    val id: UUID
+)

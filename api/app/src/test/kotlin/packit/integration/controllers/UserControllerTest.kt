@@ -1,5 +1,6 @@
 package packit.integration.controllers
 
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpMethod
@@ -12,6 +13,7 @@ import packit.model.Role
 import packit.model.User
 import packit.model.dto.CreateBasicUser
 import packit.model.dto.UpdateUserRoles
+import packit.model.dto.UserDto
 import packit.repository.RoleRepository
 import packit.repository.UserRepository
 import kotlin.test.Test
@@ -45,9 +47,11 @@ class UserControllerTest : IntegrationTest()
             String::class.java
         )
 
+        val userResult = ObjectMapper().readValue(result.body, object : TypeReference<UserDto>()
+        {})
         assertEquals(HttpStatus.CREATED, result.statusCode)
-        assertEquals(testCreateUser.email, ObjectMapper().readTree(result.body).get("username").asText())
-        assertEquals(testCreateUser.displayName, ObjectMapper().readTree(result.body).get("displayName").asText())
+        assertEquals(testCreateUser.email, userResult.email)
+        assertEquals(testCreateUser.displayName, userResult.displayName)
         assertNotNull(userRepository.findByUsername(testCreateUser.email))
     }
 
@@ -112,11 +116,13 @@ class UserControllerTest : IntegrationTest()
             String::class.java
         )
 
+        val userResult = ObjectMapper().readValue(result.body, object : TypeReference<UserDto>()
+        {})
         assertSuccess(result)
         assertEquals(userRepository.findByUsername("test@email.com")?.roles?.map { it.name }, listOf("ADMIN"))
-        assertEquals(testUser.username, ObjectMapper().readTree(result.body).get("username").asText())
-        assertEquals(testUser.displayName, ObjectMapper().readTree(result.body).get("displayName").asText())
-        assertEquals(1, ObjectMapper().readTree(result.body).get("roles").size())
+        assertEquals(testUser.username, userResult.username)
+        assertEquals(testUser.displayName, userResult.displayName)
+        assertEquals(1, userResult.roles.size)
     }
 
     @Test
