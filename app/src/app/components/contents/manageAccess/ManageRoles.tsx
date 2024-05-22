@@ -37,7 +37,7 @@ export const ManageRoles = () => {
       </div>
       <div className="space-y-4 flex flex-col">
         <div className="flex justify-between">
-          <FilterByName filteredName={filteredName} setFilterByName={setFilterByName} />
+          <FilterByName setFilterByName={setFilterByName} />
           {authConfig?.enableBasicLogin && (
             <Button
               onClick={() => {
@@ -54,7 +54,11 @@ export const ManageRoles = () => {
         {roles && (
           <DataTable
             columns={manageRolesColumns}
-            data={roles.filter((role) => role.name.toLowerCase().includes(filteredName.toLowerCase()))}
+            data={
+              filteredName
+                ? roles.filter((role) => role.name.toLowerCase().includes(filteredName.toLowerCase()))
+                : roles
+            }
             enablePagination
           />
         )}

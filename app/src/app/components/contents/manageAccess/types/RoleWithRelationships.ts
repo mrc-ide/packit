@@ -30,5 +30,5 @@ export interface RoleWithRelationships {
   rolePermissions: RolePermission[];
   users: BasicUser[];
   id: number;
-  isUsername: string;
+  isUsername: boolean;
 }

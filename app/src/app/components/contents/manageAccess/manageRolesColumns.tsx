@@ -60,10 +60,10 @@ export const manageRolesColumns = [
       // TODO: Implement
       return (
         <div className="flex space-x-2 justify-end ">
-          <Button variant="outline" size="icon">
+          <Button variant="outline" size="icon" aria-label="delete-role">
             <Trash2 className="h-4 w-4 text-red-500" />
           </Button>
-          <Button variant="outline" size="icon">
+          <Button variant="outline" size="icon" aria-label="edit-role">
             <EllipsisVertical className="h-4 w-4" />
           </Button>
         </div>

@@ -15,7 +15,7 @@ export const Home = () => {
           <p className="text-muted-foreground">Here&apos;s a list of packet groups</p>
         </div>
         <div className="space-y-4 flex flex-col">
-          <FilterByName filteredName={filteredName} setFilterByName={setFilterByName} setPageNumber={setPageNumber} />
+          <FilterByName setFilterByName={setFilterByName} setPageNumber={setPageNumber} />
           <PacketGroupSummaryList
             filterByName={filteredName}
             pageNumber={pageNumber}

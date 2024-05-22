@@ -1,3 +1,4 @@
+import { RoleWithRelationships } from "../app/components/contents/manageAccess/types/RoleWithRelationships";
 import { AuthConfig } from "../app/components/providers/types/AuthConfigTypes";
 import { UserState } from "../app/components/providers/types/UserTypes";
 import { Custom, PacketMetadata, PageablePacketGroupSummary, PageablePackets } from "../types";
@@ -245,3 +246,181 @@ export const mockPacketGroupResponse: PageablePackets = {
 };
 
 export const mockFileBlob = new Blob(["test contents"]);
+
+export const mockNonUsernameRolesWithRelationships: RoleWithRelationships[] = [
+  {
+    name: "Admin",
+    rolePermissions: [
+      {
+        permission: "packet.run",
+        packet: null,
+        tag: null,
+        packetGroup: null,
+        id: 5
+      },
+      {
+        permission: "user.manage",
+        packet: null,
+        tag: null,
+        packetGroup: null,
+        id: 6
+      },
+      {
+        permission: "packet.read",
+        packet: null,
+        tag: null,
+        packetGroup: {
+          name: "depends",
+          id: 4
+        },
+        id: 14
+      },
+      {
+        permission: "packet.read",
+        packet: {
+          name: "modup-201707-queries1",
+          id: "20170818-164847-7574883b"
+        },
+        tag: null,
+        packetGroup: null,
+        id: 13
+      },
+      {
+        permission: "packet.run",
+        packet: null,
+        tag: null,
+        packetGroup: {
+          name: "explicit",
+          id: 3
+        },
+        id: 15
+      }
+    ],
+    users: [
+      {
+        username: "b@gmail.com",
+        id: "fd261b07-9a4b-4a1d-9b66-88d708b63264"
+      },
+      {
+        username: "c@gmail.com",
+        id: "5390a192-371c-49fe-8b67-efcc250daaa9"
+      },
+      {
+        username: "d@gmail.com",
+        id: "3c0e2e83-c7a9-420c-82db-c3327931f1c0"
+      },
+      {
+        username: "e@gmail.com",
+        id: "a3e56ca4-e9ed-474a-bd4d-3d60508746d1"
+      },
+      {
+        username: "a@gmail.com",
+        id: "b13c35b8-7070-47a8-9266-3a23ae6fd76e"
+      }
+    ],
+    id: 7,
+    isUsername: false
+  },
+  {
+    name: "Modeller",
+    rolePermissions: [
+      {
+        permission: "packet.run",
+        packet: null,
+        tag: null,
+        packetGroup: null,
+        id: 7
+      },
+      {
+        permission: "user.manage",
+        packet: null,
+        tag: null,
+        packetGroup: null,
+        id: 8
+      },
+      {
+        permission: "packet.read",
+        packet: null,
+        tag: null,
+        packetGroup: {
+          name: "depends",
+          id: 4
+        },
+        id: 18
+      },
+      {
+        permission: "packet.read",
+        packet: null,
+        tag: null,
+        packetGroup: {
+          name: "depends",
+          id: 4
+        },
+        id: 19
+      },
+      {
+        permission: "packet.read",
+        packet: {
+          name: "modup-201707-queries1",
+          id: "20170818-164847-7574883b"
+        },
+        tag: null,
+        packetGroup: null,
+        id: 16
+      },
+      {
+        permission: "packet.read",
+        packet: {
+          name: "modup-201707-queries1",
+          id: "20170818-164847-7574883b"
+        },
+        tag: null,
+        packetGroup: null,
+        id: 17
+      },
+      {
+        permission: "packet.run",
+        packet: null,
+        tag: null,
+        packetGroup: {
+          name: "explicit",
+          id: 3
+        },
+        id: 20
+      },
+      {
+        permission: "packet.run",
+        packet: null,
+        tag: null,
+        packetGroup: {
+          name: "explicit",
+          id: 3
+        },
+        id: 21
+      }
+    ],
+    users: [
+      {
+        username: "b@gmail.com",
+        id: "fd261b07-9a4b-4a1d-9b66-88d708b63264"
+      },
+      {
+        username: "c@gmail.com",
+        id: "5390a192-371c-49fe-8b67-efcc250daaa9"
+      },
+      {
+        username: "a@gmail.com",
+        id: "b13c35b8-7070-47a8-9266-3a23ae6fd76e"
+      }
+    ],
+    id: 8,
+    isUsername: false
+  },
+  {
+    name: "Viewer",
+    rolePermissions: [],
+    users: [],
+    id: 11,
+    isUsername: false
+  }
+];

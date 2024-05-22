@@ -18,9 +18,9 @@ describe("Home component", () => {
   it("renders reset button when filter is being filled and & calls api 2 times", async () => {
     renderComponent();
 
-    const filterInput = await screen.findByPlaceholderText(/find a report by name/i);
+    const filterInput = await screen.findByPlaceholderText(/filter by name/i);
 
-    await userEvent.type(filterInput, "test");
+    userEvent.type(filterInput, "test");
 
     await waitFor(() => {
       expect(screen.getByRole("button", { name: /reset/i })).toBeVisible();
