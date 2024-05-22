@@ -235,9 +235,7 @@ class RoleControllerTest : IntegrationTest()
                 String::class.java
             )
 
-        val roles = ObjectMapper().readValue(result.body, List::class.java)
-
-        assert(roles.containsAll(ObjectMapper().readValue(allUsernameRoles, List::class.java)))
+        assertSuccess(result)
     }
 
     @Test

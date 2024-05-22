@@ -141,7 +141,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getGrantedAuthorities returns authorities for roles and permissions`()
+    fun `getGrantedAuthorities returns authorities of permissions`()
     {
         val role1 =
             createRoleWithPermission("role1", "permission1")
@@ -150,13 +150,11 @@ class RoleServiceTest
 
         val result = roleService.getGrantedAuthorities(listOf(role1, role2))
 
-        assertEquals(4, result.size)
+        assertEquals(2, result.size)
         assertTrue(
             result.containsAll(
                 listOf(
-                    SimpleGrantedAuthority("role1"),
                     SimpleGrantedAuthority("permission1"),
-                    SimpleGrantedAuthority("role2"),
                     SimpleGrantedAuthority("permission2")
                 )
             )
