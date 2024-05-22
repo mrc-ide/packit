@@ -1,8 +1,8 @@
-import { Outlet } from "react-router-dom";
 import { Sidebar } from "../common/Sidebar";
 import { SidebarItem } from "../../../../lib/types/SidebarItem";
 import { useUser } from "../../providers/UserProvider";
 import { Unauthorized } from "../common/Unauthorized";
+import { ManageAccessOutlet } from "./ManageAccessOutlet";
 
 const sidebarItems: SidebarItem[] = [
   {
@@ -23,7 +23,7 @@ export const ManageAccessLayout = () => {
   }
   return (
     <Sidebar sidebarItems={sidebarItems}>
-      <Outlet />
+      <ManageAccessOutlet />
     </Sidebar>
   );
 };
