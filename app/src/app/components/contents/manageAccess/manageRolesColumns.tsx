@@ -56,8 +56,8 @@ export const manageRolesColumns = [
   }),
   columnHelper.display({
     id: "actions",
-    cell: ({ row }) => {
-      // TODO: Implement
+    cell: () => {
+      // TODO: Implement with row data
       return (
         <div className="flex space-x-2 justify-end ">
           <Button variant="outline" size="icon" aria-label="delete-role">
