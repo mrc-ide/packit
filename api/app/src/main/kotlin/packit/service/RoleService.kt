@@ -20,7 +20,7 @@ interface RoleService
 {
     fun getUsernameRole(username: String): Role
     fun getAdminRole(): Role
-    fun getGrantedAuthorities(roles: List<Role>): MutableList<GrantedAuthority>
+    fun getGrantedAuthorities(roles: List<Role>): MutableSet<GrantedAuthority>
     fun createRole(createRole: CreateRole): Role
     fun deleteRole(roleName: String)
     fun deleteUsernameRole(username: String)
@@ -168,15 +168,10 @@ class BaseRoleService(
         return roleRepository.save(role)
     }
 
-    /**
-     * Authorities constructed as combination of role names and permission names.
-     * This allows for more granular control over permissions.
-     */
-    override fun getGrantedAuthorities(roles: List<Role>): MutableList<GrantedAuthority>
+    override fun getGrantedAuthorities(roles: List<Role>): MutableSet<GrantedAuthority>
     {
-        val grantedAuthorities = mutableListOf<GrantedAuthority>()
+        val grantedAuthorities = mutableSetOf<GrantedAuthority>()
         roles.forEach { role ->
-            grantedAuthorities.add(SimpleGrantedAuthority(role.name))
             role.rolePermissions.forEach {
                 grantedAuthorities.add(SimpleGrantedAuthority(getPermissionScoped(it)))
             }
