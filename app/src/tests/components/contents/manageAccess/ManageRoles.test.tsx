@@ -8,23 +8,15 @@ import { manageRolesIndexUri } from "../../../../msw/handlers/manageRolesHandler
 import { SWRConfig } from "swr";
 import userEvent from "@testing-library/user-event";
 
-const mockGetAuthConfigFromLocalStorage = jest.fn();
-jest.mock("../../../../lib/localStorageManager", () => ({
-  getAuthConfigFromLocalStorage: () => mockGetAuthConfigFromLocalStorage()
-}));
-
 const renderComponent = () => {
   render(
     <SWRConfig value={{ dedupingInterval: 0 }}>
-      <AuthConfigProvider>
-        <ManageRoles />
-      </AuthConfigProvider>
+      <ManageRoles />
     </SWRConfig>
   );
 };
 describe("ManageRoles", () => {
   it("should render table data correctly", async () => {
-    mockGetAuthConfigFromLocalStorage.mockReturnValueOnce({ enableBasicLogin: false });
     renderComponent();
 
     await waitFor(() => {
@@ -46,26 +38,7 @@ describe("ManageRoles", () => {
     );
   });
 
-  it("should display add role button when enableBasicLogin is true", async () => {
-    mockGetAuthConfigFromLocalStorage.mockReturnValueOnce({ enableBasicLogin: true });
-    renderComponent();
-
-    await waitFor(() => {
-      expect(screen.getByRole("button", { name: "Add Role" })).toBeVisible();
-    });
-  });
-
-  it("should not display add role button when enableBasicLogin is false", async () => {
-    mockGetAuthConfigFromLocalStorage.mockReturnValueOnce({ enableBasicLogin: false });
-    renderComponent();
-
-    await waitFor(() => {
-      expect(screen.queryByText("Add Role")).not.toBeInTheDocument();
-    });
-  });
-
   it("should filter roles by name", async () => {
-    mockGetAuthConfigFromLocalStorage.mockReturnValueOnce({ enableBasicLogin: false });
     renderComponent();
 
     const filterInput = await screen.findByPlaceholderText(/filter by name/i);
@@ -80,7 +53,6 @@ describe("ManageRoles", () => {
   });
 
   it("should reset filter when reset button is clicked", async () => {
-    mockGetAuthConfigFromLocalStorage.mockReturnValueOnce({ enableBasicLogin: false });
     renderComponent();
 
     const filterInput = await screen.findByPlaceholderText(/filter by name/i);
@@ -100,7 +72,6 @@ describe("ManageRoles", () => {
     });
   });
   it("should show error component if error fetching roles", async () => {
-    mockGetAuthConfigFromLocalStorage.mockReturnValueOnce({ enableBasicLogin: true });
     server.use(
       rest.get(manageRolesIndexUri, (req, res, ctx) => {
         return res(ctx.status(400));

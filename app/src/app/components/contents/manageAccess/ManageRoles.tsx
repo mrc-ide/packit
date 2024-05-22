@@ -2,7 +2,6 @@ import { SquarePlus } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../../Base/Button";
 import { Skeleton } from "../../Base/Skeleton";
-import { useAuthConfig } from "../../providers/AuthConfigProvider";
 import { DataTable } from "../common/DataTable";
 import { ErrorComponent } from "../common/ErrorComponent";
 import { FilterByName } from "../common/FilterByName";
@@ -11,7 +10,7 @@ import { manageRolesColumns } from "./manageRolesColumns";
 
 export const ManageRoles = () => {
   const { roles, isLoading, error } = useGetRolesWithRelationships();
-  const authConfig = useAuthConfig();
+
   const [filteredName, setFilterByName] = useState("");
 
   if (error) return <ErrorComponent message="Error fetching Roles" error={error} />;
@@ -38,18 +37,16 @@ export const ManageRoles = () => {
       <div className="space-y-4 flex flex-col">
         <div className="flex justify-between">
           <FilterByName setFilterByName={setFilterByName} />
-          {authConfig?.enableBasicLogin && (
-            <Button
-              onClick={() => {
-                "TODO";
-              }}
-              variant="outline"
-              size="sm"
-            >
-              <SquarePlus className="mr-2 h-5 w-5" />
-              Add Role
-            </Button>
-          )}
+          <Button
+            onClick={() => {
+              "TODO";
+            }}
+            variant="outline"
+            size="sm"
+          >
+            <SquarePlus className="mr-2 h-5 w-5" />
+            Add Role
+          </Button>
         </div>
         {roles && (
           <DataTable
