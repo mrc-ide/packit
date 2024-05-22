@@ -216,9 +216,11 @@ class RoleControllerTest : IntegrationTest()
             )
 
         assertSuccess(result)
-        val roles = ObjectMapper().readValue(result.body,
+        val roles = ObjectMapper().readValue(
+            result.body,
             object : TypeReference<List<RoleDto>>()
-            {})
+            {}
+        )
 
         assert(
             roles.containsAll(
@@ -248,8 +250,11 @@ class RoleControllerTest : IntegrationTest()
             roleRepository.findAllByIsUsernameOrderByName(true)
         )
 
-        val roles = ObjectMapper().readValue(result.body, object : TypeReference<List<RoleDto>>()
-        {})
+        val roles = ObjectMapper().readValue(
+            result.body,
+            object : TypeReference<List<RoleDto>>()
+        {}
+        )
 
         assertEquals(roles.size, usernameRoleDtos.size)
     }
@@ -269,8 +274,11 @@ class RoleControllerTest : IntegrationTest()
             )
 
         assertSuccess(result)
-        val roles = ObjectMapper().readValue(result.body, object : TypeReference<List<RoleDto>>()
-        {})
+        val roles = ObjectMapper().readValue(
+            result.body,
+            object : TypeReference<List<RoleDto>>()
+        {}
+        )
 
         assertContains(roles, adminRole.toDto())
     }
@@ -288,8 +296,11 @@ class RoleControllerTest : IntegrationTest()
                 String::class.java
             )
 
-        val roleResult = ObjectMapper().readValue(result.body, object : TypeReference<RoleDto>()
-        {})
+        val roleResult = ObjectMapper().readValue(
+            result.body,
+            object : TypeReference<RoleDto>()
+        {}
+        )
         assertSuccess(result)
 
         assertEquals(roleDto, roleResult)

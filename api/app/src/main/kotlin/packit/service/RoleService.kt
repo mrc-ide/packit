@@ -111,7 +111,9 @@ class BaseRoleService(
         return roles.map { role ->
             val roleDto = role.toDto()
             roleDto.rolePermissions =
-                roleDto.rolePermissions.sortedByDescending { it.tag == null && it.packet == null && it.packetGroup == null }
+                roleDto.rolePermissions.sortedByDescending {
+                    it.tag == null && it.packet == null && it.packetGroup == null
+                }
             roleDto
         }
     }

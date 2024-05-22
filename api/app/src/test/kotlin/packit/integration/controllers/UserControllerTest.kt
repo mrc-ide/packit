@@ -47,8 +47,11 @@ class UserControllerTest : IntegrationTest()
             String::class.java
         )
 
-        val userResult = ObjectMapper().readValue(result.body, object : TypeReference<UserDto>()
-        {})
+        val userResult = ObjectMapper().readValue(
+            result.body,
+            object : TypeReference<UserDto>()
+        {}
+        )
         assertEquals(HttpStatus.CREATED, result.statusCode)
         assertEquals(testCreateUser.email, userResult.email)
         assertEquals(testCreateUser.displayName, userResult.displayName)
@@ -116,8 +119,11 @@ class UserControllerTest : IntegrationTest()
             String::class.java
         )
 
-        val userResult = ObjectMapper().readValue(result.body, object : TypeReference<UserDto>()
-        {})
+        val userResult = ObjectMapper().readValue(
+            result.body,
+            object : TypeReference<UserDto>()
+        {}
+        )
         assertSuccess(result)
         assertEquals(userRepository.findByUsername("test@email.com")?.roles?.map { it.name }, listOf("ADMIN"))
         assertEquals(testUser.username, userResult.username)
