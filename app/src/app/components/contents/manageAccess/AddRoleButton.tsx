@@ -127,11 +127,11 @@ export const AddRoleButton = ({ mutate }: AddRoleButtonProps) => {
             <DialogFooter className="sm:justify-end gap-1">
               {fetchError && <div className="text-xs text-red-500">{fetchError}</div>}
               <DialogClose asChild>
-                <Button type="button" variant="secondary">
+                <Button type="button" variant="secondary" onClick={() => form.reset()}>
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit">Save</Button>
+              <Button type="submit">Create</Button>
             </DialogFooter>
           </form>
         </Form>
