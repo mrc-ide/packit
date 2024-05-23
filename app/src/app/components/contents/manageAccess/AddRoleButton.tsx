@@ -79,7 +79,7 @@ export const AddRoleButton = ({ mutate }: AddRoleButtonProps) => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base">Name</FormLabel>
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
                     <Input autoComplete="name" placeholder="enter role name..." {...field} />
                   </FormControl>
@@ -93,8 +93,10 @@ export const AddRoleButton = ({ mutate }: AddRoleButtonProps) => {
               render={() => (
                 <FormItem>
                   <div className="mb-3">
-                    <FormLabel className="text-base">Permissions</FormLabel>
-                    <FormDescription>Select the permissions that will be assigned to this role.</FormDescription>
+                    <FormLabel>Permissions</FormLabel>
+                    <FormDescription className="text-xs">
+                      Select the permissions that will be assigned to this role.
+                    </FormDescription>
                   </div>
                   {GLOBAL_PERMISSIONS.map((permission, idx) => (
                     <FormField
@@ -107,7 +109,7 @@ export const AddRoleButton = ({ mutate }: AddRoleButtonProps) => {
                             <FormControl>
                               <Checkbox
                                 checked={field.value?.includes(permission)}
-                                onCheckedChange={(checked: any) => {
+                                onCheckedChange={(checked) => {
                                   return checked
                                     ? field.onChange([...field.value, permission])
                                     : field.onChange(field.value?.filter((value) => value !== permission));
