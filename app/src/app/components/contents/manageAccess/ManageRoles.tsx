@@ -6,7 +6,7 @@ import { manageRolesColumns } from "./manageRolesColumns";
 import { AddRoleButton } from "./AddRoleButton";
 
 export const ManageRoles = () => {
-  const { roles } = useManageAccessLayoutContext();
+  const { roles, mutate } = useManageAccessLayoutContext();
   const [filteredName, setFilterByName] = useState("");
 
   return (
@@ -18,7 +18,7 @@ export const ManageRoles = () => {
       <div className="space-y-4 flex flex-col">
         <div className="flex justify-between">
           <FilterByName setFilterByName={setFilterByName} />
-          <AddRoleButton />
+          <AddRoleButton mutate={mutate} />
         </div>
         <DataTable
           columns={manageRolesColumns}

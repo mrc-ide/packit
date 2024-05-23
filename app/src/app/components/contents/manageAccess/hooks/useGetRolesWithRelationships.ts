@@ -5,8 +5,9 @@ import { fetcher } from "../../../../../lib/fetch";
 import { getUsersWithRoles } from "../utils/getUsersWithRoles";
 
 export const useGetRolesWithRelationships = () => {
-  const { data, isLoading, error } = useSWR<RoleWithRelationships[]>(`${appConfig.apiUrl()}/role`, (url: string) =>
-    fetcher({ url })
+  const { data, isLoading, error, mutate } = useSWR<RoleWithRelationships[]>(
+    `${appConfig.apiUrl()}/role`,
+    (url: string) => fetcher({ url })
   );
   const nonUsernameRoles = data ? data.filter((role) => !role.isUsername) : [];
   const usernameRoles = data ? data.filter((role) => role.isUsername) : [];
@@ -16,6 +17,7 @@ export const useGetRolesWithRelationships = () => {
     roles: nonUsernameRoles,
     users,
     isLoading,
-    error
+    error,
+    mutate
   };
 };

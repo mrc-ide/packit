@@ -19,9 +19,17 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "../../Base/Input";
 import { fetcher } from "../../../../lib/fetch";
 import appConfig from "../../../../config/appConfig";
+import { ApiError } from "../../../../lib/errors";
+import { HttpStatus } from "../../../../lib/types/HttpStatus";
+import { KeyedMutator } from "swr";
+import { RoleWithRelationships } from "./types/RoleWithRelationships";
 
-export const AddRoleButton = () => {
+interface AddRoleButtonProps {
+  mutate: KeyedMutator<RoleWithRelationships[]>;
+}
+export const AddRoleButton = ({ mutate }: AddRoleButtonProps) => {
   const [open, setOpen] = useState(false);
+  const [fetchError, setFetchError] = useState("");
 
   const formSchema = z.object({
     name: z.string().min(1),
@@ -36,15 +44,21 @@ export const AddRoleButton = () => {
   });
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      // await fetcher({
-      //   url: `${appConfig.apiUrl()}/role`,
-      //   body: values,
-      //   method: "POST"
-      // });
+      await fetcher({
+        url: `${appConfig.apiUrl()}/role`,
+        body: values,
+        method: "POST"
+      });
+      form.reset();
+      setOpen(false);
+      mutate();
     } catch (error) {
       console.error(error);
+      if (error instanceof ApiError && error.status === HttpStatus.BadRequest) {
+        return form.setError("name", { message: error.message });
+      }
+      setFetchError("An unexpected error occurred. Please try again.");
     }
-    setOpen(false);
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -59,7 +73,7 @@ export const AddRoleButton = () => {
           <DialogTitle>Create new Role</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
             <FormField
               control={form.control}
               name="name"
@@ -111,6 +125,7 @@ export const AddRoleButton = () => {
               )}
             />
             <DialogFooter className="sm:justify-end gap-1">
+              {fetchError && <div className="text-xs text-red-500">{fetchError}</div>}
               <DialogClose asChild>
                 <Button type="button" variant="secondary">
                   Cancel

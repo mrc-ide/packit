@@ -4,9 +4,10 @@ import { ErrorComponent } from "../common/ErrorComponent";
 import { Skeleton } from "../../Base/Skeleton";
 import { RoleWithRelationships } from "./types/RoleWithRelationships";
 import { UserWithRoles } from "./types/UserWithRoles";
+import { KeyedMutator } from "swr";
 
 export const ManageAccessOutlet = () => {
-  const { roles, users, isLoading, error } = useGetRolesWithRelationships();
+  const { roles, users, isLoading, error, mutate } = useGetRolesWithRelationships();
 
   if (error) return <ErrorComponent message="Error fetching data" error={error} />;
 
@@ -23,11 +24,12 @@ export const ManageAccessOutlet = () => {
         ))}
       </ul>
     );
-  return roles ? <Outlet context={{ roles, users }} /> : null;
+  return roles ? <Outlet context={{ roles, users, mutate }} /> : null;
 };
 
 interface ManageAccessLayoutContext {
   roles: RoleWithRelationships[];
   users: UserWithRoles[];
+  mutate: KeyedMutator<RoleWithRelationships[]>;
 }
 export const useManageAccessLayoutContext = () => useOutletContext<ManageAccessLayoutContext>();
