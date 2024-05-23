@@ -3,6 +3,7 @@ export interface UserState {
   exp: number;
   displayName: string;
   userName: string;
+  authorities: string[];
 }
 export interface UserProviderState {
   user: UserState | null;

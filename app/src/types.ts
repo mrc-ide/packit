@@ -1,6 +1,6 @@
 import { JwtPayload } from "jwt-decode";
 
-export enum SideBarItems {
+export enum PacketSideBarItems {
   explorer,
   packetRunner,
   workflowRunner,
@@ -95,6 +95,7 @@ export interface PacketJwtPayload extends JwtPayload {
   displayName: string;
   userName: string;
   datetime: number;
+  au: string[];
 }
 
 export interface PacketErrorBody {

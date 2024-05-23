@@ -13,6 +13,7 @@ import { PacketLayout } from "../main/PacketLayout";
 import ProtectedRoute from "./ProtectedRoute";
 import { UpdatePassword } from "../login";
 import { AuthLayoutForm } from "../login";
+import { ManageAccessLayout, ManageRoles, ManageUsers } from "../contents/manageAccess";
 
 export function Router() {
   return (
@@ -34,11 +35,15 @@ export function Router() {
             {/* <Route path="run-workflow" element={<WorkflowRunner />} /> */}
             {/* <Route path="documentation" element={<ProjectDocumentation />} /> */}
             <Route path="/:packetName" element={<PacketGroup />} />
-            <Route element={<PacketLayout />} path="/:packetName/:packetId">
+            <Route element={<PacketLayout />}>
               <Route path="/:packetName/:packetId" element={<PacketDetails />} />
               <Route path="/:packetName/:packetId/metadata" element={<Metadata />} />
               <Route path="/:packetName/:packetId/downloads" element={<Download />} />
               {/* <Route path="/:packetName/:packetId/changelogs" element={<ChangeLogs />} /> */}
+            </Route>
+            <Route element={<ManageAccessLayout />}>
+              <Route path="manage-roles" element={<ManageRoles />} />
+              <Route path="manage-users" element={<ManageUsers />} />
             </Route>
           </Route>
         </Route>

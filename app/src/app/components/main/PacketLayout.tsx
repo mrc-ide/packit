@@ -1,8 +1,9 @@
 import { useParams } from "react-router-dom";
+import { Sidebar } from "../contents/common/Sidebar";
 import { PacketOutlet } from "./PacketOutlet";
-import { PacketSidebarNav } from "./PacketSidebarNav";
+import { SidebarItem } from "../../../lib/types/SidebarItem";
 
-const getSideBarNavItems = (packetName = "", packetId = "") => [
+const getSideBarNavItems = (packetName = "", packetId = ""): SidebarItem[] => [
   {
     to: `/${packetName}/${packetId}`,
     title: "Summary"
@@ -23,16 +24,11 @@ const getSideBarNavItems = (packetName = "", packetId = "") => [
 
 export const PacketLayout = () => {
   const { packetId, packetName } = useParams();
-  const sidebarNavItems = getSideBarNavItems(packetName, packetId);
+  const sidebarItems = getSideBarNavItems(packetName, packetId);
 
   return (
-    <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-10 lg:space-y-2">
-      <aside data-testid="sidebar" className="lg:w-1/5 pl-1 lg:pl-2">
-        <PacketSidebarNav items={sidebarNavItems} />
-      </aside>
-      <div className="flex-1 lg:max-w-6xl">
-        <PacketOutlet packetId={packetId} />
-      </div>
-    </div>
+    <Sidebar sidebarItems={sidebarItems}>
+      <PacketOutlet packetId={packetId} />
+    </Sidebar>
   );
 };

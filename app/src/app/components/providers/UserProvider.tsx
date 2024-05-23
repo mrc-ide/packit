@@ -30,7 +30,8 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         token: jwt,
         exp: jwtPayload.exp?.valueOf() ?? 0,
         displayName: jwtPayload.displayName ?? "",
-        userName: jwtPayload.userName ?? ""
+        userName: jwtPayload.userName ?? "",
+        authorities: jwtPayload.au ?? []
       };
       setUserState(user);
       localStorage.setItem(LocalStorageKeys.USER, JSON.stringify(user));

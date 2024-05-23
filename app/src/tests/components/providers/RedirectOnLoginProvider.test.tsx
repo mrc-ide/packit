@@ -7,7 +7,6 @@ const setItemSpy = jest.spyOn(Storage.prototype, "setItem");
 const removeItemSpy = jest.spyOn(Storage.prototype, "removeItem");
 
 describe("RedirectOnLoginProvider", () => {
-
     const renderElement = (children: JSX.Element) => {
         return render(
           <RedirectOnLoginProvider>

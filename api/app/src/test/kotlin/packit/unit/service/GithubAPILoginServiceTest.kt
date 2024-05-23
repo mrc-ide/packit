@@ -41,7 +41,7 @@ class GithubAPILoginServiceTest
     private val userPrincipal = UserPrincipal(
         username,
         displayName,
-        mutableListOf(SimpleGrantedAuthority("USER")),
+        mutableSetOf(SimpleGrantedAuthority("USER")),
         mutableMapOf()
     )
     private val mockIssuer = mock<JwtIssuer> {
@@ -51,7 +51,7 @@ class GithubAPILoginServiceTest
         on { getGithubUser() } doReturn fakeGHMyself
     }
     private val mockRoleService = mock<RoleService> {
-        on { getGrantedAuthorities(fakeUser.roles) } doReturn mutableListOf(SimpleGrantedAuthority("USER"))
+        on { getGrantedAuthorities(fakeUser.roles) } doReturn mutableSetOf(SimpleGrantedAuthority("USER"))
     }
 
     @Test

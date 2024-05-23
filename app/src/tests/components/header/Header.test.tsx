@@ -46,4 +46,17 @@ describe("header component", () => {
       expect(screen.getByRole("button", { name: "theme-dark" })).toBeInTheDocument();
     });
   });
+
+  it("should render link to manage access when user has user.manage authority", () => {
+    mockGetUserFromLocalStorage.mockReturnValue(mockUserState);
+    renderElement();
+
+    expect(screen.getByRole("link", { name: "Manage Access" })).toBeInTheDocument();
+  });
+  it("should not render link to manage access when user does not have user.manage authority", () => {
+    mockGetUserFromLocalStorage.mockReturnValue({ ...mockUserState, authorities: [] });
+    renderElement();
+
+    expect(screen.queryByRole("link", { name: "Manage Access" })).not.toBeInTheDocument();
+  });
 });

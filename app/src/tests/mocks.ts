@@ -29,8 +29,31 @@ export const mockUserState: UserState = {
   token:
     // eslint-disable-next-line max-len
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwYWNraXQiLCJpc3MiOiJwYWNraXQtYXBpIiwidXNlck5hbWUiOiJhYnN0ZXJuYXRvciIsImRpc3BsYXlOYW1lIjoiQW5tb2wgVGhhcGFyIiwiZGF0ZXRpbWUiOjE3MDI5NzgyMjgsImF1IjpbIltVU0VSXSJdLCJleHAiOjE3MDMwNjQ2Mjh9.o3b4PzZX76nP2tUxndGvusx-rytOkApodZ-geVPH9Pg",
-  exp: 1703064628
+  exp: 1703064628,
+  authorities: ["user.manage", "packet.read"]
 };
+
+/**
+ * {
+  "aud": "packit",
+  "iss": "packit-api",
+  "userName": "d@gmail.com",
+  "displayName": "random pussio",
+  "datetime": 1715929239,
+  "au": [
+    "d@gmail.com",
+    "ADMIN",
+    "user.manage",
+    "packet.push",
+    "packet.run",
+    "packet.read"
+  ],
+  "exp": 1716015639
+}
+ */
+export const mockToken =
+  // eslint-disable-next-line max-len
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwYWNraXQiLCJpc3MiOiJwYWNraXQtYXBpIiwidXNlck5hbWUiOiJkQGdtYWlsLmNvbSIsImRpc3BsYXlOYW1lIjoicmFuZG9tIHB1c3NpbyIsImRhdGV0aW1lIjoxNzE1OTI5MjM5LCJhdSI6WyJkQGdtYWlsLmNvbSIsIkFETUlOIiwidXNlci5tYW5hZ2UiLCJwYWNrZXQucHVzaCIsInBhY2tldC5ydW4iLCJwYWNrZXQucmVhZCJdLCJleHAiOjE3MTYwMTU2Mzl9.l4GgV0YoENGT3tjS-2popxWxRHp_LRT5gIVP3nND838";
 
 export const mockPacketGroupSummary: PageablePacketGroupSummary = {
   content: [
