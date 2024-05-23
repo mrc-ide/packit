@@ -43,12 +43,14 @@ export const BasicUserAuthForm = () => {
       navigate("/");
     } catch (error) {
       console.error(error);
-      if (error instanceof ApiError && error.status === HttpStatus.Unauthorized) {
-        if (error.message.includes("must change your password")) {
+      if (error instanceof ApiError) {
+        if (error.status === HttpStatus.Forbidden) {
           return navigate(`/update-password?email=${values.email}&error=${error.message}`);
         }
-        form.setError("email", { message: "Invalid email or password" });
-        form.setError("password", { message: "Invalid email or password" });
+        if (error.status === HttpStatus.Unauthorized) {
+          form.setError("email", { message: "Invalid email or password" });
+          form.setError("password", { message: "Invalid email or password" });
+        }
       }
     }
   };
