@@ -225,8 +225,6 @@ class RoleControllerTest : IntegrationTest()
     fun `users can get username roles with relationships `()
     {
         roleRepository.save(Role("test-username", isUsername = true))
-        val allUsernameRoles =
-            ObjectMapper().writeValueAsString(roleRepository.findAllByIsUsername(true).map { it.toDto() })
         val result =
             restTemplate.exchange(
                 "/role?isUsername=true",

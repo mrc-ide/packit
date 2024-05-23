@@ -13,7 +13,7 @@ export const Breadcrumb = () => {
         <div className="flex h-9 items-center px-4 justify-start space-x-1 text-sm">
           {pathNames.map((path, index) => {
             const routeTo = `${pathNames.slice(0, index + 1).join("/")}`;
-            const displayName = routeTo === "" ? "Home" : kebabToSentenceCase(path);
+            const displayName = routeTo === "" ? "home" : kebabToSentenceCase(path);
 
             return index === pathNames.length - 1 ? (
               <div key={index}>{displayName}</div>
