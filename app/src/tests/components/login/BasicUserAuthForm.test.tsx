@@ -71,12 +71,12 @@ describe("BasicUserAuthForm", () => {
     });
   });
 
-  it("should navigate to update password page if api returns 401 with update password message", async () => {
+  it("should navigate to update password page if api returns 403 forbidden with update password message", async () => {
     const errorMessage = "must change your password";
     const email = "test@email.com";
     server.use(
       rest.post("*", (req, res, ctx) => {
-        return res(ctx.status(401), ctx.json({ error: { detail: errorMessage } }));
+        return res(ctx.status(403), ctx.json({ error: { detail: errorMessage } }));
       })
     );
     render(
