@@ -3,6 +3,7 @@ package packit.service
 import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import packit.exceptions.PackitAuthenticationException
 import packit.exceptions.PackitException
 import packit.model.User
 import packit.model.dto.CreateBasicUser
@@ -15,7 +16,6 @@ interface UserService
 {
     fun saveUserFromGithub(username: String, displayName: String?, email: String?): User
     fun createBasicUser(createBasicUser: CreateBasicUser): User
-    fun updateUserLastLoggedIn(user: User, lastLoggedIn: Instant): User
     fun getUserForLogin(username: String): User
     fun deleteUser(username: String)
     fun getUsersByUsernames(usernames: List<String>): List<User>
@@ -23,6 +23,7 @@ interface UserService
     fun saveUser(user: User): User
     fun saveUsers(users: List<User>): List<User>
     fun updatePassword(username: String, updatePassword: UpdatePassword)
+    fun checkAndUpdateLastLoggedIn(username: String)
 }
 
 @Service
@@ -74,7 +75,7 @@ class BaseUserService(
         return userRepository.save(newUser)
     }
 
-    override fun updateUserLastLoggedIn(user: User, lastLoggedIn: Instant): User
+    internal fun updateUserLastLoggedIn(user: User, lastLoggedIn: Instant): User
     {
         user.lastLoggedIn = lastLoggedIn
         return userRepository.save(user)
@@ -82,13 +83,7 @@ class BaseUserService(
 
     override fun getUserForLogin(username: String): User
     {
-        val user =
-            userRepository.findByUsername(username) ?: throw AuthenticationException()
-        if (user.lastLoggedIn == null)
-        {
-            throw AuthenticationException("You must change your password before logging in.")
-        }
-        return updateUserLastLoggedIn(user, Instant.now())
+        return userRepository.findByUsername(username) ?: throw AuthenticationException()
     }
 
     override fun getUsersByUsernames(usernames: List<String>): List<User>
@@ -128,6 +123,18 @@ class BaseUserService(
         }
 
         user.password = passwordEncoder.encode(updatePassword.newPassword)
+        updateUserLastLoggedIn(user, Instant.now())
+    }
+
+    override fun checkAndUpdateLastLoggedIn(username: String)
+    {
+        val user = userRepository.findByUsername(username)
+            ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
+        if (user.lastLoggedIn == null)
+        {
+            throw PackitAuthenticationException("updatePassword", HttpStatus.FORBIDDEN)
+        }
+
         updateUserLastLoggedIn(user, Instant.now())
     }
 
