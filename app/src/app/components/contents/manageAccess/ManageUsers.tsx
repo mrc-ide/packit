@@ -30,7 +30,7 @@ export const ManageUsers = () => {
               size="sm"
             >
               <SquarePlus className="mr-2 h-5 w-5" />
-              Add Role
+              Add User
             </Button>
           )}
         </div>

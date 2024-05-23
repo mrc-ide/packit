@@ -43,7 +43,7 @@ export const manageRolesColumns = [
 
       return (
         <ScrollArea className="h-12">
-          <div className="flex flex-wrap gap-1 italic text-xs">
+          <div className="flex flex-wrap gap-1 italic text-xs pl-0.5">
             {users?.length === 0
               ? "None"
               : users.map((user, index) => (

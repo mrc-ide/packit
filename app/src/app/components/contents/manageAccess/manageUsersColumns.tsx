@@ -21,7 +21,7 @@ export const manageUsersColumns = [
 
       return (
         <ScrollArea className="h-12">
-          <div className="flex flex-wrap italic gap-0.5  text-xs pl-0.5">
+          <div className="flex flex-wrap italic gap-0.5 text-xs pl-0.5">
             {roles?.length === 0
               ? "None"
               : roles.map((role, index) => (
@@ -39,7 +39,7 @@ export const manageUsersColumns = [
 
       return (
         <ScrollArea className="h-12">
-          <div className="flex flex-wrap gap-1 italic text-xs">
+          <div className="flex flex-wrap gap-1 italic text-xs pl-0.5">
             {rolePermissions?.length === 0
               ? "None"
               : rolePermissions.map((permission, index) => (
@@ -60,10 +60,10 @@ export const manageUsersColumns = [
       // TODO: Implement with row data
       return (
         <div className="flex space-x-2 justify-end ">
-          <Button variant="outline" size="icon" aria-label="delete-role">
+          <Button variant="outline" size="icon" aria-label="delete-user">
             <Trash2 className="h-4 w-4 text-red-500" />
           </Button>
-          <Button variant="outline" size="icon" aria-label="edit-role">
+          <Button variant="outline" size="icon" aria-label="edit-user">
             <EllipsisVertical className="h-4 w-4" />
           </Button>
         </div>

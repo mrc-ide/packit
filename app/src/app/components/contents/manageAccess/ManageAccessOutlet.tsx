@@ -8,7 +8,7 @@ import { UserWithRoles } from "./types/UserWithRoles";
 export const ManageAccessOutlet = () => {
   const { roles, users, isLoading, error } = useGetRolesWithRelationships();
 
-  if (error) return <ErrorComponent message="Error fetching Roles" error={error} />;
+  if (error) return <ErrorComponent message="Error fetching data" error={error} />;
 
   if (isLoading)
     return (
