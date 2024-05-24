@@ -2,9 +2,10 @@ import { SquarePlus } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../../Base/Button";
 import { DataTable } from "../common/DataTable";
-import { FilterByName } from "../common/FilterByName";
 import { useManageAccessLayoutContext } from "./ManageAccessOutlet";
 import { manageRolesColumns } from "./manageRolesColumns";
+import { FilterInput } from "../common/FilterInput";
+import { PAGE_SIZE } from "../../../../lib/constants";
 
 export const ManageRoles = () => {
   const { roles } = useManageAccessLayoutContext();
@@ -18,7 +19,7 @@ export const ManageRoles = () => {
       </div>
       <div className="space-y-4 flex flex-col">
         <div className="flex justify-between">
-          <FilterByName setFilterByName={setFilterByName} />
+          <FilterInput setFilter={setFilterByName} placeholder="Filter roles by name..." />
           <Button
             onClick={() => {
               "TODO";
@@ -35,7 +36,7 @@ export const ManageRoles = () => {
           data={
             filteredName ? roles.filter((role) => role.name.toLowerCase().includes(filteredName.toLowerCase())) : roles
           }
-          enablePagination
+          pagination={{ pageSize: PAGE_SIZE }}
         />
       </div>
     </>

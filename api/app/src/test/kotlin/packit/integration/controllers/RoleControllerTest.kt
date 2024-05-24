@@ -1,7 +1,7 @@
 package packit.integration.controllers
 
 import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpMethod
@@ -42,10 +42,10 @@ class RoleControllerTest : IntegrationTest()
         name = "testRole",
         permissionNames = listOf("packet.run", "packet.read")
     )
-    private val createTestRoleBody = ObjectMapper().writeValueAsString(
+    private val createTestRoleBody = jacksonObjectMapper().writeValueAsString(
         testCreateRole
     )
-    private val updateRolePermissions = ObjectMapper().writeValueAsString(
+    private val updateRolePermissions = jacksonObjectMapper().writeValueAsString(
         UpdateRolePermissions(
             addPermissions = listOf(
                 UpdateRolePermission(
@@ -72,10 +72,10 @@ class RoleControllerTest : IntegrationTest()
             )
 
         assertEquals(result.statusCode, HttpStatus.CREATED)
-        assertEquals(testCreateRole.name, ObjectMapper().readTree(result.body).get("name").asText())
+        assertEquals(testCreateRole.name, jacksonObjectMapper().readTree(result.body).get("name").asText())
         assertEquals(
             testCreateRole.permissionNames.size,
-            ObjectMapper().readTree(result.body).get("rolePermissions").size()
+            jacksonObjectMapper().readTree(result.body).get("rolePermissions").size()
         )
         assertNotNull(roleRepository.findByName("testRole"))
     }
@@ -163,7 +163,7 @@ class RoleControllerTest : IntegrationTest()
         val role = roleRepository.findByName("testRole")!!
         assertEquals(1, role.rolePermissions.size)
         assertEquals("packet.read", role.rolePermissions.first().permission.name)
-        assertEquals(1, ObjectMapper().readTree(result.body).get("rolePermissions").size())
+        assertEquals(1, jacksonObjectMapper().readTree(result.body).get("rolePermissions").size())
     }
 
     @Test
@@ -198,7 +198,7 @@ class RoleControllerTest : IntegrationTest()
 
         assertSuccess(result)
 
-        assert(ObjectMapper().readValue(result.body, List::class.java).containsAll(listOf("ADMIN", "testRole")))
+        assert(jacksonObjectMapper().readValue(result.body, List::class.java).containsAll(listOf("ADMIN", "testRole")))
     }
 
     @Test
@@ -216,7 +216,7 @@ class RoleControllerTest : IntegrationTest()
             )
 
         assertSuccess(result)
-        val roles = ObjectMapper().readValue(
+        val roles = jacksonObjectMapper().readValue(
             result.body,
             object : TypeReference<List<RoleDto>>()
             {}
@@ -250,10 +250,10 @@ class RoleControllerTest : IntegrationTest()
             roleRepository.findAllByIsUsernameOrderByName(true)
         )
 
-        val roles = ObjectMapper().readValue(
+        val roles = jacksonObjectMapper().readValue(
             result.body,
             object : TypeReference<List<RoleDto>>()
-        {}
+            {}
         )
 
         assertEquals(roles.size, usernameRoleDtos.size)
@@ -274,10 +274,10 @@ class RoleControllerTest : IntegrationTest()
             )
 
         assertSuccess(result)
-        val roles = ObjectMapper().readValue(
+        val roles = jacksonObjectMapper().readValue(
             result.body,
             object : TypeReference<List<RoleDto>>()
-        {}
+            {}
         )
 
         assertContains(roles, adminRole.toDto())
@@ -296,10 +296,10 @@ class RoleControllerTest : IntegrationTest()
                 String::class.java
             )
 
-        val roleResult = ObjectMapper().readValue(
+        val roleResult = jacksonObjectMapper().readValue(
             result.body,
             object : TypeReference<RoleDto>()
-        {}
+            {}
         )
         assertSuccess(result)
 
@@ -340,7 +340,7 @@ class RoleControllerTest : IntegrationTest()
             displayName = "test user",
         )
         userRepository.saveAll(listOf(userToRemove, userToAdd))
-        val updateRoleUsers = ObjectMapper().writeValueAsString(
+        val updateRoleUsers = jacksonObjectMapper().writeValueAsString(
             UpdateRoleUsers(
                 usernamesToAdd = listOf(userToAdd.username),
                 usernamesToRemove = listOf(userToRemove.username)
@@ -355,10 +355,10 @@ class RoleControllerTest : IntegrationTest()
         )
 
         assertSuccess(result)
-        assertEquals(1, ObjectMapper().readTree(result.body).get("users").size())
+        assertEquals(1, jacksonObjectMapper().readTree(result.body).get("users").size())
         assertEquals(
             userToAdd.username,
-            ObjectMapper().readTree(result.body).get("users").first().get("username").asText()
+            jacksonObjectMapper().readTree(result.body).get("users").first().get("username").asText()
         )
         assertEquals(1, roleRepository.findByName(testRole.name)!!.users.size)
     }
