@@ -1,6 +1,6 @@
 package packit.integration.controllers
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -39,7 +39,7 @@ class LoginControllerTestGithub : IntegrationTest()
         val result = LoginTestHelper.getGithubLoginResponse(LoginWithToken(token), restTemplate)
 
         assertSuccess(result)
-        val packitToken = ObjectMapper().readTree(result.body).get("token").asText()
+        val packitToken = jacksonObjectMapper().readTree(result.body).get("token").asText()
         assertThat(packitToken.count()).isGreaterThan(0)
     }
 
@@ -147,13 +147,13 @@ object LoginTestHelper
 {
     fun getBasicLoginResponse(body: LoginWithPassword, restTemplate: TestRestTemplate): ResponseEntity<String>
     {
-        val jsonBody = ObjectMapper().writeValueAsString(body)
+        val jsonBody = jacksonObjectMapper().writeValueAsString(body)
         return getLoginResponse(jsonBody, restTemplate, "/auth/login/basic")
     }
 
     fun getGithubLoginResponse(body: LoginWithToken, restTemplate: TestRestTemplate): ResponseEntity<String>
     {
-        val jsonBody = ObjectMapper().writeValueAsString(body)
+        val jsonBody = jacksonObjectMapper().writeValueAsString(body)
         return getLoginResponse(jsonBody, restTemplate, "/auth/login/api")
     }
 
@@ -163,7 +163,7 @@ object LoginTestHelper
         username: String
     ): ResponseEntity<String>
     {
-        val jsonBody = ObjectMapper().writeValueAsString(body)
+        val jsonBody = jacksonObjectMapper().writeValueAsString(body)
         return getLoginResponse(jsonBody, restTemplate, "/auth/$username/basic/password")
     }
 
