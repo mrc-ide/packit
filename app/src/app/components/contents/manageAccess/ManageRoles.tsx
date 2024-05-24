@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { DataTable } from "../common/DataTable";
-import { FilterByName } from "../common/FilterByName";
 import { useManageAccessLayoutContext } from "./ManageAccessOutlet";
-import { manageRolesColumns } from "./utils/manageRolesColumns";
+
 import { AddRoleButton } from "./AddRoleButton";
+import { FilterInput } from "../common/FilterInput";
+import { PAGE_SIZE } from "../../../../lib/constants";
+import { manageRolesColumns } from "./utils/manageRolesColumns";
 
 export const ManageRoles = () => {
   const { roles, mutate } = useManageAccessLayoutContext();
@@ -17,7 +19,7 @@ export const ManageRoles = () => {
       </div>
       <div className="space-y-4 flex flex-col">
         <div className="flex justify-between">
-          <FilterByName setFilterByName={setFilterByName} />
+          <FilterInput setFilter={setFilterByName} placeholder="Filter roles by name..." />
           <AddRoleButton mutate={mutate} />
         </div>
         <DataTable
@@ -25,7 +27,7 @@ export const ManageRoles = () => {
           data={
             filteredName ? roles.filter((role) => role.name.toLowerCase().includes(filteredName.toLowerCase())) : roles
           }
-          enablePagination
+          pagination={{ pageSize: PAGE_SIZE }}
         />
       </div>
     </>

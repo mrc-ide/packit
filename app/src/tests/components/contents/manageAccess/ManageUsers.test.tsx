@@ -1,16 +1,11 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { ManageUsers } from "../../../../app/components/contents/manageAccess";
-import { SWRConfig } from "swr";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { SWRConfig } from "swr";
+import { ManageUsers } from "../../../../app/components/contents/manageAccess";
 import { ManageAccessOutlet } from "../../../../app/components/contents/manageAccess/ManageAccessOutlet";
 import { AuthConfigProvider } from "../../../../app/components/providers/AuthConfigProvider";
-import {
-  mockNonUsernameRolesWithRelationships,
-  mockUsernameRolesWithRelationships,
-  mockUsersWithRoles
-} from "../../../mocks";
-import { getUsersWithRoles } from "../../../../app/components/contents/manageAccess/utils/getUsersWithRoles";
-import userEvent from "@testing-library/user-event";
+import { mockUsersWithRoles } from "../../../mocks";
 
 const mockAuthConfig = jest.fn();
 jest.mock("../../../../lib/localStorageManager", () => ({
@@ -71,7 +66,7 @@ describe("ManageUsers", () => {
     mockAuthConfig.mockReturnValue({ enableBasicLogin: false });
     renderComponent();
 
-    const filterInput = await screen.findByPlaceholderText(/filter by name/i);
+    const filterInput = await screen.findByPlaceholderText(/filter users by username/i);
     userEvent.type(filterInput, "x@gmail");
 
     await waitFor(() => {
@@ -87,7 +82,7 @@ describe("ManageUsers", () => {
     mockAuthConfig.mockReturnValue({ enableBasicLogin: false });
     renderComponent();
 
-    const filterInput = await screen.findByPlaceholderText(/filter by name/i);
+    const filterInput = await screen.findByPlaceholderText(/filter users by username/i);
     userEvent.type(filterInput, "x@gmail");
 
     await waitFor(() => {

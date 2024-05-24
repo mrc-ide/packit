@@ -1,12 +1,13 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { FilterByName } from "../../../../app/components/contents/common/FilterByName";
+import { FilterInput } from "../../../../app/components/contents/common/FilterInput";
 import userEvent from "@testing-library/user-event";
 
 describe("FilterByName component", () => {
   it("filtering on input & calls passed in functions", async () => {
     const setFilterByName = jest.fn();
-    const setPageNumber = jest.fn();
-    render(<FilterByName setFilterByName={setFilterByName} setPageNumber={setPageNumber} />);
+    const postFilterAction = jest.fn();
+    const placeholder = "filter by name...";
+    render(<FilterInput setFilter={setFilterByName} postFilterAction={postFilterAction} placeholder={placeholder} />);
 
     const input = screen.getByPlaceholderText(/filter by name/i);
 
@@ -15,7 +16,7 @@ describe("FilterByName component", () => {
     await waitFor(() => {
       expect(setFilterByName).toHaveBeenCalledWith("test");
     });
-
-    expect(setPageNumber).toHaveBeenCalledWith(0);
+    expect(screen.getByPlaceholderText(placeholder)).toBeVisible();
+    expect(postFilterAction).toHaveBeenCalledTimes(1);
   });
 });

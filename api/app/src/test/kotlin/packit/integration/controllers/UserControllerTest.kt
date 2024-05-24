@@ -1,7 +1,7 @@
 package packit.integration.controllers
 
 import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -35,7 +35,7 @@ class UserControllerTest : IntegrationTest()
         password = "password",
         displayName = "Random User",
     )
-    private val testCreateUserBody = ObjectMapper().writeValueAsString(testCreateUser)
+    private val testCreateUserBody = jacksonObjectMapper().writeValueAsString(testCreateUser)
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
@@ -47,10 +47,10 @@ class UserControllerTest : IntegrationTest()
             String::class.java
         )
 
-        val userResult = ObjectMapper().readValue(
+        val userResult = jacksonObjectMapper().readValue(
             result.body,
             object : TypeReference<UserDto>()
-        {}
+            {}
         )
         assertEquals(HttpStatus.CREATED, result.statusCode)
         assertEquals(testCreateUser.email, userResult.email)
@@ -75,7 +75,7 @@ class UserControllerTest : IntegrationTest()
     @WithAuthenticatedUser
     fun `reject request if createUser body is invalid`()
     {
-        val invalidEmailAndPasswordBody = ObjectMapper().writeValueAsString(
+        val invalidEmailAndPasswordBody = jacksonObjectMapper().writeValueAsString(
             CreateBasicUser(
                 email = "random",
                 password = "pp",
@@ -105,7 +105,7 @@ class UserControllerTest : IntegrationTest()
                 roles = mutableListOf(testRole)
             )
         )
-        val updateUserRolesJSON = ObjectMapper().writeValueAsString(
+        val updateUserRolesJSON = jacksonObjectMapper().writeValueAsString(
             UpdateUserRoles(
                 roleNamesToAdd = listOf("ADMIN"),
                 roleNamesToRemove = listOf(testRole.name)
@@ -119,10 +119,10 @@ class UserControllerTest : IntegrationTest()
             String::class.java
         )
 
-        val userResult = ObjectMapper().readValue(
+        val userResult = jacksonObjectMapper().readValue(
             result.body,
             object : TypeReference<UserDto>()
-        {}
+            {}
         )
         assertSuccess(result)
         assertEquals(userRepository.findByUsername("test@email.com")?.roles?.map { it.name }, listOf("ADMIN"))

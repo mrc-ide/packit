@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FilterByName } from "../common/FilterByName";
+import { FilterInput } from "../common/FilterInput";
 import { PacketGroupSummaryList } from "./PacketGroupSummaryList";
 import { PAGE_SIZE } from "../../../../lib/constants";
 
@@ -15,7 +15,11 @@ export const Home = () => {
           <p className="text-muted-foreground">Here&apos;s a list of packet groups</p>
         </div>
         <div className="space-y-4 flex flex-col">
-          <FilterByName setFilterByName={setFilterByName} setPageNumber={setPageNumber} />
+          <FilterInput
+            setFilter={setFilterByName}
+            postFilterAction={() => setPageNumber(0)}
+            placeholder="filter packet groups..."
+          />
           <PacketGroupSummaryList
             filterByName={filteredName}
             pageNumber={pageNumber}
