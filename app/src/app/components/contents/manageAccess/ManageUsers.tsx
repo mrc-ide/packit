@@ -5,7 +5,7 @@ import { Button } from "../../Base/Button";
 import { SquarePlus } from "lucide-react";
 import { useAuthConfig } from "../../providers/AuthConfigProvider";
 import { DataTable } from "../common/DataTable";
-import { manageUsersColumns } from "./manageUsersColumns";
+import { manageUsersColumns } from "./utils/manageUsersColumns";
 
 export const ManageUsers = () => {
   const { users } = useManageAccessLayoutContext();

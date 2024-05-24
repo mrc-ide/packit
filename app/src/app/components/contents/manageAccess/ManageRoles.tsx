@@ -2,7 +2,7 @@ import { useState } from "react";
 import { DataTable } from "../common/DataTable";
 import { FilterByName } from "../common/FilterByName";
 import { useManageAccessLayoutContext } from "./ManageAccessOutlet";
-import { manageRolesColumns } from "./manageRolesColumns";
+import { manageRolesColumns } from "./utils/manageRolesColumns";
 import { AddRoleButton } from "./AddRoleButton";
 
 export const ManageRoles = () => {
