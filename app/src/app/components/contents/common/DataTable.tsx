@@ -1,24 +1,27 @@
 import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../Base/Table";
 import { Pagination } from "./Pagination";
-import { PAGE_SIZE } from "../../../../lib/constants";
 
 interface DataTableProps<TData> {
   columns: ColumnDef<TData, any>[];
   data: TData[];
-  enablePagination?: boolean;
+  pagination?: {
+    pageSize: number;
+  };
 }
 
-export const DataTable = <TData,>({ data, columns, enablePagination }: DataTableProps<TData>) => {
+export const DataTable = <TData,>({ data, columns, pagination }: DataTableProps<TData>) => {
   const table = useReactTable({
     columns,
     data,
     getCoreRowModel: getCoreRowModel(),
-    ...(enablePagination && { getPaginationRowModel: getPaginationRowModel() }),
+    ...(pagination && { getPaginationRowModel: getPaginationRowModel() }),
     initialState: {
-      pagination: {
-        pageSize: PAGE_SIZE
-      }
+      ...(pagination && {
+        pagination: {
+          pageSize: pagination.pageSize
+        }
+      })
     },
     manualFiltering: true
   });
@@ -58,7 +61,7 @@ export const DataTable = <TData,>({ data, columns, enablePagination }: DataTable
           </TableBody>
         </Table>
       </div>
-      {enablePagination && (
+      {pagination && (
         <div className="flex items-center justify-center">
           <Pagination
             currentPageNumber={table.getState().pagination.pageIndex}

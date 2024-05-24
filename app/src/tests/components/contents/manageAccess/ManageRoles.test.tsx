@@ -41,7 +41,7 @@ describe("ManageRoles", () => {
   it("should filter roles by name", async () => {
     renderComponent();
 
-    const filterInput = await screen.findByPlaceholderText(/filter by name/i);
+    const filterInput = await screen.findByPlaceholderText(/filter roles by name/i);
     userEvent.type(filterInput, "adm");
 
     await waitFor(() => {
@@ -55,7 +55,7 @@ describe("ManageRoles", () => {
   it("should reset filter when reset button is clicked", async () => {
     renderComponent();
 
-    const filterInput = await screen.findByPlaceholderText(/filter by name/i);
+    const filterInput = await screen.findByPlaceholderText(/filter roles by name/i);
     userEvent.type(filterInput, "adm");
 
     await waitFor(() => {

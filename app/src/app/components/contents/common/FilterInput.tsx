@@ -5,26 +5,23 @@ import { Button } from "../../Base/Button";
 import { X } from "lucide-react";
 
 interface FilterByNameProps {
-  setFilterByName: Dispatch<SetStateAction<string>>;
-  setPageNumber?: Dispatch<SetStateAction<number>>;
+  setFilter: Dispatch<SetStateAction<string>>;
+  postFilterAction?: () => void;
+  placeholder: string;
 }
-export const FilterByName = ({ setFilterByName, setPageNumber }: FilterByNameProps) => {
+export const FilterInput = ({ setFilter, postFilterAction, placeholder }: FilterByNameProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSetNameFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFilterByName(event.target.value);
-    if (setPageNumber) {
-      setPageNumber(0);
-    }
+    setFilter(event.target.value);
+    postFilterAction && postFilterAction();
   };
   const handleResetFilter = () => {
     if (inputRef?.current) {
       inputRef.current.value = "";
     }
-    setFilterByName("");
-    if (setPageNumber) {
-      setPageNumber(0);
-    }
+    setFilter("");
+    postFilterAction && postFilterAction();
   };
   const debouncedSetFilterByName = useCallback(debounce(handleSetNameFilter, 300), []);
 
@@ -37,7 +34,7 @@ export const FilterByName = ({ setFilterByName, setPageNumber }: FilterByNamePro
   return (
     <div className="flex space-x-4">
       <Input
-        placeholder="Filter by name..."
+        placeholder={placeholder}
         onChange={debouncedSetFilterByName}
         className="h-8 sm:w-[450px] lg:w-[600px]"
         ref={inputRef}

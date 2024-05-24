@@ -4,9 +4,10 @@ import { Button } from "../../Base/Button";
 import { Skeleton } from "../../Base/Skeleton";
 import { DataTable } from "../common/DataTable";
 import { ErrorComponent } from "../common/ErrorComponent";
-import { FilterByName } from "../common/FilterByName";
+import { FilterInput } from "../common/FilterInput";
 import { useGetRolesWithRelationships } from "./hooks/useGetRolesWithRelationships";
 import { manageRolesColumns } from "./manageRolesColumns";
+import { PAGE_SIZE } from "../../../../lib/constants";
 
 export const ManageRoles = () => {
   const { roles, isLoading, error } = useGetRolesWithRelationships();
@@ -36,7 +37,7 @@ export const ManageRoles = () => {
       </div>
       <div className="space-y-4 flex flex-col">
         <div className="flex justify-between">
-          <FilterByName setFilterByName={setFilterByName} />
+          <FilterInput setFilter={setFilterByName} placeholder="Filter roles by name..." />
           <Button
             onClick={() => {
               "TODO";
@@ -56,7 +57,7 @@ export const ManageRoles = () => {
                 ? roles.filter((role) => role.name.toLowerCase().includes(filteredName.toLowerCase()))
                 : roles
             }
-            enablePagination
+            pagination={{ pageSize: PAGE_SIZE }}
           />
         )}
       </div>
