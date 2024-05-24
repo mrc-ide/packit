@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useManageAccessLayoutContext } from "./ManageAccessOutlet";
-import { FilterByName } from "../common/FilterByName";
 import { Button } from "../../Base/Button";
 import { SquarePlus } from "lucide-react";
 import { useAuthConfig } from "../../providers/AuthConfigProvider";
 import { DataTable } from "../common/DataTable";
 import { manageUsersColumns } from "./manageUsersColumns";
+import { PAGE_SIZE } from "../../../../lib/constants";
+import { FilterInput } from "../common/FilterInput";
 
 export const ManageUsers = () => {
   const { users } = useManageAccessLayoutContext();
@@ -20,7 +21,7 @@ export const ManageUsers = () => {
       </div>
       <div className="space-y-4 flex flex-col">
         <div className="flex justify-between">
-          <FilterByName setFilterByName={setFilterByName} />
+          <FilterInput setFilter={setFilterByName} placeholder="filter users by username.." />
           {authConfig?.enableBasicLogin && (
             <Button
               onClick={() => {
@@ -41,7 +42,7 @@ export const ManageUsers = () => {
               ? users.filter((user) => user.username.toLowerCase().includes(filteredName.toLowerCase()))
               : users
           }
-          enablePagination
+          pagination={{ pageSize: PAGE_SIZE }}
         />
       </div>
     </>
