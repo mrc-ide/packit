@@ -1,34 +1,10 @@
-import debounce from "lodash.debounce";
-import { X } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Button } from "../../Base/Button";
-import { Input } from "../../Base/Input";
+import { useState } from "react";
+import { FilterInput } from "../common/FilterInput";
 import { PacketGroupSummaryList } from "./PacketGroupSummaryList";
 
 export const Home = () => {
-  const [filterByName, setFilterByName] = useState("");
+  const [filteredName, setFilterByName] = useState("");
   const [pageNumber, setPageNumber] = useState(0);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const PAGE_SIZE = 50;
-
-  const handleSetNameFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFilterByName(event.target.value);
-    setPageNumber(0);
-  };
-  const handleResetFilter = () => {
-    if (inputRef?.current) {
-      inputRef.current.value = "";
-    }
-    setFilterByName("");
-    setPageNumber(0);
-  };
-  const debouncedSetFilterByName = useCallback(debounce(handleSetNameFilter, 300), []);
-
-  useEffect(() => {
-    return () => {
-      debouncedSetFilterByName.cancel();
-    };
-  }, []);
 
   return (
     <div className="flex justify-center">
@@ -38,24 +14,15 @@ export const Home = () => {
           <p className="text-muted-foreground">Here&apos;s a list of packet groups</p>
         </div>
         <div className="space-y-4 flex flex-col">
-          <div className="flex space-x-4">
-            <Input
-              placeholder="Find a Report by name..."
-              onChange={debouncedSetFilterByName}
-              className="h-8 sm:w-[450px] lg:w-[600px]"
-              ref={inputRef}
-            />
-            {filterByName && (
-              <Button variant="ghost" onClick={handleResetFilter} className="h-8 px-2 lg:px-3">
-                Reset
-                <X className="ml-2 h-4 w-4" />
-              </Button>
-            )}
-          </div>
+          <FilterInput
+            setFilter={setFilterByName}
+            postFilterAction={() => setPageNumber(0)}
+            placeholder="filter packet groups..."
+          />
           <PacketGroupSummaryList
-            filterByName={filterByName}
+            filterByName={filteredName}
             pageNumber={pageNumber}
-            pageSize={PAGE_SIZE}
+            pageSize={2}
             setPageNumber={setPageNumber}
           />
         </div>

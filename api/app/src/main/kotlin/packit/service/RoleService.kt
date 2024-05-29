@@ -1,5 +1,6 @@
 package packit.service
 
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -9,8 +10,10 @@ import packit.model.Permission
 import packit.model.Role
 import packit.model.RolePermission
 import packit.model.dto.CreateRole
+import packit.model.dto.RoleDto
 import packit.model.dto.UpdateRolePermission
 import packit.model.dto.UpdateRolePermissions
+import packit.model.toDto
 import packit.repository.RoleRepository
 
 interface RoleService
@@ -27,6 +30,7 @@ interface RoleService
     fun getRole(roleName: String): Role
     fun updatePermissionsToRole(roleName: String, updateRolePermissions: UpdateRolePermissions): Role
     fun getByRoleName(roleName: String): Role?
+    fun getSortedByBasePermissionsRoleDtos(roles: List<Role>): List<RoleDto>
 }
 
 @Service
@@ -102,6 +106,18 @@ class BaseRoleService(
         return roleRepository.findByName(roleName)
     }
 
+    override fun getSortedByBasePermissionsRoleDtos(roles: List<Role>): List<RoleDto>
+    {
+        return roles.map { role ->
+            val roleDto = role.toDto()
+            roleDto.rolePermissions =
+                roleDto.rolePermissions.sortedByDescending {
+                    it.tag == null && it.packet == null && it.packetGroup == null
+                }
+            roleDto
+        }
+    }
+
     internal fun addRolePermissionsToRole(role: Role, addRolePermissions: List<UpdateRolePermission>): Role
     {
         val rolePermissionsToAdd =
@@ -112,16 +128,16 @@ class BaseRoleService(
 
     override fun getRoleNames(): List<String>
     {
-        return roleRepository.findAll().map { it.name }
+        return roleRepository.findAll(Sort.by("name").ascending()).map { it.name }
     }
 
     override fun getAllRoles(isUsernames: Boolean?): List<Role>
     {
         if (isUsernames == null)
         {
-            return roleRepository.findAll()
+            return roleRepository.findAll(Sort.by("name").ascending())
         }
-        return roleRepository.findAllByIsUsername(isUsernames)
+        return roleRepository.findAllByIsUsernameOrderByName(isUsernames)
     }
 
     override fun getRolesByRoleNames(roleNames: List<String>): List<Role>

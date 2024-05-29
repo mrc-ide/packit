@@ -24,7 +24,7 @@ export const PacketGroupSummaryList = ({
   if (isLoading)
     return (
       <ul className="flex flex-col border rounded-md">
-        {[...Array(8)].map((val, index) => (
+        {[...Array(2)].map((_, index) => (
           <li key={index} className="p-4 flex flex-col border-b space-y-1">
             <Skeleton className="h-6 w-64" />
             <div className="flex space-x-3 items-center">
