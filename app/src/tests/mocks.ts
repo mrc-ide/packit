@@ -424,3 +424,190 @@ export const mockNonUsernameRolesWithRelationships: RoleWithRelationships[] = [
     isUsername: false
   }
 ];
+export const mockUsernameRolesWithRelationships: RoleWithRelationships[] = [
+  {
+    name: "a@gmail.com",
+    rolePermissions: [
+      {
+        permission: "user.manage",
+        packet: null,
+        tag: null,
+        packetGroup: null,
+        id: 83
+      },
+      {
+        permission: "packet.read",
+        packet: {
+          name: "modup-201707-queries1",
+          id: "20170818-164847-7574883b"
+        },
+        tag: null,
+        packetGroup: null,
+        id: 81
+      },
+      {
+        permission: "packet.push",
+        packet: null,
+        tag: null,
+        packetGroup: {
+          name: "depends",
+          id: 4
+        },
+        id: 82
+      }
+    ],
+    users: [
+      {
+        username: "a@gmail.com",
+        id: "b13c35b8-7070-47a8-9266-3a23ae6fd76e"
+      }
+    ],
+    id: 2,
+    isUsername: true
+  },
+  {
+    name: "c@gmail.com",
+    rolePermissions: [
+      {
+        permission: "packet.push",
+        packet: null,
+        tag: null,
+        packetGroup: {
+          name: "explicit",
+          id: 3
+        },
+        id: 39
+      }
+    ],
+    users: [
+      {
+        username: "c@gmail.com",
+        id: "5390a192-371c-49fe-8b67-efcc250daaa9"
+      }
+    ],
+    id: 4,
+    isUsername: true
+  },
+  {
+    name: "x@gmail.com",
+    rolePermissions: [],
+    users: [{ id: "b13c35b8-7070-47a8-9266-3a23ae6fd76e", username: "x@gmail.com" }],
+    id: 11,
+    isUsername: true
+  }
+];
+
+export const mockUsersWithRoles = [
+  {
+    username: "a@gmail.com",
+    id: "b13c35b8-7070-47a8-9266-3a23ae6fd76e",
+    roles: [
+      {
+        name: "Admin",
+        id: 7
+      },
+      {
+        name: "Modeller",
+        id: 8
+      }
+    ],
+    specificPermissions: [
+      {
+        permission: "user.manage",
+        packet: null,
+        tag: null,
+        packetGroup: null,
+        id: 83
+      },
+      {
+        permission: "packet.read",
+        packet: {
+          name: "modup-201707-queries1",
+          id: "20170818-164847-7574883b"
+        },
+        tag: null,
+        packetGroup: null,
+        id: 81
+      },
+      {
+        permission: "packet.push",
+        packet: null,
+        tag: null,
+        packetGroup: {
+          name: "depends",
+          id: 4
+        },
+        id: 82
+      }
+    ]
+  },
+  {
+    username: "b@gmail.com",
+    id: "fd261b07-9a4b-4a1d-9b66-88d708b63264",
+    roles: [
+      {
+        name: "Admin",
+        id: 7
+      },
+      {
+        name: "Modeller",
+        id: 8
+      }
+    ],
+    specificPermissions: []
+  },
+  {
+    username: "c@gmail.com",
+    id: "5390a192-371c-49fe-8b67-efcc250daaa9",
+    roles: [
+      {
+        name: "Admin",
+        id: 7
+      },
+      {
+        name: "Modeller",
+        id: 8
+      }
+    ],
+    specificPermissions: [
+      {
+        permission: "packet.push",
+        packet: null,
+        tag: null,
+        packetGroup: {
+          name: "explicit",
+          id: 3
+        },
+        id: 39
+      }
+    ]
+  },
+  {
+    username: "d@gmail.com",
+    id: "3c0e2e83-c7a9-420c-82db-c3327931f1c0",
+    roles: [
+      {
+        name: "Admin",
+        id: 7
+      }
+    ],
+    specificPermissions: []
+  },
+  {
+    username: "e@gmail.com",
+    id: "a3e56ca4-e9ed-474a-bd4d-3d60508746d1",
+    roles: [
+      {
+        name: "Admin",
+        id: 7
+      }
+    ],
+    specificPermissions: []
+  },
+  {
+    username: "x@gmail.com",
+    id: "b13c35b8-7070-47a8-9266-3a23ae6fd76e",
+    roles: [],
+    specificPermissions: []
+  }
+];

@@ -1,17 +1,24 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { ManageRoles } from "../../../../app/components/contents/manageAccess";
-import { mockNonUsernameRolesWithRelationships } from "../../../mocks";
-import { AuthConfigProvider } from "../../../../app/components/providers/AuthConfigProvider";
-import { server } from "../../../../msw/server";
-import { rest } from "msw";
-import { manageRolesIndexUri } from "../../../../msw/handlers/manageRolesHandlers";
-import { SWRConfig } from "swr";
 import userEvent from "@testing-library/user-event";
+import { rest } from "msw";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { SWRConfig } from "swr";
+import { ManageRoles } from "../../../../app/components/contents/manageAccess";
+import { ManageAccessOutlet } from "../../../../app/components/contents/manageAccess/ManageAccessOutlet";
+import { manageRolesIndexUri } from "../../../../msw/handlers/manageRolesHandlers";
+import { server } from "../../../../msw/server";
+import { mockNonUsernameRolesWithRelationships } from "../../../mocks";
 
 const renderComponent = () => {
   render(
     <SWRConfig value={{ dedupingInterval: 0 }}>
-      <ManageRoles />
+      <MemoryRouter initialEntries={["/manage-roles"]}>
+        <Routes>
+          <Route element={<ManageAccessOutlet />}>
+            <Route path="/manage-roles" element={<ManageRoles />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
     </SWRConfig>
   );
 };
@@ -19,6 +26,7 @@ describe("ManageRoles", () => {
   it("should render table data correctly", async () => {
     renderComponent();
 
+    // only non-username roles are rendered
     await waitFor(() => {
       mockNonUsernameRolesWithRelationships.forEach((role) => {
         expect(screen.getAllByText(role.name, { exact: false })[0]).toBeVisible();
@@ -80,7 +88,7 @@ describe("ManageRoles", () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText(/error fetching roles/i)).toBeVisible();
+      expect(screen.getByText(/error fetching data/i)).toBeVisible();
     });
   });
 });

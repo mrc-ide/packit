@@ -1,33 +1,15 @@
 import { SquarePlus } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../../Base/Button";
-import { Skeleton } from "../../Base/Skeleton";
 import { DataTable } from "../common/DataTable";
-import { ErrorComponent } from "../common/ErrorComponent";
-import { FilterInput } from "../common/FilterInput";
-import { useGetRolesWithRelationships } from "./hooks/useGetRolesWithRelationships";
+import { useManageAccessLayoutContext } from "./ManageAccessOutlet";
 import { manageRolesColumns } from "./manageRolesColumns";
+import { FilterInput } from "../common/FilterInput";
 import { PAGE_SIZE } from "../../../../lib/constants";
 
 export const ManageRoles = () => {
-  const { roles, isLoading, error } = useGetRolesWithRelationships();
-
+  const { roles } = useManageAccessLayoutContext();
   const [filteredName, setFilterByName] = useState("");
-
-  if (error) return <ErrorComponent message="Error fetching Roles" error={error} />;
-
-  if (isLoading)
-    return (
-      <ul className="flex flex-col border rounded-md">
-        {[...Array(2)].map((_val, index) => (
-          <li key={index} className="p-4 flex border-b space-x-6">
-            <Skeleton className="h-6 w-48" />
-            <Skeleton className="h-12 w-64" />
-            <Skeleton className="h-12 w-64" />
-          </li>
-        ))}
-      </ul>
-    );
 
   return (
     <>
@@ -49,17 +31,13 @@ export const ManageRoles = () => {
             Add Role
           </Button>
         </div>
-        {roles && (
-          <DataTable
-            columns={manageRolesColumns}
-            data={
-              filteredName
-                ? roles.filter((role) => role.name.toLowerCase().includes(filteredName.toLowerCase()))
-                : roles
-            }
-            pagination={{ pageSize: PAGE_SIZE }}
-          />
-        )}
+        <DataTable
+          columns={manageRolesColumns}
+          data={
+            filteredName ? roles.filter((role) => role.name.toLowerCase().includes(filteredName.toLowerCase())) : roles
+          }
+          pagination={{ pageSize: PAGE_SIZE }}
+        />
       </div>
     </>
   );

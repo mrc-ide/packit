@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { ManageAccessLayout } from "../../../../app/components/contents/manageAccess";
 import userEvent from "@testing-library/user-event";
@@ -8,7 +8,8 @@ import { mockUserState } from "../../../mocks";
 
 const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
 jest.mock("../../../../lib/localStorageManager", () => ({
-  getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
+  getUserFromLocalStorage: () => mockGetUserFromLocalStorage(),
+  getAuthConfigFromLocalStorage: jest.fn().mockReturnValue({ authEnabled: true, enableGithubLogin: true })
 }));
 
 describe("ManageAccessLayout", () => {
@@ -27,7 +28,9 @@ describe("ManageAccessLayout", () => {
       </UserProvider>
     );
 
-    expect(screen.getByText("role management")).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByText("role management")).toBeVisible();
+    });
 
     userEvent.click(screen.getByRole("link", { name: "Manage Users" }));
 

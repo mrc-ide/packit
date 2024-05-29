@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FilterInput } from "../common/FilterInput";
 import { PacketGroupSummaryList } from "./PacketGroupSummaryList";
+import { PAGE_SIZE } from "../../../../lib/constants";
 
 export const Home = () => {
   const [filteredName, setFilterByName] = useState("");
@@ -22,7 +23,7 @@ export const Home = () => {
           <PacketGroupSummaryList
             filterByName={filteredName}
             pageNumber={pageNumber}
-            pageSize={2}
+            pageSize={PAGE_SIZE}
             setPageNumber={setPageNumber}
           />
         </div>
