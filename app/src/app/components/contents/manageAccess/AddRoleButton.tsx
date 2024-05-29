@@ -15,7 +15,7 @@ export const AddRoleButton = ({ mutate }: AddRoleButtonProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button size="sm">
           <SquarePlus className="mr-2 h-5 w-5" />
           Add Role
         </Button>

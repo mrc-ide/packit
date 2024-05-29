@@ -19,6 +19,7 @@ import {
   MultiSelectorList,
   MultiSelectorTrigger
 } from "../../Base/MultiSelect";
+import { HttpStatus } from "../../../../lib/types/HttpStatus";
 
 interface AddUserFormProps {
   mutate: KeyedMutator<RoleWithRelationships[]>;
@@ -55,8 +56,8 @@ export const AddUserForm = ({ mutate, setOpen, roleNames }: AddUserFormProps) =>
       mutate();
     } catch (error) {
       console.error(error);
-      if (error instanceof ApiError) {
-        return setFetchError(error.message);
+      if (error instanceof ApiError && error.status === HttpStatus.BadRequest) {
+        return form.setError("email", { message: error.message });
       }
       setFetchError("An unexpected error occurred. Please try again.");
     }
@@ -113,7 +114,7 @@ export const AddUserForm = ({ mutate, setOpen, roleNames }: AddUserFormProps) =>
               <FormLabel>User&apos;s Roles</FormLabel>
               <MultiSelector onValuesChange={field.onChange} values={field.value}>
                 <MultiSelectorTrigger>
-                  <MultiSelectorInput placeholder="Select Roles" />
+                  <MultiSelectorInput className="text-sm" placeholder="Select Roles" />
                 </MultiSelectorTrigger>
                 <MultiSelectorContent>
                   <MultiSelectorList>
