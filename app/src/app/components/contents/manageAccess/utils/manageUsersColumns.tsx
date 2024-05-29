@@ -1,13 +1,16 @@
 import { createColumnHelper } from "@tanstack/react-table";
+import { EllipsisVertical } from "lucide-react";
+import { KeyedMutator } from "swr";
 import { constructPermissionName } from "../../../../../lib/constructPermissionName";
 import { Button } from "../../../Base/Button";
-import { EllipsisVertical, Trash2 } from "lucide-react";
 import { ScrollArea } from "../../../Base/ScrollArea";
+import { DeleteUserOrRole } from "../DeleteUserOrRole";
+import { RoleWithRelationships } from "../types/RoleWithRelationships";
 import { UserWithRoles } from "../types/UserWithRoles";
 
 const columnHelper = createColumnHelper<UserWithRoles>();
 
-export const manageUsersColumns = [
+export const setupManageUsersColumns = (mutate: KeyedMutator<RoleWithRelationships[]>) => [
   columnHelper.accessor("username", {
     header: "Username",
     cell: ({ getValue }) => {
@@ -56,13 +59,10 @@ export const manageUsersColumns = [
   }),
   columnHelper.display({
     id: "actions",
-    cell: () => {
-      // TODO: Implement with row data
+    cell: ({ row }) => {
       return (
         <div className="flex space-x-2 justify-end ">
-          <Button variant="outline" size="icon" aria-label="delete-user">
-            <Trash2 className="h-4 w-4 text-red-500" />
-          </Button>
+          <DeleteUserOrRole mutate={mutate} data={{ name: row.original.username, type: "user" }} />
           <Button variant="outline" size="icon" aria-label="edit-user">
             <EllipsisVertical className="h-4 w-4" />
           </Button>

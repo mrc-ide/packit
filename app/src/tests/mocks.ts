@@ -249,7 +249,7 @@ export const mockFileBlob = new Blob(["test contents"]);
 
 export const mockNonUsernameRolesWithRelationships: RoleWithRelationships[] = [
   {
-    name: "Admin",
+    name: "ADMIN",
     rolePermissions: [
       {
         permission: "packet.run",
@@ -503,7 +503,7 @@ export const mockUsersWithRoles = [
     id: "b13c35b8-7070-47a8-9266-3a23ae6fd76e",
     roles: [
       {
-        name: "Admin",
+        name: "ADMIN",
         id: 7
       },
       {
@@ -546,7 +546,7 @@ export const mockUsersWithRoles = [
     id: "fd261b07-9a4b-4a1d-9b66-88d708b63264",
     roles: [
       {
-        name: "Admin",
+        name: "ADMIN",
         id: 7
       },
       {
@@ -561,7 +561,7 @@ export const mockUsersWithRoles = [
     id: "5390a192-371c-49fe-8b67-efcc250daaa9",
     roles: [
       {
-        name: "Admin",
+        name: "ADMIN",
         id: 7
       },
       {
@@ -587,7 +587,7 @@ export const mockUsersWithRoles = [
     id: "3c0e2e83-c7a9-420c-82db-c3327931f1c0",
     roles: [
       {
-        name: "Admin",
+        name: "ADMIN",
         id: 7
       }
     ],
@@ -598,7 +598,7 @@ export const mockUsersWithRoles = [
     id: "a3e56ca4-e9ed-474a-bd4d-3d60508746d1",
     roles: [
       {
-        name: "Admin",
+        name: "ADMIN",
         id: 7
       }
     ],

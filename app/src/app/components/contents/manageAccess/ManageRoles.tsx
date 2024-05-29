@@ -5,7 +5,7 @@ import { useManageAccessLayoutContext } from "./ManageAccessOutlet";
 import { AddRoleButton } from "./AddRoleButton";
 import { FilterInput } from "../common/FilterInput";
 import { PAGE_SIZE } from "../../../../lib/constants";
-import { manageRolesColumns } from "./utils/manageRolesColumns";
+import { setupManageRolesColumns } from "./utils/manageRolesColumns";
 
 export const ManageRoles = () => {
   const { roles, mutate } = useManageAccessLayoutContext();
@@ -23,7 +23,7 @@ export const ManageRoles = () => {
           <AddRoleButton mutate={mutate} />
         </div>
         <DataTable
-          columns={manageRolesColumns}
+          columns={setupManageRolesColumns(mutate)}
           data={
             filteredName ? roles.filter((role) => role.name.toLowerCase().includes(filteredName.toLowerCase())) : roles
           }
