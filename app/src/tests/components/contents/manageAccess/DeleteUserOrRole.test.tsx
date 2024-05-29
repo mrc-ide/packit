@@ -1,8 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { DeleteUserOrRole } from "../../../../app/components/contents/manageAccess/DeleteUserOrRole";
-import * as fetch from "../../../../lib/fetch";
 import userEvent from "@testing-library/user-event";
+import { DeleteUserOrRole } from "../../../../app/components/contents/manageAccess/DeleteUserOrRole";
 import appConfig from "../../../../config/appConfig";
+import * as fetch from "../../../../lib/fetch";
 
 describe("DeleteUserOrRole", () => {
   const fetcherSpy = jest.spyOn(fetch, "fetcher");
@@ -40,5 +40,20 @@ describe("DeleteUserOrRole", () => {
       });
     });
     expect(mutate).toHaveBeenCalledTimes(1);
+  });
+
+  it("should not call mutate if delete fails", async () => {
+    fetcherSpy.mockImplementation(() => Promise.reject(new Error("Internal server error")));
+    const mutate = jest.fn();
+    render(<DeleteUserOrRole mutate={mutate} data={{ name: "roleName", type: "role" }} />);
+
+    userEvent.click(screen.getByRole("button", { name: "delete-role" }));
+    await screen.findByText(/are you absolutely sure you want to delete roleName/i);
+    userEvent.click(await screen.findByRole("button", { name: "Delete" }));
+
+    await waitFor(() => {
+      expect(fetcherSpy).toHaveBeenCalledTimes(1);
+    });
+    expect(mutate).not.toHaveBeenCalled();
   });
 });
