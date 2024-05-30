@@ -1,4 +1,3 @@
-import { R } from "msw/lib/glossary-de6278a9";
 import { RoleWithRelationships } from "../../../../../app/components/contents/manageAccess/types/RoleWithRelationships";
 import { UserWithRoles } from "../../../../../app/components/contents/manageAccess/types/UserWithRoles";
 import {
