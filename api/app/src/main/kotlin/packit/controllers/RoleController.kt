@@ -70,7 +70,7 @@ class RoleController(private val roleService: RoleService, private val userRoleS
     {
         val roles = roleService.getAllRoles(isUsername)
 
-        return ResponseEntity.ok(roleService.getSortedByBasePermissionsRoleDtos(roles))
+        return ResponseEntity.ok(roleService.getSortedRoleDtos(roles))
     }
 
     @GetMapping("/{roleName}")

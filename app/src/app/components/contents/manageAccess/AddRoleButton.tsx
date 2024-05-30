@@ -20,7 +20,7 @@ export const AddRoleButton = ({ mutate }: AddRoleButtonProps) => {
           Add Role
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Create new Role</DialogTitle>
         </DialogHeader>

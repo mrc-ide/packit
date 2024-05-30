@@ -21,7 +21,7 @@ export const AddBasicUserButton = ({ mutate, roleNames }: AddBasicUserButtonProp
           Add User
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Create new User</DialogTitle>
         </DialogHeader>

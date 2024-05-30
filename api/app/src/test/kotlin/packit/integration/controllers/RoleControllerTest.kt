@@ -18,8 +18,8 @@ import packit.repository.PermissionRepository
 import packit.repository.RoleRepository
 import packit.repository.UserRepository
 import packit.service.RoleService
-import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
@@ -224,7 +224,7 @@ class RoleControllerTest : IntegrationTest()
 
         assert(
             roles.containsAll(
-                roleService.getSortedByBasePermissionsRoleDtos(
+                roleService.getSortedRoleDtos(
                     listOf(
                         adminRole,
                         userRole
@@ -246,7 +246,7 @@ class RoleControllerTest : IntegrationTest()
                 getTokenizedHttpEntity(),
                 String::class.java
             )
-        val usernameRoleDtos = roleService.getSortedByBasePermissionsRoleDtos(
+        val usernameRoleDtos = roleService.getSortedRoleDtos(
             roleRepository.findAllByIsUsernameOrderByName(true)
         )
 
@@ -263,8 +263,8 @@ class RoleControllerTest : IntegrationTest()
     @WithAuthenticatedUser(authorities = ["user.manage"])
     fun `users can get non username roles with relationships`()
     {
-        roleRepository.save(Role("test-user", isUsername = true)).toDto()
-        val adminRole = roleRepository.findByName("ADMIN")!!
+        val userRole = roleRepository.save(Role("test-user", isUsername = true)).toDto()
+        val adminRole = roleRepository.findByName("ADMIN")!!.toDto()
         val result =
             restTemplate.exchange(
                 "/role?isUsername=false",
@@ -279,8 +279,11 @@ class RoleControllerTest : IntegrationTest()
             object : TypeReference<List<RoleDto>>()
             {}
         )
-
-        assertContains(roles, adminRole.toDto())
+        val foundAdminRole = roles.find { it.name == adminRole.name }!!
+        assertEquals(foundAdminRole.name, adminRole.name)
+        assertEquals(foundAdminRole.rolePermissions.size, adminRole.rolePermissions.size)
+        assertEquals(foundAdminRole.users.size, adminRole.users.size)
+        assertFalse(roles.contains(userRole))
     }
 
     @Test
