@@ -21,7 +21,7 @@ import {
 } from "../../../Base/DropdownMenu";
 import { RoleWithRelationships } from "../types/RoleWithRelationships";
 import { UserWithRoles } from "../types/UserWithRoles";
-import { UpdateUsers } from "./UpdateUsers";
+import { UpdateRoleUsersForm } from "./UpdateRoleUsersForm";
 
 interface UpdateRoleDropDownMenuProps {
   role: RoleWithRelationships;
@@ -30,7 +30,7 @@ interface UpdateRoleDropDownMenuProps {
 }
 export const UpdateRoleDropDownMenu = ({ mutate, role, users }: UpdateRoleDropDownMenuProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialog, setDialog] = useState<"user" | "permission">("user");
+  const [selectedOption, setSelectedOption] = useState<"users" | "permissions">();
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -43,22 +43,25 @@ export const UpdateRoleDropDownMenu = ({ mutate, role, users }: UpdateRoleDropDo
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DialogTrigger asChild onClick={() => setDialog("user")}>
+          <DialogTrigger asChild onClick={() => setSelectedOption("users")}>
             <DropdownMenuItem>Update Users</DropdownMenuItem>
           </DialogTrigger>
-          <DialogTrigger asChild onClick={() => setDialog("permission")}>
+          <DialogTrigger asChild onClick={() => setSelectedOption("permissions")}>
             <DropdownMenuItem>Update Permissions</DropdownMenuItem>
           </DialogTrigger>
         </DropdownMenuContent>
       </DropdownMenu>
-      {dialog === "user" ? (
-        <UpdateUsers mutate={mutate} role={role} users={users} setOpen={setDialogOpen} />
-      ) : (
-        // TODO
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Update Permissions on {role.name} role</DialogTitle>
-          </DialogHeader>
+
+      <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
+        <DialogHeader>
+          <DialogTitle>
+            Update {selectedOption} on {role.name} role
+          </DialogTitle>
+        </DialogHeader>
+        {selectedOption === "users" ? (
+          <UpdateRoleUsersForm mutate={mutate} role={role} users={users} setOpen={setDialogOpen} />
+        ) : (
+          // TODO: Implement UpdateRolePermissionsForm
           <DialogFooter className="sm:justify-end gap-1">
             {/* {fetchError && <div className="text-xs text-red-500">{fetchError}</div>} */}
             <DialogClose asChild>
@@ -72,8 +75,8 @@ export const UpdateRoleDropDownMenu = ({ mutate, role, users }: UpdateRoleDropDo
             </DialogClose>
             <Button type="submit">Save</Button>
           </DialogFooter>
-        </DialogContent>
-      )}
+        )}
+      </DialogContent>
     </Dialog>
   );
 };
