@@ -1,18 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
+import { KeyedMutator } from "swr";
 import { z } from "zod";
 import appConfig from "../../../../config/appConfig";
 import { GLOBAL_PERMISSIONS } from "../../../../lib/constants";
 import { ApiError } from "../../../../lib/errors";
 import { fetcher } from "../../../../lib/fetch";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
-import { Button } from "../../Base/Button";
 import { Checkbox } from "../../Base/Checkbox";
-import { DialogClose, DialogFooter } from "../../Base/Dialog";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../../Base/Form";
 import { Input } from "../../Base/Input";
-import { KeyedMutator } from "swr";
+import { CustomDialogFooter } from "../common/CustomDialogFooter";
 import { RoleWithRelationships } from "./types/RoleWithRelationships";
 
 interface AddRoleFormProps {
@@ -110,15 +109,7 @@ export const AddRoleForm = ({ mutate, setOpen }: AddRoleFormProps) => {
             </FormItem>
           )}
         />
-        <DialogFooter className="sm:justify-end gap-1">
-          {fetchError && <div className="text-xs text-red-500">{fetchError}</div>}
-          <DialogClose asChild>
-            <Button type="button" variant="secondary" onClick={() => form.reset()}>
-              Cancel
-            </Button>
-          </DialogClose>
-          <Button type="submit">Add</Button>
-        </DialogFooter>
+        <CustomDialogFooter error={fetchError} onCancel={form.reset} submitText="Add" />
       </form>
     </Form>
   );

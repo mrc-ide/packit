@@ -19,32 +19,32 @@ import { CustomDialogFooter } from "../../common/CustomDialogFooter";
 import { RoleWithRelationships } from "../types/RoleWithRelationships";
 import { UserWithRoles } from "../types/UserWithRoles";
 
-interface UpdateRoleUsersFormProps {
-  role: RoleWithRelationships;
-  users: UserWithRoles[];
+interface UpdateUserRoleFormProps {
   mutate: KeyedMutator<RoleWithRelationships[]>;
+  user: UserWithRoles;
+  roles: RoleWithRelationships[];
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
-export const UpdateRoleUsersForm = ({ role, users, mutate, setOpen }: UpdateRoleUsersFormProps) => {
+export const UpdateUserRoleForm = ({ mutate, user, roles, setOpen }: UpdateUserRoleFormProps) => {
   const [fetchError, setFetchError] = useState("");
-  const usersNotInRole = users.filter((user) => !role.users.find((u) => u.username === user.username));
+  const rolesNotInUser = roles.filter((role) => !user.roles.find((r) => r.name === role.name));
 
   const formSchema = z.object({
-    usernamesToAdd: z.array(z.string()),
-    usernamesToRemove: z.array(z.string())
+    roleNamesToAdd: z.array(z.string()),
+    roleNamesToRemove: z.array(z.string())
   });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      usernamesToAdd: [],
-      usernamesToRemove: []
+      roleNamesToAdd: [],
+      roleNamesToRemove: []
     }
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await fetcher({
-        url: `${appConfig.apiUrl()}/role/${role.name}/users`,
+        url: `${appConfig.apiUrl()}/user/${user.username}/roles`,
         body: values,
         method: "PUT"
       });
@@ -66,19 +66,19 @@ export const UpdateRoleUsersForm = ({ role, users, mutate, setOpen }: UpdateRole
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
-          name="usernamesToAdd"
+          name="roleNamesToAdd"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Users to Add</FormLabel>
+              <FormLabel>Roles to Add</FormLabel>
               <MultiSelector onValuesChange={field.onChange} values={field.value}>
                 <MultiSelectorTrigger>
-                  <MultiSelectorInput className="text-sm" placeholder="Select Usernames to Add" />
+                  <MultiSelectorInput className="text-sm" placeholder="Select Roles to Add" />
                 </MultiSelectorTrigger>
                 <MultiSelectorContent>
                   <MultiSelectorList>
-                    {usersNotInRole.map((user) => (
-                      <MultiSelectorItem key={user.id} value={user.username}>
-                        {user.username}
+                    {rolesNotInUser.map((role) => (
+                      <MultiSelectorItem key={role.id} value={role.name}>
+                        {role.name}
                       </MultiSelectorItem>
                     ))}
                   </MultiSelectorList>
@@ -89,7 +89,7 @@ export const UpdateRoleUsersForm = ({ role, users, mutate, setOpen }: UpdateRole
         />
         <FormField
           control={form.control}
-          name="usernamesToRemove"
+          name="roleNamesToRemove"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Users to Remove</FormLabel>
@@ -99,9 +99,9 @@ export const UpdateRoleUsersForm = ({ role, users, mutate, setOpen }: UpdateRole
                 </MultiSelectorTrigger>
                 <MultiSelectorContent>
                   <MultiSelectorList>
-                    {role.users.map((user) => (
-                      <MultiSelectorItem key={user.id} value={user.username}>
-                        {user.username}
+                    {user.roles.map((role) => (
+                      <MultiSelectorItem key={role.id} value={role.name}>
+                        {role.name}
                       </MultiSelectorItem>
                     ))}
                   </MultiSelectorList>

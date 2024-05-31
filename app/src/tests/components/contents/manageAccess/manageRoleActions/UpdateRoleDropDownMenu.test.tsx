@@ -16,7 +16,7 @@ describe("UpdateRoleDropDownMenu", () => {
     await waitFor(() => {
       expect(screen.getByRole("dialog")).toBeInTheDocument();
     });
-    expect(screen.getByText(/update users on role1 role/i)).toBeVisible();
+    expect(screen.getByText(/update users on role1/i)).toBeVisible();
   });
 
   it("should render update permissions dialog on update permissions click", async () => {
@@ -30,6 +30,6 @@ describe("UpdateRoleDropDownMenu", () => {
     await waitFor(() => {
       expect(screen.getByRole("dialog")).toBeInTheDocument();
     });
-    expect(screen.getByText(/update permissions on role1 role/i)).toBeVisible();
+    expect(screen.getByText(/update permissions on role1/i)).toBeVisible();
   });
 });

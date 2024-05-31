@@ -27,7 +27,7 @@ export const ManageUsers = () => {
           )}
         </div>
         <DataTable
-          columns={setupManageUsersColumns(mutate)}
+          columns={setupManageUsersColumns(mutate, roles)}
           data={
             filteredName
               ? users.filter((user) => user.username.toLowerCase().includes(filteredName.toLowerCase()))

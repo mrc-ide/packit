@@ -6,11 +6,9 @@ import { z } from "zod";
 import appConfig from "../../../../config/appConfig";
 import { ApiError } from "../../../../lib/errors";
 import { fetcher } from "../../../../lib/fetch";
-import { Button } from "../../Base/Button";
-import { DialogClose, DialogFooter } from "../../Base/Dialog";
+import { HttpStatus } from "../../../../lib/types/HttpStatus";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../../Base/Form";
 import { Input } from "../../Base/Input";
-import { RoleWithRelationships } from "./types/RoleWithRelationships";
 import {
   MultiSelector,
   MultiSelectorContent,
@@ -19,7 +17,8 @@ import {
   MultiSelectorList,
   MultiSelectorTrigger
 } from "../../Base/MultiSelect";
-import { HttpStatus } from "../../../../lib/types/HttpStatus";
+import { CustomDialogFooter } from "../common/CustomDialogFooter";
+import { RoleWithRelationships } from "./types/RoleWithRelationships";
 
 interface AddUserFormProps {
   mutate: KeyedMutator<RoleWithRelationships[]>;
@@ -132,15 +131,7 @@ export const AddUserForm = ({ mutate, setOpen, roleNames }: AddUserFormProps) =>
             </FormItem>
           )}
         />
-        <DialogFooter className="sm:justify-end gap-1">
-          {fetchError && <div className="text-xs text-red-500">{fetchError}</div>}
-          <DialogClose asChild>
-            <Button type="button" variant="secondary" onClick={() => form.reset()}>
-              Cancel
-            </Button>
-          </DialogClose>
-          <Button type="submit">Add</Button>
-        </DialogFooter>
+        <CustomDialogFooter error={fetchError} onCancel={form.reset} submitText="Add" />
       </form>
     </Form>
   );

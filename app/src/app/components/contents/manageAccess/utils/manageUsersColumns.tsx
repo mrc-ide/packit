@@ -1,16 +1,18 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { EllipsisVertical } from "lucide-react";
 import { KeyedMutator } from "swr";
 import { constructPermissionName } from "../../../../../lib/constructPermissionName";
-import { Button } from "../../../Base/Button";
 import { ScrollArea } from "../../../Base/ScrollArea";
 import { DeleteUserOrRole } from "../DeleteUserOrRole";
+import { UpdateUserDropdownMenu } from "../manageUsersActions/UpdateUserDropdownMenu";
 import { RoleWithRelationships } from "../types/RoleWithRelationships";
 import { UserWithRoles } from "../types/UserWithRoles";
 
 const columnHelper = createColumnHelper<UserWithRoles>();
 
-export const setupManageUsersColumns = (mutate: KeyedMutator<RoleWithRelationships[]>) => [
+export const setupManageUsersColumns = (
+  mutate: KeyedMutator<RoleWithRelationships[]>,
+  roles: RoleWithRelationships[]
+) => [
   columnHelper.accessor("username", {
     header: "Username",
     cell: ({ getValue }) => {
@@ -63,9 +65,7 @@ export const setupManageUsersColumns = (mutate: KeyedMutator<RoleWithRelationshi
       return (
         <div className="flex space-x-2 justify-end ">
           <DeleteUserOrRole mutate={mutate} data={{ name: row.original.username, type: "user" }} />
-          <Button variant="outline" size="icon" aria-label="edit-user">
-            <EllipsisVertical className="h-4 w-4" />
-          </Button>
+          <UpdateUserDropdownMenu user={row.original} roles={roles} mutate={mutate} />
         </div>
       );
     }

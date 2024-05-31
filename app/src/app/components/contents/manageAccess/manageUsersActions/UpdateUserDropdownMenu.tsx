@@ -6,25 +6,24 @@ import { UpdateDialogContent } from "../UpdateDialogContent";
 import { UpdateDropdown, UpdateOptions } from "../UpdateDropdown";
 import { RoleWithRelationships } from "../types/RoleWithRelationships";
 import { UserWithRoles } from "../types/UserWithRoles";
-import { UpdateRoleUsersForm } from "./UpdateRoleUsersForm";
+import { UpdateUserRoleForm } from "./UpdateUserRoleForm";
 
-interface UpdateRoleDropDownMenuProps {
-  role: RoleWithRelationships;
-  users: UserWithRoles[];
+interface UpdateUserDropdownMenuProps {
+  user: UserWithRoles;
+  roles: RoleWithRelationships[];
   mutate: KeyedMutator<RoleWithRelationships[]>;
 }
-export const UpdateRoleDropDownMenu = ({ mutate, role, users }: UpdateRoleDropDownMenuProps) => {
+export const UpdateUserDropdownMenu = ({ user, roles, mutate }: UpdateUserDropdownMenuProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState<UpdateOptions>("permissions");
-
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      <UpdateDropdown manageType="role" setSelectedOption={setSelectedOption} />
-      <UpdateDialogContent action={selectedOption} name={role.name}>
-        {selectedOption === "users" ? (
-          <UpdateRoleUsersForm mutate={mutate} role={role} users={users} setOpen={setDialogOpen} />
+      <UpdateDropdown manageType="user" setSelectedOption={setSelectedOption} />
+      <UpdateDialogContent action={selectedOption} name={user.username}>
+        {selectedOption === "roles" ? (
+          <UpdateUserRoleForm mutate={mutate} user={user} roles={roles} setOpen={setDialogOpen} />
         ) : (
-          // TODO: Implement UpdateRolePermissionsForm..change to use custom dialog footer
+          // TODO: Implement UpdateRolePermissionsForm
           <DialogFooter className="sm:justify-end gap-1">
             {/* {fetchError && <div className="text-xs text-red-500">{fetchError}</div>} */}
             <DialogClose asChild>
