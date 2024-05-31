@@ -83,7 +83,7 @@ describe("AddRoleButton", () => {
     });
   });
 
-  it("should show error message when role name is empty or not trimmed", async () => {
+  it("should show error message when role name is empty", async () => {
     render(<AddRoleButton mutate={jest.fn()} />);
     userEvent.click(screen.getByRole("button", { name: /add role/i }));
 
@@ -92,8 +92,14 @@ describe("AddRoleButton", () => {
     await waitFor(() => {
       expect(screen.getByText(/string must contain at least 1 character/i)).toBeVisible();
     });
+  });
 
-    userEvent.type(screen.getByLabelText(/name/i), "trim ");
+  it("should show error message when role name is not trimmed", async () => {
+    render(<AddRoleButton mutate={jest.fn()} />);
+    userEvent.click(screen.getByRole("button", { name: /add role/i }));
+
+    userEvent.type(screen.getByLabelText(/name/i), " trim");
+    userEvent.click(screen.getByRole("button", { name: /create/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/name must not start or end with whitespace/i)).toBeVisible();
