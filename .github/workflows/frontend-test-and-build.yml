@@ -37,6 +37,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build DB
+        uses: ./.github/actions/build-db
+      - name: Build API
+        uses: ./.github/actions/build-api
       - name: Installing dependencies
         run: npm ci --prefix=app
       - name: Building app

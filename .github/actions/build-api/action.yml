@@ -1,0 +1,8 @@
+name: Build API
+
+runs:
+  using: "composite"
+  steps:
+    - name: Build API
+      run: |
+        api/scripts/build
