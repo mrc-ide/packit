@@ -23,7 +23,10 @@ export const AddRoleForm = ({ mutate, setOpen }: AddRoleFormProps) => {
   const [fetchError, setFetchError] = useState("");
 
   const formSchema = z.object({
-    name: z.string().min(1),
+    name: z
+      .string()
+      .min(1)
+      .regex(/^\S.*\S$/, "Name must not start or end with whitespace"),
     permissionNames: z.array(z.string())
   });
   const form = useForm<z.infer<typeof formSchema>>({
