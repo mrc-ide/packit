@@ -52,7 +52,7 @@ export const UpdateRoleDropDownMenu = ({ mutate, role, users }: UpdateRoleDropDo
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
+      <DialogContent onOpenAutoFocus={(e) => e.preventDefault()} onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>
             Update {selectedOption} on {role.name} role
