@@ -4,5 +4,6 @@ runs:
   using: "composite"
   steps:
     - name: Build DB
+      shell: bash
       run: |
         db/scripts/build
