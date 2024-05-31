@@ -25,6 +25,12 @@ The app will be available on port 3000. If you would like to create a super admi
 ./scripts/dev-start --super-user
 ```
 
+For more options:
+
+```
+./scripts/dev-start --help
+```
+
 The following commands achieve the same things but allow for finer control of each of the components:
 
 1. `./scripts/run-dependencies` to run the database and `outpack_server`
