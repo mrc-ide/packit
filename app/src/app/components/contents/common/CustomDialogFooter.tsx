@@ -2,7 +2,7 @@ import { Button } from "../../Base/Button";
 import { DialogClose, DialogFooter } from "../../Base/Dialog";
 
 interface CustomDialogFooterProps {
-  error: string;
+  error?: string;
   onCancel: () => void;
   submitText: string;
 }
