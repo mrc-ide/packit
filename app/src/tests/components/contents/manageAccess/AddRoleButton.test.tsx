@@ -49,7 +49,7 @@ describe("AddRoleButton", () => {
     userEvent.click(addRoleButton);
 
     userEvent.type(screen.getByLabelText(/name/i), "Test Role");
-    userEvent.click(screen.getByRole("button", { name: /create/i }));
+    userEvent.click(screen.getByRole("button", { name: /add/i }));
 
     await waitFor(() => {
       expect(fetcherSpy).toHaveBeenCalled();
@@ -72,7 +72,7 @@ describe("AddRoleButton", () => {
     userEvent.click(screen.getByRole("checkbox", { name: GLOBAL_PERMISSIONS[0] }));
     userEvent.click(screen.getByRole("checkbox", { name: GLOBAL_PERMISSIONS[2] }));
 
-    userEvent.click(screen.getByRole("button", { name: /create/i }));
+    userEvent.click(screen.getByRole("button", { name: /add/i }));
 
     await waitFor(() => {
       expect(fetcherSpy).toHaveBeenCalledWith({
@@ -87,10 +87,22 @@ describe("AddRoleButton", () => {
     render(<AddRoleButton mutate={jest.fn()} />);
     userEvent.click(screen.getByRole("button", { name: /add role/i }));
 
-    userEvent.click(screen.getByRole("button", { name: /create/i }));
+    userEvent.click(screen.getByRole("button", { name: /add/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/string must contain at least 1 character/i)).toBeVisible();
+    });
+  });
+
+  it("should show error message when role name is not trimmed", async () => {
+    render(<AddRoleButton mutate={jest.fn()} />);
+    userEvent.click(screen.getByRole("button", { name: /add role/i }));
+
+    userEvent.type(screen.getByLabelText(/name/i), " trim");
+    userEvent.click(screen.getByRole("button", { name: /add/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/name must not start or end with whitespace/i)).toBeVisible();
     });
   });
 
@@ -105,7 +117,7 @@ describe("AddRoleButton", () => {
 
     userEvent.click(screen.getByRole("button", { name: /add role/i }));
     userEvent.type(screen.getByLabelText(/name/i), "Test Role");
-    userEvent.click(screen.getByRole("button", { name: /create/i }));
+    userEvent.click(screen.getByRole("button", { name: /add/i }));
 
     waitFor(() => {
       expect(screen.getByText(errorMessage)).toBeVisible();
@@ -121,7 +133,7 @@ describe("AddRoleButton", () => {
 
     userEvent.click(screen.getByRole("button", { name: /add role/i }));
     userEvent.type(screen.getByLabelText(/name/i), "Test Role");
-    userEvent.click(screen.getByRole("button", { name: /create/i }));
+    userEvent.click(screen.getByRole("button", { name: /add/i }));
 
     waitFor(() => {
       expect(screen.getByText(/an unexpected error occurred. please try again/i)).toBeVisible();
