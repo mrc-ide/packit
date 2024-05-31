@@ -117,7 +117,7 @@ export const AddRoleForm = ({ mutate, setOpen }: AddRoleFormProps) => {
               Cancel
             </Button>
           </DialogClose>
-          <Button type="submit">Create</Button>
+          <Button type="submit">Add</Button>
         </DialogFooter>
       </form>
     </Form>

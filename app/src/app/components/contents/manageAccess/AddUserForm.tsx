@@ -126,6 +126,9 @@ export const AddUserForm = ({ mutate, setOpen, roleNames }: AddUserFormProps) =>
                   </MultiSelectorList>
                 </MultiSelectorContent>
               </MultiSelector>
+              <FormDescription className="text-xs mt-0">
+                You can add user-specific permissions after the user has been created.
+              </FormDescription>
             </FormItem>
           )}
         />
@@ -136,7 +139,7 @@ export const AddUserForm = ({ mutate, setOpen, roleNames }: AddUserFormProps) =>
               Cancel
             </Button>
           </DialogClose>
-          <Button type="submit">Create</Button>
+          <Button type="submit">Add</Button>
         </DialogFooter>
       </form>
     </Form>

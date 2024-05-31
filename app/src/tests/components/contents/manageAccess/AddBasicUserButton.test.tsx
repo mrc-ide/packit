@@ -55,7 +55,7 @@ describe("AddBasicUser", () => {
     userEvent.type(screen.getByLabelText(/email/i), userFormValues.email);
     userEvent.type(screen.getByLabelText(/display name/i), userFormValues.displayName);
     userEvent.type(screen.getByLabelText(/password/i), userFormValues.password);
-    userEvent.click(screen.getByRole("button", { name: /create/i }));
+    userEvent.click(screen.getByRole("button", { name: /add/i }));
 
     await waitFor(() => {
       expect(fetcherSpy).toHaveBeenCalled();
@@ -79,7 +79,7 @@ describe("AddBasicUser", () => {
     userEvent.click(screen.getByRole("combobox"));
     userEvent.click(screen.getByRole("option", { name: roleNames[0] }));
     userEvent.click(screen.getByRole("option", { name: roleNames[2] }));
-    userEvent.click(screen.getByRole("button", { name: /create/i }));
+    userEvent.click(screen.getByRole("button", { name: /add/i }));
 
     await waitFor(() => {
       expect(fetcherSpy).toHaveBeenCalledWith({
@@ -96,7 +96,7 @@ describe("AddBasicUser", () => {
     userEvent.click(addUserButton);
 
     userEvent.type(screen.getByLabelText(/email/i), "invalid-email");
-    userEvent.click(screen.getByRole("button", { name: /create/i }));
+    userEvent.click(screen.getByRole("button", { name: /add/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/invalid email/i)).toBeVisible();
@@ -121,7 +121,7 @@ describe("AddBasicUser", () => {
     userEvent.type(screen.getByLabelText(/email/i), userFormValues.email);
     userEvent.type(screen.getByLabelText(/display name/i), userFormValues.displayName);
     userEvent.type(screen.getByLabelText(/password/i), userFormValues.password);
-    userEvent.click(screen.getByRole("button", { name: /create/i }));
+    userEvent.click(screen.getByRole("button", { name: /add/i }));
 
     waitFor(() => {
       expect(screen.getByText(errorMessage)).toBeVisible();
@@ -142,7 +142,7 @@ describe("AddBasicUser", () => {
     userEvent.type(screen.getByLabelText(/email/i), userFormValues.email);
     userEvent.type(screen.getByLabelText(/display name/i), userFormValues.displayName);
     userEvent.type(screen.getByLabelText(/password/i), userFormValues.password);
-    userEvent.click(screen.getByRole("button", { name: /create/i }));
+    userEvent.click(screen.getByRole("button", { name: /add/i }));
 
     waitFor(() => {
       expect(screen.getByText(errorMessage)).toBeVisible();

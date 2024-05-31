@@ -21,7 +21,7 @@ export const AddBasicUserButton = ({ mutate, roleNames }: AddBasicUserButtonProp
           Add User
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md" onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Create new User</DialogTitle>
         </DialogHeader>
