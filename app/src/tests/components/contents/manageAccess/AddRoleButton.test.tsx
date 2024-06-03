@@ -102,7 +102,21 @@ describe("AddRoleButton", () => {
     userEvent.click(screen.getByRole("button", { name: /create/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/name must not start or end with whitespace/i)).toBeVisible();
+      expect(
+        screen.getByText("Name must only contain alphanumeric characters & no leading/trailing spaces.")
+      ).toBeVisible();
+    });
+  });
+
+  it("should show error message when role name contains special characters", async () => {
+    render(<AddRoleButton mutate={jest.fn()} />);
+    userEvent.click(screen.getByRole("button", { name: /add role/i }));
+
+    userEvent.type(screen.getByLabelText(/name/i), "Test, Role");
+    userEvent.click(screen.getByRole("button", { name: /create/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/name must only contain alphanumeric characters/i)).toBeVisible();
     });
   });
 
