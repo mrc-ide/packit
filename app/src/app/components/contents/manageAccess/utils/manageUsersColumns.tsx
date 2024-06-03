@@ -4,10 +4,10 @@ import { KeyedMutator } from "swr";
 import { constructPermissionName } from "../../../../../lib/constructPermissionName";
 import { Button } from "../../../Base/Button";
 import { ScrollArea } from "../../../Base/ScrollArea";
+import { useUser } from "../../../providers/UserProvider";
 import { DeleteUserOrRole } from "../DeleteUserOrRole";
 import { RoleWithRelationships } from "../types/RoleWithRelationships";
 import { UserWithRoles } from "../types/UserWithRoles";
-import { useUser } from "../../../providers/UserProvider";
 
 const columnHelper = createColumnHelper<UserWithRoles>();
 
@@ -24,7 +24,7 @@ export const setupManageUsersColumns = (mutate: KeyedMutator<RoleWithRelationshi
       const roles = getValue();
 
       return (
-        <ScrollArea className="h-12">
+        <ScrollArea className="h-14" type="auto">
           <div className="flex flex-wrap italic gap-0.5 text-xs pl-0.5">
             {roles?.length === 0
               ? "None"
@@ -42,7 +42,7 @@ export const setupManageUsersColumns = (mutate: KeyedMutator<RoleWithRelationshi
       const rolePermissions = getValue();
 
       return (
-        <ScrollArea className="h-12">
+        <ScrollArea className="h-14" type="auto">
           <div className="flex flex-wrap gap-1 italic text-xs pl-0.5">
             {rolePermissions?.length === 0
               ? "None"
