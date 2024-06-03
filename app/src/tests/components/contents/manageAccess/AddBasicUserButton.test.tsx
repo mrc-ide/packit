@@ -107,6 +107,34 @@ describe("AddBasicUser", () => {
     expect(fetcherSpy).not.toHaveBeenCalled();
   });
 
+  it("should show error message when role name is not trimmed", async () => {
+    render(<AddBasicUserButton mutate={jest.fn()} roleNames={roleNames} />);
+    userEvent.click(screen.getByRole("button", { name: /add user/i }));
+
+    userEvent.type(screen.getByLabelText(/name/i), " trim");
+    userEvent.click(screen.getByRole("button", { name: /add/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("Name must only contain alphanumeric characters & no leading/trailing spaces.")
+      ).toBeVisible();
+    });
+  });
+
+  it("should show error message when role name contains special characters", async () => {
+    render(<AddBasicUserButton mutate={jest.fn()} roleNames={roleNames} />);
+    userEvent.click(screen.getByRole("button", { name: /add user/i }));
+
+    userEvent.type(screen.getByLabelText(/name/i), "Display, Name");
+    userEvent.click(screen.getByRole("button", { name: /add/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("Name must only contain alphanumeric characters & no leading/trailing spaces.")
+      ).toBeVisible();
+    });
+  });
+
   it("should display error message when fetch fails with bad request", () => {
     const errorMessage = "user already exists";
     server.use(

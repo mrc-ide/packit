@@ -26,7 +26,10 @@ export const AddRoleForm = ({ mutate, setOpen }: AddRoleFormProps) => {
     name: z
       .string()
       .min(1)
-      .regex(/^\S.*\S$/, "Name must not start or end with whitespace"),
+      .regex(
+        /^[a-zA-Z0-9]+(\s[a-zA-Z0-9]+)*$/,
+        "Name must only contain alphanumeric characters & no leading/trailing spaces."
+      ),
     permissionNames: z.array(z.string())
   });
   const form = useForm<z.infer<typeof formSchema>>({
