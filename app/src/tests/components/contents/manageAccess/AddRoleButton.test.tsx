@@ -113,10 +113,12 @@ describe("AddRoleButton", () => {
     userEvent.click(screen.getByRole("button", { name: /add role/i }));
 
     userEvent.type(screen.getByLabelText(/name/i), "Test, Role");
-    userEvent.click(screen.getByRole("button", { name: /create/i }));
+    userEvent.click(screen.getByRole("button", { name: /add/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/name must only contain alphanumeric characters/i)).toBeVisible();
+      expect(
+        screen.getByText("Name must only contain alphanumeric characters & no leading/trailing spaces.")
+      ).toBeVisible();
     });
   });
 
