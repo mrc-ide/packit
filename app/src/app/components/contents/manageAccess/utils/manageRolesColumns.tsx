@@ -24,7 +24,7 @@ export const setupManageRolesColumns = (mutate: KeyedMutator<RoleWithRelationshi
       const permissions = getValue();
 
       return (
-        <ScrollArea className="h-12">
+        <ScrollArea className="h-14" type="auto">
           <div className="flex flex-wrap italic gap-0.5  text-xs pl-0.5">
             {permissions?.length === 0
               ? "None"
@@ -46,7 +46,7 @@ export const setupManageRolesColumns = (mutate: KeyedMutator<RoleWithRelationshi
       const users = getValue();
 
       return (
-        <ScrollArea className="h-12">
+        <ScrollArea className="h-14" type="auto">
           <div className="flex flex-wrap gap-1 italic text-xs pl-0.5">
             {users?.length === 0
               ? "None"

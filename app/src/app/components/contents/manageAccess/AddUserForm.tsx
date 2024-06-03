@@ -30,7 +30,13 @@ export const AddUserForm = ({ mutate, setOpen, roleNames }: AddUserFormProps) =>
 
   const formSchema = z.object({
     email: z.string().email(),
-    displayName: z.string().min(1),
+    displayName: z
+      .string()
+      .min(1)
+      .regex(
+        /^[a-zA-Z0-9]+(\s[a-zA-Z0-9]+)*$/,
+        "Name must only contain alphanumeric characters & no leading/trailing spaces."
+      ),
     password: z.string().min(8),
     userRoles: z.array(z.string())
   });
