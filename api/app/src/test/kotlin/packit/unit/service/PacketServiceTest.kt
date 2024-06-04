@@ -7,6 +7,7 @@ import org.mockito.Mockito.`when`
 import org.mockito.kotlin.*
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpHeaders
 import packit.exceptions.PackitException
@@ -250,5 +251,32 @@ class PacketServiceTest
         assertThatThrownBy { sut.getFileByHash("123", true, "test.html") }
             .isInstanceOf(PackitException::class.java)
             .hasMessageContaining("PackitException with key doesNotExist")
+    }
+
+    @Test
+    fun `getPacketGroups calls repository with correct params and returns its result`()
+    {
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
+        val pageablePayload = PageablePayload(0, 10)
+        val filterName = "test"
+        val packetGroups = listOf(PacketGroup("test1"), PacketGroup("test2"))
+        val page = PageImpl(packetGroups)
+        whenever(
+            packetGroupRepository.findAllByNameContaining(
+                eq(filterName), any<Pageable>()
+            )
+        ).thenReturn(page)
+
+        val result = sut.getPacketGroups(pageablePayload, filterName)
+
+        assertEquals(packetGroups, result.content)
+        verify(packetGroupRepository).findAllByNameContaining(
+            filterName,
+                PageRequest.of(
+                pageablePayload.pageNumber,
+                pageablePayload.pageSize,
+                Sort.by("name")
+            )
+        )
     }
 }

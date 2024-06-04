@@ -46,7 +46,7 @@ class TagControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser
-    fun `can get pageable tags with name filtered`()
+    fun `can get ordered pageable tags with name filtered`()
     {
         val result = restTemplate.exchange(
             "/tag?pageNumber=0&pageSize=10&filterName=test-tag",
@@ -59,8 +59,11 @@ class TagControllerTest : IntegrationTest()
 
         val resultTags = jacksonObjectMapper().readTree(result.body).get("content")
             .let {
-                jacksonObjectMapper().convertValue(it, object : TypeReference<List<TagDto>>()
-                {})
+                jacksonObjectMapper().convertValue(
+                    it,
+                    object : TypeReference<List<TagDto>>()
+                {}
+                )
             }
 
         assert(resultTags.containsAll(tags.map { it.toDto() }))

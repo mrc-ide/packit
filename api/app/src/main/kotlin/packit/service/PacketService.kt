@@ -34,6 +34,8 @@ interface PacketService
     fun getPacketsByName(
         name: String, payload: PageablePayload
     ): Page<Packet>
+
+    fun getPacketGroups(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroup>
 }
 
 @Service
@@ -97,6 +99,16 @@ class BasePacketService(
             Sort.by("startTime").descending()
         )
         return packetRepository.findByName(name, pageable)
+    }
+
+    override fun getPacketGroups(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroup>
+    {
+        val pageable = PageRequest.of(
+            pageablePayload.pageNumber,
+            pageablePayload.pageSize,
+            Sort.by("name")
+        )
+        return packetGroupRepository.findAllByNameContaining(filteredName, pageable)
     }
 
     override fun getPackets(pageablePayload: PageablePayload): Page<Packet>

@@ -27,5 +27,4 @@ class BaseTagService(
         )
         return tagRepository.findAllByNameContaining(filterName, pageable)
     }
-
 }

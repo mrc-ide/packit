@@ -34,7 +34,8 @@ class TagServiceTest
 
         assertEquals(tags, result.content)
         verify(tagRepository).findAllByNameContaining(
-            filterName, PageRequest.of(
+            filterName,
+                PageRequest.of(
                 pageablePayload.pageNumber,
                 pageablePayload.pageSize,
                 Sort.by("name")

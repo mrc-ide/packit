@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
 import packit.model.dto.PacketDto
+import packit.model.dto.PacketGroupDto
 import packit.model.dto.PacketGroupSummary
 import packit.model.toDto
 import packit.service.PacketService
@@ -69,5 +70,16 @@ class PacketController(private val packetService: PacketService)
             .ok()
             .headers(response.second)
             .body(response.first)
+    }
+
+    @GetMapping("/packetGroup")
+    fun getPacketGroups(
+        @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
+        @RequestParam(required = false, defaultValue = "50") pageSize: Int,
+        @RequestParam(required = false, defaultValue = "") filterName: String,
+    ): ResponseEntity<Page<PacketGroupDto>>
+    {
+        val payload = PageablePayload(pageNumber, pageSize)
+        return ResponseEntity.ok(packetService.getPacketGroups(payload, filterName).map { it.toDto() })
     }
 }
