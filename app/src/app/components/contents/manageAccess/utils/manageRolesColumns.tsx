@@ -1,5 +1,5 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { Trash2 } from "lucide-react";
+import { EllipsisVertical, Trash2 } from "lucide-react";
 import { KeyedMutator } from "swr";
 import { constructPermissionName } from "../../../../../lib/constructPermissionName";
 import { Button } from "../../../Base/Button";
@@ -64,13 +64,20 @@ export const setupManageRolesColumns = (mutate: KeyedMutator<RoleWithRelationshi
       return (
         <div className="flex space-x-2 justify-end ">
           {row.original.name === "ADMIN" ? (
-            <Button variant="outline" size="icon" aria-label="delete-role" disabled>
-              <Trash2 className="h-4 w-4 " />
-            </Button>
+            <>
+              <Button variant="outline" size="icon" aria-label="delete-role" disabled>
+                <Trash2 className="h-4 w-4 " />
+              </Button>
+              <Button variant="outline" size="icon" aria-label="edit-role" disabled>
+                <EllipsisVertical className="h-4 w-4" />
+              </Button>
+            </>
           ) : (
-            <DeleteUserOrRole mutate={mutate} data={{ name: row.original.name, type: "role" }} />
+            <>
+              <DeleteUserOrRole mutate={mutate} data={{ name: row.original.name, type: "role" }} />
+              <UpdateRoleDropDownMenu mutate={mutate} role={row.original} users={users} />
+            </>
           )}
-          <UpdateRoleDropDownMenu mutate={mutate} role={row.original} users={users} />
         </div>
       );
     }
