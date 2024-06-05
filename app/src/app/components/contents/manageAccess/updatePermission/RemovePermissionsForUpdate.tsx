@@ -1,15 +1,14 @@
-import { Check, ChevronsUpDown, SquarePlus } from "lucide-react";
-import React, { useState } from "react";
-import { cn } from "../../../../../lib/cn";
+import { ChevronsUpDown } from "lucide-react";
+import React from "react";
+import { z } from "zod";
 import { constructPermissionName } from "../../../../../lib/constructPermissionName";
 import { Button } from "../../../Base/Button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../../../Base/Command";
 import { Label } from "../../../Base/Label";
 import { Popover, PopoverContent, PopoverTrigger } from "../../../Base/Popover";
 import { RolePermission } from "../types/RoleWithRelationships";
-import { z } from "zod";
 import { updatePermissionSchema } from "./UpdatePermissionsForm";
-import { isPermissionEqual } from "../utils/isPermissionEqual";
+import { isDuplicateUpdatePermission } from "./utils/isDuplicateUpdatePermission";
 
 interface RemovePermissionsForUpdateProps {
   removedPermissions: z.infer<typeof updatePermissionSchema>[];
@@ -22,55 +21,44 @@ export const RemovePermissionsForUpdate = ({
   rolePermissions
 }: RemovePermissionsForUpdateProps) => {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = useState<RolePermission>();
 
-  const constructFoundRolePermission = (rolePermission: RolePermission) => {
-    const foundRolePermission = rolePermissions.find(
-      (currentRolePermission) =>
-        constructPermissionName(currentRolePermission) === constructPermissionName(rolePermission)
-    );
-    if (!foundRolePermission) return;
-    return constructPermissionName(foundRolePermission);
-  };
   return (
     <>
       <Label>Permissions To Remove</Label>
-      <div className="flex space-x-3">
-        <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <Button variant="outline" role="combobox" aria-expanded={open} className="w-[400px] justify-between">
-              {value ? constructFoundRolePermission(value) : "Select Permission..."}
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-[400px] p-0">
-            <Command>
-              <CommandInput placeholder="Search permission..." />
-              <CommandList>
-                <CommandEmpty>No permissions found.</CommandEmpty>
-                <CommandGroup>
-                  {rolePermissions.map((rolePermission) => (
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button variant="outline" role="combobox" aria-expanded={open} className="w-[400px] justify-between">
+            Select Permission...
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[400px] p-0">
+          <Command>
+            <CommandInput placeholder="Search permission..." />
+            <CommandList>
+              <CommandEmpty>No permissions found.</CommandEmpty>
+              <CommandGroup>
+                {rolePermissions.map((rolePermission) => {
+                  const displayPermission = constructPermissionName(rolePermission);
+                  return (
                     <CommandItem
                       key={rolePermission.id}
-                      value={rolePermission.id.toString()}
+                      value={displayPermission}
                       onSelect={() => {
                         removePermission(rolePermission);
-                        setValue(undefined);
                         setOpen(false);
                       }}
-                      disabled={removedPermissions.some((removedPermission) =>
-                        isPermissionEqual(removedPermission, rolePermission)
-                      )}
+                      disabled={isDuplicateUpdatePermission(removedPermissions, rolePermission)}
                     >
-                      {constructPermissionName(rolePermission)}
+                      {displayPermission}
                     </CommandItem>
-                  ))}
-                </CommandGroup>
-              </CommandList>
-            </Command>
-          </PopoverContent>
-        </Popover>
-      </div>
+                  );
+                })}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
     </>
   );
 };
