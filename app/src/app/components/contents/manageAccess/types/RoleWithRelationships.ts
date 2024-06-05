@@ -20,6 +20,14 @@ export interface RolePermission {
   id: number;
 }
 
+export interface UpdateRolePermission {
+  permission?: string;
+  packet?: BasicPacket | null;
+  tag?: Tag | null;
+  packetGroup?: BasicPacketGroup | null;
+  id?: number;
+}
+
 interface BasicUser {
   username: string;
   id: string;

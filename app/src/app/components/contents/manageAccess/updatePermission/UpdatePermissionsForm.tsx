@@ -1,21 +1,18 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { X } from "lucide-react";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
 import { KeyedMutator } from "swr";
 import { z } from "zod";
 import appConfig from "../../../../../config/appConfig";
-import { cn } from "../../../../../lib/cn";
-import { constructPermissionName } from "../../../../../lib/constructPermissionName";
 import { ApiError } from "../../../../../lib/errors";
 import { fetcher } from "../../../../../lib/fetch";
-import { Badge } from "../../../Base/Badge";
-import { ScrollArea } from "../../../Base/ScrollArea";
 import { CustomDialogFooter } from "../../common/CustomDialogFooter";
-import { RolePermission, RoleWithRelationships } from "../types/RoleWithRelationships";
+import { RoleWithRelationships } from "../types/RoleWithRelationships";
 import { AddPermissionForUpdateForm } from "./AddPermissionForUpdateForm";
 import { RemovePermissionsForUpdate } from "./RemovePermissionsForUpdate";
 import { UpdatePermissionScrollArea } from "./UpdatePermissionScrollArea";
+import { convertUpdatePermissionsForFetch } from "./utils/convertUpdatePermissionsForFetch";
+import { isDuplicateUpdatePermission } from "./utils/isDuplicateUpdatePermission";
 
 interface UpdatePermissionsFormProps {
   role: RoleWithRelationships;
@@ -59,65 +56,25 @@ export const UpdatePermissionsForm = ({ role, mutate, setOpen }: UpdatePermissio
     }
   });
 
-  const removePermission = (removePermissionValues: RolePermission) => {
+  const removePermission = (removePermission: z.infer<typeof updatePermissionSchema>) => {
     const currentRemovePermissions = form.getValues("removePermissions");
-    if (
-      !currentRemovePermissions.some(
-        (permission) =>
-          permission.permission === removePermissionValues.permission &&
-          permission.packet?.id === removePermissionValues.packet?.id &&
-          permission.tag?.id === removePermissionValues.tag?.id &&
-          permission.packetGroup?.id === removePermissionValues.packetGroup?.id
-      )
-    ) {
-      form.setValue("removePermissions", [
-        ...form.getValues("removePermissions"),
-        {
-          permission: removePermissionValues.permission,
-          ...(removePermissionValues.packet && { packet: removePermissionValues.packet }),
-          ...(removePermissionValues.tag && { tag: removePermissionValues.tag }),
-          ...(removePermissionValues.packetGroup && { packetGroup: removePermissionValues.packetGroup })
-        }
-      ]);
+    if (!isDuplicateUpdatePermission(currentRemovePermissions, removePermission)) {
+      form.setValue("removePermissions", [...currentRemovePermissions, removePermission]);
     }
   };
 
-  const addPermission = (addPermissionValue: z.infer<typeof updatePermissionSchema>) => {
+  const addPermission = (addPermission: z.infer<typeof updatePermissionSchema>) => {
     const currentAddPermissions = form.getValues("addPermissions");
-    if (
-      !currentAddPermissions.some(
-        (permission) =>
-          permission.permission === addPermissionValue.permission &&
-          permission.packet?.id === addPermissionValue.packet?.id &&
-          permission.tag?.id === addPermissionValue.tag?.id &&
-          permission.packetGroup?.id === addPermissionValue.packetGroup?.id
-      )
-    ) {
-      form.setValue("addPermissions", [...form.getValues("addPermissions"), addPermissionValue]);
+    if (!isDuplicateUpdatePermission(currentAddPermissions, addPermission)) {
+      form.setValue("addPermissions", [...currentAddPermissions, addPermission]);
     }
-    // TODO: fix up types and id types
   };
 
   const onSubmit = async (values: z.infer<typeof updatePermissionsFormSchema>) => {
-    console.log(values);
-    const updatedPermissions = {
-      addPermissions: values.addPermissions.map((p) => ({
-        permission: p.permission,
-        packetId: p.packet?.id,
-        packetGroupId: p.packetGroup?.id,
-        tagId: p.tag?.id
-      })),
-      removePermissions: values.removePermissions.map((p) => ({
-        permission: p.permission,
-        packetId: p.packet?.id,
-        packetGroupId: p.packetGroup?.id,
-        tagId: p.tag?.id
-      }))
-    };
     try {
       await fetcher({
         url: `${appConfig.apiUrl()}/role/${role.name}/permissions`,
-        body: updatedPermissions,
+        body: convertUpdatePermissionsForFetch(values),
         method: "PUT"
       });
 

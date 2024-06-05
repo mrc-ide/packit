@@ -7,9 +7,11 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Label } from "../../../Base/Label";
 import { Popover, PopoverContent, PopoverTrigger } from "../../../Base/Popover";
 import { RolePermission } from "../types/RoleWithRelationships";
+import { z } from "zod";
+import { updatePermissionSchema } from "./UpdatePermissionsForm";
 
 interface RemovePermissionsForUpdateProps {
-  removePermission: (value: RolePermission) => void;
+  removePermission: (value: z.infer<typeof updatePermissionSchema>) => void;
   rolePermissions: RolePermission[];
 }
 export const RemovePermissionsForUpdate = ({ removePermission, rolePermissions }: RemovePermissionsForUpdateProps) => {
@@ -18,10 +20,21 @@ export const RemovePermissionsForUpdate = ({ removePermission, rolePermissions }
 
   const constructFoundRolePermission = (rolePermission: RolePermission) => {
     const foundRolePermission = rolePermissions.find(
-      (rolePermision) => constructPermissionName(rolePermision) === constructPermissionName(rolePermission)
+      (currentRolePermission) =>
+        constructPermissionName(currentRolePermission) === constructPermissionName(rolePermission)
     );
     if (!foundRolePermission) return;
     return constructPermissionName(foundRolePermission);
+  };
+
+  const onRemovePermission = (rolePermission: RolePermission) => {
+    removePermission({
+      permission: rolePermission.permission,
+      ...(rolePermission.packet && { packet: rolePermission.packet }),
+      ...(rolePermission.tag && { tag: rolePermission.tag }),
+      ...(rolePermission.packetGroup && { packetGroup: rolePermission.packetGroup })
+    });
+    setValue(undefined);
   };
   return (
     <>
@@ -64,7 +77,7 @@ export const RemovePermissionsForUpdate = ({ removePermission, rolePermissions }
           variant="outline"
           size="icon"
           disabled={value?.permission === undefined}
-          onClick={() => removePermission(value as RolePermission)}
+          onClick={() => value && onRemovePermission(value)}
         >
           <SquarePlus className="h-4 w-4" />
         </Button>

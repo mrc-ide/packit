@@ -1,12 +1,12 @@
 import { X } from "lucide-react";
+import { UseFormReturn } from "react-hook-form";
+import { z } from "zod";
 import { cn } from "../../../../../lib/cn";
 import { constructPermissionName } from "../../../../../lib/constructPermissionName";
 import { Badge } from "../../../Base/Badge";
 import { ScrollArea } from "../../../Base/ScrollArea";
-import { RolePermission } from "../types/RoleWithRelationships";
-import { UseFormReturn } from "react-hook-form";
-import { z } from "zod";
 import { updatePermissionsFormSchema } from "./UpdatePermissionsForm";
+import { isPermissionEqual } from "../utils/isPermissionEqual";
 
 interface UpdatePermissionScrollAreaProps {
   form: UseFormReturn<z.infer<typeof updatePermissionsFormSchema>>;
@@ -16,8 +16,8 @@ export const UpdatePermissionScrollArea = ({ form, fieldName }: UpdatePermission
   return (
     <ScrollArea className="h-20 border rounded-md" type="auto">
       <div className="flex flex-wrap gap-0.5 text-xs px-1 py-2">
-        {form.watch(fieldName).map((permission) => {
-          const permissionDisplay = constructPermissionName(permission as unknown as RolePermission);
+        {form.watch(fieldName).map((updatePermission) => {
+          const permissionDisplay = constructPermissionName(updatePermission);
           return (
             <Badge
               key={permissionDisplay}
@@ -33,12 +33,7 @@ export const UpdatePermissionScrollArea = ({ form, fieldName }: UpdatePermission
                 onClick={() => {
                   form.setValue(
                     fieldName,
-                    form
-                      .getValues(fieldName)
-                      .filter(
-                        (permission) =>
-                          permissionDisplay !== constructPermissionName(permission as unknown as RolePermission)
-                      )
+                    form.getValues(fieldName).filter((permission) => !isPermissionEqual(permission, updatePermission))
                   );
                 }}
               >
