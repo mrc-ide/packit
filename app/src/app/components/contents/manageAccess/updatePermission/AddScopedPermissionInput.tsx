@@ -7,10 +7,12 @@ import { Button } from "../../../Base/Button";
 import { Command, CommandInput } from "../../../Base/Command";
 import { Popover, PopoverContent, PopoverTrigger } from "../../../Base/Popover";
 import { PermissionCommandList } from "./PermissionCommandList";
+import { addPermissionFormSchema } from "./AddPermissionForUpdateForm";
+import { z } from "zod";
 
 interface AddScopedPermissionInputProps {
   scope: PermissionScope;
-  form: UseFormReturn<any>;
+  form: UseFormReturn<z.infer<typeof addPermissionFormSchema>>;
 }
 
 export const AddScopedPermissionInput = ({ scope, form }: AddScopedPermissionInputProps) => {

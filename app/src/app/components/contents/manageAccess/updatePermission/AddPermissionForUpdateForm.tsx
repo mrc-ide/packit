@@ -8,6 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { RadioGroup, RadioGroupItem } from "../../../Base/RadioGroup";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../Base/Select";
 import { AddScopedPermissionInput } from "./AddScopedPermissionInput";
+import { updatePermissionSchema } from "./UpdatePermissionsForm";
 
 export const addPermissionFormSchema = z
   .object({
@@ -23,7 +24,7 @@ export const addPermissionFormSchema = z
     path: ["scope"]
   });
 interface AddPermissionForUpdateFormProps {
-  addPermission: (values: z.infer<typeof addPermissionFormSchema>) => void;
+  addPermission: (values: z.infer<typeof updatePermissionSchema>) => void;
 }
 export const AddPermissionForUpdateForm = ({ addPermission }: AddPermissionForUpdateFormProps) => {
   const form = useForm<z.infer<typeof addPermissionFormSchema>>({
@@ -32,9 +33,20 @@ export const AddPermissionForUpdateForm = ({ addPermission }: AddPermissionForUp
       scope: "global"
     }
   });
-  const onSubmit = (values: z.infer<typeof addPermissionFormSchema>) => {
-    // TODO: convert ids back to number
-    addPermission(values);
+  const onSubmit = (addPermissionValues: z.infer<typeof addPermissionFormSchema>) => {
+    const addPermissionValue: z.infer<typeof updatePermissionSchema> = {
+      permission: addPermissionValues.permission,
+      ...(addPermissionValues.scope !== "global" && {
+        [addPermissionValues.scope]: {
+          id:
+            addPermissionValues.scope === "packet"
+              ? addPermissionValues.scopeResource.id
+              : Number(addPermissionValues.scopeResource.id),
+          name: addPermissionValues.scopeResource.name
+        }
+      })
+    };
+    addPermission(addPermissionValue);
   };
 
   return (
@@ -57,7 +69,7 @@ export const AddPermissionForUpdateForm = ({ addPermission }: AddPermissionForUp
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a permission" />
+                    <SelectValue placeholder="Select a Permission..." />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>

@@ -10,8 +10,8 @@ import { CommandEmpty, CommandGroup, CommandItem, CommandList } from "../../../B
 
 interface PermissionCommandListProps {
   scope: PermissionScope;
-  scopeResource: { id: number | string; name: string };
-  setScopeResource: (value: { id: number | string; name: string }) => void;
+  scopeResource: { id: string; name: string };
+  setScopeResource: (value: { id: string; name: string }) => void;
   filterName: string;
   setFilterName: (value: string) => void;
   setOpen: (value: boolean) => void;
