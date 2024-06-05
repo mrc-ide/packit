@@ -1,47 +1,60 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { SquarePlus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { constructPermissionName } from "../../../../../lib/constructPermissionName";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../../Base/Form";
-import { Button } from "../../../Base/Button";
-import { SquarePlus } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../Base/Select";
 import { GLOBAL_PERMISSIONS, PERMISSION_SCOPES } from "../../../../../lib/constants";
+import { Button } from "../../../Base/Button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../../Base/Form";
 import { RadioGroup, RadioGroupItem } from "../../../Base/RadioGroup";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../Base/Select";
+import { AddScopedPermissionInput } from "./AddScopedPermissionInput";
 
+export const addPermissionFormSchema = z
+  .object({
+    permission: z.enum(GLOBAL_PERMISSIONS),
+    scope: z.enum(PERMISSION_SCOPES),
+    scopeResource: z.object({
+      id: z.string(),
+      name: z.string()
+    })
+  })
+  .refine((data) => data.scope === "global" || !!data.scopeResource?.id, {
+    message: "Scoped name is required if not global scope ",
+    path: ["scope"]
+  });
 interface AddPermissionForUpdateFormProps {
-  addPermission: (permission: string, packetId?: string, packetGroupId?: number, tagId?: number) => void;
+  addPermission: (values: z.infer<typeof addPermissionFormSchema>) => void;
 }
 export const AddPermissionForUpdateForm = ({ addPermission }: AddPermissionForUpdateFormProps) => {
-  const formSchema = z.object({
-    permission: z.string(),
-    scope: z.string(),
-    packetId: z.string().optional(),
-    packetGroupId: z.number().optional(),
-    tagId: z.number().optional()
-  });
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof addPermissionFormSchema>>({
+    resolver: zodResolver(addPermissionFormSchema),
     defaultValues: {
-      permission: "",
       scope: "global"
     }
   });
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
-    addPermission(values.permission, values.packetId, values.packetGroupId, values.tagId);
+  const onSubmit = (values: z.infer<typeof addPermissionFormSchema>) => {
+    // TODO: convert ids back to number
+    addPermission(values);
   };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-1">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 w-[350px]">
         <FormLabel>Permissions To Add</FormLabel>
         <FormField
           control={form.control}
           name="permission"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Permission</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  if (value === "user.manage") {
+                    form.setValue("scope", "global");
+                  }
+                }}
+                defaultValue={field.value}
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a permission" />
@@ -68,8 +81,9 @@ export const AddPermissionForUpdateForm = ({ addPermission }: AddPermissionForUp
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
                   className="flex flex-row space-x-3"
+                  disabled={!form.watch("permission") || form.watch("permission") === "user.manage"}
+                  value={field.value}
                 >
                   {PERMISSION_SCOPES.map((scope) => (
                     <FormItem key={scope} className="flex items-center space-x-2 space-y-0">
@@ -85,6 +99,7 @@ export const AddPermissionForUpdateForm = ({ addPermission }: AddPermissionForUp
             </FormItem>
           )}
         />
+        <AddScopedPermissionInput scope={form.watch("scope")} form={form} />
         <Button type="submit" variant="outline" size="icon">
           <SquarePlus className="h-4 w-4" />
         </Button>
