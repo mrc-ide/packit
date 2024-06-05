@@ -9,12 +9,18 @@ import { Popover, PopoverContent, PopoverTrigger } from "../../../Base/Popover";
 import { RolePermission } from "../types/RoleWithRelationships";
 import { z } from "zod";
 import { updatePermissionSchema } from "./UpdatePermissionsForm";
+import { isPermissionEqual } from "../utils/isPermissionEqual";
 
 interface RemovePermissionsForUpdateProps {
+  removedPermissions: z.infer<typeof updatePermissionSchema>[];
   removePermission: (value: z.infer<typeof updatePermissionSchema>) => void;
   rolePermissions: RolePermission[];
 }
-export const RemovePermissionsForUpdate = ({ removePermission, rolePermissions }: RemovePermissionsForUpdateProps) => {
+export const RemovePermissionsForUpdate = ({
+  removedPermissions,
+  removePermission,
+  rolePermissions
+}: RemovePermissionsForUpdateProps) => {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = useState<RolePermission>();
 
@@ -26,28 +32,18 @@ export const RemovePermissionsForUpdate = ({ removePermission, rolePermissions }
     if (!foundRolePermission) return;
     return constructPermissionName(foundRolePermission);
   };
-
-  const onRemovePermission = (rolePermission: RolePermission) => {
-    removePermission({
-      permission: rolePermission.permission,
-      ...(rolePermission.packet && { packet: rolePermission.packet }),
-      ...(rolePermission.tag && { tag: rolePermission.tag }),
-      ...(rolePermission.packetGroup && { packetGroup: rolePermission.packetGroup })
-    });
-    setValue(undefined);
-  };
   return (
     <>
       <Label>Permissions To Remove</Label>
       <div className="flex space-x-3">
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
-            <Button variant="outline" role="combobox" aria-expanded={open} className="w-[350px] justify-between">
+            <Button variant="outline" role="combobox" aria-expanded={open} className="w-[400px] justify-between">
               {value ? constructFoundRolePermission(value) : "Select Permission..."}
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[350px] p-0">
+          <PopoverContent className="w-[400px] p-0">
             <Command>
               <CommandInput placeholder="Search permission..." />
               <CommandList>
@@ -57,14 +53,15 @@ export const RemovePermissionsForUpdate = ({ removePermission, rolePermissions }
                     <CommandItem
                       key={rolePermission.id}
                       value={rolePermission.id.toString()}
-                      onSelect={(currentValue) => {
-                        setValue(currentValue === value?.id.toString() ? undefined : rolePermission);
+                      onSelect={() => {
+                        removePermission(rolePermission);
+                        setValue(undefined);
                         setOpen(false);
                       }}
+                      disabled={removedPermissions.some((removedPermission) =>
+                        isPermissionEqual(removedPermission, rolePermission)
+                      )}
                     >
-                      <Check
-                        className={cn("mr-2 h-4 w-4", value?.id === rolePermission.id ? "opacity-100" : "opacity-0")}
-                      />
                       {constructPermissionName(rolePermission)}
                     </CommandItem>
                   ))}
@@ -73,14 +70,6 @@ export const RemovePermissionsForUpdate = ({ removePermission, rolePermissions }
             </Command>
           </PopoverContent>
         </Popover>
-        <Button
-          variant="outline"
-          size="icon"
-          disabled={value?.permission === undefined}
-          onClick={() => value && onRemovePermission(value)}
-        >
-          <SquarePlus className="h-4 w-4" />
-        </Button>
       </div>
     </>
   );

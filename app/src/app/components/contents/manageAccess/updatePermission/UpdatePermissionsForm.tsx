@@ -27,18 +27,21 @@ export const updatePermissionSchema = z.object({
       id: z.string(),
       name: z.string()
     })
+    .or(z.null())
     .optional(),
   packetGroup: z
     .object({
       id: z.number(),
       name: z.string()
     })
+    .or(z.null())
     .optional(),
   tag: z
     .object({
       id: z.number(),
       name: z.string()
     })
+    .or(z.null())
     .optional()
 });
 export const updatePermissionsFormSchema = z.object({
@@ -58,9 +61,7 @@ export const UpdatePermissionsForm = ({ role, mutate, setOpen }: UpdatePermissio
 
   const removePermission = (removePermission: z.infer<typeof updatePermissionSchema>) => {
     const currentRemovePermissions = form.getValues("removePermissions");
-    if (!isDuplicateUpdatePermission(currentRemovePermissions, removePermission)) {
-      form.setValue("removePermissions", [...currentRemovePermissions, removePermission]);
-    }
+    form.setValue("removePermissions", [...currentRemovePermissions, removePermission]);
   };
 
   const addPermission = (addPermission: z.infer<typeof updatePermissionSchema>) => {
@@ -95,7 +96,11 @@ export const UpdatePermissionsForm = ({ role, mutate, setOpen }: UpdatePermissio
       <AddPermissionForUpdateForm addPermission={addPermission} />
       <UpdatePermissionScrollArea form={form} fieldName="addPermissions" />
 
-      <RemovePermissionsForUpdate removePermission={removePermission} rolePermissions={role.rolePermissions} />
+      <RemovePermissionsForUpdate
+        removePermission={removePermission}
+        rolePermissions={role.rolePermissions}
+        removedPermissions={form.watch("removePermissions")}
+      />
       <UpdatePermissionScrollArea form={form} fieldName="removePermissions" />
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
