@@ -1,8 +1,8 @@
-import { RolePermission, UpdateRolePermission } from "../types/RoleWithRelationships";
+import { RolePermission, NewRolePermission } from "../types/RoleWithRelationships";
 
 export const isPermissionEqual = (
-  permission1: RolePermission | UpdateRolePermission,
-  permission2: RolePermission | UpdateRolePermission
+  permission1: RolePermission | NewRolePermission,
+  permission2: RolePermission | NewRolePermission
 ): boolean =>
   permission1.permission === permission2.permission &&
   permission1.packet?.id === permission2.packet?.id &&

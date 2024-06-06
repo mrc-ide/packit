@@ -20,7 +20,7 @@ export interface RolePermission {
   id: number;
 }
 
-export interface UpdateRolePermission {
+export interface NewRolePermission {
   permission?: string;
   packet?: BasicPacket | null;
   tag?: Tag | null;

@@ -1,12 +1,9 @@
 import { CommandLoading } from "cmdk";
 import { Check } from "lucide-react";
-import useSWR from "swr";
-import appConfig from "../../../../../config/appConfig";
 import { cn } from "../../../../../lib/cn";
 import { PermissionScope } from "../../../../../lib/constants";
-import { fetcher } from "../../../../../lib/fetch";
-import { Pageable } from "../../../../../types";
 import { CommandEmpty, CommandGroup, CommandItem, CommandList } from "../../../Base/Command";
+import { useGetDtosForScopedPermissions } from "./hooks/useGetDtosForSpecificPermissions";
 
 interface PermissionCommandListProps {
   scope: PermissionScope;
@@ -15,12 +12,6 @@ interface PermissionCommandListProps {
   filterName: string;
   setFilterName: (value: string) => void;
   setOpen: (value: boolean) => void;
-}
-interface Resource extends Pageable {
-  content: {
-    name: string;
-    id: string | number;
-  }[];
 }
 
 export const PermissionCommandList = ({
@@ -31,13 +22,9 @@ export const PermissionCommandList = ({
   setFilterName,
   setOpen
 }: PermissionCommandListProps) => {
-  const searchParam = scope === "tag" ? "tag" : `packets${scope === "packet" ? "" : `/${scope}`}`;
-  const { data, isLoading, error } = useSWR<Resource>(
-    scope !== "global" ? `${appConfig.apiUrl()}/${searchParam}?filterName=${filterName}` : null,
-    (url: string) => fetcher({ url })
-  );
+  const { data, isLoading, error } = useGetDtosForScopedPermissions(scope, filterName);
 
-  if (error) return <div>error fetching</div>;
+  if (error) return <CommandEmpty>Error Fetching data</CommandEmpty>;
   return (
     <CommandList>
       {isLoading && <CommandLoading>Loading {scope}s...</CommandLoading>}

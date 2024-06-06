@@ -44,10 +44,15 @@ export const updatePermissionSchema = z.object({
     .or(z.null())
     .optional()
 });
-export const updatePermissionsFormSchema = z.object({
-  addPermissions: z.array(updatePermissionSchema),
-  removePermissions: z.array(updatePermissionSchema)
-});
+export const updatePermissionsFormSchema = z
+  .object({
+    addPermissions: z.array(updatePermissionSchema),
+    removePermissions: z.array(updatePermissionSchema)
+  })
+  .refine((data) => data.addPermissions.length > 0 || data.removePermissions.length > 0, {
+    message: "You must add or remove at least one permission.",
+    path: ["addPermissions"]
+  });
 export const UpdatePermissionsForm = ({ role, mutate, setOpen }: UpdatePermissionsFormProps) => {
   const [fetchError, setFetchError] = useState("");
 
@@ -104,6 +109,9 @@ export const UpdatePermissionsForm = ({ role, mutate, setOpen }: UpdatePermissio
       <UpdatePermissionScrollArea form={form} fieldName="removePermissions" />
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+        {form.formState.errors?.addPermissions && (
+          <div className="text-xs text-red-500">{form.formState.errors.addPermissions.message}</div>
+        )}
         <CustomDialogFooter error={fetchError} onCancel={() => form.reset()} submitText="Save" />
       </form>
     </>

@@ -1,14 +1,11 @@
-import {
-  RolePermission,
-  UpdateRolePermission
-} from "../app/components/contents/manageAccess/types/RoleWithRelationships";
+import { RolePermission, NewRolePermission } from "../app/components/contents/manageAccess/types/RoleWithRelationships";
 
 export const constructPermissionName = ({
   permission,
   packet,
   tag,
   packetGroup
-}: RolePermission | UpdateRolePermission) => {
+}: RolePermission | NewRolePermission) => {
   if (packet) {
     return `${permission}:packet:${packet.id}`;
   }

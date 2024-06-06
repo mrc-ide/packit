@@ -18,6 +18,7 @@ interface AddScopedPermissionInputProps {
 export const AddScopedPermissionInput = ({ scope, form }: AddScopedPermissionInputProps) => {
   const [open, setOpen] = React.useState(false);
   const [filterName, setFilterName] = React.useState<string>("");
+  const scopeResource = form.watch("scopeResource");
 
   const handleSetNameFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterName(event.target.value);
@@ -46,11 +47,7 @@ export const AddScopedPermissionInput = ({ scope, form }: AddScopedPermissionInp
             className="w-[350px] justify-between"
             disabled={scope === "global"}
           >
-            {form.getValues("scopeResource")?.id
-              ? scope === "packet"
-                ? form.getValues("scopeResource")?.id
-                : form.getValues("scopeResource")?.name
-              : "Select Resource..."}
+            {scopeResource?.id ? (scope === "packet" ? scopeResource?.id : scopeResource?.name) : "Select Resource..."}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -65,7 +62,7 @@ export const AddScopedPermissionInput = ({ scope, form }: AddScopedPermissionInp
               setFilterName={setFilterName}
               scope={scope}
               setOpen={setOpen}
-              scopeResource={form.getValues("scopeResource")}
+              scopeResource={scopeResource}
               setScopeResource={(value) => form.setValue("scopeResource", value)}
             />
           </Command>
