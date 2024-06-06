@@ -12,12 +12,13 @@ import { convertUpdatePermissionsForFetch } from "./utils/convertUpdatePermissio
 import { isDuplicateUpdatePermission } from "./utils/isDuplicateUpdatePermission";
 
 interface UpdatePermissionsFormProps {
-  role: RoleWithRelationships;
+  roleName: string;
+  rolePermissions: RolePermission[];
   mutate: KeyedMutator<RoleWithRelationships[]>;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export const UpdatePermissionsForm = ({ role, mutate, setOpen }: UpdatePermissionsFormProps) => {
+export const UpdatePermissionsForm = ({ roleName, rolePermissions, mutate, setOpen }: UpdatePermissionsFormProps) => {
   const [error, setError] = useState("");
   const [updatePermissions, setUpdatePermissions] = useState<{
     addPermissions: NewRolePermission[];
@@ -47,7 +48,7 @@ export const UpdatePermissionsForm = ({ role, mutate, setOpen }: UpdatePermissio
     }
     try {
       await fetcher({
-        url: `${appConfig.apiUrl()}/role/${role.name}/permissions`,
+        url: `${appConfig.apiUrl()}/role/${roleName}/permissions`,
         body: convertUpdatePermissionsForFetch(updatePermissions),
         method: "PUT"
       });
@@ -78,7 +79,7 @@ export const UpdatePermissionsForm = ({ role, mutate, setOpen }: UpdatePermissio
 
       <RemovePermissionsForUpdate
         removePermission={removePermission}
-        rolePermissions={role.rolePermissions}
+        rolePermissions={rolePermissions}
         removedPermissions={updatePermissions.removePermissions}
       />
       <UpdatePermissionScrollArea

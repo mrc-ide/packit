@@ -117,6 +117,7 @@ class PacketServiceTest
             on { findPacketGroupSummaryByName("random", PageRequest.of(0, 10)) } doReturn
                     mockPacketGroupSummaries
             on { findByName(anyString(), any()) } doReturn PageImpl(oldPackets)
+            on { findAllByIdContaining(any(), anyString()) } doReturn PageImpl(oldPackets)
         }
 
     private val outpackServerClient =
@@ -135,6 +136,26 @@ class PacketServiceTest
         val result = sut.getPackets()
 
         assertEquals(result, oldPackets)
+    }
+
+    @Test
+    fun `getPackets calls repository with correct params and returns its result`()
+    {
+        val pageablePayload = PageablePayload(pageNumber = 0, pageSize = 10)
+        val filterId = "20231127-140959-72829b00"
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
+
+        val result = sut.getPackets(pageablePayload, filterId)
+
+        assertEquals(oldPackets, result.content)
+        verify(packetRepository).findAllByIdContaining(
+            PageRequest.of(
+                pageablePayload.pageNumber,
+                pageablePayload.pageSize,
+                Sort.by("startTime").descending()
+            ),
+            filterId
+        )
     }
 
     @Test
@@ -272,7 +293,7 @@ class PacketServiceTest
         assertEquals(packetGroups, result.content)
         verify(packetGroupRepository).findAllByNameContaining(
             filterName,
-                PageRequest.of(
+            PageRequest.of(
                 pageablePayload.pageNumber,
                 pageablePayload.pageSize,
                 Sort.by("name")

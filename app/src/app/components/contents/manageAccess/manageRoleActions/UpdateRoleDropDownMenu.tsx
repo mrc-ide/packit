@@ -24,7 +24,12 @@ export const UpdateRoleDropDownMenu = ({ mutate, role, users }: UpdateRoleDropDo
         {selectedOption === "users" ? (
           <UpdateRoleUsersForm mutate={mutate} role={role} users={users} setOpen={setDialogOpen} />
         ) : (
-          <UpdatePermissionsForm role={role} mutate={mutate} setOpen={setDialogOpen} />
+          <UpdatePermissionsForm
+            roleName={role.name}
+            rolePermissions={role.rolePermissions}
+            mutate={mutate}
+            setOpen={setDialogOpen}
+          />
         )}
       </UpdateDialogContent>
     </Dialog>
