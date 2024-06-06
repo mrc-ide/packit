@@ -7,8 +7,8 @@ import { Button } from "../../../Base/Button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../../Base/Form";
 import { RadioGroup, RadioGroupItem } from "../../../Base/RadioGroup";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../Base/Select";
+import { NewRolePermission } from "../types/RoleWithRelationships";
 import { AddScopedPermissionInput } from "./AddScopedPermissionInput";
-import { updatePermissionSchema } from "./UpdatePermissionsForm";
 
 export const addPermissionFormSchema = z
   .object({
@@ -24,7 +24,7 @@ export const addPermissionFormSchema = z
     path: ["scope"]
   });
 interface AddPermissionForUpdateFormProps {
-  addPermission: (values: z.infer<typeof updatePermissionSchema>) => void;
+  addPermission: (values: NewRolePermission) => void;
 }
 export const AddPermissionForUpdateForm = ({ addPermission }: AddPermissionForUpdateFormProps) => {
   const form = useForm<z.infer<typeof addPermissionFormSchema>>({
@@ -34,7 +34,7 @@ export const AddPermissionForUpdateForm = ({ addPermission }: AddPermissionForUp
     }
   });
   const onSubmit = (addPermissionValues: z.infer<typeof addPermissionFormSchema>) => {
-    const addPermissionValue: z.infer<typeof updatePermissionSchema> = {
+    const addPermissionValue: NewRolePermission = {
       permission: addPermissionValues.permission,
       ...(addPermissionValues.scope !== "global" && {
         [addPermissionValues.scope]: {
@@ -112,7 +112,7 @@ export const AddPermissionForUpdateForm = ({ addPermission }: AddPermissionForUp
           )}
         />
         <AddScopedPermissionInput scope={form.watch("scope")} form={form} />
-        <Button type="submit" variant="outline" size="icon">
+        <Button type="submit" size="icon">
           <SquarePlus className="h-4 w-4" />
         </Button>
       </form>

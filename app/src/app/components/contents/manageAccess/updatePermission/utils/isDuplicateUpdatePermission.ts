@@ -1,7 +1,6 @@
-import { z } from "zod";
-import { updatePermissionSchema } from "./../UpdatePermissionsForm";
+import { NewRolePermission, RolePermission } from "../../types/RoleWithRelationships";
 import { isPermissionEqual } from "../../utils/isPermissionEqual";
 export const isDuplicateUpdatePermission = (
-  currentPermissions: z.infer<typeof updatePermissionSchema>[],
-  updatedPermission: z.infer<typeof updatePermissionSchema>
+  currentPermissions: NewRolePermission[] | RolePermission[],
+  updatedPermission: NewRolePermission | RolePermission
 ) => currentPermissions.some((currentPermission) => isPermissionEqual(currentPermission, updatedPermission));

@@ -23,7 +23,7 @@ import java.time.Instant
 
 interface PacketService
 {
-    fun getPackets(pageablePayload: PageablePayload): Page<Packet>
+    fun getPackets(pageablePayload: PageablePayload, filterId: String): Page<Packet>
     fun getPackets(): List<Packet>
     fun getChecksum(): String
     fun importPackets()
@@ -111,7 +111,7 @@ class BasePacketService(
         return packetGroupRepository.findAllByNameContaining(filteredName, pageable)
     }
 
-    override fun getPackets(pageablePayload: PageablePayload): Page<Packet>
+    override fun getPackets(pageablePayload: PageablePayload, filterId: String): Page<Packet>
     {
         val pageable = PageRequest.of(
             pageablePayload.pageNumber,
@@ -119,7 +119,7 @@ class BasePacketService(
             Sort.by("startTime").descending()
         )
 
-        return packetRepository.findAll(pageable)
+        return packetRepository.findAllByIdContaining(pageable, filterId)
     }
 
     override fun getChecksum(): String

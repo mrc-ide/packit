@@ -39,4 +39,5 @@ interface PacketRepository : JpaRepository<Packet, String>
         nativeQuery = true
     )
     fun findPacketGroupSummaryByName(filterName: String, pageable: Pageable): Page<PacketGroupSummary>
+    fun findAllByIdContaining(pageable: Pageable, id: String): Page<Packet>
 }

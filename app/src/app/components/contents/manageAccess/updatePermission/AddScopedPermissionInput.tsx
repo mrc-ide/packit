@@ -1,6 +1,6 @@
 import debounce from "lodash.debounce";
 import { ChevronsUpDown } from "lucide-react";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { PermissionScope } from "../../../../../lib/constants";
 import { Button } from "../../../Base/Button";
@@ -17,7 +17,7 @@ interface AddScopedPermissionInputProps {
 
 export const AddScopedPermissionInput = ({ scope, form }: AddScopedPermissionInputProps) => {
   const [open, setOpen] = React.useState(false);
-  const [filterName, setFilterName] = React.useState<string>("");
+  const [filterName, setFilterName] = useState<string>("");
   const scopeResource = form.watch("scopeResource");
 
   const handleSetNameFilter = (event: React.ChangeEvent<HTMLInputElement>) => {

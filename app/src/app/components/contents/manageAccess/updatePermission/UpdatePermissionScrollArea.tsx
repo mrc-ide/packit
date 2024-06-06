@@ -1,22 +1,31 @@
 import { X } from "lucide-react";
-import { UseFormReturn } from "react-hook-form";
-import { z } from "zod";
+import { Dispatch, SetStateAction } from "react";
 import { cn } from "../../../../../lib/cn";
 import { constructPermissionName } from "../../../../../lib/constructPermissionName";
 import { Badge } from "../../../Base/Badge";
 import { ScrollArea } from "../../../Base/ScrollArea";
-import { updatePermissionsFormSchema } from "./UpdatePermissionsForm";
+import { NewRolePermission, RolePermission } from "../types/RoleWithRelationships";
 import { isPermissionEqual } from "../utils/isPermissionEqual";
 
 interface UpdatePermissionScrollAreaProps {
-  form: UseFormReturn<z.infer<typeof updatePermissionsFormSchema>>;
-  fieldName: keyof z.infer<typeof updatePermissionsFormSchema>;
+  updatePermissions: NewRolePermission[] | RolePermission[];
+  updateFieldName: "addPermissions" | "removePermissions";
+  setUpdatePermissions: Dispatch<
+    SetStateAction<{
+      addPermissions: NewRolePermission[];
+      removePermissions: RolePermission[];
+    }>
+  >;
 }
-export const UpdatePermissionScrollArea = ({ form, fieldName }: UpdatePermissionScrollAreaProps) => {
+export const UpdatePermissionScrollArea = ({
+  updatePermissions,
+  updateFieldName,
+  setUpdatePermissions
+}: UpdatePermissionScrollAreaProps) => {
   return (
     <ScrollArea className="h-20 border rounded-md" type="auto">
       <div className="flex flex-wrap gap-0.5 text-xs px-1 py-2">
-        {form.watch(fieldName).map((updatePermission) => {
+        {updatePermissions.map((updatePermission) => {
           const permissionDisplay = constructPermissionName(updatePermission);
           return (
             <Badge
@@ -31,10 +40,12 @@ export const UpdatePermissionScrollArea = ({ form, fieldName }: UpdatePermission
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => {
-                  form.setValue(
-                    fieldName,
-                    form.getValues(fieldName).filter((permission) => !isPermissionEqual(permission, updatePermission))
-                  );
+                  setUpdatePermissions((prevUpdatePermissions) => ({
+                    ...prevUpdatePermissions,
+                    [updateFieldName]: prevUpdatePermissions[updateFieldName].filter(
+                      (permission) => !isPermissionEqual(permission, updatePermission)
+                    )
+                  }));
                 }}
               >
                 <span className="sr-only">Remove {permissionDisplay} option</span>

@@ -19,11 +19,12 @@ class PacketController(private val packetService: PacketService)
     @GetMapping
     fun pageableIndex(
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
-        @RequestParam(required = false, defaultValue = "50") pageSize: Int
+        @RequestParam(required = false, defaultValue = "50") pageSize: Int,
+        @RequestParam(required = false, defaultValue = "") filterName: String,
     ): ResponseEntity<Page<PacketDto>>
     {
         val payload = PageablePayload(pageNumber, pageSize)
-        return ResponseEntity.ok(packetService.getPackets(payload).map { it.toDto() })
+        return ResponseEntity.ok(packetService.getPackets(payload, filterName).map { it.toDto() })
     }
 
     @GetMapping("/{name}")

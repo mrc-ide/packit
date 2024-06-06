@@ -1,18 +1,16 @@
 import { ChevronsUpDown } from "lucide-react";
 import React from "react";
-import { z } from "zod";
 import { constructPermissionName } from "../../../../../lib/constructPermissionName";
 import { Button } from "../../../Base/Button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../../../Base/Command";
 import { Label } from "../../../Base/Label";
 import { Popover, PopoverContent, PopoverTrigger } from "../../../Base/Popover";
 import { RolePermission } from "../types/RoleWithRelationships";
-import { updatePermissionSchema } from "./UpdatePermissionsForm";
 import { isDuplicateUpdatePermission } from "./utils/isDuplicateUpdatePermission";
 
 interface RemovePermissionsForUpdateProps {
-  removedPermissions: z.infer<typeof updatePermissionSchema>[];
-  removePermission: (value: z.infer<typeof updatePermissionSchema>) => void;
+  removedPermissions: RolePermission[];
+  removePermission: (value: RolePermission) => void;
   rolePermissions: RolePermission[];
 }
 export const RemovePermissionsForUpdate = ({
