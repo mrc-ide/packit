@@ -23,7 +23,7 @@ describe("AddBasicUser", () => {
     userEvent.click(screen.getByRole("button", { name: /add user/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/create new user/i)).toBeVisible();
+      expect(screen.getByText(/add new user/i)).toBeVisible();
     });
     expect(screen.getByLabelText(/email/i)).toBeVisible();
     expect(screen.getByLabelText(/display name/i)).toBeVisible();
@@ -39,7 +39,7 @@ describe("AddBasicUser", () => {
     userEvent.type(screen.getByLabelText(/email/i), "test@gmail.com");
     userEvent.click(screen.getByRole("button", { name: /cancel/i }));
 
-    expect(screen.queryByText(/create new user/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/add new user/i)).not.toBeInTheDocument();
 
     userEvent.click(addUserButton);
 
@@ -61,7 +61,7 @@ describe("AddBasicUser", () => {
       expect(fetcherSpy).toHaveBeenCalled();
     });
     expect(mutate).toHaveBeenCalled();
-    expect(screen.queryByText(/create new user/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/add new user/i)).not.toBeInTheDocument();
 
     userEvent.click(addUserButton);
 
@@ -111,27 +111,11 @@ describe("AddBasicUser", () => {
     render(<AddBasicUserButton mutate={jest.fn()} roleNames={roleNames} />);
     userEvent.click(screen.getByRole("button", { name: /add user/i }));
 
-    userEvent.type(screen.getByLabelText(/name/i), " trim");
+    userEvent.type(screen.getByLabelText(/name/i), " trim ");
     userEvent.click(screen.getByRole("button", { name: /add/i }));
 
     await waitFor(() => {
-      expect(
-        screen.getByText("Name must only contain alphanumeric characters & no leading/trailing spaces.")
-      ).toBeVisible();
-    });
-  });
-
-  it("should show error message when role name contains special characters", async () => {
-    render(<AddBasicUserButton mutate={jest.fn()} roleNames={roleNames} />);
-    userEvent.click(screen.getByRole("button", { name: /add user/i }));
-
-    userEvent.type(screen.getByLabelText(/name/i), "Display, Name");
-    userEvent.click(screen.getByRole("button", { name: /add/i }));
-
-    await waitFor(() => {
-      expect(
-        screen.getByText("Name must only contain alphanumeric characters & no leading/trailing spaces.")
-      ).toBeVisible();
+      expect(screen.getByText("name must contain no leading/trailing spaces.")).toBeVisible();
     });
   });
 

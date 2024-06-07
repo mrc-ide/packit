@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+usage() {
+    echo "Usage: $0 [OPTIONS]"
+    echo "Options:"
+    echo " -h, --help            Show list of flags"
+    echo " --db-build-skip       Skip building the db"
+    echo " --api-build-skip      Skip building the api"
+    echo " --super-user          Add basic super user"
+}
+
+DB_BUILD_SKIP=0
+API_BUILD_SKIP=0
+ADD_SUPER_USER=0
+
+handle_options() {
+  while [ $# -gt 0 ]; do
+    case $1 in
+      -h | --help)
+        usage
+        exit 0
+      ;;
+      --db-build-skip)
+        DB_BUILD_SKIP=1
+        ;;
+      --api-build-skip)
+        API_BUILD_SKIP=1
+        ;;
+      --super-user)
+        ADD_SUPER_USER=1
+        ;;
+      *)
+        echo "Invalid option: $1" >&2
+        usage
+        exit 1
+        ;;
+    esac
+    shift
+  done
+}
+
+handle_options "$@"
+
+HERE=$(realpath "$(dirname $0)")
+. "$HERE"/common
+
+if [ $DB_BUILD_SKIP -eq 0 ]; then
+    "$HERE"/../db/scripts/build
+fi
+
+"$HERE"/run-dependencies
+
+if [ $API_BUILD_SKIP -eq 0 ]; then
+    "$HERE"/../api/scripts/build
+fi
+
+"$HERE"/../api/scripts/run
+
+if [ $ADD_SUPER_USER -eq 1 ]; then
+    echo "Waiting for api to initialise"
+    sleep 5
+    "$HERE"/basic-create-super-user
+fi
+
+npm start --prefix="$HERE/../app"
