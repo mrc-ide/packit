@@ -33,6 +33,8 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Checkout repository
         uses: actions/checkout@v3
+      - name: Build DB
+        uses: ./.github/actions/build-db
       - name: Run dependencies
         run: ./scripts/run-dependencies
       - name: Set up Java JDK ${{ matrix.java-version }}
