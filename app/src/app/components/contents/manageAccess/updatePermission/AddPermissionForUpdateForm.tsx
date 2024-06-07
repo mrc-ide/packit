@@ -9,6 +9,7 @@ import { RadioGroup, RadioGroupItem } from "../../../Base/RadioGroup";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../Base/Select";
 import { NewRolePermission } from "../types/RoleWithRelationships";
 import { AddScopedPermissionInput } from "./AddScopedPermissionInput";
+import { isDuplicateUpdatePermission } from "./utils/isDuplicateUpdatePermission";
 
 export const addPermissionFormSchema = z
   .object({
@@ -25,8 +26,12 @@ export const addPermissionFormSchema = z
   });
 interface AddPermissionForUpdateFormProps {
   addPermission: (values: NewRolePermission) => void;
+  currentAddPermissions: NewRolePermission[];
 }
-export const AddPermissionForUpdateForm = ({ addPermission }: AddPermissionForUpdateFormProps) => {
+export const AddPermissionForUpdateForm = ({
+  addPermission,
+  currentAddPermissions
+}: AddPermissionForUpdateFormProps) => {
   const form = useForm<z.infer<typeof addPermissionFormSchema>>({
     resolver: zodResolver(addPermissionFormSchema),
     defaultValues: {
@@ -46,6 +51,11 @@ export const AddPermissionForUpdateForm = ({ addPermission }: AddPermissionForUp
         }
       })
     };
+    if (isDuplicateUpdatePermission(currentAddPermissions, addPermissionValue)) {
+      return form.setError("root", {
+        message: "Permission already added"
+      });
+    }
     addPermission(addPermissionValue);
   };
 
@@ -112,6 +122,9 @@ export const AddPermissionForUpdateForm = ({ addPermission }: AddPermissionForUp
           )}
         />
         <AddScopedPermissionInput scope={form.watch("scope")} form={form} />
+        {form.formState.errors?.root && (
+          <div className="text-xs text-red-500">{form.formState.errors.root.message}</div>
+        )}
         <Button type="submit" size="icon">
           <SquarePlus className="h-4 w-4" />
         </Button>

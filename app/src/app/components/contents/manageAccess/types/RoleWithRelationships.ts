@@ -1,13 +1,13 @@
-interface BasicPacket {
+export interface BasicPacket {
   name: string;
   id: string;
 }
 
-interface BasicPacketGroup {
+export interface BasicPacketGroup {
   name: string;
   id: number;
 }
-interface Tag {
+export interface Tag {
   name: string;
   id: number;
 }

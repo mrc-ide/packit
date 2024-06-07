@@ -2,14 +2,7 @@ import { EllipsisVertical } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
 import { Button } from "../../Base/Button";
 import { DialogTrigger } from "../../Base/Dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from "../../Base/DropdownMenu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../../Base/DropdownMenu";
 
 export type UpdateOptions = "roles" | "permissions" | "users";
 interface UpdateDropdownProps {

@@ -33,12 +33,10 @@ export const UpdatePermissionsForm = ({ roleName, rolePermissions, mutate, setOp
   };
 
   const addPermission = (addPermission: NewRolePermission) => {
-    if (!isDuplicateUpdatePermission(updatePermissions.addPermissions, addPermission)) {
-      setUpdatePermissions((prevUpdatePermissions) => ({
-        ...prevUpdatePermissions,
-        addPermissions: [...prevUpdatePermissions.addPermissions, addPermission]
-      }));
-    }
+    setUpdatePermissions((prevUpdatePermissions) => ({
+      ...prevUpdatePermissions,
+      addPermissions: [...prevUpdatePermissions.addPermissions, addPermission]
+    }));
   };
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -70,7 +68,10 @@ export const UpdatePermissionsForm = ({ roleName, rolePermissions, mutate, setOp
 
   return (
     <>
-      <AddPermissionForUpdateForm addPermission={addPermission} />
+      <AddPermissionForUpdateForm
+        addPermission={addPermission}
+        currentAddPermissions={updatePermissions.addPermissions}
+      />
       <UpdatePermissionScrollArea
         updateFieldName="addPermissions"
         updatePermissions={updatePermissions.addPermissions}
