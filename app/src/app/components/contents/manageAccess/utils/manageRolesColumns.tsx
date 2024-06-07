@@ -1,9 +1,9 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { RoleWithRelationships } from "./types/RoleWithRelationships";
-import { constructPermissionName } from "../../../../lib/constructPermissionName";
-import { Button } from "../../Base/Button";
+import { RoleWithRelationships } from "../types/RoleWithRelationships";
+import { constructPermissionName } from "../../../../../lib/constructPermissionName";
+import { Button } from "../../../Base/Button";
 import { EllipsisVertical, Trash2 } from "lucide-react";
-import { ScrollArea } from "../../Base/ScrollArea";
+import { ScrollArea } from "../../../Base/ScrollArea";
 
 const columnHelper = createColumnHelper<RoleWithRelationships>();
 

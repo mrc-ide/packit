@@ -4,6 +4,7 @@
 // learn more: https://github.com/testing-library/jest-dom
 import "@testing-library/jest-dom";
 import { server } from "./msw/server";
+import ResizeObserverPolyFill from "resize-observer-polyfill";
 
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
@@ -26,3 +27,5 @@ Object.defineProperty(window, "matchMedia", {
     dispatchEvent: jest.fn()
   }))
 });
+// Checkbox component needs ResizeObserver
+window.ResizeObserver = ResizeObserverPolyFill;

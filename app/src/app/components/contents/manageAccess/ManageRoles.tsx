@@ -1,14 +1,14 @@
-import { SquarePlus } from "lucide-react";
 import { useState } from "react";
-import { Button } from "../../Base/Button";
 import { DataTable } from "../common/DataTable";
 import { useManageAccessLayoutContext } from "./ManageAccessOutlet";
-import { manageRolesColumns } from "./manageRolesColumns";
+
+import { AddRoleButton } from "./AddRoleButton";
 import { FilterInput } from "../common/FilterInput";
 import { PAGE_SIZE } from "../../../../lib/constants";
+import { manageRolesColumns } from "./utils/manageRolesColumns";
 
 export const ManageRoles = () => {
-  const { roles } = useManageAccessLayoutContext();
+  const { roles, mutate } = useManageAccessLayoutContext();
   const [filteredName, setFilterByName] = useState("");
 
   return (
@@ -20,16 +20,7 @@ export const ManageRoles = () => {
       <div className="space-y-4 flex flex-col">
         <div className="flex justify-between">
           <FilterInput setFilter={setFilterByName} placeholder="Filter roles by name..." />
-          <Button
-            onClick={() => {
-              "TODO";
-            }}
-            variant="outline"
-            size="sm"
-          >
-            <SquarePlus className="mr-2 h-5 w-5" />
-            Add Role
-          </Button>
+          <AddRoleButton mutate={mutate} />
         </div>
         <DataTable
           columns={manageRolesColumns}
