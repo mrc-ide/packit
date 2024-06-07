@@ -9,7 +9,6 @@ import { AddPermissionForUpdateForm } from "./AddPermissionForUpdateForm";
 import { RemovePermissionsForUpdate } from "./RemovePermissionsForUpdate";
 import { UpdatePermissionScrollArea } from "./UpdatePermissionScrollArea";
 import { convertUpdatePermissionsForFetch } from "./utils/convertUpdatePermissionsForFetch";
-import { isDuplicateUpdatePermission } from "./utils/isDuplicateUpdatePermission";
 
 interface UpdatePermissionsFormProps {
   roleName: string;
