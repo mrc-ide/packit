@@ -90,7 +90,7 @@ describe("AddScopedPermissionInput", () => {
       id: mockPacketGroupDtos.content[0].id.toString(),
       name: mockPacketGroupDtos.content[0].name
     });
-  });
+  }, 4000);
 
   it("should set scopeResource to empty object when scope changes", async () => {
     const form = getForm(1, "packetGroup69");
