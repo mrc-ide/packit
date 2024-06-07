@@ -41,8 +41,6 @@ export const UpdateRoleDropDownMenu = ({ mutate, role, users }: UpdateRoleDropDo
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuSeparator />
           <DialogTrigger asChild onClick={() => setSelectedOption("users")}>
             <DropdownMenuItem>Update Users</DropdownMenuItem>
           </DialogTrigger>
