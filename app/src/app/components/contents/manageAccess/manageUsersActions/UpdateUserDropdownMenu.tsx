@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { KeyedMutator } from "swr";
-import { Button } from "../../../Base/Button";
-import { Dialog, DialogClose, DialogFooter } from "../../../Base/Dialog";
+import { Dialog } from "../../../Base/Dialog";
 import { UpdateDialogContent } from "../UpdateDialogContent";
 import { UpdateDropdown, UpdateOptions } from "../UpdateDropdown";
 import { RoleWithRelationships } from "../types/RoleWithRelationships";
 import { UserWithRoles } from "../types/UserWithRoles";
-import { UpdateUserRoleForm } from "./UpdateUserRoleForm";
 import { UpdatePermissionsForm } from "../updatePermission/UpdatePermissionsForm";
+import { UpdateUserRoleForm } from "./UpdateUserRoleForm";
 
 interface UpdateUserDropdownMenuProps {
   user: UserWithRoles;

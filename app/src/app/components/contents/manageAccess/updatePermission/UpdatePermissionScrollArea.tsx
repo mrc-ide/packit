@@ -33,7 +33,9 @@ export const UpdatePermissionScrollArea = ({
               className={cn("px-1 rounded-xl flex items-center gap-1")}
               variant={"secondary"}
             >
-              <span className="text-xs">{permissionDisplay}</span>
+              <span className="text-xs" data-testid={`update-badge-${permissionDisplay}`}>
+                {permissionDisplay}
+              </span>
               <button
                 aria-label={`Remove ${permissionDisplay} option`}
                 aria-roledescription="button to remove option"

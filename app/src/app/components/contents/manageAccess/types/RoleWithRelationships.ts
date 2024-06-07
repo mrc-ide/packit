@@ -21,7 +21,7 @@ export interface RolePermission {
 }
 
 export interface NewRolePermission {
-  permission?: string;
+  permission: string;
   packet?: BasicPacket | null;
   tag?: Tag | null;
   packetGroup?: BasicPacketGroup | null;

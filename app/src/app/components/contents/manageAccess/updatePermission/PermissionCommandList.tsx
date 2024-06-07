@@ -28,7 +28,7 @@ export const PermissionCommandList = ({
   return (
     <CommandList>
       {isLoading && <CommandLoading>Loading {scope}s...</CommandLoading>}
-      <CommandEmpty>No {scope} found.</CommandEmpty>
+      <CommandEmpty>No {scope}s found.</CommandEmpty>
       <CommandGroup>
         {data?.content?.map((resource) => (
           <CommandItem
@@ -44,6 +44,7 @@ export const PermissionCommandList = ({
           >
             <Check
               className={cn("mr-2 h-4 w-4", scopeResource.id === resource.id.toString() ? "opacity-100" : "opacity-0")}
+              data-testid={`check-${resource.id}`}
             />
             {scope === "packet" ? resource.id : resource.name}
           </CommandItem>

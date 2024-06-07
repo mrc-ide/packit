@@ -1,7 +1,7 @@
 import { RoleWithRelationships } from "../app/components/contents/manageAccess/types/RoleWithRelationships";
 import { AuthConfig } from "../app/components/providers/types/AuthConfigTypes";
 import { UserState } from "../app/components/providers/types/UserTypes";
-import { Custom, PacketMetadata, PageablePacketGroupSummary, PageablePackets } from "../types";
+import { Custom, PacketMetadata, PageableBasicDto, PageablePacketGroupSummary, PageablePackets } from "../types";
 
 export const mockPacketResponse = {
   id: "52fd88b2-8ee8-4ac0-a0e5-41b9a15554a4",
@@ -611,3 +611,37 @@ export const mockUsersWithRoles = [
     specificPermissions: []
   }
 ];
+
+export const mockPacketGroupDtos: PageableBasicDto = {
+  content: [
+    { id: 1, name: "depends" },
+    { id: 2, name: "explicit" },
+    { id: 3, name: "incoming_data" },
+    { id: 4, name: "parameters" },
+    { id: 5, name: "test1" }
+  ],
+  totalPages: 1,
+  totalElements: 5,
+  last: true,
+  first: true,
+  size: 50,
+  number: 0,
+  numberOfElements: 5
+};
+
+export const mockTags: PageableBasicDto = {
+  content: [
+    { id: 1, name: "tag1" },
+    { id: 2, name: "tag2" },
+    { id: 3, name: "tag3" },
+    { id: 4, name: "tag4" },
+    { id: 5, name: "tag5" }
+  ],
+  totalPages: 1,
+  totalElements: 5,
+  last: true,
+  first: true,
+  size: 50,
+  number: 0,
+  numberOfElements: 5
+};

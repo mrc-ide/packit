@@ -29,3 +29,6 @@ Object.defineProperty(window, "matchMedia", {
 });
 // Checkbox component needs ResizeObserver
 window.ResizeObserver = ResizeObserverPolyFill;
+
+// combobox needs this for tests
+window.HTMLElement.prototype.scrollIntoView = jest.fn();

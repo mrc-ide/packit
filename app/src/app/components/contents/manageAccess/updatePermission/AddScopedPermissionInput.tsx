@@ -54,7 +54,7 @@ export const AddScopedPermissionInput = ({ scope, form }: AddScopedPermissionInp
         <PopoverContent className="w-[350px] p-0">
           <Command shouldFilter={false}>
             <CommandInput
-              placeholder={`Search ${scope}...`}
+              placeholder={`Search ${scope}s...`}
               onChangeCapture={(e) => debouncedSetFilterByName(e.nativeEvent as any)}
             />
             <PermissionCommandList
