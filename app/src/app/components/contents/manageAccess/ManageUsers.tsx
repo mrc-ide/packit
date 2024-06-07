@@ -6,7 +6,7 @@ import { useManageAccessLayoutContext } from "./ManageAccessOutlet";
 import { PAGE_SIZE } from "../../../../lib/constants";
 import { FilterInput } from "../common/FilterInput";
 import { AddBasicUserButton } from "./AddBasicUserButton";
-import { manageUsersColumns } from "./utils/manageUsersColumns";
+import { setupManageUsersColumns } from "./utils/manageUsersColumns";
 
 export const ManageUsers = () => {
   const { users, mutate, roles } = useManageAccessLayoutContext();
@@ -27,7 +27,7 @@ export const ManageUsers = () => {
           )}
         </div>
         <DataTable
-          columns={manageUsersColumns}
+          columns={setupManageUsersColumns(mutate)}
           data={
             filteredName
               ? users.filter((user) => user.username.toLowerCase().includes(filteredName.toLowerCase()))

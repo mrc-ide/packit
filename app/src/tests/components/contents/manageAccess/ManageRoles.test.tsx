@@ -44,6 +44,8 @@ describe("ManageRoles", () => {
     expect(screen.getAllByRole("button", { name: "edit-role" })).toHaveLength(
       mockNonUsernameRolesWithRelationships.length
     );
+    // cant delete admin role
+    expect(screen.getAllByRole("button", { name: "delete-role" })[0]).toBeDisabled();
   });
 
   it("should filter roles by name", async () => {
