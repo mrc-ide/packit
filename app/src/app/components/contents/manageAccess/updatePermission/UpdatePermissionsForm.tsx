@@ -70,7 +70,7 @@ export const UpdatePermissionsForm = ({ roleName, rolePermissions, mutate, setOp
     <>
       <AddPermissionForUpdateForm
         addPermission={addPermission}
-        currentAddPermissions={updatePermissions.addPermissions}
+        currentPermissions={[...updatePermissions.addPermissions, ...updatePermissions.removePermissions]}
       />
       <UpdatePermissionScrollArea
         updateFieldName="addPermissions"

@@ -26,12 +26,9 @@ export const addPermissionFormSchema = z
   });
 interface AddPermissionForUpdateFormProps {
   addPermission: (values: NewRolePermission) => void;
-  currentAddPermissions: NewRolePermission[];
+  currentPermissions: NewRolePermission[];
 }
-export const AddPermissionForUpdateForm = ({
-  addPermission,
-  currentAddPermissions
-}: AddPermissionForUpdateFormProps) => {
+export const AddPermissionForUpdateForm = ({ addPermission, currentPermissions }: AddPermissionForUpdateFormProps) => {
   const form = useForm<z.infer<typeof addPermissionFormSchema>>({
     resolver: zodResolver(addPermissionFormSchema),
     defaultValues: {
@@ -51,9 +48,9 @@ export const AddPermissionForUpdateForm = ({
         }
       })
     };
-    if (isDuplicateUpdatePermission(currentAddPermissions, addPermissionValue)) {
+    if (isDuplicateUpdatePermission(currentPermissions, addPermissionValue)) {
       return form.setError("root", {
-        message: "Permission already added"
+        message: "Permission already exists"
       });
     }
     addPermission(addPermissionValue);

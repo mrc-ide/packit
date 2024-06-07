@@ -7,7 +7,7 @@ import { Tag } from "../../../../../app/components/contents/manageAccess/types/R
 
 describe("AddPermissionForUpdateForm", () => {
   it("it should disable scope radio group if permission is not set or user.manage", async () => {
-    render(<AddPermissionForUpdateForm addPermission={jest.fn()} currentAddPermissions={[]} />);
+    render(<AddPermissionForUpdateForm addPermission={jest.fn()} currentPermissions={[]} />);
     const radioButtons = screen.getAllByRole("radio");
     const select = screen.getAllByRole("combobox", { hidden: true })[1];
 
@@ -24,7 +24,7 @@ describe("AddPermissionForUpdateForm", () => {
   });
 
   it("should set scope to global if permission is user.manage", async () => {
-    render(<AddPermissionForUpdateForm addPermission={jest.fn()} currentAddPermissions={[]} />);
+    render(<AddPermissionForUpdateForm addPermission={jest.fn()} currentPermissions={[]} />);
     const select = screen.getAllByRole("combobox", { hidden: true })[1];
 
     userEvent.selectOptions(select, "user.manage");
@@ -35,7 +35,7 @@ describe("AddPermissionForUpdateForm", () => {
 
   it("should submit form with correct values for permission and global scope", async () => {
     const addPermission = jest.fn();
-    render(<AddPermissionForUpdateForm addPermission={addPermission} currentAddPermissions={[]} />);
+    render(<AddPermissionForUpdateForm addPermission={addPermission} currentPermissions={[]} />);
 
     const select = screen.getAllByRole("combobox", { hidden: true })[1];
     userEvent.selectOptions(select, "user.manage");
@@ -50,7 +50,7 @@ describe("AddPermissionForUpdateForm", () => {
     const testPacket = { id: mockPacketGroupResponse.content[0].id, name: mockPacketGroupResponse.content[0].name };
     const addPermission = jest.fn();
 
-    render(<AddPermissionForUpdateForm addPermission={addPermission} currentAddPermissions={[]} />);
+    render(<AddPermissionForUpdateForm addPermission={addPermission} currentPermissions={[]} />);
 
     const allComboBox = screen.getAllByRole("combobox", { hidden: true });
     userEvent.selectOptions(allComboBox[1], "packet.read");
@@ -70,7 +70,7 @@ describe("AddPermissionForUpdateForm", () => {
   it("should submit form with correct values for permission and tag scope", async () => {
     const addPermission = jest.fn();
     const testTag = { ...mockTags.content[0] };
-    render(<AddPermissionForUpdateForm addPermission={addPermission} currentAddPermissions={[]} />);
+    render(<AddPermissionForUpdateForm addPermission={addPermission} currentPermissions={[]} />);
 
     const allComboBox = screen.getAllByRole("combobox", { hidden: true });
     userEvent.selectOptions(allComboBox[1], "packet.push");
@@ -89,7 +89,7 @@ describe("AddPermissionForUpdateForm", () => {
 
   it("should show error if permission and not global scope set but no scopeResource", async () => {
     const addPermission = jest.fn();
-    render(<AddPermissionForUpdateForm addPermission={addPermission} currentAddPermissions={[]} />);
+    render(<AddPermissionForUpdateForm addPermission={addPermission} currentPermissions={[]} />);
 
     const allComboBox = screen.getAllByRole("combobox", { hidden: true });
     userEvent.selectOptions(allComboBox[1], "packet.push");
@@ -104,7 +104,7 @@ describe("AddPermissionForUpdateForm", () => {
 
   it("should not show error on submit if permission not set", async () => {
     const addPermission = jest.fn();
-    render(<AddPermissionForUpdateForm addPermission={addPermission} currentAddPermissions={[]} />);
+    render(<AddPermissionForUpdateForm addPermission={addPermission} currentPermissions={[]} />);
 
     userEvent.click(screen.getByRole("button"));
 
@@ -119,7 +119,7 @@ describe("AddPermissionForUpdateForm", () => {
     render(
       <AddPermissionForUpdateForm
         addPermission={addPermission}
-        currentAddPermissions={[{ permission: "packet.push", tag: testTag }]}
+        currentPermissions={[{ permission: "packet.push", tag: testTag }]}
       />
     );
 
@@ -134,7 +134,7 @@ describe("AddPermissionForUpdateForm", () => {
     userEvent.click(screen.getByRole("button"));
 
     await waitFor(() => {
-      expect(screen.getByText(/permission already added/i)).toBeVisible();
+      expect(screen.getByText(/permission already exists/i)).toBeVisible();
     });
   });
 });
