@@ -25,8 +25,6 @@ export const UpdateDropdown = ({ setSelectedOption, manageType }: UpdateDropdown
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuSeparator />
         <DialogTrigger asChild onClick={() => setSelectedOption(manageType === "user" ? "roles" : "users")}>
           <DropdownMenuItem>Update {manageType === "user" ? "Roles" : "Users"}</DropdownMenuItem>
         </DialogTrigger>
