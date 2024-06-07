@@ -16,7 +16,7 @@ describe("AddRoleButton", () => {
     userEvent.click(screen.getByRole("button", { name: /add role/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/create new role/i)).toBeVisible();
+      expect(screen.getByText(/add new role/i)).toBeVisible();
     });
     expect(screen.getByLabelText(/name/i)).toBeVisible();
     GLOBAL_PERMISSIONS.forEach((permission) => {
@@ -34,7 +34,7 @@ describe("AddRoleButton", () => {
     userEvent.type(screen.getByLabelText(/name/i), "Test Role");
     userEvent.click(screen.getByRole("button", { name: /cancel/i }));
 
-    expect(screen.queryByText(/create new role/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/add new role/i)).not.toBeInTheDocument();
 
     userEvent.click(addRoleButton);
 
@@ -55,7 +55,7 @@ describe("AddRoleButton", () => {
       expect(fetcherSpy).toHaveBeenCalled();
     });
     expect(mutate).toHaveBeenCalled();
-    expect(screen.queryByText(/create new role/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/add new role/i)).not.toBeInTheDocument();
 
     userEvent.click(addRoleButton);
 

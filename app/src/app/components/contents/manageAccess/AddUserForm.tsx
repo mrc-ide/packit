@@ -34,7 +34,7 @@ export const AddUserForm = ({ mutate, setOpen, roleNames }: AddUserFormProps) =>
     displayName: z
       .string()
       .min(1)
-      .regex(/^\S.*\S$/, "must contain no leading/trailing spaces."),
+      .regex(/^\S.*\S$/, "name must contain no leading/trailing spaces."),
     password: z.string().min(8),
     userRoles: z.array(z.string())
   });
