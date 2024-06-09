@@ -1,17 +1,21 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { EllipsisVertical, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { KeyedMutator } from "swr";
 import { constructPermissionName } from "../../../../../lib/constructPermissionName";
 import { Button } from "../../../Base/Button";
 import { ScrollArea } from "../../../Base/ScrollArea";
+import { useUser } from "../../../providers/UserProvider";
 import { DeleteUserOrRole } from "../DeleteUserOrRole";
+import { UpdateUserDropdownMenu } from "../manageUsersActions/UpdateUserDropdownMenu";
 import { RoleWithRelationships } from "../types/RoleWithRelationships";
 import { UserWithRoles } from "../types/UserWithRoles";
-import { useUser } from "../../../providers/UserProvider";
 
 const columnHelper = createColumnHelper<UserWithRoles>();
 
-export const setupManageUsersColumns = (mutate: KeyedMutator<RoleWithRelationships[]>) => [
+export const setupManageUsersColumns = (
+  mutate: KeyedMutator<RoleWithRelationships[]>,
+  roles: RoleWithRelationships[]
+) => [
   columnHelper.accessor("username", {
     header: "Username",
     cell: ({ getValue }) => {
@@ -24,7 +28,7 @@ export const setupManageUsersColumns = (mutate: KeyedMutator<RoleWithRelationshi
       const roles = getValue();
 
       return (
-        <ScrollArea className="h-12">
+        <ScrollArea className="h-14" type="auto">
           <div className="flex flex-wrap italic gap-0.5 text-xs pl-0.5">
             {roles?.length === 0
               ? "None"
@@ -42,7 +46,7 @@ export const setupManageUsersColumns = (mutate: KeyedMutator<RoleWithRelationshi
       const rolePermissions = getValue();
 
       return (
-        <ScrollArea className="h-12">
+        <ScrollArea className="h-14" type="auto">
           <div className="flex flex-wrap gap-1 italic text-xs pl-0.5">
             {rolePermissions?.length === 0
               ? "None"
@@ -71,9 +75,7 @@ export const setupManageUsersColumns = (mutate: KeyedMutator<RoleWithRelationshi
           ) : (
             <DeleteUserOrRole mutate={mutate} data={{ name: row.original.username, type: "user" }} />
           )}
-          <Button variant="outline" size="icon" aria-label="edit-user">
-            <EllipsisVertical className="h-4 w-4" />
-          </Button>
+          <UpdateUserDropdownMenu user={row.original} roles={roles} mutate={mutate} />
         </div>
       );
     }

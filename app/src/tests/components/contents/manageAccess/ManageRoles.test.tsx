@@ -81,6 +81,7 @@ describe("ManageRoles", () => {
       expect(screen.getByText(role.name)).toBeVisible();
     });
   });
+
   it("should show error component if error fetching roles", async () => {
     server.use(
       rest.get(manageRolesIndexUri, (req, res, ctx) => {

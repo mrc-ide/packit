@@ -30,7 +30,7 @@ interface RoleService
     fun getRole(roleName: String): Role
     fun updatePermissionsToRole(roleName: String, updateRolePermissions: UpdateRolePermissions): Role
     fun getByRoleName(roleName: String): Role?
-    fun getSortedByBasePermissionsRoleDtos(roles: List<Role>): List<RoleDto>
+    fun getSortedRoleDtos(roles: List<Role>): List<RoleDto>
 }
 
 @Service
@@ -106,7 +106,7 @@ class BaseRoleService(
         return roleRepository.findByName(roleName)
     }
 
-    override fun getSortedByBasePermissionsRoleDtos(roles: List<Role>): List<RoleDto>
+    override fun getSortedRoleDtos(roles: List<Role>): List<RoleDto>
     {
         return roles.map { role ->
             val roleDto = role.toDto()
@@ -114,6 +114,7 @@ class BaseRoleService(
                 roleDto.rolePermissions.sortedByDescending {
                     it.tag == null && it.packet == null && it.packetGroup == null
                 }
+            roleDto.users = roleDto.users.sortedBy { it.username }
             roleDto
         }
     }

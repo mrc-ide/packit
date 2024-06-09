@@ -17,6 +17,7 @@ import packit.repository.RoleRepository
 import packit.service.BaseRoleService
 import packit.service.PermissionService
 import packit.service.RolePermissionService
+import java.util.*
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -437,7 +438,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getSortedByBasePermissionsRoleDtos returns roles sorted by base permissions`()
+    fun `getSortedRoleDtos returns roles sorted by base permissions`()
     {
         val role1 = Role(name = "role1", id = 1).apply {
             rolePermissions = mutableListOf(
@@ -464,12 +465,51 @@ class RoleServiceTest
         }
         val roles = listOf(role1, role2)
 
-        val result = roleService.getSortedByBasePermissionsRoleDtos(roles)
+        val result = roleService.getSortedRoleDtos(roles)
 
         assertEquals(2, result.size)
         assertEquals("permission1", result[0].rolePermissions[0].permission)
         assertEquals("permission3", result[0].rolePermissions[1].permission)
         assertEquals("permission4", result[1].rolePermissions[0].permission)
+    }
+
+    @Test
+    fun `getSortedRoleDtos returns sorted user dtos`()
+    {
+        val role1 = Role(name = "role1", id = 1).apply {
+            users = mutableListOf(
+                User(
+                    username = "c user",
+                    id = UUID.randomUUID(),
+                    disabled = false,
+                    displayName = "user1",
+                    userSource = "github"
+                ),
+                User(
+                    username = "a user",
+                    id = UUID.randomUUID(),
+                    disabled = false,
+                    displayName = "user1",
+                    userSource = "github"
+                ),
+                User(
+                    username = "b user",
+                    id = UUID.randomUUID(),
+                    disabled = false,
+                    displayName = "user1",
+                    userSource = "github"
+                ),
+            )
+        }
+
+        val roles = listOf(role1)
+
+        val result = roleService.getSortedRoleDtos(roles)
+
+        assertEquals(1, result.size)
+        assertEquals("a user", result[0].users[0].username)
+        assertEquals("b user", result[0].users[1].username)
+        assertEquals("c user", result[0].users[2].username)
     }
 
     private fun createRoleWithPermission(

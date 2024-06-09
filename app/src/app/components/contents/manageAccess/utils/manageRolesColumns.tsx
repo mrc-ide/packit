@@ -1,15 +1,17 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { EllipsisVertical, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { KeyedMutator } from "swr";
 import { constructPermissionName } from "../../../../../lib/constructPermissionName";
 import { Button } from "../../../Base/Button";
 import { ScrollArea } from "../../../Base/ScrollArea";
 import { DeleteUserOrRole } from "../DeleteUserOrRole";
+import { UpdateRoleDropDownMenu } from "../manageRoleActions/UpdateRoleDropDownMenu";
 import { RoleWithRelationships } from "../types/RoleWithRelationships";
+import { UserWithRoles } from "../types/UserWithRoles";
 
 const columnHelper = createColumnHelper<RoleWithRelationships>();
 
-export const setupManageRolesColumns = (mutate: KeyedMutator<RoleWithRelationships[]>) => [
+export const setupManageRolesColumns = (mutate: KeyedMutator<RoleWithRelationships[]>, users: UserWithRoles[]) => [
   columnHelper.accessor("name", {
     header: "Role",
     cell: ({ getValue }) => {
@@ -22,7 +24,7 @@ export const setupManageRolesColumns = (mutate: KeyedMutator<RoleWithRelationshi
       const permissions = getValue();
 
       return (
-        <ScrollArea className="h-12">
+        <ScrollArea className="h-14" type="auto">
           <div className="flex flex-wrap italic gap-0.5  text-xs pl-0.5">
             {permissions?.length === 0
               ? "None"
@@ -44,7 +46,7 @@ export const setupManageRolesColumns = (mutate: KeyedMutator<RoleWithRelationshi
       const users = getValue();
 
       return (
-        <ScrollArea className="h-12">
+        <ScrollArea className="h-14" type="auto">
           <div className="flex flex-wrap gap-1 italic text-xs pl-0.5">
             {users?.length === 0
               ? "None"
@@ -68,10 +70,7 @@ export const setupManageRolesColumns = (mutate: KeyedMutator<RoleWithRelationshi
           ) : (
             <DeleteUserOrRole mutate={mutate} data={{ name: row.original.name, type: "role" }} />
           )}
-
-          <Button variant="outline" size="icon" aria-label="edit-role">
-            <EllipsisVertical className="h-4 w-4" />
-          </Button>
+          <UpdateRoleDropDownMenu mutate={mutate} role={row.original} users={users} />
         </div>
       );
     }
