@@ -3,13 +3,14 @@ import { useState } from "react";
 import { KeyedMutator } from "swr";
 import { Button } from "../../Base/Button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../Base/Dialog";
-import { AddRoleForm } from "./AddRoleForm";
+import { AddUserForm } from "./AddUserForm";
 import { RoleWithRelationships } from "./types/RoleWithRelationships";
 
-interface AddRoleButtonProps {
+interface AddBasicUserButtonProps {
   mutate: KeyedMutator<RoleWithRelationships[]>;
+  roleNames: string[];
 }
-export const AddRoleButton = ({ mutate }: AddRoleButtonProps) => {
+export const AddBasicUserButton = ({ mutate, roleNames }: AddBasicUserButtonProps) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -17,14 +18,14 @@ export const AddRoleButton = ({ mutate }: AddRoleButtonProps) => {
       <DialogTrigger asChild>
         <Button size="sm">
           <SquarePlus className="mr-2 h-5 w-5" />
-          Add Role
+          Add User
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md" onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader>
-          <DialogTitle>Add new Role</DialogTitle>
+          <DialogTitle>Add new User</DialogTitle>
         </DialogHeader>
-        <AddRoleForm mutate={mutate} setOpen={setOpen} />
+        <AddUserForm mutate={mutate} setOpen={setOpen} roleNames={roleNames} />
       </DialogContent>
     </Dialog>
   );

@@ -1,16 +1,15 @@
 import { useState } from "react";
-import { useManageAccessLayoutContext } from "./ManageAccessOutlet";
-import { Button } from "../../Base/Button";
-import { SquarePlus } from "lucide-react";
 import { useAuthConfig } from "../../providers/AuthConfigProvider";
 import { DataTable } from "../common/DataTable";
+import { useManageAccessLayoutContext } from "./ManageAccessOutlet";
 
 import { PAGE_SIZE } from "../../../../lib/constants";
 import { FilterInput } from "../common/FilterInput";
-import { manageUsersColumns } from "./utils/manageUsersColumns";
+import { AddBasicUserButton } from "./AddBasicUserButton";
+import { setupManageUsersColumns } from "./utils/manageUsersColumns";
 
 export const ManageUsers = () => {
-  const { users } = useManageAccessLayoutContext();
+  const { users, mutate, roles } = useManageAccessLayoutContext();
   const authConfig = useAuthConfig();
   const [filteredName, setFilterByName] = useState("");
 
@@ -24,20 +23,11 @@ export const ManageUsers = () => {
         <div className="flex justify-between">
           <FilterInput setFilter={setFilterByName} placeholder="filter users by username.." />
           {authConfig?.enableBasicLogin && (
-            <Button
-              onClick={() => {
-                "TODO";
-              }}
-              variant="outline"
-              size="sm"
-            >
-              <SquarePlus className="mr-2 h-5 w-5" />
-              Add User
-            </Button>
+            <AddBasicUserButton mutate={mutate} roleNames={roles.map((role) => role.name)} />
           )}
         </div>
         <DataTable
-          columns={manageUsersColumns}
+          columns={setupManageUsersColumns(mutate)}
           data={
             filteredName
               ? users.filter((user) => user.username.toLowerCase().includes(filteredName.toLowerCase()))

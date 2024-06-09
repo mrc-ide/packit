@@ -1,13 +1,15 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { RoleWithRelationships } from "../types/RoleWithRelationships";
+import { EllipsisVertical, Trash2 } from "lucide-react";
+import { KeyedMutator } from "swr";
 import { constructPermissionName } from "../../../../../lib/constructPermissionName";
 import { Button } from "../../../Base/Button";
-import { EllipsisVertical, Trash2 } from "lucide-react";
 import { ScrollArea } from "../../../Base/ScrollArea";
+import { DeleteUserOrRole } from "../DeleteUserOrRole";
+import { RoleWithRelationships } from "../types/RoleWithRelationships";
 
 const columnHelper = createColumnHelper<RoleWithRelationships>();
 
-export const manageRolesColumns = [
+export const setupManageRolesColumns = (mutate: KeyedMutator<RoleWithRelationships[]>) => [
   columnHelper.accessor("name", {
     header: "Role",
     cell: ({ getValue }) => {
@@ -56,13 +58,17 @@ export const manageRolesColumns = [
   }),
   columnHelper.display({
     id: "actions",
-    cell: () => {
-      // TODO: Implement with row data
+    cell: ({ row }) => {
       return (
         <div className="flex space-x-2 justify-end ">
-          <Button variant="outline" size="icon" aria-label="delete-role">
-            <Trash2 className="h-4 w-4 text-red-500" />
-          </Button>
+          {row.original.name === "ADMIN" ? (
+            <Button variant="outline" size="icon" aria-label="delete-role" disabled>
+              <Trash2 className="h-4 w-4 " />
+            </Button>
+          ) : (
+            <DeleteUserOrRole mutate={mutate} data={{ name: row.original.name, type: "role" }} />
+          )}
+
           <Button variant="outline" size="icon" aria-label="edit-role">
             <EllipsisVertical className="h-4 w-4" />
           </Button>

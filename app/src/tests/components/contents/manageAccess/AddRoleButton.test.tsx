@@ -16,7 +16,7 @@ describe("AddRoleButton", () => {
     userEvent.click(screen.getByRole("button", { name: /add role/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/create new role/i)).toBeVisible();
+      expect(screen.getByText(/add new role/i)).toBeVisible();
     });
     expect(screen.getByLabelText(/name/i)).toBeVisible();
     GLOBAL_PERMISSIONS.forEach((permission) => {
@@ -34,7 +34,7 @@ describe("AddRoleButton", () => {
     userEvent.type(screen.getByLabelText(/name/i), "Test Role");
     userEvent.click(screen.getByRole("button", { name: /cancel/i }));
 
-    expect(screen.queryByText(/create new role/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/add new role/i)).not.toBeInTheDocument();
 
     userEvent.click(addRoleButton);
 
@@ -49,13 +49,13 @@ describe("AddRoleButton", () => {
     userEvent.click(addRoleButton);
 
     userEvent.type(screen.getByLabelText(/name/i), "Test Role");
-    userEvent.click(screen.getByRole("button", { name: /create/i }));
+    userEvent.click(screen.getByRole("button", { name: /add/i }));
 
     await waitFor(() => {
       expect(fetcherSpy).toHaveBeenCalled();
     });
     expect(mutate).toHaveBeenCalled();
-    expect(screen.queryByText(/create new role/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/add new role/i)).not.toBeInTheDocument();
 
     userEvent.click(addRoleButton);
 
@@ -72,7 +72,7 @@ describe("AddRoleButton", () => {
     userEvent.click(screen.getByRole("checkbox", { name: GLOBAL_PERMISSIONS[0] }));
     userEvent.click(screen.getByRole("checkbox", { name: GLOBAL_PERMISSIONS[2] }));
 
-    userEvent.click(screen.getByRole("button", { name: /create/i }));
+    userEvent.click(screen.getByRole("button", { name: /add/i }));
 
     await waitFor(() => {
       expect(fetcherSpy).toHaveBeenCalledWith({
@@ -87,7 +87,7 @@ describe("AddRoleButton", () => {
     render(<AddRoleButton mutate={jest.fn()} />);
     userEvent.click(screen.getByRole("button", { name: /add role/i }));
 
-    userEvent.click(screen.getByRole("button", { name: /create/i }));
+    userEvent.click(screen.getByRole("button", { name: /add/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/string must contain at least 1 character/i)).toBeVisible();
@@ -99,7 +99,7 @@ describe("AddRoleButton", () => {
     userEvent.click(screen.getByRole("button", { name: /add role/i }));
 
     userEvent.type(screen.getByLabelText(/name/i), " trim");
-    userEvent.click(screen.getByRole("button", { name: /create/i }));
+    userEvent.click(screen.getByRole("button", { name: /add/i }));
 
     await waitFor(() => {
       expect(
@@ -113,10 +113,12 @@ describe("AddRoleButton", () => {
     userEvent.click(screen.getByRole("button", { name: /add role/i }));
 
     userEvent.type(screen.getByLabelText(/name/i), "Test, Role");
-    userEvent.click(screen.getByRole("button", { name: /create/i }));
+    userEvent.click(screen.getByRole("button", { name: /add/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/name must only contain alphanumeric characters/i)).toBeVisible();
+      expect(
+        screen.getByText("Name must only contain alphanumeric characters & no leading/trailing spaces.")
+      ).toBeVisible();
     });
   });
 
@@ -131,7 +133,7 @@ describe("AddRoleButton", () => {
 
     userEvent.click(screen.getByRole("button", { name: /add role/i }));
     userEvent.type(screen.getByLabelText(/name/i), "Test Role");
-    userEvent.click(screen.getByRole("button", { name: /create/i }));
+    userEvent.click(screen.getByRole("button", { name: /add/i }));
 
     waitFor(() => {
       expect(screen.getByText(errorMessage)).toBeVisible();
@@ -147,7 +149,7 @@ describe("AddRoleButton", () => {
 
     userEvent.click(screen.getByRole("button", { name: /add role/i }));
     userEvent.type(screen.getByLabelText(/name/i), "Test Role");
-    userEvent.click(screen.getByRole("button", { name: /create/i }));
+    userEvent.click(screen.getByRole("button", { name: /add/i }));
 
     waitFor(() => {
       expect(screen.getByText(/an unexpected error occurred. please try again/i)).toBeVisible();
