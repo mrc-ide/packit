@@ -3,6 +3,8 @@ import { Outlet, useOutletContext } from "react-router-dom";
 import { PacketMetadata } from "../../../types";
 import { ErrorComponent } from "../contents/common/ErrorComponent";
 import { useGetPacketById } from "../contents/common/hooks/useGetPacketById";
+import { HttpStatus } from "../../../lib/types/HttpStatus";
+import { Unauthorized } from "../contents/common/Unauthorized";
 
 interface PacketOutletProps {
   packetId: string | undefined;
@@ -10,9 +12,8 @@ interface PacketOutletProps {
 export const PacketOutlet = ({ packetId }: PacketOutletProps) => {
   const { packet, isLoading, error } = useGetPacketById(packetId);
 
-  if (error) {
-    return <ErrorComponent error={error} message="Error Fetching Packet details" />;
-  }
+  if (error?.status === HttpStatus.Unauthorized) return <Unauthorized />;
+  if (error) return <ErrorComponent error={error} message="Error Fetching Packet details" />;
 
   if (isLoading)
     return (

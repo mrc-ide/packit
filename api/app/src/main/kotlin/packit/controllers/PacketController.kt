@@ -3,6 +3,7 @@ package packit.controllers
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
@@ -17,6 +18,7 @@ import packit.service.PacketService
 class PacketController(private val packetService: PacketService)
 {
     @GetMapping
+    @PreAuthorize("hasAuthority('packet.read')")
     fun pageableIndex(
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
         @RequestParam(required = false, defaultValue = "50") pageSize: Int,
@@ -28,6 +30,7 @@ class PacketController(private val packetService: PacketService)
     }
 
     @GetMapping("/{name}")
+    @PreAuthorize("hasAuthority('packet.read')")
     fun getPacketsByName(
         @PathVariable name: String,
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
@@ -41,6 +44,7 @@ class PacketController(private val packetService: PacketService)
     }
 
     @GetMapping("/packetGroupSummary")
+    @PreAuthorize("hasAuthority('packet.read')")
     fun getPacketGroupSummary(
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
         @RequestParam(required = false, defaultValue = "50") pageSize: Int,
@@ -52,12 +56,14 @@ class PacketController(private val packetService: PacketService)
     }
 
     @GetMapping("/metadata/{id}")
+    @PreAuthorize("hasAuthority('packet.read')")
     fun findPacketMetadata(@PathVariable id: String): ResponseEntity<PacketMetadata>
     {
         return ResponseEntity.ok(packetService.getMetadataBy(id))
     }
 
     @GetMapping("/file/{hash}")
+    @PreAuthorize("hasAuthority('packet.read')")
     @ResponseBody
     fun findFile(
         @PathVariable hash: String,
@@ -74,6 +80,7 @@ class PacketController(private val packetService: PacketService)
     }
 
     @GetMapping("/packetGroup")
+    @PreAuthorize("hasAuthority('packet.read')")
     fun getPacketGroups(
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
         @RequestParam(required = false, defaultValue = "50") pageSize: Int,

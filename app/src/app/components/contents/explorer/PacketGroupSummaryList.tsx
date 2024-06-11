@@ -1,7 +1,9 @@
 import { Dispatch, SetStateAction } from "react";
+import { HttpStatus } from "../../../../lib/types/HttpStatus";
 import { Skeleton } from "../../Base/Skeleton";
 import { ErrorComponent } from "../common/ErrorComponent";
 import { Pagination } from "../common/Pagination";
+import { Unauthorized } from "../common/Unauthorized";
 import { PacketGroupSummaryListItem } from "./PacketGroupSummaryListItem";
 import { useGetPacketGroupSummary } from "./hooks/useGetPacketGroupSummary";
 
@@ -19,6 +21,7 @@ export const PacketGroupSummaryList = ({
 }: PacketGroupSummaryListProps) => {
   const { packetGroupSummary, isLoading, error } = useGetPacketGroupSummary(pageNumber, pageSize, filterByName);
 
+  if (error?.status === HttpStatus.Unauthorized) return <Unauthorized />;
   if (error) return <ErrorComponent message="Error fetching packet groups" error={error} />;
 
   if (isLoading)
