@@ -13,7 +13,7 @@ export default function Download() {
       <ul>
         {packet?.files.map((data, key) => (
           <li key={key}>
-            <DownloadButton file={data}></DownloadButton>
+            <DownloadButton file={data} packetId={packetId ?? ""} />
           </li>
         ))}
       </ul>

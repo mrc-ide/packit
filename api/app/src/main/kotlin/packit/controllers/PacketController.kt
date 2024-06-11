@@ -56,17 +56,18 @@ class PacketController(private val packetService: PacketService)
     }
 
     @GetMapping("/metadata/{id}")
-    @PreAuthorize("hasAuthority('packet.read')")
+    @PreAuthorize("hasAuthority('packet.read') or @authz.canReadPacketMetadata(#root, #id)")
     fun findPacketMetadata(@PathVariable id: String): ResponseEntity<PacketMetadata>
     {
         return ResponseEntity.ok(packetService.getMetadataBy(id))
     }
 
-    @GetMapping("/file/{hash}")
-    @PreAuthorize("hasAuthority('packet.read')")
+    @GetMapping("/file/{id}")
+    @PreAuthorize("hasAuthority('packet.read') or @authz.canReadPacketMetadata(#root, #id)")
     @ResponseBody
     fun findFile(
-        @PathVariable hash: String,
+        @PathVariable id: String,
+        @RequestParam hash: String,
         @RequestParam inline: Boolean = false,
         @RequestParam filename: String,
     ): ResponseEntity<ByteArrayResource>
