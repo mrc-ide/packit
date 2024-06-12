@@ -173,21 +173,22 @@ class RoleServiceTest
     @Test
     fun `getPermissionScoped returns permission name with packetGroup id`()
     {
-        val rolePermission = createRoleWithPermission("role", "permission", packetGroupId = 2).rolePermissions[0]
+        val rolePermission =
+            createRoleWithPermission("role", "permission", packetGroupName = "packetGroupName").rolePermissions[0]
 
         val result = roleService.getPermissionScoped(rolePermission)
 
-        assertEquals("permission:packetGroup:2", result)
+        assertEquals("permission:packetGroup:packetGroupName", result)
     }
 
     @Test
     fun `getPermissionScoped returns permission name with tag id`()
     {
-        val rolePermission = createRoleWithPermission("role", "permission", tagId = 3).rolePermissions[0]
+        val rolePermission = createRoleWithPermission("role", "permission", tagName = "tagName").rolePermissions[0]
 
         val result = roleService.getPermissionScoped(rolePermission)
 
-        assertEquals("permission:tag:3", result)
+        assertEquals("permission:tag:tagName", result)
     }
 
     @Test
@@ -516,8 +517,8 @@ class RoleServiceTest
         roleName: String,
         permissionName: String,
         packetId: String? = null,
-        packetGroupId: Int? = null,
-        tagId: Int? = null
+        packetGroupName: String? = null,
+        tagName: String? = null
     ): Role
     {
         return Role(
@@ -531,8 +532,8 @@ class RoleServiceTest
                     ),
                     role = Role(name = roleName),
                     packet = packetId?.let { mock<Packet> { on { id } doReturn packetId } },
-                    packetGroup = packetGroupId?.let { mock { on { id } doReturn packetGroupId } },
-                    tag = tagId?.let { mock { on { id } doReturn tagId } }
+                    packetGroup = packetGroupName?.let { mock { on { name } doReturn packetGroupName } },
+                    tag = tagName?.let { mock { on { name } doReturn tagName } }
                 )
             )
         )

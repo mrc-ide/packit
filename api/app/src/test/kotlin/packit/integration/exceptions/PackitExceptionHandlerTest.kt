@@ -7,7 +7,7 @@ import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
 import kotlin.test.assertEquals
 
-@WithAuthenticatedUser
+@WithAuthenticatedUser(authorities = ["packet.read"])
 class PackitExceptionHandlerTest : IntegrationTest()
 {
     @Test
