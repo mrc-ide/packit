@@ -9,7 +9,7 @@ describe("getHtmlFilePath", () => {
 
   it("returns the correct path if getHtmlFileIfExists returns a hash and path", () => {
     expect(getHtmlFilePath(mockPacket)).toBe(
-      `packets/file/${mockPacket.files[1].hash}?inline=true&filename=${mockPacket.files[1].path}`
+      `packets/file/${mockPacket.id}?hash=${mockPacket.files[1].hash}?inline=true&filename=${mockPacket.files[1].path}`
     );
   });
 });

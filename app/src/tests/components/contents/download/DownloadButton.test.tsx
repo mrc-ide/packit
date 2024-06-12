@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import DownloadButton from "../../../../app/components/contents/download/DownloadButton";
+import appConfig from "../../../../config/appConfig";
 
 let errorOnDownload = false;
 const mockDownload = jest.fn();
@@ -14,9 +15,10 @@ describe("DownloadButton", () => {
     size: 1024,
     hash: "fakeHash"
   };
+  const packetId = "fakePacketId";
 
   const renderComponent = () => {
-    render(<DownloadButton file={file} packetId="" />);
+    render(<DownloadButton file={file} packetId={packetId} />);
   };
 
   beforeEach(() => {
@@ -39,7 +41,7 @@ describe("DownloadButton", () => {
     renderComponent();
 
     userEvent.click(screen.getByRole("button"));
-    const url = "http://localhost:8080/packets/file/fakeHash?filename=test.txt";
+    const url = `${appConfig.apiUrl()}/packets/file/${packetId}?hash=${file.hash}&filename=${file.path}`;
     expect(mockDownload).toHaveBeenCalledWith(url, "test.txt");
   });
 
