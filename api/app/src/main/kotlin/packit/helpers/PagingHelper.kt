@@ -16,6 +16,7 @@ object PagingHelper
         )
         val start = pageable.offset.toInt()
         val end = min((start + pageable.pageSize), list.size)
+
         return PageImpl(list.subList(start, end), pageable, list.size.toLong())
     }
 }
