@@ -12,23 +12,17 @@ class AuthorizationLogic(
     fun canReadPacketMetadata(operations: MethodSecurityExpressionOperations, id: String): Boolean
     {
         val packet = packetService.getPacket(id)
-        for (grantedAuth in operations.authentication.authorities)
-        {
-            if (grantedAuth.authority == "packet.read:packet:${id}")
-            {
-                return true
-            }
-            if (grantedAuth.authority == "packet.read:packetGroup:${packet.name}")
-            {
-                return true
-            }
-//            TODO: uncomment below when tags implemented
-//            if (grantedAuth.authority == "packet.read:tag:${tag}")
-//            {
-//                return true
-//            }
-        }
-        return false
+        return canReadPacket(operations, packet.id, packet.name)
     }
 
+    fun canReadPacket(operations: MethodSecurityExpressionOperations, id: String, name: String): Boolean
+    {
+        // TODO: update with tag when implemented
+        return operations.hasAnyAuthority("packet.read", "packet.read:packet:${id}", "packet.read:packetGroup:${name}")
+    }
+
+    fun canReadPacketGroup(operations: MethodSecurityExpressionOperations, name: String): Boolean
+    {
+        return operations.hasAnyAuthority("packet.read", "packet.read:packetGroup:${name}")
+    }
 }

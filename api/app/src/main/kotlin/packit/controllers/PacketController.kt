@@ -18,7 +18,6 @@ import packit.service.PacketService
 class PacketController(private val packetService: PacketService)
 {
     @GetMapping
-    @PreAuthorize("hasAuthority('packet.read')")
     fun pageableIndex(
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
         @RequestParam(required = false, defaultValue = "50") pageSize: Int,
@@ -30,7 +29,6 @@ class PacketController(private val packetService: PacketService)
     }
 
     @GetMapping("/{name}")
-    @PreAuthorize("hasAuthority('packet.read')")
     fun getPacketsByName(
         @PathVariable name: String,
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
@@ -44,7 +42,6 @@ class PacketController(private val packetService: PacketService)
     }
 
     @GetMapping("/packetGroupSummary")
-    @PreAuthorize("hasAuthority('packet.read')")
     fun getPacketGroupSummary(
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
         @RequestParam(required = false, defaultValue = "50") pageSize: Int,
@@ -56,14 +53,14 @@ class PacketController(private val packetService: PacketService)
     }
 
     @GetMapping("/metadata/{id}")
-    @PreAuthorize("hasAuthority('packet.read') or @authz.canReadPacketMetadata(#root, #id)")
+    @PreAuthorize("@authz.canReadPacketMetadata(#root, #id)")
     fun findPacketMetadata(@PathVariable id: String): ResponseEntity<PacketMetadata>
     {
         return ResponseEntity.ok(packetService.getMetadataBy(id))
     }
 
     @GetMapping("/file/{id}")
-    @PreAuthorize("hasAuthority('packet.read') or @authz.canReadPacketMetadata(#root, #id)")
+    @PreAuthorize("@authz.canReadPacketMetadata(#root, #id)")
     @ResponseBody
     fun findFile(
         @PathVariable id: String,
@@ -81,7 +78,6 @@ class PacketController(private val packetService: PacketService)
     }
 
     @GetMapping("/packetGroup")
-    @PreAuthorize("hasAuthority('packet.read')")
     fun getPacketGroups(
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
         @RequestParam(required = false, defaultValue = "50") pageSize: Int,

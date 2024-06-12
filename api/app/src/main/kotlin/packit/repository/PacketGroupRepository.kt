@@ -1,8 +1,8 @@
 package packit.repository
 
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.security.access.prepost.PostFilter
 import org.springframework.stereotype.Repository
 import packit.model.PacketGroup
 
@@ -10,5 +10,7 @@ import packit.model.PacketGroup
 interface PacketGroupRepository : JpaRepository<PacketGroup, Int>
 {
     fun findByNameIn(names: List<String>): List<PacketGroup>
-    fun findAllByNameContaining(name: String, pageable: Pageable): Page<PacketGroup>
+
+    @PostFilter("@authz.canReadPacketGroup(#root, filterObject.name)")
+    fun findAllByNameContaining(name: String, sort: Sort): List<PacketGroup>
 }

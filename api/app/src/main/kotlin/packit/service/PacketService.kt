@@ -11,6 +11,7 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import packit.contentTypes
 import packit.exceptions.PackitException
+import packit.helpers.PagingHelper
 import packit.model.Packet
 import packit.model.PacketGroup
 import packit.model.PacketMetadata
@@ -84,23 +85,14 @@ class BasePacketService(
         filteredName: String
     ): Page<PacketGroupSummary>
     {
-        return packetRepository.findPacketGroupSummaryByName(
-            filteredName,
-            PageRequest.of(
-                pageablePayload.pageNumber,
-                pageablePayload.pageSize
-            )
-        )
+        val packetGroupSummaries = packetRepository.findPacketGroupSummaryByName(filteredName)
+        return PagingHelper.convertListToPage(packetGroupSummaries, pageablePayload)
     }
 
     override fun getPacketsByName(name: String, payload: PageablePayload): Page<Packet>
     {
-        val pageable = PageRequest.of(
-            payload.pageNumber,
-            payload.pageSize,
-            Sort.by("startTime").descending()
-        )
-        return packetRepository.findByName(name, pageable)
+        val packets = packetRepository.findByName(name, Sort.by("startTime").descending())
+        return PagingHelper.convertListToPage(packets, payload)
     }
 
     override fun getPacketGroups(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroup>
@@ -110,7 +102,8 @@ class BasePacketService(
             pageablePayload.pageSize,
             Sort.by("name")
         )
-        return packetGroupRepository.findAllByNameContaining(filteredName, pageable)
+        val packetGroups = packetGroupRepository.findAllByNameContaining(filteredName, Sort.by("name"))
+        return PagingHelper.convertListToPage(packetGroups, pageablePayload)
     }
 
     override fun getPacket(id: String): Packet
@@ -121,13 +114,9 @@ class BasePacketService(
 
     override fun getPackets(pageablePayload: PageablePayload, filterId: String): Page<Packet>
     {
-        val pageable = PageRequest.of(
-            pageablePayload.pageNumber,
-            pageablePayload.pageSize,
-            Sort.by("startTime").descending()
-        )
+        val packets = packetRepository.findAllByIdContaining(filterId, Sort.by("startTime").descending())
 
-        return packetRepository.findAllByIdContaining(pageable, filterId)
+        return PagingHelper.convertListToPage(packets, pageablePayload)
     }
 
     override fun getChecksum(): String
