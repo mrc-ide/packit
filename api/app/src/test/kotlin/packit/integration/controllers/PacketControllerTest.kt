@@ -13,10 +13,12 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
+import packit.model.Packet
 import packit.model.PacketGroup
 import packit.model.dto.PacketGroupDto
 import packit.model.toDto
 import packit.repository.PacketGroupRepository
+import packit.repository.PacketRepository
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -24,18 +26,83 @@ class PacketControllerTest : IntegrationTest()
 {
     @Autowired
     private lateinit var packetGroupRepository: PacketGroupRepository
+
+    @Autowired
+    private lateinit var packetRepository: PacketRepository
     private lateinit var packetGroups: List<PacketGroup>
+    private lateinit var packets: List<Packet>
+    private val packetNames = listOf(
+        "test-packetGroupName-1",
+        "test-packetGroupName-2",
+        "test-packetGroupName-3",
+        "test-packetGroupName-4",
+        "test-packetGroupName-5"
+    )
 
     @BeforeAll
     fun setupData()
     {
         packetGroups = packetGroupRepository.saveAll(
             listOf(
-                PacketGroup(name = "test-packetGroup-2"),
-                PacketGroup(name = "test-packetGroup-1"),
-                PacketGroup(name = "test-packetGroup-5"),
-                PacketGroup(name = "test-packetGroup-4"),
-                PacketGroup(name = "test-packetGroup-3"),
+                PacketGroup(name = packetNames[1]),
+                PacketGroup(name = packetNames[0]),
+                PacketGroup(name = packetNames[4]),
+                PacketGroup(name = packetNames[3]),
+                PacketGroup(name = packetNames[2]),
+            )
+        )
+        packets = packetRepository.saveAll(
+            listOf(
+                Packet(
+                    "20230427-150755-2dbede93",
+                    packetNames[0],
+                    "test-packetGroupName-1",
+                    mapOf("name" to "value"),
+                    false,
+                    0.0,
+                    0.0,
+                    0.0
+                ),
+                Packet(
+                    "20230427-150755-2dbede94",
+                    packetNames[0],
+                    packetNames[0],
+                    mapOf("a" to 1),
+                    false,
+                    0.0,
+                    0.0,
+                    0.0
+                ),
+                Packet(
+                    "20230427-150755-2dbede95",
+                    packetNames[2],
+                    "test-packetGroupName-3",
+                    mapOf("alpha" to true),
+                    false,
+                    0.0,
+                    0.0,
+                    0.0
+                ),
+                Packet(
+                    "20230427-150755-2dbede96",
+                    packetNames[3],
+                    "test-packetGroupName-4",
+                    mapOf(),
+                    true,
+                    0.0,
+                    0.0,
+                    0.0
+                ),
+                Packet(
+                    "20230427-150755-2dbede97",
+                    packetNames[4],
+                    "test-packetGroupName-5",
+                    mapOf(),
+                    true,
+                    0.0,
+                    0.0,
+                    0.0
+                ),
             )
         )
     }
@@ -44,6 +111,7 @@ class PacketControllerTest : IntegrationTest()
     fun cleanup()
     {
         packetGroupRepository.deleteAll(packetGroups)
+        packetRepository.deleteAll(packets)
     }
 
     @Test
@@ -138,7 +206,8 @@ class PacketControllerTest : IntegrationTest()
     fun `get packet file by hash`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/file/20230427-150755-2dbede93?hash=sha256:715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1" +
+            "/packets/file/20230427-150755-2dbede93" +
+                    "?hash=sha256:715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1" +
                     "&filename=report.html",
             HttpMethod.GET,
             getTokenizedHttpEntity()
@@ -152,7 +221,7 @@ class PacketControllerTest : IntegrationTest()
     fun `get ordered pageable packetGroups with filtered name`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/packetGroup?pageNumber=0&pageSize=10&filterName=test-packetGroup",
+            "/packets/packetGroup?pageNumber=0&pageSize=10&filterName=test-packetGroupName",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -167,8 +236,8 @@ class PacketControllerTest : IntegrationTest()
             }
         assert(resultPacketGroups.containsAll(packetGroups.map { it.toDto() }))
         assertEquals(5, resultPacketGroups.size)
-        assertEquals("test-packetGroup-1", resultPacketGroups[0].name)
-        assertEquals("test-packetGroup-5", resultPacketGroups[resultPacketGroups.size - 1].name)
+        assertEquals("test-packetGroupName-1", resultPacketGroups[0].name)
+        assertEquals("test-packetGroupName-5", resultPacketGroups[resultPacketGroups.size - 1].name)
     }
 
     @Test
@@ -176,7 +245,7 @@ class PacketControllerTest : IntegrationTest()
     fun `return correct page information for get pageable packet groups `()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/packetGroup?pageNumber=0&pageSize=10&filterName=test-packetGroup",
+            "/packets/packetGroup?pageNumber=0&pageSize=10&filterName=test-packetGroupName",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -189,7 +258,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser(authorities = ["packet.read:packet:20230427-150755-2dbede93"])
+    @WithAuthenticatedUser(authorities = ["packet.read:packet:test-packetGroupName-1:20230427-150755-2dbede93"])
     fun `findPacketMetadata returns metadata if user has correct specific permission`()
     {
 
@@ -202,7 +271,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser(authorities = ["packet.read:packet:wrong-id"])
+    @WithAuthenticatedUser(authorities = ["packet.read:packet:name:wrong-id"])
     fun `findPacketMetadata returns 401 if incorrect specific permission`()
     {
 
@@ -214,13 +283,13 @@ class PacketControllerTest : IntegrationTest()
         assertEquals(HttpStatus.UNAUTHORIZED, result.statusCode)
     }
 
-
     @Test
-    @WithAuthenticatedUser(authorities = ["packet.read:packet:20230427-150755-2dbede93"])
+    @WithAuthenticatedUser(authorities = ["packet.read:packet:test-packetGroupName-1:20230427-150755-2dbede93"])
     fun `findFile returns file if user has correct specific permission`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/file/20230427-150755-2dbede93?hash=sha256:715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1" +
+            "/packets/file/20230427-150755-2dbede93" +
+                    "?hash=sha256:715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1" +
                     "&filename=report.html",
             HttpMethod.GET,
             getTokenizedHttpEntity()
@@ -234,7 +303,8 @@ class PacketControllerTest : IntegrationTest()
     fun `findFile returns 401 if incorrect specific permission`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/file/20230427-150755-2dbede93?hash=sha256:715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1" +
+            "/packets/file/20230427-150755-2dbede93" +
+                    "?hash=sha256:715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1" +
                     "&filename=report.html",
             HttpMethod.GET,
             getTokenizedHttpEntity()
@@ -243,7 +313,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser
+    @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:random-name"])
     fun `pageableIndex returns empty page if no permissions match`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
@@ -252,6 +322,106 @@ class PacketControllerTest : IntegrationTest()
             getTokenizedHttpEntity()
         )
 
-//        assertEquals(0, jacksonObjectMapper().readValue(result.body))
+        assertEquals(0, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:test-packetGroupName-1"])
+    fun `pageableIndex returns of packets user can see`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packets",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        assertEquals(2, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:random-name"])
+    fun `getPacketsByName returns empty page if no permissions match`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packets/test-packetGroupName-1",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        assertEquals(0, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read:packet:test-packetGroupName-1:20230427-150755-2dbede94"])
+    fun `getPacketsByName returns of packets user can see`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packets/test-packetGroupName-1",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+        val packetId = jacksonObjectMapper().readTree(result.body).get("content")[0].get("id").asText()
+        assertEquals(1, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
+        assertEquals("20230427-150755-2dbede94", packetId)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:random-name"])
+    fun `getPacketGroupSummary returns empty page if no permissions match`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packets/packetGroupSummary",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        assertEquals(0, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
+    }
+
+    @Test
+    @WithAuthenticatedUser(
+        authorities = [
+            "packet.read:packetGroup:test-packetGroupName-1",
+            "packet.read:packet:test-packetGroupName-3:20230427-150755-2dbede95"
+        ]
+    )
+    fun `getPacketGroupSummary returns of packet groups user can see`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packets/packetGroupSummary",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+        assertEquals(2, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:random-name"])
+    fun `getPacketGroups returns empty page if no permissions match`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packets/packetGroup",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        assertEquals(0, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
+    }
+
+    @Test
+    @WithAuthenticatedUser(
+        authorities = [
+            "packet.read:packetGroup:test-packetGroupName-1",
+            "packet.read:packet:test-packetGroupName-3:20230427-150755-2dbede95"
+        ]
+    )
+    fun `getPacketGroups returns of packet groups user can see`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packets/packetGroup",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+        assertEquals(2, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
     }
 }

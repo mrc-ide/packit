@@ -2,7 +2,6 @@ package packit.service
 
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.http.ContentDisposition
 import org.springframework.http.HttpHeaders
@@ -97,11 +96,6 @@ class BasePacketService(
 
     override fun getPacketGroups(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroup>
     {
-        val pageable = PageRequest.of(
-            pageablePayload.pageNumber,
-            pageablePayload.pageSize,
-            Sort.by("name")
-        )
         val packetGroups = packetGroupRepository.findAllByNameContaining(filteredName, Sort.by("name"))
         return PagingHelper.convertListToPage(packetGroups, pageablePayload)
     }

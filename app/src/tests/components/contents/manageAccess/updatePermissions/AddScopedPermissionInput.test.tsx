@@ -57,12 +57,16 @@ describe("AddScopedPermissionInput", () => {
 
     await waitFor(() => {
       mockPacketGroupResponse.content.forEach((packet) => {
-        expect(screen.getByText(packet.id)).toBeVisible();
+        expect(screen.getByText(`${packet.name}:${packet.id}`)).toBeVisible();
       });
     });
 
     userEvent.type(screen.getByPlaceholderText("Search packets..."), "random search");
-    userEvent.click(screen.getByRole("option", { name: mockPacketGroupResponse.content[0].id }));
+    userEvent.click(
+      screen.getByRole("option", {
+        name: `${mockPacketGroupResponse.content[0].name}:${mockPacketGroupResponse.content[0].id}`
+      })
+    );
 
     expect(form.setValue).toHaveBeenCalledWith("scopeResource", {
       id: mockPacketGroupResponse.content[0].id,

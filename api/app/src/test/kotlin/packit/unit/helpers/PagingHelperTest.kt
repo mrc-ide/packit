@@ -46,7 +46,6 @@ class PagingHelperTest
         assertThrows<IllegalArgumentException> {
             PagingHelper.convertListToPage(list, pageablePayload)
         }
-
     }
 
     @Test

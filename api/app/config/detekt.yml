@@ -47,6 +47,8 @@ style:
     active: false
   ForbiddenComment:
     active: false
+  UnusedPrivateMember:
+    active: false
 
 naming:
   NoNameShadowing:

@@ -1,14 +1,11 @@
 package packit.unit.security
 
-
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.mockito.kotlin.any
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
+import org.mockito.kotlin.*
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import packit.model.Packet
 import packit.security.AuthorizationLogic
 import packit.service.PacketService
@@ -30,7 +27,9 @@ class AuthorizationLogicTest
         now
     )
     private val mockAuthentication = mock<Authentication>()
-    private val mockOperations = mock<MethodSecurityExpressionOperations>()
+    private val mockOperations = mock<MethodSecurityExpressionOperations> {
+        on { authentication } doReturn mockAuthentication
+    }
 
     @Test
     fun `canReadPacketMetadata calls packetService and returns true when hasAnyAuthority returns true`()
@@ -40,7 +39,7 @@ class AuthorizationLogicTest
         whenever(
             mockOperations.hasAnyAuthority(
                 "packet.read",
-                "packet.read:packet:${packet.id}",
+                "packet.read:packet:${packet.name}:${packet.id}",
                 "packet.read:packetGroup:${packet.name}"
             )
         ).thenReturn(true)
@@ -62,7 +61,6 @@ class AuthorizationLogicTest
 
         assertFalse(result)
         verify(packetService).getPacket(packet.id)
-
     }
 
     @Test
@@ -72,7 +70,7 @@ class AuthorizationLogicTest
         whenever(
             mockOperations.hasAnyAuthority(
                 "packet.read",
-                "packet.read:packet:${packet.id}",
+                "packet.read:packet:${packet.name}:${packet.id}",
                 "packet.read:packetGroup:${packet.name}"
             )
         ).thenReturn(true)
@@ -99,6 +97,18 @@ class AuthorizationLogicTest
 
         whenever(mockOperations.hasAnyAuthority("packet.read", "packet.read:packetGroup:${packet.name}")).thenReturn(
             true
+        )
+
+        val result = AuthorizationLogic(packetService).canReadPacketGroup(mockOperations, packet.name)
+
+        assertTrue(result)
+    }
+
+    @Test
+    fun `canReadPacketGroup returns true if the authentication authorities contain packet read packet name`()
+    {
+        whenever(mockAuthentication.authorities).thenReturn(
+            listOf(SimpleGrantedAuthority("packet.read:packet:${packet.name}:${packet.id}"))
         )
 
         val result = AuthorizationLogic(packetService).canReadPacketGroup(mockOperations, packet.name)
