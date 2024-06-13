@@ -18,11 +18,16 @@ class AuthorizationLogic(
     fun canReadPacket(operations: MethodSecurityExpressionOperations, id: String, name: String): Boolean
     {
         // TODO: update with tag when implemented
-        return operations.hasAnyAuthority("packet.read", "packet.read:packet:${id}", "packet.read:packetGroup:${name}")
+        return operations.hasAnyAuthority(
+            "packet.read",
+            "packet.read:packet:${name}:${id}",
+            "packet.read:packetGroup:${name}"
+        )
     }
 
     fun canReadPacketGroup(operations: MethodSecurityExpressionOperations, name: String): Boolean
     {
-        return operations.hasAnyAuthority("packet.read", "packet.read:packetGroup:${name}")
+        return operations.hasAnyAuthority("packet.read", "packet.read:packetGroup:${name}") ||
+                operations.authentication.authorities.any { it.authority.contains("packet.read:packet:${name}") }
     }
 }

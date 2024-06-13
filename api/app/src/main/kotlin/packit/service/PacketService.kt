@@ -24,7 +24,7 @@ import java.time.Instant
 
 interface PacketService
 {
-    fun getPackets(pageablePayload: PageablePayload, filterId: String): Page<Packet>
+    fun getPackets(pageablePayload: PageablePayload, filterName: String): Page<Packet>
     fun getPackets(): List<Packet>
     fun getChecksum(): String
     fun importPackets()
@@ -112,9 +112,9 @@ class BasePacketService(
             .orElseThrow { PackitException("doesNotExist", HttpStatus.NOT_FOUND) }
     }
 
-    override fun getPackets(pageablePayload: PageablePayload, filterId: String): Page<Packet>
+    override fun getPackets(pageablePayload: PageablePayload, filterName: String): Page<Packet>
     {
-        val packets = packetRepository.findAllByIdContaining(filterId, Sort.by("startTime").descending())
+        val packets = packetRepository.findAllByNameContaining(filterName, Sort.by("startTime").descending())
 
         return PagingHelper.convertListToPage(packets, pageablePayload)
     }

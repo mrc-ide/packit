@@ -44,5 +44,5 @@ interface PacketRepository : JpaRepository<Packet, String>
     fun findPacketGroupSummaryByName(filterName: String): List<PacketGroupSummary>
 
     @PostFilter("@authz.canReadPacket(#root, filterObject.id, filterObject.name)")
-    fun findAllByIdContaining(id: String, sort: Sort): List<Packet>
+    fun findAllByNameContaining(id: String, sort: Sort): List<Packet>
 }

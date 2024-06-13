@@ -7,7 +7,7 @@ export const constructPermissionName = ({
   packetGroup
 }: RolePermission | NewRolePermission) => {
   if (packet) {
-    return `${permission}:packet:${packet.id}`;
+    return `${permission}:packet:${packet.name}:${packet.id}`;
   }
 
   if (tag) {

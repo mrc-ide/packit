@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Sort
+import packit.integration.WithAuthenticatedUser
 import packit.model.Packet
 import packit.repository.PacketRepository
 import java.time.Instant
@@ -86,6 +87,7 @@ class PacketRepositoryTest : RepositoryTest()
     }
 
     @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `can get packets from db`()
     {
         packetRepository.saveAll(packets)
@@ -102,6 +104,7 @@ class PacketRepositoryTest : RepositoryTest()
     }
 
     @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `gets filtered by name packets when findByName called`()
     {
         packetRepository.saveAll(packets)
@@ -116,6 +119,8 @@ class PacketRepositoryTest : RepositoryTest()
     }
 
     @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
+
     fun `can get right order and data expected from findPacketGroupSummaryByName`()
     {
         packetRepository.saveAll(packets)
@@ -137,6 +142,7 @@ class PacketRepositoryTest : RepositoryTest()
     }
 
     @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `can filter correctly when calling findPacketGroupSummaryByName`()
     {
         packetRepository.saveAll(packets)
@@ -157,8 +163,9 @@ class PacketRepositoryTest : RepositoryTest()
         assertEquals(result[0].latestTime, now + 4)
         assertEquals(result[0].packetCount, 2)
     }
-    
+
     @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `can get sorted packet ids from db`()
     {
         packetRepository.saveAll(packets)
@@ -179,6 +186,7 @@ class PacketRepositoryTest : RepositoryTest()
     }
 
     @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `most recent packet is null if no packets in db`()
     {
         val result = packetRepository.findTopByOrderByImportTimeDesc()
@@ -186,6 +194,7 @@ class PacketRepositoryTest : RepositoryTest()
     }
 
     @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `can get most recent packet from db`()
     {
         packetRepository.saveAll(packets)
@@ -196,6 +205,7 @@ class PacketRepositoryTest : RepositoryTest()
     }
 
     @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `can get packet by id`()
     {
         packetRepository.saveAll(packets)

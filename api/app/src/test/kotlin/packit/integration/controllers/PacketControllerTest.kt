@@ -70,7 +70,7 @@ class PacketControllerTest : IntegrationTest()
     fun `test can get packet group summary if authenticated`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/packetGroupSummary?pageNumber=3&pageSize=5&filterName=hell",
+            "/packets/packetGroupSummary?pageNumber=0&pageSize=5&filterName=hell",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -92,7 +92,7 @@ class PacketControllerTest : IntegrationTest()
     fun `test can get packets by name if authenticated`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/random?pageNumber=3&pageSize=5",
+            "/packets/random?pageNumber=0&pageSize=5",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -242,5 +242,16 @@ class PacketControllerTest : IntegrationTest()
         assertEquals(HttpStatus.UNAUTHORIZED, result.statusCode)
     }
 
-    //    TODO: list return tests in next PR
+    @Test
+    @WithAuthenticatedUser
+    fun `pageableIndex returns empty page if no permissions match`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packets",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+//        assertEquals(0, jacksonObjectMapper().readValue(result.body))
+    }
 }

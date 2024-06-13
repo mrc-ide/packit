@@ -184,7 +184,7 @@ class BaseRoleService(
     {
         val scopeString = when
         {
-            rolePermission.packet != null -> ":packet:${rolePermission.packet!!.id}"
+            rolePermission.packet != null -> ":packet:${rolePermission.packet!!.name}:${rolePermission.packet!!.id}"
             rolePermission.packetGroup != null -> ":packetGroup:${rolePermission.packetGroup!!.name}"
             rolePermission.tag != null -> ":tag:${rolePermission.tag!!.name}"
             else -> ""

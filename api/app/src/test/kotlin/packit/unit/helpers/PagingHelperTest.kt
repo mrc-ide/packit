@@ -7,7 +7,7 @@ import packit.helpers.PagingHelper
 import packit.model.PageablePayload
 import kotlin.test.Test
 
-class PagingHelper
+class PagingHelperTest
 {
     @Test
     fun `convertListToPage returns correct page when list fits into one page`()
