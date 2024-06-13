@@ -5,13 +5,10 @@ import { Dialog } from "../../../../../app/components/Base/Dialog";
 import { UpdatePermissionsForm } from "../../../../../app/components/contents/manageAccess/updatePermission/UpdatePermissionsForm";
 import appConfig from "../../../../../config/appConfig";
 import { constructPermissionName } from "../../../../../lib/constructPermissionName";
-import * as fetch from "../../../../../lib/fetch";
-import { mockNonUsernameRolesWithRelationships } from "../../../../mocks";
-import { flushSync } from "react-dom";
-import { server } from "../../../../../msw/server";
-import { rest } from "msw";
-import { HttpStatus } from "../../../../../lib/types/HttpStatus";
 import { ApiError } from "../../../../../lib/errors";
+import * as fetch from "../../../../../lib/fetch";
+import { HttpStatus } from "../../../../../lib/types/HttpStatus";
+import { mockNonUsernameRolesWithRelationships } from "../../../../mocks";
 
 describe("UpdatePermissionsForm", () => {
   const fetchSpy = jest.spyOn(fetch, "fetcher");
@@ -95,16 +92,12 @@ describe("UpdatePermissionsForm", () => {
     const addButton = await screen.findAllByRole("button");
 
     userEvent.click(addButton[0]);
-    const addPermissions = await screen.findAllByTestId("update-badge-user.manage");
-
-    expect(addPermissions.length).toBe(1);
-    userEvent.selectOptions(addSelect, "user.manage");
-    userEvent.click(addButton[0]);
 
     await waitFor(() => {
-      expect(addPermissions.length).toBe(1);
+      expect(screen.queryAllByTestId("update-badge-user.manage").length).toBe(0);
     });
   });
+
   it("should show api error message if fetcher throws ApiError", async () => {
     const errorMessage = "permission already exists";
     const apiError = new ApiError(errorMessage, HttpStatus.BadRequest);

@@ -106,4 +106,13 @@ describe("ManageUsers", () => {
       expect(screen.getByText(user.username)).toBeVisible();
     });
   });
+
+  it("should disable delete and edit buttons for own user", async () => {
+    mockAuthConfig.mockReturnValue({ enableBasicLogin: false });
+    mockUser.mockReturnValue({ userName: mockUsersWithRoles[0].username });
+    renderComponent();
+
+    expect(screen.getAllByRole("button", { name: "delete-user" })[0]).toBeDisabled();
+    expect(screen.getAllByRole("button", { name: "edit-user" })[0]).toBeDisabled();
+  });
 });

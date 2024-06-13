@@ -9,6 +9,7 @@ import { AddPermissionForUpdateForm } from "./AddPermissionForUpdateForm";
 import { RemovePermissionsForUpdate } from "./RemovePermissionsForUpdate";
 import { UpdatePermissionScrollArea } from "./UpdatePermissionScrollArea";
 import { convertUpdatePermissionsForFetch } from "./utils/convertUpdatePermissionsForFetch";
+import { Separator } from "../../../Base/Separator";
 
 interface UpdatePermissionsFormProps {
   roleName: string;
@@ -69,14 +70,14 @@ export const UpdatePermissionsForm = ({ roleName, rolePermissions, mutate, setOp
     <>
       <AddPermissionForUpdateForm
         addPermission={addPermission}
-        currentPermissions={[...updatePermissions.addPermissions, ...updatePermissions.removePermissions]}
+        currentPermissions={[...updatePermissions.addPermissions, ...rolePermissions]}
       />
       <UpdatePermissionScrollArea
         updateFieldName="addPermissions"
         updatePermissions={updatePermissions.addPermissions}
         setUpdatePermissions={setUpdatePermissions}
       />
-
+      <Separator />
       <RemovePermissionsForUpdate
         removePermission={removePermission}
         rolePermissions={rolePermissions}
@@ -87,7 +88,6 @@ export const UpdatePermissionsForm = ({ roleName, rolePermissions, mutate, setOp
         updatePermissions={updatePermissions.removePermissions}
         setUpdatePermissions={setUpdatePermissions}
       />
-
       <form onSubmit={onSubmit} className="space-y-3">
         {error && <div className="text-xs text-red-500">{error}</div>}
         <CustomDialogFooter
