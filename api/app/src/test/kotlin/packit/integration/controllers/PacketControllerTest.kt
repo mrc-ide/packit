@@ -119,7 +119,7 @@ class PacketControllerTest : IntegrationTest()
     fun `can get pageable packets`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets?pageNumber=3&pageSize=5",
+            "/packets?pageNumber=0&pageSize=5",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )

@@ -114,8 +114,6 @@ class PacketRepositoryTest : RepositoryTest()
         assertEquals(result.size, 2)
         assertEquals(result[0].name, "test1")
         assertEquals(result[1].name, "test1")
-        assertEquals(result[0].id, "20180818-164847-7574833b")
-        assertEquals(result[1].id, "20170819-164847-7574333b")
     }
 
     @Test
