@@ -5,12 +5,12 @@ import { Button } from "../../../Base/Button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../../../Base/Command";
 import { Label } from "../../../Base/Label";
 import { Popover, PopoverContent, PopoverTrigger } from "../../../Base/Popover";
-import { RolePermission } from "../types/RoleWithRelationships";
+import { BaseRolePermission, RolePermission } from "../types/RoleWithRelationships";
 import { isDuplicateUpdatePermission } from "./utils/isDuplicateUpdatePermission";
 
 interface RemovePermissionsForUpdateProps {
-  removedPermissions: RolePermission[];
-  removePermission: (value: RolePermission) => void;
+  removedPermissions: BaseRolePermission[];
+  removePermission: (value: BaseRolePermission) => void;
   rolePermissions: RolePermission[];
 }
 export const RemovePermissionsForUpdate = ({

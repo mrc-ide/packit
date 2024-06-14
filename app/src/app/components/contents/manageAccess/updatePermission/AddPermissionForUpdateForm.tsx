@@ -6,7 +6,7 @@ import { Button } from "../../../Base/Button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../../Base/Form";
 import { RadioGroup, RadioGroupItem } from "../../../Base/RadioGroup";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../Base/Select";
-import { NewRolePermission } from "../types/RoleWithRelationships";
+import { BaseRolePermission } from "../types/RoleWithRelationships";
 import { AddScopedPermissionInput } from "./AddScopedPermissionInput";
 import { isDuplicateUpdatePermission } from "./utils/isDuplicateUpdatePermission";
 
@@ -24,8 +24,8 @@ export const addPermissionFormSchema = z
     path: ["scope"]
   });
 interface AddPermissionForUpdateFormProps {
-  addPermission: (values: NewRolePermission) => void;
-  currentPermissions: NewRolePermission[];
+  addPermission: (values: BaseRolePermission) => void;
+  currentPermissions: BaseRolePermission[];
 }
 export const AddPermissionForUpdateForm = ({ addPermission, currentPermissions }: AddPermissionForUpdateFormProps) => {
   const form = useForm<z.infer<typeof addPermissionFormSchema>>({
@@ -35,7 +35,7 @@ export const AddPermissionForUpdateForm = ({ addPermission, currentPermissions }
     }
   });
   const onSubmit = (addPermissionValues: z.infer<typeof addPermissionFormSchema>) => {
-    const addPermissionValue: NewRolePermission = {
+    const addPermissionValue: BaseRolePermission = {
       permission: addPermissionValues.permission,
       ...(addPermissionValues.scope !== "global" && {
         [addPermissionValues.scope]: {

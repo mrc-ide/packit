@@ -1,16 +1,14 @@
 /* eslint-disable max-len */
-import {
-  NewRolePermission,
-  RolePermission
-} from "../../../../../../app/components/contents/manageAccess/types/RoleWithRelationships";
+import { BaseRolePermission } from "../../../../../../app/components/contents/manageAccess/types/RoleWithRelationships";
 import { isDuplicateUpdatePermission } from "../../../../../../app/components/contents/manageAccess/updatePermission/utils/isDuplicateUpdatePermission";
 
 describe("isDuplicateUpdatePermission", () => {
   it("should return true if the updated permission is a duplicate", () => {
-    const currentPermissions = [{ permission: "permission1" }, { permission: "permission2" }] as unknown as
-      | NewRolePermission[]
-      | RolePermission[];
-    const updatedPermission = { permission: "permission1" } as unknown as NewRolePermission | RolePermission;
+    const currentPermissions = [
+      { permission: "permission1" },
+      { permission: "permission2" }
+    ] as unknown as BaseRolePermission[];
+    const updatedPermission = { permission: "permission1" } as unknown as BaseRolePermission;
 
     const result = isDuplicateUpdatePermission(currentPermissions, updatedPermission);
 
@@ -21,8 +19,8 @@ describe("isDuplicateUpdatePermission", () => {
     const currentPermissions = [
       { permission: "permission1" },
       { permission: "permission2" }
-    ] as unknown as RolePermission[];
-    const updatedPermission = { permission: "permission3" } as unknown as RolePermission;
+    ] as unknown as BaseRolePermission[];
+    const updatedPermission = { permission: "permission3" } as unknown as BaseRolePermission;
 
     const result = isDuplicateUpdatePermission(currentPermissions, updatedPermission);
 
