@@ -55,7 +55,7 @@ describe("Metadata component", () => {
     expect(screen.queryByText("elapsed")).not.toBeInTheDocument();
   });
 
-  it("shoul not render git metadata when git is not present", async () => {
+  it("should not render git metadata when git is not present", async () => {
     server.use(
       rest.get("*", (req, res, ctx) => {
         return res(

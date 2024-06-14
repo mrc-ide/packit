@@ -268,27 +268,6 @@ class PacketServiceTest
             .hasMessageContaining("PackitException with key doesNotExist")
     }
 
-    @Test
-    fun `getPacketGroups calls repository with correct params and returns its result`()
-    {
-        val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
-        val pageablePayload = PageablePayload(0, 10)
-        val filterName = "test"
-        val packetGroups = listOf(PacketGroup("test1"), PacketGroup("test2"))
-        whenever(
-            packetGroupRepository.findAllByNameContaining(
-                eq(filterName), any<Sort>()
-            )
-        ).thenReturn(packetGroups)
-
-        val result = sut.getPacketGroups(pageablePayload, filterName)
-
-        assertEquals(packetGroups, result.content)
-        verify(packetGroupRepository).findAllByNameContaining(
-            filterName,
-            Sort.by("name")
-        )
-    }
 
     @Test
     fun `getPacket returns packet when packet exists with given id`()
