@@ -1,4 +1,4 @@
-export const getScopePaths = (filterName: string) => {
+export const getPermissionScopePaths = (filterName: string) => {
   const filter = filterName.split(":");
   return {
     global: null,

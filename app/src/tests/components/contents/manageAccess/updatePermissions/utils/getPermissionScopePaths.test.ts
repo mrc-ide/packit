@@ -1,9 +1,9 @@
 // eslint-disable-next-line max-len
-import { getScopePaths } from "../../../../../../app/components/contents/manageAccess/updatePermission/utils/getScopePaths";
+import { getPermissionScopePaths } from "../../../../../../app/components/contents/manageAccess/updatePermission/utils/getPermissionScopePaths";
 
 describe("getScopePaths", () => {
   test("should return correct paths when filterName contains colon", () => {
-    const result = getScopePaths("filterName:filterId");
+    const result = getPermissionScopePaths("filterName:filterId");
     expect(result).toEqual({
       global: null,
       packet: "packets?filterName=filterName&filterId=filterId",
@@ -13,7 +13,7 @@ describe("getScopePaths", () => {
   });
 
   test("should return correct paths when filterName does not contain colon", () => {
-    const result = getScopePaths("filterName");
+    const result = getPermissionScopePaths("filterName");
     expect(result).toEqual({
       global: null,
       packet: "packets?filterName=filterName&filterId=",
@@ -23,7 +23,7 @@ describe("getScopePaths", () => {
   });
 
   test("should return correct paths when filterName is empty", () => {
-    const result = getScopePaths("");
+    const result = getPermissionScopePaths("");
     expect(result).toEqual({
       global: null,
       packet: "packets?filterName=&filterId=",
