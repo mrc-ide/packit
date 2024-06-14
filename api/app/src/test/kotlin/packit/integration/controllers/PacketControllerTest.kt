@@ -196,7 +196,7 @@ class PacketControllerTest : IntegrationTest()
 
         assertHtmlFileSuccess(result)
     }
-    
+
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packet:test-packetGroupName-1:20230427-150755-2dbede93"])
     fun `findPacketMetadata returns metadata if user has correct specific permission`()

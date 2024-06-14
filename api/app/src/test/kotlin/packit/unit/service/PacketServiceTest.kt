@@ -268,7 +268,6 @@ class PacketServiceTest
             .hasMessageContaining("PackitException with key doesNotExist")
     }
 
-
     @Test
     fun `getPacket returns packet when packet exists with given id`()
     {
