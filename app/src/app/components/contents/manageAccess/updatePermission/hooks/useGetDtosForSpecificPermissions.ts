@@ -7,7 +7,7 @@ import { fetcher } from "../../../../../../lib/fetch";
 export const useGetDtosForScopedPermissions = (scope: PermissionScope, filterName: string) => {
   const scopePathVariable = scope === "tag" ? "tag" : `packets${scope === "packetGroup" ? "/packetGroup" : ""}`;
   const { data, isLoading, error } = useSWR<PageableBasicDto>(
-    scope !== "global" ? `${appConfig.apiUrl()}/${scopePathVariable}?filterName=${filterName}` : null,
+    scope !== "global" ? `${appConfig.apiUrl()}/${scopePathVariable}?filterName=${filterName}&pageSize=150` : null,
     (url: string) => fetcher({ url })
   );
 
