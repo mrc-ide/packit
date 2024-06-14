@@ -6,7 +6,7 @@ import { PermissionScope } from "../../../../../lib/constants";
 import { Button } from "../../../Base/Button";
 import { Command, CommandInput } from "../../../Base/Command";
 import { Popover, PopoverContent, PopoverTrigger } from "../../../Base/Popover";
-import { PermissionCommandList } from "./PermissionCommandList";
+import { PermissionScopeCommandList } from "./PermissionScopeCommandList";
 import { addPermissionFormSchema } from "./AddPermissionForUpdateForm";
 import { z } from "zod";
 
@@ -57,7 +57,7 @@ export const AddScopedPermissionInput = ({ scope, form }: AddScopedPermissionInp
               placeholder={`Search ${scope}s...`}
               onChangeCapture={(e) => debouncedSetFilterByName(e.nativeEvent as any)}
             />
-            <PermissionCommandList
+            <PermissionScopeCommandList
               filterName={filterName}
               setFilterName={setFilterName}
               scope={scope}
