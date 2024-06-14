@@ -3,7 +3,7 @@ import { Check } from "lucide-react";
 import { cn } from "../../../../../lib/cn";
 import { PermissionScope } from "../../../../../lib/constants";
 import { CommandEmpty, CommandGroup, CommandItem, CommandList } from "../../../Base/Command";
-import { useGetDtosForScopedPermissions } from "./hooks/useGetDtosForSpecificPermissions";
+import { useGetResourcesForScopedPermissions } from "./hooks/useGetResourcesForScopedPermissions";
 
 interface PermissionCommandListProps {
   scope: PermissionScope;
@@ -14,7 +14,7 @@ interface PermissionCommandListProps {
   setOpen: (value: boolean) => void;
 }
 
-export const PermissionCommandList = ({
+export const PermissionScopeCommandList = ({
   scope,
   scopeResource,
   setScopeResource,
@@ -22,7 +22,7 @@ export const PermissionCommandList = ({
   setFilterName,
   setOpen
 }: PermissionCommandListProps) => {
-  const { data, isLoading, error } = useGetDtosForScopedPermissions(scope, filterName);
+  const { data, isLoading, error } = useGetResourcesForScopedPermissions(scope, filterName);
 
   if (error) return <CommandEmpty>Error Fetching data</CommandEmpty>;
   return (

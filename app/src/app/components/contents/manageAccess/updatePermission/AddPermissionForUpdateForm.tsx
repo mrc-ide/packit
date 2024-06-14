@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SquarePlus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { GLOBAL_PERMISSIONS, PERMISSION_SCOPES } from "../../../../../lib/constants";
@@ -7,7 +6,7 @@ import { Button } from "../../../Base/Button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../../Base/Form";
 import { RadioGroup, RadioGroupItem } from "../../../Base/RadioGroup";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../Base/Select";
-import { NewRolePermission } from "../types/RoleWithRelationships";
+import { BaseRolePermission } from "../types/RoleWithRelationships";
 import { AddScopedPermissionInput } from "./AddScopedPermissionInput";
 import { isDuplicateUpdatePermission } from "./utils/isDuplicateUpdatePermission";
 
@@ -21,12 +20,12 @@ export const addPermissionFormSchema = z
     })
   })
   .refine((data) => data.scope === "global" || !!data.scopeResource?.id, {
-    message: "Scoped name is required if not global scope ",
+    message: "Select a resource for non-global scope",
     path: ["scope"]
   });
 interface AddPermissionForUpdateFormProps {
-  addPermission: (values: NewRolePermission) => void;
-  currentPermissions: NewRolePermission[];
+  addPermission: (values: BaseRolePermission) => void;
+  currentPermissions: BaseRolePermission[];
 }
 export const AddPermissionForUpdateForm = ({ addPermission, currentPermissions }: AddPermissionForUpdateFormProps) => {
   const form = useForm<z.infer<typeof addPermissionFormSchema>>({
@@ -36,7 +35,7 @@ export const AddPermissionForUpdateForm = ({ addPermission, currentPermissions }
     }
   });
   const onSubmit = (addPermissionValues: z.infer<typeof addPermissionFormSchema>) => {
-    const addPermissionValue: NewRolePermission = {
+    const addPermissionValue: BaseRolePermission = {
       permission: addPermissionValues.permission,
       ...(addPermissionValues.scope !== "global" && {
         [addPermissionValues.scope]: {
@@ -59,7 +58,7 @@ export const AddPermissionForUpdateForm = ({ addPermission, currentPermissions }
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 w-[350px]">
-        <FormLabel>Permissions To Add</FormLabel>
+        <FormLabel className="font-semibold">Permissions To Add</FormLabel>
         <FormField
           control={form.control}
           name="permission"
@@ -109,7 +108,7 @@ export const AddPermissionForUpdateForm = ({ addPermission, currentPermissions }
                       <FormControl>
                         <RadioGroupItem value={scope} />
                       </FormControl>
-                      <FormLabel className="font-normal">{scope}</FormLabel>
+                      <FormLabel className="font-normal">{scope === "packetGroup" ? "packet group" : scope}</FormLabel>
                     </FormItem>
                   ))}
                 </RadioGroup>
@@ -120,10 +119,10 @@ export const AddPermissionForUpdateForm = ({ addPermission, currentPermissions }
         />
         <AddScopedPermissionInput scope={form.watch("scope")} form={form} />
         {form.formState.errors?.root && (
-          <div className="text-xs text-red-500">{form.formState.errors.root.message}</div>
+          <div className="text-xs text-destructive">{form.formState.errors.root.message}</div>
         )}
-        <Button type="submit" size="icon">
-          <SquarePlus className="h-4 w-4" />
+        <Button type="submit" variant="outline" disabled={form.getValues("permission") === undefined}>
+          Add Permission
         </Button>
       </form>
     </Form>

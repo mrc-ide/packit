@@ -34,6 +34,7 @@ class TagControllerTest : IntegrationTest()
                 Tag(name = "test-tag-5"),
                 Tag(name = "test-tag-4"),
                 Tag(name = "test-tag-3"),
+                Tag(name = "tag-testing-1")
             )
         )
     }
@@ -62,11 +63,11 @@ class TagControllerTest : IntegrationTest()
                 jacksonObjectMapper().convertValue(
                     it,
                     object : TypeReference<List<TagDto>>()
-                {}
+                    {}
                 )
             }
 
-        assert(resultTags.containsAll(tags.map { it.toDto() }))
+        assert(resultTags.containsAll(tags.subList(0, 5).map { it.toDto() }))
         assertEquals(5, resultTags.size)
         assertEquals("test-tag-1", resultTags[0].name)
         assertEquals("test-tag-5", resultTags[resultTags.size - 1].name)

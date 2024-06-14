@@ -4,16 +4,16 @@ import { cn } from "../../../../../lib/cn";
 import { constructPermissionName } from "../../../../../lib/constructPermissionName";
 import { Badge } from "../../../Base/Badge";
 import { ScrollArea } from "../../../Base/ScrollArea";
-import { NewRolePermission, RolePermission } from "../types/RoleWithRelationships";
+import { BaseRolePermission } from "../types/RoleWithRelationships";
 import { isPermissionEqual } from "../utils/isPermissionEqual";
 
 interface UpdatePermissionScrollAreaProps {
-  updatePermissions: NewRolePermission[] | RolePermission[];
+  updatePermissions: BaseRolePermission[];
   updateFieldName: "addPermissions" | "removePermissions";
   setUpdatePermissions: Dispatch<
     SetStateAction<{
-      addPermissions: NewRolePermission[];
-      removePermissions: RolePermission[];
+      addPermissions: BaseRolePermission[];
+      removePermissions: BaseRolePermission[];
     }>
   >;
 }

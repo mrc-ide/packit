@@ -1,14 +1,14 @@
 /* eslint-disable max-len */
 import {
-  NewRolePermission,
+  BaseRolePermission,
   RolePermission
 } from "../../../../../../app/components/contents/manageAccess/types/RoleWithRelationships";
 import { convertUpdatePermissionsForFetch } from "../../../../../../app/components/contents/manageAccess/updatePermission/utils/convertUpdatePermissionsForFetch";
 
 describe("convertUpdatePermissionsForFetch", () => {
   const updatePermissions = {
-    addPermissions: [{ permission: "packet.read" }] as unknown as NewRolePermission[],
-    removePermissions: [{ permission: "packet.run", tag: { id: 4 } }] as unknown as RolePermission[]
+    addPermissions: [{ permission: "packet.read" }] as unknown as BaseRolePermission[],
+    removePermissions: [{ permission: "packet.run", tag: { id: 4 } }] as unknown as BaseRolePermission[]
   };
 
   it("should convert permissions when both add and remove permissions are not empty", () => {

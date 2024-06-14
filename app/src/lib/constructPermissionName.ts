@@ -1,11 +1,6 @@
-import { RolePermission, NewRolePermission } from "../app/components/contents/manageAccess/types/RoleWithRelationships";
+import { BaseRolePermission } from "../app/components/contents/manageAccess/types/RoleWithRelationships";
 
-export const constructPermissionName = ({
-  permission,
-  packet,
-  tag,
-  packetGroup
-}: RolePermission | NewRolePermission) => {
+export const constructPermissionName = ({ permission, packet, tag, packetGroup }: BaseRolePermission) => {
   if (packet) {
     return `${permission}:packet:${packet.name}:${packet.id}`;
   }
