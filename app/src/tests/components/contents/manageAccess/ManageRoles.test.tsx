@@ -95,4 +95,13 @@ describe("ManageRoles", () => {
       expect(screen.getByText(/error fetching data/i)).toBeVisible();
     });
   });
+
+  it("should disable delete and edit buttons for admin role", async () => {
+    renderComponent();
+
+    const deleteButtons = await screen.findAllByRole("button", { name: "delete-role" });
+    const editButtons = await screen.findAllByRole("button", { name: "edit-role" });
+    expect(deleteButtons[0]).toBeDisabled();
+    expect(editButtons[0]).toBeDisabled();
+  });
 });

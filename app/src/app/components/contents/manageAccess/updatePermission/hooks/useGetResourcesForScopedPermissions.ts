@@ -4,7 +4,7 @@ import { PermissionScope } from "../../../../../../lib/constants";
 import { PageableBasicDto } from "../../../../../../types";
 import { fetcher } from "../../../../../../lib/fetch";
 
-export const useGetDtosForScopedPermissions = (scope: PermissionScope, filterName: string) => {
+export const useGetResourcesForScopedPermissions = (scope: PermissionScope, filterName: string) => {
   const scopePathVariable = scope === "tag" ? "tag" : `packets${scope === "packetGroup" ? "/packetGroup" : ""}`;
   const { data, isLoading, error } = useSWR<PageableBasicDto>(
     scope !== "global" ? `${appConfig.apiUrl()}/${scopePathVariable}?filterName=${filterName}` : null,

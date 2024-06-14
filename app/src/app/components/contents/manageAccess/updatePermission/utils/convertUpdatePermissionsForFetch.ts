@@ -1,14 +1,14 @@
-import { NewRolePermission, RolePermission } from "../../types/RoleWithRelationships";
+import { BaseRolePermission } from "../../types/RoleWithRelationships";
 
 export const convertUpdatePermissionsForFetch = (updatePermissions: {
-  addPermissions: NewRolePermission[];
-  removePermissions: RolePermission[];
+  addPermissions: BaseRolePermission[];
+  removePermissions: BaseRolePermission[];
 }) => ({
   addPermissions: updatePermissions.addPermissions.map(convertUpdatePermissionForFetch),
   removePermissions: updatePermissions.removePermissions.map(convertUpdatePermissionForFetch)
 });
 
-const convertUpdatePermissionForFetch = (updatePermission: RolePermission | NewRolePermission) => ({
+const convertUpdatePermissionForFetch = (updatePermission: BaseRolePermission) => ({
   permission: updatePermission.permission,
   packetId: updatePermission.packet?.id,
   packetGroupId: updatePermission.packetGroup?.id,

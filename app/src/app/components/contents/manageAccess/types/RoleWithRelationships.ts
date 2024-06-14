@@ -12,20 +12,15 @@ export interface Tag {
   id: number;
 }
 
-export interface RolePermission {
-  permission: string;
-  packet: BasicPacket | null;
-  tag: Tag | null;
-  packetGroup: BasicPacketGroup | null;
+export interface RolePermission extends BaseRolePermission {
   id: number;
 }
 
-export interface NewRolePermission {
+export interface BaseRolePermission {
   permission: string;
   packet?: BasicPacket | null;
   tag?: Tag | null;
   packetGroup?: BasicPacketGroup | null;
-  id?: number;
 }
 
 interface BasicUser {

@@ -4,11 +4,12 @@ import appConfig from "../../../../../config/appConfig";
 import { ApiError } from "../../../../../lib/errors";
 import { fetcher } from "../../../../../lib/fetch";
 import { CustomDialogFooter } from "../../common/CustomDialogFooter";
-import { NewRolePermission, RolePermission, RoleWithRelationships } from "../types/RoleWithRelationships";
+import { BaseRolePermission, RolePermission, RoleWithRelationships } from "../types/RoleWithRelationships";
 import { AddPermissionForUpdateForm } from "./AddPermissionForUpdateForm";
 import { RemovePermissionsForUpdate } from "./RemovePermissionsForUpdate";
 import { UpdatePermissionScrollArea } from "./UpdatePermissionScrollArea";
 import { convertUpdatePermissionsForFetch } from "./utils/convertUpdatePermissionsForFetch";
+import { Separator } from "../../../Base/Separator";
 
 interface UpdatePermissionsFormProps {
   roleName: string;
@@ -20,18 +21,18 @@ interface UpdatePermissionsFormProps {
 export const UpdatePermissionsForm = ({ roleName, rolePermissions, mutate, setOpen }: UpdatePermissionsFormProps) => {
   const [error, setError] = useState("");
   const [updatePermissions, setUpdatePermissions] = useState<{
-    addPermissions: NewRolePermission[];
-    removePermissions: RolePermission[];
+    addPermissions: BaseRolePermission[];
+    removePermissions: BaseRolePermission[];
   }>({ addPermissions: [], removePermissions: [] });
 
-  const removePermission = (removePermission: RolePermission) => {
+  const removePermission = (removePermission: BaseRolePermission) => {
     setUpdatePermissions((prevUpdatePermissions) => ({
       ...prevUpdatePermissions,
       removePermissions: [...prevUpdatePermissions.removePermissions, removePermission]
     }));
   };
 
-  const addPermission = (addPermission: NewRolePermission) => {
+  const addPermission = (addPermission: BaseRolePermission) => {
     setUpdatePermissions((prevUpdatePermissions) => ({
       ...prevUpdatePermissions,
       addPermissions: [...prevUpdatePermissions.addPermissions, addPermission]
@@ -69,14 +70,14 @@ export const UpdatePermissionsForm = ({ roleName, rolePermissions, mutate, setOp
     <>
       <AddPermissionForUpdateForm
         addPermission={addPermission}
-        currentPermissions={[...updatePermissions.addPermissions, ...updatePermissions.removePermissions]}
+        currentPermissions={[...updatePermissions.addPermissions, ...rolePermissions]}
       />
       <UpdatePermissionScrollArea
         updateFieldName="addPermissions"
         updatePermissions={updatePermissions.addPermissions}
         setUpdatePermissions={setUpdatePermissions}
       />
-
+      <Separator />
       <RemovePermissionsForUpdate
         removePermission={removePermission}
         rolePermissions={rolePermissions}
@@ -87,7 +88,6 @@ export const UpdatePermissionsForm = ({ roleName, rolePermissions, mutate, setOp
         updatePermissions={updatePermissions.removePermissions}
         setUpdatePermissions={setUpdatePermissions}
       />
-
       <form onSubmit={onSubmit} className="space-y-3">
         {error && <div className="text-xs text-red-500">{error}</div>}
         <CustomDialogFooter

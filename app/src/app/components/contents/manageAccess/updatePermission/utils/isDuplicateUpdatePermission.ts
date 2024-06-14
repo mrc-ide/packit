@@ -1,6 +1,6 @@
-import { NewRolePermission, RolePermission } from "../../types/RoleWithRelationships";
+import { BaseRolePermission } from "../../types/RoleWithRelationships";
 import { isPermissionEqual } from "../../utils/isPermissionEqual";
 export const isDuplicateUpdatePermission = (
-  currentPermissions: NewRolePermission[] | RolePermission[],
-  updatedPermission: NewRolePermission | RolePermission
+  currentPermissions: BaseRolePermission[],
+  updatedPermission: BaseRolePermission
 ) => currentPermissions.some((currentPermission) => isPermissionEqual(currentPermission, updatedPermission));

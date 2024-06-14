@@ -6,7 +6,7 @@ import { mockPacketGroupResponse, mockTags } from "../../../../mocks";
 import { Tag } from "../../../../../app/components/contents/manageAccess/types/RoleWithRelationships";
 
 describe("AddPermissionForUpdateForm", () => {
-  it("it should disable scope radio group if permission is not set or user.manage", async () => {
+  it("it should disable scope radio group, submit button if permission is not set or user.manage", async () => {
     render(<AddPermissionForUpdateForm addPermission={jest.fn()} currentPermissions={[]} />);
     const radioButtons = screen.getAllByRole("radio");
     const select = screen.getAllByRole("combobox", { hidden: true })[1];
@@ -98,19 +98,15 @@ describe("AddPermissionForUpdateForm", () => {
     userEvent.click(screen.getByRole("button"));
 
     await waitFor(() => {
-      expect(screen.getByText(/scoped name is required if not global scope/i)).toBeVisible();
+      expect(screen.getByText(/select a resource for non-global scope/i)).toBeVisible();
     });
   });
 
-  it("should not show error on submit if permission not set", async () => {
+  it("should disable add permission button when no permission selected", async () => {
     const addPermission = jest.fn();
     render(<AddPermissionForUpdateForm addPermission={addPermission} currentPermissions={[]} />);
 
-    userEvent.click(screen.getByRole("button"));
-
-    await waitFor(() => {
-      expect(screen.getByText(/required/i)).toBeVisible();
-    });
+    expect(screen.getByRole("button", { name: /add permission/i })).toBeDisabled();
   });
 
   it("should show error if duplicate permission is added", async () => {

@@ -1,21 +1,17 @@
 /* eslint-disable max-len */
 import { render, screen } from "@testing-library/react";
-import {
-  NewRolePermission,
-  RolePermission
-} from "../../../../../app/components/contents/manageAccess/types/RoleWithRelationships";
+import userEvent from "@testing-library/user-event";
+import { BaseRolePermission } from "../../../../../app/components/contents/manageAccess/types/RoleWithRelationships";
 import { UpdatePermissionScrollArea } from "../../../../../app/components/contents/manageAccess/updatePermission/UpdatePermissionScrollArea";
 import { constructPermissionName } from "../../../../../lib/constructPermissionName";
-import userEvent from "@testing-library/user-event";
-import { isPermissionEqual } from "../../../../../app/components/contents/manageAccess/utils/isPermissionEqual";
 
 const mockIsPermissionEqual = jest.fn();
 jest.mock("../../../../../app/components/contents/manageAccess/utils/isPermissionEqual", () => ({
   isPermissionEqual: () => mockIsPermissionEqual()
 }));
 describe("UpdatePermissionScrollArea", () => {
-  const updatePermissions: RolePermission[] | NewRolePermission[] = [
-    { permission: "permission1", id: 1 },
+  const updatePermissions: BaseRolePermission[] = [
+    { permission: "permission1" },
     { permission: "permission2", packet: { name: "packet1", id: "420" } },
     { permission: "permission3", packetGroup: { name: "packetGroup1", id: 1 } },
     { permission: "permission4", tag: { name: "tag1", id: 2 } }
