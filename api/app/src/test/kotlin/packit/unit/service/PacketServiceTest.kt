@@ -115,7 +115,7 @@ class PacketServiceTest
             on { findPacketGroupSummaryByName("random") } doReturn
                     packetGroupSummaries
             on { findByName(anyString(), any()) } doReturn oldPackets
-            on { findAllByNameContaining(any(), any<Sort>()) } doReturn oldPackets
+            on { findAllByNameContainingAndIdContaining(anyString(), anyString(), any<Sort>()) } doReturn oldPackets
         }
 
     private val outpackServerClient =
@@ -141,13 +141,15 @@ class PacketServiceTest
     {
         val pageablePayload = PageablePayload(pageNumber = 0, pageSize = 10)
         val filterName = "para"
+        val filterId = "123"
         val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
 
-        val result = sut.getPackets(pageablePayload, filterName)
+        val result = sut.getPackets(pageablePayload, filterName, filterId)
 
         assertEquals(oldPackets, result.content)
-        verify(packetRepository).findAllByNameContaining(
+        verify(packetRepository).findAllByNameContainingAndIdContaining(
             filterName,
+            filterId,
             Sort.by("startTime").descending()
         )
     }
