@@ -1,0 +1,19 @@
+#!/bin/bash
+set -e
+
+# Check if the SQL query is passed as an argument
+if [ -z "$1" ]; then
+  echo "Usage: $0 \"SQL_QUERY\""
+  exit 1
+fi
+
+# Assign the SQL query to a variable
+SQL_QUERY="$1"
+
+# Define the Docker container name, PostgreSQL user, and database
+DOCKER_CONTAINER="packit-db"
+PG_USER="packituser"
+PG_DATABASE="packit"
+
+# Execute the SQL query using docker exec and psql
+docker exec $DOCKER_CONTAINER psql -U $PG_USER -d $PG_DATABASE -c "$SQL_QUERY"
