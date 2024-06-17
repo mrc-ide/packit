@@ -36,6 +36,8 @@ interface PacketService
     ): Page<Packet>
 
     fun getPacketGroups(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroup>
+
+    fun getPacket(id: String): Packet
 }
 
 @Service
@@ -109,6 +111,12 @@ class BasePacketService(
             Sort.by("name")
         )
         return packetGroupRepository.findAllByNameContaining(filteredName, pageable)
+    }
+
+    override fun getPacket(id: String): Packet
+    {
+        return packetRepository.findById(id)
+            .orElseThrow { PackitException("doesNotExist", HttpStatus.NOT_FOUND) }
     }
 
     override fun getPackets(pageablePayload: PageablePayload, filterId: String): Page<Packet>

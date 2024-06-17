@@ -9,6 +9,7 @@ import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
@@ -46,7 +47,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `can get pageable packets`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
@@ -65,7 +66,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `test can get packet group summary if authenticated`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
@@ -87,7 +88,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `test can get packets by name if authenticated`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
@@ -109,7 +110,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `can get non pageable packets`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
@@ -121,7 +122,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `get packet metadata by packet id`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
@@ -133,12 +134,12 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `get packet file by hash`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/file/sha256:715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1" +
-                    "?filename=report.html",
+            "/packets/file/20230427-150755-2dbede93?hash=sha256:715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1" +
+                    "&filename=report.html",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -147,7 +148,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `get ordered pageable packetGroups with filtered name`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
@@ -161,7 +162,7 @@ class PacketControllerTest : IntegrationTest()
                 jacksonObjectMapper().convertValue(
                     it,
                     object : TypeReference<List<PacketGroupDto>>()
-                {}
+                    {}
                 )
             }
         assert(resultPacketGroups.containsAll(packetGroups.map { it.toDto() }))
@@ -171,7 +172,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `return correct page information for get pageable packet groups `()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
@@ -186,4 +187,60 @@ class PacketControllerTest : IntegrationTest()
         assertEquals(0, resultPage.get("number").asInt())
         assertEquals(10, resultPage.get("size").asInt())
     }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read:packet:20230427-150755-2dbede93"])
+    fun `findPacketMetadata returns metadata if user has correct specific permission`()
+    {
+
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packets/metadata/20230427-150755-2dbede93",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+        assertSuccess(result)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read:packet:wrong-id"])
+    fun `findPacketMetadata returns 401 if incorrect specific permission`()
+    {
+
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packets/metadata/20230427-150755-2dbede93",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+        assertEquals(HttpStatus.UNAUTHORIZED, result.statusCode)
+    }
+
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read:packet:20230427-150755-2dbede93"])
+    fun `findFile returns file if user has correct specific permission`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packets/file/20230427-150755-2dbede93?hash=sha256:715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1" +
+                    "&filename=report.html",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        assertHtmlFileSuccess(result)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read:packet:wrong-id"])
+    fun `findFile returns 401 if incorrect specific permission`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packets/file/20230427-150755-2dbede93?hash=sha256:715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1" +
+                    "&filename=report.html",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+        assertEquals(HttpStatus.UNAUTHORIZED, result.statusCode)
+    }
+
+    //    TODO: list return tests in next PR
 }

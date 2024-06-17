@@ -135,7 +135,7 @@ class PacketControllerTest
     fun `get packet file by id`()
     {
         val sut = PacketController(indexService)
-        val result = sut.findFile("sha123", false, "test.html")
+        val result = sut.findFile("123", "sha123", false, "test.html")
         val responseBody = result.body
 
         val actualText = responseBody?.inputStream?.use { it.readBytes().toString(Charsets.UTF_8) }

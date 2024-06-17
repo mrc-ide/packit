@@ -8,6 +8,7 @@ import { PacketDetails } from "../../../app/components/contents/packets";
 import { PacketLayout } from "../../../app/components/main";
 import { server } from "../../../msw/server";
 import { mockPacket } from "../../mocks";
+import { HttpStatus } from "../../../lib/types/HttpStatus";
 
 jest.mock("../../../lib/download", () => ({
   getFileObjectUrl: async () => "fakeObjectUrl"
@@ -57,5 +58,18 @@ describe("Packet Layout test", () => {
       expect(screen.getByText(/error fetching/i)).toBeVisible();
     });
     expect(screen.getByRole("link", { name: /metadata/i })).toBeVisible();
+  });
+
+  it("should render unauthorized when 401 error fetching", async () => {
+    server.use(
+      rest.get("*", (req, res, ctx) => {
+        return res(ctx.status(HttpStatus.Unauthorized));
+      })
+    );
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText(/unauthorized/i)).toBeVisible();
+    });
   });
 });

@@ -2,6 +2,7 @@ package packit.unit.service
 
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.*
@@ -19,6 +20,7 @@ import packit.repository.PacketRepository
 import packit.service.BasePacketService
 import packit.service.OutpackServerClient
 import java.time.Instant
+import java.util.*
 import kotlin.test.assertEquals
 
 class PacketServiceTest
@@ -299,5 +301,28 @@ class PacketServiceTest
                 Sort.by("name")
             )
         )
+    }
+
+    @Test
+    fun `getPacket returns packet when packet exists with given id`()
+    {
+        whenever(packetRepository.findById(oldPackets[0].id)).thenReturn(Optional.of(oldPackets[0]))
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
+
+        val result = sut.getPacket(oldPackets[0].id)
+
+        assertEquals(oldPackets[0], result)
+    }
+
+    @Test
+    fun `getPacket throws PackitException when no packet exists with given id`()
+    {
+        val packetId = "nonExistingId"
+        whenever(packetRepository.findById(packetId)).thenReturn(Optional.empty())
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
+
+        assertThrows<PackitException> {
+            sut.getPacket(packetId)
+        }
     }
 }

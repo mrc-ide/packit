@@ -5,6 +5,7 @@ import { SWRConfig } from "swr";
 import { PacketGroup } from "../../../../app/components/contents/PacketGroup";
 import { server } from "../../../../msw/server";
 import { mockPacketGroupResponse } from "../../../mocks";
+import { HttpStatus } from "../../../../lib/types/HttpStatus";
 describe("PacketGroup", () => {
   const packetGroupName = mockPacketGroupResponse.content[0].name;
   const renderComponent = () =>
@@ -51,6 +52,19 @@ describe("PacketGroup", () => {
 
     await waitFor(() => {
       expect(screen.getByText(/error fetching/i)).toBeVisible();
+    });
+  });
+
+  it("should render unauthorized when 401 error fetching packets", async () => {
+    server.use(
+      rest.get("*", (req, res, ctx) => {
+        return res(ctx.status(HttpStatus.Unauthorized));
+      })
+    );
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText(/unauthorized/i)).toBeVisible();
     });
   });
 });
