@@ -19,7 +19,7 @@ class PackitExceptionHandlerTest : IntegrationTest()
             getTokenizedHttpEntity()
         )
 
-        assertEquals(result.statusCode, HttpStatus.INTERNAL_SERVER_ERROR)
+        assertEquals(HttpStatus.BAD_REQUEST, result.statusCode)
     }
 
     @Test

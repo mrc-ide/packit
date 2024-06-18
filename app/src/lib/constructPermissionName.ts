@@ -2,7 +2,7 @@ import { BaseRolePermission } from "../app/components/contents/manageAccess/type
 
 export const constructPermissionName = ({ permission, packet, tag, packetGroup }: BaseRolePermission) => {
   if (packet) {
-    return `${permission}:packet:${packet.id}`;
+    return `${permission}:packet:${packet.name}:${packet.id}`;
   }
 
   if (tag) {

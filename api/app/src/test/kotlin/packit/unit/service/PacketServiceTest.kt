@@ -6,9 +6,6 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.*
-import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpHeaders
 import packit.exceptions.PackitException
@@ -109,17 +106,16 @@ class PacketServiceTest
         )
 
     private val responseByte = "htmlContent".toByteArray() to HttpHeaders.EMPTY
-    private val mockPacketGroupSummaries = PageImpl(packetGroupSummaries)
 
     private val packetRepository =
         mock<PacketRepository> {
             on { findAll() } doReturn oldPackets
             on { findAllIds() } doReturn oldPackets.map { it.id }
             on { findTopByOrderByImportTimeDesc() } doReturn oldPackets.first()
-            on { findPacketGroupSummaryByName("random", PageRequest.of(0, 10)) } doReturn
-                    mockPacketGroupSummaries
-            on { findByName(anyString(), any()) } doReturn PageImpl(oldPackets)
-            on { findAllByIdContaining(any(), anyString()) } doReturn PageImpl(oldPackets)
+            on { findPacketGroupSummaryByName("random") } doReturn
+                    packetGroupSummaries
+            on { findByName(anyString(), any()) } doReturn oldPackets
+            on { findAllByNameContainingAndIdContaining(anyString(), anyString(), any<Sort>()) } doReturn oldPackets
         }
 
     private val outpackServerClient =
@@ -144,19 +140,17 @@ class PacketServiceTest
     fun `getPackets calls repository with correct params and returns its result`()
     {
         val pageablePayload = PageablePayload(pageNumber = 0, pageSize = 10)
-        val filterId = "20231127-140959-72829b00"
+        val filterName = "para"
+        val filterId = "123"
         val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
 
-        val result = sut.getPackets(pageablePayload, filterId)
+        val result = sut.getPackets(pageablePayload, filterName, filterId)
 
         assertEquals(oldPackets, result.content)
-        verify(packetRepository).findAllByIdContaining(
-            PageRequest.of(
-                pageablePayload.pageNumber,
-                pageablePayload.pageSize,
-                Sort.by("startTime").descending()
-            ),
-            filterId
+        verify(packetRepository).findAllByNameContainingAndIdContaining(
+            filterName,
+            filterId,
+            Sort.by("startTime").descending()
         )
     }
 
@@ -167,9 +161,9 @@ class PacketServiceTest
 
         val result = sut.getPacketsByName("pg1", PageablePayload(0, 10))
 
-        assertEquals(result, PageImpl(oldPackets))
+        assertEquals(result.content, oldPackets)
         verify(packetRepository)
-            .findByName("pg1", PageRequest.of(0, 10, Sort.by("startTime").descending()))
+            .findByName("pg1", Sort.by("startTime").descending())
     }
 
     @Test
@@ -181,7 +175,7 @@ class PacketServiceTest
 
         assertEquals(result.totalElements, 2)
         assertEquals(result.content, packetGroupSummaries)
-        verify(packetRepository).findPacketGroupSummaryByName("random", PageRequest.of(0, 10))
+        verify(packetRepository).findPacketGroupSummaryByName("random")
     }
 
     @Test
@@ -274,33 +268,6 @@ class PacketServiceTest
         assertThatThrownBy { sut.getFileByHash("123", true, "test.html") }
             .isInstanceOf(PackitException::class.java)
             .hasMessageContaining("PackitException with key doesNotExist")
-    }
-
-    @Test
-    fun `getPacketGroups calls repository with correct params and returns its result`()
-    {
-        val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
-        val pageablePayload = PageablePayload(0, 10)
-        val filterName = "test"
-        val packetGroups = listOf(PacketGroup("test1"), PacketGroup("test2"))
-        val page = PageImpl(packetGroups)
-        whenever(
-            packetGroupRepository.findAllByNameContaining(
-                eq(filterName), any<Pageable>()
-            )
-        ).thenReturn(page)
-
-        val result = sut.getPacketGroups(pageablePayload, filterName)
-
-        assertEquals(packetGroups, result.content)
-        verify(packetGroupRepository).findAllByNameContaining(
-            filterName,
-            PageRequest.of(
-                pageablePayload.pageNumber,
-                pageablePayload.pageSize,
-                Sort.by("name")
-            )
-        )
     }
 
     @Test

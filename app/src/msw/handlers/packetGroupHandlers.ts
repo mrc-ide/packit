@@ -1,17 +1,11 @@
 import { rest } from "msw";
 import appConfig from "../../config/appConfig";
-import { mockPacketGroupDtos, mockPacketGroupResponse } from "../../tests/mocks";
+import { mockPacketGroupDtos } from "../../tests/mocks";
 
-const packetIndexUri = `${appConfig.apiUrl()}/packets`;
+const packetGroupIndexUri = `${appConfig.apiUrl()}/packetGroup`;
 
 export const packetGroupHandlers = [
-  rest.get(`${packetIndexUri}/${mockPacketGroupResponse.content[0].name}`, (req, res, ctx) => {
-    return res(ctx.json(mockPacketGroupResponse));
-  }),
-  rest.get(`${packetIndexUri}/packetGroup`, (req, res, ctx) => {
+  rest.get(packetGroupIndexUri, (req, res, ctx) => {
     return res(ctx.json(mockPacketGroupDtos));
-  }),
-  rest.get(`${packetIndexUri}`, (req, res, ctx) => {
-    return res(ctx.json(mockPacketGroupResponse));
   })
 ];

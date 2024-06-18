@@ -8,7 +8,7 @@ describe("constructPermissionName", () => {
       tag: null,
       packetGroup: null
     });
-    expect(result).toEqual("read:packet:123");
+    expect(result).toEqual("read:packet:packet1:123");
   });
 
   it("should return permission:tag:name when tag is present", () => {

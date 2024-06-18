@@ -57,8 +57,8 @@ describe("AddPermissionForUpdateForm", () => {
     userEvent.click(screen.getByRole("radio", { name: "packet" }));
 
     userEvent.click(allComboBox[2]);
-    await screen.findByText(testPacket.id);
-    userEvent.click(screen.getByRole("option", { name: testPacket.id }));
+    await screen.findByText(`${testPacket.name}:${testPacket.id}`);
+    userEvent.click(screen.getByRole("option", { name: `${testPacket.name}:${testPacket.id}` }));
 
     userEvent.click(screen.getByRole("button"));
 

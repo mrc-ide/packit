@@ -58,7 +58,7 @@ describe("PermissionCommandList", () => {
       />
     );
 
-    const secondPacketGroup = await screen.findByText(testPacket.id);
+    const secondPacketGroup = await screen.findByText(`${testPacket.name}:${testPacket.id}`);
     expect(screen.getByTestId(`check-${testPacket.id}`)).toHaveClass("opacity-100");
 
     userEvent.click(secondPacketGroup);

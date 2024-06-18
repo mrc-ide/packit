@@ -3,11 +3,12 @@ import appConfig from "../../../../../../config/appConfig";
 import { PermissionScope } from "../../../../../../lib/constants";
 import { PageableBasicDto } from "../../../../../../types";
 import { fetcher } from "../../../../../../lib/fetch";
+import { getPermissionScopePaths } from "../utils/getPermissionScopePaths";
 
 export const useGetResourcesForScopedPermissions = (scope: PermissionScope, filterName: string) => {
-  const scopePathVariable = scope === "tag" ? "tag" : `packets${scope === "packetGroup" ? "/packetGroup" : ""}`;
+  const scopePath = getPermissionScopePaths(filterName)[scope];
   const { data, isLoading, error } = useSWR<PageableBasicDto>(
-    scope !== "global" ? `${appConfig.apiUrl()}/${scopePathVariable}?filterName=${filterName}` : null,
+    scopePath ? `${appConfig.apiUrl()}/${scopePath}` : null,
     (url: string) => fetcher({ url })
   );
 

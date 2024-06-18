@@ -2,7 +2,6 @@ package packit.service
 
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.http.ContentDisposition
 import org.springframework.http.HttpHeaders
@@ -11,6 +10,7 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import packit.contentTypes
 import packit.exceptions.PackitException
+import packit.helpers.PagingHelper
 import packit.model.Packet
 import packit.model.PacketGroup
 import packit.model.PacketMetadata
@@ -23,7 +23,7 @@ import java.time.Instant
 
 interface PacketService
 {
-    fun getPackets(pageablePayload: PageablePayload, filterId: String): Page<Packet>
+    fun getPackets(pageablePayload: PageablePayload, filterName: String, filterId: String): Page<Packet>
     fun getPackets(): List<Packet>
     fun getChecksum(): String
     fun importPackets()
@@ -34,8 +34,6 @@ interface PacketService
     fun getPacketsByName(
         name: String, payload: PageablePayload
     ): Page<Packet>
-
-    fun getPacketGroups(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroup>
 
     fun getPacket(id: String): Packet
 }
@@ -84,33 +82,14 @@ class BasePacketService(
         filteredName: String
     ): Page<PacketGroupSummary>
     {
-        return packetRepository.findPacketGroupSummaryByName(
-            filteredName,
-            PageRequest.of(
-                pageablePayload.pageNumber,
-                pageablePayload.pageSize
-            )
-        )
+        val packetGroupSummaries = packetRepository.findPacketGroupSummaryByName(filteredName)
+        return PagingHelper.convertListToPage(packetGroupSummaries, pageablePayload)
     }
 
     override fun getPacketsByName(name: String, payload: PageablePayload): Page<Packet>
     {
-        val pageable = PageRequest.of(
-            payload.pageNumber,
-            payload.pageSize,
-            Sort.by("startTime").descending()
-        )
-        return packetRepository.findByName(name, pageable)
-    }
-
-    override fun getPacketGroups(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroup>
-    {
-        val pageable = PageRequest.of(
-            pageablePayload.pageNumber,
-            pageablePayload.pageSize,
-            Sort.by("name")
-        )
-        return packetGroupRepository.findAllByNameContaining(filteredName, pageable)
+        val packets = packetRepository.findByName(name, Sort.by("startTime").descending())
+        return PagingHelper.convertListToPage(packets, payload)
     }
 
     override fun getPacket(id: String): Packet
@@ -119,15 +98,15 @@ class BasePacketService(
             .orElseThrow { PackitException("doesNotExist", HttpStatus.NOT_FOUND) }
     }
 
-    override fun getPackets(pageablePayload: PageablePayload, filterId: String): Page<Packet>
+    override fun getPackets(pageablePayload: PageablePayload, filterName: String, filterId: String): Page<Packet>
     {
-        val pageable = PageRequest.of(
-            pageablePayload.pageNumber,
-            pageablePayload.pageSize,
+        val packets = packetRepository.findAllByNameContainingAndIdContaining(
+            filterName,
+            filterId,
             Sort.by("startTime").descending()
         )
 
-        return packetRepository.findAllByIdContaining(pageable, filterId)
+        return PagingHelper.convertListToPage(packets, pageablePayload)
     }
 
     override fun getChecksum(): String

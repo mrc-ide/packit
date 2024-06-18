@@ -161,13 +161,13 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getPermissionScoped returns permission name with packet id`()
+    fun `getPermissionScoped returns permission name with packet name and id`()
     {
-        val rolePermission = createRoleWithPermission("role", "permission", "1").rolePermissions[0]
+        val rolePermission = createRoleWithPermission("role", "permission", "123").rolePermissions[0]
 
         val result = roleService.getPermissionScoped(rolePermission)
 
-        assertEquals("permission:packet:1", result)
+        assertEquals("permission:packet:packetName:123", result)
     }
 
     @Test
@@ -531,7 +531,12 @@ class RoleServiceTest
                         description = "description does not matter"
                     ),
                     role = Role(name = roleName),
-                    packet = packetId?.let { mock<Packet> { on { id } doReturn packetId } },
+                    packet = packetId?.let {
+                        mock<Packet> {
+                            on { id } doReturn packetId
+                            on { name } doReturn "packetName"
+                        }
+                    },
                     packetGroup = packetGroupName?.let { mock { on { name } doReturn packetGroupName } },
                     tag = tagName?.let { mock { on { name } doReturn tagName } }
                 )
