@@ -7,7 +7,13 @@ describe("UpdateUserDropdownMenu", () => {
   const DOWN_ARROW = { keyCode: 40 };
 
   it("should render update roles dialog on update roles click", async () => {
-    render(<UpdateUserDropdownMenu mutate={jest.fn()} user={{ roles: [], username: "user1" } as any} roles={[]} />);
+    render(
+      <UpdateUserDropdownMenu
+        mutate={jest.fn()}
+        user={{ roles: [], username: "user1", id: 1, specificPermissions: [] }}
+        roles={[]}
+      />
+    );
 
     fireEvent.keyDown(await screen.findByRole("button", { name: "edit-user" }), DOWN_ARROW);
 
@@ -21,7 +27,13 @@ describe("UpdateUserDropdownMenu", () => {
   });
 
   it("should render update permissions dialog on update permissions click", async () => {
-    render(<UpdateUserDropdownMenu mutate={jest.fn()} user={{ roles: [], username: "user1" } as any} roles={[]} />);
+    render(
+      <UpdateUserDropdownMenu
+        mutate={jest.fn()}
+        user={{ roles: [], username: "user1", id: 1, specificPermissions: [] }}
+        roles={[]}
+      />
+    );
 
     fireEvent.keyDown(await screen.findByRole("button", { name: "edit-user" }), DOWN_ARROW);
 

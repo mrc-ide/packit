@@ -5,6 +5,7 @@ import { SWRConfig } from "swr";
 import { PacketGroupSummaryList } from "../../../../app/components/contents/explorer/PacketGroupSummaryList";
 import { server } from "../../../../msw/server";
 import { mockPacketGroupSummary } from "../../../mocks";
+import { HttpStatus } from "../../../../lib/types/HttpStatus";
 
 describe("PacketList test", () => {
   const renderComponent = () =>
@@ -42,6 +43,19 @@ describe("PacketList test", () => {
 
     await waitFor(() => {
       expect(screen.getByText(/error fetching/i)).toBeVisible();
+    });
+  });
+
+  it("should render unauthorized when 401 error fetching", async () => {
+    server.use(
+      rest.get("*", (req, res, ctx) => {
+        return res(ctx.status(HttpStatus.Unauthorized));
+      })
+    );
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText(/unauthorized/i)).toBeVisible();
     });
   });
 });

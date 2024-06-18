@@ -7,6 +7,8 @@ import { Pagination } from "../common/Pagination";
 import { useGetPacketGroups } from "./hooks/useGetPacketGroups";
 import { packetColumns } from "./packetColumns";
 import { PAGE_SIZE } from "../../../../lib/constants";
+import { HttpStatus } from "../../../../lib/types/HttpStatus";
+import { Unauthorized } from "../common/Unauthorized";
 
 // TODO: make table more feature rich (sorting, filter, etc). May need to fetch all data then and let tanstack handle
 export const PacketTable = () => {
@@ -15,6 +17,7 @@ export const PacketTable = () => {
 
   const { packetGroups, error, isLoading } = useGetPacketGroups(packetName, pageNumber, PAGE_SIZE);
 
+  if (error?.status === HttpStatus.Unauthorized) return <Unauthorized />;
   if (error) return <ErrorComponent message="Error fetching packets" error={error} />;
 
   if (isLoading)

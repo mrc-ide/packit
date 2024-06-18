@@ -1,5 +1,6 @@
-import {render, screen, waitFor} from "@testing-library/react";
-import {PacketReport} from "../../../../app/components/contents/packets/PacketReport";
+import { render, screen, waitFor } from "@testing-library/react";
+import { PacketReport } from "../../../../app/components/contents/packets/PacketReport";
+import { PacketMetadata } from "../../../../types";
 
 const mockGetFileObjectUrl = jest.fn();
 jest.mock("../../../../lib/download", () => ({
@@ -7,17 +8,19 @@ jest.mock("../../../../lib/download", () => ({
     })
 );
 describe("PacketReport component", () => {
+    const packet = {
+        files: [{ path: "test.html", hash: "sha256:12345" }],
+        id: "20231130-082812-cd744153"
+        } as  unknown as PacketMetadata;
+
+        const renderComponent = (fileName = "test.html") => {
+            render(<PacketReport packet={ packet } fileName={ fileName } />);
+        };
+
     beforeEach(() => {
         jest.clearAllMocks();
         mockGetFileObjectUrl.mockImplementation(() => "fakeObjectUrl");
     });
-
-    const renderComponent = (fileName = "test.html") => {
-        const packet = {
-            files: [{ path: "test.html", hash: "sha256:12345" }]
-        } as any;
-        render(<PacketReport packet={ packet } fileName={ fileName } />);
-    };
 
     it("gets file object url for report src", async () => {
         renderComponent();
@@ -26,7 +29,7 @@ describe("PacketReport component", () => {
             expect(iframe).toBeVisible();
             expect(iframe.getAttribute("src")).toBe("fakeObjectUrl");
             expect(mockGetFileObjectUrl).toHaveBeenCalledWith(
-                "http://localhost:8080/packets/file/sha256:12345?inline=true&filename=test.html", "");
+                `http://localhost:8080/packets/file/${packet.id}?hash=sha256:12345?inline=true&filename=test.html`, "");
         });
     });
 

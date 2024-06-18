@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { KeyedMutator } from "swr";
-import { Button } from "../../../Base/Button";
-import { Dialog, DialogClose, DialogFooter } from "../../../Base/Dialog";
+import { Dialog } from "../../../Base/Dialog";
 import { UpdateDialogContent } from "../UpdateDialogContent";
 import { UpdateDropdown, UpdateOptions } from "../UpdateDropdown";
+import { UpdatePermissionsForm } from "../updatePermission/UpdatePermissionsForm";
 import { RoleWithRelationships } from "../types/RoleWithRelationships";
 import { UserWithRoles } from "../types/UserWithRoles";
 import { UpdateRoleUsersForm } from "./UpdateRoleUsersForm";
@@ -24,20 +24,12 @@ export const UpdateRoleDropDownMenu = ({ mutate, role, users }: UpdateRoleDropDo
         {selectedOption === "users" ? (
           <UpdateRoleUsersForm mutate={mutate} role={role} users={users} setOpen={setDialogOpen} />
         ) : (
-          // TODO: Implement UpdateRolePermissionsForm..change to use custom dialog footer
-          <DialogFooter className="sm:justify-end gap-1">
-            {/* {fetchError && <div className="text-xs text-red-500">{fetchError}</div>} */}
-            <DialogClose asChild>
-              <Button
-                type="button"
-                variant="secondary"
-                //    onClick={() => form.reset()}
-              >
-                Cancel
-              </Button>
-            </DialogClose>
-            <Button type="submit">Save</Button>
-          </DialogFooter>
+          <UpdatePermissionsForm
+            roleName={role.name}
+            rolePermissions={role.rolePermissions}
+            mutate={mutate}
+            setOpen={setDialogOpen}
+          />
         )}
       </UpdateDialogContent>
     </Dialog>

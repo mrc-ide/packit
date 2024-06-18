@@ -1,9 +1,9 @@
 package packit.repository
 
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
+import org.springframework.security.access.prepost.PostFilter
 import org.springframework.stereotype.Repository
 import packit.model.Packet
 import packit.model.dto.PacketGroupSummary
@@ -14,8 +14,11 @@ interface PacketRepository : JpaRepository<Packet, String>
     @Query("select p.id from Packet p order by p.id asc")
     fun findAllIds(): List<String>
     fun findTopByOrderByImportTimeDesc(): Packet?
-    fun findByName(name: String, pageable: Pageable): Page<Packet>
 
+    @PostFilter("@authz.canReadPacket(#root, filterObject.id, filterObject.name)")
+    fun findByName(name: String, sort: Sort): List<Packet>
+
+    @PostFilter("@authz.canReadPacketGroup(#root, filterObject.name)")
     @Query(
         value = """
                 SELECT 
@@ -38,5 +41,8 @@ interface PacketRepository : JpaRepository<Packet, String>
         countQuery = "SELECT count(distinct name) from packet WHERE name ILIKE  %?1%",
         nativeQuery = true
     )
-    fun findPacketGroupSummaryByName(filterName: String, pageable: Pageable): Page<PacketGroupSummary>
+    fun findPacketGroupSummaryByName(filterName: String): List<PacketGroupSummary>
+
+    @PostFilter("@authz.canReadPacket(#root, filterObject.id, filterObject.name)")
+    fun findAllByNameContainingAndIdContaining(name: String, id: String, sort: Sort): List<Packet>
 }

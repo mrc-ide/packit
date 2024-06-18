@@ -2,11 +2,18 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 // eslint-disable-next-line max-len
 import { UpdateRoleDropDownMenu } from "../../../../../app/components/contents/manageAccess/manageRoleActions/UpdateRoleDropDownMenu";
 import userEvent from "@testing-library/user-event";
+import { RolePermission } from "../../../../../app/components/contents/manageAccess/types/RoleWithRelationships";
 
 describe("UpdateRoleDropDownMenu", () => {
   const DOWN_ARROW = { keyCode: 40 };
   it("should render update user dialog on update users click", async () => {
-    render(<UpdateRoleDropDownMenu mutate={jest.fn()} role={{ users: [], name: "role1" } as any} users={[]} />);
+    render(
+      <UpdateRoleDropDownMenu
+        mutate={jest.fn()}
+        role={{ users: [], name: "role1", rolePermissions: [], id: 2, isUsername: false }}
+        users={[]}
+      />
+    );
 
     fireEvent.keyDown(await screen.findByRole("button", { name: "edit-role" }), DOWN_ARROW);
 
@@ -20,7 +27,13 @@ describe("UpdateRoleDropDownMenu", () => {
   });
 
   it("should render update permissions dialog on update permissions click", async () => {
-    render(<UpdateRoleDropDownMenu mutate={jest.fn()} role={{ users: [], name: "role1" } as any} users={[]} />);
+    render(
+      <UpdateRoleDropDownMenu
+        mutate={jest.fn()}
+        role={{ users: [], name: "role1", rolePermissions: [], id: 2, isUsername: false }}
+        users={[]}
+      />
+    );
 
     fireEvent.keyDown(await screen.findByRole("button", { name: "edit-role" }), DOWN_ARROW);
 

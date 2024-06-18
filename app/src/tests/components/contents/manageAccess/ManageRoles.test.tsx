@@ -44,8 +44,9 @@ describe("ManageRoles", () => {
     expect(screen.getAllByRole("button", { name: "edit-role" })).toHaveLength(
       mockNonUsernameRolesWithRelationships.length
     );
-    // cant delete admin role
+    // cant delete or edit admin role
     expect(screen.getAllByRole("button", { name: "delete-role" })[0]).toBeDisabled();
+    expect(screen.getAllByRole("button", { name: "edit-role" })[0]).toBeDisabled();
   });
 
   it("should filter roles by name", async () => {
@@ -93,5 +94,14 @@ describe("ManageRoles", () => {
     await waitFor(() => {
       expect(screen.getByText(/error fetching data/i)).toBeVisible();
     });
+  });
+
+  it("should disable delete and edit buttons for admin role", async () => {
+    renderComponent();
+
+    const deleteButtons = await screen.findAllByRole("button", { name: "delete-role" });
+    const editButtons = await screen.findAllByRole("button", { name: "edit-role" });
+    expect(deleteButtons[0]).toBeDisabled();
+    expect(editButtons[0]).toBeDisabled();
   });
 });

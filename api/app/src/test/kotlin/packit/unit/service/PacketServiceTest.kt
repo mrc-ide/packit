@@ -2,11 +2,10 @@ package packit.unit.service
 
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.*
-import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpHeaders
 import packit.exceptions.PackitException
@@ -18,6 +17,7 @@ import packit.repository.PacketRepository
 import packit.service.BasePacketService
 import packit.service.OutpackServerClient
 import java.time.Instant
+import java.util.*
 import kotlin.test.assertEquals
 
 class PacketServiceTest
@@ -106,16 +106,16 @@ class PacketServiceTest
         )
 
     private val responseByte = "htmlContent".toByteArray() to HttpHeaders.EMPTY
-    private val mockPacketGroupSummaries = PageImpl(packetGroupSummaries)
 
     private val packetRepository =
         mock<PacketRepository> {
             on { findAll() } doReturn oldPackets
             on { findAllIds() } doReturn oldPackets.map { it.id }
             on { findTopByOrderByImportTimeDesc() } doReturn oldPackets.first()
-            on { findPacketGroupSummaryByName("random", PageRequest.of(0, 10)) } doReturn
-                    mockPacketGroupSummaries
-            on { findByName(anyString(), any()) } doReturn PageImpl(oldPackets)
+            on { findPacketGroupSummaryByName("random") } doReturn
+                    packetGroupSummaries
+            on { findByName(anyString(), any()) } doReturn oldPackets
+            on { findAllByNameContainingAndIdContaining(anyString(), anyString(), any<Sort>()) } doReturn oldPackets
         }
 
     private val outpackServerClient =
@@ -137,15 +137,33 @@ class PacketServiceTest
     }
 
     @Test
+    fun `getPackets calls repository with correct params and returns its result`()
+    {
+        val pageablePayload = PageablePayload(pageNumber = 0, pageSize = 10)
+        val filterName = "para"
+        val filterId = "123"
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
+
+        val result = sut.getPackets(pageablePayload, filterName, filterId)
+
+        assertEquals(oldPackets, result.content)
+        verify(packetRepository).findAllByNameContainingAndIdContaining(
+            filterName,
+            filterId,
+            Sort.by("startTime").descending()
+        )
+    }
+
+    @Test
     fun `gets packets by name`()
     {
         val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
 
         val result = sut.getPacketsByName("pg1", PageablePayload(0, 10))
 
-        assertEquals(result, PageImpl(oldPackets))
+        assertEquals(result.content, oldPackets)
         verify(packetRepository)
-            .findByName("pg1", PageRequest.of(0, 10, Sort.by("startTime").descending()))
+            .findByName("pg1", Sort.by("startTime").descending())
     }
 
     @Test
@@ -157,7 +175,7 @@ class PacketServiceTest
 
         assertEquals(result.totalElements, 2)
         assertEquals(result.content, packetGroupSummaries)
-        verify(packetRepository).findPacketGroupSummaryByName("random", PageRequest.of(0, 10))
+        verify(packetRepository).findPacketGroupSummaryByName("random")
     }
 
     @Test
@@ -250,5 +268,28 @@ class PacketServiceTest
         assertThatThrownBy { sut.getFileByHash("123", true, "test.html") }
             .isInstanceOf(PackitException::class.java)
             .hasMessageContaining("PackitException with key doesNotExist")
+    }
+
+    @Test
+    fun `getPacket returns packet when packet exists with given id`()
+    {
+        whenever(packetRepository.findById(oldPackets[0].id)).thenReturn(Optional.of(oldPackets[0]))
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
+
+        val result = sut.getPacket(oldPackets[0].id)
+
+        assertEquals(oldPackets[0], result)
+    }
+
+    @Test
+    fun `getPacket throws PackitException when no packet exists with given id`()
+    {
+        val packetId = "nonExistingId"
+        whenever(packetRepository.findById(packetId)).thenReturn(Optional.empty())
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
+
+        assertThrows<PackitException> {
+            sut.getPacket(packetId)
+        }
     }
 }

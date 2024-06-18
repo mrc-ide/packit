@@ -8,13 +8,14 @@ import { Button } from "../../Base/Button";
 
 interface DownloadButtonProps {
   file: FileMetadata;
+  packetId: string;
 }
 
-export default function DownloadButton({ file }: DownloadButtonProps) {
+export default function DownloadButton({ file, packetId }: DownloadButtonProps) {
   const [error, setError] = useState("");
 
   const downloadFile = (file: FileMetadata) => {
-    const url = `${appConfig.apiUrl()}/packets/file/${file.hash}?filename=${file.path}`;
+    const url = `${appConfig.apiUrl()}/packets/file/${packetId}?hash=${file.hash}&filename=${file.path}`;
     download(url, file.path)
       .then(() => setError(""))
       .catch((e) => {

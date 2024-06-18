@@ -1,23 +1,26 @@
-interface BasicPacket {
+export interface BasicPacket {
   name: string;
   id: string;
 }
 
-interface BasicPacketGroup {
+export interface BasicPacketGroup {
   name: string;
   id: number;
 }
-interface Tag {
+export interface Tag {
   name: string;
   id: number;
 }
 
-export interface RolePermission {
-  permission: string;
-  packet: BasicPacket | null;
-  tag: Tag | null;
-  packetGroup: BasicPacketGroup | null;
+export interface RolePermission extends BaseRolePermission {
   id: number;
+}
+
+export interface BaseRolePermission {
+  permission: string;
+  packet?: BasicPacket | null;
+  tag?: Tag | null;
+  packetGroup?: BasicPacketGroup | null;
 }
 
 interface BasicUser {

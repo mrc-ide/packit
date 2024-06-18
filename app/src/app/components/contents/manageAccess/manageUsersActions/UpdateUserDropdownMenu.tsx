@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { KeyedMutator } from "swr";
-import { Button } from "../../../Base/Button";
-import { Dialog, DialogClose, DialogFooter } from "../../../Base/Dialog";
+import { Dialog } from "../../../Base/Dialog";
 import { UpdateDialogContent } from "../UpdateDialogContent";
 import { UpdateDropdown, UpdateOptions } from "../UpdateDropdown";
 import { RoleWithRelationships } from "../types/RoleWithRelationships";
 import { UserWithRoles } from "../types/UserWithRoles";
+import { UpdatePermissionsForm } from "../updatePermission/UpdatePermissionsForm";
 import { UpdateUserRoleForm } from "./UpdateUserRoleForm";
 
 interface UpdateUserDropdownMenuProps {
@@ -23,20 +23,12 @@ export const UpdateUserDropdownMenu = ({ user, roles, mutate }: UpdateUserDropdo
         {selectedOption === "roles" ? (
           <UpdateUserRoleForm mutate={mutate} user={user} roles={roles} setOpen={setDialogOpen} />
         ) : (
-          // TODO: Implement UpdateRolePermissionsForm
-          <DialogFooter className="sm:justify-end gap-1">
-            {/* {fetchError && <div className="text-xs text-red-500">{fetchError}</div>} */}
-            <DialogClose asChild>
-              <Button
-                type="button"
-                variant="secondary"
-                //    onClick={() => form.reset()}
-              >
-                Cancel
-              </Button>
-            </DialogClose>
-            <Button type="submit">Save</Button>
-          </DialogFooter>
+          <UpdatePermissionsForm
+            roleName={user.username}
+            rolePermissions={user.specificPermissions}
+            mutate={mutate}
+            setOpen={setDialogOpen}
+          />
         )}
       </UpdateDialogContent>
     </Dialog>

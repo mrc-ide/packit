@@ -3,7 +3,8 @@ package packit.integration.repository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
+import packit.integration.WithAuthenticatedUser
 import packit.model.Packet
 import packit.repository.PacketRepository
 import java.time.Instant
@@ -86,6 +87,7 @@ class PacketRepositoryTest : RepositoryTest()
     }
 
     @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `can get packets from db`()
     {
         packetRepository.saveAll(packets)
@@ -102,25 +104,26 @@ class PacketRepositoryTest : RepositoryTest()
     }
 
     @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `gets filtered by name packets when findByName called`()
     {
         packetRepository.saveAll(packets)
 
-        val result = packetRepository.findByName("test1", PageRequest.of(0, 10))
+        val result = packetRepository.findByName("test1", Sort.by("startTime").descending())
 
-        assertEquals(result.totalElements, 2)
-        assertEquals(result.content[0].name, "test1")
-        assertEquals(result.content[1].name, "test1")
-        assertEquals(result.content[0].id, "20180818-164847-7574833b")
-        assertEquals(result.content[1].id, "20170819-164847-7574333b")
+        assertEquals(result.size, 2)
+        assertEquals(result[0].name, "test1")
+        assertEquals(result[1].name, "test1")
     }
 
     @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
+
     fun `can get right order and data expected from findPacketGroupSummaryByName`()
     {
         packetRepository.saveAll(packets)
 
-        val result = packetRepository.findPacketGroupSummaryByName("", PageRequest.of(0, 10)).map {
+        val result = packetRepository.findPacketGroupSummaryByName("").map {
             object
             {
                 val name = it.getName()
@@ -129,19 +132,20 @@ class PacketRepositoryTest : RepositoryTest()
                 val packetCount = it.getPacketCount()
             }
         }
-        assertEquals(result.totalElements, 4)
-        assertEquals(result.content[0].name, "test1")
-        assertEquals(result.content[0].latestId, "20170819-164847-7574333b")
-        assertEquals(result.content[0].latestTime, now + 5)
-        assertEquals(result.content[0].packetCount, 2)
+        assertEquals(result.size, 4)
+        assertEquals(result[0].name, "test1")
+        assertEquals(result[0].latestId, "20170819-164847-7574333b")
+        assertEquals(result[0].latestTime, now + 5)
+        assertEquals(result[0].packetCount, 2)
     }
 
     @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `can filter correctly when calling findPacketGroupSummaryByName`()
     {
         packetRepository.saveAll(packets)
 
-        val result = packetRepository.findPacketGroupSummaryByName("4", PageRequest.of(0, 10)).map {
+        val result = packetRepository.findPacketGroupSummaryByName("4").map {
             object
             {
                 val name = it.getName()
@@ -151,34 +155,15 @@ class PacketRepositoryTest : RepositoryTest()
             }
         }
 
-        assertEquals(result.totalElements, 1)
-        assertEquals(result.content[0].name, "test4")
-        assertEquals(result.content[0].latestId, "20170819-164847-7574113a")
-        assertEquals(result.content[0].latestTime, now + 4)
-        assertEquals(result.content[0].packetCount, 2)
+        assertEquals(result.size, 1)
+        assertEquals(result[0].name, "test4")
+        assertEquals(result[0].latestId, "20170819-164847-7574113a")
+        assertEquals(result[0].latestTime, now + 4)
+        assertEquals(result[0].packetCount, 2)
     }
 
     @Test
-    fun `returns correct paging data when calling findPacketGroupSummaryByName`()
-    {
-        packetRepository.saveAll(packets)
-
-        val result = packetRepository.findPacketGroupSummaryByName("random", PageRequest.of(0, 10)).map {
-            object
-            {
-                val name = it.getName()
-                val latestTime = it.getLatestTime()
-                val latestId = it.getLatestId()
-                val packetCount = it.getPacketCount()
-            }
-        }
-
-        assertEquals(result.totalPages, 1)
-        assertEquals(result.isFirst, true)
-        assertEquals(result.isLast, true)
-    }
-
-    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `can get sorted packet ids from db`()
     {
         packetRepository.saveAll(packets)
@@ -199,6 +184,7 @@ class PacketRepositoryTest : RepositoryTest()
     }
 
     @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `most recent packet is null if no packets in db`()
     {
         val result = packetRepository.findTopByOrderByImportTimeDesc()
@@ -206,6 +192,7 @@ class PacketRepositoryTest : RepositoryTest()
     }
 
     @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `can get most recent packet from db`()
     {
         packetRepository.saveAll(packets)
@@ -216,6 +203,7 @@ class PacketRepositoryTest : RepositoryTest()
     }
 
     @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `can get packet by id`()
     {
         packetRepository.saveAll(packets)

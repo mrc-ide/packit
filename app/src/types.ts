@@ -106,3 +106,10 @@ export interface PacketErrorBody {
   };
   status: string;
 }
+
+export interface PageableBasicDto extends Pageable {
+  content: {
+    name: string;
+    id: string | number;
+  }[];
+}
