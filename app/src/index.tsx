@@ -15,7 +15,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <AuthConfigProvider>
         <UserProvider>
           <RedirectOnLoginProvider>
-            <BrowserRouter>
+            <BrowserRouter basename={process.env.PUBLIC_URL}>
               <Router />
             </BrowserRouter>
           </RedirectOnLoginProvider>
