@@ -1,5 +1,3 @@
-import appConfig from "../config/appConfig";
-
 describe("api service", () => {
 
     const OLD_ENV = process.env;
@@ -14,12 +12,19 @@ describe("api service", () => {
     });
 
     test("uses API URL from environment", () => {
-        /* eslint-disable */
-        // @ts-ignore
         process.env.REACT_APP_PACKIT_API_URL = "http://localhost/foo/api";
+        /* eslint-disable */
         const appConfig = require("../config/appConfig").default;
         /* eslint-enable */
         expect(appConfig.apiUrl()).toBe("http://localhost/foo/api");
+    });
+
+    test("throw error if environment variable is missing", () => {
+        delete process.env["REACT_APP_PACKIT_API_URL"];
+        /* eslint-disable */
+        const appConfig = require("../config/appConfig").default;
+        /* eslint-enable */
+        expect(appConfig.apiUrl).toThrow();
     });
 });
 
