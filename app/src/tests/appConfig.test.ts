@@ -13,17 +13,13 @@ describe("api service", () => {
         process.env = OLD_ENV; // Restore old environment
     });
 
-    test("uses default config by default", () => {
-        expect(appConfig.apiUrl()).toBe("http://localhost:8080");
-    });
-
-    test("uses production config if node_env is production", () => {
+    test("uses API URL from environment", () => {
         /* eslint-disable */
         // @ts-ignore
-        process.env.NODE_ENV = "production";
+        process.env.REACT_APP_PACKIT_API_URL = "http://localhost/foo/api";
         const appConfig = require("../config/appConfig").default;
         /* eslint-enable */
-        expect(appConfig.apiUrl()).toBe("https://localhost/packit/api");
+        expect(appConfig.apiUrl()).toBe("http://localhost/foo/api");
     });
 });
 
