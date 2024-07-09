@@ -1,3 +1,5 @@
+export {};
+
 describe("api service", () => {
 
     const OLD_ENV = process.env;
