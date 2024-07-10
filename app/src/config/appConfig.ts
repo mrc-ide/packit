@@ -2,19 +2,15 @@ interface AppConfig {
     apiUrl: () => string
 }
 
-const devConfig: AppConfig = {
-    apiUrl: () => "http://localhost:8080"
+const appConfig: AppConfig = {
+    apiUrl: () => {
+        if (process.env.REACT_APP_PACKIT_API_URL === undefined) {
+            throw new Error("An API URL must be configured");
+        } else {
+            return process.env.REACT_APP_PACKIT_API_URL;
+        }
+    }
 };
-
-const prodConfig: AppConfig = {
-    apiUrl: () => `https://${window.location.host}/packit/api`,
-};
-
-let appConfig = devConfig;
-
-if (process.env.NODE_ENV == "production") {
-    appConfig = prodConfig;
-}
 
 export default appConfig;
 export const githubAuthEndpoint = (config: AppConfig) => `${config.apiUrl()}/oauth2/authorization/github`;

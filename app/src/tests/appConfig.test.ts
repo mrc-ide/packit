@@ -1,4 +1,4 @@
-import appConfig from "../config/appConfig";
+export {};
 
 describe("api service", () => {
 
@@ -13,17 +13,20 @@ describe("api service", () => {
         process.env = OLD_ENV; // Restore old environment
     });
 
-    test("uses default config by default", () => {
-        expect(appConfig.apiUrl()).toBe("http://localhost:8080");
-    });
-
-    test("uses production config if node_env is production", () => {
+    test("uses API URL from environment", () => {
+        process.env.REACT_APP_PACKIT_API_URL = "http://localhost/foo/api";
         /* eslint-disable */
-        // @ts-ignore
-        process.env.NODE_ENV = "production";
         const appConfig = require("../config/appConfig").default;
         /* eslint-enable */
-        expect(appConfig.apiUrl()).toBe("https://localhost/packit/api");
+        expect(appConfig.apiUrl()).toBe("http://localhost/foo/api");
+    });
+
+    test("throw error if environment variable is missing", () => {
+        delete process.env["REACT_APP_PACKIT_API_URL"];
+        /* eslint-disable */
+        const appConfig = require("../config/appConfig").default;
+        /* eslint-enable */
+        expect(appConfig.apiUrl).toThrow();
     });
 });
 
