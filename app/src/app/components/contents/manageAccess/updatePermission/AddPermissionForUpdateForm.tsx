@@ -47,8 +47,6 @@ export const AddPermissionForUpdateForm = ({ addPermission, currentPermissions }
         }
       })
     };
-    console.log(addPermissionValue);
-
     if (isDuplicateUpdatePermission(currentPermissions, addPermissionValue)) {
       return form.setError("root", {
         message: "Permission already exists"

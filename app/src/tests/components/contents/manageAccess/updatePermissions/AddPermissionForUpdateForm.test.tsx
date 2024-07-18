@@ -6,7 +6,7 @@ import { mockPacketGroupResponse, mockTags } from "../../../../mocks";
 import { Tag } from "../../../../../app/components/contents/manageAccess/types/RoleWithRelationships";
 
 describe("AddPermissionForUpdateForm", () => {
-  it("it should disable scope radio group, submit button if permission is not set or user.manage", async () => {
+  it("it should disable scope radio group, submit button if permission is not set to packet.read", async () => {
     render(<AddPermissionForUpdateForm addPermission={jest.fn()} currentPermissions={[]} />);
     const radioButtons = screen.getAllByRole("radio");
     const select = screen.getAllByRole("combobox", { hidden: true })[1];
@@ -23,7 +23,7 @@ describe("AddPermissionForUpdateForm", () => {
     });
   });
 
-  it("should set scope to global if permission is user.manage", async () => {
+  it("should set scope to global if permission is not packet.read", async () => {
     render(<AddPermissionForUpdateForm addPermission={jest.fn()} currentPermissions={[]} />);
     const select = screen.getAllByRole("combobox", { hidden: true })[1];
 
@@ -46,7 +46,7 @@ describe("AddPermissionForUpdateForm", () => {
     });
   });
 
-  it("should submit form with correct values for permission and packet scope", async () => {
+  it("should submit form with correct values for packet.read permission and packet scope", async () => {
     const testPacket = { id: mockPacketGroupResponse.content[0].id, name: mockPacketGroupResponse.content[0].name };
     const addPermission = jest.fn();
 
@@ -67,13 +67,13 @@ describe("AddPermissionForUpdateForm", () => {
     });
   });
 
-  it("should submit form with correct values for permission and tag scope", async () => {
+  it("should submit form with correct values for packet.read permission and tag scope", async () => {
     const addPermission = jest.fn();
     const testTag = { ...mockTags.content[0] };
     render(<AddPermissionForUpdateForm addPermission={addPermission} currentPermissions={[]} />);
 
     const allComboBox = screen.getAllByRole("combobox", { hidden: true });
-    userEvent.selectOptions(allComboBox[1], "outpack.write");
+    userEvent.selectOptions(allComboBox[1], "packet.read");
     userEvent.click(screen.getByRole("radio", { name: "tag" }));
 
     userEvent.click(allComboBox[2]);
@@ -83,16 +83,16 @@ describe("AddPermissionForUpdateForm", () => {
     userEvent.click(screen.getByRole("button"));
 
     await waitFor(() => {
-      expect(addPermission).toHaveBeenCalledWith({ permission: "outpack.write", tag: testTag });
+      expect(addPermission).toHaveBeenCalledWith({ permission: "packet.read", tag: testTag });
     });
   });
 
-  it("should show error if permission and not global scope set but no scopeResource", async () => {
+  it("should show error if packet.read permission and not global scope set but no scopeResource", async () => {
     const addPermission = jest.fn();
     render(<AddPermissionForUpdateForm addPermission={addPermission} currentPermissions={[]} />);
 
     const allComboBox = screen.getAllByRole("combobox", { hidden: true });
-    userEvent.selectOptions(allComboBox[1], "outpack.write");
+    userEvent.selectOptions(allComboBox[1], "packet.read");
     userEvent.click(screen.getByRole("radio", { name: "tag" }));
 
     userEvent.click(screen.getByRole("button"));
@@ -115,12 +115,12 @@ describe("AddPermissionForUpdateForm", () => {
     render(
       <AddPermissionForUpdateForm
         addPermission={addPermission}
-        currentPermissions={[{ permission: "outpack.write", tag: testTag }]}
+        currentPermissions={[{ permission: "packet.read", tag: testTag }]}
       />
     );
 
     const allComboBox = screen.getAllByRole("combobox", { hidden: true });
-    userEvent.selectOptions(allComboBox[1], "outpack.write");
+    userEvent.selectOptions(allComboBox[1], "packet.read");
     userEvent.click(screen.getByRole("radio", { name: "tag" }));
 
     userEvent.click(allComboBox[2]);

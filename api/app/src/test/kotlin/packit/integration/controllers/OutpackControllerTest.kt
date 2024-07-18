@@ -30,7 +30,31 @@ class OutpackControllerTest : IntegrationTest()
             "}"
 
     @Test
-    @WithAuthenticatedUser
+    @WithAuthenticatedUser(authorities = ["none"])
+    fun `can not GET if no outpack read or write authority`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/outpack",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+        assertEquals(result.statusCode, HttpStatus.UNAUTHORIZED)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["outpack.read"])
+    fun `can not POST if no outpack write authority`()
+    {
+        val result = restTemplate.postForEntity(
+            "/outpack",
+            getTokenizedHttpEntity(MediaType.TEXT_PLAIN, testPacket),
+            String::class.java
+        )
+        assertEquals(result.statusCode, HttpStatus.UNAUTHORIZED)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["outpack.read"])
     fun `can GET json from outpack_server`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
@@ -44,7 +68,7 @@ class OutpackControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser
+    @WithAuthenticatedUser(authorities = ["outpack.write"])
     fun `can GET plain text from outpack_server`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
@@ -58,7 +82,7 @@ class OutpackControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser
+    @WithAuthenticatedUser(authorities = ["outpack.read"])
     fun `can GET file from outpack_server`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
@@ -72,7 +96,7 @@ class OutpackControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser
+    @WithAuthenticatedUser(authorities = ["outpack.write"])
     fun `can POST text to outpack_server`()
     {
         val result = restTemplate.postForEntity(
@@ -85,7 +109,7 @@ class OutpackControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser
+    @WithAuthenticatedUser(authorities = ["outpack.write"])
     fun `can POST file to outpack_server`()
     {
         val result = restTemplate.postForEntity(
@@ -98,7 +122,7 @@ class OutpackControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser
+    @WithAuthenticatedUser(authorities = ["outpack.write"])
     fun `can return GET errors from outpack_server`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
@@ -109,13 +133,13 @@ class OutpackControllerTest : IntegrationTest()
 
         assertEquals(result.statusCode, HttpStatusCode.valueOf(404))
         jsonValidator.validateError(
-                result.body!!, "NOT_FOUND",
-                "This route does not exist"
+            result.body!!, "NOT_FOUND",
+            "This route does not exist"
         )
     }
 
     @Test
-    @WithAuthenticatedUser
+    @WithAuthenticatedUser(authorities = ["outpack.write"])
     fun `can return POST errors from outpack_server`()
     {
         val result = restTemplate.postForEntity(
@@ -126,8 +150,8 @@ class OutpackControllerTest : IntegrationTest()
 
         assertEquals(result.statusCode, HttpStatusCode.valueOf(400))
         jsonValidator.validateError(
-                result.body!!, "invalid input parameter",
-                "Invalid hash format 'badhash'"
+            result.body!!, "invalid input parameter",
+            "Invalid hash format 'badhash'"
         )
     }
 }
