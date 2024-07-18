@@ -47,6 +47,8 @@ export const AddPermissionForUpdateForm = ({ addPermission, currentPermissions }
         }
       })
     };
+    console.log(addPermissionValue);
+
     if (isDuplicateUpdatePermission(currentPermissions, addPermissionValue)) {
       return form.setError("root", {
         message: "Permission already exists"
@@ -67,7 +69,7 @@ export const AddPermissionForUpdateForm = ({ addPermission, currentPermissions }
               <Select
                 onValueChange={(value) => {
                   field.onChange(value);
-                  if (value === "user.manage") {
+                  if (value !== "packet.read") {
                     form.setValue("scope", "global");
                   }
                 }}
@@ -100,7 +102,7 @@ export const AddPermissionForUpdateForm = ({ addPermission, currentPermissions }
                 <RadioGroup
                   onValueChange={field.onChange}
                   className="flex flex-row space-x-3"
-                  disabled={!form.watch("permission") || form.watch("permission") === "user.manage"}
+                  disabled={form.watch("permission") !== "packet.read"}
                   value={field.value}
                 >
                   {PERMISSION_SCOPES.map((scope) => (

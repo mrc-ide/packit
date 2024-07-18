@@ -73,7 +73,7 @@ describe("AddPermissionForUpdateForm", () => {
     render(<AddPermissionForUpdateForm addPermission={addPermission} currentPermissions={[]} />);
 
     const allComboBox = screen.getAllByRole("combobox", { hidden: true });
-    userEvent.selectOptions(allComboBox[1], "packet.push");
+    userEvent.selectOptions(allComboBox[1], "outpack.write");
     userEvent.click(screen.getByRole("radio", { name: "tag" }));
 
     userEvent.click(allComboBox[2]);
@@ -83,7 +83,7 @@ describe("AddPermissionForUpdateForm", () => {
     userEvent.click(screen.getByRole("button"));
 
     await waitFor(() => {
-      expect(addPermission).toHaveBeenCalledWith({ permission: "packet.push", tag: testTag });
+      expect(addPermission).toHaveBeenCalledWith({ permission: "outpack.write", tag: testTag });
     });
   });
 
@@ -92,7 +92,7 @@ describe("AddPermissionForUpdateForm", () => {
     render(<AddPermissionForUpdateForm addPermission={addPermission} currentPermissions={[]} />);
 
     const allComboBox = screen.getAllByRole("combobox", { hidden: true });
-    userEvent.selectOptions(allComboBox[1], "packet.push");
+    userEvent.selectOptions(allComboBox[1], "outpack.write");
     userEvent.click(screen.getByRole("radio", { name: "tag" }));
 
     userEvent.click(screen.getByRole("button"));
@@ -115,12 +115,12 @@ describe("AddPermissionForUpdateForm", () => {
     render(
       <AddPermissionForUpdateForm
         addPermission={addPermission}
-        currentPermissions={[{ permission: "packet.push", tag: testTag }]}
+        currentPermissions={[{ permission: "outpack.write", tag: testTag }]}
       />
     );
 
     const allComboBox = screen.getAllByRole("combobox", { hidden: true });
-    userEvent.selectOptions(allComboBox[1], "packet.push");
+    userEvent.selectOptions(allComboBox[1], "outpack.write");
     userEvent.click(screen.getByRole("radio", { name: "tag" }));
 
     userEvent.click(allComboBox[2]);
