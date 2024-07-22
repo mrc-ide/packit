@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { BaseRolePermission } from "../types/RoleWithRelationships";
 import { AddScopedPermissionInput } from "./AddScopedPermissionInput";
 import { isDuplicateUpdatePermission } from "./utils/isDuplicateUpdatePermission";
+import { cn } from "../../../../../lib/cn";
 
 export const addPermissionFormSchema = z
   .object({
@@ -108,7 +109,11 @@ export const AddPermissionForUpdateForm = ({ addPermission, currentPermissions }
                       <FormControl>
                         <RadioGroupItem value={scope} />
                       </FormControl>
-                      <FormLabel className="font-normal">{scope === "packetGroup" ? "packet group" : scope}</FormLabel>
+                      <FormLabel
+                        className={cn("font-normal", form.watch("permission") !== "packet.read" && "opacity-70")}
+                      >
+                        {scope === "packetGroup" ? "packet group" : scope}
+                      </FormLabel>
                     </FormItem>
                   ))}
                 </RadioGroup>
