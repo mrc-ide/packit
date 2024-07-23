@@ -8,7 +8,8 @@ INSERT INTO "permission"
     ("name", "description")
 VALUES ('packet.read', 'Read packets'),
        ('packet.run', 'Run packets'),
-       ('packet.push', 'Push packets'),
+       ('outpack.read', 'Read from outpack server'),
+       ('outpack.write', 'Write to outpack server'),
        ('user.manage', 'Manage users');
 
 
@@ -19,4 +20,5 @@ INSERT
 INTO "role_permission" ("role_id", "permission_id")
 SELECT r.id, p.id
 FROM "role" r
-         CROSS JOIN permission_ids p;
+         CROSS JOIN permission_ids p
+WHERE r.name = 'ADMIN';

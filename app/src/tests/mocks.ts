@@ -34,24 +34,6 @@ export const mockUserState: UserState = {
   authorities: ["user.manage", "packet.read"]
 };
 
-/**
- * {
-  "aud": "packit",
-  "iss": "packit-api",
-  "userName": "d@gmail.com",
-  "displayName": "random pussio",
-  "datetime": 1715929239,
-  "au": [
-    "d@gmail.com",
-    "ADMIN",
-    "user.manage",
-    "packet.push",
-    "packet.run",
-    "packet.read"
-  ],
-  "exp": 1716015639
-}
- */
 export const mockToken =
   // eslint-disable-next-line max-len
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwYWNraXQiLCJpc3MiOiJwYWNraXQtYXBpIiwidXNlck5hbWUiOiJkQGdtYWlsLmNvbSIsImRpc3BsYXlOYW1lIjoicmFuZG9tIHB1c3NpbyIsImRhdGV0aW1lIjoxNzE1OTI5MjM5LCJhdSI6WyJkQGdtYWlsLmNvbSIsIkFETUlOIiwidXNlci5tYW5hZ2UiLCJwYWNrZXQucHVzaCIsInBhY2tldC5ydW4iLCJwYWNrZXQucmVhZCJdLCJleHAiOjE3MTYwMTU2Mzl9.l4GgV0YoENGT3tjS-2popxWxRHp_LRT5gIVP3nND838";
@@ -446,7 +428,7 @@ export const mockUsernameRolesWithRelationships: RoleWithRelationships[] = [
         id: 81
       },
       {
-        permission: "packet.push",
+        permission: "outpack.write",
         packet: null,
         tag: null,
         packetGroup: {
@@ -469,7 +451,7 @@ export const mockUsernameRolesWithRelationships: RoleWithRelationships[] = [
     name: "c@gmail.com",
     rolePermissions: [
       {
-        permission: "packet.push",
+        permission: "outpack.write",
         packet: null,
         tag: null,
         packetGroup: {
@@ -530,7 +512,7 @@ export const mockUsersWithRoles = [
         id: 81
       },
       {
-        permission: "packet.push",
+        permission: "outpack.write",
         packet: null,
         tag: null,
         packetGroup: {
@@ -571,7 +553,7 @@ export const mockUsersWithRoles = [
     ],
     specificPermissions: [
       {
-        permission: "packet.push",
+        permission: "outpack.write",
         packet: null,
         tag: null,
         packetGroup: {
