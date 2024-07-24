@@ -28,5 +28,21 @@ describe("api service", () => {
         /* eslint-enable */
         expect(appConfig.apiUrl).toThrow();
     });
+
+    test("uses PACKET NAMESPACE from environment", () => {
+        process.env.REACT_APP_PACKIT_NAMESPACE = "my-repo";
+        /* eslint-disable */
+        const appConfig = require("../config/appConfig").default;
+        /* eslint-enable */
+        expect(appConfig.appNamespace()).toBe("my-repo");
+    });
+
+    test("returns null when PACKET NAMESPACE is missing", () => {
+        delete process.env["REACT_APP_PACKIT_NAMESPACE"];
+        /* eslint-disable */
+        const appConfig = require("../config/appConfig").default;
+        /* eslint-enable */
+        expect(appConfig.appNamespace()).toBe(null);
+    });
 });
 
