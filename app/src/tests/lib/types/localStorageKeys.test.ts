@@ -15,6 +15,7 @@ describe("local storage keys", () => {
     test("local storage keys are namespaced correctly", () => {
         const ns = "test-ns";
         process.env.REACT_APP_PACKIT_NAMESPACE = ns;
+        /* eslint-disable */
         const keys = require("../../../lib/types/LocalStorageKeys").LocalStorageKeys;
         expect(keys).toStrictEqual({
             AUTH_CONFIG: `${ns}-authConfig`,
@@ -26,6 +27,7 @@ describe("local storage keys", () => {
 
     test("local storage keys are not namespaced when NAMESPACE unset", () => {
         delete process.env["REACT_APP_PACKIT_NAMESPACE"];
+        /* eslint-disable */
         const keys = require("../../../lib/types/LocalStorageKeys").LocalStorageKeys;
         expect(keys).toStrictEqual({
             AUTH_CONFIG: "authConfig",
