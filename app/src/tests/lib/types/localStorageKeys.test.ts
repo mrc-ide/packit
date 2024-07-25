@@ -18,10 +18,10 @@ describe("local storage keys", () => {
         /* eslint-disable */
         const keys = require("../../../lib/types/LocalStorageKeys").LocalStorageKeys;
         expect(keys).toStrictEqual({
-            AUTH_CONFIG: `${ns}-authConfig`,
-            USER: `${ns}-user`,
+            AUTH_CONFIG: `${ns}.authConfig`,
+            USER: `${ns}.user`,
             THEME: "ui-theme",
-            REQUESTED_URL: `${ns}-requestedUrl`
+            REQUESTED_URL: `${ns}.requestedUrl`
         })
     });
 

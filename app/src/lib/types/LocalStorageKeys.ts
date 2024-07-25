@@ -2,7 +2,7 @@ import appConfig from "../../config/appConfig";
 
 const getLocalStorageKey = (key: string) => {
   const ns = appConfig.appNamespace();
-  return ns ? `${ns}-${key}` : key;
+  return ns ? `${ns}.${key}` : key;
 } 
 
 export const LocalStorageKeys = {
