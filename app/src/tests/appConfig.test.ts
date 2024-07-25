@@ -29,7 +29,7 @@ describe("api service", () => {
         expect(appConfig.apiUrl).toThrow();
     });
 
-    test("uses PACKET NAMESPACE from environment", () => {
+    test("uses PACKIT NAMESPACE from environment", () => {
         process.env.REACT_APP_PACKIT_NAMESPACE = "my-repo";
         /* eslint-disable */
         const appConfig = require("../config/appConfig").default;
