@@ -37,7 +37,7 @@ describe("api service", () => {
         expect(appConfig.appNamespace()).toBe("my-repo");
     });
 
-    test("returns null when PACKET NAMESPACE is missing", () => {
+    test("returns null when PACKIT NAMESPACE is missing", () => {
         delete process.env["REACT_APP_PACKIT_NAMESPACE"];
         /* eslint-disable */
         const appConfig = require("../config/appConfig").default;
