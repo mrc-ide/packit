@@ -1,5 +1,6 @@
 interface AppConfig {
-    apiUrl: () => string
+    apiUrl: () => string,
+    appNamespace: () => string | null
 }
 
 const appConfig: AppConfig = {
@@ -8,6 +9,13 @@ const appConfig: AppConfig = {
             throw new Error("An API URL must be configured");
         } else {
             return process.env.REACT_APP_PACKIT_API_URL;
+        }
+    },
+    appNamespace: () => {
+        if (!process.env.REACT_APP_PACKIT_NAMESPACE) {
+            return null;
+        } else {
+            return process.env.REACT_APP_PACKIT_NAMESPACE;
         }
     }
 };
