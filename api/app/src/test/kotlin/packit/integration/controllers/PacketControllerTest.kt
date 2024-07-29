@@ -5,6 +5,7 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.fail
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.http.HttpMethod
@@ -36,7 +37,7 @@ class PacketControllerTest : IntegrationTest()
         packets = packetRepository.saveAll(
             listOf(
                 Packet(
-                    "20230427-150755-2dbede93",
+                    "20240729-154633-10abe7d1",
                     packetGroupNames[0],
                     "test-packetGroupName-1",
                     mapOf("name" to "value"),
@@ -175,7 +176,7 @@ class PacketControllerTest : IntegrationTest()
     fun `get packet metadata by packet id`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/metadata/20230427-150755-2dbede93",
+            "/packets/metadata/20240729-154633-10abe7d1",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -187,7 +188,7 @@ class PacketControllerTest : IntegrationTest()
     fun `get packet file by hash`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/file/20230427-150755-2dbede93" +
+            "/packets/file/20240729-154633-10abe7d1" +
                     "?hash=sha256:715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1" +
                     "&filename=report.html",
             HttpMethod.GET,
@@ -198,12 +199,12 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser(authorities = ["packet.read:packet:test-packetGroupName-1:20230427-150755-2dbede93"])
+    @WithAuthenticatedUser(authorities = ["packet.read:packet:test-packetGroupName-1:20240729-154633-10abe7d1"])
     fun `findPacketMetadata returns metadata if user has correct specific permission`()
     {
 
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/metadata/20230427-150755-2dbede93",
+            "/packets/metadata/20240729-154633-10abe7d1",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -216,7 +217,7 @@ class PacketControllerTest : IntegrationTest()
     {
 
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/metadata/20230427-150755-2dbede93",
+            "/packets/metadata/20240729-154633-10abe7d1",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -224,11 +225,11 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser(authorities = ["packet.read:packet:test-packetGroupName-1:20230427-150755-2dbede93"])
+    @WithAuthenticatedUser(authorities = ["packet.read:packet:test-packetGroupName-1:20240729-154633-10abe7d1"])
     fun `findFile returns file if user has correct specific permission`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/file/20230427-150755-2dbede93" +
+            "/packets/file/20240729-154633-10abe7d1" +
                     "?hash=sha256:715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1" +
                     "&filename=report.html",
             HttpMethod.GET,
@@ -243,7 +244,7 @@ class PacketControllerTest : IntegrationTest()
     fun `findFile returns 401 if incorrect specific permission`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/file/20230427-150755-2dbede93" +
+            "/packets/file/20240729-154633-10abe7d1" +
                     "?hash=sha256:715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1" +
                     "&filename=report.html",
             HttpMethod.GET,
