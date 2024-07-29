@@ -175,7 +175,7 @@ class PacketControllerTest : IntegrationTest()
     fun `get packet metadata by packet id`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/metadata/20240729-154639-25b955eb",
+            "/packets/metadata/20240729-154633-10abe7d1",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -203,7 +203,7 @@ class PacketControllerTest : IntegrationTest()
     {
 
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/metadata/20240729-154639-25b955eb",
+            "/packets/metadata/20240729-154633-10abe7d1",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
