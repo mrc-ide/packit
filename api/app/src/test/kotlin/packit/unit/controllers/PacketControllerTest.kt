@@ -71,6 +71,7 @@ class PacketControllerTest
         GitMetadata("git", "sha", emptyList()),
         TimeMetadata(Instant.now().epochSecond.toDouble(), Instant.now().epochSecond.toDouble()),
         emptyMap(),
+        emptyList()
     )
 
     private val htmlContentByteArray = "<html><body><h1>Test html file</h1></body></html>".toByteArray()

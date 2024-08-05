@@ -72,7 +72,7 @@ class OutpackControllerTest : IntegrationTest()
     fun `can GET plain text from outpack_server`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/outpack/metadata/20230427-150755-2dbede93/text",
+            "/outpack/metadata/20240729-154639-25b955eb/text",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -86,7 +86,7 @@ class OutpackControllerTest : IntegrationTest()
     fun `can GET file from outpack_server`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/outpack/file/sha256:1e2e932aa25493f54366fef8ec996a24ff3456c6b30d4ff6fa753e6263cf8ee0",
+            "/outpack/file/sha256:1a1b649d911106d45dcb58e535aae97904f465e66b11a38d7a70828b53e3a2eb",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )

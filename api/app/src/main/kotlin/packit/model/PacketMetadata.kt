@@ -7,12 +7,24 @@ data class PacketMetadata(
     val files: List<FileMetadata>?,
     val git: GitMetadata?,
     val time: TimeMetadata,
-    val custom: Map<String, Any>?
+    val custom: Map<String, Any>?,
+    val depends: List<DependsMetadata>?
+)
+
+data class DependsMetadata(
+    val packet: String,
+    val query: String,
+    val files: List<DependsFileMetadata>
+)
+
+data class DependsFileMetadata(
+    val here: String,
+    val there: String
 )
 
 data class GitMetadata(
-    val branch: String,
-    val sha: String,
+    val branch: String?,
+    val sha: String?,
     val url: List<String>
 )
 
