@@ -12,7 +12,7 @@ class RunnerServiceTest
     private val version = OrderlyRunnerVersion("test-version", "test-runner")
     private val orderlyRunnerClient =
         mock<OrderlyRunnerClient> {
-            on { getVersion() } do doReturn(version)
+            on { getVersion() } doReturn version
         }
 
     @Test
