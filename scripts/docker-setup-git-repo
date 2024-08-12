@@ -1,12 +1,15 @@
 #!/usr/bin/env sh
-set -ex
+set -exu
+
+HERE=$(realpath "$(dirname $0)")
+. "$HERE"/common
 
 git config --global --add safe.directory "*"
 
 git config --global user.email "coolemail@example.com"
 git config --global user.name "cooldude"
 
-cd /orderly-root-remote
+cd $CONTAINER_ORDERLY_REMOTE_ROOT_PATH
 git init
 
 echo ".outpack \n orderly_envir.yml \n draft \n archive \n .packit" > .gitignore
@@ -14,6 +17,6 @@ echo ".outpack \n orderly_envir.yml \n draft \n archive \n .packit" > .gitignore
 git add --all
 git commit -m "first commit"
 
-cd /orderly-root
+cd $CONTAINER_ORDERLY_ROOT_PATH
 
-git clone /orderly-root-remote /orderly-root
+git clone $CONTAINER_ORDERLY_REMOTE_ROOT_PATH $CONTAINER_ORDERLY_ROOT_PATH

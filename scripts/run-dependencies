@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -eu
 
 HERE=$(realpath "$(dirname $0)")
 . "$HERE"/common
@@ -9,52 +9,59 @@ HERE=$(realpath "$(dirname $0)")
 
 docker exec packit-db wait-for-db
 
-docker network create $NETWORK_NAME
+docker network create $NETWORK
 
 docker run --rm -d \
-       --net=$NETWORK_NAME \
-       --name=orderly.runner_redis \
+       --net=$NETWORK \
+       --name=$REDIS \
        -p 6379:6379 \
        redis
 
-docker volume create orderly-root-volume
-docker volume create orderly-root-remote-volume
+docker volume create $ORDERLY_VOLUME
+docker volume create $ORDERLY_REMOTE_VOLUME
 
 docker run -d --pull=missing \
-       --name=orderly.runner_debug \
-       --net=$NETWORK_NAME \
-       -v orderly-root-volume:/orderly-root \
-       -v orderly-root-remote-volume:/orderly-root-remote \
+       --name=$DEBUG \
+       --net=$NETWORK \
+       -v $ORDERLY_VOLUME:$CONTAINER_ORDERLY_ROOT_PATH \
+       -v $ORDERLY_REMOTE_VOLUME:$CONTAINER_ORDERLY_REMOTE_ROOT_PATH \
        --entrypoint="/bin/sh" \
        alpine/git \
        -c "sleep infinity"
 
-docker cp $HERE/../demos/orderly/. orderly.runner_debug:/orderly-root-remote
-docker cp $HERE/docker-setup-git-repo orderly.runner_debug:/docker-setup-git-repo
+docker cp $HERE/../demos/orderly/. $DEBUG:$CONTAINER_ORDERLY_REMOTE_ROOT_PATH
 
-docker exec orderly.runner_debug /docker-setup-git-repo
+docker exec $DEBUG sh -c "mkdir /setup-repo"
+
+docker cp $HERE/common $DEBUG:/setup-repo/.
+docker cp $HERE/docker-setup-git-repo $DEBUG:/setup-repo/.
+
+docker exec $DEBUG /setup-repo/docker-setup-git-repo
 
 docker run --pull=always --name outpack_server \
        --net=host \
-       -v orderly-root-volume:/outpack \
-       -v orderly-root-remote-volume:/orderly-root-remote \
+       -v $ORDERLY_VOLUME:/outpack \
+       -v $ORDERLY_REMOTE_VOLUME:$CONTAINER_ORDERLY_REMOTE_ROOT_PATH \
        -p 8000:8000 -d --rm \
        $OUTPACK_SERVER_TAG
 
-docker run -d --pull=always \
-       --net=$NETWORK_NAME \
-       --name=orderly.runner_server \
+docker run --rm -d --pull=always \
+       --net=$NETWORK \
+       --name=$SERVER \
        --entrypoint="/usr/local/bin/orderly.runner.server" \
+       --env=ORDERLY_RUNNER_QUEUE_ID=$ORDERLY_RUNNER_QUEUE_ID \
+       --env=REDIS_CONTAINER_NAME=$REDIS \
        -p 8001:8001 \
-       -v orderly-root-volume:/orderly-root \
-       -v orderly-root-remote-volume:/orderly-root-remote \
-       ghcr.io/mrc-ide/orderly.runner:mrc-5146-container-gh-actions \
-       /orderly-root
+       -v $ORDERLY_VOLUME:$CONTAINER_ORDERLY_ROOT_PATH \
+       $ORDERLY_RUNNER_IMAGE \
+       $CONTAINER_ORDERLY_ROOT_PATH
 
 docker run --rm -d --pull=always \
-       --net=$NETWORK_NAME \
-       --name=orderly.runner_worker \
+       --net=$NETWORK \
+       --name=$WORKER \
        --entrypoint="/usr/local/bin/orderly.runner.worker" \
-       -v orderly-root-volume:/orderly-root \
-       ghcr.io/mrc-ide/orderly.runner:mrc-5146-container-gh-actions \
-       /orderly-root
+       --env=ORDERLY_RUNNER_QUEUE_ID=$ORDERLY_RUNNER_QUEUE_ID \
+       --env=REDIS_CONTAINER_NAME=$REDIS \
+       -v $ORDERLY_VOLUME:$CONTAINER_ORDERLY_ROOT_PATH \
+       $ORDERLY_RUNNER_IMAGE \
+       $CONTAINER_ORDERLY_ROOT_PATH

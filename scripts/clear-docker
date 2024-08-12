@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
+HERE=$(realpath "$(dirname $0)")
+. "$HERE"/common
+
 docker rm --force $(docker ps --all --quiet) || true
 docker network prune --force
 docker volume prune --force
 
-docker volume rm orderly-root-volume orderly-root-remote-volume
+docker volume rm $ORDERLY_VOLUME $ORDERLY_REMOTE_VOLUME
