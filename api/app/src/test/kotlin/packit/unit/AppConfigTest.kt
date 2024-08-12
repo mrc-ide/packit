@@ -15,6 +15,7 @@ class AppConfigTest
 {
     private val environmentVariables = mapOf(
         "outpack.server.url" to "url",
+        "orderly.runner.url" to "url",
         "db.url" to "url",
         "db.user" to "user",
         "db.password" to "password",
