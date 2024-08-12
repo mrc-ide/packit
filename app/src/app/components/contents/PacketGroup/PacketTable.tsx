@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Skeleton } from "../../Base/Skeleton";
 import { DataTable } from "../common/DataTable";
@@ -9,11 +9,6 @@ import { packetColumns } from "./packetColumns";
 import { PAGE_SIZE } from "../../../../lib/constants";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
 import { Unauthorized } from "../common/Unauthorized";
-import useSWR from "swr";
-import appConfig from "../../../../config/appConfig";
-import { fetcher } from "../../../../lib/fetch";
-
-type OrderlyRunnerVersion = any
 
 // TODO: make table more feature rich (sorting, filter, etc). May need to fetch all data then and let tanstack handle
 export const PacketTable = () => {
@@ -21,15 +16,6 @@ export const PacketTable = () => {
   const [pageNumber, setPageNumber] = useState(0);
 
   const { packetGroups, error, isLoading } = useGetPacketGroups(packetName, pageNumber, PAGE_SIZE);
-
-  const { data } = useSWR<OrderlyRunnerVersion>(
-    `${appConfig.apiUrl()}/runner/version`,
-    (url: string) => fetcher({ url })
-  );
-
-  useEffect(() => {
-    console.log({data});
-  }, [data])
 
   if (error?.status === HttpStatus.Unauthorized) return <Unauthorized />;
   if (error) return <ErrorComponent message="Error fetching packets" error={error} />;
