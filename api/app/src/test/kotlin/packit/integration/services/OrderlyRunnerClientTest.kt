@@ -18,7 +18,7 @@ class OrderlyRunnerClientTest : IntegrationTest()
     {
         val result = sut.getVersion()
         assertEquals(
-            OrderlyRunnerVersion("1.99.0", "0.1.0"),
+            OrderlyRunnerVersion("1.99.25", "0.1.0"),
             result
         )
     }
