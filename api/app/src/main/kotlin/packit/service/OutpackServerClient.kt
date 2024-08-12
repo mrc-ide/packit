@@ -12,7 +12,7 @@ import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate
 import packit.AppConfig
 import packit.exceptions.PackitException
-import packit.model.OutpackResponse
+import packit.model.ServerResponse
 import packit.model.PacketMetadata
 import packit.model.dto.OutpackMetadata
 import java.net.URI
@@ -113,14 +113,14 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
             url,
             HttpMethod.GET,
             HttpEntity.EMPTY,
-            object : ParameterizedTypeReference<OutpackResponse<T>>()
+            object : ParameterizedTypeReference<ServerResponse<T>>()
             {}
         )
 
         return handleResponse(response)
     }
 
-    private fun <T> handleResponse(response: ResponseEntity<OutpackResponse<T>>): T
+    private fun <T> handleResponse(response: ResponseEntity<ServerResponse<T>>): T
     {
         if (response.statusCode.isError)
         {

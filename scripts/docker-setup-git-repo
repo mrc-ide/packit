@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+set -ex
+
+git config --global --add safe.directory "*"
+
+git config --global user.email "coolemail@example.com"
+git config --global user.name "cooldude"
+
+cd /orderly-root-remote
+git init
+
+echo ".outpack \n orderly_envir.yml \n draft \n archive \n .packit" > .gitignore
+
+git add --all
+git commit -m "first commit"
+
+cd /orderly-root
+
+git clone /orderly-root-remote /orderly-root

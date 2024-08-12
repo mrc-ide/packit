@@ -9,9 +9,52 @@ HERE=$(realpath "$(dirname $0)")
 
 docker exec packit-db wait-for-db
 
-# Start outpack_server
-docker pull $OUTPACK_SERVER_TAG
-docker run --name outpack_server \
-  -v $HERE/../demos/orderly:/outpack \
-  -p 8000:8000 -d --rm \
-  $OUTPACK_SERVER_TAG
+docker network create $NETWORK_NAME
+
+docker run --rm -d \
+       --net=$NETWORK_NAME \
+       --name=orderly.runner_redis \
+       -p 6379:6379 \
+       redis
+
+docker volume create orderly-root-volume
+docker volume create orderly-root-remote-volume
+
+docker run -d --pull=missing \
+       --name=orderly.runner_debug \
+       --net=$NETWORK_NAME \
+       -v orderly-root-volume:/orderly-root \
+       -v orderly-root-remote-volume:/orderly-root-remote \
+       --entrypoint="/bin/sh" \
+       alpine/git \
+       -c "sleep infinity"
+
+docker cp $HERE/../demos/orderly/. orderly.runner_debug:/orderly-root-remote
+docker cp $HERE/docker-setup-git-repo orderly.runner_debug:/docker-setup-git-repo
+
+docker exec orderly.runner_debug /docker-setup-git-repo
+
+docker run --pull=always --name outpack_server \
+       --net=host \
+       -v orderly-root-volume:/outpack \
+       -v orderly-root-remote-volume:/orderly-root-remote \
+       -p 8000:8000 -d --rm \
+       $OUTPACK_SERVER_TAG
+
+docker run -d --pull=always \
+       --net=$NETWORK_NAME \
+       --name=orderly.runner_server \
+       --entrypoint="/usr/local/bin/orderly.runner.server" \
+       -p 8001:8001 \
+       -v orderly-root-volume:/orderly-root \
+       -v orderly-root-remote-volume:/orderly-root-remote \
+       ghcr.io/mrc-ide/orderly.runner:mrc-5146-container-gh-actions \
+       /orderly-root
+
+docker run --rm -d --pull=always \
+       --net=$NETWORK_NAME \
+       --name=orderly.runner_worker \
+       --entrypoint="/usr/local/bin/orderly.runner.worker" \
+       -v orderly-root-volume:/orderly-root \
+       ghcr.io/mrc-ide/orderly.runner:mrc-5146-container-gh-actions \
+       /orderly-root

@@ -3,4 +3,8 @@ set -ex
 
 # Export env vars needed for running test dependencies
 export ORG=mrcide
-export OUTPACK_SERVER_TAG=$ORG/outpack_server:main
+export OUTPACK_SERVER_TAG=$ORG/outpack_server:497d8b1
+
+export ORDERLY_RUNNER_TAG=ghcr.io/mrc-ide/orderly.runner:mrc-5146-container-gh-actions
+
+export NETWORK_NAME=orderly.runner_network
