@@ -1,10 +1,10 @@
 package packit.unit.service
 
-import org.mockito.kotlin.*
-import packit.service.OrderlyRunnerClient
-import packit.service.BaseRunnerService
-import packit.model.dto.OrderlyRunnerVersion
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.*
+import packit.model.dto.OrderlyRunnerVersion
+import packit.service.BaseRunnerService
+import packit.service.OrderlyRunnerClient
 import kotlin.test.assertEquals
 
 class RunnerServiceTest

@@ -12,8 +12,8 @@ import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate
 import packit.AppConfig
 import packit.exceptions.PackitException
-import packit.model.ServerResponse
 import packit.model.PacketMetadata
+import packit.model.ServerResponse
 import packit.model.dto.OutpackMetadata
 import java.net.URI
 

@@ -1,13 +1,13 @@
 package packit.service
 
+import org.slf4j.LoggerFactory
+import org.springframework.core.ParameterizedTypeReference
+import org.springframework.http.*
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import packit.AppConfig
-import org.slf4j.LoggerFactory
-import org.springframework.core.ParameterizedTypeReference
-import packit.model.ServerResponse
-import org.springframework.http.*
 import packit.exceptions.PackitException
+import packit.model.ServerResponse
 import packit.model.dto.OrderlyRunnerVersion
 
 interface OrderlyRunner
@@ -21,7 +21,7 @@ class OrderlyRunnerClient(appConfig: AppConfig) : OrderlyRunner
     val baseUrl: String = appConfig.orderlyRunnerUrl
     private val restTemplate = RestTemplate()
 
-    override fun getVersion() : OrderlyRunnerVersion
+    override fun getVersion(): OrderlyRunnerVersion
     {
         return getEndpoint("/")
     }
