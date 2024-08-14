@@ -1,15 +1,14 @@
 package packit.service
 
 import org.springframework.stereotype.Service
-import packit.model.dto.GitBranchInfo
+import packit.model.dto.GitBranches
 import packit.model.dto.OrderlyRunnerVersion
 
 interface RunnerService
 {
     fun getVersion(): OrderlyRunnerVersion
     fun gitFetch()
-
-    fun getBranches(): List<GitBranchInfo>
+    fun getBranches(): GitBranches
 }
 
 @Service
@@ -28,9 +27,8 @@ class BaseRunnerService(
         outpackServerClient.gitFetch()
     }
 
-    override fun getBranches(): List<GitBranchInfo>
+    override fun getBranches(): GitBranches
     {
         return outpackServerClient.getBranches()
     }
-
 }

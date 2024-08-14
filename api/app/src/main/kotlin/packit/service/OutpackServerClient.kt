@@ -14,7 +14,7 @@ import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.model.PacketMetadata
 import packit.model.ServerResponse
-import packit.model.dto.GitBranchInfo
+import packit.model.dto.GitBranches
 import packit.model.dto.OutpackMetadata
 import java.net.URI
 
@@ -26,8 +26,7 @@ interface OutpackServer
     fun proxyRequest(urlFragment: String, request: HttpServletRequest, response: HttpServletResponse)
     fun getChecksum(): String
     fun gitFetch()
-
-    fun getBranches(): List<GitBranchInfo>
+    fun getBranches(): GitBranches
 }
 
 @Service
@@ -103,7 +102,7 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
         return postEndpoint("git/fetch")
     }
 
-    override fun getBranches(): List<GitBranchInfo>
+    override fun getBranches(): GitBranches
     {
         return getEndpoint("git/branches")
     }

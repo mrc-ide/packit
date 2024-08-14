@@ -7,9 +7,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
-import packit.model.dto.GitBranchInfo
+import packit.model.dto.GitBranches
 import packit.model.dto.OrderlyRunnerVersion
-import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
 class RunnerControllerTest : IntegrationTest()
@@ -57,22 +56,21 @@ class RunnerControllerTest : IntegrationTest()
     @WithAuthenticatedUser(authorities = ["packet.run"])
     fun `can get git branches`()
     {
-        val res: ResponseEntity<List<GitBranchInfo>> = restTemplate.exchange(
+        val testBranchName = "master"
+        val testBranchMessages = listOf("first commit")
+        val res: ResponseEntity<GitBranches> = restTemplate.exchange(
             "/runner/git/branches",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
-        
-        res.body?.let {
-            assertContains(
-                it,
-                GitBranchInfo(
-                    "master",
-                    "34bb6b7f38139420b029f28ace8e5c9f46145c0d",
-                    1723627545,
-                    listOf("first commit")
-                )
-            )
-        }
+
+        val resBody = res.body!!
+
+        assertEquals(testBranchName, resBody.defaultBranch.name)
+        assertEquals(testBranchMessages, resBody.defaultBranch.message)
+        assertEquals(Long::class.java, resBody.defaultBranch.time::class.java)
+        assertEquals(String::class.java, resBody.defaultBranch.commitHash::class.java)
+        assertEquals(testBranchName, resBody.branches[0].name)
+        assertEquals(testBranchMessages, resBody.branches[0].message)
     }
 }

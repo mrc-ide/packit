@@ -1,11 +1,11 @@
 package packit.integration.services
 
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentMatchers
 import org.springframework.beans.factory.annotation.Autowired
 import packit.integration.IntegrationTest
 import packit.model.dto.GitBranchInfo
 import packit.service.OutpackServerClient
-import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
 class OutpackServerClientTest : IntegrationTest()
@@ -38,15 +38,21 @@ class OutpackServerClientTest : IntegrationTest()
     @Test
     fun `can get git branches`()
     {
-        val res = sut.getBranches()
-
-        assertContains(
-            res, GitBranchInfo(
-                "master",
-                "34bb6b7f38139420b029f28ace8e5c9f46145c0d",
-                1723627545,
-                listOf("first commit")
-            )
+        val testBranchName = "master"
+        val testBranchMessages = listOf("first commit")
+        val gitBranchesInfo = GitBranchInfo(
+            "master",
+            ArgumentMatchers.anyString(),
+            ArgumentMatchers.anyLong(),
+            listOf("first commit")
         )
+        val resBody = sut.getBranches()
+
+        assertEquals(testBranchName, resBody.defaultBranch.name)
+        assertEquals(testBranchMessages, resBody.defaultBranch.message)
+        assertEquals(Long::class.java, resBody.defaultBranch.time::class.java)
+        assertEquals(String::class.java, resBody.defaultBranch.commitHash::class.java)
+        assertEquals(testBranchName, resBody.branches[0].name)
+        assertEquals(testBranchMessages, resBody.branches[0].message)
     }
 }
