@@ -1,10 +1,12 @@
 package packit.unit.service
 
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.`when`
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import packit.model.dto.OrderlyRunnerVersion
+import packit.model.dto.Parameter
 import packit.service.BaseRunnerService
 import packit.service.OrderlyRunnerClient
 import packit.service.OutpackServerClient
@@ -43,5 +45,22 @@ class RunnerServiceTest
         sut.getBranches()
 
         verify(outpackServerClient).getBranches()
+    }
+
+    @Test
+    fun `can get parameters`()
+    {
+        val packetGroupName = "test-packet-group"
+        val ref = "commit-name"
+        val testParameters = listOf(
+            Parameter("test-name", "test-value")
+        )
+        `when`(orderlyRunnerClient.getParameters(packetGroupName, ref)).thenReturn(testParameters)
+        val sut = BaseRunnerService(orderlyRunnerClient, outpackServerClient)
+
+        val parameters = sut.getParameters(packetGroupName, ref)
+
+        verify(orderlyRunnerClient).getParameters(packetGroupName, ref)
+        assertEquals(testParameters, parameters)
     }
 }

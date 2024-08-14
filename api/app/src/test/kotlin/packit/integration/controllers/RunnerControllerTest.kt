@@ -9,6 +9,7 @@ import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
 import packit.model.dto.GitBranches
 import packit.model.dto.OrderlyRunnerVersion
+import packit.model.dto.Parameter
 import kotlin.test.assertEquals
 
 class RunnerControllerTest : IntegrationTest()
@@ -72,5 +73,24 @@ class RunnerControllerTest : IntegrationTest()
         assertEquals(String::class.java, resBody.defaultBranch.commitHash::class.java)
         assertEquals(testBranchName, resBody.branches[0].name)
         assertEquals(testBranchMessages, resBody.branches[0].message)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.run"])
+    fun `can get parameters`()
+    {
+        val testPacketGroupName = "parameters"
+        val expectedParameters = listOf(
+            Parameter("a", null),
+            Parameter("b", "2"),
+            Parameter("c", null)
+        )
+        val res: ResponseEntity<List<Parameter>> = restTemplate.exchange(
+            "/runner/$testPacketGroupName/parameters?ref=master",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        assertEquals(expectedParameters, res.body)
     }
 }
