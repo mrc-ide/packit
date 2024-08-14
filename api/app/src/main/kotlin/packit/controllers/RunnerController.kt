@@ -1,15 +1,14 @@
 package packit.controllers
 
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.*
 import packit.model.dto.OrderlyRunnerVersion
 import packit.service.RunnerService
 
 @RestController
 @RequestMapping("/runner")
+@PreAuthorize("hasAuthority('packet.run')")
 class RunnerController(private val runnerService: RunnerService)
 {
     @GetMapping("/version")
@@ -17,5 +16,12 @@ class RunnerController(private val runnerService: RunnerService)
     fun getVersion(): ResponseEntity<OrderlyRunnerVersion>
     {
         return ResponseEntity.ok(runnerService.getVersion())
+    }
+
+    @PostMapping("/git/fetch")
+    fun gitFetch(): ResponseEntity<Unit>
+    {
+        runnerService.gitFetch()
+        return ResponseEntity.noContent().build()
     }
 }

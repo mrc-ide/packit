@@ -3,7 +3,7 @@ set -exu
 
 # Export env vars needed for running test dependencies
 export ORG=mrcide
-export OUTPACK_SERVER_TAG=$ORG/outpack_server:497d8b1
+export OUTPACK_SERVER_TAG=$ORG/outpack_server:mrc-4973-git-branches
 
 export CONTAINER_NAMESPACE=orderly.runner
 

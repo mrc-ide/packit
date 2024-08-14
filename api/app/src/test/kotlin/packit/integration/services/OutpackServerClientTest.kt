@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import packit.integration.IntegrationTest
 import packit.service.OutpackServerClient
+import kotlin.test.assertEquals
 
 class OutpackServerClientTest : IntegrationTest()
 {
@@ -23,5 +24,12 @@ class OutpackServerClientTest : IntegrationTest()
     {
         val result = sut.getMetadata()
         assert(result.map { it.name }.containsAll(listOf("parameters", "explicit", "depends", "computed-resource")))
+    }
+
+    @Test
+    fun `can git fetch`()
+    {
+        val res = sut.gitFetch()
+        assertEquals(Unit, res)
     }
 }
