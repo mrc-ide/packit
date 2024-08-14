@@ -100,8 +100,7 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
 
     override fun gitFetch()
     {
-        var urlFragment = "git/fetch"
-        return postEndpoint(urlFragment)
+        return postEndpoint("git/fetch")
     }
 
     override fun getBranches(): List<GitBranchInfo>

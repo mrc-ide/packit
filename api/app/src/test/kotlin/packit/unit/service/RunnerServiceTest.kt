@@ -35,4 +35,13 @@ class RunnerServiceTest
 
         verify(outpackServerClient).gitFetch()
     }
+
+    @Test
+    fun `can get branches`()
+    {
+        val sut = BaseRunnerService(orderlyRunnerClient, outpackServerClient)
+        sut.getBranches()
+
+        verify(outpackServerClient).getBranches()
+    }
 }
