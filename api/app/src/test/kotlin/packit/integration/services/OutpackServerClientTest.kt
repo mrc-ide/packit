@@ -1,10 +1,8 @@
 package packit.integration.services
 
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers
 import org.springframework.beans.factory.annotation.Autowired
 import packit.integration.IntegrationTest
-import packit.model.dto.GitBranchInfo
 import packit.service.OutpackServerClient
 import kotlin.test.assertEquals
 
@@ -40,19 +38,13 @@ class OutpackServerClientTest : IntegrationTest()
     {
         val testBranchName = "master"
         val testBranchMessages = listOf("first commit")
-        val gitBranchesInfo = GitBranchInfo(
-            "master",
-            ArgumentMatchers.anyString(),
-            ArgumentMatchers.anyLong(),
-            listOf("first commit")
-        )
-        val resBody = sut.getBranches()
+        val gitBranches = sut.getBranches()
 
-        assertEquals(testBranchName, resBody.defaultBranch.name)
-        assertEquals(testBranchMessages, resBody.defaultBranch.message)
-        assertEquals(Long::class.java, resBody.defaultBranch.time::class.java)
-        assertEquals(String::class.java, resBody.defaultBranch.commitHash::class.java)
-        assertEquals(testBranchName, resBody.branches[0].name)
-        assertEquals(testBranchMessages, resBody.branches[0].message)
+        assertEquals(testBranchName, gitBranches.defaultBranch.name)
+        assertEquals(testBranchMessages, gitBranches.defaultBranch.message)
+        assertEquals(Long::class.java, gitBranches.defaultBranch.time::class.java)
+        assertEquals(String::class.java, gitBranches.defaultBranch.commitHash::class.java)
+        assertEquals(testBranchName, gitBranches.branches[0].name)
+        assertEquals(testBranchMessages, gitBranches.branches[0].message)
     }
 }
