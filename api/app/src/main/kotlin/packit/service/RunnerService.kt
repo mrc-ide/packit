@@ -17,8 +17,8 @@ interface RunnerService
 
 @Service
 class BaseRunnerService(
-    private val orderlyRunnerClient: OrderlyRunnerClient,
-    private val outpackServerClient: OutpackServerClient
+    private val orderlyRunnerClient: OrderlyRunner,
+    private val outpackServerClient: OutpackServer
 ) : RunnerService
 {
     override fun getVersion(): OrderlyRunnerVersion
