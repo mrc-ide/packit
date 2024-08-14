@@ -35,4 +35,16 @@ class OrderlyRunnerClientTest : IntegrationTest()
 
         assertEquals(expectedParameters, result)
     }
+
+    @Test
+    fun `can get packet groups`()
+    {
+        val runnerPacketGroups = sut.getPacketGroups("HEAD")
+
+        runnerPacketGroups.forEach {
+            assertEquals(String::class.java, it.name::class.java)
+            assertEquals(Long::class.java, it.updatedTime::class.java)
+            assertEquals(Boolean::class.java, it.hasModifications::class.java)
+        }
+    }
 }

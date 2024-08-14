@@ -7,6 +7,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import packit.model.dto.OrderlyRunnerVersion
 import packit.model.dto.Parameter
+import packit.model.dto.RunnerPacketGroup
 import packit.service.BaseRunnerService
 import packit.service.OrderlyRunnerClient
 import packit.service.OutpackServerClient
@@ -62,5 +63,22 @@ class RunnerServiceTest
 
         verify(orderlyRunnerClient).getParameters(packetGroupName, ref)
         assertEquals(testParameters, parameters)
+    }
+
+    @Test
+    fun `can get packet groups for ref`()
+    {
+        val testRunnerPacketGroups = listOf(
+            RunnerPacketGroup("test-group", 0, true),
+            RunnerPacketGroup("test-group", 1, false)
+        )
+        val ref = "branch-name"
+        `when`(orderlyRunnerClient.getPacketGroups(ref)).thenReturn(testRunnerPacketGroups)
+        val sut = BaseRunnerService(orderlyRunnerClient, outpackServerClient)
+
+        val packetGroups = sut.getPacketGroups(ref)
+
+        verify(orderlyRunnerClient).getPacketGroups(ref)
+        assertEquals(testRunnerPacketGroups, packetGroups)
     }
 }

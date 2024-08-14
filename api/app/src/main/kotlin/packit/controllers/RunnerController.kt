@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*
 import packit.model.dto.GitBranches
 import packit.model.dto.OrderlyRunnerVersion
 import packit.model.dto.Parameter
+import packit.model.dto.RunnerPacketGroup
 import packit.service.RunnerService
 
 @RestController
@@ -40,5 +41,11 @@ class RunnerController(private val runnerService: RunnerService)
     ): ResponseEntity<List<Parameter>>
     {
         return ResponseEntity.ok(runnerService.getParameters(packetGroupName, ref))
+    }
+
+    @GetMapping("/packetGroups")
+    fun getPacketGroups(@RequestParam(defaultValue = "HEAD") ref: String): ResponseEntity<List<RunnerPacketGroup>>
+    {
+        return ResponseEntity.ok(runnerService.getPacketGroups(ref))
     }
 }

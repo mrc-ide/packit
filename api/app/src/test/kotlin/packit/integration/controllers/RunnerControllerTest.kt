@@ -10,6 +10,7 @@ import packit.integration.WithAuthenticatedUser
 import packit.model.dto.GitBranches
 import packit.model.dto.OrderlyRunnerVersion
 import packit.model.dto.Parameter
+import packit.model.dto.RunnerPacketGroup
 import kotlin.test.assertEquals
 
 class RunnerControllerTest : IntegrationTest()
@@ -92,5 +93,22 @@ class RunnerControllerTest : IntegrationTest()
         )
 
         assertEquals(expectedParameters, res.body)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.run"])
+    fun `can get list of packetGroups`()
+    {
+        val res: ResponseEntity<List<RunnerPacketGroup>> = restTemplate.exchange(
+            "/runner/packetGroups?ref=master",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        res.body!!.forEach {
+            assertEquals(String::class.java, it.name::class.java)
+            assertEquals(Long::class.java, it.updatedTime::class.java)
+            assertEquals(Boolean::class.java, it.hasModifications::class.java)
+        }
     }
 }

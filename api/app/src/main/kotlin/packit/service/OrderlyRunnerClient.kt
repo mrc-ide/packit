@@ -12,11 +12,13 @@ import packit.exceptions.PackitException
 import packit.model.ServerResponse
 import packit.model.dto.OrderlyRunnerVersion
 import packit.model.dto.Parameter
+import packit.model.dto.RunnerPacketGroup
 
 interface OrderlyRunner
 {
     fun getVersion(): OrderlyRunnerVersion
     fun getParameters(packetGroupName: String, ref: String): List<Parameter>
+    fun getPacketGroups(ref: String): List<RunnerPacketGroup>
 }
 
 @Service
@@ -33,6 +35,11 @@ class OrderlyRunnerClient(appConfig: AppConfig) : OrderlyRunner
     override fun getParameters(packetGroupName: String, ref: String): List<Parameter>
     {
         return getEndpoint("/report/$packetGroupName/parameters?ref=$ref")
+    }
+
+    override fun getPacketGroups(ref: String): List<RunnerPacketGroup>
+    {
+        return getEndpoint("/report/list?ref=$ref")
     }
 
     private inline fun <reified T> getEndpoint(urlFragment: String): T
