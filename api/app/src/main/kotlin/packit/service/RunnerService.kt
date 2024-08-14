@@ -24,5 +24,4 @@ class BaseRunnerService(
     {
         outpackServerClient.gitFetch()
     }
-
 }
