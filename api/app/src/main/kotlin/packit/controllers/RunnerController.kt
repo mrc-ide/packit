@@ -3,6 +3,7 @@ package packit.controllers
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
+import packit.model.dto.GitBranchInfo
 import packit.model.dto.OrderlyRunnerVersion
 import packit.service.RunnerService
 
@@ -23,5 +24,11 @@ class RunnerController(private val runnerService: RunnerService)
     {
         runnerService.gitFetch()
         return ResponseEntity.noContent().build()
+    }
+
+    @GetMapping("git/branches")
+    fun getBranches(): ResponseEntity<List<GitBranchInfo>>
+    {
+        return ResponseEntity.ok(runnerService.getBranches())
     }
 }
