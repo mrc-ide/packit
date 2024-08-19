@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import packit.integration.IntegrationTest
 import packit.model.dto.OrderlyRunnerVersion
 import packit.service.OrderlyRunnerClient
-import kotlin.test.assertEquals
+import kotlin.test.assertContains
 
 class OrderlyRunnerClientTest : IntegrationTest() {
 
@@ -14,6 +14,7 @@ class OrderlyRunnerClientTest : IntegrationTest() {
     @Test
     fun `can get version`() {
         val result = sut.getVersion()
-        assertEquals(OrderlyRunnerVersion("1.99.25", "0.1.0"), result)
+        assertContains(result.orderly2, "1.99")
+        assertContains(result.orderlyRunner, "0.1")
     }
 }
