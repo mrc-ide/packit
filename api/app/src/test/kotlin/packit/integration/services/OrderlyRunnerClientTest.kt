@@ -3,7 +3,6 @@ package packit.integration.services
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import packit.integration.IntegrationTest
-import packit.model.dto.OrderlyRunnerVersion
 import packit.service.OrderlyRunnerClient
 import kotlin.test.assertContains
 
