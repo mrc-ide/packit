@@ -9,11 +9,11 @@ HERE=$(realpath "$(dirname $0)")
 
 docker exec packit-db wait-for-db
 
-docker network create $NETWORK
+docker network create $RUNNER_NETWORK
 
 docker run --rm -d \
-       --net=$NETWORK \
-       --name=$REDIS \
+       --net=$RUNNER_NETWORK \
+       --name=$RUNNER_REDIS \
        -p 6379:6379 \
        redis
 
@@ -21,22 +21,22 @@ docker volume create $ORDERLY_VOLUME
 docker volume create $ORDERLY_REMOTE_VOLUME
 
 docker run -d --pull=missing \
-       --name=$DEBUG \
-       --net=$NETWORK \
+       --name=$RUNNER_DEBUG \
+       --net=$RUNNER_NETWORK \
        -v $ORDERLY_VOLUME:$CONTAINER_ORDERLY_ROOT_PATH \
        -v $ORDERLY_REMOTE_VOLUME:$CONTAINER_ORDERLY_REMOTE_ROOT_PATH \
        --entrypoint="/bin/sh" \
        alpine/git \
        -c "sleep infinity"
 
-docker cp $HERE/../demos/orderly/. $DEBUG:$CONTAINER_ORDERLY_REMOTE_ROOT_PATH
+docker cp $HERE/../demos/orderly/. $RUNNER_DEBUG:$CONTAINER_ORDERLY_REMOTE_ROOT_PATH
 
-docker exec $DEBUG sh -c "mkdir /setup-repo"
+docker exec $RUNNER_DEBUG sh -c "mkdir /setup-repo"
 
-docker cp $HERE/common $DEBUG:/setup-repo/.
-docker cp $HERE/docker-setup-git-repo $DEBUG:/setup-repo/.
+docker cp $HERE/common $RUNNER_DEBUG:/setup-repo/.
+docker cp $HERE/docker-setup-git-repo $RUNNER_DEBUG:/setup-repo/.
 
-docker exec $DEBUG /setup-repo/docker-setup-git-repo
+docker exec $RUNNER_DEBUG /setup-repo/docker-setup-git-repo
 
 docker run --pull=always --name outpack_server \
        --net=host \
@@ -46,22 +46,22 @@ docker run --pull=always --name outpack_server \
        $OUTPACK_SERVER_TAG
 
 docker run --rm -d --pull=always \
-       --net=$NETWORK \
-       --name=$SERVER \
+       --net=$RUNNER_NETWORK \
+       --name=$RUNNER_SERVER \
        --entrypoint="/usr/local/bin/orderly.runner.server" \
        --env=ORDERLY_RUNNER_QUEUE_ID=$ORDERLY_RUNNER_QUEUE_ID \
-       --env=REDIS_CONTAINER_NAME=$REDIS \
+       --env=REDIS_CONTAINER_NAME=$RUNNER_REDIS \
        -p 8001:8001 \
        -v $ORDERLY_VOLUME:$CONTAINER_ORDERLY_ROOT_PATH \
        $ORDERLY_RUNNER_IMAGE \
        $CONTAINER_ORDERLY_ROOT_PATH
 
 docker run --rm -d --pull=always \
-       --net=$NETWORK \
-       --name=$WORKER \
+       --net=$RUNNER_NETWORK \
+       --name=$RUNNER_WORKER \
        --entrypoint="/usr/local/bin/orderly.runner.worker" \
        --env=ORDERLY_RUNNER_QUEUE_ID=$ORDERLY_RUNNER_QUEUE_ID \
-       --env=REDIS_CONTAINER_NAME=$REDIS \
+       --env=REDIS_CONTAINER_NAME=$RUNNER_REDIS \
        -v $ORDERLY_VOLUME:$CONTAINER_ORDERLY_ROOT_PATH \
        $ORDERLY_RUNNER_IMAGE \
        $CONTAINER_ORDERLY_ROOT_PATH
