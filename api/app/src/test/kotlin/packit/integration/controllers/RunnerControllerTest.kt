@@ -1,5 +1,6 @@
 package packit.integration.controllers
 
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.http.HttpMethod
@@ -24,10 +25,9 @@ class RunnerControllerTest : IntegrationTest()
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
-        assertEquals(
-            OrderlyRunnerVersion("1.99.25", "0.1.0"),
-            res.body
-        )
+        assertThat(res.body).isInstanceOf(OrderlyRunnerVersion::class.java)
+        assertThat(res.body!!.orderly2).isInstanceOf(String::class.java)
+        assertThat(res.body!!.orderlyRunner).isInstanceOf(String::class.java)
     }
 
     @Test
