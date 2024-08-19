@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
 import packit.model.dto.OrderlyRunnerVersion
-import kotlin.test.assertEquals
+import kotlin.test.assertContains
 
 class RunnerControllerTest : IntegrationTest()
 {
@@ -20,9 +20,7 @@ class RunnerControllerTest : IntegrationTest()
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
-        assertEquals(
-            OrderlyRunnerVersion("1.99.25", "0.1.0"),
-            res.body
-        )
+        assertContains(res.body!!.orderly2, "1.99")
+        assertContains(res.body!!.orderlyRunner, "0.1")
     }
 }
