@@ -7,7 +7,7 @@ HERE=$(realpath "$(dirname $0)")
 docker rm -f \
     packit-db \
     $RUNNER_REDIS \
-    $RUNNER_DEBUG \
+    $RUNNER_GIT_SETUP \
     outpack_server \
     $RUNNER_SERVER \
     $RUNNER_WORKER

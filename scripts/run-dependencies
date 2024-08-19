@@ -21,7 +21,7 @@ docker volume create $ORDERLY_VOLUME
 docker volume create $ORDERLY_REMOTE_VOLUME
 
 docker run -d --pull=missing \
-       --name=$RUNNER_DEBUG \
+       --name=$RUNNER_GIT_SETUP \
        --net=$RUNNER_NETWORK \
        -v $ORDERLY_VOLUME:$CONTAINER_ORDERLY_ROOT_PATH \
        -v $ORDERLY_REMOTE_VOLUME:$CONTAINER_ORDERLY_REMOTE_ROOT_PATH \
@@ -29,14 +29,14 @@ docker run -d --pull=missing \
        alpine/git \
        -c "sleep infinity"
 
-docker cp $HERE/../demos/orderly/. $RUNNER_DEBUG:$CONTAINER_ORDERLY_REMOTE_ROOT_PATH
+docker cp $HERE/../demos/orderly/. $RUNNER_GIT_SETUP:$CONTAINER_ORDERLY_REMOTE_ROOT_PATH
 
-docker exec $RUNNER_DEBUG sh -c "mkdir /setup-repo"
+docker exec $RUNNER_GIT_SETUP sh -c "mkdir /setup-repo"
 
-docker cp $HERE/common $RUNNER_DEBUG:/setup-repo/.
-docker cp $HERE/docker-setup-git-repo $RUNNER_DEBUG:/setup-repo/.
+docker cp $HERE/common $RUNNER_GIT_SETUP:/setup-repo/.
+docker cp $HERE/docker-setup-git-repo $RUNNER_GIT_SETUP:/setup-repo/.
 
-docker exec $RUNNER_DEBUG /setup-repo/docker-setup-git-repo
+docker exec $RUNNER_GIT_SETUP /setup-repo/docker-setup-git-repo
 
 docker run --pull=always --name outpack_server \
        --net=host \
