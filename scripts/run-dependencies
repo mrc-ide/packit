@@ -11,15 +11,30 @@ docker exec packit-db wait-for-db
 
 docker network create $RUNNER_NETWORK
 
+# we need the redis container for the redis queue that the
+# RUNNER_SERVER and RUNNER_WORKER containers will
+# connect to
 docker run --rm -d \
        --net=$RUNNER_NETWORK \
        --name=$RUNNER_REDIS \
        -p 6379:6379 \
        redis
 
-docker volume create $ORDERLY_VOLUME
+# in practice the orderly repos will be on github and we would
+# do a git clone, for our local setup, this volume
+# (ORDERLY_REMOTE_VOLUME) will be the that we will do a git
+# clone from into the ORDERLY_VOLUME
+#
+# we need this to test the git fetch endpoint in outpack server
 docker volume create $ORDERLY_REMOTE_VOLUME
 
+# this volume is our local copy of the git remote, this is the
+# volume that the runner worker and runner server will have
+# access to
+docker volume create $ORDERLY_VOLUME
+
+# this volume is just to setup the orderly volumes, but it can
+# also be the container to exec into and modify the orderly volumes
 docker run -d --pull=missing \
        --name=$RUNNER_GIT_SETUP \
        --net=$RUNNER_NETWORK \
@@ -29,6 +44,8 @@ docker run -d --pull=missing \
        alpine/git \
        -c "sleep infinity"
 
+# we use the demos/orderly dir for our list of reports, to test a
+# different report you can modify the folder and run this script again
 docker cp $HERE/../demos/orderly/. $RUNNER_GIT_SETUP:$CONTAINER_ORDERLY_REMOTE_ROOT_PATH
 
 docker exec $RUNNER_GIT_SETUP sh -c "mkdir /setup-repo"
@@ -38,6 +55,8 @@ docker cp $HERE/docker-setup-git-repo $RUNNER_GIT_SETUP:/setup-repo/.
 
 docker exec $RUNNER_GIT_SETUP /setup-repo/docker-setup-git-repo
 
+# outpack server needs the remote mounted because when we do a git
+# fetch, it will need to fetch from that folder
 docker run --pull=always --name outpack_server \
        --net=host \
        -v $ORDERLY_VOLUME:/outpack \
@@ -45,6 +64,9 @@ docker run --pull=always --name outpack_server \
        -p 8000:8000 -d --rm \
        $OUTPACK_SERVER_TAG
 
+# R server for the runner, this will list out reports in a
+# particular branch, enqueue a task into the redis queue
+# (task submit), we expect one of these per orderly repo
 docker run --rm -d --pull=always \
        --net=$RUNNER_NETWORK \
        --name=$RUNNER_SERVER \
@@ -56,6 +78,9 @@ docker run --rm -d --pull=always \
        $ORDERLY_RUNNER_IMAGE \
        $CONTAINER_ORDERLY_ROOT_PATH
 
+# this is the worker, just a container that will pop tasks
+# off the queue and run the tasks, we expect to have 1 - n
+# of these per orderly repo
 docker run --rm -d --pull=always \
        --net=$RUNNER_NETWORK \
        --name=$RUNNER_WORKER \
