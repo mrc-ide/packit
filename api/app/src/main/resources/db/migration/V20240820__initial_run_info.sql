@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS "run_info"
     "time_completed"      DOUBLE PRECISION NULL,
     "time_queued"         DOUBLE PRECISION NULL,
     "packet_id"           TEXT NULL,
+    "parameters"          JSON NULL,
     "packet_group_name"   TEXT NOT NULL,
     FOREIGN KEY ("packet_group_name") REFERENCES "packet_group" ("name") ON DELETE CASCADE
 );
