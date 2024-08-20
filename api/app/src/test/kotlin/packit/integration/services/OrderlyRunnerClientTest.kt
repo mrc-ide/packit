@@ -20,7 +20,6 @@ class OrderlyRunnerClientTest : IntegrationTest()
     {
         val result = sut.getVersion()
 
-
         assertIs<OrderlyRunnerVersion>(result)
         assertIs<String>(result.orderly2)
         assertIs<String>(result.orderlyRunner)
