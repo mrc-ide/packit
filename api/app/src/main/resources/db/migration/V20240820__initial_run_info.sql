@@ -3,6 +3,9 @@ CREATE TABLE IF NOT EXISTS "run_info"
 (
     "task_id"             TEXT PRIMARY KEY,
     "status"              TEXT NULL,
+    "commit_hash"         TEXT,
+    "branch"              TEXT,
+    "logs"                TEXT NULL,
     "time_started"        DOUBLE PRECISION NULL,
     "time_completed"      DOUBLE PRECISION NULL,
     "time_queued"         DOUBLE PRECISION NULL,

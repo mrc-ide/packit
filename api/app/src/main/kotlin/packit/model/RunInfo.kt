@@ -4,6 +4,7 @@ import jakarta.persistence.*
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.type.SqlTypes
 import packit.model.dto.RunInfoDto
+import packit.model.dto.BasicRunInfoDto
 
 @Entity
 @Table(name = "`run_info`")
@@ -12,6 +13,12 @@ class RunInfo(
     var taskId: String,
 
     var status: String? = null,
+    var commitHash: String? = null,
+    var branch: String? = null,
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    var logs: List<String>? = null,
+
     var timeStarted: Double? = null,
     var timeCompleted: Double? = null,
     var timeQueued: Double? = null,
@@ -26,5 +33,11 @@ class RunInfo(
 )
 
 fun RunInfo.toDto() = RunInfoDto(
-    taskId, packetGroup.toDto(), status, timeStarted, timeCompleted, timeQueued, packetId, parameters
+    taskId, packetGroup.toDto(), status, commitHash, branch, logs,
+    timeStarted, timeCompleted, timeQueued, packetId, parameters
+)
+
+fun RunInfo.toBasicDto() = BasicRunInfoDto(
+    taskId, packetGroup.toDto(), status, commitHash, branch,
+    timeStarted, timeCompleted, timeQueued, packetId, parameters
 )
