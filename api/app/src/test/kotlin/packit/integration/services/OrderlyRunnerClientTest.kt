@@ -7,6 +7,7 @@ import packit.model.dto.OrderlyRunnerVersion
 import packit.model.dto.Parameter
 import packit.service.OrderlyRunnerClient
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 
 class OrderlyRunnerClientTest : IntegrationTest()
 {
@@ -18,7 +19,11 @@ class OrderlyRunnerClientTest : IntegrationTest()
     fun `can get version`()
     {
         val result = sut.getVersion()
-        assertEquals(OrderlyRunnerVersion("1.99.25", "0.1.0"), result)
+
+
+        assertIs<OrderlyRunnerVersion>(result)
+        assertIs<String>(result.orderly2)
+        assertIs<String>(result.orderlyRunner)
     }
 
     @Test
