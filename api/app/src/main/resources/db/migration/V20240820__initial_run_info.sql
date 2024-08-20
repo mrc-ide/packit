@@ -1,7 +1,7 @@
 -- Create run info table
 CREATE TABLE IF NOT EXISTS "run_info"
 (
-    "task_id"             TEXT PRIMARY KEY,
+    "id"             TEXT PRIMARY KEY,
     "status"              TEXT NULL,
     "commit_hash"         TEXT,
     "branch"              TEXT,
