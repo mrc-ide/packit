@@ -13,7 +13,7 @@ class RunInfoTest
     @Test
     fun `toDto return correct RunInfoDto for RunInfo`()
     {
-        val packetGroup = PacketGroup("test_report")
+        val packetGroup = PacketGroup("test_report", id = 1)
         val runInfo = RunInfo("task_id", packetGroup, "status", "hash", "branch", listOf("log1", "log2"), 1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input"))
         val runInfoDto = runInfo.toDto()
         assertEquals(runInfo.taskId, runInfoDto.taskId)
@@ -32,7 +32,7 @@ class RunInfoTest
     @Test
     fun `toBasicDto return correct BasicRunInfoDto for RunInfo`()
     {
-        val packetGroup = PacketGroup("test_report")
+        val packetGroup = PacketGroup("test_report", id = 1)
         val runInfo = RunInfo("task_id", packetGroup, "status", "hash", "branch", listOf("log1", "log2"), 1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input"))
         val basicRunInfoDto = runInfo.toBasicDto()
         assertEquals(runInfo.taskId, basicRunInfoDto.taskId)
