@@ -14,7 +14,7 @@ class RunInfo(
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "packet_group_name", nullable = false)
-    var packetGroup: PacketGroup
+    var packetGroup: PacketGroup,
 
     var status: String? = null,
     var commitHash: String? = null,
@@ -29,7 +29,7 @@ class RunInfo(
     var packetId: String? = null,
 
     @JdbcTypeCode(SqlTypes.JSON)
-    var parameters: Map<String, Any>? = null,
+    var parameters: Map<String, Any>? = null
 )
 
 fun RunInfo.toDto() = RunInfoDto(
