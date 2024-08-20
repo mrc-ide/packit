@@ -65,7 +65,7 @@ describe("redirect", () => {
   });
 
   it("renders home page and set user if token is present", async () => {
-    let userState = mockUserState();
+    const userState = mockUserState();
     mockGetUserFromLocalStorage.mockReturnValue(userState);
     renderElement(`/redirect?token=${userState.token}`);
 

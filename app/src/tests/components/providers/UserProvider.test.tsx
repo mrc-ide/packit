@@ -22,7 +22,7 @@ describe("UserProvider", () => {
   });
 
   it("should fill user state with returned values from getUserFromLocalStorage", () => {
-    let userState = mockUserState();
+    const userState = mockUserState();
 
     mockGetUserFromLocalStorage.mockReturnValueOnce(userState);
     const TestComponent = () => {
