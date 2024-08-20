@@ -43,7 +43,7 @@ class RunnerController(private val runnerService: RunnerService)
         return ResponseEntity.ok(runnerService.getParameters(packetGroupName, ref))
     }
 
-    @GetMapping("/")
+    @GetMapping("/packetGroups")
     fun getPacketGroups(@RequestParam(defaultValue = "HEAD") ref: String): ResponseEntity<List<RunnerPacketGroup>>
     {
         return ResponseEntity.ok(runnerService.getPacketGroups(ref))
