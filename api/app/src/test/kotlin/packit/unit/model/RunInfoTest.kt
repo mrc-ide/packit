@@ -1,7 +1,7 @@
 package packit.unit.model
 
-import packit.model.RunInfo
 import packit.model.PacketGroup
+import packit.model.RunInfo
 import packit.model.toBasicDto
 import packit.model.toDto
 import java.util.*
@@ -14,7 +14,10 @@ class RunInfoTest
     fun `toDto return correct RunInfoDto for RunInfo`()
     {
         val packetGroup = PacketGroup("test_report", id = 1)
-        val runInfo = RunInfo("task_id", packetGroup, "status", "hash", "branch", listOf("log1", "log2"), 1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input"))
+        val runInfo = RunInfo(
+            "task_id", packetGroup, "status", "hash", "branch", listOf("log1", "log2"),
+            1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input")
+        )
         val runInfoDto = runInfo.toDto()
         assertEquals(runInfo.taskId, runInfoDto.taskId)
         assertEquals(runInfo.packetGroup.toDto(), runInfoDto.packetGroup)
@@ -33,7 +36,10 @@ class RunInfoTest
     fun `toBasicDto return correct BasicRunInfoDto for RunInfo`()
     {
         val packetGroup = PacketGroup("test_report", id = 1)
-        val runInfo = RunInfo("task_id", packetGroup, "status", "hash", "branch", listOf("log1", "log2"), 1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input"))
+        val runInfo = RunInfo(
+            "task_id", packetGroup, "status", "hash", "branch", listOf("log1", "log2"),
+            1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input")
+        )
         val basicRunInfoDto = runInfo.toBasicDto()
         assertEquals(runInfo.taskId, basicRunInfoDto.taskId)
         assertEquals(runInfo.packetGroup.toDto(), basicRunInfoDto.packetGroup)
