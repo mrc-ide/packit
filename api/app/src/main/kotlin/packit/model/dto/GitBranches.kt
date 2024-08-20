@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAlias
 
 data class GitBranches(
     @JsonAlias("default_branch")
-    val defaultBranch: GitBranchInfo,
+    val defaultBranch: String,
     val branches: List<GitBranchInfo>
 )
 
