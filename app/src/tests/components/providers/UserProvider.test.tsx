@@ -22,7 +22,9 @@ describe("UserProvider", () => {
   });
 
   it("should fill user state with returned values from getUserFromLocalStorage", () => {
-    mockGetUserFromLocalStorage.mockReturnValueOnce(mockUserState);
+    let userState = mockUserState();
+
+    mockGetUserFromLocalStorage.mockReturnValueOnce(userState);
     const TestComponent = () => {
       const { user } = useUser();
       return <div>{JSON.stringify(user)}</div>;
@@ -30,11 +32,11 @@ describe("UserProvider", () => {
 
     renderElement(<TestComponent />);
 
-    expect(screen.getByText(JSON.stringify(mockUserState))).toBeVisible();
+    expect(screen.getByText(JSON.stringify(userState))).toBeVisible();
   });
 
   it("should setUser from token correctly & put into local storage when called", async () => {
-    mockGetUserFromLocalStorage.mockReturnValueOnce(mockUserState);
+    mockGetUserFromLocalStorage.mockReturnValueOnce(mockUserState());
     const TestComponent = () => {
       const { user, setUser } = useUser();
       useEffect(() => {
@@ -54,7 +56,7 @@ describe("UserProvider", () => {
     });
   });
   it("should set user to null in state and local storage when removeUser is called", async () => {
-    mockGetUserFromLocalStorage.mockReturnValueOnce(mockUserState);
+    mockGetUserFromLocalStorage.mockReturnValueOnce(mockUserState());
     const TestComponent = () => {
       const { user, removeUser } = useUser();
       useEffect(() => {

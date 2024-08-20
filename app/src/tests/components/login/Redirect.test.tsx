@@ -54,7 +54,7 @@ describe("redirect", () => {
   });
 
   it("renders home page if user is logged in", async () => {
-    mockGetUserFromLocalStorage.mockReturnValue(mockUserState);
+    mockGetUserFromLocalStorage.mockReturnValue(mockUserState());
     renderElement("/redirect");
 
     await waitFor(() => {
@@ -65,8 +65,9 @@ describe("redirect", () => {
   });
 
   it("renders home page and set user if token is present", async () => {
-    mockGetUserFromLocalStorage.mockReturnValue(mockUserState);
-    renderElement(`/redirect?token=${mockUserState.token}`);
+    let userState = mockUserState();
+    mockGetUserFromLocalStorage.mockReturnValue(userState);
+    renderElement(`/redirect?token=${userState.token}`);
 
     await waitFor(() => {
       expect(screen.getByText(/parameters/i)).toBeInTheDocument();
@@ -77,7 +78,7 @@ describe("redirect", () => {
 
   it("renders requested url if present", async () => {
     mockRequestedUrl = "/accessibility";
-    mockGetUserFromLocalStorage.mockReturnValue(mockUserState);
+    mockGetUserFromLocalStorage.mockReturnValue(mockUserState());
     renderElement("/redirect");
     await waitFor(() => {
       expect(screen.getByText(/Accessibility Page/i)).toBeInTheDocument();
