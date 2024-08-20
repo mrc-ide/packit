@@ -10,7 +10,7 @@ import packit.model.dto.BasicRunInfoDto
 @Table(name = "`run_info`")
 class RunInfo(
     @Id
-    var taskId: String,
+    var id: String,
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "packet_group_name", nullable = false)
@@ -33,11 +33,11 @@ class RunInfo(
 )
 
 fun RunInfo.toDto() = RunInfoDto(
-    taskId, packetGroup.toDto(), status, commitHash, branch, logs,
+    id, packetGroup.toDto(), status, commitHash, branch, logs,
     timeStarted, timeCompleted, timeQueued, packetId, parameters
 )
 
 fun RunInfo.toBasicDto() = BasicRunInfoDto(
-    taskId, packetGroup.toDto(), status, commitHash, branch,
+    id, packetGroup.toDto(), status, commitHash, branch,
     timeStarted, timeCompleted, timeQueued, packetId, parameters
 )
