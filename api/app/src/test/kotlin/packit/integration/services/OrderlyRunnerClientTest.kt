@@ -31,7 +31,7 @@ class OrderlyRunnerClientTest : IntegrationTest()
         val testPacketGroupName = "parameters"
         val expectedParameters = listOf(
             Parameter("a", null),
-            Parameter("b", "2"),
+            Parameter("b", 2),
             Parameter("c", null)
         )
 
