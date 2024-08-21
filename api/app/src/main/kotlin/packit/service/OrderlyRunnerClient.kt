@@ -1,63 +1,39 @@
 package packit.service
 
-import org.slf4j.LoggerFactory
-import org.springframework.core.ParameterizedTypeReference
-import org.springframework.http.*
 import org.springframework.stereotype.Service
-import org.springframework.web.client.RestTemplate
 import packit.AppConfig
-import packit.exceptions.PackitException
-import packit.model.ServerResponse
 import packit.model.dto.OrderlyRunnerVersion
+import packit.model.dto.Parameter
+import packit.model.dto.RunnerPacketGroup
 
 interface OrderlyRunner
 {
     fun getVersion(): OrderlyRunnerVersion
+    fun getParameters(packetGroupName: String, ref: String): List<Parameter>
+    fun getPacketGroups(ref: String): List<RunnerPacketGroup>
 }
 
 @Service
 class OrderlyRunnerClient(appConfig: AppConfig) : OrderlyRunner
 {
     val baseUrl: String = appConfig.orderlyRunnerUrl
-    private val restTemplate = RestTemplate()
-
     override fun getVersion(): OrderlyRunnerVersion
     {
-        return getEndpoint("/")
+        return GenericClient.get(constructUrl("/"))
     }
 
-    private inline fun <reified T> getEndpoint(urlFragment: String): T
+    override fun getParameters(packetGroupName: String, ref: String): List<Parameter>
     {
-        val url = "$baseUrl/$urlFragment"
-        log.debug("Fetching {}", url)
-
-        val response = restTemplate.exchange(
-            url,
-            HttpMethod.GET,
-            HttpEntity.EMPTY,
-            object : ParameterizedTypeReference<ServerResponse<T>>()
-            {}
-        )
-
-        return handleResponse(response)
+        return GenericClient.get(constructUrl("/report/$packetGroupName/parameters?ref=$ref"))
     }
 
-    private fun <T> handleResponse(response: ResponseEntity<ServerResponse<T>>): T
+    override fun getPacketGroups(ref: String): List<RunnerPacketGroup>
     {
-        if (response.statusCode.isError)
-        {
-            // TODO we need proper error handling for the whole app
-            // this is really just a placeholder
-            @Suppress("TooGenericExceptionThrown")
-            throw PackitException(response.body?.errors.toString())
-        } else
-        {
-            return response.body!!.data
-        }
+        return GenericClient.get(constructUrl("/report/list?ref=$ref"))
     }
 
-    companion object
+    private fun constructUrl(urlFragment: String): String
     {
-        private val log = LoggerFactory.getLogger(OrderlyRunnerClient::class.java)
+        return "$baseUrl/$urlFragment"
     }
 }

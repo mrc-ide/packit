@@ -2,20 +2,12 @@ package packit.service
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.apache.tomcat.util.http.fileupload.IOUtils
-import org.slf4j.LoggerFactory
-import org.springframework.core.ParameterizedTypeReference
-import org.springframework.http.*
-import org.springframework.http.client.ClientHttpRequest
+import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Service
-import org.springframework.web.client.HttpStatusCodeException
-import org.springframework.web.client.RestTemplate
 import packit.AppConfig
-import packit.exceptions.PackitException
 import packit.model.PacketMetadata
-import packit.model.ServerResponse
+import packit.model.dto.GitBranches
 import packit.model.dto.OutpackMetadata
-import java.net.URI
 
 interface OutpackServer
 {
@@ -24,6 +16,8 @@ interface OutpackServer
     fun getFileByHash(hash: String): Pair<ByteArray, HttpHeaders>?
     fun proxyRequest(urlFragment: String, request: HttpServletRequest, response: HttpServletResponse)
     fun getChecksum(): String
+    fun gitFetch()
+    fun getBranches(): GitBranches
 }
 
 @Service
@@ -31,67 +25,34 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
 {
     val baseUrl: String = appConfig.outpackServerUrl
 
-    private val restTemplate = RestTemplate()
-
     override fun proxyRequest(urlFragment: String, request: HttpServletRequest, response: HttpServletResponse)
     {
-        val url = "$baseUrl/$urlFragment"
-        val method = request.method
-        log.debug("{} {}", method, url)
-        try
-        {
-            restTemplate.execute(
-                URI(url),
-                HttpMethod.valueOf(method),
-                { outpackServerRequest: ClientHttpRequest ->
-                    request.headerNames.asIterator().forEach {
-                        outpackServerRequest.headers.set(it, request.getHeader(it))
-                    }
-                    IOUtils.copy(request.inputStream, outpackServerRequest.body)
-                }
-            ) { outpackServerResponse ->
-                response.status = response.status
-                outpackServerResponse.headers.map { response.setHeader(it.key, it.value.first()) }
-                IOUtils.copy(outpackServerResponse.body, response.outputStream)
-                true
-            }
-        } catch (e: HttpStatusCodeException)
-        {
-            throw OutpackServerException(e)
-        }
+        GenericClient.proxyRequest(constructUrl(urlFragment), request, response)
     }
 
     override fun getMetadataById(id: String): PacketMetadata
     {
-        return getEndpoint("metadata/$id/json")
+        return GenericClient.get(constructUrl("metadata/$id/json"))
     }
 
     override fun getFileByHash(hash: String): Pair<ByteArray, HttpHeaders>
     {
-        val url = "$baseUrl/file/$hash"
-        log.debug("Fetching {}", url)
-
-        val response = restTemplate.exchange(
-            url,
-            HttpMethod.GET,
-            HttpEntity.EMPTY,
-            ByteArray::class.java
-        )
-        return handleFileResponse(response)
-    }
-
-    private fun handleFileResponse(response: ResponseEntity<ByteArray>): Pair<ByteArray, HttpHeaders>
-    {
-        if (response.statusCode.isError)
-        {
-            throw PackitException("couldNotGetFile", HttpStatus.valueOf(response.statusCode.value()))
-        }
-        return response.body!! to response.headers
+        return GenericClient.getFile(constructUrl("file/$hash"))
     }
 
     override fun getChecksum(): String
     {
-        return getEndpoint("checksum")
+        return GenericClient.get(constructUrl("checksum"))
+    }
+
+    override fun gitFetch()
+    {
+        return GenericClient.post(constructUrl("git/fetch"))
+    }
+
+    override fun getBranches(): GitBranches
+    {
+        return GenericClient.get(constructUrl("git/branches"))
     }
 
     override fun getMetadata(from: Double?): List<OutpackMetadata>
@@ -101,43 +62,13 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
         {
             url = "$url?known_since=$from"
         }
-        return getEndpoint(url)
+        return GenericClient.get(constructUrl(url))
     }
 
-    private inline fun <reified T> getEndpoint(urlFragment: String): T
+    private fun constructUrl(urlFragment: String): String
     {
-        val url = "$baseUrl/$urlFragment"
-        log.debug("Fetching {}", url)
-
-        val response = restTemplate.exchange(
-            url,
-            HttpMethod.GET,
-            HttpEntity.EMPTY,
-            object : ParameterizedTypeReference<ServerResponse<T>>()
-            {}
-        )
-
-        return handleResponse(response)
-    }
-
-    private fun <T> handleResponse(response: ResponseEntity<ServerResponse<T>>): T
-    {
-        if (response.statusCode.isError)
-        {
-            // TODO we need proper error handling for the whole app
-            // this is really just a placeholder
-            @Suppress("TooGenericExceptionThrown")
-            throw PackitException(response.body?.errors.toString())
-        } else
-        {
-            return response.body!!.data
-        }
-    }
-
-    companion object
-    {
-        private val log = LoggerFactory.getLogger(OutpackServerClient::class.java)
+        return "$baseUrl/$urlFragment"
     }
 }
 
-class OutpackServerException(e: HttpStatusCodeException) : Exception(e)
+
