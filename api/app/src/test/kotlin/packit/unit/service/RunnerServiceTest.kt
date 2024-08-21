@@ -69,8 +69,8 @@ class RunnerServiceTest
     fun `can get packet groups for ref`()
     {
         val testRunnerPacketGroups = listOf(
-            RunnerPacketGroup("test-group", 0, true),
-            RunnerPacketGroup("test-group", 1, false)
+            RunnerPacketGroup("test-group", 0.0, true),
+            RunnerPacketGroup("test-group", 1.0, false)
         )
         val ref = "branch-name"
         `when`(orderlyRunnerClient.getPacketGroups(ref)).thenReturn(testRunnerPacketGroups)
