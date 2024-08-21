@@ -1,10 +1,16 @@
 package packit.unit.service
 
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.*
+import org.mockito.Mockito.`when`
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import packit.model.dto.OrderlyRunnerVersion
+import packit.model.dto.Parameter
+import packit.model.dto.RunnerPacketGroup
 import packit.service.BaseRunnerService
 import packit.service.OrderlyRunnerClient
+import packit.service.OutpackServerClient
 import kotlin.test.assertEquals
 
 class RunnerServiceTest
@@ -14,12 +20,65 @@ class RunnerServiceTest
         mock<OrderlyRunnerClient> {
             on { getVersion() } doReturn version
         }
+    private val outpackServerClient = mock<OutpackServerClient>()
 
     @Test
     fun `can get version`()
     {
-        val sut = BaseRunnerService(orderlyRunnerClient)
+        val sut = BaseRunnerService(orderlyRunnerClient, outpackServerClient)
         val result = sut.getVersion()
         assertEquals(result, version)
+    }
+
+    @Test
+    fun `can fetch git`()
+    {
+        val sut = BaseRunnerService(orderlyRunnerClient, outpackServerClient)
+        sut.gitFetch()
+
+        verify(outpackServerClient).gitFetch()
+    }
+
+    @Test
+    fun `can get branches`()
+    {
+        val sut = BaseRunnerService(orderlyRunnerClient, outpackServerClient)
+        sut.getBranches()
+
+        verify(outpackServerClient).getBranches()
+    }
+
+    @Test
+    fun `can get parameters`()
+    {
+        val packetGroupName = "test-packet-group"
+        val ref = "commit-name"
+        val testParameters = listOf(
+            Parameter("test-name", "test-value")
+        )
+        `when`(orderlyRunnerClient.getParameters(packetGroupName, ref)).thenReturn(testParameters)
+        val sut = BaseRunnerService(orderlyRunnerClient, outpackServerClient)
+
+        val parameters = sut.getParameters(packetGroupName, ref)
+
+        verify(orderlyRunnerClient).getParameters(packetGroupName, ref)
+        assertEquals(testParameters, parameters)
+    }
+
+    @Test
+    fun `can get packet groups for ref`()
+    {
+        val testRunnerPacketGroups = listOf(
+            RunnerPacketGroup("test-group", 0.0, true),
+            RunnerPacketGroup("test-group", 1.0, false)
+        )
+        val ref = "branch-name"
+        `when`(orderlyRunnerClient.getPacketGroups(ref)).thenReturn(testRunnerPacketGroups)
+        val sut = BaseRunnerService(orderlyRunnerClient, outpackServerClient)
+
+        val packetGroups = sut.getPacketGroups(ref)
+
+        verify(orderlyRunnerClient).getPacketGroups(ref)
+        assertEquals(testRunnerPacketGroups, packetGroups)
     }
 }

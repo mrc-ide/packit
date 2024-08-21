@@ -14,6 +14,7 @@ import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.model.PacketMetadata
 import packit.model.ServerResponse
+import packit.model.dto.GitBranches
 import packit.model.dto.OutpackMetadata
 import java.net.URI
 
@@ -24,6 +25,8 @@ interface OutpackServer
     fun getFileByHash(hash: String): Pair<ByteArray, HttpHeaders>?
     fun proxyRequest(urlFragment: String, request: HttpServletRequest, response: HttpServletResponse)
     fun getChecksum(): String
+    fun gitFetch()
+    fun getBranches(): GitBranches
 }
 
 @Service
@@ -94,6 +97,16 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
         return getEndpoint("checksum")
     }
 
+    override fun gitFetch()
+    {
+        return postEndpoint("git/fetch")
+    }
+
+    override fun getBranches(): GitBranches
+    {
+        return getEndpoint("git/branches")
+    }
+
     override fun getMetadata(from: Double?): List<OutpackMetadata>
     {
         var url = "packit/metadata"
@@ -102,6 +115,22 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
             url = "$url?known_since=$from"
         }
         return getEndpoint(url)
+    }
+
+    private inline fun <reified T> postEndpoint(urlFragment: String, body: Any? = null): T
+    {
+        val url = "$baseUrl/$urlFragment"
+        log.debug("Posting to {}", url)
+
+        val response = restTemplate.exchange(
+            url,
+            HttpMethod.POST,
+            null,
+            object : ParameterizedTypeReference<ServerResponse<T>>()
+            {}
+        )
+
+        return handleResponse(response)
     }
 
     private inline fun <reified T> getEndpoint(urlFragment: String): T
