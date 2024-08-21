@@ -82,7 +82,7 @@ class RunnerControllerTest : IntegrationTest()
         val testPacketGroupName = "parameters"
         val expectedParameters = listOf(
             Parameter("a", null),
-            Parameter("b", "2"),
+            Parameter("b", 2),
             Parameter("c", null),
         )
         val res: ResponseEntity<List<Parameter>> = restTemplate.exchange(
