@@ -4,11 +4,17 @@ set -exu
 HERE=$(realpath "$(dirname $0)")
 . "$HERE"/common
 
+# this is just some git config, and can be ignored
 git config --global --add safe.directory "*"
 
 git config --global user.email "coolemail@example.com"
 git config --global user.name "cooldude"
+# end of git config
 
+
+
+# set up git remote (emulating a remote on github that we
+# would clone down)
 cd $CONTAINER_ORDERLY_REMOTE_ROOT_PATH
 git init
 
@@ -17,6 +23,10 @@ echo ".outpack \n orderly_envir.yml \n draft \n archive \n .packit" > .gitignore
 git add --all
 git commit -m "first commit"
 
+
+
+# this is what we would do in practice to set up, just git
+# clone the remote
 cd $CONTAINER_ORDERLY_ROOT_PATH
 
 git clone $CONTAINER_ORDERLY_REMOTE_ROOT_PATH $CONTAINER_ORDERLY_ROOT_PATH
