@@ -40,11 +40,10 @@ class OutpackServerClientTest : IntegrationTest()
         val testBranchMessages = listOf("first commit")
         val gitBranches = sut.getBranches()
 
-        assertEquals(testBranchName, gitBranches.defaultBranch.name)
-        assertEquals(testBranchMessages, gitBranches.defaultBranch.message)
-        assertEquals(Long::class.java, gitBranches.defaultBranch.time::class.java)
-        assertEquals(String::class.java, gitBranches.defaultBranch.commitHash::class.java)
+        assertEquals(testBranchName, gitBranches.defaultBranch)
         assertEquals(testBranchName, gitBranches.branches[0].name)
         assertEquals(testBranchMessages, gitBranches.branches[0].message)
+        assertEquals(Long::class.java, gitBranches.branches[0].time::class.java)
+        assertEquals(String::class.java, gitBranches.branches[0].commitHash::class.java)
     }
 }

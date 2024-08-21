@@ -68,12 +68,11 @@ class RunnerControllerTest : IntegrationTest()
 
         val resBody = res.body!!
 
-        assertEquals(testBranchName, resBody.defaultBranch.name)
-        assertEquals(testBranchMessages, resBody.defaultBranch.message)
-        assertEquals(Long::class.java, resBody.defaultBranch.time::class.java)
-        assertEquals(String::class.java, resBody.defaultBranch.commitHash::class.java)
+        assertEquals(testBranchName, resBody.defaultBranch)
         assertEquals(testBranchName, resBody.branches[0].name)
         assertEquals(testBranchMessages, resBody.branches[0].message)
+        assertEquals(Long::class.java, resBody.branches[0].time::class.java)
+        assertEquals(String::class.java, resBody.branches[0].commitHash::class.java)
     }
 
     @Test
@@ -84,7 +83,7 @@ class RunnerControllerTest : IntegrationTest()
         val expectedParameters = listOf(
             Parameter("a", null),
             Parameter("b", "2"),
-            Parameter("c", null)
+            Parameter("c", null),
         )
         val res: ResponseEntity<List<Parameter>> = restTemplate.exchange(
             "/runner/$testPacketGroupName/parameters?ref=master",
@@ -107,7 +106,7 @@ class RunnerControllerTest : IntegrationTest()
 
         res.body!!.forEach {
             assertEquals(String::class.java, it.name::class.java)
-            assertEquals(Long::class.java, it.updatedTime::class.java)
+            assertEquals(Double::class.java, it.updatedTime::class.java)
             assertEquals(Boolean::class.java, it.hasModifications::class.java)
         }
     }

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAlias
 
 data class GitBranches(
     @JsonAlias("default_branch")
-    val defaultBranch: GitBranchInfo,
+    val defaultBranch: String?, // null when no HEAD. This should not happen as we do a git clone.
     val branches: List<GitBranchInfo>
 )
 

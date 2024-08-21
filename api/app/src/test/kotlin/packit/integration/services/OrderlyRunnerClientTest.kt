@@ -20,7 +20,6 @@ class OrderlyRunnerClientTest : IntegrationTest()
     {
         val result = sut.getVersion()
 
-
         assertIs<OrderlyRunnerVersion>(result)
         assertIs<String>(result.orderly2)
         assertIs<String>(result.orderlyRunner)
@@ -48,7 +47,7 @@ class OrderlyRunnerClientTest : IntegrationTest()
 
         runnerPacketGroups.forEach {
             assertEquals(String::class.java, it.name::class.java)
-            assertEquals(Long::class.java, it.updatedTime::class.java)
+            assertEquals(Double::class.java, it.updatedTime::class.java)
             assertEquals(Boolean::class.java, it.hasModifications::class.java)
         }
     }
