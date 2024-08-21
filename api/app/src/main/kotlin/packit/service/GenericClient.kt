@@ -107,8 +107,6 @@ object GenericClient
         }
         return response.body!! to response.headers
     }
-
 }
-
 
 class GenericClientException(e: HttpStatusCodeException) : Exception(e)
