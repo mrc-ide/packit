@@ -1,6 +1,17 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
-docker rm --force $(docker ps --all --quiet) || true
-docker network prune --force
-docker volume prune --force
+HERE=$(realpath "$(dirname $0)")
+. "$HERE"/common
+
+docker rm -f \
+    packit-db \
+    $RUNNER_REDIS \
+    $RUNNER_GIT_SETUP \
+    outpack_server \
+    $RUNNER_SERVER \
+    $RUNNER_WORKER
+
+docker network rm -f $RUNNER_NETWORK
+
+docker volume rm $ORDERLY_VOLUME $ORDERLY_REMOTE_VOLUME

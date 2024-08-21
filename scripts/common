@@ -1,6 +1,24 @@
 #!/usr/bin/env bash
-set -ex
+set -exu
 
 # Export env vars needed for running test dependencies
 export ORG=mrcide
 export OUTPACK_SERVER_TAG=$ORG/outpack_server:main
+
+export RUNNER_CONTAINER_NAMESPACE=orderly.runner
+
+export RUNNER_NETWORK=$RUNNER_CONTAINER_NAMESPACE-network
+export RUNNER_REDIS=$RUNNER_CONTAINER_NAMESPACE-redis
+export RUNNER_GIT_SETUP=$RUNNER_CONTAINER_NAMESPACE-git-setup
+export RUNNER_SERVER=$RUNNER_CONTAINER_NAMESPACE-server
+export RUNNER_WORKER=$RUNNER_CONTAINER_NAMESPACE-worker
+
+export ORDERLY_RUNNER_QUEUE_ID=orderly.runner.queue
+
+export ORDERLY_VOLUME=$RUNNER_CONTAINER_NAMESPACE-orderly-root
+export ORDERLY_REMOTE_VOLUME=$RUNNER_CONTAINER_NAMESPACE-orderly-root-remote
+
+export ORDERLY_RUNNER_IMAGE=ghcr.io/mrc-ide/orderly.runner:main
+
+export CONTAINER_ORDERLY_ROOT_PATH=/orderly-root
+export CONTAINER_ORDERLY_REMOTE_ROOT_PATH=/orderly-root-remote

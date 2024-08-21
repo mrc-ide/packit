@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.io.Serializable
 
-data class OutpackResponse<T>(
+data class ServerResponse<T>(
         val status: String,
         val data: T,
         val errors: Any?

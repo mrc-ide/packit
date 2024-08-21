@@ -22,8 +22,8 @@ class AppConfig(private val enviroment: Environment)
         return BCryptPasswordEncoder()
     }
 
-    val outpackServerUrl: String =
-        requiredEnvValue("outpack.server.url")
+    val outpackServerUrl: String = requiredEnvValue("outpack.server.url")
+    val orderlyRunnerUrl: String = requiredEnvValue("orderly.runner.url")
     val dbUrl: String = requiredEnvValue("db.url")
     val dbUser: String = requiredEnvValue("db.user")
     val dbPassword: String = requiredEnvValue("db.password")
