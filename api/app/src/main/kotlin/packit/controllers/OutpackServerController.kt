@@ -32,7 +32,8 @@ class OutpackServerController(private val outpackServerClient: OutpackServerClie
     private fun proxyRequest(
         request: HttpServletRequest,
         response: HttpServletResponse,
-        copyRequestBody: Boolean)
+        copyRequestBody: Boolean
+    )
     {
         val url = getUrlFragment(request)
         outpackServerClient.proxyRequest(url, request, response, copyRequestBody)

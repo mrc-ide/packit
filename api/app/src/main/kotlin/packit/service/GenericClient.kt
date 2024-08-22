@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.*
 import org.springframework.http.client.ClientHttpRequest
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory
 import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate
 import packit.exceptions.PackitException
@@ -21,8 +21,8 @@ object GenericClient
     val log: Logger = LoggerFactory.getLogger(GenericClient::class.java)
 
     val restTemplate = run {
-        val requestFactory = SimpleClientHttpRequestFactory();
-        requestFactory.setBufferRequestBody(false);
+        val requestFactory = SimpleClientHttpRequestFactory()
+        requestFactory.setBufferRequestBody(false)
         RestTemplate(requestFactory)
     }
 
@@ -57,7 +57,8 @@ object GenericClient
         url: String,
         request: HttpServletRequest,
         response: HttpServletResponse,
-        copyRequestBody: Boolean)
+        copyRequestBody: Boolean
+    )
     {
         val method = request.method
         log.debug("{} {}", method, url)

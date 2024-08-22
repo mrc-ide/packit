@@ -18,7 +18,8 @@ interface OutpackServer
         urlFragment: String,
         request: HttpServletRequest,
         response: HttpServletResponse,
-        copyRequestBody: Boolean)
+        copyRequestBody: Boolean
+    )
     fun getChecksum(): String
     fun gitFetch()
     fun getBranches(): GitBranches
@@ -33,7 +34,8 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
         urlFragment: String,
         request: HttpServletRequest,
         response: HttpServletResponse,
-        copyRequestBody: Boolean)
+        copyRequestBody: Boolean
+    )
     {
         GenericClient.proxyRequest(constructUrl(urlFragment), request, response, copyRequestBody)
     }
