@@ -8,109 +8,104 @@ import org.slf4j.LoggerFactory
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.*
 import org.springframework.http.client.ClientHttpRequest
-import org.springframework.stereotype.Service
 import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate
 import packit.exceptions.PackitException
 import packit.model.ServerResponse
 import java.net.URI
 
-@Service
-class GenericClient
+object GenericClient
 {
-    companion object
+
+    val log: Logger = LoggerFactory.getLogger(GenericClient::class.java)
+    val restTemplate = RestTemplate()
+
+    inline fun <reified T : Any> get(url: String): T
     {
-        val log: Logger = LoggerFactory.getLogger(GenericClient::class.java)
-        val restTemplate = RestTemplate()
+        val response = restTemplate.exchange(
+            url,
+            HttpMethod.GET,
+            HttpEntity.EMPTY,
+            object : ParameterizedTypeReference<ServerResponse<T>>()
+            {}
+        )
+        return handleResponse(response)
+    }
 
-        inline fun <reified T : Any> get(url: String): T
+    inline fun <reified T> post(url: String, body: Any? = null): T
+    {
+        log.debug("Posting to {}", url)
+
+        val response = restTemplate.exchange(
+            url,
+            HttpMethod.POST,
+            body?.let { HttpEntity(it) } ?: HttpEntity.EMPTY,
+            object : ParameterizedTypeReference<ServerResponse<T>>()
+            {}
+        )
+
+        return handleResponse(response)
+    }
+
+    fun proxyRequest(url: String, request: HttpServletRequest, response: HttpServletResponse)
+    {
+        val method = request.method
+        log.debug("{} {}", method, url)
+        try
         {
-            val response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                HttpEntity.EMPTY,
-                object : ParameterizedTypeReference<ServerResponse<T>>()
-                {}
-            )
-            return handleResponse(response)
-        }
-
-        inline fun <reified T> post(url: String, body: Any? = null): T
-        {
-            log.debug("Posting to {}", url)
-
-            val response = restTemplate.exchange(
-                url,
-                HttpMethod.POST,
-                body?.let { HttpEntity(it) } ?: HttpEntity.EMPTY,
-                object : ParameterizedTypeReference<ServerResponse<T>>()
-                {}
-            )
-
-            return handleResponse(response)
-        }
-
-        fun proxyRequest(url: String, request: HttpServletRequest, response: HttpServletResponse)
-        {
-            val method = request.method
-            log.debug("{} {}", method, url)
-            try
-            {
-                restTemplate.execute(
-                    URI(url),
-                    HttpMethod.valueOf(method),
-                    { serverRequest: ClientHttpRequest ->
-                        request.headerNames.asIterator().forEach {
-                            serverRequest.headers.set(it, request.getHeader(it))
-                        }
-                        IOUtils.copy(request.inputStream, serverRequest.body)
+            restTemplate.execute(
+                URI(url),
+                HttpMethod.valueOf(method),
+                { serverRequest: ClientHttpRequest ->
+                    request.headerNames.asIterator().forEach {
+                        serverRequest.headers.set(it, request.getHeader(it))
                     }
-                ) { serverResponse ->
-                    response.status = response.status
-                    serverResponse.headers.map { response.setHeader(it.key, it.value.first()) }
-                    IOUtils.copy(serverResponse.body, response.outputStream)
-                    true
+                    IOUtils.copy(request.inputStream, serverRequest.body)
                 }
-            } catch (e: HttpStatusCodeException)
-            {
-                throw GenericClientException(e)
+            ) { serverResponse ->
+                response.status = response.status
+                serverResponse.headers.map { response.setHeader(it.key, it.value.first()) }
+                IOUtils.copy(serverResponse.body, response.outputStream)
+                true
             }
-        }
-
-        fun <T> handleResponse(response: ResponseEntity<ServerResponse<T>>): T
+        } catch (e: HttpStatusCodeException)
         {
-            if (response.statusCode.isError)
-            {
-                log.error("Error response: {}", response.body?.errors)
-                throw PackitException("httpClientError", HttpStatus.INTERNAL_SERVER_ERROR)
-            } else
-            {
-                return response.body!!.data
-            }
+            throw GenericClientException(e)
         }
+    }
 
-        fun getFile(url: String): Pair<ByteArray, HttpHeaders>
+    fun <T> handleResponse(response: ResponseEntity<ServerResponse<T>>): T
+    {
+        if (response.statusCode.isError)
         {
-            log.debug("Fetching {}", url)
-
-            val response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                HttpEntity.EMPTY,
-                ByteArray::class.java
-            )
-            return handleFileResponse(response)
-        }
-
-        private fun handleFileResponse(response: ResponseEntity<ByteArray>): Pair<ByteArray, HttpHeaders>
+            log.error("Error response: {}", response.body?.errors)
+            throw PackitException("httpClientError", HttpStatus.INTERNAL_SERVER_ERROR)
+        } else
         {
-            if (response.statusCode.isError)
-            {
-                throw PackitException("couldNotGetFile", HttpStatus.valueOf(response.statusCode.value()))
-            }
-            return response.body!! to response.headers
+            return response.body!!.data
         }
+    }
 
+    fun getFile(url: String): Pair<ByteArray, HttpHeaders>
+    {
+        log.debug("Fetching {}", url)
+
+        val response = restTemplate.exchange(
+            url,
+            HttpMethod.GET,
+            HttpEntity.EMPTY,
+            ByteArray::class.java
+        )
+        return handleFileResponse(response)
+    }
+
+    private fun handleFileResponse(response: ResponseEntity<ByteArray>): Pair<ByteArray, HttpHeaders>
+    {
+        if (response.statusCode.isError)
+        {
+            throw PackitException("couldNotGetFile", HttpStatus.valueOf(response.statusCode.value()))
+        }
+        return response.body!! to response.headers
     }
 }
 
