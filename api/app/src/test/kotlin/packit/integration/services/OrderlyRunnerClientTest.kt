@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import packit.integration.IntegrationTest
 import packit.model.dto.OrderlyRunnerVersion
 import packit.model.dto.Parameter
-import packit.model.dto.SubmitRunResponse
 import packit.model.dto.SubmitRunInfo
 import packit.service.OrderlyRunnerClient
 import packit.service.OutpackServerClient

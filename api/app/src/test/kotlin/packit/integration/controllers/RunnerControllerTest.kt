@@ -2,22 +2,19 @@ package packit.integration.controllers
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpEntity
 import org.springframework.http.MediaType
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
+import packit.model.PacketGroup
 import packit.model.dto.GitBranches
 import packit.model.dto.OrderlyRunnerVersion
 import packit.model.dto.Parameter
-import packit.model.dto.SubmitRunInfo
 import packit.model.dto.RunnerPacketGroup
-import packit.model.PacketGroup
 import packit.repository.PacketGroupRepository
 import packit.repository.RunInfoRepository
 import kotlin.test.assertEquals

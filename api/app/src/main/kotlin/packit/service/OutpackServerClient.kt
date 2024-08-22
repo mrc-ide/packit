@@ -70,5 +70,3 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
         return "$baseUrl/$urlFragment"
     }
 }
-
-

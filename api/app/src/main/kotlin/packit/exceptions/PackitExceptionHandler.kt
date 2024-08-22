@@ -82,7 +82,6 @@ class PackitExceptionHandler
         val message = clientError.responseBodyAsString
         return ResponseEntity<String>(message, clientError.responseHeaders, clientError.statusCode)
     }
-    
 
     @ExceptionHandler(PackitException::class)
     fun handlePackitException(

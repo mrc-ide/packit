@@ -110,7 +110,6 @@ class GenericClient
             }
             return response.body!! to response.headers
         }
-
     }
 }
 
