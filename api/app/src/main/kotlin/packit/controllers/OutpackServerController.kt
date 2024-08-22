@@ -19,20 +19,23 @@ class OutpackServerController(private val outpackServerClient: OutpackServerClie
     @GetMapping("/**")
     fun get(request: HttpServletRequest, response: HttpServletResponse)
     {
-        proxyRequest(request, response)
+        proxyRequest(request, response, copyRequestBody = false)
     }
 
     @PostMapping("/**")
     @PreAuthorize("hasAuthority('outpack.write')")
     fun post(request: HttpServletRequest, response: HttpServletResponse)
     {
-        proxyRequest(request, response)
+        proxyRequest(request, response, copyRequestBody = true)
     }
 
-    private fun proxyRequest(request: HttpServletRequest, response: HttpServletResponse)
+    private fun proxyRequest(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        copyRequestBody: Boolean)
     {
         val url = getUrlFragment(request)
-        outpackServerClient.proxyRequest(url, request, response)
+        outpackServerClient.proxyRequest(url, request, response, copyRequestBody)
     }
 
     private fun getUrlFragment(request: HttpServletRequest): String
