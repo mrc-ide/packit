@@ -15,7 +15,6 @@ import packit.service.RunnerService
 class RunnerController(private val runnerService: RunnerService)
 {
     @GetMapping("/version")
-    @ResponseBody
     fun getVersion(): ResponseEntity<OrderlyRunnerVersion>
     {
         return ResponseEntity.ok(runnerService.getVersion())
