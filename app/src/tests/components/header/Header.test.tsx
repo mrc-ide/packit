@@ -59,4 +59,11 @@ describe("header component", () => {
 
     expect(screen.queryByRole("link", { name: "Manage Access" })).not.toBeInTheDocument();
   });
+
+  it("should render left nav is user is present", async () => {
+    mockGetUserFromLocalStorage.mockReturnValue(mockUserState);
+    renderElement();
+
+    expect(screen.getByRole("link", { name: /runner/i })).toBeInTheDocument();
+  });
 });
