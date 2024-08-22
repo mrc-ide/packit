@@ -6,16 +6,39 @@ import org.springframework.boot.test.web.client.exchange
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpEntity
+import org.springframework.http.MediaType
+import org.springframework.beans.factory.annotation.Autowired
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
 import packit.model.dto.GitBranches
 import packit.model.dto.OrderlyRunnerVersion
 import packit.model.dto.Parameter
+import packit.model.dto.SubmitRunInfo
 import packit.model.dto.RunnerPacketGroup
+import packit.model.PacketGroup
+import packit.repository.PacketGroupRepository
+import packit.repository.RunInfoRepository
 import kotlin.test.assertEquals
 
 class RunnerControllerTest : IntegrationTest()
 {
+    @Autowired
+    private lateinit var packetGroupRepository: PacketGroupRepository
+
+    @Autowired
+    private lateinit var runInfoRepository: RunInfoRepository
+
+    private fun getSubmitRunInfo(branch: String, commitHash: String): String
+    {
+        return "{\n" +
+        "  \"name\": \"data\",\n" +
+        "  \"branch\": \"$branch\",\n" +
+        "  \"hash\": \"$commitHash\"\n" +
+        "}"
+    }
+
     @Test
     @WithAuthenticatedUser(authorities = ["packet.run"])
     fun `can get orderly runner version`()
@@ -82,7 +105,7 @@ class RunnerControllerTest : IntegrationTest()
         val testPacketGroupName = "parameters"
         val expectedParameters = listOf(
             Parameter("a", null),
-            Parameter("b", "2"),
+            Parameter("b", 2),
             Parameter("c", null)
         )
         val res: ResponseEntity<List<Parameter>> = restTemplate.exchange(
@@ -109,5 +132,34 @@ class RunnerControllerTest : IntegrationTest()
             assertEquals(Long::class.java, it.updatedTime::class.java)
             assertEquals(Boolean::class.java, it.hasModifications::class.java)
         }
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.run"])
+    fun `can submit report run`()
+    {
+        val branchRes: ResponseEntity<GitBranches> = restTemplate.exchange(
+            "/runner/git/branches",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+        val branch = branchRes.body!!.branches[0]
+
+        if (!packetGroupRepository.existsByName("data"))
+        {
+            val packetGroup = PacketGroup("data", id = 1)
+            packetGroupRepository.save(packetGroup)
+        }
+
+        val res: ResponseEntity<String> = restTemplate.exchange(
+            "/runner/run",
+            HttpMethod.POST,
+            getTokenizedHttpEntity(
+                MediaType.APPLICATION_JSON,
+                getSubmitRunInfo(branch.name, branch.commitHash)
+            )
+        )
+
+        assertEquals(String::class.java, res.body!!::class.java)
     }
 }
