@@ -103,7 +103,7 @@ class RunnerControllerTest : IntegrationTest()
         val expectedParameters = listOf(
             Parameter("a", null),
             Parameter("b", 2),
-            Parameter("c", null)
+            Parameter("c", null),
         )
         val res: ResponseEntity<List<Parameter>> = restTemplate.exchange(
             "/runner/$testPacketGroupName/parameters?ref=master",
@@ -126,7 +126,7 @@ class RunnerControllerTest : IntegrationTest()
 
         res.body!!.forEach {
             assertEquals(String::class.java, it.name::class.java)
-            assertEquals(Long::class.java, it.updatedTime::class.java)
+            assertEquals(Double::class.java, it.updatedTime::class.java)
             assertEquals(Boolean::class.java, it.hasModifications::class.java)
         }
     }

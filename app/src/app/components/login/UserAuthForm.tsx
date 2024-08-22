@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "../../../lib/cn";
+import { isAuthenticated } from "../../../lib/isAuthenticated";
 import { useAuthConfig } from "../providers/AuthConfigProvider";
 import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 import { useUser } from "../providers/UserProvider";
@@ -21,7 +22,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     if (loggingOut) {
       setLoggingOut(false);
     }
-    if (user?.token) {
+    if (isAuthenticated(authConfig, user)) {
       navigate("/");
     }
   }, [user?.token]);
