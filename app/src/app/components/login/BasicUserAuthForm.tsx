@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 import { Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -17,6 +18,7 @@ export const BasicUserAuthForm = () => {
   const { setUser } = useUser();
   const [searchParams] = useSearchParams();
   const updatePasswordSuccess = searchParams.get("success");
+  const { requestedUrl, setRequestedUrl } = useRedirectOnLogin();
 
   const formSchema = z.object({
     email: z.string().email(),
@@ -40,7 +42,10 @@ export const BasicUserAuthForm = () => {
       });
 
       setUser(data.token);
-      navigate("/");
+
+      const url = requestedUrl || "/";
+      setRequestedUrl(null); // reset requested url before redirecting
+      navigate(url);
     } catch (error) {
       console.error(error);
       if (error instanceof ApiError) {

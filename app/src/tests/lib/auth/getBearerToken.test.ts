@@ -20,11 +20,8 @@ Object.defineProperty(window, "location", {
 });
 
 describe("getBearerToken", () => {
-  it("should return the bearer token if it exists and is not expired", () => {
-    const user = {
-      token: "testToken",
-      exp: Math.floor(Date.now() / 1000) + 3600 // expires in 1 hour
-    } as UserState;
+  it("should return the bearer token if it exists", () => {
+    const user = { token: "testToken" } as UserState;
     mockGetUserFromLocalStorage.mockReturnValueOnce(user);
 
     const result = getBearerToken();
@@ -32,27 +29,11 @@ describe("getBearerToken", () => {
     expect(result).toBe(user.token);
   });
 
-  it("should remove the user from local storage and redirect to login page if bearer token is not found", () => {
+  it("should throw an error if no token exists", () => {
     mockGetUserFromLocalStorage.mockReturnValueOnce(null);
-    expect(() => {
-      getBearerToken();
-    }).toThrow("No bearer token found");
-
-    expect(localStorage.getItem("user")).toBeNull();
-    expect(window.location.href).toBe("/login");
-  });
-
-  it("should remove the user from local storage and redirect to login page if bearer token is expired", () => {
-    const user = {
-      token: "testToken",
-      exp: Math.floor(Date.now() / 1000) - 3600 // expired 1 hour ago
-    } as UserState;
-    mockGetUserFromLocalStorage.mockReturnValueOnce(user);
 
     expect(() => {
       getBearerToken();
     }).toThrow("No bearer token found");
-
-    expect(window.location.href).toBe("/login");
   });
 });

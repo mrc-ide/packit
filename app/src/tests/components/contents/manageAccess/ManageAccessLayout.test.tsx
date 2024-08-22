@@ -14,7 +14,7 @@ jest.mock("../../../../lib/localStorageManager", () => ({
 
 describe("ManageAccessLayout", () => {
   it("should allow navigation between sidebar and render outlet when user access", async () => {
-    mockGetUserFromLocalStorage.mockReturnValue(mockUserState);
+    mockGetUserFromLocalStorage.mockReturnValue(mockUserState());
     render(
       <UserProvider>
         <MemoryRouter initialEntries={["/manage-roles"]}>
@@ -38,7 +38,7 @@ describe("ManageAccessLayout", () => {
   });
 
   it("should show unauthorized when user does not have user.manage authority", () => {
-    mockGetUserFromLocalStorage.mockReturnValue({ ...mockUserState, authorities: [] });
+    mockGetUserFromLocalStorage.mockReturnValue({ ...mockUserState(), authorities: [] });
     render(
       <UserProvider>
         <MemoryRouter initialEntries={["/manage-roles"]}>

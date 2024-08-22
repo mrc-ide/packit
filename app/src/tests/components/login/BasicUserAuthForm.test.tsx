@@ -11,7 +11,22 @@ jest.mock("react-router-dom", () => ({
   ...(jest.requireActual("react-router-dom") as any),
   useNavigate: () => mockedUsedNavigate
 }));
+
+const mockSetRequestedUrl = jest.fn();
+let mockRequestedUrl: string | null = null;
+jest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
+  useRedirectOnLogin: () => ({
+    setRequestedUrl: mockSetRequestedUrl,
+    requestedUrl: (() => mockRequestedUrl)()
+  })
+}));
+
 describe("BasicUserAuthForm", () => {
+  beforeEach(() => {
+    mockRequestedUrl = null;
+    jest.clearAllMocks();
+  });
+
   it("should validate both email and password by showing errors if fails schema", async () => {
     render(
       <MemoryRouter>
@@ -48,6 +63,28 @@ describe("BasicUserAuthForm", () => {
       expect(mockedUsedNavigate).toHaveBeenCalledWith("/");
     });
   });
+
+  it("should navigate to saved redirect page if successful submission", async () => {
+    mockRequestedUrl = "/accessibility";
+
+    render(
+      <MemoryRouter>
+        <UserProvider>
+          <BasicUserAuthForm />
+        </UserProvider>
+      </MemoryRouter>
+    );
+
+    userEvent.type(screen.getByLabelText(/email/i), "test@gmail.com");
+    userEvent.type(screen.getByLabelText(/password/i), "password");
+    userEvent.click(screen.getByRole("button", { name: /login/i }));
+
+    await waitFor(() => {
+      expect(mockedUsedNavigate).toHaveBeenCalledWith("/accessibility");
+      expect(mockSetRequestedUrl).toHaveBeenCalledWith(null);
+    });
+  });
+
   it("should show error message on email and password fields if api returns 401", async () => {
     server.use(
       rest.post("*", (req, res, ctx) => {
