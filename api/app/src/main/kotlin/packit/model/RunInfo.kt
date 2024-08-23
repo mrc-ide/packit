@@ -12,13 +12,10 @@ class RunInfo(
     @Id
     var taskId: String,
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "packet_group_id", nullable = false)
-    var packetGroup: PacketGroup,
-
-    var status: String? = null,
-    var commitHash: String? = null,
-    var branch: String? = null,
+    var packetGroupName: String,
+    var status: String,
+    var commitHash: String,
+    var branch: String,
 
     @JdbcTypeCode(SqlTypes.JSON)
     var logs: List<String>? = null,
@@ -33,11 +30,11 @@ class RunInfo(
 )
 
 fun RunInfo.toDto() = RunInfoDto(
-    taskId, packetGroup.toDto(), status, commitHash, branch, logs,
+    taskId, packetGroupName, status, commitHash, branch, logs,
     timeStarted, timeCompleted, timeQueued, packetId, parameters
 )
 
 fun RunInfo.toBasicDto() = BasicRunInfoDto(
-    taskId, packetGroup.toDto(), status, commitHash, branch,
+    taskId, packetGroupName, status, commitHash, branch,
     timeStarted, timeCompleted, timeQueued, packetId, parameters
 )
