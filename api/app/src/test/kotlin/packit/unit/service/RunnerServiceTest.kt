@@ -3,14 +3,12 @@ package packit.unit.service
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.*
-import packit.model.PacketGroup
 import packit.model.RunInfo
 import packit.model.dto.OrderlyRunnerVersion
 import packit.model.dto.Parameter
 import packit.model.dto.RunnerPacketGroup
 import packit.model.dto.SubmitRunInfo
 import packit.model.dto.SubmitRunResponse
-import packit.repository.PacketGroupRepository
 import packit.repository.RunInfoRepository
 import packit.service.BaseRunnerService
 import packit.service.OrderlyRunnerClient

@@ -10,12 +10,10 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
-import packit.model.PacketGroup
 import packit.model.dto.GitBranches
 import packit.model.dto.OrderlyRunnerVersion
 import packit.model.dto.Parameter
 import packit.model.dto.RunnerPacketGroup
-import packit.repository.PacketGroupRepository
 import packit.repository.RunInfoRepository
 import kotlin.test.assertEquals
 

@@ -3,7 +3,7 @@ package packit.model.dto
 data class BasicRunInfoDto(
     val taskId: String,
     val packetGroupName: String,
-    val status: String,
+    val status: String? = null,
     val commitHash: String,
     val branch: String,
     val timeStarted: Double? = null,

@@ -13,7 +13,7 @@ class RunInfo(
     var taskId: String,
 
     var packetGroupName: String,
-    var status: String,
+    var status: String? = null,
     var commitHash: String,
     var branch: String,
 

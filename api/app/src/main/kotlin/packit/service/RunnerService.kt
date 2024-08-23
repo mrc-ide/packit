@@ -7,7 +7,6 @@ import packit.model.dto.OrderlyRunnerVersion
 import packit.model.dto.Parameter
 import packit.model.dto.RunnerPacketGroup
 import packit.model.dto.SubmitRunInfo
-import packit.repository.PacketGroupRepository
 import packit.repository.RunInfoRepository
 
 interface RunnerService
@@ -57,7 +56,7 @@ class BaseRunnerService(
         val res = orderlyRunnerClient.submitRun(info)
         val runInfo = RunInfo(
             res.taskId,
-            packitGroupName = info.name,
+            packetGroupName = info.name,
             commitHash = info.hash,
             branch = info.branch,
             parameters = info.parameters
