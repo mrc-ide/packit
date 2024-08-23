@@ -22,9 +22,6 @@ import kotlin.test.assertEquals
 class RunnerControllerTest : IntegrationTest()
 {
     @Autowired
-    private lateinit var packetGroupRepository: PacketGroupRepository
-
-    @Autowired
     private lateinit var runInfoRepository: RunInfoRepository
 
     private fun getSubmitRunInfo(branch: String, commitHash: String): String
@@ -141,12 +138,6 @@ class RunnerControllerTest : IntegrationTest()
             getTokenizedHttpEntity()
         )
         val branch = branchRes.body!!.branches[0]
-
-        if (!packetGroupRepository.existsByName("data"))
-        {
-            val packetGroup = PacketGroup("data", id = 1)
-            packetGroupRepository.save(packetGroup)
-        }
 
         val res: ResponseEntity<String> = restTemplate.exchange(
             "/runner/run",

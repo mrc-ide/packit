@@ -25,13 +25,9 @@ class RunnerServiceTest
             on { getVersion() } doReturn version
         }
     private val outpackServerClient = mock<OutpackServerClient>()
-    private val packitGroupRepository = mock<PacketGroupRepository>()
     private val runInfoRepository = mock<RunInfoRepository>()
 
-    private val sut = BaseRunnerService(
-        orderlyRunnerClient, outpackServerClient,
-        packitGroupRepository, runInfoRepository
-    )
+    private val sut = BaseRunnerService(orderlyRunnerClient, outpackServerClient, runInfoRepository)
 
     @Test
     fun `can get version`()
@@ -94,23 +90,19 @@ class RunnerServiceTest
 
         val info = SubmitRunInfo("report-name", "branch", "hash", null)
         val mockRes = SubmitRunResponse("task-id")
-        val mockPacketGroup = PacketGroup("report-name", id = 1)
 
         `when`(orderlyRunnerClient.submitRun(info)).thenReturn(mockRes)
-        `when`(packitGroupRepository.findOneByName(info.name)).thenReturn(mockPacketGroup)
 
         val runInfo = RunInfo(
             mockRes.taskId,
-            mockPacketGroup,
+            packetGroupName = info.name,
             commitHash = info.hash,
             branch = info.branch,
             parameters = info.parameters
         )
-
         val res = sut.submitRun(info)
 
         verify(orderlyRunnerClient).submitRun(info)
-        verify(packitGroupRepository).findOneByName(info.name)
         verify(runInfoRepository).save(argThat { this.taskId == runInfo.taskId })
         assertEquals(res, "task-id")
     }

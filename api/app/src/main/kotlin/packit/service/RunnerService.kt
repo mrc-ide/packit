@@ -24,7 +24,6 @@ interface RunnerService
 class BaseRunnerService(
     private val orderlyRunnerClient: OrderlyRunner,
     private val outpackServerClient: OutpackServer,
-    private val packitGroupRepository: PacketGroupRepository,
     private val runInfoRepository: RunInfoRepository
 ) : RunnerService
 {
@@ -56,10 +55,9 @@ class BaseRunnerService(
     override fun submitRun(info: SubmitRunInfo): String
     {
         val res = orderlyRunnerClient.submitRun(info)
-        val packitGroup = packitGroupRepository.findOneByName(info.name)
         val runInfo = RunInfo(
             res.taskId,
-            packitGroup,
+            packitGroupName = info.name,
             commitHash = info.hash,
             branch = info.branch,
             parameters = info.parameters
