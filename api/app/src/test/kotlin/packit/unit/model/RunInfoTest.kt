@@ -1,6 +1,5 @@
 package packit.unit.model
 
-import packit.model.PacketGroup
 import packit.model.RunInfo
 import packit.model.toBasicDto
 import packit.model.toDto
