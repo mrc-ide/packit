@@ -2,10 +2,10 @@ package packit.model.dto
 
 data class RunInfoDto(
     val taskId: String,
-    val packetGroup: PacketGroupDto,
-    val status: String? = null,
-    val commitHash: String? = null,
-    val branch: String? = null,
+    val packetGroupName: String,
+    val status: String,
+    val commitHash: String,
+    val branch: String,
     val logs: List<String>? = null,
     val timeStarted: Double? = null,
     val timeCompleted: Double? = null,
