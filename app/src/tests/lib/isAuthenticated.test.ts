@@ -1,5 +1,4 @@
 import { AuthConfig } from "../../app/components/providers/types/AuthConfigTypes";
-import { UserState } from "../../app/components/providers/types/UserTypes";
 import { isAuthenticated } from "../../lib/isAuthenticated";
 import { mockUserState, mockExpiredUserState } from "../mocks";
 

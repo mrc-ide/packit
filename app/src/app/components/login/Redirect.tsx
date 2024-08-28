@@ -5,7 +5,7 @@ import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 
 export default function Redirect() {
   const navigate = useNavigate();
-  const { user, setUser } = useUser();
+  const { setUser } = useUser();
   const { requestedUrl, setRequestedUrl } = useRedirectOnLogin();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);

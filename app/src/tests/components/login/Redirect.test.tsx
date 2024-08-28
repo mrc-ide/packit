@@ -2,7 +2,6 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { Home } from "../../../app/components/contents/explorer";
 import { Login, Redirect } from "../../../app/components/login";
-import { UserProvider } from "../../../app/components/providers/UserProvider";
 import { UserState } from "../../../app/components/providers/types/UserTypes";
 import { mockUserState, mockExpiredUserState } from "../../mocks";
 import { Accessibility } from "../../../app/components/contents/accessibility";
