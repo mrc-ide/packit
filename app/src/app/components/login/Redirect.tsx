@@ -19,15 +19,15 @@ export default function Redirect() {
   };
 
   useEffect(() => {
-    if (user?.token) {
-      navigateToRequestedUrl();
-    } else if (token) {
-      setUser(token);
-    }
     if (error) {
       navigate(`/login?error=${error}`);
+    } else {
+      if (token) {
+        setUser(token);
+      }
+      navigateToRequestedUrl();
     }
-  }, [token, error, user?.token]);
+  }, [token, error]);
 
   return (
     <div>
