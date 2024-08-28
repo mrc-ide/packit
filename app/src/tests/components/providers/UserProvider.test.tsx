@@ -15,7 +15,7 @@ const renderElement = (children: JSX.Element) => {
 describe("UserProvider", () => {
   it("should throw error if useUser is used outside of UserProvider", () => {
     const TestComponent = () => {
-      const { user } = useUser();
+      useUser();
       return <div>test</div>;
     };
     expect(() => render(<TestComponent />)).toThrowError("useUser must be used within a UserProvider");
