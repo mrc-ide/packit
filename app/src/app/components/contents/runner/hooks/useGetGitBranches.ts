@@ -8,7 +8,6 @@ export const useGetGitBranches = () => {
     `${appConfig.apiUrl()}/runner/git/branches`,
     (url: string) => fetcher({ url })
   );
-  console.log(data);
 
   return {
     branchData: data,

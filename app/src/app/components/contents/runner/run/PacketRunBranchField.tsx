@@ -66,7 +66,7 @@ export const PacketRunBranchField = ({ branches, form, mutate }: PacketRunBranch
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button aria-label="git-fetch" size="icon" onClick={gitFetch}>
+              <Button aria-label="git-fetch" size="icon" onClick={gitFetch} type="button">
                 <RefreshCw />
               </Button>
             </TooltipTrigger>
