@@ -10,5 +10,6 @@ data class BasicRunInfoDto(
     val timeCompleted: Double? = null,
     val timeQueued: Double? = null,
     val packetId: String? = null,
-    val parameters: Map<String, Any>? = null
+    val parameters: Map<String, Any>? = null,
+    val queuePosition: Int? = null
 )

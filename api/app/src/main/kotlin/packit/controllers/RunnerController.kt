@@ -9,6 +9,8 @@ import packit.model.dto.OrderlyRunnerVersion
 import packit.model.dto.Parameter
 import packit.model.dto.RunnerPacketGroup
 import packit.model.dto.SubmitRunInfo
+import packit.model.dto.RunInfoDto
+import packit.model.RunInfo
 import packit.service.RunnerService
 
 @RestController
@@ -56,5 +58,11 @@ class RunnerController(private val runnerService: RunnerService)
     ): ResponseEntity<String>
     {
         return ResponseEntity.ok(runnerService.submitRun(submitRunInfo))
+    }
+
+    @GetMapping("/status/{taskId}")
+    fun getJobStatus(@PathVariable taskId: String): ResponseEntity<RunInfoDto>
+    {
+        return ResponseEntity.ok(runnerService.getTaskStatus(taskId))
     }
 }

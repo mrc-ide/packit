@@ -11,5 +11,6 @@ CREATE TABLE IF NOT EXISTS "run_info"
     "time_started"        DOUBLE PRECISION,
     "time_completed"      DOUBLE PRECISION,
     "time_queued"         DOUBLE PRECISION,
+    "queue_position"      INT,
     "packet_id"           TEXT
 );

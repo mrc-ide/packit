@@ -7,6 +7,8 @@ import packit.model.dto.OrderlyRunnerVersion
 import packit.model.dto.Parameter
 import packit.model.dto.RunnerPacketGroup
 import packit.model.dto.SubmitRunInfo
+import packit.model.dto.RunInfoDto
+import packit.model.toDto
 import packit.repository.RunInfoRepository
 
 interface RunnerService
@@ -17,6 +19,7 @@ interface RunnerService
     fun getParameters(packetGroupName: String, ref: String): List<Parameter>
     fun getPacketGroups(ref: String): List<RunnerPacketGroup>
     fun submitRun(info: SubmitRunInfo): String
+    fun getTaskStatus(taskId: String): RunInfoDto
 }
 
 @Service
@@ -63,5 +66,22 @@ class BaseRunnerService(
         )
         runInfoRepository.save(runInfo)
         return res.taskId
+    }
+
+    override fun getTaskStatus(taskId: String): RunInfoDto
+    {
+        val taskStatus = orderlyRunnerClient.getTaskStatuses(listOf(taskId), true)[0]
+
+        val runInfo = runInfoRepository.findByTaskId(taskId)!!
+        runInfo.timeQueued = taskStatus.timeQueued
+        runInfo.timeStarted = taskStatus.timeStarted
+        runInfo.timeCompleted = taskStatus.timeComplete
+        runInfo.logs = taskStatus.logs
+        runInfo.status = taskStatus.status
+        runInfo.packetId = taskStatus.packetId
+        runInfo.queuePosition = taskStatus.queuePosition
+        runInfoRepository.save(runInfo)
+
+        return runInfo.toDto()
     }
 }
