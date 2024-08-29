@@ -1,9 +1,9 @@
 import { render, screen, waitFor } from "@testing-library/react";
+import { useEffect } from "react";
 import { UserProvider, useUser } from "../../../app/components/providers/UserProvider";
 import { UserState } from "../../../app/components/providers/types/UserTypes";
-import { mockToken, mockUserState } from "../../mocks";
-import { useEffect } from "react";
 import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
+import { mockToken, mockUserState } from "../../mocks";
 
 const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
 jest.mock("../../../lib/localStorageManager", () => ({

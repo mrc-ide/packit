@@ -1,20 +1,27 @@
+import { hasPacketRunPermission } from "../../../lib/auth/hasPermission";
 import { cn } from "../../../lib/cn";
 import { NavigationLink } from "../Base/NavigationLink";
+import { UserState } from "../providers/types/UserTypes";
 
 export const LeftNavItems = {
-  runner: "Runner",
-  "run-workflow": "Workflow Runner",
-  documentation: "Documentation"
+  runner: "Runner"
+  // "run-workflow": "Workflow Runner",
+  // documentation: "Documentation"
 };
 
-export const LeftNav = ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => {
+interface LeftNavProps extends React.HTMLAttributes<HTMLElement> {
+  user: UserState;
+}
+export const LeftNav = ({ className, user, ...props }: LeftNavProps) => {
   return (
     <nav className={cn("flex items-center space-x-4 lg:space-x-6", className)} {...props}>
-      {Object.entries(LeftNavItems).map(([to, title]) => (
-        <NavigationLink to={to} key={to}>
-          {title}
-        </NavigationLink>
-      ))}
+      {Object.entries(LeftNavItems).map(([to, title]) =>
+        to === "runner" && !hasPacketRunPermission(user) ? null : (
+          <NavigationLink to={to} key={to}>
+            {title}
+          </NavigationLink>
+        )
+      )}
     </nav>
   );
 };
