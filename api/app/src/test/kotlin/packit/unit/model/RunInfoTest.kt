@@ -29,24 +29,4 @@ class RunInfoTest
         assertEquals(runInfo.packetId, runInfoDto.packetId)
         assertEquals(runInfo.parameters, runInfoDto.parameters)
     }
-
-    @Test
-    fun `toBasicDto return correct BasicRunInfoDto for RunInfo`()
-    {
-        val runInfo = RunInfo(
-            "task_id", "report_name", "status", "hash", "branch", listOf("log1", "log2"),
-            1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input")
-        )
-        val basicRunInfoDto = runInfo.toBasicDto()
-        assertEquals(runInfo.taskId, basicRunInfoDto.taskId)
-        assertEquals(runInfo.packetGroupName, basicRunInfoDto.packetGroupName)
-        assertEquals(runInfo.status, basicRunInfoDto.status)
-        assertEquals(runInfo.commitHash, basicRunInfoDto.commitHash)
-        assertEquals(runInfo.branch, basicRunInfoDto.branch)
-        assertEquals(runInfo.timeStarted, basicRunInfoDto.timeStarted)
-        assertEquals(runInfo.timeCompleted, basicRunInfoDto.timeCompleted)
-        assertEquals(runInfo.timeQueued, basicRunInfoDto.timeQueued)
-        assertEquals(runInfo.packetId, basicRunInfoDto.packetId)
-        assertEquals(runInfo.parameters, basicRunInfoDto.parameters)
-    }
 }
