@@ -1,15 +1,12 @@
+import { useEffect } from "react";
 import { useFieldArray, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
-import { packetRunFormSchema } from "./PacketRunForm";
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../../../Base/Form";
-import appConfig from "../../../../../config/appConfig";
-import { fetcher } from "../../../../../lib/fetch";
-import useSWR from "swr";
-import { Parameter } from "../types/RunnerPacketGroup";
-import { ErrorComponent } from "../../common/ErrorComponent";
-import { Skeleton } from "../../../Base/Skeleton";
-import { useEffect } from "react";
 import { Input } from "../../../Base/Input";
+import { Skeleton } from "../../../Base/Skeleton";
+import { ErrorComponent } from "../../common/ErrorComponent";
+import { useGetParameters } from "../hooks/useGetParameters";
+import { packetRunFormSchema } from "./PacketRunForm";
 
 interface PacketRunParamsFieldProps {
   packetGroupName: string;
@@ -17,20 +14,17 @@ interface PacketRunParamsFieldProps {
   form: UseFormReturn<z.infer<typeof packetRunFormSchema>>;
 }
 export const PacketRunParamsField = ({ packetGroupName, branchName, form }: PacketRunParamsFieldProps) => {
-  const { data, isLoading, error } = useSWR<Parameter[]>(
-    packetGroupName ? `${appConfig.apiUrl()}/runner/${packetGroupName}/parameters?ref=${branchName}` : null,
-    (url: string) => fetcher({ url })
-  );
+  const { parameters, isLoading, error } = useGetParameters(packetGroupName, branchName);
   const { fields, replace } = useFieldArray({
     control: form.control,
     name: "parameters"
   });
 
   useEffect(() => {
-    if (data) {
-      replace(data.map((param) => ({ ...param, value: param.value ?? "" })));
+    if (parameters) {
+      replace(parameters.map((param) => ({ name: param.name, value: param.value ?? "" })));
     }
-  }, [data]);
+  }, [parameters]);
 
   if (error) {
     return <ErrorComponent message="Error loading parameters" error={error} />;
@@ -42,7 +36,7 @@ export const PacketRunParamsField = ({ packetGroupName, branchName, form }: Pack
   return (
     <div className="space-y-2">
       <FormLabel className="font-semibold text-lg">Packet Group Parameters</FormLabel>
-      {data ? (
+      {parameters ? (
         <div className="flex flex-col space-y-3">
           {fields.length == 0 ? (
             <FormDescription>No parameters available for this packet group.</FormDescription>

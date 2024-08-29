@@ -1,17 +1,14 @@
 import { Check, ChevronsUpDown } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
-import useSWR from "swr";
 import { z } from "zod";
-import appConfig from "../../../../../config/appConfig";
 import { cn } from "../../../../../lib/cn";
-import { fetcher } from "../../../../../lib/fetch";
 import { Button } from "../../../Base/Button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../../../Base/Command";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../../Base/Form";
 import { Popover, PopoverContent, PopoverTrigger } from "../../../Base/Popover";
 import { Skeleton } from "../../../Base/Skeleton";
 import { ErrorComponent } from "../../common/ErrorComponent";
-import { RunnerPacketGroup } from "../types/RunnerPacketGroup";
+import { useGetRunnerPacketGroups } from "../hooks/useGetRunnerPacketGroups";
 import { packetRunFormSchema } from "./PacketRunForm";
 import { PacketRunParamsField } from "./PacketRunParamsField";
 
@@ -20,10 +17,7 @@ interface PacketRunPacketGroupFieldsProps {
   branchName: string;
 }
 export const PacketRunPacketGroupFields = ({ form, branchName }: PacketRunPacketGroupFieldsProps) => {
-  const { data, isLoading, error } = useSWR<RunnerPacketGroup[]>(
-    `${appConfig.apiUrl()}/runner/packetGroups?ref=${branchName}`,
-    (url: string) => fetcher({ url })
-  );
+  const { packetGroups, isLoading, error } = useGetRunnerPacketGroups(branchName);
 
   if (error) {
     return <ErrorComponent message="Error loading packet groups" error={error} />;
@@ -32,7 +26,7 @@ export const PacketRunPacketGroupFields = ({ form, branchName }: PacketRunPacket
     return <Skeleton className="h-12 w-96" />;
   }
 
-  return data ? (
+  return packetGroups ? (
     <>
       <FormField
         control={form.control}
@@ -59,7 +53,7 @@ export const PacketRunPacketGroupFields = ({ form, branchName }: PacketRunPacket
                   <CommandList>
                     <CommandEmpty>No packet groups found.</CommandEmpty>
                     <CommandGroup>
-                      {data.map((packetGroupName) => (
+                      {packetGroups.map((packetGroupName) => (
                         <CommandItem
                           value={packetGroupName.name}
                           key={packetGroupName.name}
