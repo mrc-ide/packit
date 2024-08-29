@@ -1,6 +1,7 @@
 package packit.unit.model
 
 import packit.model.RunInfo
+import packit.model.dto.Status
 import packit.model.toDto
 import java.util.*
 import kotlin.test.Test
@@ -12,13 +13,13 @@ class RunInfoTest
     fun `toDto return correct RunInfoDto for RunInfo`()
     {
         val runInfo = RunInfo(
-            "task_id", "report_name", "status", "hash", "branch", listOf("log1", "log2"),
+            "task_id", "report_name", "PENDING", "hash", "branch", listOf("log1", "log2"),
             1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input")
         )
         val runInfoDto = runInfo.toDto()
         assertEquals(runInfo.taskId, runInfoDto.taskId)
         assertEquals(runInfo.packetGroupName, runInfoDto.packetGroupName)
-        assertEquals(runInfo.status, runInfoDto.status)
+        assertEquals(runInfo.status, runInfoDto.status.toString())
         assertEquals(runInfo.commitHash, runInfoDto.commitHash)
         assertEquals(runInfo.branch, runInfoDto.branch)
         assertEquals(runInfo.logs, runInfoDto.logs)

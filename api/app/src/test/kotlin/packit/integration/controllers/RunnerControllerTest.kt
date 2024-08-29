@@ -14,8 +14,10 @@ import packit.model.dto.GitBranches
 import packit.model.dto.OrderlyRunnerVersion
 import packit.model.dto.Parameter
 import packit.model.dto.RunnerPacketGroup
+import packit.model.dto.SubmitRunInfo
 import packit.repository.RunInfoRepository
 import kotlin.test.assertEquals
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
 class RunnerControllerTest : IntegrationTest()
 {
@@ -24,11 +26,7 @@ class RunnerControllerTest : IntegrationTest()
 
     private fun getSubmitRunInfo(branch: String, commitHash: String): String
     {
-        return "{\n" +
-        "  \"name\": \"data\",\n" +
-        "  \"branch\": \"$branch\",\n" +
-        "  \"hash\": \"$commitHash\"\n" +
-        "}"
+        return jacksonObjectMapper().writeValueAsString(SubmitRunInfo("data", branch, commitHash))
     }
 
     @Test
