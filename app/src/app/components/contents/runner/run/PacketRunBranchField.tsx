@@ -35,7 +35,7 @@ export const PacketRunBranchField = ({ branches, form, mutate }: PacketRunBranch
   };
 
   return (
-    <>
+    <div className="space-y-2">
       <FormLabel className="font-semibold text-lg">Branch</FormLabel>
       <div className="flex space-x-3">
         <div className="flex-grow">
@@ -86,6 +86,6 @@ export const PacketRunBranchField = ({ branches, form, mutate }: PacketRunBranch
           Updated {lastCommitTime.value} {lastCommitTime.unit} ago
         </div>
       </div>
-    </>
+    </div>
   );
 };
