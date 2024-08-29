@@ -14,7 +14,7 @@ import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.servlet.NoHandlerFoundException
 import packit.model.ErrorDetail
-import packit.service.OutpackServerException
+import packit.service.GenericClientException
 import java.util.*
 
 @ControllerAdvice
@@ -75,8 +75,8 @@ class PackitExceptionHandler
             .toResponseEntity()
     }
 
-    @ExceptionHandler(OutpackServerException::class)
-    fun handleOutpackServerException(e: OutpackServerException): ResponseEntity<String>
+    @ExceptionHandler(GenericClientException::class)
+    fun handleGenericClientException(e: GenericClientException): ResponseEntity<String>
     {
         val clientError = e.cause!! as HttpStatusCodeException
         val message = clientError.responseBodyAsString
