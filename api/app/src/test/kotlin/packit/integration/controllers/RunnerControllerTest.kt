@@ -26,7 +26,7 @@ class RunnerControllerTest : IntegrationTest()
 
     private fun getSubmitRunInfo(branch: String, commitHash: String): String
     {
-        return jacksonObjectMapper().writeValueAsString(SubmitRunInfo("data", branch, commitHash))
+        return jacksonObjectMapper().writeValueAsString(SubmitRunInfo("data", branch, commitHash, null))
     }
 
     @Test
