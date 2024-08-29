@@ -28,14 +28,14 @@ describe("header component", () => {
     );
   };
   it("can render header user related items when authenticated", () => {
-    mockGetUserFromLocalStorage.mockReturnValue(mockUserState);
+    mockGetUserFromLocalStorage.mockReturnValue(mockUserState());
     renderElement();
 
     expect(screen.getByText("LJ")).toBeInTheDocument();
   });
 
   it("should change theme when theme button is clicked", async () => {
-    mockGetUserFromLocalStorage.mockReturnValue(mockUserState);
+    mockGetUserFromLocalStorage.mockReturnValue(mockUserState());
     renderElement();
 
     const darkThemeButton = screen.getByRole("button", { name: "theme-light" });
@@ -48,13 +48,13 @@ describe("header component", () => {
   });
 
   it("should render link to manage access when user has user.manage authority", () => {
-    mockGetUserFromLocalStorage.mockReturnValue(mockUserState);
+    mockGetUserFromLocalStorage.mockReturnValue(mockUserState());
     renderElement();
 
     expect(screen.getByRole("link", { name: "Manage Access" })).toBeInTheDocument();
   });
   it("should not render link to manage access when user does not have user.manage authority", () => {
-    mockGetUserFromLocalStorage.mockReturnValue({ ...mockUserState, authorities: [] });
+    mockGetUserFromLocalStorage.mockReturnValue({ ...mockUserState(), authorities: [] });
     renderElement();
 
     expect(screen.queryByRole("link", { name: "Manage Access" })).not.toBeInTheDocument();

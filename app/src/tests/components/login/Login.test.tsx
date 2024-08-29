@@ -55,7 +55,7 @@ describe("login", () => {
   });
 
   it("should navigate if user token is present", () => {
-    mockGetUserFromLocalStorage.mockReturnValue(mockUserState);
+    mockGetUserFromLocalStorage.mockReturnValue(mockUserState());
     renderElement();
 
     expect(mockedUsedNavigate).toHaveBeenCalledWith("/");

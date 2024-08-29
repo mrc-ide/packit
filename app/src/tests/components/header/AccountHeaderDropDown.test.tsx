@@ -46,7 +46,7 @@ describe("header drop down menu component", () => {
   });
 
   it("renders drop down menu without user info if authenticated", async () => {
-    mockGetUserFromLocalStorage.mockReturnValue(mockUserState);
+    mockGetUserFromLocalStorage.mockReturnValue(mockUserState());
     renderElement();
 
     expect(await screen.findByText("LJ")).toBeInTheDocument();
