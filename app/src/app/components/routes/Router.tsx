@@ -14,6 +14,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import { UpdatePassword } from "../login";
 import { AuthLayoutForm } from "../login";
 import { ManageAccessLayout, ManageRoles, ManageUsers } from "../contents/manageAccess";
+import { PacketRun, PacketRunLogs, PacketRunnerLayout } from "../contents/runner";
 
 export function Router() {
   return (
@@ -31,7 +32,10 @@ export function Router() {
         <Route element={<ProtectedRoute />}>
           <Route element={<Breadcrumb />}>
             <Route index element={<Home />} />
-            {/* <Route path="runner" element={<PacketRunner />} /> */}
+            <Route element={<PacketRunnerLayout />}>
+              <Route path="runner" element={<PacketRun />} />
+              <Route path="runner/logs" element={<PacketRunLogs />} />
+            </Route>
             {/* <Route path="run-workflow" element={<WorkflowRunner />} /> */}
             {/* <Route path="documentation" element={<ProjectDocumentation />} /> */}
             <Route path="/:packetName" element={<PacketGroup />} />

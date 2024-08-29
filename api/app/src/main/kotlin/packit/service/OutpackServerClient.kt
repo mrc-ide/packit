@@ -14,7 +14,12 @@ interface OutpackServer
     fun getMetadata(from: Double? = null): List<OutpackMetadata>
     fun getMetadataById(id: String): PacketMetadata?
     fun getFileByHash(hash: String): Pair<ByteArray, HttpHeaders>?
-    fun proxyRequest(urlFragment: String, request: HttpServletRequest, response: HttpServletResponse)
+    fun proxyRequest(
+        urlFragment: String,
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        copyRequestBody: Boolean
+    )
     fun getChecksum(): String
     fun gitFetch()
     fun getBranches(): GitBranches
@@ -25,9 +30,14 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
 {
     val baseUrl: String = appConfig.outpackServerUrl
 
-    override fun proxyRequest(urlFragment: String, request: HttpServletRequest, response: HttpServletResponse)
+    override fun proxyRequest(
+        urlFragment: String,
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        copyRequestBody: Boolean
+    )
     {
-        GenericClient.proxyRequest(constructUrl(urlFragment), request, response)
+        GenericClient.proxyRequest(constructUrl(urlFragment), request, response, copyRequestBody)
     }
 
     override fun getMetadataById(id: String): PacketMetadata

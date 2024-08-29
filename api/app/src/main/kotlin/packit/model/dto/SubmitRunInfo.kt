@@ -1,8 +1,12 @@
 package packit.model.dto
 
+import com.fasterxml.jackson.annotation.JsonProperty
+
 data class SubmitRunInfo(
-    val name: String,
+    @JsonProperty("name")
+    val packetGroupName: String,
     val branch: String,
-    val hash: String,
+    @JsonProperty("hash")
+    val commitHash: String,
     val parameters: Map<String, Any>?
 )

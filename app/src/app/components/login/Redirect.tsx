@@ -5,7 +5,7 @@ import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 
 export default function Redirect() {
   const navigate = useNavigate();
-  const { user, setUser } = useUser();
+  const { setUser } = useUser();
   const { requestedUrl, setRequestedUrl } = useRedirectOnLogin();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -19,15 +19,15 @@ export default function Redirect() {
   };
 
   useEffect(() => {
-    if (user?.token) {
-      navigateToRequestedUrl();
-    } else if (token) {
-      setUser(token);
-    }
     if (error) {
       navigate(`/login?error=${error}`);
+    } else {
+      if (token) {
+        setUser(token);
+      }
+      navigateToRequestedUrl();
     }
-  }, [token, error, user?.token]);
+  }, [token, error]);
 
   return (
     <div>

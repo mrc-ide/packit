@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.*
 import org.springframework.http.client.ClientHttpRequest
+import org.springframework.http.client.SimpleClientHttpRequestFactory
 import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate
 import packit.exceptions.PackitException
@@ -18,7 +19,12 @@ object GenericClient
 {
 
     val log: Logger = LoggerFactory.getLogger(GenericClient::class.java)
-    val restTemplate = RestTemplate()
+
+    val restTemplate = run {
+        val requestFactory = SimpleClientHttpRequestFactory()
+        requestFactory.setBufferRequestBody(false)
+        RestTemplate(requestFactory)
+    }
 
     inline fun <reified T : Any> get(url: String): T
     {
@@ -47,7 +53,12 @@ object GenericClient
         return handleResponse(response)
     }
 
-    fun proxyRequest(url: String, request: HttpServletRequest, response: HttpServletResponse)
+    fun proxyRequest(
+        url: String,
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        copyRequestBody: Boolean
+    )
     {
         val method = request.method
         log.debug("{} {}", method, url)
@@ -60,7 +71,9 @@ object GenericClient
                     request.headerNames.asIterator().forEach {
                         serverRequest.headers.set(it, request.getHeader(it))
                     }
-                    IOUtils.copy(request.inputStream, serverRequest.body)
+                    if (copyRequestBody) {
+                        IOUtils.copy(request.inputStream, serverRequest.body)
+                    }
                 }
             ) { serverResponse ->
                 response.status = response.status
