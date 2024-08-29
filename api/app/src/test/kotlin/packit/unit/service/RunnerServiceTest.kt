@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.*
 import packit.model.RunInfo
-import packit.model.dto.Status
 import packit.model.dto.OrderlyRunnerVersion
 import packit.model.dto.Parameter
 import packit.model.dto.RunnerPacketGroup
+import packit.model.dto.Status
 import packit.model.dto.SubmitRunInfo
 import packit.model.dto.SubmitRunResponse
 import packit.repository.RunInfoRepository

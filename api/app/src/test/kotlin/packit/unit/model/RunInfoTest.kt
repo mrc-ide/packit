@@ -1,7 +1,6 @@
 package packit.unit.model
 
 import packit.model.RunInfo
-import packit.model.dto.Status
 import packit.model.toDto
 import java.util.*
 import kotlin.test.Test

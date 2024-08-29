@@ -1,5 +1,6 @@
 package packit.integration.controllers
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,7 +18,6 @@ import packit.model.dto.RunnerPacketGroup
 import packit.model.dto.SubmitRunInfo
 import packit.repository.RunInfoRepository
 import kotlin.test.assertEquals
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
 class RunnerControllerTest : IntegrationTest()
 {
