@@ -7,10 +7,9 @@ import org.springframework.web.bind.annotation.*
 import packit.model.dto.GitBranches
 import packit.model.dto.OrderlyRunnerVersion
 import packit.model.dto.Parameter
+import packit.model.dto.RunInfoDto
 import packit.model.dto.RunnerPacketGroup
 import packit.model.dto.SubmitRunInfo
-import packit.model.dto.RunInfoDto
-import packit.model.RunInfo
 import packit.service.RunnerService
 
 @RestController
