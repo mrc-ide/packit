@@ -57,8 +57,8 @@ class BaseRunnerService(
         val res = orderlyRunnerClient.submitRun(info)
         val runInfo = RunInfo(
             res.taskId,
-            packetGroupName = info.name,
-            commitHash = info.hash,
+            packetGroupName = info.packetGroupName,
+            commitHash = info.commitHash,
             branch = info.branch,
             parameters = info.parameters,
             status = Status.PENDING.toString()
