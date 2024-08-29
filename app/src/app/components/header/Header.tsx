@@ -6,6 +6,9 @@ import { useUser } from "../providers/UserProvider";
 import { ThemeToggleButton } from "./ThemeToggleButton";
 import { cn } from "../../../lib/cn";
 import { buttonVariants } from "../Base/Button";
+import { NavMenuMobile } from "./NavMenuMobile";
+import { LeftNav } from "./LeftNav";
+import { hasUserManagePermission } from "../../../lib/auth/hasPermission";
 
 export default function Header() {
   const { user } = useUser();
@@ -21,15 +24,13 @@ export default function Header() {
                 Packit
               </div>
             </NavLink>
-            {/* <div className="mx-3 flex items-center md:hidden">
-              <NavMenuMobile />
-            </div> */}
-            {/* {user && <LeftNav className="mx-6 hidden md:flex" />} */}
+            {user && <NavMenuMobile user={user} />}
+            {user && <LeftNav className="mx-6 hidden md:flex" user={user} />}
             <div className="ml-auto flex items-center space-x-4">
               {/* <NavigationLink to="/accessibility" className="mx-6 hidden md:flex">
                 Accessibility
               </NavigationLink> */}
-              {user?.authorities.includes("user.manage") && (
+              {hasUserManagePermission(user) && (
                 <NavLink to="/manage-roles" className={cn(buttonVariants({ variant: "ghost" }), "justify-start")}>
                   Manage Access
                 </NavLink>

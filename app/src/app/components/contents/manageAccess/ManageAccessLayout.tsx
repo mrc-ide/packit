@@ -3,6 +3,7 @@ import { SidebarItem } from "../../../../lib/types/SidebarItem";
 import { useUser } from "../../providers/UserProvider";
 import { Unauthorized } from "../common/Unauthorized";
 import { ManageAccessOutlet } from "./ManageAccessOutlet";
+import { hasUserManagePermission } from "../../../../lib/auth/hasPermission";
 
 const sidebarItems: SidebarItem[] = [
   {
@@ -18,7 +19,7 @@ const sidebarItems: SidebarItem[] = [
 export const ManageAccessLayout = () => {
   const { user } = useUser();
 
-  if (!user?.authorities.includes("user.manage")) {
+  if (!hasUserManagePermission(user)) {
     return <Unauthorized />;
   }
   return (
