@@ -1,5 +1,7 @@
 export const parseParameterValue = (value: string): string | number | boolean | null => {
   switch (true) {
+    case value === "":
+      return null;
     case value.toLocaleLowerCase() === "true":
       return true;
     case value.toLocaleLowerCase() === "false":

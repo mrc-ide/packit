@@ -10,11 +10,11 @@ import { packetRunFormSchema } from "./PacketRunForm";
 
 interface PacketRunParamsFieldProps {
   packetGroupName: string;
-  branchName: string;
+  branchCommit: string;
   form: UseFormReturn<z.infer<typeof packetRunFormSchema>>;
 }
-export const PacketRunParamsField = ({ packetGroupName, branchName, form }: PacketRunParamsFieldProps) => {
-  const { parameters, isLoading, error } = useGetParameters(packetGroupName, branchName);
+export const PacketRunParamsField = ({ packetGroupName, branchCommit, form }: PacketRunParamsFieldProps) => {
+  const { parameters, isLoading, error } = useGetParameters(packetGroupName, branchCommit);
   const { fields, replace } = useFieldArray({
     control: form.control,
     name: "parameters"

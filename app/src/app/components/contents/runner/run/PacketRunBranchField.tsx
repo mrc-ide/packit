@@ -15,11 +15,11 @@ import { packetRunFormSchema } from "./PacketRunForm";
 
 interface PacketRunBranchFieldProps {
   branches: GitBranchInfo[];
+  selectedBranch: GitBranchInfo;
   form: UseFormReturn<z.infer<typeof packetRunFormSchema>>;
   mutate: KeyedMutator<GitBranches>;
 }
-export const PacketRunBranchField = ({ branches, form, mutate }: PacketRunBranchFieldProps) => {
-  const selectedBranch = branches.filter((branch) => branch.name === form.getValues("branch"))[0];
+export const PacketRunBranchField = ({ branches, selectedBranch, form, mutate }: PacketRunBranchFieldProps) => {
   const lastCommitTime = getTimeDifferenceToDisplay(selectedBranch.time);
 
   const gitFetch = async () => {

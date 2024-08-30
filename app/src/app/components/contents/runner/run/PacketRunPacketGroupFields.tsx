@@ -9,10 +9,10 @@ import { PacketRunParamsField } from "./PacketRunParamsField";
 
 interface PacketRunPacketGroupFieldsProps {
   form: UseFormReturn<z.infer<typeof packetRunFormSchema>>;
-  branchName: string;
+  branchCommit: string;
 }
-export const PacketRunPacketGroupFields = ({ form, branchName }: PacketRunPacketGroupFieldsProps) => {
-  const { packetGroups, isLoading, error } = useGetRunnerPacketGroups(branchName);
+export const PacketRunPacketGroupFields = ({ form, branchCommit }: PacketRunPacketGroupFieldsProps) => {
+  const { packetGroups, isLoading, error } = useGetRunnerPacketGroups(branchCommit);
 
   if (error) {
     return <ErrorComponent message="Error loading packet groups" error={error} />;
@@ -24,7 +24,7 @@ export const PacketRunPacketGroupFields = ({ form, branchName }: PacketRunPacket
   return packetGroups ? (
     <>
       <PacketRunPacketGroupField form={form} packetGroups={packetGroups} />
-      <PacketRunParamsField branchName={branchName} form={form} packetGroupName={form.watch("packetGroupName")} />
+      <PacketRunParamsField branchCommit={branchCommit} form={form} packetGroupName={form.watch("packetGroupName")} />
     </>
   ) : null;
 };

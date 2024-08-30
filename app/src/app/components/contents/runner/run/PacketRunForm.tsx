@@ -27,6 +27,7 @@ export const packetRunFormSchema = z.object({
     })
   )
 });
+
 export const PacketRunForm = ({ defaultBranch, branches, mutate }: PacketRunFormProps) => {
   const form = useForm<z.infer<typeof packetRunFormSchema>>({
     resolver: zodResolver(packetRunFormSchema),
@@ -35,6 +36,7 @@ export const PacketRunForm = ({ defaultBranch, branches, mutate }: PacketRunForm
       parameters: []
     }
   });
+  const selectedBranch = branches.filter((branch) => branch.name === form.getValues("branch"))[0];
 
   const onSubmit = async (values: z.infer<typeof packetRunFormSchema>) => {
     const parametersMap =
@@ -49,14 +51,14 @@ export const PacketRunForm = ({ defaultBranch, branches, mutate }: PacketRunForm
           );
 
     console.log(parametersMap);
-    // TODO: construct the payload SubmitRun to the server - next pr
+    // TODO: construct the payload SubmitRun to the server & redirect to logs of job - next pr
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-        <PacketRunBranchField branches={branches} form={form} mutate={mutate} />
-        <PacketRunPacketGroupFields form={form} branchName={form.watch("branch")} />
+        <PacketRunBranchField branches={branches} selectedBranch={selectedBranch} form={form} mutate={mutate} />
+        <PacketRunPacketGroupFields form={form} branchCommit={selectedBranch.commitHash} />
         <Button type="submit" size="lg">
           Run
         </Button>

@@ -4,9 +4,11 @@ import { mockGitBranches } from "../../../../mocks";
 // eslint-disable-next-line max-len
 import { getTimeDifferenceToDisplay } from "../../../../../app/components/contents/explorer/utils/getTimeDifferenceToDisplay";
 import userEvent from "@testing-library/user-event";
-import * as fetch from "../../../../../lib/fetch";
+import { server } from "../../../../../msw/server";
+import { rest } from "msw";
+// import * as fetch from "../../../../../lib/fetch";
 
-const fetcherSpy = jest.spyOn(fetch, "fetcher");
+// const fetcherSpy = jest.spyOn(fetch, "fetcher");
 describe("PacketRunForm component", () => {
   it("should render default branch information and default select value", async () => {
     const mainCommitTime = getTimeDifferenceToDisplay(mockGitBranches.branches[1].time);
@@ -44,15 +46,59 @@ describe("PacketRunForm component", () => {
     });
   });
 
-  it("should call api and mutate when git fetch button clicked", async () => {
+  it("should call api with correct url and mutate when git fetch button clicked", async () => {
+    server.use(
+      rest.post("*", (req, res, ctx) => {
+        expect(req.url.pathname).toBe("/runner/git/fetch");
+
+        return res(ctx.status(201));
+      })
+    );
     const mutate = jest.fn();
     render(<PacketRunForm defaultBranch="main" branches={mockGitBranches.branches} mutate={mutate} />);
 
     userEvent.click(screen.getByRole("button", { name: /git-fetch/i }));
 
     await waitFor(() => {
-      expect(fetcherSpy).toHaveBeenCalled();
       expect(mutate).toHaveBeenCalled();
+    });
+  });
+
+  it("should display fields for packet group and parameters", async () => {
+    render(<PacketRunForm defaultBranch="main" branches={mockGitBranches.branches} mutate={jest.fn()} />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/select packet group/i)).toBeVisible();
+    });
+    expect(screen.getByText(/branch/i)).toBeVisible();
+    expect(screen.getByText(/packet group parameters/i)).toBeVisible();
+  });
+
+  it("should show error message when form displayed with empty packet Group", async () => {
+    render(<PacketRunForm defaultBranch="main" branches={mockGitBranches.branches} mutate={jest.fn()} />);
+
+    const runButton = screen.getByRole("button", { name: /run/i });
+    userEvent.click(runButton);
+
+    await waitFor(() => {
+      expect(screen.getByText(/packet group name is required/i)).toBeVisible();
+    });
+  });
+
+  it("should show error message when form displayed with empty parameters", async () => {
+    render(<PacketRunForm defaultBranch="main" branches={mockGitBranches.branches} mutate={jest.fn()} />);
+
+    const packetGroupSelect = await screen.findByRole("combobox", { name: /packet group/i });
+    userEvent.click(packetGroupSelect);
+    userEvent.click(screen.getByRole("option", { name: /parameters/i }));
+
+    await screen.findByText(/packet group parameters/i);
+    await screen.findByText(/param1/i);
+
+    userEvent.click(screen.getByRole("button", { name: /run/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/Must enter a number, string or boolean/i)).toBeVisible();
     });
   });
 });
