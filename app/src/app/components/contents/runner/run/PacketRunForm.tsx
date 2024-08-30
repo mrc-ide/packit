@@ -17,7 +17,15 @@ export interface PacketRunFormProps {
 export const packetRunFormSchema = z.object({
   branch: z.string({ required_error: "Branch is required" }),
   packetGroupName: z.string({ required_error: "Packet Group name is required" }),
-  parameters: z.array(z.object({ name: z.string(), value: z.any() }))
+  parameters: z.array(
+    z.object({
+      name: z.string(),
+      value: z
+        .string()
+        .min(1, "Must enter a number, string or boolean")
+        .refine((value) => value !== "null", { message: "Value cannot be null." })
+    })
+  )
 });
 export const PacketRunForm = ({ defaultBranch, branches, mutate }: PacketRunFormProps) => {
   const form = useForm<z.infer<typeof packetRunFormSchema>>({

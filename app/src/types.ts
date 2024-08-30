@@ -35,7 +35,7 @@ export interface Packet {
   name: string;
   displayName: string;
   published: boolean;
-  parameters: Record<string, string | number>;
+  parameters: Record<string, string | number | boolean>;
   importTime: number;
   startTime: number;
   endTime: number;

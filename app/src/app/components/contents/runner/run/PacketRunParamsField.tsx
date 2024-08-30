@@ -22,7 +22,9 @@ export const PacketRunParamsField = ({ packetGroupName, branchName, form }: Pack
 
   useEffect(() => {
     if (parameters) {
-      replace(parameters.map((param) => ({ name: param.name, value: param.value ?? "" })));
+      replace(
+        parameters.map((param) => ({ name: param.name, value: param.value === null ? "" : param.value.toString() }))
+      );
     }
   }, [parameters]);
 
@@ -42,9 +44,7 @@ export const PacketRunParamsField = ({ packetGroupName, branchName, form }: Pack
             <FormDescription>No parameters available for this packet group.</FormDescription>
           ) : (
             <>
-              <FormDescription>
-                Fill in parameters with a number, string, boolean or leave empty for null value
-              </FormDescription>
+              <FormDescription>Fill in parameters with a number, string or boolean</FormDescription>
               {fields.map((item, idx) => (
                 <FormField
                   key={item.id}
