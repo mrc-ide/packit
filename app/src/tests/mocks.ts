@@ -172,8 +172,8 @@ export const mockPacketGroupResponse: PageablePackets = {
       displayName: "parameters",
       parameters: {
         a: 3,
-        b: 10,
-        c: 100000
+        b: false,
+        c: "hello"
       },
       published: false,
       importTime: 1701761844,
