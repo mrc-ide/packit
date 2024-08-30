@@ -55,4 +55,15 @@ describe("PacketRunForm component", () => {
       expect(mutate).toHaveBeenCalled();
     });
   });
+
+  it("should display error message when git fetch fails", async () => {
+    fetcherSpy.mockRejectedValue(new Error("Failed to fetch git branches"));
+    render(<PacketRunForm defaultBranch="main" branches={mockGitBranches.branches} mutate={jest.fn()} />);
+
+    userEvent.click(screen.getByRole("button", { name: /git-fetch/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Failed to fetch git branches. Please try again.")).toBeVisible();
+    });
+  });
 });

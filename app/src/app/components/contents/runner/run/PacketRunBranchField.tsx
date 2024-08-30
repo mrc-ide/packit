@@ -12,6 +12,7 @@ import appConfig from "../../../../../config/appConfig";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { packetRunFormSchema } from "./PacketRunForm";
+import { useState } from "react";
 
 interface PacketRunBranchFieldProps {
   branches: GitBranchInfo[];
@@ -21,6 +22,7 @@ interface PacketRunBranchFieldProps {
 export const PacketRunBranchField = ({ branches, form, mutate }: PacketRunBranchFieldProps) => {
   const selectedBranch = branches.filter((branch) => branch.name === form.getValues("branch"))[0];
   const lastCommitTime = getTimeDifferenceToDisplay(selectedBranch.time);
+  const [gitFetchError, setGitFetchError] = useState<string | null>(null);
 
   const gitFetch = async () => {
     try {
@@ -28,10 +30,12 @@ export const PacketRunBranchField = ({ branches, form, mutate }: PacketRunBranch
         url: `${appConfig.apiUrl()}/runner/git/fetch`,
         method: "POST"
       });
+      mutate();
+      setGitFetchError(null);
     } catch (error) {
       console.error(error);
+      setGitFetchError("Failed to fetch git branches. Please try again.");
     }
-    mutate();
   };
 
   return (
@@ -76,6 +80,7 @@ export const PacketRunBranchField = ({ branches, form, mutate }: PacketRunBranch
           </Tooltip>
         </TooltipProvider>
       </div>
+      {gitFetchError && <div className="text-red-500 text-xs">{gitFetchError}</div>}
       <div className="flex h-6 items-center space-x-2 text-muted-foreground text-sm">
         <Github size={20} />
         <div>{selectedBranch.name}</div>

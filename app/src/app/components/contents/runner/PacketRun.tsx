@@ -10,7 +10,7 @@ export const PacketRun = () => {
     <div>
       <div>
         <h2 className="text-2xl font-bold tracking-tight">Run</h2>
-        <p className="text-muted-foreground">Run a packet group to create packets</p>
+        <p className="text-muted-foreground">Run a packet group to create a new packet</p>
       </div>
       {error && <ErrorComponent message="Error fetching branch information" error={error} />}
       {isLoading && (
