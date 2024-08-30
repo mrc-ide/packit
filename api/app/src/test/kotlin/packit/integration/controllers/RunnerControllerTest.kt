@@ -1,10 +1,13 @@
 package packit.integration.controllers
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
@@ -12,10 +15,20 @@ import packit.model.dto.GitBranches
 import packit.model.dto.OrderlyRunnerVersion
 import packit.model.dto.Parameter
 import packit.model.dto.RunnerPacketGroup
+import packit.model.dto.SubmitRunInfo
+import packit.repository.RunInfoRepository
 import kotlin.test.assertEquals
 
 class RunnerControllerTest : IntegrationTest()
 {
+    @Autowired
+    private lateinit var runInfoRepository: RunInfoRepository
+
+    private fun getSubmitRunInfo(branch: String, commitHash: String): String
+    {
+        return jacksonObjectMapper().writeValueAsString(SubmitRunInfo("data", branch, commitHash, null))
+    }
+
     @Test
     @WithAuthenticatedUser(authorities = ["packet.run"])
     fun `can get orderly runner version`()
@@ -109,5 +122,28 @@ class RunnerControllerTest : IntegrationTest()
             assertEquals(Double::class.java, it.updatedTime::class.java)
             assertEquals(Boolean::class.java, it.hasModifications::class.java)
         }
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.run"])
+    fun `can submit report run`()
+    {
+        val branchRes: ResponseEntity<GitBranches> = restTemplate.exchange(
+            "/runner/git/branches",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+        val branch = branchRes.body!!.branches[0]
+
+        val res: ResponseEntity<String> = restTemplate.exchange(
+            "/runner/run",
+            HttpMethod.POST,
+            getTokenizedHttpEntity(
+                MediaType.APPLICATION_JSON,
+                getSubmitRunInfo(branch.name, branch.commitHash)
+            )
+        )
+
+        assertEquals(String::class.java, res.body!!::class.java)
     }
 }

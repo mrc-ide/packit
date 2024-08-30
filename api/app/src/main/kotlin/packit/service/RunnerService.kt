@@ -1,10 +1,14 @@
 package packit.service
 
 import org.springframework.stereotype.Service
+import packit.model.RunInfo
 import packit.model.dto.GitBranches
 import packit.model.dto.OrderlyRunnerVersion
 import packit.model.dto.Parameter
 import packit.model.dto.RunnerPacketGroup
+import packit.model.dto.Status
+import packit.model.dto.SubmitRunInfo
+import packit.repository.RunInfoRepository
 
 interface RunnerService
 {
@@ -13,12 +17,14 @@ interface RunnerService
     fun getBranches(): GitBranches
     fun getParameters(packetGroupName: String, ref: String): List<Parameter>
     fun getPacketGroups(ref: String): List<RunnerPacketGroup>
+    fun submitRun(info: SubmitRunInfo): String
 }
 
 @Service
 class BaseRunnerService(
     private val orderlyRunnerClient: OrderlyRunner,
-    private val outpackServerClient: OutpackServer
+    private val outpackServerClient: OutpackServer,
+    private val runInfoRepository: RunInfoRepository
 ) : RunnerService
 {
     override fun getVersion(): OrderlyRunnerVersion
@@ -44,5 +50,20 @@ class BaseRunnerService(
     override fun getPacketGroups(ref: String): List<RunnerPacketGroup>
     {
         return orderlyRunnerClient.getPacketGroups(ref)
+    }
+
+    override fun submitRun(info: SubmitRunInfo): String
+    {
+        val res = orderlyRunnerClient.submitRun(info)
+        val runInfo = RunInfo(
+            res.taskId,
+            packetGroupName = info.packetGroupName,
+            commitHash = info.commitHash,
+            branch = info.branch,
+            parameters = info.parameters,
+            status = Status.PENDING.toString()
+        )
+        runInfoRepository.save(runInfo)
+        return res.taskId
     }
 }
