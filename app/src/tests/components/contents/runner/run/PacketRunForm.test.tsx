@@ -101,4 +101,19 @@ describe("PacketRunForm component", () => {
       expect(screen.getByText(/Must enter a number, string or boolean/i)).toBeVisible();
     });
   });
+
+  it("should display error message when git fetch fails", async () => {
+    server.use(
+      rest.post("*", (req, res, ctx) => {
+        return res(ctx.status(500));
+      })
+    );
+    render(<PacketRunForm defaultBranch="main" branches={mockGitBranches.branches} mutate={jest.fn()} />);
+
+    userEvent.click(screen.getByRole("button", { name: /git-fetch/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Failed to fetch git branches. Please try again.")).toBeVisible();
+    });
+  });
 });

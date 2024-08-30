@@ -10,7 +10,8 @@ docker rm -f \
     $RUNNER_GIT_SETUP \
     outpack_server \
     $RUNNER_SERVER \
-    $RUNNER_WORKER
+    $RUNNER_WORKER \
+    packit-api
 
 docker network rm -f $RUNNER_NETWORK
 
