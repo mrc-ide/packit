@@ -6,9 +6,7 @@ import { getTimeDifferenceToDisplay } from "../../../../../app/components/conten
 import userEvent from "@testing-library/user-event";
 import { server } from "../../../../../msw/server";
 import { rest } from "msw";
-// import * as fetch from "../../../../../lib/fetch";
 
-// const fetcherSpy = jest.spyOn(fetch, "fetcher");
 describe("PacketRunForm component", () => {
   it("should render default branch information and default select value", async () => {
     const mainCommitTime = getTimeDifferenceToDisplay(mockGitBranches.branches[1].time);
