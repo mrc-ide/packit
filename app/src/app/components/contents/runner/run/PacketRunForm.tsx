@@ -1,18 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { KeyedMutator } from "swr";
 import { z } from "zod";
+import appConfig from "../../../../../config/appConfig";
+import { ApiError } from "../../../../../lib/errors";
+import { fetcher } from "../../../../../lib/fetch";
 import { Button } from "../../../Base/Button";
 import { Form } from "../../../Base/Form";
 import { GitBranches, GitBranchInfo } from "../types/GitBranches";
+import { constructSubmitRunBody } from "../utils/constructSubmitRunBody";
 import { PacketRunBranchField } from "./PacketRunBranchField";
 import { PacketRunPacketGroupFields } from "./PacketRunPacketGroupFields";
-import { parseParameterValue } from "../utils/parseParameterValue";
-import { SubmitRunInfo } from "../types/SubmitRunInfo";
-import { ApiError } from "../../../../../lib/errors";
-import { fetcher } from "../../../../../lib/fetch";
-import appConfig from "../../../../../config/appConfig";
-import { useNavigate } from "react-router-dom";
 
 export interface PacketRunFormProps {
   defaultBranch: string;
@@ -45,22 +44,7 @@ export const PacketRunForm = ({ defaultBranch, branches, mutate }: PacketRunForm
   const selectedBranch = branches.filter((branch) => branch.name === form.getValues("branch"))[0];
 
   const onSubmit = async (values: z.infer<typeof packetRunFormSchema>) => {
-    const parsedParameters =
-      values.parameters.length === 0
-        ? undefined
-        : values.parameters.reduce(
-            (acc, curr) => {
-              acc[curr.name] = parseParameterValue(curr.value);
-              return acc;
-            },
-            {} as Record<string, string | number | boolean | null>
-          );
-    const submitRunBody: SubmitRunInfo = {
-      name: values.packetGroupName,
-      branch: selectedBranch.name,
-      hash: selectedBranch.commitHash,
-      ...(parsedParameters && { parameters: parsedParameters })
-    };
+    const submitRunBody = constructSubmitRunBody(values.parameters, values.packetGroupName, selectedBranch);
 
     try {
       const { taskId } = await fetcher({

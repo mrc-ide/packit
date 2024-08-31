@@ -6,11 +6,21 @@ import { getTimeDifferenceToDisplay } from "../../../../../app/components/conten
 import userEvent from "@testing-library/user-event";
 import { server } from "../../../../../msw/server";
 import { rest } from "msw";
+import { MemoryRouter } from "react-router-dom";
 
+const renderComponent = () => {
+  const mutate = jest.fn();
+  render(
+    <MemoryRouter>
+      <PacketRunForm defaultBranch="main" branches={mockGitBranches.branches} mutate={mutate} />
+    </MemoryRouter>
+  );
+  return mutate;
+};
 describe("PacketRunForm component", () => {
   it("should render default branch information and default select value", async () => {
     const mainCommitTime = getTimeDifferenceToDisplay(mockGitBranches.branches[1].time);
-    render(<PacketRunForm defaultBranch="main" branches={mockGitBranches.branches} mutate={jest.fn()} />);
+    renderComponent();
 
     const select = screen.getByRole("combobox");
 
@@ -21,7 +31,7 @@ describe("PacketRunForm component", () => {
 
   it("should be able to switch branches and update info", async () => {
     const branch1CommitTime = getTimeDifferenceToDisplay(mockGitBranches.branches[0].time);
-    render(<PacketRunForm defaultBranch="main" branches={mockGitBranches.branches} mutate={jest.fn()} />);
+    renderComponent();
 
     const select = screen.getAllByRole("combobox", { hidden: true })[1];
     userEvent.selectOptions(select, mockGitBranches.branches[0].name);
@@ -34,7 +44,7 @@ describe("PacketRunForm component", () => {
   });
 
   it("should display tooltip on git fetch button hover", async () => {
-    render(<PacketRunForm defaultBranch="main" branches={mockGitBranches.branches} mutate={jest.fn()} />);
+    renderComponent();
 
     const gitFetchButton = screen.getByRole("button", { name: /git-fetch/i });
     userEvent.hover(gitFetchButton);
@@ -52,8 +62,7 @@ describe("PacketRunForm component", () => {
         return res(ctx.status(201));
       })
     );
-    const mutate = jest.fn();
-    render(<PacketRunForm defaultBranch="main" branches={mockGitBranches.branches} mutate={mutate} />);
+    const mutate = renderComponent();
 
     userEvent.click(screen.getByRole("button", { name: /git-fetch/i }));
 
@@ -63,7 +72,7 @@ describe("PacketRunForm component", () => {
   });
 
   it("should display fields for packet group and parameters", async () => {
-    render(<PacketRunForm defaultBranch="main" branches={mockGitBranches.branches} mutate={jest.fn()} />);
+    renderComponent();
 
     await waitFor(() => {
       expect(screen.getByText(/select packet group/i)).toBeVisible();
@@ -73,7 +82,7 @@ describe("PacketRunForm component", () => {
   });
 
   it("should show error message when form displayed with empty packet Group", async () => {
-    render(<PacketRunForm defaultBranch="main" branches={mockGitBranches.branches} mutate={jest.fn()} />);
+    renderComponent();
 
     const runButton = screen.getByRole("button", { name: /run/i });
     userEvent.click(runButton);
@@ -84,7 +93,7 @@ describe("PacketRunForm component", () => {
   });
 
   it("should show error message when form displayed with empty parameters", async () => {
-    render(<PacketRunForm defaultBranch="main" branches={mockGitBranches.branches} mutate={jest.fn()} />);
+    renderComponent();
 
     const packetGroupSelect = await screen.findByRole("combobox", { name: /packet group/i });
     userEvent.click(packetGroupSelect);
@@ -106,7 +115,7 @@ describe("PacketRunForm component", () => {
         return res(ctx.status(500));
       })
     );
-    render(<PacketRunForm defaultBranch="main" branches={mockGitBranches.branches} mutate={jest.fn()} />);
+    renderComponent();
 
     userEvent.click(screen.getByRole("button", { name: /git-fetch/i }));
 

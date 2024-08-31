@@ -4,12 +4,15 @@ import { mockGitBranches } from "../../../mocks";
 import { server } from "../../../../msw/server";
 import { rest } from "msw";
 import { SWRConfig } from "swr";
+import { MemoryRouter } from "react-router-dom";
 
 describe("Packet Run component", () => {
   const renderComponent = () =>
     render(
       <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>
-        <PacketRun />
+        <MemoryRouter>
+          <PacketRun />
+        </MemoryRouter>
       </SWRConfig>
     );
   it("should render run page with form", async () => {
