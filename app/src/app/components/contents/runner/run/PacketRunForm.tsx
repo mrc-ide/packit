@@ -8,6 +8,11 @@ import { GitBranches, GitBranchInfo } from "../types/GitBranches";
 import { PacketRunBranchField } from "./PacketRunBranchField";
 import { PacketRunPacketGroupFields } from "./PacketRunPacketGroupFields";
 import { parseParameterValue } from "../utils/parseParameterValue";
+import { SubmitRunInfo } from "../types/SubmitRunInfo";
+import { ApiError } from "../../../../../lib/errors";
+import { fetcher } from "../../../../../lib/fetch";
+import appConfig from "../../../../../config/appConfig";
+import { useNavigate } from "react-router-dom";
 
 export interface PacketRunFormProps {
   defaultBranch: string;
@@ -29,6 +34,7 @@ export const packetRunFormSchema = z.object({
 });
 
 export const PacketRunForm = ({ defaultBranch, branches, mutate }: PacketRunFormProps) => {
+  const navigate = useNavigate();
   const form = useForm<z.infer<typeof packetRunFormSchema>>({
     resolver: zodResolver(packetRunFormSchema),
     defaultValues: {
@@ -39,7 +45,7 @@ export const PacketRunForm = ({ defaultBranch, branches, mutate }: PacketRunForm
   const selectedBranch = branches.filter((branch) => branch.name === form.getValues("branch"))[0];
 
   const onSubmit = async (values: z.infer<typeof packetRunFormSchema>) => {
-    const parametersMap =
+    const parsedParameters =
       values.parameters.length === 0
         ? undefined
         : values.parameters.reduce(
@@ -49,9 +55,27 @@ export const PacketRunForm = ({ defaultBranch, branches, mutate }: PacketRunForm
             },
             {} as Record<string, string | number | boolean | null>
           );
+    const submitRunBody: SubmitRunInfo = {
+      name: values.packetGroupName,
+      branch: selectedBranch.name,
+      hash: selectedBranch.commitHash,
+      ...(parsedParameters && { parameters: parsedParameters })
+    };
 
-    console.log(parametersMap);
-    // TODO: construct the payload SubmitRun to the server & redirect to logs of job - next pr
+    try {
+      const { taskId } = await fetcher({
+        url: `${appConfig.apiUrl()}/runner/run`,
+        method: "POST",
+        body: submitRunBody
+      });
+      navigate(`/runner/logs/${taskId}`);
+    } catch (error) {
+      console.error(error);
+      if (error instanceof ApiError) {
+        return form.setError("root", { message: error.message });
+      }
+      form.setError("root", { message: "An unexpected error occurred. Please try again." });
+    }
   };
 
   return (
@@ -62,6 +86,9 @@ export const PacketRunForm = ({ defaultBranch, branches, mutate }: PacketRunForm
         <Button type="submit" size="lg">
           Run
         </Button>
+        {form.formState.errors?.root && (
+          <div className="text-xs text-destructive">{form.formState.errors.root.message}</div>
+        )}
       </form>
     </Form>
   );
