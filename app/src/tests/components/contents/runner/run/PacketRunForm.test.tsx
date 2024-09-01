@@ -6,13 +6,19 @@ import { getTimeDifferenceToDisplay } from "../../../../../app/components/conten
 import userEvent from "@testing-library/user-event";
 import { server } from "../../../../../msw/server";
 import { rest } from "msw";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 
 const renderComponent = () => {
   const mutate = jest.fn();
   render(
-    <MemoryRouter>
-      <PacketRunForm defaultBranch="main" branches={mockGitBranches.branches} mutate={mutate} />
+    <MemoryRouter initialEntries={["/runner"]}>
+      <Routes>
+        <Route
+          path="/runner"
+          element={<PacketRunForm defaultBranch="main" branches={mockGitBranches.branches} mutate={mutate} />}
+        />
+        <Route path="runner/logs/:taskId" element={<div>Task logs</div>} />
+      </Routes>
     </MemoryRouter>
   );
   return mutate;
@@ -121,6 +127,66 @@ describe("PacketRunForm component", () => {
 
     await waitFor(() => {
       expect(screen.getByText("Failed to fetch git branches. Please try again.")).toBeVisible();
+    });
+  });
+
+  it("should submit run when form submitted correctly & navigate to task run logs", async () => {
+    server.use(
+      rest.post("*", async (req, res, ctx) => {
+        expect(req.url.pathname).toBe("/runner/run");
+        const body = await req.json();
+
+        expect(body).toEqual({
+          name: "parameters",
+          branch: "main",
+          hash: mockGitBranches.branches[1].commitHash,
+          parameters: {
+            param1: "value1",
+            param2: "value2"
+          }
+        });
+
+        return res(ctx.json({ taskId: "1234" }));
+      })
+    );
+    renderComponent();
+
+    const packetGroupSelect = await screen.findByRole("combobox", { name: /packet group/i });
+    userEvent.click(packetGroupSelect);
+    userEvent.click(screen.getByRole("option", { name: /parameters/i }));
+
+    const param1 = await screen.findByLabelText(/param1/i);
+    const param2 = screen.getByLabelText(/param2/i);
+
+    userEvent.clear(param1);
+    userEvent.clear(param2);
+    userEvent.type(param1, "value1");
+    userEvent.type(param2, "value2");
+
+    userEvent.click(screen.getByRole("button", { name: /run/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Task logs")).toBeVisible();
+    });
+  });
+
+  it("should render error message when submit run erros", async () => {
+    const errorMessage = "test error message";
+    server.use(
+      rest.post("*", (req, res, ctx) => {
+        return res(ctx.status(400), ctx.json({ error: { detail: errorMessage } }));
+      })
+    );
+    renderComponent();
+
+    const packetGroupSelect = await screen.findByRole("combobox", { name: /packet group/i });
+    userEvent.click(packetGroupSelect);
+    userEvent.click(screen.getByRole("option", { name: /explicit/i }));
+
+    userEvent.click(screen.getByRole("button", { name: /run/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(errorMessage)).toBeVisible();
     });
   });
 });

@@ -2,14 +2,12 @@ package packit.unit.service
 
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
-import org.mockito.kotlin.*
+import org.mockito.kotlin.argThat
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import packit.model.RunInfo
-import packit.model.dto.OrderlyRunnerVersion
-import packit.model.dto.Parameter
-import packit.model.dto.RunnerPacketGroup
-import packit.model.dto.Status
-import packit.model.dto.SubmitRunInfo
-import packit.model.dto.SubmitRunResponse
+import packit.model.dto.*
 import packit.repository.RunInfoRepository
 import packit.service.BaseRunnerService
 import packit.service.OrderlyRunnerClient
@@ -104,6 +102,6 @@ class RunnerServiceTest
 
         verify(orderlyRunnerClient).submitRun(info)
         verify(runInfoRepository).save(argThat { this.taskId == runInfo.taskId })
-        assertEquals(res, "task-id")
+        assertEquals(res.taskId, "task-id")
     }
 }

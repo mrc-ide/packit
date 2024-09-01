@@ -58,6 +58,7 @@ export const PacketRunForm = ({ defaultBranch, branches, mutate }: PacketRunForm
       if (error instanceof ApiError) {
         return form.setError("root", { message: error.message });
       }
+
       form.setError("root", { message: "An unexpected error occurred. Please try again." });
     }
   };
