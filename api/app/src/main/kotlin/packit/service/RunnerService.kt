@@ -1,7 +1,8 @@
 package packit.service
 
-import org.springframework.stereotype.Service
 import org.springframework.http.HttpStatus
+import org.springframework.stereotype.Service
+import packit.exceptions.PackitException
 import packit.model.RunInfo
 import packit.model.dto.GitBranches
 import packit.model.dto.OrderlyRunnerVersion
@@ -12,7 +13,6 @@ import packit.model.dto.Status
 import packit.model.dto.SubmitRunInfo
 import packit.model.toDto
 import packit.repository.RunInfoRepository
-import packit.exceptions.PackitException
 
 interface RunnerService
 {
