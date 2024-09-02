@@ -1,6 +1,7 @@
 package packit.service
 
 import org.springframework.stereotype.Service
+import org.springframework.http.HttpStatus
 import packit.model.RunInfo
 import packit.model.dto.GitBranches
 import packit.model.dto.OrderlyRunnerVersion
@@ -11,6 +12,7 @@ import packit.model.dto.Status
 import packit.model.dto.SubmitRunInfo
 import packit.model.toDto
 import packit.repository.RunInfoRepository
+import packit.exceptions.PackitException
 
 interface RunnerService
 {
@@ -74,14 +76,20 @@ class BaseRunnerService(
     {
         val taskStatus = orderlyRunnerClient.getTaskStatuses(listOf(taskId), true)[0]
 
-        val runInfo = runInfoRepository.findByTaskId(taskId)!!
-        runInfo.timeQueued = taskStatus.timeQueued
-        runInfo.timeStarted = taskStatus.timeStarted
-        runInfo.timeCompleted = taskStatus.timeComplete
-        runInfo.logs = taskStatus.logs
-        runInfo.status = taskStatus.status
-        runInfo.packetId = taskStatus.packetId
-        runInfo.queuePosition = taskStatus.queuePosition
+        val runInfo = runInfoRepository.findByTaskId(taskId)
+        if (runInfo == null) {
+            throw PackitException("runInfoNotFound", HttpStatus.NOT_FOUND)
+        }
+
+        runInfo.apply {
+            timeQueued = taskStatus.timeQueued
+            timeStarted = taskStatus.timeStarted
+            timeCompleted = taskStatus.timeComplete
+            logs = taskStatus.logs
+            status = taskStatus.status
+            packetId = taskStatus.packetId
+            queuePosition = taskStatus.queuePosition
+        }
         runInfoRepository.save(runInfo)
 
         return runInfo.toDto()

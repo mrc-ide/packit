@@ -60,7 +60,7 @@ class RunnerController(private val runnerService: RunnerService)
     }
 
     @GetMapping("/status/{taskId}")
-    fun getJobStatus(@PathVariable taskId: String): ResponseEntity<RunInfoDto>
+    fun getTaskStatus(@PathVariable taskId: String): ResponseEntity<RunInfoDto>
     {
         return ResponseEntity.ok(runnerService.getTaskStatus(taskId))
     }
