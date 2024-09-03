@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*
 import packit.model.dto.GitBranches
 import packit.model.dto.OrderlyRunnerVersion
 import packit.model.dto.Parameter
+import packit.model.dto.RunInfoDto
 import packit.model.dto.RunnerPacketGroup
 import packit.model.dto.SubmitRunInfo
 import packit.service.RunnerService
@@ -56,5 +57,11 @@ class RunnerController(private val runnerService: RunnerService)
     ): ResponseEntity<String>
     {
         return ResponseEntity.ok(runnerService.submitRun(submitRunInfo))
+    }
+
+    @GetMapping("/status/{taskId}")
+    fun getTaskStatus(@PathVariable taskId: String): ResponseEntity<RunInfoDto>
+    {
+        return ResponseEntity.ok(runnerService.getTaskStatus(taskId))
     }
 }

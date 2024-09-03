@@ -17,8 +17,10 @@ export ORDERLY_RUNNER_QUEUE_ID=orderly.runner.queue
 
 export ORDERLY_VOLUME=$RUNNER_CONTAINER_NAMESPACE-orderly-root
 export ORDERLY_REMOTE_VOLUME=$RUNNER_CONTAINER_NAMESPACE-orderly-root-remote
+export ORDERLY_LOGS_VOLUME=$RUNNER_CONTAINER_NAMESPACE-logs
 
 export ORDERLY_RUNNER_IMAGE=ghcr.io/mrc-ide/orderly.runner:main
 
 export CONTAINER_ORDERLY_ROOT_PATH=/orderly-root
 export CONTAINER_ORDERLY_REMOTE_ROOT_PATH=/orderly-root-remote
+export CONTAINER_LOGS_DIR=/logs
