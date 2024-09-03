@@ -74,12 +74,12 @@ class BaseRunnerService(
 
     override fun getTaskStatus(taskId: String): RunInfoDto
     {
-        val taskStatus = orderlyRunnerClient.getTaskStatuses(listOf(taskId), true)[0]
-
         val runInfo = runInfoRepository.findByTaskId(taskId)
         if (runInfo == null) {
             throw PackitException("runInfoNotFound", HttpStatus.NOT_FOUND)
         }
+
+        val taskStatus = orderlyRunnerClient.getTaskStatuses(listOf(taskId), true)[0]
 
         runInfo.apply {
             timeQueued = taskStatus.timeQueued
