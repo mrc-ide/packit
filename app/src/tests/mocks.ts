@@ -1,4 +1,5 @@
 import { RoleWithRelationships } from "../app/components/contents/manageAccess/types/RoleWithRelationships";
+import { GitBranches } from "../app/components/contents/runner/types/GitBranches";
 import { AuthConfig } from "../app/components/providers/types/AuthConfigTypes";
 import { UserState } from "../app/components/providers/types/UserTypes";
 import { Custom, PacketMetadata, PageableBasicDto, PageablePacketGroupSummary, PageablePackets } from "../types";
@@ -640,4 +641,22 @@ export const mockTags: PageableBasicDto = {
   size: 50,
   number: 0,
   numberOfElements: 5
+};
+
+export const mockGitBranches: GitBranches = {
+  defaultBranch: "main",
+  branches: [
+    {
+      name: "mrc-6969",
+      commitHash: "00ca19bc743d4287adff2a1d6a72155ba743deb2",
+      time: 1724850401,
+      message: ["second commit"]
+    },
+    {
+      name: "main",
+      commitHash: "5df215b49e58d1f923f675fab8f6564341b91dd2",
+      time: 1724832546,
+      message: ["first commit"]
+    }
+  ]
 };
