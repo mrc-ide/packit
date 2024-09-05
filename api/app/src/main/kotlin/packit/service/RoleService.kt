@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Service
+import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.model.Permission
 import packit.model.Role
@@ -31,10 +32,12 @@ interface RoleService
     fun updatePermissionsToRole(roleName: String, updateRolePermissions: UpdateRolePermissions): Role
     fun getByRoleName(roleName: String): Role?
     fun getSortedRoleDtos(roles: List<Role>): List<RoleDto>
+    fun getDefaultRoles(): List<Role>
 }
 
 @Service
 class BaseRoleService(
+    private val appConfig: AppConfig,
     private val roleRepository: RoleRepository,
     private val permissionService: PermissionService,
     private val rolePermissionService: RolePermissionService,
@@ -178,6 +181,11 @@ class BaseRoleService(
             }
         }
         return grantedAuthorities
+    }
+
+    override fun getDefaultRoles(): List<Role>
+    {
+        return roleRepository.findByIsUsernameAndNameIn(isUsername = false, appConfig.defaultRoles)
     }
 
     internal fun getPermissionScoped(rolePermission: RolePermission): String

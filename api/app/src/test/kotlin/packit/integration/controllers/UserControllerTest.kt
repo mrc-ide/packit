@@ -159,3 +159,45 @@ class UserControllerTest : IntegrationTest()
         assertEquals(roleRepository.findByName(username), null)
     }
 }
+
+@Sql("/delete-test-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+@TestPropertySource(
+    properties = [
+    "auth.method=basic",
+    "packit.defaultRoles=TEST_USER_ROLE,TEST_MISSING_ROLE"
+]
+)
+class UserControllerDefaultRolesTest : IntegrationTest()
+{
+    @Autowired
+    lateinit var userRepository: UserRepository
+
+    @Autowired
+    lateinit var roleRepository: RoleRepository
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["user.manage"])
+    fun `user is created with default roles`()
+    {
+        roleRepository.save(Role(name = "TEST_USER_ROLE"))
+        roleRepository.save(Role(name = "TEST_AUTHOR_ROLE"))
+
+        val result = restTemplate.postForEntity(
+            "/user/basic",
+            getTokenizedHttpEntity(
+                data = CreateBasicUser(
+                email = "test@email",
+                password = "password",
+                displayName = "Random User",
+            )
+            ),
+            UserDto::class.java
+        )
+        assertEquals(result.statusCode, HttpStatus.CREATED)
+        assertEquals(result.body?.username, "test@email")
+        assertEquals(
+            result.body?.roles?.map { it.name },
+            listOf("TEST_USER_ROLE", "test@email")
+        )
+    }
+}

@@ -10,10 +10,18 @@ import org.springframework.stereotype.Component
 @Component
 class AppConfig(private val enviroment: Environment)
 {
-
     internal fun requiredEnvValue(key: String): String
     {
-        return enviroment[key] ?: throw IllegalArgumentException("$key not set")
+        return enviroment[key] ?: throw IllegalArgumentException("$key not set $enviroment")
+    }
+
+    internal fun splitList(value: String): List<String>
+    {
+        if (value.isBlank()) {
+            return listOf()
+        } else {
+            return value.split(",").map { it.trim() }
+        }
     }
 
     @Bean
@@ -35,5 +43,6 @@ class AppConfig(private val enviroment: Environment)
     val authEnabled: Boolean = requiredEnvValue("auth.enabled").toBoolean()
     val authGithubAPIOrg: String = requiredEnvValue("auth.githubAPIOrg")
     val authGithubAPITeam: String = requiredEnvValue("auth.githubAPITeam")
-    val allowedOrigins: List<String> = requiredEnvValue("cors.allowedOrigins").split(",").map { it.trim() }
+    val allowedOrigins: List<String> = splitList(requiredEnvValue("cors.allowedOrigins"))
+    val defaultRoles: List<String> = splitList(requiredEnvValue("packit.defaultRoles"))
 }

@@ -40,7 +40,10 @@ class BaseUserService(
         {
             return updateUserLastLoggedIn(user, Instant.now())
         }
-        val usersRole = roleService.getUsernameRole(username)
+
+        val roles = roleService.getDefaultRoles().toMutableList()
+        roles.add(roleService.getUsernameRole(username))
+
         val newUser = User(
             username = username,
             displayName = displayName,
@@ -48,7 +51,7 @@ class BaseUserService(
             email = email,
             userSource = "github",
             lastLoggedIn = Instant.now(),
-            roles = mutableListOf(usersRole),
+            roles = roles,
         )
         userRepository.save(newUser)
 
@@ -62,14 +65,17 @@ class BaseUserService(
             throw PackitException("userAlreadyExists", HttpStatus.BAD_REQUEST)
         }
 
-        val matchingRoles = roleService.getRolesByRoleNames(createBasicUser.userRoles).toMutableList()
+        val roles = roleService.getDefaultRoles().toMutableList()
+        roles.add(roleService.getUsernameRole(createBasicUser.email))
+        roles.addAll(roleService.getRolesByRoleNames(createBasicUser.userRoles).toMutableList())
+
         val newUser = User(
             username = createBasicUser.email,
             displayName = createBasicUser.displayName,
             disabled = false,
             email = createBasicUser.email,
             userSource = "basic",
-            roles = matchingRoles.apply { add(roleService.getUsernameRole(createBasicUser.email)) },
+            roles = roles,
             password = passwordEncoder.encode(createBasicUser.password)
         )
         return userRepository.save(newUser)

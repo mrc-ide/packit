@@ -7,6 +7,7 @@ import org.springframework.mock.env.MockEnvironment
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import packit.AppConfig
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -26,7 +27,8 @@ class AppConfigTest
         "auth.enabled" to "true",
         "auth.githubAPIOrg" to "githubAPIOrg",
         "auth.githubAPITeam" to "githubAPITeam",
-        "cors.allowedOrigins" to "http://localhost, https://production"
+        "cors.allowedOrigins" to "http://localhost, https://production",
+        "packit.defaultRoles" to "ADMIN,USER"
     )
     private val mockEnv = MockEnvironment()
 
@@ -51,19 +53,20 @@ class AppConfigTest
     {
         val sut = AppConfig(mockEnv)
 
-        assert(sut.outpackServerUrl == "url")
-        assert(sut.dbUrl == "url")
-        assert(sut.dbUser == "user")
-        assert(sut.dbPassword == "password")
-        assert(sut.authJWTSecret == "secret")
-        assert(sut.authRedirectUri == "redirectUrl")
+        assertEquals(sut.outpackServerUrl, "url")
+        assertEquals(sut.dbUrl, "url")
+        assertEquals(sut.dbUser, "user")
+        assertEquals(sut.dbPassword, "password")
+        assertEquals(sut.authJWTSecret, "secret")
+        assertEquals(sut.authRedirectUri, "redirectUrl")
         assertFalse(sut.authEnableGithubLogin)
         assertTrue(sut.authEnableBasicLogin)
-        assert(sut.authExpiryDays == 1L)
-        assert(sut.authEnabled)
-        assert(sut.authGithubAPIOrg == "githubAPIOrg")
-        assert(sut.authGithubAPITeam == "githubAPITeam")
-        assert(sut.allowedOrigins == listOf("http://localhost", "https://production"))
+        assertEquals(sut.authExpiryDays, 1L)
+        assertTrue(sut.authEnabled)
+        assertEquals(sut.authGithubAPIOrg, "githubAPIOrg")
+        assertEquals(sut.authGithubAPITeam, "githubAPITeam")
+        assertEquals(sut.allowedOrigins, listOf("http://localhost", "https://production"))
+        assertEquals(sut.defaultRoles, listOf("ADMIN", "USER"))
     }
 
     @Test
@@ -72,5 +75,23 @@ class AppConfigTest
         val sut = AppConfig(mockEnv)
 
         assertThrows<IllegalArgumentException> { sut.requiredEnvValue("notSet") }
+    }
+
+    @Test
+    fun `splitList ignores empty values`()
+    {
+        val sut = AppConfig(mockEnv)
+        assertTrue(sut.splitList("").isEmpty())
+        assertTrue(sut.splitList(" ").isEmpty())
+    }
+
+    @Test
+    fun `splitList trims whitespace`()
+    {
+        val sut = AppConfig(mockEnv)
+        assertEquals(sut.splitList("foo, bar"), listOf("foo", "bar"))
+        assertEquals(sut.splitList(" foo, bar"), listOf("foo", "bar"))
+        assertEquals(sut.splitList(" foo, bar "), listOf("foo", "bar"))
+        assertEquals(sut.splitList(" foo , bar "), listOf("foo", "bar"))
     }
 }
