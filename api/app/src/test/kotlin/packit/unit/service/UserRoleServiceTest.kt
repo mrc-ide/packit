@@ -17,10 +17,13 @@ import java.time.Instant
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class UserRoleServiceTest
 {
-    private val testRoles = listOf(Role("USER"), Role("ADMIN"))
+    private val adminRole = Role("ADMIN")
+    private val testRoles = listOf(Role("USER"), adminRole)
     private val mockUserService = mock<UserService>()
     private val mockUser = User(
         username = "username",
@@ -38,10 +41,10 @@ class UserRoleServiceTest
     @Test
     fun `updateUserRoles adds and remove roles from user`()
     {
-        val roleToAdd = listOf(Role("NEW_ROLE"))
-        val rolesToRemove = listOf(Role("USER"))
-        val updateUserRoles = UpdateUserRoles(roleToAdd.map { it.name }, rolesToRemove.map { it.name })
-        `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(roleToAdd + rolesToRemove)
+        val roleToAdd = Role("NEW_ROLE")
+        val roleToRemove = Role("USER")
+        val updateUserRoles = UpdateUserRoles(listOf(roleToAdd.name), listOf(roleToRemove.name))
+        `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(listOf(roleToAdd, roleToRemove))
         `when`(mockUserService.getByUsername(mockUser.username)).doReturn(mockUser)
         `when`(mockUserService.saveUser(any<User>())).thenAnswer { it.getArgument(0) }
         val service = BaseUserRoleService(mockRoleService, mockUserService)
@@ -50,11 +53,11 @@ class UserRoleServiceTest
 
         verify(mockUserService).saveUser(
             argThat {
-                roles = mutableListOf(mockUser.roles.last(), roleToAdd.first())
-                roles.size == 2
+                assertEquals(listOf(adminRole, roleToAdd), this.roles)
+                true
             }
         )
-        assertEquals(mutableListOf(mockUser.roles.last(), roleToAdd.first()), result.roles)
+        assertEquals(listOf(adminRole, roleToAdd), result.roles)
         assertEquals(mockUser.username, result.username)
     }
 
@@ -131,22 +134,19 @@ class UserRoleServiceTest
     @Test
     fun `updateRoleUsers adds and remove users from role`()
     {
-        val usersToDelete =
-            listOf(mockUser)
-        val usersToAdd =
-            listOf(
-                User(
-                    "username2",
-                    disabled = false,
-                    displayName = "testUser2",
-                    userSource = "github",
-                    id = UUID.randomUUID()
-                )
-            )
+        val userToDelete = mockUser
+        val userToAdd = User(
+            "username2",
+            disabled = false,
+            displayName = "testUser2",
+            userSource = "github",
+            id = UUID.randomUUID()
+        )
+
         mockUser.roles.add(mockRole)
-        val updateRoleUsers = UpdateRoleUsers(usersToAdd.map { it.username }, usersToDelete.map { it.username })
+        val updateRoleUsers = UpdateRoleUsers(listOf(userToAdd.username), listOf(userToDelete.username))
         `when`(mockRoleService.getByRoleName(mockRole.name)).doReturn(mockRole)
-        `when`(mockUserService.getUsersByUsernames(anyList())).doReturn(usersToAdd + usersToDelete)
+        `when`(mockUserService.getUsersByUsernames(anyList())).doReturn(listOf(userToAdd, userToDelete))
         `when`(mockUserService.saveUsers(anyList())).thenAnswer { it.getArgument(0) }
         val service = BaseUserRoleService(mockRoleService, mockUserService)
 
@@ -154,13 +154,16 @@ class UserRoleServiceTest
 
         verify(mockUserService).saveUsers(
             argThat {
-                first().username == usersToAdd.first().username
-                first().roles.contains(mockRole)
-                last().roles.none { it == mockRole }
+                assertEquals(this.size, 2)
+                assertEquals(this.get(0).username, userToAdd.username)
+                assertTrue(this.get(0).roles.contains(mockRole))
+                assertEquals(this.get(1).username, userToDelete.username)
+                assertFalse(this.get(1).roles.contains(mockRole))
+                true
             }
         )
         assertEquals(1, result.users.size)
-        assertEquals(usersToAdd.first().username, result.users.first().username)
+        assertEquals(userToAdd.username, result.users.first().username)
     }
 
     @Test

@@ -99,8 +99,9 @@ class RoleServiceTest
 
         verify(roleRepository).save(
             argThat {
-                this.name == createRole.name
-                this.rolePermissions.size == 2
+                assertEquals(this.name, createRole.name)
+                assertEquals(this.rolePermissions.size, 2)
+                true
             }
         )
 
@@ -131,8 +132,9 @@ class RoleServiceTest
 
         verify(roleRepository).save(
             argThat {
-                this.name == roleName
-                this.rolePermissions.size == permissions.size
+                assertEquals(this.name, roleName)
+                assertEquals(this.rolePermissions.size, permissions.size)
+                true
             }
         )
         assertEquals(roleName, savedRole.name)
@@ -302,8 +304,9 @@ class RoleServiceTest
 
         verify(roleRepository).save(
             argThat {
-                this == role
-                this.rolePermissions.size == 2
+                assertEquals(this, role)
+                assertEquals(this.rolePermissions.size, 2)
+                true
             }
         )
         verify(rolePermissionService).removeRolePermissionsFromRole(role, listOf())

@@ -19,6 +19,7 @@ import packit.service.RoleService
 import java.time.Instant
 import javax.naming.AuthenticationException
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
@@ -44,7 +45,7 @@ class UserServiceTest
     )
     private val mockRoleService = mock<RoleService> {
         on { getRolesByRoleNames(createBasicUser.userRoles) } doReturn testRoles
-        on { getUsernameRole(createBasicUser.email) } doReturn Role(createBasicUser.email)
+        on { getUsernameRole(createBasicUser.email) } doReturn Role(createBasicUser.email, isUsername = true)
     }
 
     @Test
@@ -152,14 +153,15 @@ class UserServiceTest
         verify(passwordEncoder).encode(createBasicUser.password)
         verify(mockUserRepository).save(
             argThat {
-                this.username == createBasicUser.email
-                this.password == "encodedPassword"
-                !this.disabled
-                this.displayName == createBasicUser.displayName
-                this.email == createBasicUser.email
-                this.userSource == "basic"
-                this.lastLoggedIn == null
-                this.roles.map { it.name }.containsAll(testRoles.map { it.name }.plus(createBasicUser.email))
+                assertEquals(this.username, createBasicUser.email)
+                assertEquals(this.password, "encodedPassword")
+                assertFalse(this.disabled)
+                assertEquals(this.displayName, createBasicUser.displayName)
+                assertEquals(this.email, createBasicUser.email)
+                assertEquals(this.userSource, "basic")
+                assertNull(this.lastLoggedIn)
+                assertEquals(this.roles, testRoles.plus(Role(createBasicUser.email, isUsername = true)))
+                true
             }
         )
         assertEquals(result.username, createBasicUser.email)
