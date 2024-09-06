@@ -45,7 +45,7 @@ export const packetColumns = [
             Object.entries(parameters).map(([key, val]) => (
               <div key={key} className="border py-1 px-1.5 rounded-md flex space-x-1 text-xs">
                 <div>{key}: </div>
-                <div className="text-muted-foreground"> {val}</div>
+                <div className="text-muted-foreground"> {String(val)}</div>
               </div>
             ))
           )}

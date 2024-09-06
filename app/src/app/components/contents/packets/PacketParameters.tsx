@@ -12,7 +12,7 @@ export const PacketParameters = ({ parameters }: PacketParametersProps) => {
           Object.entries(parameters).map(([key, val]) => (
             <div key={key} className="border p-1 rounded-md flex space-x-1 text-sm">
               <div>{key}: </div>
-              <div className="text-muted-foreground"> {val}</div>
+              <div className="text-muted-foreground"> {String(val)}</div>
             </div>
           ))
         )}
