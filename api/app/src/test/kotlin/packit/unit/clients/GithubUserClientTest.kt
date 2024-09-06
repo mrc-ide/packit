@@ -7,6 +7,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import org.springframework.http.HttpStatus
 import packit.AppConfig
 import packit.clients.GithubUserClient
@@ -99,7 +100,14 @@ class GithubUserClientTest
             on { authGithubAPIOrg } doReturn "mrc-idex"
         }
         val errorSut = GithubUserClient(mockErrorConfig, mockGithubBuilder)
-        assertSutThrowsPackitAuthenticationException(errorSut, "githubUserRestrictedAccess")
+        assertSutThrowsPackitAuthenticationException(errorSut, "githubUserRestrictedAccess", HttpStatus.UNAUTHORIZED)
+    }
+
+    @Test
+    fun `throw expected exception when reading orgs is forbidden`()
+    {
+        whenever(mockMyself.allOrganizations).thenThrow(HttpException("test error", 403, "", ""))
+        assertSutThrowsPackitAuthenticationException(sut, "githubTokenInsufficientPermissions", HttpStatus.FORBIDDEN)
     }
 
     @Test
@@ -110,7 +118,7 @@ class GithubUserClientTest
             on { authGithubAPITeam } doReturn "another-team"
         }
         val errorSut = GithubUserClient(mockErrorConfig, mockGithubBuilder)
-        assertSutThrowsPackitAuthenticationException(errorSut, "githubUserRestrictedAccess")
+        assertSutThrowsPackitAuthenticationException(errorSut, "githubUserRestrictedAccess", HttpStatus.UNAUTHORIZED)
     }
 
     @Test
@@ -121,16 +129,16 @@ class GithubUserClientTest
             on { authGithubAPITeam } doReturn "team-not-in-org"
         }
         val errorSut = GithubUserClient(mockErrorConfig, mockGithubBuilder)
-        assertSutThrowsPackitAuthenticationException(errorSut, "githubConfigTeamNotInOrg")
+        assertSutThrowsPackitAuthenticationException(errorSut, "githubConfigTeamNotInOrg", HttpStatus.UNAUTHORIZED)
     }
 
-    private fun assertSutThrowsPackitAuthenticationException(sut: GithubUserClient, key: String)
+    private fun assertSutThrowsPackitAuthenticationException(sut: GithubUserClient, key: String, httpStatus: HttpStatus)
     {
         sut.authenticate(token)
         assertThatThrownBy { sut.checkGithubMembership() }
             .isInstanceOf(PackitAuthenticationException::class.java)
             .matches { (it as PackitAuthenticationException).key === key }
-            .matches { (it as PackitAuthenticationException).httpStatus === HttpStatus.UNAUTHORIZED }
+            .matches { (it as PackitAuthenticationException).httpStatus === httpStatus }
     }
 
     private fun assertHandlesHttpExceptionOnAuthenticate(
@@ -157,7 +165,7 @@ class GithubUserClientTest
     @Test
     fun `handles unauthorized error on authenticate`()
     {
-        assertHandlesHttpExceptionOnAuthenticate(401, "githubTokenInsufficientPermissions", HttpStatus.UNAUTHORIZED)
+        assertHandlesHttpExceptionOnAuthenticate(401, "githubTokenInvalid", HttpStatus.UNAUTHORIZED)
     }
 
     @Test

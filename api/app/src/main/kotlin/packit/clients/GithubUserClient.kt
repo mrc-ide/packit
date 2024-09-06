@@ -30,23 +30,28 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
     {
         checkAuthenticated()
 
-        val userOrg = ghUser!!.allOrganizations.firstOrNull { org -> org.login == config.authGithubAPIOrg }
-        var userOK = userOrg != null // Check if user passes in org check
+        try {
+            val userOrg = ghUser!!.allOrganizations.firstOrNull { org -> org.login == config.authGithubAPIOrg }
 
-        val allowedTeam = config.authGithubAPITeam
-        if (userOK && allowedTeam.isNotEmpty())
-        {
-            // We've confirmed user is in org, and required team is not empty, so we need to check team membership too
-            val team = userOrg!!.teams[allowedTeam] ?: throw PackitAuthenticationException(
-                "githubConfigTeamNotInOrg",
-                HttpStatus.UNAUTHORIZED
-            )
-            userOK = ghUser!!.isMemberOf(team) // Check if user passes in team check
-        }
+            var userOK = userOrg != null // Check if user passes in org check
 
-        if (!userOK)
-        {
-            throw PackitAuthenticationException("githubUserRestrictedAccess", HttpStatus.UNAUTHORIZED)
+            val allowedTeam = config.authGithubAPITeam
+            if (userOK && allowedTeam.isNotEmpty())
+            {
+                // We've confirmed user is in org, and required team is not empty, so we need to check team membership too
+                val team = userOrg!!.teams[allowedTeam] ?: throw PackitAuthenticationException(
+                    "githubConfigTeamNotInOrg",
+                    HttpStatus.UNAUTHORIZED
+                )
+                userOK = ghUser!!.isMemberOf(team) // Check if user passes in team check
+            }
+
+            if (!userOK)
+            {
+                throw PackitAuthenticationException("githubUserRestrictedAccess", HttpStatus.UNAUTHORIZED)
+            }
+        } catch (e: HttpException) {
+            throw throwOnHttpException(e)
         }
     }
 
@@ -73,12 +78,10 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
 
     private fun throwOnHttpException(e: HttpException): Exception
     {
-        val errorCode = if (e.responseCode == HttpStatus.UNAUTHORIZED.value())
-        {
-            "githubTokenInsufficientPermissions"
-        } else
-        {
-            "githubTokenUnexpectedError"
+        val errorCode = when (e.responseCode) {
+            HttpStatus.UNAUTHORIZED.value() -> "githubTokenInvalid"
+            HttpStatus.FORBIDDEN.value() -> "githubTokenInsufficientPermissions"
+            else -> "githubTokenUnexpectedError"
         }
         return PackitAuthenticationException(errorCode, HttpStatus.valueOf(e.responseCode))
     }
