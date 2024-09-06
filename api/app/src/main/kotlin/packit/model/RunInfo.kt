@@ -26,10 +26,12 @@ class RunInfo(
     var packetId: String? = null,
 
     @JdbcTypeCode(SqlTypes.JSON)
-    var parameters: Map<String, Any>? = null
+    var parameters: Map<String, Any>? = null,
+
+    var queuePosition: Int? = null
 )
 
 fun RunInfo.toDto() = RunInfoDto(
     taskId, packetGroupName, enumValueOf<Status>(status), commitHash, branch, logs,
-    timeStarted, timeCompleted, timeQueued, packetId, parameters
+    timeStarted, timeCompleted, timeQueued, packetId, parameters, queuePosition
 )
