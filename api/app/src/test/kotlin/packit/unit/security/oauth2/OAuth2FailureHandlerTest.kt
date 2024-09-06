@@ -8,6 +8,7 @@ import packit.exceptions.PackitAuthenticationException
 import packit.exceptions.PackitExceptionHandler
 import packit.security.oauth2.OAuth2FailureHandler
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class OAuth2FailureHandlerTest : OAuthHandlerTest() {
     fun assertExpectedRedirectOnException(exception: AuthenticationException, expectedError: String)
@@ -16,7 +17,7 @@ class OAuth2FailureHandlerTest : OAuthHandlerTest() {
         sut.onAuthenticationFailure(mockRequest, mockResponse, exception)
 
         verify(mockRedirect).redirectToBrowser(eq(mockRequest), eq(mockResponse), capture(qsCaptor))
-        assert((qsCaptor.value["error"]?.get(0) ?: "") == expectedError)
+        assertEquals((qsCaptor.value["error"]?.get(0) ?: ""), expectedError)
     }
 
     @Test
@@ -24,7 +25,7 @@ class OAuth2FailureHandlerTest : OAuthHandlerTest() {
     {
         assertExpectedRedirectOnException(
             PackitAuthenticationException("githubTokenInsufficientPermissions"),
-            "The supplied GitHub token is invalid or does not have sufficient permissions to check user credentials."
+            "The supplied GitHub token does not have sufficient permissions to check user credentials."
         )
     }
 
