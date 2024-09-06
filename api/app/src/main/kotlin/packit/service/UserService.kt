@@ -66,8 +66,8 @@ class BaseUserService(
         }
 
         val roles = roleService.getDefaultRoles().toMutableList()
-        roles.add(roleService.getUsernameRole(createBasicUser.email))
         roles.addAll(roleService.getRolesByRoleNames(createBasicUser.userRoles).toMutableList())
+        roles.add(roleService.getUsernameRole(createBasicUser.email))
 
         val newUser = User(
             username = createBasicUser.email,
