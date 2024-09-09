@@ -1,5 +1,6 @@
 import { RoleWithRelationships } from "../app/components/contents/manageAccess/types/RoleWithRelationships";
 import { GitBranches } from "../app/components/contents/runner/types/GitBranches";
+import { Parameter, RunnerPacketGroup } from "../app/components/contents/runner/types/RunnerPacketGroup";
 import { AuthConfig } from "../app/components/providers/types/AuthConfigTypes";
 import { UserState } from "../app/components/providers/types/UserTypes";
 import { Custom, PacketMetadata, PageableBasicDto, PageablePacketGroupSummary, PageablePackets } from "../types";
@@ -172,8 +173,8 @@ export const mockPacketGroupResponse: PageablePackets = {
       displayName: "parameters",
       parameters: {
         a: 3,
-        b: 10,
-        c: 100000
+        b: false,
+        c: "hello"
       },
       published: false,
       importTime: 1701761844,
@@ -657,6 +658,63 @@ export const mockGitBranches: GitBranches = {
       commitHash: "5df215b49e58d1f923f675fab8f6564341b91dd2",
       time: 1724832546,
       message: ["first commit"]
+    }
+  ]
+};
+
+export const mockRunnerPacketGroups: RunnerPacketGroup[] = [
+  {
+    name: "explicit",
+    updatedTime: 1725006283.3433,
+    hasModifications: false
+  },
+  {
+    name: "incoming_data",
+    updatedTime: 1725006283.3433,
+    hasModifications: false
+  },
+  {
+    name: "parameters",
+    updatedTime: 1725006283.3433,
+    hasModifications: false
+  },
+  {
+    name: "test1",
+    updatedTime: 1725006283.3433,
+    hasModifications: false
+  }
+];
+
+export const mockPacketGroupsParameters: Record<string, Parameter[]> = {
+  explicit: [],
+  incoming_data: [
+    {
+      name: "param1",
+      value: 1
+    },
+    {
+      name: "param2",
+      value: false
+    }
+  ],
+  parameters: [
+    {
+      name: "param1",
+      value: null
+    },
+    {
+      name: "param2",
+      value: "hello"
+    }
+  ],
+  test1: [
+    {
+      name: "param1",
+      value: null
+    },
+    {
+      name: "param2",
+      value: true
     }
   ]
 };

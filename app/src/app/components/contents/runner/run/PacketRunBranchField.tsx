@@ -16,11 +16,11 @@ import { useState } from "react";
 
 interface PacketRunBranchFieldProps {
   branches: GitBranchInfo[];
+  selectedBranch: GitBranchInfo;
   form: UseFormReturn<z.infer<typeof packetRunFormSchema>>;
   mutate: KeyedMutator<GitBranches>;
 }
-export const PacketRunBranchField = ({ branches, form, mutate }: PacketRunBranchFieldProps) => {
-  const selectedBranch = branches.filter((branch) => branch.name === form.getValues("branch"))[0];
+export const PacketRunBranchField = ({ branches, selectedBranch, form, mutate }: PacketRunBranchFieldProps) => {
   const lastCommitTime = getTimeDifferenceToDisplay(selectedBranch.time);
   const [gitFetchError, setGitFetchError] = useState<string | null>(null);
 
@@ -39,7 +39,7 @@ export const PacketRunBranchField = ({ branches, form, mutate }: PacketRunBranch
   };
 
   return (
-    <>
+    <div className="space-y-2">
       <FormLabel className="font-semibold text-lg">Branch</FormLabel>
       <div className="flex space-x-3">
         <div className="flex-grow">
@@ -91,6 +91,6 @@ export const PacketRunBranchField = ({ branches, form, mutate }: PacketRunBranch
           Updated {lastCommitTime.value} {lastCommitTime.unit} ago
         </div>
       </div>
-    </>
+    </div>
   );
 };
