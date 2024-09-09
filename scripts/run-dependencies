@@ -33,6 +33,9 @@ docker volume create $ORDERLY_REMOTE_VOLUME
 # access to
 docker volume create $ORDERLY_VOLUME
 
+# this volume is our logs directory for the worker logs
+docker volume create $ORDERLY_LOGS_VOLUME
+
 # this volume is just to setup the orderly volumes, but it can
 # also be the container to exec into and modify the orderly volumes
 docker run -d --pull=missing \
@@ -61,6 +64,7 @@ docker run --pull=always --name outpack_server \
        --net=host \
        -v $ORDERLY_VOLUME:/outpack \
        -v $ORDERLY_REMOTE_VOLUME:$CONTAINER_ORDERLY_REMOTE_ROOT_PATH \
+       -v $ORDERLY_LOGS_VOLUME:$CONTAINER_LOGS_DIR \
        -p 8000:8000 -d --rm \
        $OUTPACK_SERVER_TAG
 
@@ -75,6 +79,7 @@ docker run --rm -d --pull=always \
        --env=REDIS_CONTAINER_NAME=$RUNNER_REDIS \
        -p 8001:8001 \
        -v $ORDERLY_VOLUME:$CONTAINER_ORDERLY_ROOT_PATH \
+       -v $ORDERLY_LOGS_VOLUME:$CONTAINER_LOGS_DIR \
        $ORDERLY_RUNNER_IMAGE \
        $CONTAINER_ORDERLY_ROOT_PATH
 
@@ -88,5 +93,6 @@ docker run --rm -d --pull=always \
        --env=ORDERLY_RUNNER_QUEUE_ID=$ORDERLY_RUNNER_QUEUE_ID \
        --env=REDIS_CONTAINER_NAME=$RUNNER_REDIS \
        -v $ORDERLY_VOLUME:$CONTAINER_ORDERLY_ROOT_PATH \
+       -v $ORDERLY_LOGS_VOLUME:$CONTAINER_LOGS_DIR \
        $ORDERLY_RUNNER_IMAGE \
        $CONTAINER_ORDERLY_ROOT_PATH

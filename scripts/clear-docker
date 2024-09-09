@@ -15,4 +15,4 @@ docker rm -f \
 
 docker network rm -f $RUNNER_NETWORK
 
-docker volume rm $ORDERLY_VOLUME $ORDERLY_REMOTE_VOLUME
+docker volume rm $ORDERLY_VOLUME $ORDERLY_REMOTE_VOLUME $ORDERLY_LOGS_VOLUME

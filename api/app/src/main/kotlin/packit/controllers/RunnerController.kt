@@ -4,7 +4,12 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import packit.model.dto.*
+import packit.model.dto.GitBranches
+import packit.model.dto.OrderlyRunnerVersion
+import packit.model.dto.Parameter
+import packit.model.dto.RunInfoDto
+import packit.model.dto.RunnerPacketGroup
+import packit.model.dto.SubmitRunInfo
 import packit.service.RunnerService
 
 @RestController
@@ -52,5 +57,11 @@ class RunnerController(private val runnerService: RunnerService)
     ): ResponseEntity<SubmitRunResponse>
     {
         return ResponseEntity.ok(runnerService.submitRun(submitRunInfo))
+    }
+
+    @GetMapping("/status/{taskId}")
+    fun getTaskStatus(@PathVariable taskId: String): ResponseEntity<RunInfoDto>
+    {
+        return ResponseEntity.ok(runnerService.getTaskStatus(taskId))
     }
 }

@@ -8,12 +8,15 @@ import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { packetRunFormSchema } from "./PacketRunForm";
 import { RunnerPacketGroup } from "../types/RunnerPacketGroup";
+import { useState } from "react";
 
 interface PacketRunPacketGroupFieldProps {
   form: UseFormReturn<z.infer<typeof packetRunFormSchema>>;
   packetGroups: RunnerPacketGroup[];
 }
 export const PacketRunPacketGroupField = ({ form, packetGroups }: PacketRunPacketGroupFieldProps) => {
+  const [open, setOpen] = useState(false);
+
   return (
     <FormField
       control={form.control}
@@ -21,12 +24,13 @@ export const PacketRunPacketGroupField = ({ form, packetGroups }: PacketRunPacke
       render={({ field }) => (
         <FormItem className="flex flex-col">
           <FormLabel className="font-semibold text-lg">Packet Group Name</FormLabel>
-          <Popover>
+          <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <FormControl>
                 <Button
                   variant="outline"
                   role="combobox"
+                  aria-expanded={open}
                   className={cn("w-[350px] sm:w-[450px] justify-between", !field.value && "text-muted-foreground")}
                 >
                   {field.value || "Select Packet Group..."}
@@ -46,6 +50,7 @@ export const PacketRunPacketGroupField = ({ form, packetGroups }: PacketRunPacke
                         key={packetGroupName.name}
                         onSelect={() => {
                           form.setValue("packetGroupName", packetGroupName.name);
+                          setOpen(false);
                         }}
                       >
                         <Check

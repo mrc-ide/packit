@@ -6,3 +6,6 @@ import packit.model.RunInfo
 
 @Repository
 interface RunInfoRepository : JpaRepository<RunInfo, String>
+{
+    fun findByTaskId(taskId: String): RunInfo?
+}
