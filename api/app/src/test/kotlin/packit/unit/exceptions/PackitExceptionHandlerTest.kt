@@ -15,7 +15,7 @@ class PackitExceptionHandlerTest
         val result = sut.errorDetailForPackitAuthenticationException(exception)
         assertEquals(
             result.detail,
-            "The supplied GitHub token is does not have sufficient permissions to check user credentials."
+            "The supplied GitHub token does not have sufficient permissions to check user credentials."
         )
     }
 }
