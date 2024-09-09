@@ -30,28 +30,29 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
     {
         checkAuthenticated()
 
-        try {
-            val userOrg = ghUser!!.allOrganizations.firstOrNull { org -> org.login == config.authGithubAPIOrg }
-
-            var userOK = userOrg != null // Check if user passes in org check
-
-            val allowedTeam = config.authGithubAPITeam
-            if (userOK && allowedTeam.isNotEmpty())
-            {
-                // We've confirmed user is in org, and required team is not empty, so we need to check team membership too
-                val team = userOrg!!.teams[allowedTeam] ?: throw PackitAuthenticationException(
-                    "githubConfigTeamNotInOrg",
-                    HttpStatus.UNAUTHORIZED
-                )
-                userOK = ghUser!!.isMemberOf(team) // Check if user passes in team check
-            }
-
-            if (!userOK)
-            {
-                throw PackitAuthenticationException("githubUserRestrictedAccess", HttpStatus.UNAUTHORIZED)
-            }
+        val userOrg = try {
+            ghUser!!.allOrganizations.firstOrNull { org -> org.login == config.authGithubAPIOrg }
         } catch (e: HttpException) {
             throw throwOnHttpException(e)
+        }
+
+        var userOK = userOrg != null // Check if user passes in org check
+
+        val allowedTeam = config.authGithubAPITeam
+        if (userOK && allowedTeam.isNotEmpty())
+        {
+            // We've confirmed user is in org, and required team is not empty, so we need to
+            // check team membership too
+            val team = userOrg!!.teams[allowedTeam] ?: throw PackitAuthenticationException(
+                "githubConfigTeamNotInOrg",
+                HttpStatus.UNAUTHORIZED
+            )
+            userOK = ghUser!!.isMemberOf(team) // Check if user passes in team check
+        }
+
+        if (!userOK)
+        {
+            throw PackitAuthenticationException("githubUserRestrictedAccess", HttpStatus.UNAUTHORIZED)
         }
     }
 
