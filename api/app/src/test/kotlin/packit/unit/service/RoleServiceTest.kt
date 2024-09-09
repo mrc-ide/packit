@@ -9,6 +9,7 @@ import org.mockito.kotlin.*
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.model.*
 import packit.model.dto.CreateRole
@@ -23,6 +24,7 @@ import kotlin.test.assertTrue
 
 class RoleServiceTest
 {
+    private lateinit var appConfig: AppConfig
     private lateinit var roleRepository: RoleRepository
     private lateinit var roleService: BaseRoleService
     private lateinit var permissionService: PermissionService
@@ -31,10 +33,11 @@ class RoleServiceTest
     @BeforeEach
     fun setup()
     {
+        appConfig = mock()
         roleRepository = mock()
         permissionService = mock()
         rolePermissionService = mock()
-        roleService = BaseRoleService(roleRepository, permissionService, rolePermissionService)
+        roleService = BaseRoleService(appConfig, roleRepository, permissionService, rolePermissionService)
     }
 
     @Test
@@ -545,5 +548,43 @@ class RoleServiceTest
                 )
             )
         )
+    }
+
+    @Test
+    fun `getDefaultRoles returns role`()
+    {
+        val adminRole = Role(name = "ADMIN")
+        whenever(appConfig.defaultRoles).thenReturn(listOf("ADMIN"))
+        whenever(roleRepository.findByIsUsernameAndNameIn(false, listOf("ADMIN")))
+            .thenReturn(listOf(adminRole))
+
+        val result = roleService.getDefaultRoles()
+        assertEquals(listOf(adminRole), result)
+    }
+
+    @Test
+    fun `getDefaultRoles can return multiple roles`()
+    {
+        val adminRole = Role(name = "ADMIN")
+        val userRole = Role(name = "USER")
+
+        whenever(appConfig.defaultRoles).thenReturn(listOf("ADMIN", "USER"))
+        whenever(roleRepository.findByIsUsernameAndNameIn(false, listOf("ADMIN", "USER")))
+            .thenReturn(listOf(adminRole, userRole))
+
+        val result = roleService.getDefaultRoles()
+        assertEquals(listOf(adminRole, userRole), result)
+    }
+
+    @Test
+    fun `getDefaultRoles ignores unknown roles`()
+    {
+        val adminRole = Role(name = "ADMIN")
+        whenever(appConfig.defaultRoles).thenReturn(listOf("ADMIN", "MISSING"))
+        whenever(roleRepository.findByIsUsernameAndNameIn(false, listOf("ADMIN", "MISSING")))
+            .thenReturn(listOf(adminRole))
+
+        val result = roleService.getDefaultRoles()
+        assertEquals(listOf(adminRole), result)
     }
 }
