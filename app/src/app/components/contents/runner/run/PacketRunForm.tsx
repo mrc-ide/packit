@@ -27,7 +27,7 @@ export const packetRunFormSchema = z.object({
       value: z
         .string()
         .min(1, "Must enter a number, string or boolean")
-        .refine((value) => value !== "null", { message: "Value cannot be null." })
+        .refine((value) => value.toLocaleLowerCase() !== "null", { message: "Value cannot be null." })
     })
   )
 });
