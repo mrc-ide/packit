@@ -4,13 +4,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
 import packit.model.RunInfo
-import packit.model.dto.GitBranches
-import packit.model.dto.OrderlyRunnerVersion
-import packit.model.dto.Parameter
-import packit.model.dto.RunInfoDto
-import packit.model.dto.RunnerPacketGroup
-import packit.model.dto.Status
-import packit.model.dto.SubmitRunInfo
+import packit.model.dto.*
 import packit.model.toDto
 import packit.repository.RunInfoRepository
 
@@ -75,7 +69,8 @@ class BaseRunnerService(
     override fun getTaskStatus(taskId: String): RunInfoDto
     {
         val runInfo = runInfoRepository.findByTaskId(taskId)
-        if (runInfo == null) {
+        if (runInfo == null)
+        {
             throw PackitException("runInfoNotFound", HttpStatus.NOT_FOUND)
         }
 
