@@ -15,6 +15,7 @@ import { UpdatePassword } from "../login";
 import { AuthLayoutForm } from "../login";
 import { ManageAccessLayout, ManageRoles, ManageUsers } from "../contents/manageAccess";
 import { PacketRun, PacketRunLogs, PacketRunnerLayout } from "../contents/runner";
+import { PacketRunTaskLogs } from "../contents/runner/PacketRunTaskLogs";
 
 export function Router() {
   return (
@@ -35,6 +36,7 @@ export function Router() {
             <Route element={<PacketRunnerLayout />}>
               <Route path="runner" element={<PacketRun />} />
               <Route path="runner/logs" element={<PacketRunLogs />} />
+              <Route path="runner/logs/:taskId" element={<PacketRunTaskLogs />} />
             </Route>
             {/* <Route path="run-workflow" element={<WorkflowRunner />} /> */}
             {/* <Route path="documentation" element={<ProjectDocumentation />} /> */}

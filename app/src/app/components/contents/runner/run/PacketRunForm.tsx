@@ -1,13 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { KeyedMutator } from "swr";
 import { z } from "zod";
+import appConfig from "../../../../../config/appConfig";
+import { ApiError } from "../../../../../lib/errors";
+import { fetcher } from "../../../../../lib/fetch";
 import { Button } from "../../../Base/Button";
 import { Form } from "../../../Base/Form";
 import { GitBranches, GitBranchInfo } from "../types/GitBranches";
+import { constructSubmitRunBody } from "../utils/constructSubmitRunBody";
 import { PacketRunBranchField } from "./PacketRunBranchField";
 import { PacketRunPacketGroupFields } from "./PacketRunPacketGroupFields";
-import { parseParameterValue } from "../utils/parseParameterValue";
 
 export interface PacketRunFormProps {
   defaultBranch: string;
@@ -29,6 +33,7 @@ export const packetRunFormSchema = z.object({
 });
 
 export const PacketRunForm = ({ defaultBranch, branches, mutate }: PacketRunFormProps) => {
+  const navigate = useNavigate();
   const form = useForm<z.infer<typeof packetRunFormSchema>>({
     resolver: zodResolver(packetRunFormSchema),
     defaultValues: {
@@ -39,19 +44,23 @@ export const PacketRunForm = ({ defaultBranch, branches, mutate }: PacketRunForm
   const selectedBranch = branches.filter((branch) => branch.name === form.getValues("branch"))[0];
 
   const onSubmit = async (values: z.infer<typeof packetRunFormSchema>) => {
-    const parametersMap =
-      values.parameters.length === 0
-        ? undefined
-        : values.parameters.reduce(
-            (acc, curr) => {
-              acc[curr.name] = parseParameterValue(curr.value);
-              return acc;
-            },
-            {} as Record<string, string | number | boolean | null>
-          );
+    const submitRunBody = constructSubmitRunBody(values.parameters, values.packetGroupName, selectedBranch);
 
-    console.log(parametersMap);
-    // TODO: construct the payload SubmitRun to the server & redirect to logs of job - next pr
+    try {
+      const { taskId } = await fetcher({
+        url: `${appConfig.apiUrl()}/runner/run`,
+        method: "POST",
+        body: submitRunBody
+      });
+      navigate(`/runner/logs/${taskId}`);
+    } catch (error) {
+      console.error(error);
+      if (error instanceof ApiError) {
+        return form.setError("root", { message: error.message });
+      }
+
+      form.setError("root", { message: "An unexpected error occurred. Please try again." });
+    }
   };
 
   return (
@@ -62,6 +71,9 @@ export const PacketRunForm = ({ defaultBranch, branches, mutate }: PacketRunForm
         <Button type="submit" size="lg">
           Run
         </Button>
+        {form.formState.errors?.root && (
+          <div className="text-xs text-destructive">{form.formState.errors.root.message}</div>
+        )}
       </form>
     </Form>
   );

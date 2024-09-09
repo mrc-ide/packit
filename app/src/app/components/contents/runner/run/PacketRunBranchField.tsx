@@ -56,7 +56,7 @@ export const PacketRunBranchField = ({ branches, selectedBranch, form, mutate }:
                   </FormControl>
                   <SelectContent>
                     {branches.map((branch) => (
-                      <SelectItem key={branch.commitHash} value={branch.name}>
+                      <SelectItem key={branch.name} value={branch.name}>
                         {branch.name}
                       </SelectItem>
                     ))}

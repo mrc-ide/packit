@@ -718,3 +718,5 @@ export const mockPacketGroupsParameters: Record<string, Parameter[]> = {
     }
   ]
 };
+
+export const mockTaskId = "1234";

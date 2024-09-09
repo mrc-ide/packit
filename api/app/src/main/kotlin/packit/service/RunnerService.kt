@@ -4,13 +4,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
 import packit.model.RunInfo
-import packit.model.dto.GitBranches
-import packit.model.dto.OrderlyRunnerVersion
-import packit.model.dto.Parameter
-import packit.model.dto.RunInfoDto
-import packit.model.dto.RunnerPacketGroup
-import packit.model.dto.Status
-import packit.model.dto.SubmitRunInfo
+import packit.model.dto.*
 import packit.model.toDto
 import packit.repository.RunInfoRepository
 
@@ -21,7 +15,7 @@ interface RunnerService
     fun getBranches(): GitBranches
     fun getParameters(packetGroupName: String, ref: String): List<Parameter>
     fun getPacketGroups(ref: String): List<RunnerPacketGroup>
-    fun submitRun(info: SubmitRunInfo): String
+    fun submitRun(info: SubmitRunInfo): SubmitRunResponse
     fun getTaskStatus(taskId: String): RunInfoDto
 }
 
@@ -57,7 +51,7 @@ class BaseRunnerService(
         return orderlyRunnerClient.getPacketGroups(ref)
     }
 
-    override fun submitRun(info: SubmitRunInfo): String
+    override fun submitRun(info: SubmitRunInfo): SubmitRunResponse
     {
         val res = orderlyRunnerClient.submitRun(info)
         val runInfo = RunInfo(
@@ -69,13 +63,14 @@ class BaseRunnerService(
             status = Status.PENDING.toString()
         )
         runInfoRepository.save(runInfo)
-        return res.taskId
+        return res
     }
 
     override fun getTaskStatus(taskId: String): RunInfoDto
     {
         val runInfo = runInfoRepository.findByTaskId(taskId)
-        if (runInfo == null) {
+        if (runInfo == null)
+        {
             throw PackitException("runInfoNotFound", HttpStatus.NOT_FOUND)
         }
 
