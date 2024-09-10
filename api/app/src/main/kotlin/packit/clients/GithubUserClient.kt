@@ -30,13 +30,19 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
     {
         checkAuthenticated()
 
-        val userOrg = ghUser!!.allOrganizations.firstOrNull { org -> org.login == config.authGithubAPIOrg }
+        val userOrg = try {
+            ghUser!!.allOrganizations.firstOrNull { org -> org.login == config.authGithubAPIOrg }
+        } catch (e: HttpException) {
+            throw throwOnHttpException(e)
+        }
+
         var userOK = userOrg != null // Check if user passes in org check
 
         val allowedTeam = config.authGithubAPITeam
         if (userOK && allowedTeam.isNotEmpty())
         {
-            // We've confirmed user is in org, and required team is not empty, so we need to check team membership too
+            // We've confirmed user is in org, and required team is not empty, so we need to
+            // check team membership too
             val team = userOrg!!.teams[allowedTeam] ?: throw PackitAuthenticationException(
                 "githubConfigTeamNotInOrg",
                 HttpStatus.UNAUTHORIZED
@@ -73,12 +79,10 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
 
     private fun throwOnHttpException(e: HttpException): Exception
     {
-        val errorCode = if (e.responseCode == HttpStatus.UNAUTHORIZED.value())
-        {
-            "githubTokenInsufficientPermissions"
-        } else
-        {
-            "githubTokenUnexpectedError"
+        val errorCode = when (e.responseCode) {
+            HttpStatus.UNAUTHORIZED.value() -> "githubTokenInvalid"
+            HttpStatus.FORBIDDEN.value() -> "githubTokenInsufficientPermissions"
+            else -> "githubTokenUnexpectedError"
         }
         return PackitAuthenticationException(errorCode, HttpStatus.valueOf(e.responseCode))
     }

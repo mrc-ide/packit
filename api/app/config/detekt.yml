@@ -49,6 +49,8 @@ style:
     active: false
   UnusedPrivateMember:
     active: false
+  ThrowsCount:
+    active: false
 
 naming:
   NoNameShadowing:
