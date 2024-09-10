@@ -128,7 +128,8 @@ class RunnerServiceTest
         val result = sut.getTaskStatus(taskId)
 
         verify(orderlyRunnerClient).getTaskStatuses(listOf(taskId), true)
-        verify(runInfoRepository).save(argThat {
+        verify(runInfoRepository).save(
+            argThat {
             assertEquals(taskId, this.taskId)
             assertEquals(taskStatus.timeQueued, this.timeQueued)
             assertEquals(taskStatus.timeStarted, this.timeStarted)
@@ -136,7 +137,8 @@ class RunnerServiceTest
             assertEquals(taskStatus.logs, this.logs)
             assertEquals(taskStatus.status, this.status)
             true
-        })
+        }
+        )
         assertThat(result).isInstanceOf(RunInfo::class.java)
     }
 
@@ -184,7 +186,8 @@ class RunnerServiceTest
         val result = sut.getTasksStatuses()
 
         verify(orderlyRunnerClient).getTaskStatuses(taskIds, false)
-        verify(runInfoRepository).saveAll<RunInfo>(argThat {
+        verify(runInfoRepository).saveAll<RunInfo>(
+            argThat {
             this.forEachIndexed { index, runInfo ->
                 assertEquals(taskStatuses[index].timeQueued, runInfo.timeQueued)
                 assertEquals(taskStatuses[index].timeStarted, runInfo.timeStarted)
@@ -193,7 +196,8 @@ class RunnerServiceTest
                 assertEquals(taskStatuses[index].status, runInfo.status)
             }
             true
-        })
+        }
+        )
         assertThat(result).isInstanceOf(List::class.java)
     }
 }
