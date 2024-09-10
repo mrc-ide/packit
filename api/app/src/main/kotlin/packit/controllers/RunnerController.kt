@@ -5,6 +5,8 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import packit.model.dto.*
+import packit.model.toBasicDto
+import packit.model.toDto
 import packit.service.RunnerService
 
 @RestController
@@ -59,6 +61,12 @@ class RunnerController(private val runnerService: RunnerService)
     @GetMapping("/status/{taskId}")
     fun getTaskStatus(@PathVariable taskId: String): ResponseEntity<RunInfoDto>
     {
-        return ResponseEntity.ok(runnerService.getTaskStatus(taskId))
+        return ResponseEntity.ok(runnerService.getTaskStatus(taskId).toDto())
+    }
+
+    @GetMapping("/list/status")
+    fun getTasksStatuses(): ResponseEntity<List<BasicRunInfoDto>>
+    {
+        return ResponseEntity.ok(runnerService.getTasksStatuses().map { it.toBasicDto() })
     }
 }

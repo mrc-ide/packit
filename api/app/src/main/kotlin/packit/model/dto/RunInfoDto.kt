@@ -31,3 +31,12 @@ data class RunInfoDto(
     val parameters: Map<String, Any>? = null,
     val queuePosition: Int? = null
 )
+
+data class BasicRunInfoDto(
+    val taskId: String,
+    val packetGroupName: String,
+    val status: Status,
+    val branch: String,
+    val timeStarted: Double? = null,
+    val parameters: Map<String, Any>? = null,
+)

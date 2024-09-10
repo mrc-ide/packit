@@ -11,11 +11,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
-import packit.model.dto.GitBranches
-import packit.model.dto.OrderlyRunnerVersion
-import packit.model.dto.Parameter
-import packit.model.dto.RunnerPacketGroup
-import packit.model.dto.SubmitRunInfo
+import packit.model.dto.*
 import packit.repository.RunInfoRepository
 import kotlin.test.assertEquals
 
@@ -27,6 +23,27 @@ class RunnerControllerTest : IntegrationTest()
     private fun getSubmitRunInfo(branch: String, commitHash: String): String
     {
         return jacksonObjectMapper().writeValueAsString(SubmitRunInfo("data", branch, commitHash, null))
+    }
+
+    private fun submitTestRun(): Pair<String, GitBranchInfo>
+    {
+        val branchRes: ResponseEntity<GitBranches> = restTemplate.exchange(
+            "/runner/git/branches",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+        val branch = branchRes.body!!.branches[0]
+
+        val res: ResponseEntity<SubmitRunResponse> = restTemplate.exchange(
+            "/runner/run",
+            HttpMethod.POST,
+            getTokenizedHttpEntity(
+                MediaType.APPLICATION_JSON,
+                getSubmitRunInfo(branch.name, branch.commitHash)
+            )
+        )
+
+        return Pair(res.body!!.taskId, branch)
     }
 
     @Test
@@ -128,22 +145,43 @@ class RunnerControllerTest : IntegrationTest()
     @WithAuthenticatedUser(authorities = ["packet.run"])
     fun `can submit report run`()
     {
-        val branchRes: ResponseEntity<GitBranches> = restTemplate.exchange(
-            "/runner/git/branches",
+        val (taskId) = submitTestRun()
+
+        assertEquals(String::class.java, taskId::class.java)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.run"])
+    fun `can get status of single task`()
+    {
+        val (taskId, branch) = submitTestRun()
+        val statusRes: ResponseEntity<RunInfoDto> = restTemplate.exchange(
+            "/runner/status/$taskId",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
-        val branch = branchRes.body!!.branches[0]
 
-        val res: ResponseEntity<String> = restTemplate.exchange(
-            "/runner/run",
-            HttpMethod.POST,
-            getTokenizedHttpEntity(
-                MediaType.APPLICATION_JSON,
-                getSubmitRunInfo(branch.name, branch.commitHash)
-            )
+        assertEquals(taskId, statusRes.body!!.taskId)
+        assertEquals(branch.name, statusRes.body!!.branch)
+        assertEquals(branch.commitHash, statusRes.body!!.commitHash)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.run"])
+    fun `can get status of multiple tasks`()
+    {
+        val (taskId1, _) = submitTestRun()
+        val (taskId2, _) = submitTestRun()
+        val statusRes: ResponseEntity<List<BasicRunInfoDto>> = restTemplate.exchange(
+            "/runner/list/status",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
         )
 
-        assertEquals(String::class.java, res.body!!::class.java)
+        statusRes.body!!.filter { it.taskId == taskId1 || it.taskId == taskId2 }.forEach {
+            assertEquals(String::class.java, it.taskId::class.java)
+            assertEquals(String::class.java, it.packetGroupName::class.java)
+            assertEquals(String::class.java, it.branch::class.java)
+        }
     }
 }

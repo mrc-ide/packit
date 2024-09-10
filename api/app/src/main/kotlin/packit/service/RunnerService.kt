@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
 import packit.model.RunInfo
 import packit.model.dto.*
-import packit.model.toDto
 import packit.repository.RunInfoRepository
 
 interface RunnerService
@@ -16,7 +15,8 @@ interface RunnerService
     fun getParameters(packetGroupName: String, ref: String): List<Parameter>
     fun getPacketGroups(ref: String): List<RunnerPacketGroup>
     fun submitRun(info: SubmitRunInfo): SubmitRunResponse
-    fun getTaskStatus(taskId: String): RunInfoDto
+    fun getTaskStatus(taskId: String): RunInfo
+    fun getTasksStatuses(): List<RunInfo>
 }
 
 @Service
@@ -66,27 +66,49 @@ class BaseRunnerService(
         return res
     }
 
-    override fun getTaskStatus(taskId: String): RunInfoDto
+    override fun getTaskStatus(taskId: String): RunInfo
     {
-        val runInfo = runInfoRepository.findByTaskId(taskId)
-        if (runInfo == null)
-        {
-            throw PackitException("runInfoNotFound", HttpStatus.NOT_FOUND)
+        val runInfo =
+            runInfoRepository.findByTaskId(taskId) ?: throw PackitException("runInfoNotFound", HttpStatus.NOT_FOUND)
+
+        val taskStatus = orderlyRunnerClient.getTaskStatuses(listOf(taskId), true).first()
+
+        updateRunInfo(runInfo, taskStatus)
+        runInfoRepository.save(runInfo)
+
+        return runInfo
+    }
+
+    override fun getTasksStatuses(): List<RunInfo>
+    {
+        val runInfos = runInfoRepository.findAll()
+        val taskIds = runInfos.map { it.taskId }
+        val taskStatuses = orderlyRunnerClient.getTaskStatuses(taskIds, false)
+
+        runInfos.forEach { runInfo ->
+            val taskStatus = taskStatuses.find { it.taskId == runInfo.taskId }
+                ?: throw PackitException("runInfoNotFound", HttpStatus.NOT_FOUND)
+
+            updateRunInfo(runInfo, taskStatus)
         }
+        runInfoRepository.saveAll(runInfos)
 
-        val taskStatus = orderlyRunnerClient.getTaskStatuses(listOf(taskId), true)[0]
+        return runInfos
+    }
 
-        runInfo.apply {
+    internal fun updateRunInfo(runInfo: RunInfo, taskStatus: TaskStatus): RunInfo
+    {
+        return runInfo.apply {
             timeQueued = taskStatus.timeQueued
             timeStarted = taskStatus.timeStarted
             timeCompleted = taskStatus.timeComplete
-            logs = taskStatus.logs
+            if (taskStatus.logs != null)
+            {
+                logs = taskStatus.logs
+            }
             status = taskStatus.status
             packetId = taskStatus.packetId
             queuePosition = taskStatus.queuePosition
         }
-        runInfoRepository.save(runInfo)
-
-        return runInfo.toDto()
     }
 }
