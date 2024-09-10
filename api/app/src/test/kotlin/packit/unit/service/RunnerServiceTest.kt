@@ -130,14 +130,14 @@ class RunnerServiceTest
         verify(orderlyRunnerClient).getTaskStatuses(listOf(taskId), true)
         verify(runInfoRepository).save(
             argThat {
-            assertEquals(taskId, this.taskId)
-            assertEquals(taskStatus.timeQueued, this.timeQueued)
-            assertEquals(taskStatus.timeStarted, this.timeStarted)
-            assertEquals(taskStatus.timeComplete, this.timeCompleted)
-            assertEquals(taskStatus.logs, this.logs)
-            assertEquals(taskStatus.status, this.status)
-            true
-        }
+                assertEquals(taskId, this.taskId)
+                assertEquals(taskStatus.timeQueued, this.timeQueued)
+                assertEquals(taskStatus.timeStarted, this.timeStarted)
+                assertEquals(taskStatus.timeComplete, this.timeCompleted)
+                assertEquals(taskStatus.logs, this.logs)
+                assertEquals(taskStatus.status, this.status)
+                true
+            }
         )
         assertThat(result).isInstanceOf(RunInfo::class.java)
     }
@@ -188,16 +188,61 @@ class RunnerServiceTest
         verify(orderlyRunnerClient).getTaskStatuses(taskIds, false)
         verify(runInfoRepository).saveAll<RunInfo>(
             argThat {
-            this.forEachIndexed { index, runInfo ->
-                assertEquals(taskStatuses[index].timeQueued, runInfo.timeQueued)
-                assertEquals(taskStatuses[index].timeStarted, runInfo.timeStarted)
-                assertEquals(taskStatuses[index].timeComplete, runInfo.timeCompleted)
-                assertEquals(taskStatuses[index].logs, runInfo.logs)
-                assertEquals(taskStatuses[index].status, runInfo.status)
+                this.forEachIndexed { index, runInfo ->
+                    assertEquals(taskStatuses[index].timeQueued, runInfo.timeQueued)
+                    assertEquals(taskStatuses[index].timeStarted, runInfo.timeStarted)
+                    assertEquals(taskStatuses[index].timeComplete, runInfo.timeCompleted)
+                    assertEquals(taskStatuses[index].logs, runInfo.logs)
+                    assertEquals(taskStatuses[index].status, runInfo.status)
+                }
+                true
             }
-            true
-        }
         )
         assertThat(result).isInstanceOf(List::class.java)
+    }
+
+    @Test
+    fun `should update run info when no task status logs`()
+    {
+        val runInfo = RunInfo(
+            "task-id",
+            packetGroupName = "packet-group",
+            commitHash = "hash",
+            branch = "branch",
+            parameters = null,
+            status = Status.PENDING.toString(),
+            logs = listOf("log1", "log2")
+        )
+        val taskStatus = TaskStatus(0.0, 1.0, 2.0, 0, null, "status", "packet-id", "task-id")
+        val updatedRunInfo = sut.updateRunInfo(runInfo, taskStatus)
+        assertEquals(taskStatus.timeQueued, updatedRunInfo.timeQueued)
+        assertEquals(taskStatus.timeStarted, updatedRunInfo.timeStarted)
+        assertEquals(taskStatus.timeComplete, updatedRunInfo.timeCompleted)
+        assertEquals(taskStatus.status, updatedRunInfo.status)
+        assertEquals(taskStatus.packetId, updatedRunInfo.packetId)
+        assertEquals(taskStatus.queuePosition, updatedRunInfo.queuePosition)
+        assertEquals(runInfo.logs, updatedRunInfo.logs)
+    }
+
+    @Test
+    fun `should update run info when task status has logs`()
+    {
+        val runInfo = RunInfo(
+            "task-id",
+            packetGroupName = "packet-group",
+            commitHash = "hash",
+            branch = "branch",
+            parameters = null,
+            status = Status.PENDING.toString()
+        )
+        val taskStatus = TaskStatus(0.0, 1.0, 2.0, 0, listOf("log1", "log2"), "status", "packet-id", "task-id")
+        val updatedRunInfo = sut.updateRunInfo(runInfo, taskStatus)
+        assertEquals(taskStatus.timeQueued, updatedRunInfo.timeQueued)
+        assertEquals(taskStatus.timeStarted, updatedRunInfo.timeStarted)
+        assertEquals(taskStatus.timeComplete, updatedRunInfo.timeCompleted)
+        assertEquals(taskStatus.logs, updatedRunInfo.logs)
+        assertEquals(taskStatus.status, updatedRunInfo.status)
+        assertEquals(taskStatus.packetId, updatedRunInfo.packetId)
+        assertEquals(taskStatus.queuePosition, updatedRunInfo.queuePosition)
     }
 }
