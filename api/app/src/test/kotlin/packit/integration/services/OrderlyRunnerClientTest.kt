@@ -68,4 +68,25 @@ class OrderlyRunnerClientTest : IntegrationTest()
 
         assertEquals(String::class.java, res.taskId::class.java)
     }
+
+    @Test
+    fun `can get statuses of tasks`()
+    {
+//        run 2 tasks
+        val branchInfo = sutOutpack.getBranches()
+        val mainBranch = branchInfo.branches[0]
+        val parameters = mapOf("a" to 1, "b" to 2)
+        val submitInfo = SubmitRunInfo("parameters", mainBranch.name, mainBranch.commitHash, parameters)
+        val res1 = sut.submitRun(submitInfo)
+        val res2 = sut.submitRun(submitInfo)
+
+        val taskIds = listOf(res1.taskId, res2.taskId)
+
+        val statuses = sut.getTaskStatuses(taskIds, false)
+
+        statuses.forEach {
+            assertEquals(String::class.java, it.taskId::class.java)
+            assertEquals(String::class.java, it.status::class.java)
+        }
+    }
 }

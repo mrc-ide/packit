@@ -7,5 +7,6 @@ data class TaskStatus(
     val queuePosition: Int?,
     val logs: List<String>?,
     val status: String,
-    val packetId: String?
+    val packetId: String?,
+    val taskId: String,
 )
