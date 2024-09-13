@@ -235,7 +235,6 @@ class RunnerServiceTest
             )
         ).thenReturn(PageImpl(emptyList()))
 
-
         val result = sut.getRunInfos(payload, filterName)
 
         assertEquals(0, result.size)
