@@ -57,5 +57,8 @@ The migrations and validation are run on application startup. If validation fail
 To run the migrations manually, execute the following command from the project root:
 `./api/gradlew flywayInfo -Pflyway.url={url} -Pflyway.user={user} -Pflyway.password={password}`
 
+Once a migration file has been commited to the main branch it must not be modified again. Instead you should write a new migration if you want to modify
+existing tables. There is a [GitHub Actions workflow](../.github/workflows/check-migrations.yml) that ensures these cannot be changed.
+
 Note: A intelliJ called [JpaBuddy](https://jpa-buddy.com/) can be used to generate entity classes from a database schema and visa versa.
 This [tutorial](https://www.youtube.com/watch?v=9wEJ29QIDyM&t=51s) is a good starting point on how flyway and JpaBuddy can be used together.
