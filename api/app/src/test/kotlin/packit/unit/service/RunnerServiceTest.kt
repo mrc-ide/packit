@@ -127,7 +127,8 @@ class RunnerServiceTest
         val res = sut.submitRun(info, testUsername)
 
         verify(orderlyRunnerClient).submitRun(info)
-        verify(runInfoRepository).save(argThat {
+        verify(runInfoRepository).save(
+            argThat {
             assertEquals(taskId, mockRes.taskId)
             assertEquals(packetGroupName, info.packetGroupName)
             assertEquals(commitHash, info.commitHash)
@@ -136,7 +137,8 @@ class RunnerServiceTest
             assertEquals(status, Status.PENDING.toString())
             assertEquals(username, testUsername)
             true
-        })
+        }
+        )
         assertEquals(res.taskId, "task-id")
     }
 
