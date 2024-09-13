@@ -2,11 +2,13 @@ package packit.controllers
 
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import packit.model.dto.*
 import packit.model.toBasicDto
 import packit.model.toDto
+import packit.security.profile.UserPrincipal
 import packit.service.RunnerService
 
 @RestController
@@ -52,10 +54,11 @@ class RunnerController(private val runnerService: RunnerService)
 
     @PostMapping("/run")
     fun submitRun(
-        @RequestBody @Validated submitRunInfo: SubmitRunInfo
+        @RequestBody @Validated submitRunInfo: SubmitRunInfo,
+        @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<SubmitRunResponse>
     {
-        return ResponseEntity.ok(runnerService.submitRun(submitRunInfo))
+        return ResponseEntity.ok(runnerService.submitRun(submitRunInfo, userPrincipal.name))
     }
 
     @GetMapping("/status/{taskId}")

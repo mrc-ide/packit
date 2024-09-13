@@ -29,7 +29,8 @@ data class RunInfoDto(
     val timeQueued: Double? = null,
     val packetId: String? = null,
     val parameters: Map<String, Any>? = null,
-    val queuePosition: Int? = null
+    val queuePosition: Int? = null,
+    val username: String
 )
 
 data class BasicRunInfoDto(
@@ -39,4 +40,5 @@ data class BasicRunInfoDto(
     val branch: String,
     val timeStarted: Double? = null,
     val parameters: Map<String, Any>? = null,
+    val username: String
 )

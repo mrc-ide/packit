@@ -164,6 +164,7 @@ class RunnerControllerTest : IntegrationTest()
         assertEquals(taskId, statusRes.body!!.taskId)
         assertEquals(branch.name, statusRes.body!!.branch)
         assertEquals(branch.commitHash, statusRes.body!!.commitHash)
+        assertEquals("test.user@example.com", statusRes.body!!.username)
     }
 
     @Test
@@ -182,6 +183,7 @@ class RunnerControllerTest : IntegrationTest()
             assertEquals(String::class.java, it.taskId::class.java)
             assertEquals(String::class.java, it.packetGroupName::class.java)
             assertEquals(String::class.java, it.branch::class.java)
+            assertEquals("test.user@example.com", it.username)
         }
     }
 }

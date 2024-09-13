@@ -90,22 +90,24 @@ class RunnerServiceTest
     {
 
         val info = SubmitRunInfo("report-name", "branch", "hash", null)
+        val testUsername = "test-user"
         val mockRes = SubmitRunResponse("task-id")
 
         `when`(orderlyRunnerClient.submitRun(info)).thenReturn(mockRes)
 
-        val runInfo = RunInfo(
-            mockRes.taskId,
-            packetGroupName = info.packetGroupName,
-            commitHash = info.commitHash,
-            branch = info.branch,
-            parameters = info.parameters,
-            status = Status.PENDING.toString()
-        )
-        val res = sut.submitRun(info)
+        val res = sut.submitRun(info, testUsername)
 
         verify(orderlyRunnerClient).submitRun(info)
-        verify(runInfoRepository).save(argThat { this.taskId == runInfo.taskId })
+        verify(runInfoRepository).save(argThat {
+            assertEquals(taskId, mockRes.taskId)
+            assertEquals(packetGroupName, info.packetGroupName)
+            assertEquals(commitHash, info.commitHash)
+            assertEquals(branch, info.branch)
+            assertEquals(parameters, info.parameters)
+            assertEquals(status, Status.PENDING.toString())
+            assertEquals(username, testUsername)
+            true
+        })
         assertEquals(res.taskId, "task-id")
     }
 
@@ -113,6 +115,7 @@ class RunnerServiceTest
     fun `can get task status with logs & updates run info of single task`()
     {
         val taskId = "task-id"
+
         val taskStatus = TaskStatus(0.0, 1.0, 2.0, 0, listOf("log1", "log2"), "status", "packet-id", taskId)
         val testRunInfo = RunInfo(
             taskId,
@@ -120,7 +123,8 @@ class RunnerServiceTest
             commitHash = "hash",
             branch = "branch",
             parameters = null,
-            status = Status.PENDING.toString()
+            status = Status.PENDING.toString(),
+            username = "test-user"
         )
         `when`(orderlyRunnerClient.getTaskStatuses(listOf(taskId), true)).thenReturn(listOf(taskStatus))
         `when`(runInfoRepository.findByTaskId(taskId)).thenReturn(testRunInfo)
@@ -169,7 +173,8 @@ class RunnerServiceTest
                 commitHash = "hash",
                 branch = "branch",
                 parameters = null,
-                status = Status.PENDING.toString()
+                status = Status.PENDING.toString(),
+                username = "test-user"
             ),
             RunInfo(
                 "task-id2",
@@ -177,7 +182,8 @@ class RunnerServiceTest
                 commitHash = "hash",
                 branch = "branch",
                 parameters = null,
-                status = Status.PENDING.toString()
+                status = Status.PENDING.toString(),
+                username = "test-user"
             )
         )
         `when`(runInfoRepository.findAll()).thenReturn(testRunInfos)
@@ -211,7 +217,8 @@ class RunnerServiceTest
             branch = "branch",
             parameters = null,
             status = Status.PENDING.toString(),
-            logs = listOf("log1", "log2")
+            logs = listOf("log1", "log2"),
+            username = "test-user"
         )
         val taskStatus = TaskStatus(0.0, 1.0, 2.0, 0, null, "status", "packet-id", "task-id")
         val updatedRunInfo = sut.updateRunInfo(runInfo, taskStatus)
@@ -233,7 +240,8 @@ class RunnerServiceTest
             commitHash = "hash",
             branch = "branch",
             parameters = null,
-            status = Status.PENDING.toString()
+            status = Status.PENDING.toString(),
+            username = "test-user"
         )
         val taskStatus = TaskStatus(0.0, 1.0, 2.0, 0, listOf("log1", "log2"), "status", "packet-id", "task-id")
         val updatedRunInfo = sut.updateRunInfo(runInfo, taskStatus)

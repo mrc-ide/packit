@@ -1,8 +1,8 @@
 package packit.unit.model
 
 import packit.model.RunInfo
+import packit.model.toBasicDto
 import packit.model.toDto
-import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -13,7 +13,7 @@ class RunInfoTest
     {
         val runInfo = RunInfo(
             "task_id", "report_name", "PENDING", "hash", "branch", listOf("log1", "log2"),
-            1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input")
+            1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input"), username = "test_user"
         )
         val runInfoDto = runInfo.toDto()
         assertEquals(runInfo.taskId, runInfoDto.taskId)
@@ -27,5 +27,23 @@ class RunInfoTest
         assertEquals(runInfo.timeQueued, runInfoDto.timeQueued)
         assertEquals(runInfo.packetId, runInfoDto.packetId)
         assertEquals(runInfo.parameters, runInfoDto.parameters)
+        assertEquals(runInfo.username, runInfoDto.username)
+    }
+
+    @Test
+    fun `toBasicDto return correct BasicRunInfoDto for RunInfo`()
+    {
+        val runInfo = RunInfo(
+            "task_id", "report_name", "PENDING", "hash", "branch", listOf("log1", "log2"),
+            1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input"), username = "test_user"
+        )
+        val basicRunInfoDto = runInfo.toBasicDto()
+        assertEquals(runInfo.taskId, basicRunInfoDto.taskId)
+        assertEquals(runInfo.packetGroupName, basicRunInfoDto.packetGroupName)
+        assertEquals(runInfo.status, basicRunInfoDto.status.toString())
+        assertEquals(runInfo.branch, basicRunInfoDto.branch)
+        assertEquals(runInfo.timeStarted, basicRunInfoDto.timeStarted)
+        assertEquals(runInfo.parameters, basicRunInfoDto.parameters)
+        assertEquals(runInfo.username, basicRunInfoDto.username)
     }
 }
