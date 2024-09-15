@@ -4,12 +4,13 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.`when`
-import org.mockito.kotlin.argThat
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
+import org.mockito.kotlin.*
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import packit.exceptions.PackitException
+import packit.model.PageablePayload
 import packit.model.RunInfo
 import packit.model.dto.*
 import packit.repository.RunInfoRepository
@@ -20,13 +21,41 @@ import kotlin.test.assertEquals
 
 class RunnerServiceTest
 {
+    private val filterName = "filter-name"
+    private val testRunInfos = listOf(
+        RunInfo(
+            "task-id1",
+            packetGroupName = "packet-group",
+            commitHash = "hash",
+            branch = "branch",
+            parameters = null,
+            status = Status.PENDING.toString(),
+            username = "test-user"
+        ),
+        RunInfo(
+            "task-id2",
+            packetGroupName = "packet-group",
+            commitHash = "hash",
+            branch = "branch",
+            parameters = null,
+            status = Status.PENDING.toString(),
+            username = "test-user"
+        )
+    )
+    private val testTaskStatuses = listOf(
+        TaskStatus(0.0, 1.0, 2.0, 0, listOf("log1", "log2"), "status", "packet-id", "task-id1"),
+        TaskStatus(0.0, 1.0, 2.0, 0, listOf("log1", "log2"), "status", "packet-id", "task-id2")
+    )
+
     private val version = OrderlyRunnerVersion("test-version", "test-runner")
     private val orderlyRunnerClient =
         mock<OrderlyRunnerClient> {
             on { getVersion() } doReturn version
         }
     private val outpackServerClient = mock<OutpackServerClient>()
-    private val runInfoRepository = mock<RunInfoRepository>()
+    private val runInfoRepository = mock<RunInfoRepository> {
+        on { findAllByPacketGroupNameContaining(eq(filterName), any()) } doReturn PageImpl(testRunInfos)
+    }
 
     private val sut = BaseRunnerService(orderlyRunnerClient, outpackServerClient, runInfoRepository)
 
@@ -117,7 +146,6 @@ class RunnerServiceTest
     fun `can get task status with logs & updates run info of single task`()
     {
         val taskId = "task-id"
-
         val taskStatus = TaskStatus(0.0, 1.0, 2.0, 0, listOf("log1", "log2"), "status", "packet-id", taskId)
         val testRunInfo = RunInfo(
             taskId,
@@ -161,92 +189,110 @@ class RunnerServiceTest
     }
 
     @Test
-    fun `can get statuses of tasks without logs`()
+    fun `can get run infos from db`()
     {
-        val taskIds = listOf("task-id1", "task-id2")
-        val taskStatuses = listOf(
-            TaskStatus(0.0, 1.0, 2.0, 0, listOf("log1", "log2"), "status", "packet-id", "task-id1"),
-            TaskStatus(0.0, 1.0, 2.0, 0, listOf("log1", "log2"), "status", "packet-id", "task-id2")
-        )
-        val testRunInfos = listOf(
-            RunInfo(
-                "task-id1",
-                packetGroupName = "packet-group",
-                commitHash = "hash",
-                branch = "branch",
-                parameters = null,
-                status = Status.PENDING.toString(),
-                username = "test-user"
-            ),
-            RunInfo(
-                "task-id2",
-                packetGroupName = "packet-group",
-                commitHash = "hash",
-                branch = "branch",
-                parameters = null,
-                status = Status.PENDING.toString(),
-                username = "test-user"
+        val filterName = "filter-name"
+        val payload = PageablePayload(pageNumber = 0, pageSize = 10)
+
+        val result = sut.getRunInfos(payload, filterName)
+
+        verify(runInfoRepository).findAllByPacketGroupNameContaining(
+            filterName,
+            PageRequest.of(
+                payload.pageNumber,
+                payload.pageSize,
+                Sort.by("timeQueued")
+                    .descending() // NULL values sorted first (newest as have not had status called on them yet)
             )
         )
-        `when`(runInfoRepository.findAll()).thenReturn(testRunInfos)
-        `when`(orderlyRunnerClient.getTaskStatuses(taskIds, false)).thenReturn(taskStatuses)
+        assertEquals(2, result.size)
+        assertEquals(testRunInfos, result.content)
+    }
 
-        val result = sut.getTasksStatuses()
+    @Test
+    fun `can get paginated statuses of tasks without logs`()
+    {
+        val taskIds = listOf("task-id1", "task-id2")
+        val filterName = "filter-name"
+        val payload = PageablePayload(pageNumber = 0, pageSize = 10)
+        `when`(orderlyRunnerClient.getTaskStatuses(taskIds, false)).thenReturn(testTaskStatuses)
+
+        val result = sut.getTasksStatuses(payload, filterName)
 
         verify(orderlyRunnerClient).getTaskStatuses(taskIds, false)
-        verify(runInfoRepository).saveAll<RunInfo>(
-            argThat {
-                this.forEachIndexed { index, runInfo ->
-                    assertEquals(taskStatuses[index].timeQueued, runInfo.timeQueued)
-                    assertEquals(taskStatuses[index].timeStarted, runInfo.timeStarted)
-                    assertEquals(taskStatuses[index].timeComplete, runInfo.timeCompleted)
-                    assertEquals(taskStatuses[index].logs, runInfo.logs)
-                    assertEquals(taskStatuses[index].status, runInfo.status)
-                }
-                true
-            }
+        assertEquals(2, result.size)
+        assertEquals(testRunInfos, result.content)
+    }
+
+    @Test
+    fun `returns empty page if no run infos found`()
+    {
+        val payload = PageablePayload(pageNumber = 0, pageSize = 10)
+        `when`(
+            runInfoRepository.findAllByPacketGroupNameContaining(
+                filterName,
+                PageRequest.of(payload.pageNumber, payload.pageSize, Sort.by("timeQueued").descending())
+            )
+        ).thenReturn(PageImpl(emptyList()))
+
+        val result = sut.getRunInfos(payload, filterName)
+
+        assertEquals(0, result.size)
+    }
+
+    @Test
+    fun `updateRunInfosWithStatuses should update run infos with statuses`()
+    {
+        val updatedRunInfos = sut.updateRunInfosWithStatuses(PageImpl(testRunInfos), testTaskStatuses)
+
+        assertEquals(2, updatedRunInfos.size)
+        updatedRunInfos.forEachIndexed { index, runInfo ->
+            assertEquals(testTaskStatuses[index].timeQueued, runInfo.timeQueued)
+            assertEquals(testTaskStatuses[index].timeStarted, runInfo.timeStarted)
+            assertEquals(testTaskStatuses[index].timeComplete, runInfo.timeCompleted)
+            assertEquals(testTaskStatuses[index].logs, runInfo.logs)
+            assertEquals(testTaskStatuses[index].status, runInfo.status)
+        }
+    }
+
+    @Test
+    fun `updateRunInfosWithStatuses throws unable to find taskId in statuses recieved`()
+    {
+        val taskStatuses = listOf(
+            TaskStatus(0.0, 1.0, 2.0, 0, listOf("log1", "log2"), "status", "packet-id", "task-id1")
         )
-        assertThat(result).isInstanceOf(List::class.java)
+
+        assertThrows<PackitException> {
+            sut.updateRunInfosWithStatuses(PageImpl(testRunInfos), taskStatuses)
+        }.apply {
+            assertEquals("runInfoNotFound", key)
+            assertEquals(HttpStatus.NOT_FOUND, httpStatus)
+        }
     }
 
     @Test
     fun `should update run info when no task status logs`()
     {
-        val runInfo = RunInfo(
-            "task-id",
-            packetGroupName = "packet-group",
-            commitHash = "hash",
-            branch = "branch",
-            parameters = null,
-            status = Status.PENDING.toString(),
-            logs = listOf("log1", "log2"),
-            username = "test-user"
-        )
         val taskStatus = TaskStatus(0.0, 1.0, 2.0, 0, null, "status", "packet-id", "task-id")
-        val updatedRunInfo = sut.updateRunInfo(runInfo, taskStatus)
+
+        val updatedRunInfo = sut.updateRunInfo(testRunInfos[0], taskStatus)
+
         assertEquals(taskStatus.timeQueued, updatedRunInfo.timeQueued)
         assertEquals(taskStatus.timeStarted, updatedRunInfo.timeStarted)
         assertEquals(taskStatus.timeComplete, updatedRunInfo.timeCompleted)
         assertEquals(taskStatus.status, updatedRunInfo.status)
         assertEquals(taskStatus.packetId, updatedRunInfo.packetId)
         assertEquals(taskStatus.queuePosition, updatedRunInfo.queuePosition)
-        assertEquals(runInfo.logs, updatedRunInfo.logs)
+        assertEquals(testRunInfos[0].logs, updatedRunInfo.logs)
     }
 
     @Test
     fun `should update run info when task status has logs`()
     {
-        val runInfo = RunInfo(
-            "task-id",
-            packetGroupName = "packet-group",
-            commitHash = "hash",
-            branch = "branch",
-            parameters = null,
-            status = Status.PENDING.toString(),
-            username = "test-user"
-        )
         val taskStatus = TaskStatus(0.0, 1.0, 2.0, 0, listOf("log1", "log2"), "status", "packet-id", "task-id")
-        val updatedRunInfo = sut.updateRunInfo(runInfo, taskStatus)
+
+        val updatedRunInfo = sut.updateRunInfo(testRunInfos[0], taskStatus)
+
         assertEquals(taskStatus.timeQueued, updatedRunInfo.timeQueued)
         assertEquals(taskStatus.timeStarted, updatedRunInfo.timeStarted)
         assertEquals(taskStatus.timeComplete, updatedRunInfo.timeCompleted)
