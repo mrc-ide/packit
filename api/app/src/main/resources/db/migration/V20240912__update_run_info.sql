@@ -1,2 +1,2 @@
 ALTER TABLE "run_info"
-    ADD COLUMN "username" TEXT NOT NULL;
+    ADD COLUMN "ran_by" TEXT NOT NULL;

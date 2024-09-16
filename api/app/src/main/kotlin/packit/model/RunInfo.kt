@@ -32,14 +32,14 @@ class RunInfo(
     var parameters: Map<String, Any>? = null,
 
     var queuePosition: Int? = null,
-    var username: String
+    var ranBy: String
 )
 
 fun RunInfo.toDto() = RunInfoDto(
     taskId, packetGroupName, enumValueOf<Status>(status), commitHash, branch, logs,
-    timeStarted, timeCompleted, timeQueued, packetId, parameters, queuePosition, username
+    timeStarted, timeCompleted, timeQueued, packetId, parameters, queuePosition, ranBy
 )
 
 fun RunInfo.toBasicDto() = BasicRunInfoDto(
-    taskId, packetGroupName, enumValueOf<Status>(status), branch, timeStarted, parameters, username
+    taskId, packetGroupName, enumValueOf<Status>(status), branch, timeStarted, parameters, ranBy
 )

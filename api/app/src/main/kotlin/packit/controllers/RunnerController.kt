@@ -60,7 +60,12 @@ class RunnerController(private val runnerService: RunnerService)
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<SubmitRunResponse>
     {
-        return ResponseEntity.ok(runnerService.submitRun(submitRunInfo, userPrincipal.name))
+        return ResponseEntity.ok(
+            runnerService.submitRun(
+                submitRunInfo,
+                userPrincipal.displayName ?: userPrincipal.name
+            )
+        )
     }
 
     @GetMapping("/status/{taskId}")

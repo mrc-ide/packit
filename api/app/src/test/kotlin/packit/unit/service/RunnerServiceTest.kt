@@ -30,7 +30,7 @@ class RunnerServiceTest
             branch = "branch",
             parameters = null,
             status = Status.PENDING.toString(),
-            username = "test-user"
+            ranBy = "test-user"
         ),
         RunInfo(
             "task-id2",
@@ -39,7 +39,7 @@ class RunnerServiceTest
             branch = "branch",
             parameters = null,
             status = Status.PENDING.toString(),
-            username = "test-user"
+            ranBy = "test-user"
         )
     )
     private val testTaskStatuses = listOf(
@@ -129,15 +129,15 @@ class RunnerServiceTest
         verify(orderlyRunnerClient).submitRun(info)
         verify(runInfoRepository).save(
             argThat {
-            assertEquals(taskId, mockRes.taskId)
-            assertEquals(packetGroupName, info.packetGroupName)
-            assertEquals(commitHash, info.commitHash)
-            assertEquals(branch, info.branch)
-            assertEquals(parameters, info.parameters)
-            assertEquals(status, Status.PENDING.toString())
-            assertEquals(username, testUsername)
-            true
-        }
+                assertEquals(taskId, mockRes.taskId)
+                assertEquals(packetGroupName, info.packetGroupName)
+                assertEquals(commitHash, info.commitHash)
+                assertEquals(branch, info.branch)
+                assertEquals(parameters, info.parameters)
+                assertEquals(status, Status.PENDING.toString())
+                assertEquals(ranBy, testUsername)
+                true
+            }
         )
         assertEquals(res.taskId, "task-id")
     }
@@ -154,7 +154,7 @@ class RunnerServiceTest
             branch = "branch",
             parameters = null,
             status = Status.PENDING.toString(),
-            username = "test-user"
+            ranBy = "test-user"
         )
         `when`(orderlyRunnerClient.getTaskStatuses(listOf(taskId), true)).thenReturn(listOf(taskStatus))
         `when`(runInfoRepository.findByTaskId(taskId)).thenReturn(testRunInfo)

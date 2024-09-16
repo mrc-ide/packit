@@ -18,7 +18,7 @@ interface RunnerService
     fun getBranches(): GitBranches
     fun getParameters(packetGroupName: String, ref: String): List<Parameter>
     fun getPacketGroups(ref: String): List<RunnerPacketGroup>
-    fun submitRun(info: SubmitRunInfo, username: String): SubmitRunResponse
+    fun submitRun(info: SubmitRunInfo, ranBy: String): SubmitRunResponse
     fun getTaskStatus(taskId: String): RunInfo
     fun getTasksStatuses(payload: PageablePayload, filterPacketGroupName: String): Page<RunInfo>
 }
@@ -55,7 +55,7 @@ class BaseRunnerService(
         return orderlyRunnerClient.getPacketGroups(ref)
     }
 
-    override fun submitRun(info: SubmitRunInfo, username: String): SubmitRunResponse
+    override fun submitRun(info: SubmitRunInfo, ranBy: String): SubmitRunResponse
     {
         val res = orderlyRunnerClient.submitRun(info)
         val runInfo = RunInfo(
@@ -65,7 +65,7 @@ class BaseRunnerService(
             branch = info.branch,
             parameters = info.parameters,
             status = Status.PENDING.toString(),
-            username = username
+            ranBy = ranBy
         )
         runInfoRepository.save(runInfo)
         return res

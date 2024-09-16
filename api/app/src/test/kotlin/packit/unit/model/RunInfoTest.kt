@@ -13,7 +13,7 @@ class RunInfoTest
     {
         val runInfo = RunInfo(
             "task_id", "report_name", "PENDING", "hash", "branch", listOf("log1", "log2"),
-            1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input"), username = "test_user"
+            1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input"), ranBy = "test_user"
         )
         val runInfoDto = runInfo.toDto()
         assertEquals(runInfo.taskId, runInfoDto.taskId)
@@ -27,7 +27,7 @@ class RunInfoTest
         assertEquals(runInfo.timeQueued, runInfoDto.timeQueued)
         assertEquals(runInfo.packetId, runInfoDto.packetId)
         assertEquals(runInfo.parameters, runInfoDto.parameters)
-        assertEquals(runInfo.username, runInfoDto.username)
+        assertEquals(runInfo.ranBy, runInfoDto.ranBy)
     }
 
     @Test
@@ -35,7 +35,7 @@ class RunInfoTest
     {
         val runInfo = RunInfo(
             "task_id", "report_name", "PENDING", "hash", "branch", listOf("log1", "log2"),
-            1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input"), username = "test_user"
+            1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input"), ranBy = "test_user"
         )
         val basicRunInfoDto = runInfo.toBasicDto()
         assertEquals(runInfo.taskId, basicRunInfoDto.taskId)
@@ -44,6 +44,6 @@ class RunInfoTest
         assertEquals(runInfo.branch, basicRunInfoDto.branch)
         assertEquals(runInfo.timeStarted, basicRunInfoDto.timeStarted)
         assertEquals(runInfo.parameters, basicRunInfoDto.parameters)
-        assertEquals(runInfo.username, basicRunInfoDto.username)
+        assertEquals(runInfo.ranBy, basicRunInfoDto.ranBy)
     }
 }
