@@ -1,7 +1,7 @@
 import { ExternalLink, History, Hourglass } from "lucide-react";
 import { Link } from "react-router-dom";
 import { PacketGroupSummary } from "../../../../types";
-import { getTimeDifferenceToDisplay } from "./utils/getTimeDifferenceToDisplay";
+import { getTimeDifferenceToDisplay } from "../../../../lib/time";
 
 interface PacketGroupSummaryListItemProps {
   packet: PacketGroupSummary;

@@ -10,9 +10,9 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../Base/Select";
 import { Separator } from "../../../Base/Separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../Base/Tooltip";
-import { getTimeDifferenceToDisplay } from "../../explorer/utils/getTimeDifferenceToDisplay";
 import { GitBranches, GitBranchInfo } from "../types/GitBranches";
 import { packetRunFormSchema } from "./PacketRunForm";
+import { getTimeDifferenceToDisplay } from "../../../../../lib/time";
 
 interface PacketRunBranchFieldProps {
   branches: GitBranchInfo[];

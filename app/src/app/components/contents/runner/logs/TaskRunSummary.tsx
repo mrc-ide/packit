@@ -13,27 +13,27 @@ const getStatusDisplay = (status: Status) => {
   switch (status) {
     case "PENDING":
       return {
-        borderColor: "border-gray-400",
-        separatorColor: "bg-gray-400",
+        borderColor: "border-gray-500",
+        separatorColor: "bg-gray-500",
         icon: () => <CircleEllipsis size={56} absoluteStrokeWidth={true} className="text-background fill-gray-400" />
       };
     case "RUNNING":
       return {
-        borderColor: "border-yellow-400",
-        separatorColor: "bg-yellow-400",
+        borderColor: "border-yellow-500",
+        separatorColor: "bg-yellow-500",
         icon: () => <Clock5 size={56} absoluteStrokeWidth={true} className="text-background fill-yellow-400" />
       };
     case "COMPLETE":
       return {
-        borderColor: "border-green-400",
-        separatorColor: "bg-green-400",
+        borderColor: "border-green-500",
+        separatorColor: "bg-green-500",
         icon: () => <CircleCheck size={56} absoluteStrokeWidth={true} className="text-background fill-green-400" />
       };
     default:
       // Error states
       return {
-        borderColor: "border-red-400",
-        separatorColor: "bg-red-400",
+        borderColor: "border-red-500",
+        separatorColor: "bg-red-500",
         icon: () => <CircleX size={56} absoluteStrokeWidth={true} className="text-background fill-red-400" />
       };
   }
@@ -46,7 +46,7 @@ export const TaskRunSummary = ({ runInfo }: TaskRunSummaryProps) => {
 
   return (
     <div className={`flex border rounded-md flex-col ${borderColor}`}>
-      <div className="m-4 flex justify-between items-center">
+      <div className=" flex justify-between items-center p-4">
         <div className="flex flex-col">
           <h3 className="font-semibold text-xl tracking-tight">{runInfo.packetGroupName}</h3>
           <div className="text-muted-foreground">{runInfo.taskId}</div>
@@ -57,7 +57,7 @@ export const TaskRunSummary = ({ runInfo }: TaskRunSummaryProps) => {
         </div>
       </div>
       <Separator className={separatorColor} />
-      <div className="m-4">dasdasd</div>
+      <div className="p-4">dasdasd</div>
     </div>
   );
 };

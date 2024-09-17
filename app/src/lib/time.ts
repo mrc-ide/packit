@@ -7,7 +7,7 @@ export const getTimeDifferenceToDisplay = (
   const days = Math.floor(difference / (24 * 60 * 60));
   const hours = Math.floor((difference % (24 * 60 * 60)) / (60 * 60));
   const minutes = Math.floor((difference % (60 * 60)) / 60);
-  const seconds = Math.round(difference % 60);
+  const seconds = Math.floor(difference % 60);
 
   return [
     { unit: "days", value: days },

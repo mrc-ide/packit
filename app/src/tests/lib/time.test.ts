@@ -1,5 +1,4 @@
-// eslint-disable-next-line max-len
-import { getTimeDifferenceToDisplay } from "../../../../../app/components/contents/explorer/utils/getTimeDifferenceToDisplay";
+import { getTimeDifferenceToDisplay } from "../../lib/time";
 
 describe("getTimeDifferenceToDisplay", () => {
   test("should return correct difference in days, hours, minutes, and seconds", () => {
