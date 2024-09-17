@@ -7,7 +7,7 @@ export const TaskRunLogs = ({ logs }: TaskRunLogsProps) => (
       <h3 className="font-semibold text-xl mb-2">Logs</h3>
       {logs && logs.length > 0 ? (
         logs.map((log) => (
-          <div key={log} className="text-sm font-mono p-2">
+          <div key={log} className="text-sm font-mono p-1">
             {log}
           </div>
         ))

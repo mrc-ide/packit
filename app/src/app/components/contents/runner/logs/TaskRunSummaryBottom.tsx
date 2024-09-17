@@ -1,9 +1,8 @@
-import React from "react";
-import { Separator } from "../../../Base/Separator";
 import { Github } from "lucide-react";
-import { RunInfo } from "../types/RunInfo";
 import { NavLink } from "react-router-dom";
 import { buttonVariants } from "../../../Base/Button";
+import { Separator } from "../../../Base/Separator";
+import { RunInfo } from "../types/RunInfo";
 
 interface TaskSummaryTopProps {
   runInfo: RunInfo;
@@ -11,9 +10,10 @@ interface TaskSummaryTopProps {
 }
 export const TaskRunSummaryBottom = ({ runInfo, displayStartTimeStamp }: TaskSummaryTopProps) => {
   return (
-    <div className="p-4 flex justify-between">
-      <div className="flex flex-col text-muted-foreground">
+    <div className="p-4 flex justify-between space-x-4">
+      <div className="flex flex-col text-muted-foreground space-y-2">
         <div>Ran by {runInfo.ranBy}</div>
+        <Separator />
         <div>{displayStartTimeStamp}</div>
       </div>
 
@@ -39,7 +39,7 @@ export const TaskRunSummaryBottom = ({ runInfo, displayStartTimeStamp }: TaskSum
         </div>
       </div>
 
-      {runInfo.packetId ? (
+      {!runInfo.packetId ? (
         <NavLink
           to={`/${runInfo.packetGroupName}/${runInfo.packetId}`}
           className={buttonVariants({ variant: "outline" })}

@@ -1,7 +1,7 @@
 import { Separator } from "../../../Base/Separator";
 import { useTheme } from "../../../providers/ThemeProvider";
 import { RunInfo } from "../types/RunInfo";
-import { getStatusDisplay } from "../utils/taskRunUtils";
+import { getStatusDisplayByStatus } from "../utils/taskRunUtils";
 import { TaskRunSummaryBottom } from "./TaskRunSummaryBottom";
 import { TaskRunSummaryTop } from "./TaskRunSummaryTop";
 
@@ -10,9 +10,14 @@ interface TaskRunSummaryProps {
 }
 
 export const TaskRunSummary = ({ runInfo }: TaskRunSummaryProps) => {
-  const { borderColor, separatorColor, icon: Icon, displayDuration, displayStartTimeStamp } = getStatusDisplay(runInfo);
-  const { theme } = useTheme(); // may need to updated so theme is light or dark only
-  console.log(theme);
+  const {
+    borderColor,
+    separatorColor,
+    bgColor,
+    icon: Icon,
+    displayDuration,
+    displayStartTimeStamp
+  } = getStatusDisplayByStatus(runInfo);
 
   return (
     <div className={`flex border rounded-md flex-col ${borderColor}`}>
@@ -21,6 +26,7 @@ export const TaskRunSummary = ({ runInfo }: TaskRunSummaryProps) => {
         displayDuration={displayDuration}
         packetGroupName={runInfo.packetGroupName}
         taskId={runInfo.taskId}
+        bgColor={bgColor}
       />
       <Separator className={separatorColor} />
       <TaskRunSummaryBottom runInfo={runInfo} displayStartTimeStamp={displayStartTimeStamp} />
