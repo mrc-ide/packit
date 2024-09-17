@@ -25,7 +25,7 @@ const renderComponent = () => {
 };
 describe("PacketRunForm component", () => {
   it("should render default branch information and default select value", async () => {
-    const mainCommitTime = getTimeDifferenceToDisplay(mockGitBranches.branches[1].time);
+    const mainCommitTime = getTimeDifferenceToDisplay(mockGitBranches.branches[1].time)[0];
     renderComponent();
 
     const select = screen.getByRole("combobox");
@@ -36,7 +36,7 @@ describe("PacketRunForm component", () => {
   });
 
   it("should be able to switch branches and update info", async () => {
-    const branch1CommitTime = getTimeDifferenceToDisplay(mockGitBranches.branches[0].time);
+    const branch1CommitTime = getTimeDifferenceToDisplay(mockGitBranches.branches[0].time)[0];
     renderComponent();
 
     const select = screen.getAllByRole("combobox", { hidden: true })[1];

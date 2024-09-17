@@ -8,7 +8,7 @@ interface PacketGroupSummaryListItemProps {
 }
 
 export const PacketGroupSummaryListItem = ({ packet }: PacketGroupSummaryListItemProps) => {
-  const { unit, value } = getTimeDifferenceToDisplay(packet.latestTime);
+  const { unit, value } = getTimeDifferenceToDisplay(packet.latestTime)[0];
 
   return (
     <li key={packet.latestId} className="p-4 flex flex-col border-b space-y-1">
