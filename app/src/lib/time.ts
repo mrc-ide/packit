@@ -1,13 +1,18 @@
+export interface TimeDifference {
+  unit: string;
+  value: number;
+}
+
 export const getTimeDifferenceToDisplay = (
-  startTime: number,
-  endTime = Math.floor(Date.now() / 1000) // default to current unix timestamp
-): { unit: string; value: number }[] => {
-  const difference = endTime - startTime; // Calculate difference in seconds
+  firstTime: number,
+  secondTime = Date.now() / 1000 // default to current unix timestamp
+): TimeDifference[] => {
+  const difference = secondTime - firstTime; // Calculate difference in seconds
 
   const days = Math.floor(difference / (24 * 60 * 60));
   const hours = Math.floor((difference % (24 * 60 * 60)) / (60 * 60));
   const minutes = Math.floor((difference % (60 * 60)) / 60);
-  const seconds = Math.floor(difference % 60);
+  const seconds = Math.ceil(difference % 60);
 
   return [
     { unit: "days", value: days },
