@@ -1,7 +1,8 @@
 package packit.security
-
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
@@ -35,6 +36,24 @@ class WebSecurityConfig(
 )
 {
     @Bean
+    @Order(1)
+    fun actuatorSecurityFilterChain(httpSecurity: HttpSecurity): SecurityFilterChain
+    {
+        // We allow unrestricted access to all the actuator endpoints. In
+        // practice however, only select endpoints are enabled in
+        // application.properties, and even the ones that are are all exposed on a
+        // different port than the default http server.
+        httpSecurity
+            .securityMatcher(EndpointRequest.toAnyEndpoint())
+            .authorizeHttpRequests { authorizeRequests ->
+                authorizeRequests.anyRequest().permitAll()
+            }
+
+        return httpSecurity.build()
+    }
+
+    @Bean
+    @Order(2)
     fun securityFilterChain(
         httpSecurity: HttpSecurity,
         tokenAuthenticationFilter: TokenAuthenticationFilter,

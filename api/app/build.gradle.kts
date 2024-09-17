@@ -13,6 +13,9 @@ plugins {
     kotlin("plugin.spring") version "1.7.22"
     kotlin("plugin.jpa") version "1.7.22"
 
+    // Expose Git revision as a property
+    id("com.gorylenko.gradle-git-properties") version "2.4.2"
+
     // Deket for linting
     id("io.gitlab.arturbosch.detekt") version "1.22.0"
 
@@ -50,6 +53,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("org.kohsuke:github-api:1.315")
     implementation("com.auth0:java-jwt:4.4.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
