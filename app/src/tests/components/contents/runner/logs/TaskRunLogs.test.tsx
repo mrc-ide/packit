@@ -11,4 +11,10 @@ describe("TaskRunLogs component", () => {
       expect(screen.getByText(log)).toBeVisible();
     });
   });
+
+  it("should render no logs message if logs are not provided", async () => {
+    render(<TaskRunLogs logs={null} />);
+
+    expect(screen.getByText("No logs available yet...")).toBeVisible();
+  });
 });
