@@ -9,7 +9,7 @@ interface TaskSummaryTopProps {
 }
 export const TaskRunSummaryTop = ({ packetGroupName, taskId, displayDuration, Icon, bgColor }: TaskSummaryTopProps) => {
   return (
-    <div className={`flex justify-between items-center p-4 rounded-md ${bgColor}`}>
+    <div className={`flex justify-between items-center p-4 rounded-md ${bgColor} space-x-4`}>
       <div className="flex flex-col">
         <h3 className="font-semibold text-xl tracking-tight">{packetGroupName}</h3>
         <div className="text-muted-foreground">{taskId}</div>
