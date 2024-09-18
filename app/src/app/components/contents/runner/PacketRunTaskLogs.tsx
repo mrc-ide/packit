@@ -5,10 +5,26 @@ import { ErrorComponent } from "../common/ErrorComponent";
 import { useGetTaskRunLogs } from "./hooks/useGetTaskRunLogs";
 import { TaskRunLogs } from "./logs/TaskRunLogs";
 import { TaskRunSummary } from "./logs/TaskRunSummary";
+import { useEffect, useRef } from "react";
 
 export const PacketRunTaskLogs = () => {
   const { taskId } = useParams();
-  const { runInfo, error, isLoading } = useGetTaskRunLogs(taskId);
+  const { runInfo, error, isLoading, mutate } = useGetTaskRunLogs(taskId);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (runInfo?.status === "PENDING" || runInfo?.status === "RUNNING") {
+      intervalRef.current = setInterval(() => {
+        mutate();
+      }, 2000);
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [mutate, runInfo?.status]);
 
   if (error && !runInfo) {
     if (error instanceof ApiError) {
