@@ -25,8 +25,11 @@ class User(
     var lastLoggedIn: Instant? = null,
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    val id: UUID? = null
+    val id: UUID? = null,
+    @OneToMany(mappedBy = "user")
+    var runInfos: MutableList<RunInfo> = mutableListOf()
 )
+
 
 fun User.toBasicDto() = BasicUserDto(username, id!!)
 

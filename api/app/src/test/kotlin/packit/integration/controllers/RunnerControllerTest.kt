@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.exchange
@@ -13,15 +14,23 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
+import packit.model.User
 import packit.model.dto.*
 import packit.repository.RunInfoRepository
+import packit.repository.UserRepository
 import kotlin.test.assertEquals
 
 class RunnerControllerTest : IntegrationTest()
 {
     @Autowired
     private lateinit var runInfoRepository: RunInfoRepository
-    val testPacketGroupName = "test-packetGroupName"
+
+    @Autowired
+    private lateinit var userRepository: UserRepository
+
+    private val testPacketGroupName = "test-packetGroupName"
+    private val testUser = User("test.user@example.com", mutableListOf(), false, "source1", "Test User")
+
     private fun getSubmitRunInfo(branch: String, commitHash: String): String
     {
         return jacksonObjectMapper().writeValueAsString(SubmitRunInfo(testPacketGroupName, branch, commitHash, null))
@@ -48,10 +57,17 @@ class RunnerControllerTest : IntegrationTest()
         return Pair(res.body!!.taskId, branch)
     }
 
+    @BeforeEach
+    fun setupData()
+    {
+        userRepository.save(testUser)
+    }
+
     @AfterEach
     fun cleanupData()
     {
         runInfoRepository.deleteAllByPacketGroupName(testPacketGroupName)
+        userRepository.delete(testUser)
     }
 
     @Test
@@ -172,7 +188,7 @@ class RunnerControllerTest : IntegrationTest()
         assertEquals(taskId, statusRes.body!!.taskId)
         assertEquals(branch.name, statusRes.body!!.branch)
         assertEquals(branch.commitHash, statusRes.body!!.commitHash)
-        assertEquals("Test User", statusRes.body!!.ranBy)
+        assertEquals(testUser.displayName, statusRes.body!!.ranBy)
     }
 
     @Test
@@ -206,7 +222,7 @@ class RunnerControllerTest : IntegrationTest()
         assertEquals(2, resultStatuses.size)
         resultStatuses.forEach {
             assertEquals(testPacketGroupName, it.packetGroupName)
-            assertEquals("Test User", it.ranBy)
+            assertEquals(testUser.displayName, it.ranBy)
         }
         assertEquals(taskId1, resultStatuses[0].taskId)
         assertEquals(branch1.name, resultStatuses[0].branch)

@@ -1,19 +1,25 @@
 package packit.unit.model
 
 import packit.model.RunInfo
+import packit.model.User
 import packit.model.toBasicDto
 import packit.model.toDto
+import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class RunInfoTest
 {
+    private val testUser = User("user1", mutableListOf(), false, "source1", "displayName1", id = UUID.randomUUID())
+    private val testUserNoDisplayName =
+        User("user1", mutableListOf(), false, "source1", displayName = null, id = UUID.randomUUID())
+
     @Test
     fun `toDto return correct RunInfoDto for RunInfo`()
     {
         val runInfo = RunInfo(
             "task_id", "report_name", "PENDING", "hash", "branch", listOf("log1", "log2"),
-            1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input"), ranBy = "test_user"
+            1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input"), user = testUser
         )
         val runInfoDto = runInfo.toDto()
         assertEquals(runInfo.taskId, runInfoDto.taskId)
@@ -27,7 +33,7 @@ class RunInfoTest
         assertEquals(runInfo.timeQueued, runInfoDto.timeQueued)
         assertEquals(runInfo.packetId, runInfoDto.packetId)
         assertEquals(runInfo.parameters, runInfoDto.parameters)
-        assertEquals(runInfo.ranBy, runInfoDto.ranBy)
+        assertEquals(runInfo.user.displayName, runInfoDto.ranBy)
     }
 
     @Test
@@ -35,7 +41,7 @@ class RunInfoTest
     {
         val runInfo = RunInfo(
             "task_id", "report_name", "PENDING", "hash", "branch", listOf("log1", "log2"),
-            1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input"), ranBy = "test_user"
+            1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input"), user = testUser
         )
         val basicRunInfoDto = runInfo.toBasicDto()
         assertEquals(runInfo.taskId, basicRunInfoDto.taskId)
@@ -44,6 +50,29 @@ class RunInfoTest
         assertEquals(runInfo.branch, basicRunInfoDto.branch)
         assertEquals(runInfo.timeStarted, basicRunInfoDto.timeStarted)
         assertEquals(runInfo.parameters, basicRunInfoDto.parameters)
-        assertEquals(runInfo.ranBy, basicRunInfoDto.ranBy)
+        assertEquals(runInfo.user.displayName, basicRunInfoDto.ranBy)
+    }
+
+    @Test
+    fun `toDto should fallback to username if displayName is null`()
+    {
+
+        val runInfo = RunInfo(
+            "task_id", "report_name", "PENDING", "hash", "branch", listOf("log1", "log2"),
+            1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input"), user = testUserNoDisplayName
+        )
+        val runInfoDto = runInfo.toDto()
+        assertEquals(runInfo.user.username, runInfoDto.ranBy)
+    }
+
+    @Test
+    fun `toBasicDto should fallback to username if displayName is null`()
+    {
+        val runInfo = RunInfo(
+            "task_id", "report_name", "PENDING", "hash", "branch", listOf("log1", "log2"),
+            1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input"), user = testUserNoDisplayName
+        )
+        val basicRunInfoDto = runInfo.toBasicDto()
+        assertEquals(runInfo.user.username, basicRunInfoDto.ranBy)
     }
 }
