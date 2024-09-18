@@ -10,6 +10,10 @@ jest.mock("../../../../../lib/time", () => ({
   getTimeDifferenceToDisplay: () => mockDisplayTime()
 }));
 
+const getTimeString = (time: number) => {
+  return new Date(time * 1000).toLocaleString();
+};
+
 describe("getStatusDisplayByStatus", () => {
   const mockRunInfo = {
     timeQueued: 1620000000,
@@ -25,7 +29,7 @@ describe("getStatusDisplayByStatus", () => {
     expect(result.borderColor).toBe("border-gray-400 dark:border-gray-700");
     expect(result.separatorColor).toBe("bg-gray-400 dark:bg-gray-700");
     expect(result.displayDuration).toBe("Waiting for  10 m");
-    expect(result.displayStartTimeStamp).toBe("Queued on 03/05/2021, 01:00:00");
+    expect(result.displayStartTimeStamp).toBe("Queued on " + getTimeString(mockRunInfo.timeQueued as number));
     expect(result.bgColor).toBe("bg-gray-50 dark:bg-gray-950");
   });
 
@@ -37,7 +41,7 @@ describe("getStatusDisplayByStatus", () => {
     expect(result.borderColor).toBe("border-yellow-400 dark:border-yellow-700");
     expect(result.separatorColor).toBe("bg-yellow-400 dark:bg-yellow-700");
     expect(result.displayDuration).toBe("Running for  10 m");
-    expect(result.displayStartTimeStamp).toBe("Started 03/05/2021, 02:00:00");
+    expect(result.displayStartTimeStamp).toBe("Started " + getTimeString(mockRunInfo.timeStarted as number));
     expect(result.bgColor).toBe("bg-yellow-50 dark:bg-yellow-950");
   });
 
@@ -48,7 +52,7 @@ describe("getStatusDisplayByStatus", () => {
     expect(result.borderColor).toBe("border-green-400 dark:border-green-700");
     expect(result.separatorColor).toBe("bg-green-400 dark:bg-green-700");
     expect(result.displayDuration).toBe("Ran in  10 m");
-    expect(result.displayStartTimeStamp).toBe("Started 03/05/2021, 02:00:00");
+    expect(result.displayStartTimeStamp).toBe("Started " + getTimeString(mockRunInfo.timeStarted as number));
     expect(result.bgColor).toBe("bg-green-50 dark:bg-green-950");
   });
 
@@ -59,7 +63,7 @@ describe("getStatusDisplayByStatus", () => {
     expect(result.borderColor).toBe("border-red-700");
     expect(result.separatorColor).toBe("bg-red-700");
     expect(result.displayDuration).toBe("Failed in  10 m");
-    expect(result.displayStartTimeStamp).toBe("Started 03/05/2021, 02:00:00");
+    expect(result.displayStartTimeStamp).toBe("Started " + getTimeString(mockRunInfo.timeStarted as number));
     expect(result.bgColor).toBe("bg-red-50 dark:bg-red-950");
   });
 });
