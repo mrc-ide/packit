@@ -1,7 +1,10 @@
 package packit.integration.controllers
 
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.exchange
@@ -11,8 +14,10 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
+import packit.model.User
 import packit.model.dto.*
 import packit.repository.RunInfoRepository
+import packit.repository.UserRepository
 import kotlin.test.assertEquals
 
 class RunnerControllerTest : IntegrationTest()
@@ -20,9 +25,15 @@ class RunnerControllerTest : IntegrationTest()
     @Autowired
     private lateinit var runInfoRepository: RunInfoRepository
 
+    @Autowired
+    private lateinit var userRepository: UserRepository
+
+    private val testPacketGroupName = "test-packetGroupName"
+    private val testUser = User("test.user@example.com", mutableListOf(), false, "source1", "Test User")
+
     private fun getSubmitRunInfo(branch: String, commitHash: String): String
     {
-        return jacksonObjectMapper().writeValueAsString(SubmitRunInfo("data", branch, commitHash, null))
+        return jacksonObjectMapper().writeValueAsString(SubmitRunInfo(testPacketGroupName, branch, commitHash, null))
     }
 
     private fun submitTestRun(): Pair<String, GitBranchInfo>
@@ -44,6 +55,19 @@ class RunnerControllerTest : IntegrationTest()
         )
 
         return Pair(res.body!!.taskId, branch)
+    }
+
+    @BeforeEach
+    fun setupData()
+    {
+        userRepository.save(testUser)
+    }
+
+    @AfterEach
+    fun cleanupData()
+    {
+        runInfoRepository.deleteAllByPacketGroupName(testPacketGroupName)
+        userRepository.delete(testUser)
     }
 
     @Test
@@ -164,24 +188,45 @@ class RunnerControllerTest : IntegrationTest()
         assertEquals(taskId, statusRes.body!!.taskId)
         assertEquals(branch.name, statusRes.body!!.branch)
         assertEquals(branch.commitHash, statusRes.body!!.commitHash)
+        assertEquals(testUser.displayName, statusRes.body!!.ranBy)
     }
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.run"])
-    fun `can get status of multiple tasks`()
+    fun `can get paginated status of multiple tasks`()
     {
-        val (taskId1, _) = submitTestRun()
-        val (taskId2, _) = submitTestRun()
-        val statusRes: ResponseEntity<List<BasicRunInfoDto>> = restTemplate.exchange(
-            "/runner/list/status",
-            HttpMethod.GET,
-            getTokenizedHttpEntity()
-        )
+        val (taskId1, branch1) = submitTestRun()
+        val (taskId2, branch2) = submitTestRun()
+        val pageNumber = 0
+        val pageSize = 100
+        val filterPacketGroupName = testPacketGroupName
 
-        statusRes.body!!.filter { it.taskId == taskId1 || it.taskId == taskId2 }.forEach {
-            assertEquals(String::class.java, it.taskId::class.java)
-            assertEquals(String::class.java, it.packetGroupName::class.java)
-            assertEquals(String::class.java, it.branch::class.java)
+        val res = restTemplate.exchange(
+            "/runner/list/status?pageNumber=$pageNumber&pageSize=" +
+                    "$pageSize&filterPacketGroupName=$filterPacketGroupName",
+            HttpMethod.GET,
+            getTokenizedHttpEntity(),
+            String::class.java
+        )
+        assertSuccess(res)
+
+        val resultStatuses = jacksonObjectMapper().readTree(res.body).get("content")
+            .let {
+                jacksonObjectMapper().convertValue(
+                    it,
+                    object : TypeReference<List<BasicRunInfoDto>>()
+                    {}
+                )
+            }
+
+        assertEquals(2, resultStatuses.size)
+        resultStatuses.forEach {
+            assertEquals(testPacketGroupName, it.packetGroupName)
+            assertEquals(testUser.displayName, it.ranBy)
         }
+        assertEquals(taskId1, resultStatuses[0].taskId)
+        assertEquals(branch1.name, resultStatuses[0].branch)
+        assertEquals(taskId2, resultStatuses[1].taskId)
+        assertEquals(branch2.name, resultStatuses[1].branch)
     }
 }

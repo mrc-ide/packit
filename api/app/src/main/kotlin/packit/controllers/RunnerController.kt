@@ -1,12 +1,16 @@
 package packit.controllers
 
+import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import packit.model.PageablePayload
 import packit.model.dto.*
 import packit.model.toBasicDto
 import packit.model.toDto
+import packit.security.profile.UserPrincipal
 import packit.service.RunnerService
 
 @RestController
@@ -52,10 +56,15 @@ class RunnerController(private val runnerService: RunnerService)
 
     @PostMapping("/run")
     fun submitRun(
-        @RequestBody @Validated submitRunInfo: SubmitRunInfo
+        @RequestBody @Validated submitRunInfo: SubmitRunInfo,
+        @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<SubmitRunResponse>
     {
-        return ResponseEntity.ok(runnerService.submitRun(submitRunInfo))
+        return ResponseEntity.ok(
+            runnerService.submitRun(
+                submitRunInfo, userPrincipal.name
+            )
+        )
     }
 
     @GetMapping("/status/{taskId}")
@@ -65,8 +74,13 @@ class RunnerController(private val runnerService: RunnerService)
     }
 
     @GetMapping("/list/status")
-    fun getTasksStatuses(): ResponseEntity<List<BasicRunInfoDto>>
+    fun getTasksStatuses(
+        @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
+        @RequestParam(required = false, defaultValue = "50") pageSize: Int,
+        @RequestParam(required = false, defaultValue = "") filterPacketGroupName: String,
+    ): ResponseEntity<Page<BasicRunInfoDto>>
     {
-        return ResponseEntity.ok(runnerService.getTasksStatuses().map { it.toBasicDto() })
+        val payload = PageablePayload(pageNumber, pageSize)
+        return ResponseEntity.ok(runnerService.getTasksStatuses(payload, filterPacketGroupName).map { it.toBasicDto() })
     }
 }
