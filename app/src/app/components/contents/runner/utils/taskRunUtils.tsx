@@ -1,4 +1,4 @@
-import { CircleCheck, CircleEllipsis, CircleX, Clock5 } from "lucide-react";
+import { CircleCheck, CircleEllipsis, CircleX, Clock5, LoaderCircle } from "lucide-react";
 import { getTimeDifferenceToDisplay, TimeDifference } from "../../../../../lib/time";
 import { RunInfo } from "../types/RunInfo";
 
@@ -27,7 +27,11 @@ export const getStatusDisplayByStatus = (runInfo: RunInfo): RunStatusDisplay => 
       return {
         borderColor: "border-yellow-400 dark:border-yellow-700",
         separatorColor: "bg-yellow-400 dark:bg-yellow-700",
-        icon: () => <Clock5 size={56} absoluteStrokeWidth={true} className="text-background fill-yellow-400" />,
+        icon: () => (
+          <div className="w-14 h-14 rounded-full bg-yellow-400 flex items-center justify-center">
+            <LoaderCircle size={34} strokeWidth={3} className="animate-spin text-background" />
+          </div>
+        ),
         displayDuration: `Running for ${getTimeInDisplayFormat(
           getTimeDifferenceToDisplay(runInfo.timeStarted as number)
         )}`,

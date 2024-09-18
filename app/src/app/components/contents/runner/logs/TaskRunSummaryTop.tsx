@@ -16,7 +16,7 @@ export const TaskRunSummaryTop = ({ packetGroupName, taskId, displayDuration, Ic
       </div>
       <div className="flex items-center">
         <div className="text-muted-foreground mr-1"> {displayDuration}</div>
-        {<Icon />}
+        <Icon />
       </div>
     </div>
   );
