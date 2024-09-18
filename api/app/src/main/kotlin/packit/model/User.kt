@@ -30,7 +30,6 @@ class User(
     var runInfos: MutableList<RunInfo> = mutableListOf()
 )
 
-
 fun User.toBasicDto() = BasicUserDto(username, id!!)
 
 fun User.toDto() =
