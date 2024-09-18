@@ -18,7 +18,7 @@ interface RunnerService
     fun getBranches(): GitBranches
     fun getParameters(packetGroupName: String, ref: String): List<Parameter>
     fun getPacketGroups(ref: String): List<RunnerPacketGroup>
-    fun submitRun(info: SubmitRunInfo, ranBy: String): SubmitRunResponse
+    fun submitRun(info: SubmitRunInfo, username: String): SubmitRunResponse
     fun getTaskStatus(taskId: String): RunInfo
     fun getTasksStatuses(payload: PageablePayload, filterPacketGroupName: String): Page<RunInfo>
 }
@@ -27,7 +27,8 @@ interface RunnerService
 class BaseRunnerService(
     private val orderlyRunnerClient: OrderlyRunner,
     private val outpackServerClient: OutpackServer,
-    private val runInfoRepository: RunInfoRepository
+    private val runInfoRepository: RunInfoRepository,
+    private val userService: UserService,
 ) : RunnerService
 {
     override fun getVersion(): OrderlyRunnerVersion
@@ -55,8 +56,9 @@ class BaseRunnerService(
         return orderlyRunnerClient.getPacketGroups(ref)
     }
 
-    override fun submitRun(info: SubmitRunInfo, ranBy: String): SubmitRunResponse
+    override fun submitRun(info: SubmitRunInfo, username: String): SubmitRunResponse
     {
+        val user = userService.getByUsername(username) ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
         val res = orderlyRunnerClient.submitRun(info)
         val runInfo = RunInfo(
             res.taskId,
@@ -65,7 +67,7 @@ class BaseRunnerService(
             branch = info.branch,
             parameters = info.parameters,
             status = Status.PENDING.toString(),
-            ranBy = ranBy
+            user = user
         )
         runInfoRepository.save(runInfo)
         return res
@@ -75,7 +77,7 @@ class BaseRunnerService(
     {
         val runInfo =
             runInfoRepository.findByTaskId(taskId) ?: throw PackitException("runInfoNotFound", HttpStatus.NOT_FOUND)
-
+        
         val taskStatus = orderlyRunnerClient.getTaskStatuses(listOf(taskId), true).first()
 
         updateRunInfo(runInfo, taskStatus)

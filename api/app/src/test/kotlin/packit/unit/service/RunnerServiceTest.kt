@@ -12,16 +12,21 @@ import org.springframework.http.HttpStatus
 import packit.exceptions.PackitException
 import packit.model.PageablePayload
 import packit.model.RunInfo
+import packit.model.User
 import packit.model.dto.*
 import packit.repository.RunInfoRepository
 import packit.service.BaseRunnerService
 import packit.service.OrderlyRunnerClient
 import packit.service.OutpackServerClient
+import packit.service.UserService
+import java.util.*
 import kotlin.test.assertEquals
 
 class RunnerServiceTest
 {
     private val filterName = "filter-name"
+    private val testUser = User("test-user", mutableListOf(), false, "source1", "displayName1", id = UUID.randomUUID())
+
     private val testRunInfos = listOf(
         RunInfo(
             "task-id1",
@@ -30,7 +35,7 @@ class RunnerServiceTest
             branch = "branch",
             parameters = null,
             status = Status.PENDING.toString(),
-            ranBy = "test-user"
+            user = testUser
         ),
         RunInfo(
             "task-id2",
@@ -39,7 +44,7 @@ class RunnerServiceTest
             branch = "branch",
             parameters = null,
             status = Status.PENDING.toString(),
-            ranBy = "test-user"
+            user = testUser
         )
     )
     private val testTaskStatuses = listOf(
@@ -56,8 +61,11 @@ class RunnerServiceTest
     private val runInfoRepository = mock<RunInfoRepository> {
         on { findAllByPacketGroupNameContaining(eq(filterName), any()) } doReturn PageImpl(testRunInfos)
     }
+    private val userService = mock<UserService> {
+        on { getByUsername(testUser.username) } doReturn testUser
+    }
 
-    private val sut = BaseRunnerService(orderlyRunnerClient, outpackServerClient, runInfoRepository)
+    private val sut = BaseRunnerService(orderlyRunnerClient, outpackServerClient, runInfoRepository, userService)
 
     @Test
     fun `can get version`()
@@ -119,14 +127,15 @@ class RunnerServiceTest
     {
 
         val info = SubmitRunInfo("report-name", "branch", "hash", null)
-        val testUsername = "test-user"
+
         val mockRes = SubmitRunResponse("task-id")
 
         `when`(orderlyRunnerClient.submitRun(info)).thenReturn(mockRes)
 
-        val res = sut.submitRun(info, testUsername)
+        val res = sut.submitRun(info, testUser.username)
 
         verify(orderlyRunnerClient).submitRun(info)
+        verify(userService).getByUsername(testUser.username)
         verify(runInfoRepository).save(
             argThat {
                 assertEquals(taskId, mockRes.taskId)
@@ -135,7 +144,6 @@ class RunnerServiceTest
                 assertEquals(branch, info.branch)
                 assertEquals(parameters, info.parameters)
                 assertEquals(status, Status.PENDING.toString())
-                assertEquals(ranBy, testUsername)
                 true
             }
         )
@@ -154,7 +162,7 @@ class RunnerServiceTest
             branch = "branch",
             parameters = null,
             status = Status.PENDING.toString(),
-            ranBy = "test-user"
+            user = testUser
         )
         `when`(orderlyRunnerClient.getTaskStatuses(listOf(taskId), true)).thenReturn(listOf(taskStatus))
         `when`(runInfoRepository.findByTaskId(taskId)).thenReturn(testRunInfo)

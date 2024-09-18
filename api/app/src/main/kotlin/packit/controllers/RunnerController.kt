@@ -62,8 +62,7 @@ class RunnerController(private val runnerService: RunnerService)
     {
         return ResponseEntity.ok(
             runnerService.submitRun(
-                submitRunInfo,
-                userPrincipal.displayName ?: userPrincipal.name
+                submitRunInfo, userPrincipal.name
             )
         )
     }
