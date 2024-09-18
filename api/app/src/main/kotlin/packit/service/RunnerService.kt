@@ -77,7 +77,7 @@ class BaseRunnerService(
     {
         val runInfo =
             runInfoRepository.findByTaskId(taskId) ?: throw PackitException("runInfoNotFound", HttpStatus.NOT_FOUND)
-        
+
         val taskStatus = orderlyRunnerClient.getTaskStatuses(listOf(taskId), true).first()
 
         updateRunInfo(runInfo, taskStatus)
