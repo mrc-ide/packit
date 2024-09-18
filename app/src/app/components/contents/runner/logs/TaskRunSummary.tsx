@@ -1,5 +1,4 @@
 import { Separator } from "../../../Base/Separator";
-import { useTheme } from "../../../providers/ThemeProvider";
 import { RunInfo } from "../types/RunInfo";
 import { getStatusDisplayByStatus } from "../utils/taskRunUtils";
 import { TaskRunSummaryBottom } from "./TaskRunSummaryBottom";

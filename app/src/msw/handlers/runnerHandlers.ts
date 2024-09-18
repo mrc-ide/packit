@@ -1,6 +1,12 @@
 import { rest } from "msw";
 import appConfig from "../../config/appConfig";
-import { mockGitBranches, mockPacketGroupsParameters, mockRunnerPacketGroups, mockTaskId } from "../../tests/mocks";
+import {
+  mockCompleteRunInfo,
+  mockGitBranches,
+  mockPacketGroupsParameters,
+  mockRunnerPacketGroups,
+  mockTaskId
+} from "../../tests/mocks";
 
 export const basicRunnerUri = `${appConfig.apiUrl()}/runner`;
 export const runnerHandlers = [
@@ -16,5 +22,8 @@ export const runnerHandlers = [
   }),
   rest.post(`${basicRunnerUri}/run`, (req, res, ctx) => {
     return res(ctx.json({ taskId: mockTaskId }));
+  }),
+  rest.get(`${basicRunnerUri}/status/:taskId`, (req, res, ctx) => {
+    return res(ctx.json(mockCompleteRunInfo));
   })
 ];
