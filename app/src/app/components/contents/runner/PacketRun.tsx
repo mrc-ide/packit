@@ -14,7 +14,7 @@ export const PacketRun = () => {
       </div>
       {error && <ErrorComponent message="Error fetching branch information" error={error} />}
       {isLoading && (
-        <ul className="">
+        <ul>
           <li className="mb-8">
             <div className="flex space-x-2 mb-2">
               <Skeleton className="h-12 w-96" />

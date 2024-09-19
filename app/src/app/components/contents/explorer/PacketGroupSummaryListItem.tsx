@@ -1,14 +1,14 @@
 import { ExternalLink, History, Hourglass } from "lucide-react";
 import { Link } from "react-router-dom";
 import { PacketGroupSummary } from "../../../../types";
-import { getTimeDifferenceToDisplay } from "./utils/getTimeDifferenceToDisplay";
+import { getTimeDifferenceToDisplay } from "../../../../lib/time";
 
 interface PacketGroupSummaryListItemProps {
   packet: PacketGroupSummary;
 }
 
 export const PacketGroupSummaryListItem = ({ packet }: PacketGroupSummaryListItemProps) => {
-  const { unit, value } = getTimeDifferenceToDisplay(packet.latestTime);
+  const { unit, value } = getTimeDifferenceToDisplay(packet.latestTime)[0];
 
   return (
     <li key={packet.latestId} className="p-4 flex flex-col border-b space-y-1">

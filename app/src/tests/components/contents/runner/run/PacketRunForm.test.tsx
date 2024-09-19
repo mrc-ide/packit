@@ -1,12 +1,11 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { PacketRunForm } from "../../../../../app/components/contents/runner/run/PacketRunForm";
 import { mockGitBranches } from "../../../../mocks";
-// eslint-disable-next-line max-len
-import { getTimeDifferenceToDisplay } from "../../../../../app/components/contents/explorer/utils/getTimeDifferenceToDisplay";
 import userEvent from "@testing-library/user-event";
 import { server } from "../../../../../msw/server";
 import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { getTimeDifferenceToDisplay } from "../../../../../lib/time";
 
 const renderComponent = () => {
   const mutate = jest.fn();
@@ -25,7 +24,7 @@ const renderComponent = () => {
 };
 describe("PacketRunForm component", () => {
   it("should render default branch information and default select value", async () => {
-    const mainCommitTime = getTimeDifferenceToDisplay(mockGitBranches.branches[1].time);
+    const mainCommitTime = getTimeDifferenceToDisplay(mockGitBranches.branches[1].time)[0];
     renderComponent();
 
     const select = screen.getByRole("combobox");
@@ -36,7 +35,7 @@ describe("PacketRunForm component", () => {
   });
 
   it("should be able to switch branches and update info", async () => {
-    const branch1CommitTime = getTimeDifferenceToDisplay(mockGitBranches.branches[0].time);
+    const branch1CommitTime = getTimeDifferenceToDisplay(mockGitBranches.branches[0].time)[0];
     renderComponent();
 
     const select = screen.getAllByRole("combobox", { hidden: true })[1];

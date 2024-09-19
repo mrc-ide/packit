@@ -1,5 +1,6 @@
 import { RoleWithRelationships } from "../app/components/contents/manageAccess/types/RoleWithRelationships";
 import { GitBranches } from "../app/components/contents/runner/types/GitBranches";
+import { RunInfo } from "../app/components/contents/runner/types/RunInfo";
 import { Parameter, RunnerPacketGroup } from "../app/components/contents/runner/types/RunnerPacketGroup";
 import { AuthConfig } from "../app/components/providers/types/AuthConfigTypes";
 import { UserState } from "../app/components/providers/types/UserTypes";
@@ -720,3 +721,28 @@ export const mockPacketGroupsParameters: Record<string, Parameter[]> = {
 };
 
 export const mockTaskId = "1234";
+
+export const mockCompleteRunInfo: RunInfo = {
+  taskId: mockTaskId,
+  packetGroupName: "test-packetGroup",
+  status: "COMPLETE",
+  commitHash: "11a0029f5d7ce4df2e46d114a16abe96b6d2e7ca",
+  branch: "master",
+  logs: [
+    "> Sys.sleep(70)",
+    "[2024-09-18 08:44:31 (78)] START OK",
+    "config value 'user.name' was not found",
+    "[2024-09-18 08:44:32 (79)] STOP OK"
+  ],
+  timeStarted: 1726649001.8584,
+  timeCompleted: 1726649072.4384,
+  timeQueued: 1726649001.8572,
+  packetId: "20240918-084322-3373cc95",
+  parameters: {
+    testParam1: 2,
+    testParam2: false,
+    testParam3: "hello"
+  },
+  queuePosition: null,
+  ranBy: "Super Admin"
+};

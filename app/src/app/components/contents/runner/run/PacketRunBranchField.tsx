@@ -1,18 +1,18 @@
 import { Github, RefreshCw } from "lucide-react";
+import { useState } from "react";
+import { UseFormReturn } from "react-hook-form";
+import { KeyedMutator } from "swr";
+import { z } from "zod";
+import appConfig from "../../../../../config/appConfig";
+import { fetcher } from "../../../../../lib/fetch";
 import { Button } from "../../../Base/Button";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../../Base/Form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../Base/Select";
 import { Separator } from "../../../Base/Separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../Base/Tooltip";
 import { GitBranches, GitBranchInfo } from "../types/GitBranches";
-import { getTimeDifferenceToDisplay } from "../../explorer/utils/getTimeDifferenceToDisplay";
-import { KeyedMutator } from "swr";
-import { fetcher } from "../../../../../lib/fetch";
-import appConfig from "../../../../../config/appConfig";
-import { UseFormReturn } from "react-hook-form";
-import { z } from "zod";
 import { packetRunFormSchema } from "./PacketRunForm";
-import { useState } from "react";
+import { getTimeDifferenceToDisplay } from "../../../../../lib/time";
 
 interface PacketRunBranchFieldProps {
   branches: GitBranchInfo[];
@@ -21,7 +21,7 @@ interface PacketRunBranchFieldProps {
   mutate: KeyedMutator<GitBranches>;
 }
 export const PacketRunBranchField = ({ branches, selectedBranch, form, mutate }: PacketRunBranchFieldProps) => {
-  const lastCommitTime = getTimeDifferenceToDisplay(selectedBranch.time);
+  const lastCommitTime = getTimeDifferenceToDisplay(selectedBranch.time)[0];
   const [gitFetchError, setGitFetchError] = useState<string | null>(null);
 
   const gitFetch = async () => {
