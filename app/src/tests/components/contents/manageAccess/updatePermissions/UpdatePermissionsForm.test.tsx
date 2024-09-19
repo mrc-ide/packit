@@ -8,11 +8,11 @@ import { constructPermissionName } from "../../../../../lib/constructPermissionN
 import { ApiError } from "../../../../../lib/errors";
 import * as fetch from "../../../../../lib/fetch";
 import { HttpStatus } from "../../../../../lib/types/HttpStatus";
-import { mockNonUsernameRolesWithRelationships } from "../../../../mocks";
+import { mockRoles } from "../../../../mocks";
 
 describe("UpdatePermissionsForm", () => {
   const fetchSpy = jest.spyOn(fetch, "fetcher");
-  const rolePermissions = mockNonUsernameRolesWithRelationships[0].rolePermissions;
+  const rolePermissions = mockRoles[0].rolePermissions;
   const renderComponent = (roleName: string, mutate = jest.fn(), setOpen = jest.fn()) => {
     render(
       <Dialog>

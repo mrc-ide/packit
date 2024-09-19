@@ -4,14 +4,14 @@ import { Dialog } from "../../../Base/Dialog";
 import { UpdateDialogContent } from "../UpdateDialogContent";
 import { UpdateDropdown, UpdateOptions } from "../UpdateDropdown";
 import { UpdatePermissionsForm } from "../updatePermission/UpdatePermissionsForm";
-import { RoleWithRelationships } from "../types/RoleWithRelationships";
-import { UserWithRoles } from "../types/UserWithRoles";
+import { Role } from "../types/Role";
+import { User } from "../types/User";
 import { UpdateRoleUsersForm } from "./UpdateRoleUsersForm";
 
 interface UpdateRoleDropDownMenuProps {
-  role: RoleWithRelationships;
-  users: UserWithRoles[];
-  mutate: KeyedMutator<RoleWithRelationships[]>;
+  role: Role;
+  users: User[];
+  mutate: KeyedMutator<never>;
 }
 export const UpdateRoleDropDownMenu = ({ mutate, role, users }: UpdateRoleDropDownMenuProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);

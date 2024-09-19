@@ -208,13 +208,13 @@ class UserServiceTest
 
         val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
 
-        val result = service.createBasicUser(
-            CreateBasicUser(
-            email = "email",
-            password = "password",
-            displayName = "displayName",
-            userRoles = listOf()
-        )
+        service.createBasicUser(
+                CreateBasicUser(
+                email = "email",
+                password = "password",
+                displayName = "displayName",
+                userRoles = listOf()
+            )
         )
         verify(mockUserRepository).save(
             argThat {
@@ -474,5 +474,20 @@ class UserServiceTest
             assertEquals("updatePassword", key)
             assertEquals(HttpStatus.FORBIDDEN, httpStatus)
         }
+    }
+
+    @Test
+    fun `getAllUsers returns all users`()
+    {
+        val users = listOf(
+            User(username = "user1", userSource = "source"),
+            User(username = "user2", userSource = "source"),
+        )
+        whenever(mockUserRepository.findAll()).thenReturn(users)
+
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+        val result = service.getAllUsers()
+
+        assertEquals(result, users)
     }
 }

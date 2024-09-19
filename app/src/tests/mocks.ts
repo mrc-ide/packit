@@ -1,4 +1,4 @@
-import { RoleWithRelationships } from "../app/components/contents/manageAccess/types/RoleWithRelationships";
+import { Role } from "../app/components/contents/manageAccess/types/Role";
 import { GitBranches } from "../app/components/contents/runner/types/GitBranches";
 import { RunInfo } from "../app/components/contents/runner/types/RunInfo";
 import { Parameter, RunnerPacketGroup } from "../app/components/contents/runner/types/RunnerPacketGroup";
@@ -246,7 +246,7 @@ export const mockPacketGroupResponse: PageablePackets = {
 
 export const mockFileBlob = new Blob(["test contents"]);
 
-export const mockNonUsernameRolesWithRelationships: RoleWithRelationships[] = [
+export const mockRoles: Role[] = [
   {
     name: "ADMIN",
     rolePermissions: [
@@ -423,80 +423,8 @@ export const mockNonUsernameRolesWithRelationships: RoleWithRelationships[] = [
     isUsername: false
   }
 ];
-export const mockUsernameRolesWithRelationships: RoleWithRelationships[] = [
-  {
-    name: "a@gmail.com",
-    rolePermissions: [
-      {
-        permission: "user.manage",
-        packet: null,
-        tag: null,
-        packetGroup: null,
-        id: 83
-      },
-      {
-        permission: "packet.read",
-        packet: {
-          name: "modup-201707-queries1",
-          id: "20170818-164847-7574883b"
-        },
-        tag: null,
-        packetGroup: null,
-        id: 81
-      },
-      {
-        permission: "outpack.write",
-        packet: null,
-        tag: null,
-        packetGroup: {
-          name: "depends",
-          id: 4
-        },
-        id: 82
-      }
-    ],
-    users: [
-      {
-        username: "a@gmail.com",
-        id: "b13c35b8-7070-47a8-9266-3a23ae6fd76e"
-      }
-    ],
-    id: 2,
-    isUsername: true
-  },
-  {
-    name: "c@gmail.com",
-    rolePermissions: [
-      {
-        permission: "outpack.write",
-        packet: null,
-        tag: null,
-        packetGroup: {
-          name: "explicit",
-          id: 3
-        },
-        id: 39
-      }
-    ],
-    users: [
-      {
-        username: "c@gmail.com",
-        id: "5390a192-371c-49fe-8b67-efcc250daaa9"
-      }
-    ],
-    id: 4,
-    isUsername: true
-  },
-  {
-    name: "x@gmail.com",
-    rolePermissions: [],
-    users: [{ id: "b13c35b8-7070-47a8-9266-3a23ae6fd76e", username: "x@gmail.com" }],
-    id: 11,
-    isUsername: true
-  }
-];
 
-export const mockUsersWithRoles = [
+export const mockUsers = [
   {
     username: "a@gmail.com",
     id: "b13c35b8-7070-47a8-9266-3a23ae6fd76e",

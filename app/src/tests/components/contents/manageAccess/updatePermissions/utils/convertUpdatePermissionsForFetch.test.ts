@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { BaseRolePermission } from "../../../../../../app/components/contents/manageAccess/types/RoleWithRelationships";
+import { BaseRolePermission } from "../../../../../../app/components/contents/manageAccess/types/Role";
 import { convertUpdatePermissionsForFetch } from "../../../../../../app/components/contents/manageAccess/updatePermission/utils/convertUpdatePermissionsForFetch";
 
 describe("convertUpdatePermissionsForFetch", () => {

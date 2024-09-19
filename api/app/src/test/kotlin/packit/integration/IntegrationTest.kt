@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 
@@ -57,11 +58,12 @@ abstract class IntegrationTest
         return HttpEntity(data, headers)
     }
 
-    protected fun assertSuccess(responseEntity: ResponseEntity<String>)
+    protected fun <T>assertSuccess(responseEntity: ResponseEntity<T>): T
     {
         assertEquals(responseEntity.statusCode, HttpStatus.OK)
         assertEquals(responseEntity.headers.contentType, MediaType.APPLICATION_JSON)
-        assertThat(responseEntity.body).isNotEmpty
+        assertNotNull(responseEntity.body)
+        return responseEntity.body!!
     }
 
     protected fun assertUnauthorized(responseEntity: ResponseEntity<String>)

@@ -24,6 +24,7 @@ interface UserService
     fun saveUsers(users: List<User>): List<User>
     fun updatePassword(username: String, updatePassword: UpdatePassword)
     fun checkAndUpdateLastLoggedIn(username: String)
+    fun getAllUsers(): List<User>
 }
 
 @Service
@@ -151,5 +152,10 @@ class BaseUserService(
 
         userRepository.delete(user)
         roleService.deleteUsernameRole(username)
+    }
+
+    override fun getAllUsers(): List<User>
+    {
+        return userRepository.findAll()
     }
 }

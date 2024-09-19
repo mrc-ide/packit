@@ -40,6 +40,13 @@ class UserController(
         return ResponseEntity.created(URI.create("/user/${user.id}")).body(user.toDto())
     }
 
+    @GetMapping
+    fun getUsers(): ResponseEntity<List<UserDto>>
+    {
+        val users = userService.getAllUsers().toDto()
+        return ResponseEntity.ok(users)
+    }
+
     @PutMapping("/{username}/roles")
     fun updateUserRoles(
         @RequestBody @Validated updateUserRoles: UpdateUserRoles,

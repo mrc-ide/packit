@@ -6,7 +6,7 @@ import { Button } from "../../../Base/Button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../../Base/Form";
 import { RadioGroup, RadioGroupItem } from "../../../Base/RadioGroup";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../Base/Select";
-import { BaseRolePermission } from "../types/RoleWithRelationships";
+import { BaseRolePermission } from "../types/Role";
 import { AddScopedPermissionInput } from "./AddScopedPermissionInput";
 import { isDuplicateUpdatePermission } from "./utils/isDuplicateUpdatePermission";
 import { cn } from "../../../../../lib/cn";

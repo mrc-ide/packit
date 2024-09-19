@@ -4,7 +4,7 @@ import appConfig from "../../../../../config/appConfig";
 import { ApiError } from "../../../../../lib/errors";
 import { fetcher } from "../../../../../lib/fetch";
 import { CustomDialogFooter } from "../../common/CustomDialogFooter";
-import { BaseRolePermission, RolePermission, RoleWithRelationships } from "../types/RoleWithRelationships";
+import { BaseRolePermission, RolePermission } from "../types/Role";
 import { AddPermissionForUpdateForm } from "./AddPermissionForUpdateForm";
 import { RemovePermissionsForUpdate } from "./RemovePermissionsForUpdate";
 import { UpdatePermissionScrollArea } from "./UpdatePermissionScrollArea";
@@ -14,7 +14,7 @@ import { Separator } from "../../../Base/Separator";
 interface UpdatePermissionsFormProps {
   roleName: string;
   rolePermissions: RolePermission[];
-  mutate: KeyedMutator<RoleWithRelationships[]>;
+  mutate: KeyedMutator<never>;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 

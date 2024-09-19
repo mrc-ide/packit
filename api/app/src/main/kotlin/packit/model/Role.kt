@@ -35,11 +35,22 @@ class Role(
         result = 31 * result + isUsername.hashCode()
         return result
     }
+
+    fun isHidden(): Boolean = isUsername
 }
 
 fun Role.toDto() =
     RoleDto(
-        name, rolePermissions.map { it.toDto() }, users.map { it.toBasicDto() }, id!!, isUsername
+        name,
+        rolePermissions.map { it.toDto() }.sortedByDescending {
+            it.tag == null && it.packet == null && it.packetGroup == null
+        },
+        users.toBasicDto(),
+        id!!,
+        isUsername
     )
 
 fun Role.toBasicDto() = BasicRoleDto(name, id!!)
+
+fun List<Role>.toDto() = filter { !it.isHidden() }.sortedBy { it.name }.map { it.toDto() }
+fun List<Role>.toBasicDto() = filter { !it.isHidden() }.sortedBy { it.name }.map { it.toBasicDto() }

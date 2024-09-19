@@ -12,7 +12,6 @@ interface RoleRepository : JpaRepository<Role, Int>
     fun existsByName(name: String): Boolean
     fun findByNameIn(names: List<String>): List<Role>
     fun findByIsUsernameAndNameIn(isUsername: Boolean, names: List<String>): List<Role>
-    fun findAllByIsUsernameOrderByName(isUsername: Boolean): List<Role>
 
     @Transactional
     fun deleteByName(name: String)

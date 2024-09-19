@@ -4,10 +4,9 @@ import { KeyedMutator } from "swr";
 import { Button } from "../../Base/Button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../Base/Dialog";
 import { AddUserForm } from "./AddUserForm";
-import { RoleWithRelationships } from "./types/RoleWithRelationships";
 
 interface AddBasicUserButtonProps {
-  mutate: KeyedMutator<RoleWithRelationships[]>;
+  mutate: KeyedMutator<never>;
   roleNames: string[];
 }
 export const AddBasicUserButton = ({ mutate, roleNames }: AddBasicUserButtonProps) => {

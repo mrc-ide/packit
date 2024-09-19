@@ -28,7 +28,7 @@ interface BasicUser {
   id: string;
 }
 
-export interface RoleWithRelationships {
+export interface Role {
   name: string;
   rolePermissions: RolePermission[];
   users: BasicUser[];

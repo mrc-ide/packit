@@ -18,10 +18,9 @@ import {
   MultiSelectorTrigger
 } from "../../Base/MultiSelect";
 import { CustomDialogFooter } from "../common/CustomDialogFooter";
-import { RoleWithRelationships } from "./types/RoleWithRelationships";
 
 interface AddUserFormProps {
-  mutate: KeyedMutator<RoleWithRelationships[]>;
+  mutate: KeyedMutator<never>;
   setOpen: Dispatch<SetStateAction<boolean>>;
   roleNames: string[];
 }

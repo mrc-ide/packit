@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 // eslint-disable-next-line max-len
 import { RemovePermissionsForUpdate } from "../../../../../app/components/contents/manageAccess/updatePermission/RemovePermissionsForUpdate";
-import { mockNonUsernameRolesWithRelationships } from "../../../../mocks";
+import { mockRoles } from "../../../../mocks";
 import userEvent from "@testing-library/user-event";
 import { constructPermissionName } from "../../../../../lib/constructPermissionName";
 
@@ -9,7 +9,7 @@ describe("RemovePermissionsForUpdate", () => {
   it("should show rolePermission names in dropdown", async () => {
     render(
       <RemovePermissionsForUpdate
-        rolePermissions={mockNonUsernameRolesWithRelationships[0].rolePermissions}
+        rolePermissions={mockRoles[0].rolePermissions}
         removedPermissions={[]}
         removePermission={jest.fn()}
       />
@@ -18,7 +18,7 @@ describe("RemovePermissionsForUpdate", () => {
     userEvent.click(screen.getByRole("combobox"));
 
     await waitFor(() => {
-      mockNonUsernameRolesWithRelationships[0].rolePermissions.forEach((rolePermission) => {
+      mockRoles[0].rolePermissions.forEach((rolePermission) => {
         const permissionName = constructPermissionName(rolePermission);
         expect(screen.getByText(permissionName)).toBeVisible();
       });
@@ -29,7 +29,7 @@ describe("RemovePermissionsForUpdate", () => {
     const removePermission = jest.fn();
     render(
       <RemovePermissionsForUpdate
-        rolePermissions={mockNonUsernameRolesWithRelationships[0].rolePermissions}
+        rolePermissions={mockRoles[0].rolePermissions}
         removedPermissions={[]}
         removePermission={removePermission}
       />
@@ -37,20 +37,20 @@ describe("RemovePermissionsForUpdate", () => {
 
     userEvent.click(screen.getByRole("combobox"));
     const firstPermission = await screen.findByText(
-      constructPermissionName(mockNonUsernameRolesWithRelationships[0].rolePermissions[0])
+      constructPermissionName(mockRoles[0].rolePermissions[0])
     );
     userEvent.click(firstPermission);
 
-    expect(removePermission).toHaveBeenCalledWith(mockNonUsernameRolesWithRelationships[0].rolePermissions[0]);
+    expect(removePermission).toHaveBeenCalledWith(mockRoles[0].rolePermissions[0]);
 
     expect(firstPermission).not.toBeInTheDocument();
   });
 
   it("should disable permissions that are already removed", async () => {
-    const removedPermissions = [mockNonUsernameRolesWithRelationships[0].rolePermissions[0]];
+    const removedPermissions = [mockRoles[0].rolePermissions[0]];
     render(
       <RemovePermissionsForUpdate
-        rolePermissions={mockNonUsernameRolesWithRelationships[0].rolePermissions}
+        rolePermissions={mockRoles[0].rolePermissions}
         removedPermissions={removedPermissions}
         removePermission={jest.fn()}
       />
@@ -59,7 +59,7 @@ describe("RemovePermissionsForUpdate", () => {
     userEvent.click(screen.getByRole("combobox"));
 
     await waitFor(() => {
-      mockNonUsernameRolesWithRelationships[0].rolePermissions.forEach((rolePermission) => {
+      mockRoles[0].rolePermissions.forEach((rolePermission) => {
         const permissionName = constructPermissionName(rolePermission);
         const permission = screen.getByText(permissionName);
         if (removedPermissions.includes(rolePermission)) {

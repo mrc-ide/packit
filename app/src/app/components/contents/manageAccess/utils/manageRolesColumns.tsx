@@ -6,12 +6,12 @@ import { Button } from "../../../Base/Button";
 import { ScrollArea } from "../../../Base/ScrollArea";
 import { DeleteUserOrRole } from "../DeleteUserOrRole";
 import { UpdateRoleDropDownMenu } from "../manageRoleActions/UpdateRoleDropDownMenu";
-import { RoleWithRelationships } from "../types/RoleWithRelationships";
-import { UserWithRoles } from "../types/UserWithRoles";
+import { Role } from "../types/Role";
+import { User } from "../types/User";
 
-const columnHelper = createColumnHelper<RoleWithRelationships>();
+const columnHelper = createColumnHelper<Role>();
 
-export const setupManageRolesColumns = (mutate: KeyedMutator<RoleWithRelationships[]>, users: UserWithRoles[]) => [
+export const setupManageRolesColumns = (mutate: KeyedMutator<never>, users: User[]) => [
   columnHelper.accessor("name", {
     header: "Role",
     cell: ({ getValue }) => {

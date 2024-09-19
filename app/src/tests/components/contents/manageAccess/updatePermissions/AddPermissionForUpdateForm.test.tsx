@@ -3,7 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { AddPermissionForUpdateForm } from "../../../../../app/components/contents/manageAccess/updatePermission/AddPermissionForUpdateForm";
 import userEvent from "@testing-library/user-event";
 import { mockPacketGroupResponse, mockTags } from "../../../../mocks";
-import { Tag } from "../../../../../app/components/contents/manageAccess/types/RoleWithRelationships";
+import { Tag } from "../../../../../app/components/contents/manageAccess/types/Role";
 
 describe("AddPermissionForUpdateForm", () => {
   it("it should disable scope radio group, submit button if permission is not set to packet.read", async () => {

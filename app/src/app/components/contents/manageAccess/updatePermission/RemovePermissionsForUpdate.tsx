@@ -5,7 +5,7 @@ import { Button } from "../../../Base/Button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../../../Base/Command";
 import { Label } from "../../../Base/Label";
 import { Popover, PopoverContent, PopoverTrigger } from "../../../Base/Popover";
-import { BaseRolePermission, RolePermission } from "../types/RoleWithRelationships";
+import { BaseRolePermission, RolePermission } from "../types/Role";
 import { isDuplicateUpdatePermission } from "./utils/isDuplicateUpdatePermission";
 
 interface RemovePermissionsForUpdateProps {

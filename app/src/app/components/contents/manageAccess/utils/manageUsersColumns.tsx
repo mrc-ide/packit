@@ -7,14 +7,14 @@ import { ScrollArea } from "../../../Base/ScrollArea";
 import { useUser } from "../../../providers/UserProvider";
 import { DeleteUserOrRole } from "../DeleteUserOrRole";
 import { UpdateUserDropdownMenu } from "../manageUsersActions/UpdateUserDropdownMenu";
-import { RoleWithRelationships } from "../types/RoleWithRelationships";
-import { UserWithRoles } from "../types/UserWithRoles";
+import { Role } from "../types/Role";
+import { User } from "../types/User";
 
-const columnHelper = createColumnHelper<UserWithRoles>();
+const columnHelper = createColumnHelper<User>();
 
 export const setupManageUsersColumns = (
-  mutate: KeyedMutator<RoleWithRelationships[]>,
-  roles: RoleWithRelationships[]
+  mutate: KeyedMutator<never>,
+  roles: Role[]
 ) => [
   columnHelper.accessor("username", {
     header: "Username",

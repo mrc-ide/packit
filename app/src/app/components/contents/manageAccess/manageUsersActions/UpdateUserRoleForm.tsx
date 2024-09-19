@@ -16,13 +16,13 @@ import {
   MultiSelectorTrigger
 } from "../../../Base/MultiSelect";
 import { CustomDialogFooter } from "../../common/CustomDialogFooter";
-import { RoleWithRelationships } from "../types/RoleWithRelationships";
-import { UserWithRoles } from "../types/UserWithRoles";
+import { Role } from "../types/Role";
+import { User } from "../types/User";
 
 interface UpdateUserRoleFormProps {
-  mutate: KeyedMutator<RoleWithRelationships[]>;
-  user: UserWithRoles;
-  roles: RoleWithRelationships[];
+  mutate: KeyedMutator<never>;
+  user: User;
+  roles: Role[];
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 export const UpdateUserRoleForm = ({ mutate, user, roles, setOpen }: UpdateUserRoleFormProps) => {

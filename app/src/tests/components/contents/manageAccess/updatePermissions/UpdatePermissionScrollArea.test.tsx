@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { BaseRolePermission } from "../../../../../app/components/contents/manageAccess/types/RoleWithRelationships";
+import { BaseRolePermission } from "../../../../../app/components/contents/manageAccess/types/Role";
 import { UpdatePermissionScrollArea } from "../../../../../app/components/contents/manageAccess/updatePermission/UpdatePermissionScrollArea";
 import { constructPermissionName } from "../../../../../lib/constructPermissionName";
 

@@ -1,6 +1,7 @@
 package packit.unit.model
 
 import packit.model.*
+import packit.model.dto.*
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -11,15 +12,7 @@ class RoleTest
     @Test
     fun `toDto returns correct RoleDto for given Role`()
     {
-        val user =
-            User(
-                "user1",
-                mutableListOf(),
-                false,
-                "source1",
-                "displayName",
-                id = UUID.randomUUID()
-            )
+        val user = User("user1", userSource = "source1", id = UUID.randomUUID())
         val role = Role("role1", users = mutableListOf(user), id = 1)
         val permission = Permission("permission1", "d1")
         val tag = Tag("tag1", id = 1)
@@ -45,6 +38,60 @@ class RoleTest
 
         assertEquals(role.name, basicRoleDto.name)
         assertEquals(role.id, basicRoleDto.id)
+    }
+
+    @Test
+    fun `toDto returns sorted user dtos`()
+    {
+        val role = Role(
+            name = "role1", id = 1,
+            users = mutableListOf(
+                User("c user", id = UUID.randomUUID(), userSource = "github"),
+                User("a user", id = UUID.randomUUID(), userSource = "github"),
+                User("b user", id = UUID.randomUUID(), userSource = "github"),
+            )
+        )
+
+        assertEquals(
+            role.toDto().users.map { it.username },
+            listOf("a user", "b user", "c user")
+        )
+    }
+
+    @Test
+    fun `list toDto skips username roles`()
+    {
+        val roles = listOf(
+            Role(name = "testRole1", id = 1),
+            Role(name = "testRole2", id = 2, isUsername = true),
+            Role(name = "testRole3", id = 3),
+        )
+        assertEquals(
+            roles.toDto().map { it.name },
+            listOf("testRole1", "testRole3")
+        )
+        assertEquals(
+            roles.toBasicDto().map { it.name },
+            listOf("testRole1", "testRole3")
+        )
+    }
+
+    @Test
+    fun `list toDto returns roles sorted by name`()
+    {
+        val roles = listOf(
+            Role(name = "testRoleB", id = 2),
+            Role(name = "testRoleA", id = 1),
+            Role(name = "testRoleC", id = 3),
+        )
+        assertEquals(
+            roles.toDto().map { it.name },
+            listOf("testRoleA", "testRoleB", "testRoleC")
+        )
+        assertEquals(
+            roles.toBasicDto().map { it.name },
+            listOf("testRoleA", "testRoleB", "testRoleC")
+        )
     }
 
     @Test

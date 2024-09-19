@@ -1,13 +1,13 @@
 import { Outlet, useOutletContext } from "react-router-dom";
-import { useGetRolesWithRelationships } from "./hooks/useGetRolesWithRelationships";
+import { useGetUsersAndRoles } from "./hooks/useGetUsersAndRoles";
 import { ErrorComponent } from "../common/ErrorComponent";
 import { Skeleton } from "../../Base/Skeleton";
-import { RoleWithRelationships } from "./types/RoleWithRelationships";
-import { UserWithRoles } from "./types/UserWithRoles";
+import { Role } from "./types/Role";
+import { User } from "./types/User";
 import { KeyedMutator } from "swr";
 
 export const ManageAccessOutlet = () => {
-  const { roles, users, isLoading, error, mutate } = useGetRolesWithRelationships();
+  const { users, roles, isLoading, error, mutate } = useGetUsersAndRoles();
 
   if (error) return <ErrorComponent message="Error fetching data" error={error} />;
 
@@ -24,12 +24,12 @@ export const ManageAccessOutlet = () => {
         ))}
       </ul>
     );
-  return roles ? <Outlet context={{ roles, users, mutate }} /> : null;
+    return roles ? <Outlet context={{ roles, users, mutate }} /> : null;
 };
 
 interface ManageAccessLayoutContext {
-  roles: RoleWithRelationships[];
-  users: UserWithRoles[];
-  mutate: KeyedMutator<RoleWithRelationships[]>;
+  roles: Role[];
+  users: User[];
+  mutate: KeyedMutator<never>;
 }
 export const useManageAccessLayoutContext = () => useOutletContext<ManageAccessLayoutContext>();

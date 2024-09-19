@@ -9,5 +9,6 @@ data class UserDto(
     val userSource: String,
     val displayName: String?,
     val email: String?,
-    val id: UUID
+    val id: UUID,
+    var specificPermissions: List<RolePermissionDto>,
 )

@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.*
-import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import packit.AppConfig
@@ -333,31 +332,19 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getRoleNames returns role names`()
+    fun `getAllRoles returns all roles`()
     {
         val roles = listOf(Role(name = "role1"), Role(name = "role2"))
-        whenever(roleRepository.findAll(Sort.by("name").ascending())).thenReturn(roles)
+        whenever(roleRepository.findAll()).thenReturn(roles)
 
-        val result = roleService.getRoleNames()
-
-        assertEquals(2, result.size)
-        assertTrue(result.containsAll(listOf("role1", "role2")))
-    }
-
-    @Test
-    fun `getRolesWithRelationships returns all roles when no isUsernamesflag set`()
-    {
-        val roles = listOf(Role(name = "role1"), Role(name = "role2"))
-        whenever(roleRepository.findAll(Sort.by("name").ascending())).thenReturn(roles)
-
-        val result = roleService.getAllRoles(null)
+        val result = roleService.getAllRoles()
 
         assertEquals(2, result.size)
         assertTrue(result.containsAll(roles))
     }
 
     @Test
-    fun `getRolesWithRelationships returns matching roles when all role names exist`()
+    fun `getRoles returns matching roles when all role names exist`()
     {
         val roleNames = listOf("role1", "role2")
         val roles = listOf(Role(name = "role1"), Role(name = "role2"))
@@ -369,7 +356,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getRolesWithRelationships throws exception when some role names do not exist`()
+    fun `getRoles throws exception when some role names do not exist`()
     {
         val roleNames = listOf("role1", "role2")
         val roles = listOf(Role(name = "role1"))
@@ -384,7 +371,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getRolesWithRelationships throws exception when no role names exist`()
+    fun `getRoles throws exception when no role names exist`()
     {
         val roleNames = listOf("role1", "role2")
         whenever(roleRepository.findByNameIn(roleNames)).thenReturn(emptyList())
@@ -395,18 +382,6 @@ class RoleServiceTest
             assertEquals("invalidRolesProvided", key)
             assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
         }
-    }
-
-    @Test
-    fun `getRolesWithRelationships returns roles with isUsername flag`()
-    {
-        val roles = listOf(Role(name = "username1", isUsername = true), Role(name = "username2", isUsername = true))
-        whenever(roleRepository.findAllByIsUsernameOrderByName(true)).thenReturn(roles)
-
-        val result = roleService.getAllRoles(true)
-
-        assertEquals(roles, result)
-        verify(roleRepository).findAllByIsUsernameOrderByName(true)
     }
 
     @Test
@@ -442,81 +417,6 @@ class RoleServiceTest
         val result = roleService.getByRoleName(roleName)
 
         assertNull(result)
-    }
-
-    @Test
-    fun `getSortedRoleDtos returns roles sorted by base permissions`()
-    {
-        val role1 = Role(name = "role1", id = 1).apply {
-            rolePermissions = mutableListOf(
-                RolePermission(permission = Permission("permission1", "d1"), role = this, id = 10),
-                RolePermission(
-                    permission = Permission("permission2", "d2"),
-                    role = this,
-                    packetGroup = PacketGroup("pg1", id = 20),
-                    id = 11
-                ),
-                RolePermission(permission = Permission("permission3", "d3"), role = this, id = 12),
-            )
-        }
-        val role2 = Role(name = "role2", id = 2).apply {
-            rolePermissions = mutableListOf(
-                RolePermission(
-                    permission = Permission("permission5", "d5"),
-                    role = this,
-                    tag = Tag("tag1", id = 21),
-                    id = 13
-                ),
-                RolePermission(permission = Permission("permission4", "d4"), role = this, id = 14),
-            )
-        }
-        val roles = listOf(role1, role2)
-
-        val result = roleService.getSortedRoleDtos(roles)
-
-        assertEquals(2, result.size)
-        assertEquals("permission1", result[0].rolePermissions[0].permission)
-        assertEquals("permission3", result[0].rolePermissions[1].permission)
-        assertEquals("permission4", result[1].rolePermissions[0].permission)
-    }
-
-    @Test
-    fun `getSortedRoleDtos returns sorted user dtos`()
-    {
-        val role1 = Role(name = "role1", id = 1).apply {
-            users = mutableListOf(
-                User(
-                    username = "c user",
-                    id = UUID.randomUUID(),
-                    disabled = false,
-                    displayName = "user1",
-                    userSource = "github"
-                ),
-                User(
-                    username = "a user",
-                    id = UUID.randomUUID(),
-                    disabled = false,
-                    displayName = "user1",
-                    userSource = "github"
-                ),
-                User(
-                    username = "b user",
-                    id = UUID.randomUUID(),
-                    disabled = false,
-                    displayName = "user1",
-                    userSource = "github"
-                ),
-            )
-        }
-
-        val roles = listOf(role1)
-
-        val result = roleService.getSortedRoleDtos(roles)
-
-        assertEquals(1, result.size)
-        assertEquals("a user", result[0].users[0].username)
-        assertEquals("b user", result[0].users[1].username)
-        assertEquals("c user", result[0].users[2].username)
     }
 
     private fun createRoleWithPermission(

@@ -1,11 +1,10 @@
 import { rest } from "msw";
 import appConfig from "../../config/appConfig";
-import { mockNonUsernameRolesWithRelationships, mockUsernameRolesWithRelationships } from "../../tests/mocks";
+import { mockUsers, mockRoles } from "../../tests/mocks";
 
-export const manageRolesIndexUri = `${appConfig.apiUrl()}/role`;
-
+export const usersIndexUri = `${appConfig.apiUrl()}/user`;
+export const rolesIndexUri = `${appConfig.apiUrl()}/role`;
 export const manageRolesHandlers = [
-  rest.get(manageRolesIndexUri, (req, res, ctx) => {
-    return res(ctx.json([...mockNonUsernameRolesWithRelationships, ...mockUsernameRolesWithRelationships]));
-  })
+  rest.get(usersIndexUri, (req, res, ctx) => res(ctx.json(mockUsers))),
+  rest.get(rolesIndexUri, (req, res, ctx) => res(ctx.json(mockRoles))),
 ];

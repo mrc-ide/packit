@@ -9,7 +9,7 @@ import { AddBasicUserButton } from "./AddBasicUserButton";
 import { setupManageUsersColumns } from "./utils/manageUsersColumns";
 
 export const ManageUsers = () => {
-  const { users, mutate, roles } = useManageAccessLayoutContext();
+  const { users, roles, mutate } = useManageAccessLayoutContext();
   const authConfig = useAuthConfig();
   const [filteredName, setFilterByName] = useState("");
 

@@ -1,4 +1,4 @@
-import { BaseRolePermission } from "../types/RoleWithRelationships";
+import { BaseRolePermission } from "../types/Role";
 
 export const isPermissionEqual = (permission1: BaseRolePermission, permission2: BaseRolePermission): boolean =>
   permission1.permission === permission2.permission &&

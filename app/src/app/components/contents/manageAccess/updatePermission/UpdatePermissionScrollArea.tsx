@@ -4,7 +4,7 @@ import { cn } from "../../../../../lib/cn";
 import { constructPermissionName } from "../../../../../lib/constructPermissionName";
 import { Badge } from "../../../Base/Badge";
 import { ScrollArea } from "../../../Base/ScrollArea";
-import { BaseRolePermission } from "../types/RoleWithRelationships";
+import { BaseRolePermission } from "../types/Role";
 import { isPermissionEqual } from "../utils/isPermissionEqual";
 
 interface UpdatePermissionScrollAreaProps {

@@ -186,18 +186,15 @@ class UserControllerDefaultRolesTest : IntegrationTest()
             "/user/basic",
             getTokenizedHttpEntity(
                 data = CreateBasicUser(
-                email = "test@email",
-                password = "password",
-                displayName = "Random User",
-            )
+                    email = "test@email",
+                    password = "password",
+                    displayName = "Random User"
+                )
             ),
             UserDto::class.java
         )
         assertEquals(result.statusCode, HttpStatus.CREATED)
         assertEquals(result.body?.username, "test@email")
-        assertEquals(
-            result.body?.roles?.map { it.name },
-            listOf("TEST_USER_ROLE", "test@email")
-        )
+        assertEquals(result.body?.roles?.map { it.name }, listOf("TEST_USER_ROLE"))
     }
 }

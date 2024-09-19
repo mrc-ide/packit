@@ -1,4 +1,4 @@
-import { BaseRolePermission } from "../../types/RoleWithRelationships";
+import { BaseRolePermission } from "../../types/Role";
 
 export const convertUpdatePermissionsForFetch = (updatePermissions: {
   addPermissions: BaseRolePermission[];

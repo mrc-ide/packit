@@ -1,6 +1,5 @@
 package packit.service
 
-import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -11,10 +10,8 @@ import packit.model.Permission
 import packit.model.Role
 import packit.model.RolePermission
 import packit.model.dto.CreateRole
-import packit.model.dto.RoleDto
 import packit.model.dto.UpdateRolePermission
 import packit.model.dto.UpdateRolePermissions
-import packit.model.toDto
 import packit.repository.RoleRepository
 
 interface RoleService
@@ -25,13 +22,11 @@ interface RoleService
     fun createRole(createRole: CreateRole): Role
     fun deleteRole(roleName: String)
     fun deleteUsernameRole(username: String)
-    fun getRoleNames(): List<String>
     fun getRolesByRoleNames(roleNames: List<String>): List<Role>
-    fun getAllRoles(isUsernames: Boolean?): List<Role>
+    fun getAllRoles(): List<Role>
     fun getRole(roleName: String): Role
     fun updatePermissionsToRole(roleName: String, updateRolePermissions: UpdateRolePermissions): Role
     fun getByRoleName(roleName: String): Role?
-    fun getSortedRoleDtos(roles: List<Role>): List<RoleDto>
     fun getDefaultRoles(): List<Role>
 }
 
@@ -109,19 +104,6 @@ class BaseRoleService(
         return roleRepository.findByName(roleName)
     }
 
-    override fun getSortedRoleDtos(roles: List<Role>): List<RoleDto>
-    {
-        return roles.map { role ->
-            val roleDto = role.toDto()
-            roleDto.rolePermissions =
-                roleDto.rolePermissions.sortedByDescending {
-                    it.tag == null && it.packet == null && it.packetGroup == null
-                }
-            roleDto.users = roleDto.users.sortedBy { it.username }
-            roleDto
-        }
-    }
-
     internal fun addRolePermissionsToRole(role: Role, addRolePermissions: List<UpdateRolePermission>): Role
     {
         val rolePermissionsToAdd =
@@ -130,18 +112,9 @@ class BaseRoleService(
         return roleRepository.save(role)
     }
 
-    override fun getRoleNames(): List<String>
+    override fun getAllRoles(): List<Role>
     {
-        return roleRepository.findAll(Sort.by("name").ascending()).map { it.name }
-    }
-
-    override fun getAllRoles(isUsernames: Boolean?): List<Role>
-    {
-        if (isUsernames == null)
-        {
-            return roleRepository.findAll(Sort.by("name").ascending())
-        }
-        return roleRepository.findAllByIsUsernameOrderByName(isUsernames)
+        return roleRepository.findAll()
     }
 
     override fun getRolesByRoleNames(roleNames: List<String>): List<Role>

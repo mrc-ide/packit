@@ -11,13 +11,12 @@ import {
   AlertDialogTrigger
 } from "../../Base/AlertDialog";
 import { Button, buttonVariants } from "../../Base/Button";
-import { RoleWithRelationships } from "./types/RoleWithRelationships";
 import { KeyedMutator } from "swr";
 import { fetcher } from "../../../../lib/fetch";
 import appConfig from "../../../../config/appConfig";
 
 interface DeleteUserOrRoleProps {
-  mutate: KeyedMutator<RoleWithRelationships[]>;
+  mutate: KeyedMutator<never>;
   data: {
     name: string;
     type: "user" | "role";

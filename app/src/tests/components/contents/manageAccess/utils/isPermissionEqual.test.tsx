@@ -1,4 +1,4 @@
-import { BaseRolePermission } from "../../../../../app/components/contents/manageAccess/types/RoleWithRelationships";
+import { BaseRolePermission } from "../../../../../app/components/contents/manageAccess/types/Role";
 import { isPermissionEqual } from "../../../../../app/components/contents/manageAccess/utils/isPermissionEqual";
 
 describe("isPermissionEqual", () => {

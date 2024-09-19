@@ -59,18 +59,11 @@ class RoleController(private val roleService: RoleService, private val userRoleS
         return ResponseEntity.ok(updatedRole.toDto())
     }
 
-    @GetMapping("/names")
-    fun getRoleNames(): ResponseEntity<List<String>>
-    {
-        return ResponseEntity.ok(roleService.getRoleNames())
-    }
-
     @GetMapping
-    fun getRolesWithRelationships(@RequestParam isUsername: Boolean?): ResponseEntity<List<RoleDto>>
+    fun getRoles(): ResponseEntity<List<RoleDto>>
     {
-        val roles = roleService.getAllRoles(isUsername)
-
-        return ResponseEntity.ok(roleService.getSortedRoleDtos(roles))
+        val roles = roleService.getAllRoles().toDto()
+        return ResponseEntity.ok(roles)
     }
 
     @GetMapping("/{roleName}")

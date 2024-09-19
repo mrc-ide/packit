@@ -12,10 +12,9 @@ import { Checkbox } from "../../Base/Checkbox";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../../Base/Form";
 import { Input } from "../../Base/Input";
 import { CustomDialogFooter } from "../common/CustomDialogFooter";
-import { RoleWithRelationships } from "./types/RoleWithRelationships";
 
 interface AddRoleFormProps {
-  mutate: KeyedMutator<RoleWithRelationships[]>;
+  mutate: KeyedMutator<never>;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 export const AddRoleForm = ({ mutate, setOpen }: AddRoleFormProps) => {
