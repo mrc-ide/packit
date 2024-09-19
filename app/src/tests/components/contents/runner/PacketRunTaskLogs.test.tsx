@@ -50,30 +50,63 @@ describe("PacketRunTaskLogs", () => {
     });
   });
 
-  it("should call not poll api if status is not RUNNING", async () => {
+  it("should poll api & update time if status is RUNNING", async () => {
     let numApiCalled = 0;
+    const timeStarted = Date.now() / 1000;
     server.use(
       rest.get(`${basicRunnerUri}/status/:taskId`, (req, res, ctx) => {
         numApiCalled++;
-        return res(ctx.json({ ...mockCompleteRunInfo, status: "RUNNING" }));
+        return res(ctx.json({ ...mockCompleteRunInfo, status: "RUNNING", timeStarted }));
       })
     );
     jest.useFakeTimers();
     renderComponent();
 
-    await awaitTaskId();
+    await waitFor(() => {
+      expect(screen.getByText(/Running for 1 s/i)).toBeVisible();
+    });
 
     jest.advanceTimersByTime(2000);
-    await awaitTaskId();
+    await waitFor(() => {
+      expect(screen.getByText(/Running for 3 s/i)).toBeVisible();
+    });
 
     jest.advanceTimersByTime(2000);
-    await awaitTaskId();
+    await waitFor(() => {
+      expect(screen.getByText(/Running for 5 s/i)).toBeVisible();
+    });
+    expect(numApiCalled).toBe(3);
+  });
+
+  it("should  poll api & update time if status is PENDING", async () => {
+    let numApiCalled = 0;
+    const timeQueued = Date.now() / 1000;
+    server.use(
+      rest.get(`${basicRunnerUri}/status/:taskId`, (req, res, ctx) => {
+        numApiCalled++;
+        return res(ctx.json({ ...mockCompleteRunInfo, status: "PENDING", timeQueued }));
+      })
+    );
+    jest.useFakeTimers();
+    renderComponent();
 
     await waitFor(() => {
-      expect(numApiCalled).toBe(3);
+      expect(screen.getByText(/Waiting for 1 s/i)).toBeVisible();
     });
+
+    jest.advanceTimersByTime(2000);
+    await waitFor(() => {
+      expect(screen.getByText(/Waiting for 3 s/i)).toBeVisible();
+    });
+
+    jest.advanceTimersByTime(2000);
+    await waitFor(() => {
+      expect(screen.getByText(/Waiting for 5 s/i)).toBeVisible();
+    });
+    expect(numApiCalled).toBe(3);
   });
-  it("should call not poll api if status is PENDING", async () => {
+
+  it("should not poll api if status is not RUNNING OR PENDING", async () => {
     let numApiCalled = 0;
     server.use(
       rest.get(`${basicRunnerUri}/status/:taskId`, (req, res, ctx) => {
@@ -94,30 +127,6 @@ describe("PacketRunTaskLogs", () => {
 
     await waitFor(() => {
       expect(numApiCalled).toBe(1);
-    });
-  });
-
-  it("should call not poll api if status is not RUNNING OR PENDING", async () => {
-    let numApiCalled = 0;
-    server.use(
-      rest.get(`${basicRunnerUri}/status/:taskId`, (req, res, ctx) => {
-        numApiCalled++;
-        return res(ctx.json({ ...mockCompleteRunInfo, status: "RUNNING" }));
-      })
-    );
-    jest.useFakeTimers();
-    renderComponent();
-
-    await awaitTaskId();
-
-    jest.advanceTimersByTime(2000);
-    await awaitTaskId();
-
-    jest.advanceTimersByTime(2000);
-    await awaitTaskId();
-
-    await waitFor(() => {
-      expect(numApiCalled).toBe(3);
     });
   });
 });

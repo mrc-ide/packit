@@ -5,17 +5,19 @@ import { ErrorComponent } from "../common/ErrorComponent";
 import { useGetTaskRunLogs } from "./hooks/useGetTaskRunLogs";
 import { TaskRunLogs } from "./logs/TaskRunLogs";
 import { TaskRunSummary } from "./logs/TaskRunSummary";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const PacketRunTaskLogs = () => {
   const { taskId } = useParams();
   const { runInfo, error, isLoading, mutate } = useGetTaskRunLogs(taskId);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [, setRenderTrigger] = useState(0); // State variable to trigger re-render on interval
 
   useEffect(() => {
     if (runInfo?.status === "PENDING" || runInfo?.status === "RUNNING") {
       intervalRef.current = setInterval(() => {
         mutate();
+        setRenderTrigger((prev) => prev + 1);
       }, 2000);
     }
 
@@ -33,7 +35,7 @@ export const PacketRunTaskLogs = () => {
     return <ErrorComponent error={error} message="Error fetching run information for task" />;
   }
 
-  if (isLoading) {
+  if (isLoading && !runInfo) {
     return (
       <div className="flex flex-col space-y-4">
         <Skeleton className="h-56	 w-full" />
