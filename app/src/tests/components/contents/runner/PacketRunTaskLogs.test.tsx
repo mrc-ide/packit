@@ -5,6 +5,7 @@ import { mockCompleteRunInfo } from "../../../mocks";
 import { server } from "../../../../msw/server";
 import { rest } from "msw";
 import { SWRConfig } from "swr";
+import { basicRunnerUri } from "../../../../msw/handlers/runnerHandlers";
 
 describe("PacketRunTaskLogs", () => {
   const testTaskId = "1234";
@@ -19,13 +20,16 @@ describe("PacketRunTaskLogs", () => {
       </SWRConfig>
     );
   };
+  const awaitTaskId = async () => {
+    await waitFor(() => {
+      expect(screen.getByText(testTaskId, { exact: false })).toBeVisible();
+    });
+  };
 
   it("should render runInfo if successfully gets status", async () => {
     renderComponent();
 
-    await waitFor(() => {
-      expect(screen.getByText(testTaskId, { exact: false })).toBeVisible();
-    });
+    await awaitTaskId();
     expect(screen.getByText(mockCompleteRunInfo.branch)).toBeVisible();
     mockCompleteRunInfo.logs?.forEach((log) => {
       expect(screen.getByText(log)).toBeVisible();
@@ -43,6 +47,86 @@ describe("PacketRunTaskLogs", () => {
 
     await waitFor(() => {
       expect(screen.getByText(errorMessage)).toBeVisible();
+    });
+  });
+
+  it("should poll api & update time if status is RUNNING", async () => {
+    let numApiCalled = 0;
+    const timeStarted = Date.now() / 1000;
+    server.use(
+      rest.get(`${basicRunnerUri}/status/:taskId`, (req, res, ctx) => {
+        numApiCalled++;
+        return res(ctx.json({ ...mockCompleteRunInfo, status: "RUNNING", timeStarted }));
+      })
+    );
+    jest.useFakeTimers();
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText(/Running for 1 s/i)).toBeVisible();
+    });
+
+    jest.advanceTimersByTime(2000);
+    await waitFor(() => {
+      expect(screen.getByText(/Running for 3 s/i)).toBeVisible();
+    });
+
+    jest.advanceTimersByTime(2000);
+    await waitFor(() => {
+      expect(screen.getByText(/Running for 5 s/i)).toBeVisible();
+    });
+    expect(numApiCalled).toBe(3);
+  });
+
+  it("should  poll api & update time if status is PENDING", async () => {
+    let numApiCalled = 0;
+    const timeQueued = Date.now() / 1000;
+    server.use(
+      rest.get(`${basicRunnerUri}/status/:taskId`, (req, res, ctx) => {
+        numApiCalled++;
+        return res(ctx.json({ ...mockCompleteRunInfo, status: "PENDING", timeQueued }));
+      })
+    );
+    jest.useFakeTimers();
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText(/Waiting for 1 s/i)).toBeVisible();
+    });
+
+    jest.advanceTimersByTime(2000);
+    await waitFor(() => {
+      expect(screen.getByText(/Waiting for 3 s/i)).toBeVisible();
+    });
+
+    jest.advanceTimersByTime(2000);
+    await waitFor(() => {
+      expect(screen.getByText(/Waiting for 5 s/i)).toBeVisible();
+    });
+    expect(numApiCalled).toBe(3);
+  });
+
+  it("should not poll api if status is not RUNNING OR PENDING", async () => {
+    let numApiCalled = 0;
+    server.use(
+      rest.get(`${basicRunnerUri}/status/:taskId`, (req, res, ctx) => {
+        numApiCalled++;
+        return res(ctx.json(mockCompleteRunInfo));
+      })
+    );
+    jest.useFakeTimers();
+    renderComponent();
+
+    await awaitTaskId();
+
+    jest.advanceTimersByTime(2000);
+    await awaitTaskId();
+
+    jest.advanceTimersByTime(2000);
+    await awaitTaskId();
+
+    await waitFor(() => {
+      expect(numApiCalled).toBe(1);
     });
   });
 });
