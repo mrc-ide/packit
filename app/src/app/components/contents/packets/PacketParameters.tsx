@@ -1,3 +1,5 @@
+import { ParameterContainer } from "../common/ParameterContainer";
+
 interface PacketParametersProps {
   parameters: Record<string, string>;
 }
@@ -10,10 +12,7 @@ export const PacketParameters = ({ parameters }: PacketParametersProps) => {
           <div className="italic text-sm">None</div>
         ) : (
           Object.entries(parameters).map(([key, val]) => (
-            <div key={key} className="border p-1 rounded-md flex space-x-1 text-sm">
-              <div>{key}: </div>
-              <div className="text-muted-foreground"> {val.toString()}</div>
-            </div>
+            <ParameterContainer key={key} paramKey={key} paramValue={val} />
           ))
         )}
       </div>

@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { buttonVariants } from "../../../Base/Button";
 import { Separator } from "../../../Base/Separator";
 import { RunInfo } from "../types/RunInfo";
+import { ParameterContainer } from "../../common/ParameterContainer";
 
 interface TaskSummaryTopProps {
   runInfo: RunInfo;
@@ -28,10 +29,7 @@ export const TaskRunSummaryBottom = ({ runInfo, displayStartTimeStamp }: TaskSum
         <div className="flex flex-wrap gap-1 max-h-64">
           {runInfo.parameters ? (
             Object.entries(runInfo.parameters).map(([key, val]) => (
-              <div key={key} className="border py-1 px-1.5 rounded-md flex space-x-1 text-xs">
-                <div>{key}: </div>
-                <div className="text-muted-foreground"> {val.toString()}</div>
-              </div>
+              <ParameterContainer key={key} paramKey={key} paramValue={val} />
             ))
           ) : (
             <div className="italic text-muted-foreground">Parameters: None</div>

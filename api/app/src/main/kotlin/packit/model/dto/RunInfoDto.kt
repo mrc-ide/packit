@@ -40,5 +40,8 @@ data class BasicRunInfoDto(
     val branch: String,
     val timeStarted: Double? = null,
     val parameters: Map<String, Any>? = null,
-    val ranBy: String
+    val ranBy: String,
+    val commitHash: String,
+    val packetId: String? = null,
+    val timeQueued: Double? = null,
 )

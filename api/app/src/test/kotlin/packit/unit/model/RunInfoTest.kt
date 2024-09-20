@@ -33,6 +33,7 @@ class RunInfoTest
         assertEquals(runInfo.timeQueued, runInfoDto.timeQueued)
         assertEquals(runInfo.packetId, runInfoDto.packetId)
         assertEquals(runInfo.parameters, runInfoDto.parameters)
+        assertEquals(runInfo.timeQueued, runInfoDto.timeQueued)
         assertEquals(runInfo.user.displayName, runInfoDto.ranBy)
     }
 
@@ -48,9 +49,12 @@ class RunInfoTest
         assertEquals(runInfo.packetGroupName, basicRunInfoDto.packetGroupName)
         assertEquals(runInfo.status, basicRunInfoDto.status.toString())
         assertEquals(runInfo.branch, basicRunInfoDto.branch)
+        assertEquals(runInfo.commitHash, basicRunInfoDto.commitHash)
         assertEquals(runInfo.timeStarted, basicRunInfoDto.timeStarted)
         assertEquals(runInfo.parameters, basicRunInfoDto.parameters)
+        assertEquals(runInfo.packetId, basicRunInfoDto.packetId)
         assertEquals(runInfo.user.displayName, basicRunInfoDto.ranBy)
+
     }
 
     @Test

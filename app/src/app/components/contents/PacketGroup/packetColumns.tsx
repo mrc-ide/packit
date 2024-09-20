@@ -1,6 +1,7 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 import { Packet } from "../../../../types";
+import { ParameterContainer } from "../common/ParameterContainer";
 
 const columnHelper = createColumnHelper<Packet>();
 
@@ -43,10 +44,7 @@ export const packetColumns = [
             <div className="italic text-xs">None</div>
           ) : (
             Object.entries(parameters).map(([key, val]) => (
-              <div key={key} className="border py-1 px-1.5 rounded-md flex space-x-1 text-xs">
-                <div>{key}: </div>
-                <div className="text-muted-foreground"> {val.toString()}</div>
-              </div>
+              <ParameterContainer key={key} paramKey={key} paramValue={val} />
             ))
           )}
         </div>

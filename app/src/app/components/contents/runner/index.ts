@@ -1,5 +1,5 @@
 import { PacketRunnerLayout } from "./PacketRunnerLayout";
 import { PacketRun } from "./PacketRun";
-import { PacketRunLogs } from "./PacketRunLogs";
+import { PacketRunTasksLogs } from "./PacketRunTasksLogs";
 
-export { PacketRunnerLayout, PacketRun, PacketRunLogs };
+export { PacketRunnerLayout, PacketRun, PacketRunTasksLogs };

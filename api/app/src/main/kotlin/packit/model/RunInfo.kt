@@ -48,5 +48,8 @@ fun RunInfo.toBasicDto() = BasicRunInfoDto(
     branch,
     timeStarted,
     parameters,
-    user.displayName ?: user.username
+    user.displayName ?: user.username,
+    commitHash,
+    packetId,
+    timeQueued
 )
