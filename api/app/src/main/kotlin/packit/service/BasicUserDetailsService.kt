@@ -14,7 +14,7 @@ class BasicUserDetailsService(
 {
     override fun loadUserByUsername(username: String): UserDetails
     {
-        val user = userService.getUserForLogin(username)
+        val user = userService.getUserForBasicLogin(username)
         return BasicUserDetails(
             UserPrincipal(
                 user.username,

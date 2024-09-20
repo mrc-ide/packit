@@ -35,6 +35,16 @@ class UserRoleServiceTest
         roles = testRoles.toMutableList(),
         id = UUID.randomUUID()
     )
+    private val mockServiceUser = User(
+        username = "SERVICE",
+        displayName = "Service Account",
+        disabled = false,
+        email = "email",
+        userSource = "service",
+        lastLoggedIn = Instant.parse("2018-12-12T00:00:00Z"),
+        roles = testRoles.toMutableList(),
+        id = UUID.randomUUID()
+    )
     private val mockRole = Role("role1", users = mutableListOf(mockUser))
     private val mockRoleService = mock<RoleService>()
 
@@ -222,6 +232,40 @@ class UserRoleServiceTest
         val ex = assertThrows<PackitException> { service.updateRoleUsers(mockRole.name, updateRoleUsers) }
 
         assertEquals(ex.key, "userRoleNotExists")
+        assertEquals(ex.httpStatus, HttpStatus.BAD_REQUEST)
+    }
+
+    @Test
+    fun `updateRoleUsers throws exception when adding service account to roles`()
+    {
+        whenever(mockRoleService.getByRoleName(mockRole.name)).doReturn(mockRole)
+        whenever(mockUserService.getUsersByUsernames(listOf(mockServiceUser.username)))
+            .doReturn(listOf(mockServiceUser))
+
+        val service = BaseUserRoleService(mockRoleService, mockUserService)
+        val ex = assertThrows<PackitException> {
+            service.updateRoleUsers(mockRole.name, UpdateRoleUsers(usernamesToAdd = listOf(mockServiceUser.username)))
+        }
+
+        assertEquals(ex.key, "cannotModifyServiceUser")
+        assertEquals(ex.httpStatus, HttpStatus.BAD_REQUEST)
+    }
+
+    @Test
+    fun `updateUserRoles throws exception when adding roles to service account`()
+    {
+        whenever(mockUserService.getByUsername(mockServiceUser.username)).doReturn(mockServiceUser)
+        whenever(mockRoleService.getRolesByRoleNames(listOf(mockRole.name))).doReturn(listOf(mockRole))
+
+        val service = BaseUserRoleService(mockRoleService, mockUserService)
+        val ex = assertThrows<PackitException> {
+            service.updateUserRoles(
+                mockServiceUser.username,
+                UpdateUserRoles(roleNamesToAdd = listOf(mockRole.name))
+            )
+        }
+
+        assertEquals(ex.key, "cannotModifyServiceUser")
         assertEquals(ex.httpStatus, HttpStatus.BAD_REQUEST)
     }
 }

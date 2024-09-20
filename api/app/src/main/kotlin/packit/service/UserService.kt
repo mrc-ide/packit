@@ -16,7 +16,7 @@ interface UserService
 {
     fun saveUserFromGithub(username: String, displayName: String?, email: String?): User
     fun createBasicUser(createBasicUser: CreateBasicUser): User
-    fun getUserForLogin(username: String): User
+    fun getUserForBasicLogin(username: String): User
     fun deleteUser(username: String)
     fun getUsersByUsernames(usernames: List<String>): List<User>
     fun getByUsername(username: String): User?
@@ -24,6 +24,7 @@ interface UserService
     fun saveUsers(users: List<User>): List<User>
     fun updatePassword(username: String, updatePassword: UpdatePassword)
     fun checkAndUpdateLastLoggedIn(username: String)
+    fun getServiceUser(): User
 }
 
 @Service
@@ -38,11 +39,14 @@ class BaseUserService(
         val user = userRepository.findByUsername(username)
         if (user != null)
         {
+            if (user.userSource != "github") {
+                throw PackitException("userAlreadyExists", HttpStatus.BAD_REQUEST)
+            }
             return updateUserLastLoggedIn(user, Instant.now())
         }
 
         val roles = roleService.getDefaultRoles().toMutableList()
-        roles.add(roleService.getUsernameRole(username))
+        roles.add(roleService.createUsernameRole(username))
 
         val newUser = User(
             username = username,
@@ -67,7 +71,7 @@ class BaseUserService(
 
         val roles = roleService.getDefaultRoles().toMutableList()
         roles.addAll(roleService.getRolesByRoleNames(createBasicUser.userRoles).toMutableList())
-        roles.add(roleService.getUsernameRole(createBasicUser.email))
+        roles.add(roleService.createUsernameRole(createBasicUser.email))
 
         val newUser = User(
             username = createBasicUser.email,
@@ -87,9 +91,9 @@ class BaseUserService(
         return userRepository.save(user)
     }
 
-    override fun getUserForLogin(username: String): User
+    override fun getUserForBasicLogin(username: String): User
     {
-        return userRepository.findByUsername(username) ?: throw AuthenticationException()
+        return userRepository.findByUsernameAndUserSource(username, "basic") ?: throw AuthenticationException()
     }
 
     override fun getUsersByUsernames(usernames: List<String>): List<User>
@@ -149,7 +153,17 @@ class BaseUserService(
         val user = userRepository.findByUsername(username)
             ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
 
+        if (user.userSource == "service") {
+            throw PackitException("cannotUpdateServiceUser", HttpStatus.BAD_REQUEST)
+        }
+
         userRepository.delete(user)
         roleService.deleteUsernameRole(username)
+    }
+
+    override fun getServiceUser(): User
+    {
+        return userRepository.findByUsernameAndUserSource("SERVICE", "service")
+            ?: throw PackitException("serviceUserNotFound", HttpStatus.INTERNAL_SERVER_ERROR)
     }
 }
