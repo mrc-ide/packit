@@ -53,7 +53,6 @@ class RunInfoTest
         assertEquals(runInfo.parameters, basicRunInfoDto.parameters)
         assertEquals(runInfo.packetId, basicRunInfoDto.packetId)
         assertEquals(runInfo.user.displayName, basicRunInfoDto.ranBy)
-
     }
 
     @Test
