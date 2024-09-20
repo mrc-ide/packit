@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FilterInput } from "../common/FilterInput";
 import { PAGE_SIZE } from "../../../../lib/constants";
-import { TasksLogsList } from "./logs/TasksLogsList";
+import { TasksLogsTable } from "./logs/TasksLogsTable";
 
 export const PacketRunTasksLogs = () => {
   const [pageNumber, setPageNumber] = useState(0);
@@ -19,7 +19,7 @@ export const PacketRunTasksLogs = () => {
           postFilterAction={() => setPageNumber(0)}
           placeholder="filter packet group names..."
         />
-        <TasksLogsList
+        <TasksLogsTable
           filterPacketGroupName={filterPacketGroupName}
           pageNumber={pageNumber}
           pageSize={PAGE_SIZE}

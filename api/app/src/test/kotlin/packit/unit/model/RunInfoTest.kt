@@ -50,7 +50,6 @@ class RunInfoTest
         assertEquals(runInfo.status, basicRunInfoDto.status.toString())
         assertEquals(runInfo.branch, basicRunInfoDto.branch)
         assertEquals(runInfo.commitHash, basicRunInfoDto.commitHash)
-        assertEquals(runInfo.timeStarted, basicRunInfoDto.timeStarted)
         assertEquals(runInfo.parameters, basicRunInfoDto.parameters)
         assertEquals(runInfo.packetId, basicRunInfoDto.packetId)
         assertEquals(runInfo.user.displayName, basicRunInfoDto.ranBy)

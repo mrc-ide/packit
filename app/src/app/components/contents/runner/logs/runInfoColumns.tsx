@@ -11,7 +11,7 @@ import { StatusIcon } from "./StatusIcon";
 const columnHelper = createColumnHelper<BasicRunInfo>();
 export const runInfoColumns = [
   columnHelper.accessor("packetGroupName", {
-    header: "Task",
+    header: "",
     cell: ({ row }) => {
       const { packetGroupName, taskId, packetId, status } = row.original;
       const iconClassName = status === "RUNNING" ? "h-4 w-4 stroke-2" : "h-8 w-8";

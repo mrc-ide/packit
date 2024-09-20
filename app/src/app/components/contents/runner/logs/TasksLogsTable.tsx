@@ -6,13 +6,13 @@ import { Pagination } from "../../common/Pagination";
 import { useGetTasksRunLogs } from "../hooks/useGetTasksRunLogs";
 import { runInfoColumns } from "./runInfoColumns";
 
-interface TasksLogsListProps {
+interface TasksLogsTableProps {
   pageNumber: number;
   pageSize: number;
   setPageNumber: Dispatch<SetStateAction<number>>;
   filterPacketGroupName: string;
 }
-export const TasksLogsList = ({ pageNumber, pageSize, setPageNumber, filterPacketGroupName }: TasksLogsListProps) => {
+export const TasksLogsTable = ({ pageNumber, pageSize, setPageNumber, filterPacketGroupName }: TasksLogsTableProps) => {
   const { runInfo, error, isLoading } = useGetTasksRunLogs(pageNumber, pageSize, filterPacketGroupName);
 
   if (error && !runInfo) return <ErrorComponent message="Error fetching tasks logs" error={error} />;
@@ -31,7 +31,6 @@ export const TasksLogsList = ({ pageNumber, pageSize, setPageNumber, filterPacke
         ))}
       </ul>
     );
-  console.log(runInfo);
 
   return (
     <>

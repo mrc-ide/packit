@@ -38,7 +38,6 @@ data class BasicRunInfoDto(
     val packetGroupName: String,
     val status: Status,
     val branch: String,
-    val timeStarted: Double? = null,
     val parameters: Map<String, Any>? = null,
     val ranBy: String,
     val commitHash: String,
