@@ -66,6 +66,13 @@ describe("getStatusDisplayByStatus", () => {
     expect(result.displayStartTimeStamp).toBe("Started " + getTimeString(mockRunInfo.timeStarted as number));
     expect(result.bgColor).toBe("bg-red-50 dark:bg-red-950");
   });
+
+  it("should return correct display duration for default case with no timeCompleted", () => {
+    mockDisplayTime.mockReturnValueOnce([{ unit: "minutes", value: 10 }]);
+
+    const result = getStatusDisplayByStatus({ ...mockRunInfo, status: "ERROR", timeCompleted: null });
+    expect(result.displayDuration).toBe("Failed");
+  });
 });
 
 describe("getTimeInDisplayFormat", () => {
