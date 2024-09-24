@@ -15,7 +15,9 @@ export const TaskRunSummary = ({ runInfo }: TaskRunSummaryProps) => {
     bgColor,
     icon: Icon,
     displayDuration,
-    displayStartTimeStamp
+    createdTime,
+    startTime,
+    finishTime
   } = getStatusDisplayByStatus(runInfo);
 
   return (
@@ -28,7 +30,7 @@ export const TaskRunSummary = ({ runInfo }: TaskRunSummaryProps) => {
         bgColor={bgColor}
       />
       <Separator className={separatorColor} />
-      <TaskRunSummaryBottom runInfo={runInfo} displayStartTimeStamp={displayStartTimeStamp} />
+      <TaskRunSummaryBottom runInfo={runInfo} createdTime={createdTime} startTime={startTime} finishTime={finishTime} />
     </div>
   );
 };

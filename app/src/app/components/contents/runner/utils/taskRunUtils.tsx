@@ -8,7 +8,9 @@ interface RunStatusDisplay {
   bgColor: string;
   icon: () => JSX.Element;
   displayDuration: string;
-  displayStartTimeStamp: string;
+  createdTime: Date;
+  startTime?: Date;
+  finishTime?: Date;
 }
 export const getStatusDisplayByStatus = (runInfo: RunInfo): RunStatusDisplay => {
   switch (runInfo.status) {
@@ -20,7 +22,7 @@ export const getStatusDisplayByStatus = (runInfo: RunInfo): RunStatusDisplay => 
         displayDuration: `Waiting for ${getTimeInDisplayFormat(
           getTimeDifferenceToDisplay(runInfo.timeQueued as number)
         )}`,
-        displayStartTimeStamp: `Queued on ${new Date((runInfo.timeQueued as number) * 1000).toLocaleString()}`,
+        createdTime: new Date((runInfo.timeQueued as number) * 1000),
         bgColor: "bg-gray-50 dark:bg-gray-950"
       };
     case "RUNNING":
@@ -31,7 +33,8 @@ export const getStatusDisplayByStatus = (runInfo: RunInfo): RunStatusDisplay => 
         displayDuration: `Running for ${getTimeInDisplayFormat(
           getTimeDifferenceToDisplay(runInfo.timeStarted as number)
         )}`,
-        displayStartTimeStamp: `Started ${new Date((runInfo.timeStarted as number) * 1000).toLocaleString()}`,
+        createdTime: new Date((runInfo.timeQueued as number) * 1000),
+        startTime: new Date((runInfo.timeStarted as number) * 1000),
         bgColor: "bg-yellow-50 dark:bg-yellow-950"
       };
     case "COMPLETE":
@@ -42,7 +45,9 @@ export const getStatusDisplayByStatus = (runInfo: RunInfo): RunStatusDisplay => 
         displayDuration: `Ran in ${getTimeInDisplayFormat(
           getTimeDifferenceToDisplay(runInfo.timeStarted as number, runInfo.timeCompleted as number)
         )}`,
-        displayStartTimeStamp: `Started ${new Date((runInfo.timeStarted as number) * 1000).toLocaleString()}`,
+        createdTime: new Date((runInfo.timeQueued as number) * 1000),
+        startTime: new Date((runInfo.timeStarted as number) * 1000),
+        finishTime: new Date((runInfo.timeCompleted as number) * 1000),
         bgColor: "bg-green-50 dark:bg-green-950"
       };
     default:
@@ -56,7 +61,9 @@ export const getStatusDisplayByStatus = (runInfo: RunInfo): RunStatusDisplay => 
               getTimeDifferenceToDisplay(runInfo.timeStarted as number, runInfo.timeCompleted as number)
             )}`
           : "Failed",
-        displayStartTimeStamp: `Started ${new Date((runInfo.timeStarted as number) * 1000).toLocaleString()}`,
+        createdTime: new Date((runInfo.timeQueued as number) * 1000),
+        startTime: new Date((runInfo.timeStarted as number) * 1000),
+        finishTime: new Date((runInfo.timeCompleted as number) * 1000),
         bgColor: "bg-red-50 dark:bg-red-950"
       };
   }
