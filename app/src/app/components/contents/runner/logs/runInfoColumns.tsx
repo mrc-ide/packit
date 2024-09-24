@@ -1,9 +1,8 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { ExternalLink, GitBranch, Github } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ExternalLink, GitBranch, GitBranchPlus, GitCommit, Github } from "lucide-react";
+import { Link, NavLink } from "react-router-dom";
 import { getTimeDifferenceToDisplay } from "../../../../../lib/time";
 import { ScrollArea } from "../../../Base/ScrollArea";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../Base/Tooltip";
 import { ParameterContainer } from "../../common/ParameterContainer";
 import { BasicRunInfo } from "../types/RunInfo";
 import { StatusIcon } from "./StatusIcon";
@@ -13,33 +12,16 @@ export const runInfoColumns = [
   columnHelper.accessor("packetGroupName", {
     header: "",
     cell: ({ row }) => {
-      const { packetGroupName, taskId, packetId, status } = row.original;
-      const iconClassName = status === "RUNNING" ? "h-4 w-4 stroke-2" : "h-8 w-8";
+      const { packetGroupName, taskId, status } = row.original;
 
       return (
-        <div className="flex space-x-2">
-          <StatusIcon status={status} iconClassName={iconClassName} iconWrapperClassName="h-7 w-7 m-0.5" />
+        <div className="flex space-x-2 items-center">
+          <StatusIcon status={status} iconClassName="h-4 w-4 stroke-2" iconWrapperClassName="h-7 w-7 m-0.5" />
           <div className="flex flex-col">
             <Link to={`${taskId}`} className="hover:underline decoration-blue-500 font-semibold text-blue-500">
               {packetGroupName}
             </Link>
-            <div className="flex space-x-2">
-              <div className="text-xs text-muted-foreground">{taskId}</div>
-              {packetId && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Link to={`/${packetGroupName}/${packetId}`} className="text-blue-500">
-                        <ExternalLink size={15} />
-                      </Link>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="text-xs">Go to packet</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
-            </div>
+            <div className="text-xs text-muted-foreground">{taskId}</div>
           </div>
         </div>
       );
@@ -91,14 +73,34 @@ export const runInfoColumns = [
       return (
         <div className="flex flex-col space-y-1">
           <div className="flex space-x-1">
-            <GitBranch size={18} />
+            <GitBranchPlus size={18} />
             <div>{branch}</div>
           </div>
 
           <div className="flex space-x-1">
-            <Github size={18} />
+            <GitCommit size={18} />
             <div>{commitHash.slice(0, 7)}</div>
           </div>
+        </div>
+      );
+    }
+  }),
+  columnHelper.accessor("packetId", {
+    header: "Packet",
+    cell: ({ row }) => {
+      const { packetId, packetGroupName } = row.original;
+      return packetId ? (
+        <NavLink
+          to={`/${packetGroupName}/${packetId}`}
+          className=" text-blue-500  flex items-center gap-0.5 
+      hover:underline decoration-blue-500"
+        >
+          <ExternalLink size={16} />
+          View
+        </NavLink>
+      ) : (
+        <div>
+          <div className="italic">N/A</div>
         </div>
       );
     }

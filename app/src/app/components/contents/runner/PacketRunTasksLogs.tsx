@@ -17,7 +17,7 @@ export const PacketRunTasksLogs = () => {
         <FilterInput
           setFilter={setFilterPacketGroupName}
           postFilterAction={() => setPageNumber(0)}
-          placeholder="filter packet group names..."
+          placeholder="Filter by packet group name..."
         />
         <TasksLogsTable
           filterPacketGroupName={filterPacketGroupName}

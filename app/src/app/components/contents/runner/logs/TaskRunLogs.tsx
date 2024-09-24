@@ -9,8 +9,8 @@ export const TaskRunLogs = memo(function TaskRunLogs({ logs }: TaskRunLogsProps)
       <div className="p-4">
         <h3 className="font-semibold text-xl mb-2">Logs</h3>
         {logs && logs.length > 0 ? (
-          logs.map((log) => (
-            <div key={log} className="text-sm font-mono p-1">
+          logs.map((log, i) => (
+            <div key={`${log}-${i}`} className="text-sm font-mono p-1 break-words">
               {log}
             </div>
           ))

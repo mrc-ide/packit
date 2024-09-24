@@ -27,7 +27,7 @@ describe("PacketRunTasksLogs component", () => {
 
     await screen.findByText("Git Info");
 
-    const filterInput = screen.getByPlaceholderText("filter packet group names...");
+    const filterInput = screen.getByPlaceholderText("Filter by packet group name...");
     userEvent.type(filterInput, "testName");
 
     await waitFor(() => {

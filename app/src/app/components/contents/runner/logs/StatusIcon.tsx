@@ -1,6 +1,6 @@
-import { CircleCheck, CircleEllipsis, CircleX, LoaderCircle } from "lucide-react";
-import { Status } from "../types/RunInfo";
+import { Check, Ellipsis, LoaderCircle, X } from "lucide-react";
 import { cn } from "../../../../../lib/cn";
+import { Status } from "../types/RunInfo";
 
 interface StatusIconProps {
   iconClassName?: string;
@@ -10,22 +10,48 @@ interface StatusIconProps {
 export const StatusIcon = ({ iconClassName, iconWrapperClassName, status }: StatusIconProps) => {
   switch (status) {
     case "PENDING":
-      return <CircleEllipsis className={cn("text-background fill-gray-400 w-14 h-14 stroke-1", iconClassName)} />;
+      return (
+        <div
+          className={cn(
+            "w-11 h-11 rounded-full bg-gray-400 flex items-center justify-center m-1",
+            iconWrapperClassName
+          )}
+        >
+          <Ellipsis className={cn("text-background w-6 h-6", iconClassName)} />
+        </div>
+      );
+
     case "RUNNING":
       return (
         <div
           className={cn(
-            "w-12 h-12 rounded-full bg-yellow-400 flex items-center justify-center m-1",
+            "w-11 h-11 rounded-full bg-yellow-400 flex items-center justify-center m-1",
             iconWrapperClassName
           )}
         >
-          <LoaderCircle className={cn("animate-spin text-background stroke-[3px] w-7 h-7", iconClassName)} />
+          <LoaderCircle className={cn("animate-spin text-background stroke-[3px] w-6 h-6", iconClassName)} />
         </div>
       );
     case "COMPLETE":
-      return <CircleCheck className={cn("text-background fill-green-400 w-14 h-14 stroke-1", iconClassName)} />;
+      return (
+        <div
+          className={cn(
+            "w-11 h-11 rounded-full bg-green-400 flex items-center justify-center m-1",
+            iconWrapperClassName
+          )}
+        >
+          <Check className={cn("text-background w-6 h-6", iconClassName)} />
+        </div>
+      );
+
     default:
       // error, cancelled, died, timeout, missing, moved, deferred, impossible
-      return <CircleX className={cn("text-background fill-red-400 w-14 h-14 stroke-1", iconClassName)} />;
+      return (
+        <div
+          className={cn("w-11 h-11 rounded-full bg-red-400 flex items-center justify-center m-1", iconWrapperClassName)}
+        >
+          <X className={cn("text-background w-6 h-6", iconClassName)} />
+        </div>
+      );
   }
 };

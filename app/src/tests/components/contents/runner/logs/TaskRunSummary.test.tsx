@@ -25,7 +25,7 @@ describe("TaskRunSummary component", () => {
       expect(screen.getByText(`${key}:`)).toBeVisible();
       expect(screen.getByText(value)).toBeVisible();
     });
-    const packetIdLink = screen.getByRole("link", { name: "View" });
+    const packetIdLink = screen.getByRole("link", { name: /view/i });
     expect(packetIdLink).toBeVisible();
     expect(packetIdLink).toHaveAttribute(
       "href",
@@ -51,6 +51,6 @@ describe("TaskRunSummary component", () => {
       </MemoryRouter>
     );
 
-    expect(screen.queryByRole("link", { name: "View" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /view/i })).not.toBeInTheDocument();
   });
 });

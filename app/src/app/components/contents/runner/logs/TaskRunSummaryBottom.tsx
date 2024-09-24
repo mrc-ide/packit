@@ -40,9 +40,9 @@ export const TaskRunSummaryBottom = ({ runInfo, displayStartTimeStamp }: TaskSum
       {runInfo.packetId ? (
         <NavLink
           to={`/${runInfo.packetGroupName}/${runInfo.packetId}`}
-          className={buttonVariants({ variant: "outline" })}
+          className={buttonVariants({ variant: "outline", size: "sm" })}
         >
-          View
+          View Packet
         </NavLink>
       ) : (
         <div></div>
