@@ -4,6 +4,7 @@ import { DataTable } from "../../common/DataTable";
 import { ErrorComponent } from "../../common/ErrorComponent";
 import { Pagination } from "../../common/Pagination";
 import { useGetTasksRunLogs } from "../hooks/useGetTasksRunLogs";
+import { usePollLogs } from "../hooks/usePollLogs";
 import { runInfoColumns } from "./runInfoColumns";
 
 interface TasksLogsTableProps {
@@ -13,7 +14,8 @@ interface TasksLogsTableProps {
   filterPacketGroupName: string;
 }
 export const TasksLogsTable = ({ pageNumber, pageSize, setPageNumber, filterPacketGroupName }: TasksLogsTableProps) => {
-  const { runInfo, error, isLoading } = useGetTasksRunLogs(pageNumber, pageSize, filterPacketGroupName);
+  const { runInfo, error, isLoading, mutate } = useGetTasksRunLogs(pageNumber, pageSize, filterPacketGroupName);
+  usePollLogs(mutate, undefined, 3000);
 
   if (error && !runInfo) return <ErrorComponent message="Error fetching tasks logs" error={error} />;
 
