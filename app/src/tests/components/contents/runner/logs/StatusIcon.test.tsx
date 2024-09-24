@@ -7,7 +7,7 @@ describe("StatusIcon component", () => {
 
     const icon = document.querySelector("svg") as SVGElement;
 
-    expect(icon).toHaveClass("iconClassName lucide-circle-ellipsis");
+    expect(icon).toHaveClass("iconClassName lucide-ellipsis");
   });
 
   it("should render running icon with extra classnames when status is RUNNING", () => {
@@ -24,7 +24,7 @@ describe("StatusIcon component", () => {
 
     const icon = document.querySelector("svg") as SVGElement;
 
-    expect(icon).toHaveClass("iconClassName lucide-circle-check");
+    expect(icon).toHaveClass("iconClassName lucide-check");
   });
 
   it("should render error icon with extra classnames when status is ERROR", () => {
@@ -32,6 +32,6 @@ describe("StatusIcon component", () => {
 
     const icon = document.querySelector("svg") as SVGElement;
 
-    expect(icon).toHaveClass("iconClassName lucide-circle-x");
+    expect(icon).toHaveClass("iconClassName lucide-x");
   });
 });

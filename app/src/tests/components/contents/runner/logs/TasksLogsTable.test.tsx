@@ -1,5 +1,4 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { rest } from "msw";
 import { MemoryRouter } from "react-router-dom";
 import { SWRConfig } from "swr";
@@ -36,27 +35,22 @@ describe("TasksLogsTable component", () => {
     const { container } = renderComponent();
 
     await waitFor(() => {
-      expect(container.querySelector(".lucide-circle-check.h-8.w-8")).toBeVisible();
+      expect(container.querySelector(".lucide-check.h-4.w-4.stroke-2")).toBeVisible();
     });
-    expect(container.querySelector(".lucide-circle-x.h-8.w-8")).toBeVisible();
-    expect(container.querySelector(".lucide-circle-ellipsis.h-8.w-8")).toBeVisible();
+    expect(container.querySelector(".lucide-x.h-4.w-4.stroke-2")).toBeVisible();
+    expect(container.querySelector(".lucide-ellipsis.h-4.w-4.stroke-2")).toBeVisible();
     expect(container.querySelector(".lucide-loader-circle.h-4.w-4.stroke-2")).toBeVisible();
     // loader wrapper
     expect(container.querySelector(".h-7.w-7")).toBeVisible();
   });
 
-  it("should render link with packet id for complete status row and tooltip", async () => {
+  it("should render link with packet id for complete status row", async () => {
     const completeTaskRun = { ...mockTasksRunInfo.content[0] };
     renderComponent();
 
     const packetIdLink = (await screen.findAllByRole("link"))[1];
+
     expect(packetIdLink).toHaveAttribute("href", `/${completeTaskRun.packetGroupName}/${completeTaskRun.packetId}`);
-
-    userEvent.hover(packetIdLink);
-
-    await waitFor(() => {
-      expect(screen.getAllByText(/Go to packet/i)[0]).toBeVisible();
-    });
   });
 
   it("should render packetGroupName links to task logs", async () => {

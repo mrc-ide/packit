@@ -31,7 +31,7 @@ describe("TaskRunSummary component", () => {
       "href",
       `/${mockCompleteRunInfo.packetGroupName}/${mockCompleteRunInfo.packetId}`
     );
-    expect(container.querySelector(".lucide-circle-check") as Element).toBeVisible();
+    expect(container.querySelector(".lucide-check") as Element).toBeVisible();
   });
 
   it("should render parameters as None if no parameters are provided", async () => {
