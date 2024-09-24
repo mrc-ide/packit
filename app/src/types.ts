@@ -94,7 +94,6 @@ export interface FileMetadata {
 export interface PacketJwtPayload extends JwtPayload {
   displayName: string;
   userName: string;
-  datetime: number;
   au: string[];
 }
 

@@ -113,3 +113,41 @@ The GitApiLoginService class is invoked by the LoginController to:
 as a Bearer token in the Authorization header in all subsequent requests to the API.
 - return an error response if authentication requirements not satisfied, e.g. empty PAT provided or user not member of
 an authorized org. 
+
+### External JWT Authentication
+
+In addition to interactive authentication for humans, Packit support authentication using a JWT from an external
+provider. The client must exchange this 3rd-party token for a Packit-issued JWT, which may be used in the application.
+
+This scenario is useful for automated jobs that need to connect to Packit, such as
+[GitHub Actions workflows][github-oidc] or [Buildkite pipelines][buildkite-oidc]. In either case, the continuous
+integration environment provides a way for the job to obtain a signed JWT identifying it. Packit verifies the JWT
+against a list of policies to determine whether the token is accepted.
+
+These are the properties that configure the external JWT authentication:
+- `auth.externalJwt.audience`: the required `aud` claim. If this property is missing, authentication from external JWTs is disabled.
+- `auth.externalJwt.policy`: the list of policies
+- `auth.externalJwt.policy[i].jwk-set-uri`: the URL to the set of public keys used by the issuer
+- `auth.externalJwt.policy[i].issuer`: the required `iss` claim
+- `auth.externalJwt.policy[i].required-claims.${name}`: custom required claims
+- `auth.externalJwt.policy[i].granted-permissions`: scopes that are granted through the authentication process
+- `auth.externalJwt.policy[i].token-duration`: the lifetime of tokens issued in exchange
+
+The claims which may be referenced by the `requiredClaims` property depend on the token issuer. For example, GitHub
+provides claims such as `repository`, `repository_owner`, `workflow`, `event_name` or `ref` (the Git reference).
+Buildkite provides claims such as `organization_slug`, `pipeline_slug` or `build_branch`. At the moment, only
+string-valued claims are supported.
+
+For example, the following configuration snippet would allow any GitHub actions workflow running in the `mrc-ide/packit`
+repository to read and write packets.
+
+```
+auth.external-jwt.audience=https://packit.dide.ic.ac.uk/reside
+auth.external-jwt.policy[0].issuer=https://token.actions.githubusercontent.com
+auth.external-jwt.policy[0].jwk-set-uri=https://token.actions.githubusercontent.com/.well-known/jwks
+auth.external-jwt.policy[0].required-claims.repository=mrc-ide/packit
+auth.external-jwt.policy[0].granted-permissions=outpack.read,outpack.write
+```
+
+[github-oidc]: https://docs.github.com/en/actions/security-for-github-actions/security-hardening-your-deployments/about-security-hardening-with-openid-connect
+[buildkite-oidc]: https://buildkite.com/docs/pipelines/security/oidc

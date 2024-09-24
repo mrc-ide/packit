@@ -11,6 +11,7 @@ import packit.model.dto.LoginWithToken
 import packit.model.dto.UpdatePassword
 import packit.service.BasicLoginService
 import packit.service.GithubAPILoginService
+import packit.service.JwtLoginService
 import packit.service.UserService
 
 @RestController
@@ -18,6 +19,7 @@ import packit.service.UserService
 class LoginController(
     val gitApiLoginService: GithubAPILoginService,
     val basicLoginService: BasicLoginService,
+    val jwtLoginService: JwtLoginService,
     val config: AppConfig,
     val userService: UserService,
 )
@@ -48,6 +50,31 @@ class LoginController(
         }
         val token = basicLoginService.authenticateAndIssueToken(user)
         return ResponseEntity.ok(token)
+    }
+
+    @PostMapping("/login/jwt")
+    @ResponseBody
+    fun loginJWT(
+        @RequestBody @Validated user: LoginWithToken,
+    ): ResponseEntity<Map<String, String>>
+    {
+        if (jwtLoginService.audience == null) {
+            throw PackitException("jwtLoginDisabled", HttpStatus.FORBIDDEN)
+        }
+
+        val token = jwtLoginService.authenticateAndIssueToken(user)
+        return ResponseEntity.ok(token)
+    }
+
+    @GetMapping("/login/jwt/audience")
+    @ResponseBody
+    fun jwtAudience(): ResponseEntity<Map<String, String>>
+    {
+        if (jwtLoginService.audience == null) {
+            throw PackitException("jwtLoginDisabled", HttpStatus.FORBIDDEN)
+        } else {
+            return ResponseEntity.ok(mapOf("audience" to jwtLoginService.audience!!))
+        }
     }
 
     @GetMapping("/config")

@@ -57,19 +57,18 @@ abstract class IntegrationTest
         return HttpEntity(data, headers)
     }
 
-    protected fun assertSuccess(responseEntity: ResponseEntity<String>)
+    protected fun <T>assertSuccess(responseEntity: ResponseEntity<T>)
     {
         assertEquals(responseEntity.statusCode, HttpStatus.OK)
         assertEquals(responseEntity.headers.contentType, MediaType.APPLICATION_JSON)
-        assertThat(responseEntity.body).isNotEmpty
     }
 
-    protected fun assertUnauthorized(responseEntity: ResponseEntity<String>)
+    protected fun <T>assertUnauthorized(responseEntity: ResponseEntity<T>)
     {
         assertEquals(responseEntity.statusCode, HttpStatus.UNAUTHORIZED)
     }
 
-    protected fun assertForbidden(responseEntity: ResponseEntity<String>)
+    protected fun <T>assertForbidden(responseEntity: ResponseEntity<T>)
     {
         assertEquals(responseEntity.statusCode, HttpStatus.FORBIDDEN)
     }

@@ -1,10 +1,18 @@
 package packit.integration.controllers
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockserver.integration.ClientAndServer
+import org.mockserver.junit.jupiter.MockServerExtension
+import org.mockserver.junit.jupiter.MockServerSettings
+import org.mockserver.model.HttpRequest.request
+import org.mockserver.model.HttpResponse.response
+import org.mockserver.model.JsonBody
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.*
@@ -16,6 +24,8 @@ import packit.model.dto.LoginWithPassword
 import packit.model.dto.LoginWithToken
 import packit.model.dto.UpdatePassword
 import packit.repository.UserRepository
+import packit.security.provider.TokenDecoder
+import packit.testing.TestJwtIssuer
 import java.time.Instant
 import kotlin.test.assertEquals
 
@@ -140,6 +150,87 @@ class LoginControllerTestBasic : IntegrationTest()
         val result = LoginTestHelper.getUpdatePasswordResponse(updatePassword, restTemplate, testUser.username)
 
         assertEquals(result.statusCode, HttpStatus.NO_CONTENT)
+    }
+}
+
+@ExtendWith(MockServerExtension::class)
+@MockServerSettings(ports = [8787])
+@TestPropertySource(
+    properties = [
+    "auth.external-jwt.audience=packit",
+    "auth.external-jwt.policy[0].jwk-set-uri=http://127.0.0.1:8787/jwks.json",
+    "auth.external-jwt.policy[0].issuer=issuer",
+    "auth.external-jwt.policy[0].granted-permissions=outpack.read,outpack.write",
+]
+)
+class LoginControllerTestJwt(val jwksServer: ClientAndServer) : IntegrationTest()
+{
+    val trustedIssuer = TestJwtIssuer()
+
+    @Autowired
+    private lateinit var tokenDecoder: TokenDecoder
+
+    @BeforeEach
+    fun configureJwksServer()
+    {
+        jwksServer.`when`(request().withMethod("GET").withPath("/jwks.json"))
+                   .respond(response().withStatusCode(200).withBody(JsonBody(trustedIssuer.jwkSet.toString())))
+    }
+
+    @AfterEach
+    fun resetJwksServer()
+    {
+        jwksServer.reset()
+    }
+
+    @Test
+    fun `can get expected audience`()
+    {
+        val result = restTemplate.getForEntity("/auth/login/jwt/audience", JsonNode::class.java)
+        assertSuccess(result)
+        assertEquals(result.body?.required("audience")?.textValue(), "packit")
+    }
+
+    @Test
+    fun `can login with external JWT`()
+    {
+        val externalToken = trustedIssuer.issue { builder ->
+            builder.issuer("issuer")
+            builder.audience(listOf("packit"))
+        }
+        val result = restTemplate.postForEntity(
+            "/auth/login/jwt",
+            LoginWithToken(externalToken),
+            JsonNode::class.java,
+        )
+        assertSuccess(result)
+
+        val token = tokenDecoder.decode(result.body?.required("token")?.textValue()!!)
+        assertEquals(token.getClaim("userName").asString(), "SERVICE")
+        assertEquals(token.getClaim("au").asList(String::class.java), listOf("outpack.read", "outpack.write"))
+    }
+
+    @Test
+    fun `returns unauthorized when token is signed with different key`()
+    {
+        val untrustedIssuer = TestJwtIssuer()
+        val externalToken = untrustedIssuer.issue { builder ->
+            builder.issuer("issuer")
+            builder.audience(listOf("packit"))
+        }
+        val result = restTemplate.postForEntity("/auth/login/jwt", LoginWithToken(externalToken), JsonNode::class.java)
+        assertUnauthorized(result)
+    }
+
+    @Test
+    fun `returns unauthorized when token has invalid claims`()
+    {
+        val token = trustedIssuer.issue { builder ->
+            builder.issuer("issuer")
+            builder.audience(listOf("not-packit"))
+        }
+        val result = restTemplate.postForEntity("/auth/login/jwt", LoginWithToken(token), String::class.java)
+        assertUnauthorized(result)
     }
 }
 

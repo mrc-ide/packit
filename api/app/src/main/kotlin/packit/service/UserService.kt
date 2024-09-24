@@ -9,6 +9,7 @@ import packit.model.User
 import packit.model.dto.CreateBasicUser
 import packit.model.dto.UpdatePassword
 import packit.repository.UserRepository
+import packit.security.profile.UserPrincipal
 import java.time.Instant
 import javax.naming.AuthenticationException
 
@@ -25,6 +26,7 @@ interface UserService
     fun updatePassword(username: String, updatePassword: UpdatePassword)
     fun checkAndUpdateLastLoggedIn(username: String)
     fun getServiceUser(): User
+    fun getUserPrincipal(user: User): UserPrincipal
 }
 
 @Service
@@ -165,5 +167,14 @@ class BaseUserService(
     {
         return userRepository.findByUsernameAndUserSource("SERVICE", "service")
             ?: throw PackitException("serviceUserNotFound", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+
+    override fun getUserPrincipal(user: User): UserPrincipal {
+        return UserPrincipal(
+            user.username,
+            user.displayName,
+            roleService.getGrantedAuthorities(user.roles),
+            mutableMapOf()
+        )
     }
 }
