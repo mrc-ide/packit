@@ -41,18 +41,14 @@ class WebSecurityConfig(
     ): SecurityFilterChain
     {
         httpSecurity
-            .cors().configurationSource(getCorsConfigurationSource())
-            .and()
-            .csrf().disable()
+            .cors { it.configurationSource(getCorsConfigurationSource()) }
+            .csrf { it.disable() }
             .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .formLogin().disable()
+            .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
+            .formLogin { it.disable() }
             .handleSecurePaths()
             .handleOauth2Login()
-            .exceptionHandling { exceptionHandling ->
-                exceptionHandling.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-            }
+            .exceptionHandling { it.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)) }
 
         return httpSecurity.build()
     }
@@ -79,8 +75,7 @@ class WebSecurityConfig(
         {
             this.oauth2Login { oauth2Login ->
                 oauth2Login
-                    .userInfoEndpoint().userService(customOauth2UserService)
-                    .and()
+                    .userInfoEndpoint { it.userService(customOauth2UserService) }
                     .successHandler(OAuth2SuccessHandler(browserRedirect, jwtIssuer))
                     .failureHandler(OAuth2FailureHandler(browserRedirect, exceptionHandler))
             }
@@ -102,8 +97,7 @@ class WebSecurityConfig(
         } else
         {
             this.securityMatcher("/**")
-                .authorizeHttpRequests()
-                .anyRequest().permitAll()
+                .authorizeHttpRequests { it.anyRequest().permitAll() }
         }
 
         return this
