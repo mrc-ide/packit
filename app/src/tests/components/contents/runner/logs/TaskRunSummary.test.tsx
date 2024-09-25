@@ -17,7 +17,13 @@ describe("TaskRunSummary component", () => {
 
     expect(screen.getByText(mockCompleteRunInfo.branch)).toBeVisible();
     expect(
-      screen.getByText("Started " + new Date((mockCompleteRunInfo.timeStarted as number) * 1000).toLocaleString())
+      screen.getByText("Created at " + new Date((mockCompleteRunInfo.timeQueued as number) * 1000).toLocaleString())
+    ).toBeVisible();
+    expect(
+      screen.getByText("Started at " + new Date((mockCompleteRunInfo.timeStarted as number) * 1000).toLocaleString())
+    ).toBeVisible();
+    expect(
+      screen.getByText("Finished at " + new Date((mockCompleteRunInfo.timeCompleted as number) * 1000).toLocaleString())
     ).toBeVisible();
     expect(screen.getByText(`Ran by ${mockCompleteRunInfo.ranBy}`)).toBeVisible();
     expect(screen.getByText(mockCompleteRunInfo.commitHash.slice(0, 7))).toBeVisible();
