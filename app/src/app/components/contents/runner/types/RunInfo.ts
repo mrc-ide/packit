@@ -1,3 +1,5 @@
+import { Pageable } from "../../../../../types";
+
 export interface RunInfo {
   taskId: string;
   packetGroupName: string;
@@ -12,6 +14,11 @@ export interface RunInfo {
   parameters?: Record<string, string | number | boolean> | null;
   queuePosition?: number | null;
   ranBy: string;
+}
+export type BasicRunInfo = Omit<RunInfo, "logs" | "queuePosition" | "timeStarted" | "timeCompleted">;
+
+export interface PageableBasicRunInfo extends Pageable {
+  content: BasicRunInfo[];
 }
 
 export type Status =

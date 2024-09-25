@@ -46,7 +46,9 @@ fun RunInfo.toBasicDto() = BasicRunInfoDto(
     packetGroupName,
     enumValueOf<Status>(status),
     branch,
-    timeStarted,
     parameters,
-    user.displayName ?: user.username
+    user.displayName ?: user.username,
+    commitHash,
+    packetId,
+    timeQueued
 )

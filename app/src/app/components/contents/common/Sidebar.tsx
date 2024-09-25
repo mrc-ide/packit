@@ -9,6 +9,7 @@ interface SidebarProps {
 }
 export const Sidebar = ({ sidebarItems, children }: SidebarProps) => {
   const { pathname } = useLocation();
+
   return (
     <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-10 lg:space-y-2">
       <aside data-testid="sidebar" className="lg:w-1/6 pl-1 lg:pl-2">

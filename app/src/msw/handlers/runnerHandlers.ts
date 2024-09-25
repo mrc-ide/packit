@@ -5,7 +5,8 @@ import {
   mockGitBranches,
   mockPacketGroupsParameters,
   mockRunnerPacketGroups,
-  mockTaskId
+  mockTaskId,
+  mockTasksRunInfo
 } from "../../tests/mocks";
 
 export const basicRunnerUri = `${appConfig.apiUrl()}/runner`;
@@ -25,5 +26,8 @@ export const runnerHandlers = [
   }),
   rest.get(`${basicRunnerUri}/status/:taskId`, (req, res, ctx) => {
     return res(ctx.json(mockCompleteRunInfo));
+  }),
+  rest.get(`${basicRunnerUri}/list/status`, (req, res, ctx) => {
+    return res(ctx.json(mockTasksRunInfo));
   })
 ];

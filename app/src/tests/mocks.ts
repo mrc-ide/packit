@@ -1,6 +1,6 @@
 import { RoleWithRelationships } from "../app/components/contents/manageAccess/types/RoleWithRelationships";
 import { GitBranches } from "../app/components/contents/runner/types/GitBranches";
-import { RunInfo } from "../app/components/contents/runner/types/RunInfo";
+import { PageableBasicRunInfo, RunInfo } from "../app/components/contents/runner/types/RunInfo";
 import { Parameter, RunnerPacketGroup } from "../app/components/contents/runner/types/RunnerPacketGroup";
 import { AuthConfig } from "../app/components/providers/types/AuthConfigTypes";
 import { UserState } from "../app/components/providers/types/UserTypes";
@@ -745,4 +745,64 @@ export const mockCompleteRunInfo: RunInfo = {
   },
   queuePosition: null,
   ranBy: "Super Admin"
+};
+
+export const mockTasksRunInfo: PageableBasicRunInfo = {
+  content: [
+    {
+      taskId: "taskId1",
+      packetGroupName: "packetGroupName1",
+      status: "COMPLETE",
+      branch: "master1",
+      parameters: {
+        testParam1: 2000,
+        testParam2: false,
+        testParam3: "hello"
+      },
+      ranBy: "user1",
+      commitHash: "1e0b69e099b28d0539c3cb6abfee328987e11d7a",
+      packetId: "20240920-094300-78e4ae00",
+      timeQueued: 1726825380.115
+    },
+    {
+      taskId: "taskId2",
+      packetGroupName: "packetGroupName2",
+      status: "ERROR",
+      branch: "master2",
+      parameters: null,
+      ranBy: "user2",
+      commitHash: "2e0b69e099b28d0539c3cb6abfee328987e11d7a",
+      packetId: null,
+      timeQueued: 1726775309.6623
+    },
+    {
+      taskId: "taskId3",
+      packetGroupName: "packetGroupName3",
+      status: "PENDING",
+      branch: "master3",
+      parameters: null,
+      ranBy: "user3",
+      commitHash: "3e0b69e099b28d0539c3cb6abfee328987e11d7a",
+      packetId: null,
+      timeQueued: 1726773690.4451
+    },
+    {
+      taskId: "taskId4",
+      packetGroupName: "packetGroupName4",
+      status: "RUNNING",
+      branch: "master4",
+      parameters: null,
+      ranBy: "user4",
+      commitHash: "4e0b69e099b28d0539c3cb6abfee328987e11d7a",
+      packetId: null,
+      timeQueued: 1726734163.4371
+    }
+  ],
+  totalPages: 1,
+  totalElements: 4,
+  last: true,
+  first: true,
+  size: 50,
+  number: 0,
+  numberOfElements: 4
 };
