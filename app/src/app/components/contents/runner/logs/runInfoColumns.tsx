@@ -1,5 +1,5 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { ExternalLink, GitBranchPlus, GitCommit } from "lucide-react";
+import { ExternalLink, GitBranch, GitCommit } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import { getTimeDifferenceToDisplay } from "../../../../../lib/time";
 import { ScrollArea } from "../../../Base/ScrollArea";
@@ -73,10 +73,9 @@ export const runInfoColumns = [
       return (
         <div className="flex flex-col space-y-1">
           <div className="flex space-x-1">
-            <GitBranchPlus size={18} />
+            <GitBranch size={18} />
             <div>{branch}</div>
           </div>
-
           <div className="flex space-x-1">
             <GitCommit size={18} />
             <div>{commitHash.slice(0, 7)}</div>

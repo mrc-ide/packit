@@ -31,7 +31,7 @@ export const TaskRunSummaryBottom = ({ runInfo, createdTime, startTime, finishTi
         <div>{runInfo.commitHash.slice(0, 7)}</div>
       </div>
 
-      <div className="flex flex-wrap gap-1 max-h-64">
+      <div className="flex flex-wrap gap-1 max-h-72 overflow-auto">
         {runInfo.parameters ? (
           Object.entries(runInfo.parameters).map(([key, val]) => (
             <ParameterContainer key={key} paramKey={key} paramValue={val} />

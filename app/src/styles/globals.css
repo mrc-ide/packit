@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
  
+@layer utilities {
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  *::-webkit-scrollbar-track {
+    border-radius: 100vh;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    border-radius: 100vh;
+    background-color: hsl(var(--scroll-bar));
+    padding: 1px;
+  }
+  *::-webkit-scrollbar-corner { 
+    background-color: hsl(var(--background));
+   }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -33,6 +53,8 @@
     --ring: 222.2 84% 4.9%;
  
     --radius: 0.5rem;
+
+    --scroll-bar: 215 20.2% 80%;
   }
  
   .dark {
@@ -63,6 +85,8 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
+
+    --scroll-bar: 215 20.2% 30%;
   }
 }
  
@@ -73,6 +97,7 @@
   body {
     @apply bg-background text-foreground;
   }
+  
 }
 
 iframe {
