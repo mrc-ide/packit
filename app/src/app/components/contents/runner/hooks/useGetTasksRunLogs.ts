@@ -11,7 +11,7 @@ export const useGetTasksRunLogs = (pageNumber: number, pageSize: number, filterP
   );
 
   return {
-    runInfo: data,
+    runInfos: data,
     isLoading,
     error,
     mutate

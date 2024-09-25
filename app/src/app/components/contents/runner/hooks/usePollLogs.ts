@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { Status } from "../types/RunInfo";
 import { KeyedMutator } from "swr";
+import { RunInfo } from "../types/RunInfo";
 
-export const usePollLogs = (mutate: KeyedMutator<any>, status?: Status, intervalDuration = 2000) => {
+export const usePollLogs = (mutate: KeyedMutator<any>, runInfos: RunInfo[], intervalDuration = 2000) => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const [, setRenderTrigger] = useState(0); // State variable to trigger re-render on interval
 
   useEffect(() => {
-    if (!status || status === "PENDING" || status === "RUNNING") {
+    if (runInfos.some((runInfo) => runInfo.status === "RUNNING" || runInfo.status === "PENDING")) {
       intervalRef.current = setInterval(() => {
         mutate();
         setRenderTrigger((prev) => prev + 1);
@@ -19,5 +19,5 @@ export const usePollLogs = (mutate: KeyedMutator<any>, status?: Status, interval
         clearInterval(intervalRef.current);
       }
     };
-  }, [mutate, status]);
+  }, [mutate, runInfos]);
 };

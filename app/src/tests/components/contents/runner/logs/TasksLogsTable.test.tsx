@@ -97,15 +97,15 @@ describe("TasksLogsTable component", () => {
     });
   });
 
-  it("should poll api every 3 seconds & update created at time", async () => {
+  it("should poll api every 3 seconds & update created at time if any status is running or pending", async () => {
     let numApiCalled = 0;
     const timeStarted = Date.now() / 1000;
-    const firstRunInfoClone = { ...mockTasksRunInfo.content[0], timeQueued: timeStarted };
+    const pendingRunInfo = { ...mockTasksRunInfo.content[2], timeQueued: timeStarted };
 
     server.use(
       rest.get(`${basicRunnerUri}/list/status`, (req, res, ctx) => {
         numApiCalled++;
-        return res(ctx.json({ ...mockTasksRunInfo, content: [firstRunInfoClone] }));
+        return res(ctx.json({ ...mockTasksRunInfo, content: [mockTasksRunInfo.content[0], pendingRunInfo] }));
       })
     );
     jest.useFakeTimers();
@@ -123,7 +123,29 @@ describe("TasksLogsTable component", () => {
     jest.advanceTimersByTime(3000);
     await waitFor(() => {
       expect(screen.getByText(/created 7 seconds ago/i)).toBeVisible();
+      expect(numApiCalled).toBe(3);
     });
-    expect(numApiCalled).toBe(3);
+  });
+
+  it("should not poll api if all task are completed", async () => {
+    let numApiCalled = 0;
+    const timeStarted = Date.now() / 1000;
+    const completedRunInfo = { ...mockTasksRunInfo.content[0], timeQueued: timeStarted };
+
+    server.use(
+      rest.get(`${basicRunnerUri}/list/status`, (req, res, ctx) => {
+        numApiCalled++;
+        return res(ctx.json({ ...mockTasksRunInfo, content: [completedRunInfo] }));
+      })
+    );
+    jest.useFakeTimers();
+    renderComponent();
+
+    jest.advanceTimersByTime(3000);
+    jest.advanceTimersByTime(3000);
+
+    await waitFor(() => {
+      expect(numApiCalled).toBe(1);
+    });
   });
 });
