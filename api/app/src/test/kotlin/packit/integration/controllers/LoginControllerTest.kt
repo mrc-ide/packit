@@ -157,10 +157,10 @@ class LoginControllerTestBasic : IntegrationTest()
 @MockServerSettings(ports = [8787])
 @TestPropertySource(
     properties = [
-    "auth.external-jwt.audience=packit",
-    "auth.external-jwt.policies[0].jwk-set-uri=http://127.0.0.1:8787/jwks.json",
-    "auth.external-jwt.policies[0].issuer=issuer",
-    "auth.external-jwt.policies[0].granted-permissions=outpack.read,outpack.write",
+    "auth.service.audience=packit",
+    "auth.service.policies[0].jwk-set-uri=http://127.0.0.1:8787/jwks.json",
+    "auth.service.policies[0].issuer=issuer",
+    "auth.service.policies[0].granted-permissions=outpack.read,outpack.write",
 ]
 )
 class LoginControllerTestJwt(val jwksServer: ClientAndServer) : IntegrationTest()
