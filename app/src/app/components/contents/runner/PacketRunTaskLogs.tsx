@@ -3,30 +3,14 @@ import { ApiError } from "../../../../lib/errors";
 import { Skeleton } from "../../Base/Skeleton";
 import { ErrorComponent } from "../common/ErrorComponent";
 import { useGetTaskRunLogs } from "./hooks/useGetTaskRunLogs";
+import { usePollLogs } from "./hooks/usePollLogs";
 import { TaskRunLogs } from "./logs/TaskRunLogs";
 import { TaskRunSummary } from "./logs/TaskRunSummary";
-import { useEffect, useRef, useState } from "react";
 
 export const PacketRunTaskLogs = () => {
   const { taskId } = useParams();
   const { runInfo, error, isLoading, mutate } = useGetTaskRunLogs(taskId);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const [, setRenderTrigger] = useState(0); // State variable to trigger re-render on interval
-
-  useEffect(() => {
-    if (runInfo?.status === "PENDING" || runInfo?.status === "RUNNING") {
-      intervalRef.current = setInterval(() => {
-        mutate();
-        setRenderTrigger((prev) => prev + 1);
-      }, 2000);
-    }
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [mutate, runInfo?.status]);
+  usePollLogs(mutate, runInfo ? [runInfo] : []);
 
   if (error && !runInfo) {
     if (error instanceof ApiError) {

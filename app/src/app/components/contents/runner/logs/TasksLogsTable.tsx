@@ -4,6 +4,7 @@ import { DataTable } from "../../common/DataTable";
 import { ErrorComponent } from "../../common/ErrorComponent";
 import { Pagination } from "../../common/Pagination";
 import { useGetTasksRunLogs } from "../hooks/useGetTasksRunLogs";
+import { usePollLogs } from "../hooks/usePollLogs";
 import { runInfoColumns } from "./runInfoColumns";
 
 interface TasksLogsTableProps {
@@ -13,11 +14,12 @@ interface TasksLogsTableProps {
   filterPacketGroupName: string;
 }
 export const TasksLogsTable = ({ pageNumber, pageSize, setPageNumber, filterPacketGroupName }: TasksLogsTableProps) => {
-  const { runInfo, error, isLoading } = useGetTasksRunLogs(pageNumber, pageSize, filterPacketGroupName);
+  const { runInfos, error, isLoading, mutate } = useGetTasksRunLogs(pageNumber, pageSize, filterPacketGroupName);
+  usePollLogs(mutate, runInfos ? runInfos.content : [], 3000);
 
-  if (error && !runInfo) return <ErrorComponent message="Error fetching tasks logs" error={error} />;
+  if (error && !runInfos) return <ErrorComponent message="Error fetching tasks logs" error={error} />;
 
-  if (isLoading && !runInfo)
+  if (isLoading && !runInfos)
     return (
       <ul className="flex flex-col border rounded-md">
         {[...Array(2)].map((_val, index) => (
@@ -34,15 +36,15 @@ export const TasksLogsTable = ({ pageNumber, pageSize, setPageNumber, filterPack
 
   return (
     <>
-      {runInfo && (
+      {runInfos && (
         <div className="space-y-4">
-          <DataTable columns={runInfoColumns} data={runInfo.content} />
+          <DataTable columns={runInfoColumns} data={runInfos.content} />
           <div className="flex items-center justify-center">
             <Pagination
               currentPageNumber={pageNumber}
-              totalPages={runInfo.totalPages}
-              isFirstPage={runInfo.first}
-              isLastPage={runInfo.last}
+              totalPages={runInfos.totalPages}
+              isFirstPage={runInfos.first}
+              isLastPage={runInfos.last}
               setPageNumber={setPageNumber}
             />
           </div>

@@ -6,6 +6,7 @@ import { TasksLogsTable } from "../../../../../app/components/contents/runner/lo
 import { PAGE_SIZE } from "../../../../../lib/constants";
 import { server } from "../../../../../msw/server";
 import { mockTasksRunInfo } from "../../../../mocks";
+import { basicRunnerUri } from "../../../../../msw/handlers/runnerHandlers";
 
 const renderComponent = () =>
   render(
@@ -93,6 +94,58 @@ describe("TasksLogsTable component", () => {
         expect(screen.getByText(`${key}:`)).toBeVisible();
         expect(screen.getByText(`${val}`)).toBeVisible();
       });
+    });
+  });
+
+  it("should poll api every 3 seconds & update created at time if any status is running or pending", async () => {
+    let numApiCalled = 0;
+    const timeStarted = Date.now() / 1000;
+    const pendingRunInfo = { ...mockTasksRunInfo.content[2], timeQueued: timeStarted };
+
+    server.use(
+      rest.get(`${basicRunnerUri}/list/status`, (req, res, ctx) => {
+        numApiCalled++;
+        return res(ctx.json({ ...mockTasksRunInfo, content: [mockTasksRunInfo.content[0], pendingRunInfo] }));
+      })
+    );
+    jest.useFakeTimers();
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText(/created 1 seconds ago/i)).toBeVisible();
+    });
+
+    jest.advanceTimersByTime(3000);
+    await waitFor(() => {
+      expect(screen.getByText(/created 4 seconds ago/i)).toBeVisible();
+    });
+
+    jest.advanceTimersByTime(3000);
+    await waitFor(() => {
+      expect(screen.getByText(/created 7 seconds ago/i)).toBeVisible();
+      expect(numApiCalled).toBe(3);
+    });
+  });
+
+  it("should not poll api if all task are completed", async () => {
+    let numApiCalled = 0;
+    const timeStarted = Date.now() / 1000;
+    const completedRunInfo = { ...mockTasksRunInfo.content[0], timeQueued: timeStarted };
+
+    server.use(
+      rest.get(`${basicRunnerUri}/list/status`, (req, res, ctx) => {
+        numApiCalled++;
+        return res(ctx.json({ ...mockTasksRunInfo, content: [completedRunInfo] }));
+      })
+    );
+    jest.useFakeTimers();
+    renderComponent();
+
+    jest.advanceTimersByTime(3000);
+    jest.advanceTimersByTime(3000);
+
+    await waitFor(() => {
+      expect(numApiCalled).toBe(1);
     });
   });
 });
