@@ -163,7 +163,7 @@ class LoginControllerTestBasic : IntegrationTest()
     "auth.service.policies[0].granted-permissions=outpack.read,outpack.write",
 ]
 )
-class LoginControllerTestJwt(val jwksServer: ClientAndServer) : IntegrationTest()
+class LoginControllerTestService(val jwksServer: ClientAndServer) : IntegrationTest()
 {
     val trustedIssuer = TestJwtIssuer()
 
@@ -186,7 +186,7 @@ class LoginControllerTestJwt(val jwksServer: ClientAndServer) : IntegrationTest(
     @Test
     fun `can get expected audience`()
     {
-        val result = restTemplate.getForEntity("/auth/login/jwt/audience", JsonNode::class.java)
+        val result = restTemplate.getForEntity("/auth/login/service/audience", JsonNode::class.java)
         assertSuccess(result)
         assertEquals(result.body?.required("audience")?.textValue(), "packit")
     }
@@ -199,7 +199,7 @@ class LoginControllerTestJwt(val jwksServer: ClientAndServer) : IntegrationTest(
             builder.audience(listOf("packit"))
         }
         val result = restTemplate.postForEntity(
-            "/auth/login/jwt",
+            "/auth/login/service",
             LoginWithToken(externalToken),
             JsonNode::class.java,
         )
@@ -218,7 +218,11 @@ class LoginControllerTestJwt(val jwksServer: ClientAndServer) : IntegrationTest(
             builder.issuer("issuer")
             builder.audience(listOf("packit"))
         }
-        val result = restTemplate.postForEntity("/auth/login/jwt", LoginWithToken(externalToken), JsonNode::class.java)
+        val result = restTemplate.postForEntity(
+            "/auth/login/service",
+            LoginWithToken(externalToken),
+            JsonNode::class.java
+        )
         assertUnauthorized(result)
     }
 
@@ -229,7 +233,7 @@ class LoginControllerTestJwt(val jwksServer: ClientAndServer) : IntegrationTest(
             builder.issuer("issuer")
             builder.audience(listOf("not-packit"))
         }
-        val result = restTemplate.postForEntity("/auth/login/jwt", LoginWithToken(token), String::class.java)
+        val result = restTemplate.postForEntity("/auth/login/service", LoginWithToken(token), String::class.java)
         assertUnauthorized(result)
     }
 }
