@@ -11,7 +11,7 @@ import packit.model.dto.LoginWithToken
 import packit.model.dto.UpdatePassword
 import packit.service.BasicLoginService
 import packit.service.GithubAPILoginService
-import packit.service.JwtLoginService
+import packit.service.ServiceLoginService
 import packit.service.UserService
 
 @RestController
@@ -19,7 +19,7 @@ import packit.service.UserService
 class LoginController(
     val gitApiLoginService: GithubAPILoginService,
     val basicLoginService: BasicLoginService,
-    val jwtLoginService: JwtLoginService,
+    val serviceLoginService: ServiceLoginService,
     val config: AppConfig,
     val userService: UserService,
 )
@@ -52,28 +52,28 @@ class LoginController(
         return ResponseEntity.ok(token)
     }
 
-    @PostMapping("/login/jwt")
+    @PostMapping("/login/service")
     @ResponseBody
     fun loginJWT(
         @RequestBody @Validated user: LoginWithToken,
     ): ResponseEntity<Map<String, String>>
     {
-        if (!jwtLoginService.isEnabled()) {
-            throw PackitException("jwtLoginDisabled", HttpStatus.FORBIDDEN)
+        if (!serviceLoginService.isEnabled()) {
+            throw PackitException("serviceLoginDisabled", HttpStatus.FORBIDDEN)
         }
 
-        val token = jwtLoginService.authenticateAndIssueToken(user)
+        val token = serviceLoginService.authenticateAndIssueToken(user)
         return ResponseEntity.ok(token)
     }
 
-    @GetMapping("/login/jwt/audience")
+    @GetMapping("/login/service/audience")
     @ResponseBody
-    fun jwtAudience(): ResponseEntity<Map<String, String>>
+    fun serviceAudience(): ResponseEntity<Map<String, String>>
     {
-        if (!jwtLoginService.isEnabled()) {
-            throw PackitException("jwtLoginDisabled", HttpStatus.FORBIDDEN)
+        if (!serviceLoginService.isEnabled()) {
+            throw PackitException("serviceLoginDisabled", HttpStatus.FORBIDDEN)
         } else {
-            return ResponseEntity.ok(mapOf("audience" to jwtLoginService.audience!!))
+            return ResponseEntity.ok(mapOf("audience" to serviceLoginService.audience!!))
         }
     }
 

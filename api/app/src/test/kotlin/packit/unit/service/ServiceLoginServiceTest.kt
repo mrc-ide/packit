@@ -22,14 +22,14 @@ import org.springframework.test.web.client.response.DefaultResponseCreator.*
 import org.springframework.test.web.client.response.MockRestResponseCreators.*
 import org.springframework.web.client.RestTemplate
 import packit.AppConfig
-import packit.config.JwtLoginConfig
-import packit.config.JwtPolicy
+import packit.config.ServiceLoginConfig
+import packit.config.ServiceLoginPolicy
 import packit.exceptions.PackitException
 import packit.model.User
 import packit.model.dto.LoginWithToken
 import packit.security.profile.UserPrincipal
 import packit.security.provider.TokenProvider
-import packit.service.JwtLoginService
+import packit.service.ServiceLoginService
 import packit.service.UserService
 import packit.testing.TestJwtIssuer
 import java.time.Duration
@@ -38,7 +38,7 @@ import java.time.temporal.ChronoUnit
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class JwtLoginServiceTest
+class ServiceLoginServiceTest
 {
     private val restTemplate = RestTemplate()
     private val server = MockRestServiceServer.bindTo(restTemplate).ignoreExpectOrder(true).build()
@@ -84,8 +84,8 @@ class JwtLoginServiceTest
         return issuer
     }
 
-    fun exchangeTokens(config: JwtLoginConfig, token: String): Jwt {
-        val sut = JwtLoginService(TokenProvider(mockAppConfig), mockUserService, config, restTemplate)
+    fun exchangeTokens(config: ServiceLoginConfig, token: String): Jwt {
+        val sut = ServiceLoginService(TokenProvider(mockAppConfig), mockUserService, config, restTemplate)
         val result = sut.authenticateAndIssueToken(LoginWithToken(token))
 
         val processor = object : DefaultJWTProcessor<SecurityContext>() {
@@ -96,7 +96,7 @@ class JwtLoginServiceTest
         return NimbusJwtDecoder(processor).decode(result["token"]!!)
     }
 
-    fun exchangeTokens(config: JwtLoginConfig, f: (JwtClaimsSet.Builder) -> Unit): Jwt {
+    fun exchangeTokens(config: ServiceLoginConfig, f: (JwtClaimsSet.Builder) -> Unit): Jwt {
         return exchangeTokens(config, defaultIssuer.issue(f))
     }
 
@@ -113,9 +113,9 @@ class JwtLoginServiceTest
     @Test
     fun `can exchange tokens`()
     {
-        val config = JwtLoginConfig(
+        val config = ServiceLoginConfig(
             audience = "packit",
-            policies = listOf(JwtPolicy(jwkSetURI = "http://issuer/jwks.json", issuer = "issuer"))
+            policies = listOf(ServiceLoginPolicy(jwkSetURI = "http://issuer/jwks.json", issuer = "issuer"))
         )
 
         exchangeTokens(config, { builder ->
@@ -188,10 +188,10 @@ class JwtLoginServiceTest
         )
 
         for (entry in testCases) {
-            val config = JwtLoginConfig(
+            val config = ServiceLoginConfig(
                 audience = requiredAudience,
                 policies = listOf(
-                    JwtPolicy(
+                    ServiceLoginPolicy(
                     jwkSetURI = "http://issuer/jwks.json",
                     issuer = requiredIssuer,
                     requiredClaims = entry.requiredClaims,
@@ -244,10 +244,10 @@ class JwtLoginServiceTest
         )
 
         for (entry in testCases) {
-            val config = JwtLoginConfig(
+            val config = ServiceLoginConfig(
                 audience = "packit",
                 policies = listOf(
-                    JwtPolicy(
+                    ServiceLoginPolicy(
                     jwkSetURI = "http://issuer/jwks.json",
                     issuer = "issuer",
                     grantedPermissions = entry.policyPermissions,
@@ -303,10 +303,10 @@ class JwtLoginServiceTest
         )
 
         for (entry in testCases) {
-            val config = JwtLoginConfig(
+            val config = ServiceLoginConfig(
                 audience = "packit",
                 policies = listOf(
-                    JwtPolicy(
+                    ServiceLoginPolicy(
                     jwkSetURI = "http://issuer/jwks.json",
                     issuer = "issuer",
                     tokenDuration = entry.policyDuration
@@ -334,16 +334,16 @@ class JwtLoginServiceTest
     @Test
     fun `can define multiple policies for the same issuer`()
     {
-        val config = JwtLoginConfig(
+        val config = ServiceLoginConfig(
             audience = "packit",
             policies = listOf(
-                JwtPolicy(
+                ServiceLoginPolicy(
                     jwkSetURI = "http://issuer/jwks.json",
                     issuer = "issuer",
                     requiredClaims = mapOf("name" to "read-only"),
                     grantedPermissions = listOf("outpack.read"),
                 ),
-                JwtPolicy(
+                ServiceLoginPolicy(
                     jwkSetURI = "http://issuer/jwks.json",
                     issuer = "issuer",
                     requiredClaims = mapOf("name" to "read-write"),
@@ -373,15 +373,15 @@ class JwtLoginServiceTest
         val issuer1 = createIssuer("http://issuer1/jwks.json")
         val issuer2 = createIssuer("http://issuer2/jwks.json")
 
-        val config = JwtLoginConfig(
+        val config = ServiceLoginConfig(
             audience = "packit",
             policies = listOf(
-                JwtPolicy(
+                ServiceLoginPolicy(
                     jwkSetURI = "http://issuer1/jwks.json",
                     issuer = "issuer1",
                     grantedPermissions = listOf("outpack.read"),
                 ),
-                JwtPolicy(
+                ServiceLoginPolicy(
                     jwkSetURI = "http://issuer2/jwks.json",
                     issuer = "issuer2",
                     grantedPermissions = listOf("outpack.read", "outpack.write"),
@@ -413,10 +413,10 @@ class JwtLoginServiceTest
     {
         val untrustedIssuer = createIssuer("http://issuer/jwks.json")
 
-        val config = JwtLoginConfig(
+        val config = ServiceLoginConfig(
             audience = "packit",
             policies = listOf(
-                JwtPolicy(
+                ServiceLoginPolicy(
                     jwkSetURI = "http://issuer/jwks.json",
                     issuer = "issuer",
                     grantedPermissions = listOf("outpack.read"),

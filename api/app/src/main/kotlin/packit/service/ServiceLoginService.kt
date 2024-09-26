@@ -13,8 +13,8 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
 import org.springframework.web.client.RestTemplate
-import packit.config.JwtLoginConfig
-import packit.config.JwtPolicy
+import packit.config.ServiceLoginConfig
+import packit.config.ServiceLoginPolicy
 import packit.exceptions.PackitException
 import packit.model.dto.LoginWithToken
 import packit.security.provider.JwtIssuer
@@ -22,19 +22,19 @@ import java.util.function.Predicate
 
 data class TokenPolicy(
   val decoder: NimbusJwtDecoder,
-  val config: JwtPolicy,
+  val config: ServiceLoginPolicy,
 )
 
 @Component
-class JwtLoginService(
+class ServiceLoginService(
   val jwtIssuer: JwtIssuer,
   val userService: UserService,
-  val jwtLoginConfig: JwtLoginConfig,
+  val serviceLoginConfig: ServiceLoginConfig,
   val restOperations: RestOperations = RestTemplate(),
 ) {
-  lateinit var policies: List<TokenPolicy>
+  private lateinit var policies: List<TokenPolicy>
 
-  val audience: String? = jwtLoginConfig.audience
+  val audience: String? = serviceLoginConfig.audience
   fun isEnabled(): Boolean = audience != null && !audience!!.isEmpty()
 
   init {
@@ -42,7 +42,7 @@ class JwtLoginService(
       val audValidator = JwtClaimValidator<List<String>>(
         IdTokenClaimNames.AUD, { claimValue -> claimValue != null && claimValue.contains(audience) }
       )
-      policies = jwtLoginConfig.policies.map { policy ->
+      policies = serviceLoginConfig.policies.map { policy ->
         val validators = mutableListOf(
           JwtTimestampValidator(),
           JwtIssuerValidator(policy.issuer),
@@ -65,7 +65,7 @@ class JwtLoginService(
     }
   }
 
-  private fun issueToken(verifiedToken: Jwt, policy: JwtPolicy): String {
+  private fun issueToken(verifiedToken: Jwt, policy: ServiceLoginPolicy): String {
       val user = userService.getServiceUser()
       val userPrincipal = userService.getUserPrincipal(user)
       val tokenBuilder = jwtIssuer.builder(userPrincipal)
@@ -99,6 +99,6 @@ class JwtLoginService(
 
   companion object
   {
-    private val log = LoggerFactory.getLogger(JwtLoginService::class.java)
+    private val log = LoggerFactory.getLogger(ServiceLoginService::class.java)
   }
 }

@@ -5,7 +5,7 @@ import org.springframework.boot.convert.DurationUnit
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 
-data class JwtPolicy(
+data class ServiceLoginPolicy(
   val jwkSetURI: String,
   val issuer: String,
   val requiredClaims: Map<String, String> = mapOf(),
@@ -15,8 +15,8 @@ data class JwtPolicy(
   val tokenDuration: Duration? = null,
 )
 
-@ConfigurationProperties(prefix = "auth.external-jwt")
-data class JwtLoginConfig(
+@ConfigurationProperties(prefix = "auth.service")
+data class ServiceLoginConfig(
   val audience: String?,
-  val policies: List<JwtPolicy> = listOf()
+  val policies: List<ServiceLoginPolicy> = listOf()
 )
