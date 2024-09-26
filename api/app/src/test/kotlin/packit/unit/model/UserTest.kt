@@ -7,6 +7,8 @@ import packit.model.toDto
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class UserTest
 {
@@ -37,5 +39,15 @@ class UserTest
         assertEquals(user.displayName, userDto.displayName)
         assertEquals(user.email, userDto.email)
         assertEquals(user.id, userDto.id)
+    }
+
+    @Test
+    fun `isServiceUser works`()
+    {
+        val serviceUser = User("SERVICE", disabled = false, userSource = "service", displayName = null)
+        val basicUser = User("user", disabled = false, userSource = "basic", displayName = null)
+
+        assertTrue(serviceUser.isServiceUser())
+        assertFalse(basicUser.isServiceUser())
     }
 }

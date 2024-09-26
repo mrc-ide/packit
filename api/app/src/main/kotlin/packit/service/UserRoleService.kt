@@ -25,6 +25,10 @@ class BaseUserRoleService(
         val user = userService.getByUsername(username)
             ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
 
+        if (user.isServiceUser()) {
+            throw PackitException("cannotModifyServiceUser", HttpStatus.BAD_REQUEST)
+        }
+
         val rolesToUpdate = getRolesForUpdate(updateUserRoles.roleNamesToAdd + updateUserRoles.roleNamesToRemove)
         addRolesToUser(user, rolesToUpdate.filter { it.name in updateUserRoles.roleNamesToAdd })
         removeRolesFromUser(user, rolesToUpdate.filter { it.name in updateUserRoles.roleNamesToRemove })
@@ -40,13 +44,18 @@ class BaseUserRoleService(
         {
             throw PackitException("cannotUpdateUsernameRoles", HttpStatus.BAD_REQUEST)
         }
+
         val updateUsers =
             userService.getUsersByUsernames(usersToUpdate.usernamesToAdd + usersToUpdate.usernamesToRemove)
+
+        if (updateUsers.any { it.isServiceUser() }) {
+            throw PackitException("cannotModifyServiceUser", HttpStatus.BAD_REQUEST)
+        }
 
         addUsersToRole(role, updateUsers.filter { it.username in usersToUpdate.usernamesToAdd })
         removeUsersFromRole(role, updateUsers.filter { it.username in usersToUpdate.usernamesToRemove })
 
-//        have to update users to save change as it is owner of many-to-many relationship
+        // have to update users to save change as it is owner of many-to-many relationship
         userService.saveUsers(updateUsers)
         return role
     }

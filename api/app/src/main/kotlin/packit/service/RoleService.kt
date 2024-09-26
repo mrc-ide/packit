@@ -19,10 +19,10 @@ import packit.repository.RoleRepository
 
 interface RoleService
 {
-    fun getUsernameRole(username: String): Role
     fun getAdminRole(): Role
     fun getGrantedAuthorities(roles: List<Role>): MutableSet<GrantedAuthority>
     fun createRole(createRole: CreateRole): Role
+    fun createUsernameRole(username: String): Role
     fun deleteRole(roleName: String)
     fun deleteUsernameRole(username: String)
     fun getRoleNames(): List<String>
@@ -43,17 +43,6 @@ class BaseRoleService(
     private val rolePermissionService: RolePermissionService,
 ) : RoleService
 {
-    override fun getUsernameRole(username: String): Role
-    {
-        val userRole = roleRepository.findByName(username)
-
-        if (userRole != null)
-        {
-            return userRole
-        }
-        return roleRepository.save(Role(name = username, isUsername = true))
-    }
-
     override fun getAdminRole(): Role
     {
         return roleRepository.findByName("ADMIN")
@@ -65,6 +54,16 @@ class BaseRoleService(
         val permissions = permissionService.checkMatchingPermissions(createRole.permissionNames)
 
         return saveRole(createRole.name, permissions)
+    }
+
+    override fun createUsernameRole(username: String): Role
+    {
+        val userRole = roleRepository.findByName(username)
+        if (userRole != null)
+        {
+            throw PackitException("roleAlreadyExists", HttpStatus.BAD_REQUEST)
+        }
+        return roleRepository.save(Role(name = username, isUsername = true))
     }
 
     override fun deleteRole(roleName: String)

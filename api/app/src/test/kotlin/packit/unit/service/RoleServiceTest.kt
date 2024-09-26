@@ -41,23 +41,23 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getUsernameRole returns existing role`()
+    fun `createUsernameRole throws exception if role exists`()
     {
-        val role = Role(name = "username")
+        val role = Role(name = "username", isUsername = true)
         whenever(roleRepository.findByName("username")).thenReturn(role)
 
-        val result = roleService.getUsernameRole("username")
-
-        assertEquals(role, result)
+        assertThrows(PackitException::class.java) {
+            roleService.createUsernameRole("username")
+        }
     }
 
     @Test
-    fun `getUsernameRole creates new role with is_username flag if not exists`()
+    fun `createUsernameRole creates new role with is_username flag`()
     {
         whenever(roleRepository.findByName("username")).thenReturn(null)
         whenever(roleRepository.save(any<Role>())).thenAnswer { it.getArgument(0) }
 
-        val result = roleService.getUsernameRole("username")
+        val result = roleService.createUsernameRole("username")
 
         assertEquals("username", result.name)
         assertEquals(true, result.isUsername)

@@ -33,7 +33,7 @@ class BasicUserDetailsServiceTest
     @Test
     fun `loadUserByUsername returns correct UserDetails for valid username`()
     {
-        whenever(mockUserService.getUserForLogin(mockUser.username)).thenReturn(
+        whenever(mockUserService.getUserForBasicLogin(mockUser.username)).thenReturn(
             mockUser
         )
         val userDetails: UserDetails = service.loadUserByUsername(mockUser.username)

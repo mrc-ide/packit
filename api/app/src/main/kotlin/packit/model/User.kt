@@ -28,7 +28,9 @@ class User(
     val id: UUID? = null,
     @OneToMany(mappedBy = "user")
     var runInfos: MutableList<RunInfo> = mutableListOf()
-)
+){
+    fun isServiceUser(): Boolean = userSource == "service"
+}
 
 fun User.toBasicDto() = BasicUserDto(username, id!!)
 
