@@ -58,7 +58,7 @@ class LoginController(
         @RequestBody @Validated user: LoginWithToken,
     ): ResponseEntity<Map<String, String>>
     {
-        if (jwtLoginService.audience == null) {
+        if (!jwtLoginService.isEnabled()) {
             throw PackitException("jwtLoginDisabled", HttpStatus.FORBIDDEN)
         }
 
@@ -70,7 +70,7 @@ class LoginController(
     @ResponseBody
     fun jwtAudience(): ResponseEntity<Map<String, String>>
     {
-        if (jwtLoginService.audience == null) {
+        if (!jwtLoginService.isEnabled()) {
             throw PackitException("jwtLoginDisabled", HttpStatus.FORBIDDEN)
         } else {
             return ResponseEntity.ok(mapOf("audience" to jwtLoginService.audience!!))

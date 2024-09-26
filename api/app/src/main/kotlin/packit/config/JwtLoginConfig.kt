@@ -18,5 +18,5 @@ data class JwtPolicy(
 @ConfigurationProperties(prefix = "auth.external-jwt")
 data class JwtLoginConfig(
   val audience: String?,
-  val policy: List<JwtPolicy> = listOf()
+  val policies: List<JwtPolicy> = listOf()
 )

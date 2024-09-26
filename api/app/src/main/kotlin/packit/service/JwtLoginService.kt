@@ -35,13 +35,14 @@ class JwtLoginService(
   lateinit var policies: List<TokenPolicy>
 
   val audience: String? = jwtLoginConfig.audience
+  fun isEnabled(): Boolean = audience != null && !audience!!.isEmpty()
 
   init {
     if (audience != null) {
       val audValidator = JwtClaimValidator<List<String>>(
         IdTokenClaimNames.AUD, { claimValue -> claimValue != null && claimValue.contains(audience) }
       )
-      policies = jwtLoginConfig.policy.map { policy ->
+      policies = jwtLoginConfig.policies.map { policy ->
         val validators = mutableListOf(
           JwtTimestampValidator(),
           JwtIssuerValidator(policy.issuer),

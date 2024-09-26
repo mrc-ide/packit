@@ -115,7 +115,7 @@ class JwtLoginServiceTest
     {
         val config = JwtLoginConfig(
             audience = "packit",
-            policy = listOf(JwtPolicy(jwkSetURI = "http://issuer/jwks.json", issuer = "issuer"))
+            policies = listOf(JwtPolicy(jwkSetURI = "http://issuer/jwks.json", issuer = "issuer"))
         )
 
         exchangeTokens(config, { builder ->
@@ -190,7 +190,7 @@ class JwtLoginServiceTest
         for (entry in testCases) {
             val config = JwtLoginConfig(
                 audience = requiredAudience,
-                policy = listOf(
+                policies = listOf(
                     JwtPolicy(
                     jwkSetURI = "http://issuer/jwks.json",
                     issuer = requiredIssuer,
@@ -246,7 +246,7 @@ class JwtLoginServiceTest
         for (entry in testCases) {
             val config = JwtLoginConfig(
                 audience = "packit",
-                policy = listOf(
+                policies = listOf(
                     JwtPolicy(
                     jwkSetURI = "http://issuer/jwks.json",
                     issuer = "issuer",
@@ -305,7 +305,7 @@ class JwtLoginServiceTest
         for (entry in testCases) {
             val config = JwtLoginConfig(
                 audience = "packit",
-                policy = listOf(
+                policies = listOf(
                     JwtPolicy(
                     jwkSetURI = "http://issuer/jwks.json",
                     issuer = "issuer",
@@ -336,7 +336,7 @@ class JwtLoginServiceTest
     {
         val config = JwtLoginConfig(
             audience = "packit",
-            policy = listOf(
+            policies = listOf(
                 JwtPolicy(
                     jwkSetURI = "http://issuer/jwks.json",
                     issuer = "issuer",
@@ -375,7 +375,7 @@ class JwtLoginServiceTest
 
         val config = JwtLoginConfig(
             audience = "packit",
-            policy = listOf(
+            policies = listOf(
                 JwtPolicy(
                     jwkSetURI = "http://issuer1/jwks.json",
                     issuer = "issuer1",
@@ -415,7 +415,7 @@ class JwtLoginServiceTest
 
         val config = JwtLoginConfig(
             audience = "packit",
-            policy = listOf(
+            policies = listOf(
                 JwtPolicy(
                     jwkSetURI = "http://issuer/jwks.json",
                     issuer = "issuer",
