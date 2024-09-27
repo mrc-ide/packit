@@ -12,7 +12,6 @@ import packit.security.profile.UserPrincipal
 import packit.security.provider.TokenDecoder
 import packit.security.provider.TokenProvider
 import java.time.Duration
-import java.time.temporal.ChronoUnit
 import java.util.*
 import kotlin.test.assertEquals
 
@@ -46,16 +45,14 @@ class TokenDecoderTest
 
         val result = TokenDecoder(mockAppConfig).decode(jwtToken)
 
-        val expectedDatetime = result.getClaim("datetime").asDate().toInstant()
-
-        val expectedExpiresAt = Date.from(expectedDatetime.plus(Duration.of(1, ChronoUnit.DAYS)))
+        val expectedExpiresAt = result.issuedAtAsInstant.plus(Duration.ofDays(1))
 
         assertEquals(listOf("packit"), result.audience)
         assertEquals("packit-api", result.issuer)
         assertEquals("Fake Name", result.getClaim("displayName").asString())
         assertEquals("fakeName", result.getClaim("userName").asString())
         assertEquals(emptyList(), result.getClaim("au").asList(String::class.java))
-        assertEquals(expectedExpiresAt, result.expiresAt)
+        assertEquals(expectedExpiresAt, result.expiresAtAsInstant)
     }
 
     @Test

@@ -249,7 +249,7 @@ class UserServiceTest
 
         val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
 
-        val result = service.createBasicUser(
+        service.createBasicUser(
             CreateBasicUser(
             email = "email",
             password = "password",

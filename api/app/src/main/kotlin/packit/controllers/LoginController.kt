@@ -11,6 +11,7 @@ import packit.model.dto.LoginWithToken
 import packit.model.dto.UpdatePassword
 import packit.service.BasicLoginService
 import packit.service.GithubAPILoginService
+import packit.service.ServiceLoginService
 import packit.service.UserService
 
 @RestController
@@ -18,6 +19,7 @@ import packit.service.UserService
 class LoginController(
     val gitApiLoginService: GithubAPILoginService,
     val basicLoginService: BasicLoginService,
+    val serviceLoginService: ServiceLoginService,
     val config: AppConfig,
     val userService: UserService,
 )
@@ -48,6 +50,31 @@ class LoginController(
         }
         val token = basicLoginService.authenticateAndIssueToken(user)
         return ResponseEntity.ok(token)
+    }
+
+    @PostMapping("/login/service")
+    @ResponseBody
+    fun loginService(
+        @RequestBody @Validated user: LoginWithToken,
+    ): ResponseEntity<Map<String, String>>
+    {
+        if (!serviceLoginService.isEnabled()) {
+            throw PackitException("serviceLoginDisabled", HttpStatus.FORBIDDEN)
+        }
+
+        val token = serviceLoginService.authenticateAndIssueToken(user)
+        return ResponseEntity.ok(token)
+    }
+
+    @GetMapping("/login/service/audience")
+    @ResponseBody
+    fun serviceAudience(): ResponseEntity<Map<String, String>>
+    {
+        if (!serviceLoginService.isEnabled()) {
+            throw PackitException("serviceLoginDisabled", HttpStatus.FORBIDDEN)
+        } else {
+            return ResponseEntity.ok(mapOf("audience" to serviceLoginService.audience!!))
+        }
     }
 
     @GetMapping("/config")

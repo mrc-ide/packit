@@ -18,7 +18,6 @@ import packit.model.dto.LoginWithToken
 import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
 import packit.service.GithubAPILoginService
-import packit.service.RoleService
 import packit.service.UserService
 import kotlin.test.assertEquals
 
@@ -35,29 +34,27 @@ class GithubAPILoginServiceTest
         username = username, displayName = displayName, disabled = false,
         userSource = "github", roles = mutableListOf(Role(name = "USER"))
     )
-    private val mockUserService = mock<UserService> {
-        on { saveUserFromGithub(username, displayName, null) } doReturn fakeUser
-    }
     private val userPrincipal = UserPrincipal(
         username,
         displayName,
         mutableSetOf(SimpleGrantedAuthority("USER")),
         mutableMapOf()
     )
+    private val mockUserService = mock<UserService> {
+        on { saveUserFromGithub(username, displayName, null) } doReturn fakeUser
+        on { getUserPrincipal(fakeUser) } doReturn userPrincipal
+    }
     private val mockIssuer = mock<JwtIssuer> {
         on { issue(argThat { this == userPrincipal }) } doReturn "fake jwt"
     }
     private val mockGithubUserClient = mock<GithubUserClient> {
         on { getGithubUser() } doReturn fakeGHMyself
     }
-    private val mockRoleService = mock<RoleService> {
-        on { getGrantedAuthorities(fakeUser.roles) } doReturn mutableSetOf(SimpleGrantedAuthority("USER"))
-    }
 
     @Test
     fun `can authenticate and issue token`()
     {
-        val sut = GithubAPILoginService(mockConfig, mockIssuer, mockGithubUserClient, mockUserService, mockRoleService)
+        val sut = GithubAPILoginService(mockConfig, mockIssuer, mockGithubUserClient, mockUserService)
 
         val token = sut.authenticateAndIssueToken(LoginWithToken("fake token"))
 
@@ -70,7 +67,7 @@ class GithubAPILoginServiceTest
     @Test
     fun `throws exception if token is empty`()
     {
-        val sut = GithubAPILoginService(mockConfig, mockIssuer, mockGithubUserClient, mockUserService, mockRoleService)
+        val sut = GithubAPILoginService(mockConfig, mockIssuer, mockGithubUserClient, mockUserService)
         val ex = assertThrows<PackitException> { sut.authenticateAndIssueToken(LoginWithToken("")) }
         assertEquals("emptyGitToken", ex.key)
         assertEquals(HttpStatus.BAD_REQUEST, ex.httpStatus)
