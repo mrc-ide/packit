@@ -54,7 +54,7 @@ class LoginController(
 
     @PostMapping("/login/service")
     @ResponseBody
-    fun loginJWT(
+    fun loginService(
         @RequestBody @Validated user: LoginWithToken,
     ): ResponseEntity<Map<String, String>>
     {
