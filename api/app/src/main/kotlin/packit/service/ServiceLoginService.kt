@@ -32,10 +32,10 @@ class ServiceLoginService(
   val serviceLoginConfig: ServiceLoginConfig,
   val restOperations: RestOperations = RestTemplate(),
 ) {
-  private lateinit var policies: List<TokenPolicy>
-
   val audience: String? = serviceLoginConfig.audience
   fun isEnabled(): Boolean = audience != null && !audience!!.isEmpty()
+
+  private val policies: List<TokenPolicy>
 
   init {
     if (audience != null) {
