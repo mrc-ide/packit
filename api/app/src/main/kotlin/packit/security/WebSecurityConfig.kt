@@ -1,9 +1,10 @@
 package packit.security
+
+import jakarta.servlet.DispatcherType
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
-import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
@@ -11,11 +12,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.security.web.authentication.HttpStatusEntryPoint
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.security.web.authentication.logout.LogoutFilter
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import packit.AppConfig
+import packit.exceptions.FilterChainExceptionHandler
 import packit.exceptions.PackitExceptionHandler
 import packit.security.oauth2.OAuth2FailureHandler
 import packit.security.oauth2.OAuth2SuccessHandler
@@ -57,17 +59,20 @@ class WebSecurityConfig(
     fun securityFilterChain(
         httpSecurity: HttpSecurity,
         tokenAuthenticationFilter: TokenAuthenticationFilter,
+        filterChainExceptionHandler: FilterChainExceptionHandler
+
     ): SecurityFilterChain
     {
         httpSecurity
             .cors { it.configurationSource(getCorsConfigurationSource()) }
             .csrf { it.disable() }
+            .addFilterBefore(filterChainExceptionHandler, LogoutFilter::class.java)
             .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .formLogin { it.disable() }
             .handleSecurePaths()
             .handleOauth2Login()
-            .exceptionHandling { it.authenticationEntryPoint(HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)) }
+            .exceptionHandling()
 
         return httpSecurity.build()
     }
@@ -107,10 +112,11 @@ class WebSecurityConfig(
         if (config.authEnabled)
         {
             this.securityMatcher("/**")
-                .authorizeHttpRequests { authorizeRequests ->
-                    authorizeRequests
+                .authorizeHttpRequests {
+                    it
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/auth/**", "/oauth2/**").permitAll()
+                        .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
                         .anyRequest().authenticated()
                 }
         } else
