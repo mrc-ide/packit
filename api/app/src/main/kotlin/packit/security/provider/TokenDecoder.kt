@@ -6,6 +6,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException
 import com.auth0.jwt.exceptions.SignatureVerificationException
 import com.auth0.jwt.exceptions.TokenExpiredException
 import com.auth0.jwt.interfaces.DecodedJWT
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import packit.AppConfig
 import packit.exceptions.PackitException
@@ -27,13 +28,13 @@ class TokenDecoder(val config: AppConfig) : JwtDecoder
                 .verify(token)
         } catch (e: SignatureVerificationException)
         {
-            throw PackitException("signature failed: ${e.message}")
+            throw PackitException("jwtSignatureVerificationFailed", HttpStatus.UNAUTHORIZED)
         } catch (e: TokenExpiredException)
         {
-            throw PackitException("expired token: ${e.message}")
+            throw PackitException("jwtTokenExpired", HttpStatus.UNAUTHORIZED)
         } catch (e: JWTVerificationException)
         {
-            throw PackitException("verification failed: ${e.message}")
+            throw PackitException("jwtVerificationFailed", HttpStatus.UNAUTHORIZED)
         }
     }
 }

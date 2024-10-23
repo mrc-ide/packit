@@ -38,8 +38,8 @@ class TokenAuthenticationFilterTest
         val thrownError = assertThrows<PackitException> { sut.extractToken(mockHttpRequest) }
 
         assertEquals(
-            "PackitException with key Invalid authorization type. Please use a Bearer token",
-            thrownError.message
+            "invalidAuthType",
+            thrownError.key
         )
     }
 

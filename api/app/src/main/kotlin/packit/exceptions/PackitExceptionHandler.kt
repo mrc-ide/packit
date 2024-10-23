@@ -6,9 +6,10 @@ import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.authentication.InternalAuthenticationServiceException
 import org.springframework.security.core.AuthenticationException
+import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
-import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.client.HttpStatusCodeException
@@ -17,13 +18,21 @@ import packit.model.ErrorDetail
 import packit.service.GenericClientException
 import java.util.*
 
-@ControllerAdvice
+@RestControllerAdvice
 class PackitExceptionHandler
 {
+
     @ExceptionHandler(NoHandlerFoundException::class)
     fun handleNoHandlerFoundException(e: Exception): Any
     {
         return ErrorDetail(HttpStatus.NOT_FOUND, e.message ?: "")
+            .toResponseEntity()
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException::class)
+    fun handleHttpRequestMethodNotSupportedException(e: Exception): Any
+    {
+        return ErrorDetail(HttpStatus.METHOD_NOT_ALLOWED, e.message ?: "")
             .toResponseEntity()
     }
 
@@ -89,8 +98,9 @@ class PackitExceptionHandler
     ): ResponseEntity<String>
     {
         val resourceBundle = getBundle()
-
-        return ErrorDetail(error.httpStatus, resourceBundle.getString(error.key))
+        val errorDetail =
+            if (resourceBundle.containsKey(error.key)) resourceBundle.getString(error.key) else error.key
+        return ErrorDetail(error.httpStatus, errorDetail)
             .toResponseEntity()
     }
 

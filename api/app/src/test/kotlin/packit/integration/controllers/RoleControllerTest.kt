@@ -133,8 +133,9 @@ class RoleControllerTest : IntegrationTest()
         roleRepository.save(Role(name = "testRole"))
 
         val result =
-            restTemplate.postForEntity(
+            restTemplate.exchange(
                 "/role/testRole",
+                HttpMethod.DELETE,
                 getTokenizedHttpEntity(data = createTestRoleBody),
                 String::class.java
             )
