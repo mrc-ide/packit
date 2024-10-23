@@ -98,8 +98,9 @@ class PackitExceptionHandler
     ): ResponseEntity<String>
     {
         val resourceBundle = getBundle()
-
-        return ErrorDetail(error.httpStatus, resourceBundle.getString(error.key))
+        val errorDetail =
+            if (resourceBundle.containsKey(error.key)) resourceBundle.getString(error.key) else error.key
+        return ErrorDetail(error.httpStatus, errorDetail)
             .toResponseEntity()
     }
 
