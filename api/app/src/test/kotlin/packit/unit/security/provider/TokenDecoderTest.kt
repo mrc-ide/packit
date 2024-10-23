@@ -99,7 +99,6 @@ class TokenDecoderTest
 
         assertEquals("jwtTokenExpired", errorThrown.key)
 
-
         assertEquals(HttpStatus.UNAUTHORIZED, errorThrown.httpStatus)
     }
 }
