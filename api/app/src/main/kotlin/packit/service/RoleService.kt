@@ -111,13 +111,13 @@ class BaseRoleService(
     override fun getSortedRoleDtos(roles: List<Role>): List<RoleDto>
     {
         return roles.map { role ->
-            val roleDto = role.toDto()
-            roleDto.rolePermissions =
-                roleDto.rolePermissions.sortedByDescending {
+            role.apply {
+                users = users.filterNot { it.isServiceUser() }.sortedBy { it.username }.toMutableList()
+                rolePermissions = role.rolePermissions.sortedByDescending {
                     it.tag == null && it.packet == null && it.packetGroup == null
-                }
-            roleDto.users = roleDto.users.sortedBy { it.username }
-            roleDto
+                }.toMutableList()
+            }
+            role.toDto()
         }
     }
 
