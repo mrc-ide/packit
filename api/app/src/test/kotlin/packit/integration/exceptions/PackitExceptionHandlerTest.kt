@@ -52,4 +52,28 @@ class PackitExceptionHandlerTest : IntegrationTest()
 
         assertEquals(result.statusCode, HttpStatus.UNAUTHORIZED)
     }
+
+    @Test
+    fun `throw 404 error when not found endpoint is called`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/wrong-endpoint",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        assertEquals(HttpStatus.NOT_FOUND, result.statusCode)
+    }
+
+    @Test
+    fun `throw 405 when method not allowed`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/auth/login/api",
+            HttpMethod.PUT,
+            getTokenizedHttpEntity()
+        )
+
+        assertEquals(HttpStatus.METHOD_NOT_ALLOWED, result.statusCode)
+    }
 }

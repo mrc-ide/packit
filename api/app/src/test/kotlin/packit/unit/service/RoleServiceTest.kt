@@ -519,6 +519,36 @@ class RoleServiceTest
         assertEquals("c user", result[0].users[2].username)
     }
 
+    @Test
+    fun `getSortedRoleDtos filters out service users`()
+    {
+        val role1 = Role(name = "role1", id = 1).apply {
+            users = mutableListOf(
+                User(
+                    username = "c user",
+                    id = UUID.randomUUID(),
+                    disabled = false,
+                    displayName = "user1",
+                    userSource = "github"
+                ),
+                User(
+                    username = "service user",
+                    id = UUID.randomUUID(),
+                    disabled = false,
+                    displayName = "service user",
+                    userSource = "service"
+                ),
+            )
+        }
+
+        val roles = listOf(role1)
+
+        val result = roleService.getSortedRoleDtos(roles)
+
+        assertEquals(1, result[0].users.size)
+        assert(result[0].users.none { it.username == "service user" })
+    }
+
     private fun createRoleWithPermission(
         roleName: String,
         permissionName: String,

@@ -12,7 +12,6 @@ import packit.security.profile.UserPrincipal
 import packit.security.provider.TokenDecoder
 import packit.security.provider.TokenProvider
 import java.time.Duration
-import java.util.*
 import kotlin.test.assertEquals
 
 class TokenDecoderTest
@@ -65,13 +64,9 @@ class TokenDecoderTest
 
         val errorThrown = assertThrows<PackitException> { tokenDecoder.decode(jwtToken) }
 
-        assertEquals(
-            "PackitException with key verification failed: " +
-                    "The token was expected to have 3 parts, but got 2.",
-            errorThrown.message
-        )
+        assertEquals("jwtVerificationFailed", errorThrown.key)
 
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, errorThrown.httpStatus)
+        assertEquals(HttpStatus.UNAUTHORIZED, errorThrown.httpStatus)
     }
 
     @Test
@@ -85,13 +80,9 @@ class TokenDecoderTest
 
         val errorThrown = assertThrows<PackitException> { tokenDecoder.decode(jwtToken) }
 
-        assertEquals(
-            "PackitException with key signature failed: The Token's Signature resulted " +
-                    "invalid when verified using the Algorithm: HmacSHA256",
-            errorThrown.message
-        )
+        assertEquals("jwtSignatureVerificationFailed", errorThrown.key)
 
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, errorThrown.httpStatus)
+        assertEquals(HttpStatus.UNAUTHORIZED, errorThrown.httpStatus)
     }
 
     @Test
@@ -106,11 +97,8 @@ class TokenDecoderTest
 
         val errorThrown = assertThrows<PackitException> { tokenDecoder.decode(jwtToken) }
 
-        assertEquals(
-            "PackitException with key expired token: The Token has expired on 2023-09-22T13:52:38Z.",
-            errorThrown.message
-        )
+        assertEquals("jwtTokenExpired", errorThrown.key)
 
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, errorThrown.httpStatus)
+        assertEquals(HttpStatus.UNAUTHORIZED, errorThrown.httpStatus)
     }
 }

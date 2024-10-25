@@ -133,8 +133,9 @@ class RoleControllerTest : IntegrationTest()
         roleRepository.save(Role(name = "testRole"))
 
         val result =
-            restTemplate.postForEntity(
+            restTemplate.exchange(
                 "/role/testRole",
+                HttpMethod.DELETE,
                 getTokenizedHttpEntity(data = createTestRoleBody),
                 String::class.java
             )
@@ -282,7 +283,7 @@ class RoleControllerTest : IntegrationTest()
         val foundAdminRole = roles.find { it.name == adminRole.name }!!
         assertEquals(foundAdminRole.name, adminRole.name)
         assertEquals(foundAdminRole.rolePermissions.size, adminRole.rolePermissions.size)
-        assertEquals(foundAdminRole.users.size, adminRole.users.size)
+        assertEquals(foundAdminRole.users.size, adminRole.users.size - 1) // service user not included
         assertFalse(roles.contains(userRole))
     }
 
