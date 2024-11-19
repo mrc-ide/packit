@@ -23,15 +23,17 @@ describe("Metadata component", () => {
     );
   };
 
-  it("renders all metadata if present", async () => {
+  it("renders all metadata and sub-headings if metadata is present", async () => {
     renderComponent();
 
     expect(await screen.findByText(mockPacket.id)).toBeVisible();
+    expect(screen.getByText(/timings/i)).toBeInTheDocument();
     expect(screen.getByText(/started/i)).toBeInTheDocument();
     expect(screen.getByText(/elapsed/i)).toBeInTheDocument();
-    expect(screen.getByText(/git branch/i)).toBeInTheDocument();
-    expect(screen.getByText(/git commit/i)).toBeInTheDocument();
-    expect(screen.getByText(/git remotes/i)).toBeInTheDocument();
+    expect(screen.getByTestId("gitHeading")).toBeInTheDocument();
+    expect(screen.getByText(/branch/i)).toBeInTheDocument();
+    expect(screen.getByText(/commit/i)).toBeInTheDocument();
+    expect(screen.getByText(/remotes/i)).toBeInTheDocument();
   });
 
   it("does not render elapsed time when datetime has no difference", async () => {
@@ -55,7 +57,7 @@ describe("Metadata component", () => {
     expect(screen.queryByText("elapsed")).not.toBeInTheDocument();
   });
 
-  it("should not render git metadata when git is not present", async () => {
+  it("should not render git metadata or any sub-headings when git is not present", async () => {
     server.use(
       rest.get("*", (req, res, ctx) => {
         return res(
@@ -70,9 +72,11 @@ describe("Metadata component", () => {
 
     await screen.findByText(/started/i);
 
-    expect(screen.queryByText(/git branch/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/git commit/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/git remotes/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/timings/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/git/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/branch/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/commit/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/remotes/i)).not.toBeInTheDocument();
   });
 
   it("should not render any fields if packet is null", async () => {
@@ -85,10 +89,12 @@ describe("Metadata component", () => {
 
     await screen.findByText(/metadata/i);
 
+    expect(screen.queryByText(/timings/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/git/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/started/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/elapsed/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/git branch/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/git commit/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/git remotes/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/branch/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/commit/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/remotes/i)).not.toBeInTheDocument();
   });
 });
