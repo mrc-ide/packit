@@ -105,7 +105,7 @@ describe("redirect", () => {
     renderElement("/redirect?error=invalid_token");
 
     await waitFor(() => {
-      expect(screen.getByText(/login to account/i)).toBeInTheDocument();
+      expect(screen.getByText(/log in to account/i)).toBeInTheDocument();
       expect(screen.getByText(/invalid_token/i)).toBeInTheDocument();
     });
   });

@@ -73,7 +73,7 @@ describe("UpdatePasswordForm", () => {
 
       await waitFor(() => {
         expect(mockedUsedNavigate).toHaveBeenCalledWith(
-          `/login?email=${testEmail}&success=Password updated successfully. Please login.`
+          `/login?email=${testEmail}&success=Password updated successfully. Please log in.`
         );
       });
     });

@@ -6,7 +6,7 @@ Postgresql database for storing packit web app data.
 
 ## Basic Auth Admin user 
 For basic auth superadmin may be needed, where the credentials are stored in the vault.(secret/packit/basicauth).
-This user is created automatically when the run command is execited with the `basicauth` argument.
+This user is created automatically when the run command is executed with the `basicauth` argument.
 
 ### Development: Run direct postgres query.
 This can be to insert test data or just for testing. 
@@ -14,4 +14,4 @@ This can be to insert test data or just for testing.
 ./scripts/runQuery "{SQL_QUERY}"
 ```
 
-Now this super user can be used to create users and login initially.
+Now this super user can be used to create users and log in initially.

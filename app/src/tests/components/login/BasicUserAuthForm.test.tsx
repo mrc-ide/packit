@@ -38,7 +38,7 @@ describe("BasicUserAuthForm", () => {
 
     userEvent.type(await screen.findByLabelText(/email/i), "invalid-email");
     userEvent.type(screen.getByLabelText(/password/i), "short");
-    userEvent.click(screen.getByRole("button", { name: /login/i }));
+    userEvent.click(screen.getByRole("button", { name: /log in/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/invalid email/i)).toBeInTheDocument();
@@ -57,7 +57,7 @@ describe("BasicUserAuthForm", () => {
 
     userEvent.type(screen.getByLabelText(/email/i), "test@gmail.com");
     userEvent.type(screen.getByLabelText(/password/i), "password");
-    userEvent.click(screen.getByRole("button", { name: /login/i }));
+    userEvent.click(screen.getByRole("button", { name: /log in/i }));
 
     await waitFor(() => {
       expect(mockedUsedNavigate).toHaveBeenCalledWith("/");
@@ -77,7 +77,7 @@ describe("BasicUserAuthForm", () => {
 
     userEvent.type(screen.getByLabelText(/email/i), "test@gmail.com");
     userEvent.type(screen.getByLabelText(/password/i), "password");
-    userEvent.click(screen.getByRole("button", { name: /login/i }));
+    userEvent.click(screen.getByRole("button", { name: /log in/i }));
 
     await waitFor(() => {
       expect(mockedUsedNavigate).toHaveBeenCalledWith("/accessibility");
@@ -101,7 +101,7 @@ describe("BasicUserAuthForm", () => {
 
     userEvent.type(screen.getByLabelText(/email/i), "test@gmail.com");
     userEvent.type(screen.getByLabelText(/password/i), "password");
-    userEvent.click(screen.getByRole("button", { name: /login/i }));
+    userEvent.click(screen.getByRole("button", { name: /log in/i }));
 
     await waitFor(() => {
       expect(screen.getAllByText(/invalid email or password/i).length).toBe(2);
@@ -126,7 +126,7 @@ describe("BasicUserAuthForm", () => {
 
     userEvent.type(screen.getByLabelText(/email/i), email);
     userEvent.type(screen.getByLabelText(/password/i), "password");
-    userEvent.click(screen.getByRole("button", { name: /login/i }));
+    userEvent.click(screen.getByRole("button", { name: /log in/i }));
 
     await waitFor(() => {
       expect(mockedUsedNavigate).toHaveBeenCalledWith(`/update-password?email=${email}&error=${errorMessage}`);
@@ -134,7 +134,7 @@ describe("BasicUserAuthForm", () => {
   });
 
   it("should fill in email and success message if update password success message is in search params", async () => {
-    const successMessage = "Password updated successfully. Please login.";
+    const successMessage = "Password updated successfully. Please log in.";
     const email = "test@email.com";
     render(
       <MemoryRouter initialEntries={[`/login?email=${email}&success=${successMessage}`]}>
