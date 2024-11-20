@@ -1,5 +1,5 @@
 import { AuthConfig } from "../../app/components/providers/types/AuthConfigTypes";
-import { isAuthenticated } from "../../lib/isAuthenticated";
+import { authIsPreExpiry, isAuthenticated } from "../../lib/isAuthenticated";
 import { mockUserState, mockExpiredUserState } from "../mocks";
 
 describe("isAuthenticated", () => {
@@ -27,5 +27,30 @@ describe("isAuthenticated", () => {
     const authConfig = null;
     const user = null;
     expect(isAuthenticated(authConfig, user)).toBe(false);
+  });
+});
+
+describe("authIsPreExpiry", () => {
+  const user = {
+    token: '',
+    displayName: '',
+    userName: '',
+    authorities: []
+  };
+
+  it("returns false if user is null", () => {
+    expect(authIsPreExpiry(null)).toBe(false);
+  });
+
+  it("returns false if user.exp is undefined", () => {
+    expect(authIsPreExpiry({ ...user, exp: undefined as any })).toBe(false);
+  });
+
+  it("returns false if user.exp is in the past", () => {
+    expect(authIsPreExpiry({ ...user, exp: 1732105366 })).toBe(false);
+  });
+
+  it("returns true if user.exp is in the future", () => {
+    expect(authIsPreExpiry({ ...user, exp: 9000000000 })).toBe(true);
   });
 });

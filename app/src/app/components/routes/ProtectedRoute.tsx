@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { authExpiryIsValid, isAuthenticated } from "../../../lib/isAuthenticated";
+import { authIsPreExpiry, isAuthenticated } from "../../../lib/isAuthenticated";
 import { useAuthConfig } from "../providers/AuthConfigProvider";
 import { useUser } from "../providers/UserProvider";
 import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
@@ -19,7 +19,7 @@ export default function ProtectedRoute() {
       if (!loggingOut) {
         setRequestedUrl(pathname);
       }
-      if (user && !authExpiryIsValid(user)) {
+      if (user && !authIsPreExpiry(user)) {
         removeUser()
         navigate(`/login?info=${expiryMessage}`);
       } else {
