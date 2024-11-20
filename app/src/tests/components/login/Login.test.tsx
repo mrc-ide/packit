@@ -24,7 +24,7 @@ describe("login", () => {
   const renderElement = () => {
     return render(
       <SWRConfig value={{ dedupingInterval: 0 }}>
-        <MemoryRouter initialEntries={["/login?error=random"]}>
+        <MemoryRouter initialEntries={["/login?error=random&info=Notification"]}>
           <UserProvider>
             <RedirectOnLoginProvider>
               <AuthConfigProvider>
@@ -59,5 +59,11 @@ describe("login", () => {
     renderElement();
 
     expect(mockedUsedNavigate).toHaveBeenCalledWith("/");
+  });
+
+  it("should show info message if info message is in search params", async () => {
+    renderElement();
+
+    expect(screen.getByText(/Notification/)).toBeInTheDocument();
   });
 });
