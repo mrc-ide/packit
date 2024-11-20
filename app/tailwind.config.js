@@ -17,6 +17,7 @@ export const theme = {
       background: "hsl(var(--background))",
       foreground: "hsl(var(--foreground))",
       scrollbar: "hsl(var(--scroll-bar))",
+      info: "rgb(var(--info))",
       primary: {
         DEFAULT: "hsl(var(--primary))",
         foreground: "hsl(var(--primary-foreground))"
