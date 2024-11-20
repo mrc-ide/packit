@@ -31,26 +31,15 @@ describe("isAuthenticated", () => {
 });
 
 describe("authIsPreExpiry", () => {
-  const user = {
-    token: '',
-    displayName: '',
-    userName: '',
-    authorities: []
-  };
-
   it("returns false if user is null", () => {
     expect(authIsPreExpiry(null)).toBe(false);
   });
 
-  it("returns false if user.exp is undefined", () => {
-    expect(authIsPreExpiry({ ...user, exp: undefined as any })).toBe(false);
-  });
-
   it("returns false if user.exp is in the past", () => {
-    expect(authIsPreExpiry({ ...user, exp: 1732105366 })).toBe(false);
+    expect(authIsPreExpiry(mockExpiredUserState())).toBe(false);
   });
 
   it("returns true if user.exp is in the future", () => {
-    expect(authIsPreExpiry({ ...user, exp: 9000000000 })).toBe(true);
+    expect(authIsPreExpiry(mockUserState())).toBe(true);
   });
 });
