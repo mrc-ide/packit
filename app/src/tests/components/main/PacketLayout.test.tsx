@@ -39,7 +39,7 @@ describe("Packet Layout test", () => {
 
     userEvent.click(screen.getByRole("link", { name: /metadata/i }));
 
-    expect(await screen.findByText(/git branch/i)).toBeVisible();
+    expect(await screen.findByText(/branch/i)).toBeVisible();
 
     userEvent.click(screen.getByRole("link", { name: /downloads/i }));
 

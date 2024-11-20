@@ -18,7 +18,7 @@ export const Home = () => {
           <FilterInput
             setFilter={setFilterByName}
             postFilterAction={() => setPageNumber(0)}
-            placeholder="filter packet groups..."
+            placeholder="Filter packet groups..."
           />
           <PacketGroupSummaryList
             filterByName={filteredName}
