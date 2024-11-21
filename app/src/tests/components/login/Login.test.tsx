@@ -41,7 +41,7 @@ describe("login", () => {
     renderElement();
 
     expect(await screen.findByRole("link", { name: /github/i })).toBeVisible();
-    expect(screen.getByRole("button", { name: /login with email/i })).toBeVisible();
+    expect(screen.getByRole("button", { name: /log in with email/i })).toBeVisible();
   });
 
   it("can render github login button when authenticated and error from params", async () => {

@@ -94,7 +94,7 @@ export const BasicUserAuthForm = () => {
             )}
           />
           <Button type="submit" className="w-full">
-            <Mail className="mr-2 h-4 w-4" /> Login with Email
+            <Mail className="mr-2 h-4 w-4" /> Log in with email
           </Button>
         </form>
       </Form>
