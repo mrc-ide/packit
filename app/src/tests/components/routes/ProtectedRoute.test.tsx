@@ -12,10 +12,10 @@ jest.mock("react-router-dom", () => ({
   useNavigate: () => mockedUsedNavigate
 }));
 const mockIsAuthenticated = jest.fn();
-const mockAuthIsPreExpiry = jest.fn();
+const mockAuthIsExpired = jest.fn();
 jest.mock("../../../lib/isAuthenticated", () => ({
   isAuthenticated: () => mockIsAuthenticated(),
-  authIsPreExpiry: () => mockAuthIsPreExpiry()
+  authIsExpired: () => mockAuthIsExpired()
 }));
 
 const mockSetRequestedUrl = jest.fn();
@@ -53,7 +53,7 @@ describe("protected routes", () => {
 
   it("renders protected content when authenticated", async () => {
     mockIsAuthenticated.mockReturnValue(true);
-    mockAuthIsPreExpiry.mockReturnValue(true);
+    mockAuthIsExpired.mockReturnValue(false);
     renderElement();
 
     await waitFor(() => {
@@ -64,7 +64,7 @@ describe("protected routes", () => {
   it("should navigate to login and set requested url when unauthenticated", async () => {
     mockLoggingOut = false;
     mockIsAuthenticated.mockReturnValue(false);
-    mockAuthIsPreExpiry.mockReturnValue(true);
+    mockAuthIsExpired.mockReturnValue(false);
     renderElement();
 
     await waitFor(() => {
@@ -76,7 +76,7 @@ describe("protected routes", () => {
   it("navigates to login, sets requested url, & logs the user out when auth expiry time is in the past", async () => {
     mockLoggingOut = false;
     mockIsAuthenticated.mockReturnValue(false);
-    mockAuthIsPreExpiry.mockReturnValue(false);
+    mockAuthIsExpired.mockReturnValue(true);
     mockGetUserFromLocalStorage.mockReturnValueOnce(mockExpiredUserState());
     localStorage.setItem(LocalStorageKeys.USER, "mockUser");
     renderElement();
@@ -92,7 +92,7 @@ describe("protected routes", () => {
   it("should not set requested url when logging out", async () => {
     mockLoggingOut = true;
     mockIsAuthenticated.mockReturnValue(false);
-    mockAuthIsPreExpiry.mockReturnValue(true);
+    mockAuthIsExpired.mockReturnValue(false);
     renderElement();
 
     await waitFor(() => {

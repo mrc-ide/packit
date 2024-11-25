@@ -1,5 +1,5 @@
 import { AuthConfig } from "../../app/components/providers/types/AuthConfigTypes";
-import { authIsPreExpiry, isAuthenticated } from "../../lib/isAuthenticated";
+import { authIsExpired, isAuthenticated } from "../../lib/isAuthenticated";
 import { mockUserState, mockExpiredUserState } from "../mocks";
 
 describe("isAuthenticated", () => {
@@ -28,18 +28,24 @@ describe("isAuthenticated", () => {
     const user = null;
     expect(isAuthenticated(authConfig, user)).toBe(false);
   });
+
+  it("returns false if authConfig is present and user is null", () => {
+    const authConfig = { enableAuth: true } as AuthConfig;
+    const user = null;
+    expect(isAuthenticated(authConfig, user)).toBe(false);
+  })
 });
 
-describe("authIsPreExpiry", () => {
-  it("returns false if user is null", () => {
-    expect(authIsPreExpiry(null)).toBe(false);
+describe("authIsExpired", () => {
+  it("returns true if user is null", () => {
+    expect(authIsExpired(null)).toBe(true);
   });
 
-  it("returns false if user.exp is in the past", () => {
-    expect(authIsPreExpiry(mockExpiredUserState())).toBe(false);
+  it("returns true if user.exp is in the past", () => {
+    expect(authIsExpired(mockExpiredUserState())).toBe(true);
   });
 
-  it("returns true if user.exp is in the future", () => {
-    expect(authIsPreExpiry(mockUserState())).toBe(true);
+  it("returns false if user.exp is in the future", () => {
+    expect(authIsExpired(mockUserState())).toBe(false);
   });
 });
