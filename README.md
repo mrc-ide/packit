@@ -40,6 +40,7 @@ The following commands achieve the same things but allow for finer control of ea
 
 There are 3 subdirectories in this repo, each corresponding to a different service.
 See individual READMEs for further details on developing each service.
+`./scripts/clear-docker` is a useful command for reverting docker to a state without any of the containers, networks or volumes created by the services.
 
 ## Database
 
