@@ -15,6 +15,7 @@ import packit.model.Packet
 import packit.model.PacketGroup
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
+import packit.model.dto.OutpackMetadata
 import packit.model.dto.PacketGroupSummary
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
@@ -44,6 +45,13 @@ class BasePacketService(
     private val outpackServerClient: OutpackServer
 ) : PacketService
 {
+    private fun getDisplayNameForPacket(packet: OutpackMetadata): String {
+        val metadata = outpackServerClient.getMetadataById(packet.id)
+        val orderlyMetadata = metadata?.custom?.get("orderly") as? Map<*, *>
+        val description = orderlyMetadata?.get("description") as? Map<*, *>
+        return description?.get("display") as? String ?: packet.name
+    }
+
     override fun importPackets()
     {
         val mostRecent = packetRepository.findTopByOrderByImportTimeDesc()?.importTime
@@ -51,7 +59,7 @@ class BasePacketService(
         val packets = outpackServerClient.getMetadata(mostRecent)
             .map {
                 Packet(
-                    it.id, it.name, it.name,
+                    it.id, it.name, getDisplayNameForPacket(it),
                     it.parameters ?: mapOf(), false, now,
                     it.time.start, it.time.end
                 )
