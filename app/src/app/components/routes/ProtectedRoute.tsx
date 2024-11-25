@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { isAuthenticated } from "../../../lib/isAuthenticated";
+import {authIsExpired, isAuthenticated} from "../../../lib/isAuthenticated";
 import { useAuthConfig } from "../providers/AuthConfigProvider";
 import { useUser } from "../providers/UserProvider";
 import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
@@ -8,9 +8,10 @@ import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 export default function ProtectedRoute() {
   const navigate = useNavigate();
   const authConfig = useAuthConfig();
-  const { user } = useUser();
+  const { user, removeUser } = useUser();
   const { setRequestedUrl, loggingOut } = useRedirectOnLogin();
   const { pathname } = useLocation();
+  const expiryMessage = "You have been signed out because your session expired. Please log in."
 
   useEffect(() => {
     if (authConfig && !isAuthenticated(authConfig, user)) {
@@ -18,7 +19,12 @@ export default function ProtectedRoute() {
       if (!loggingOut) {
         setRequestedUrl(pathname);
       }
-      navigate("/login");
+      if (user && authIsExpired(user)) {
+        removeUser()
+        navigate(`/login?info=${expiryMessage}`);
+      } else {
+        navigate("/login");
+      }
     }
   }, [navigate, authConfig, user]);
 

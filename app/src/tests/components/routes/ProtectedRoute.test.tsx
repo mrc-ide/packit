@@ -2,6 +2,9 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { UserProvider } from "../../../app/components/providers/UserProvider";
 import ProtectedRoute from "../../../app/components/routes/ProtectedRoute";
+import {UserState} from "../../../app/components/providers/types/UserTypes";
+import {mockExpiredUserState} from "../../mocks";
+import {LocalStorageKeys} from "../../../lib/types/LocalStorageKeys";
 
 const mockedUsedNavigate = jest.fn();
 jest.mock("react-router-dom", () => ({
@@ -9,8 +12,10 @@ jest.mock("react-router-dom", () => ({
   useNavigate: () => mockedUsedNavigate
 }));
 const mockIsAuthenticated = jest.fn();
+const mockAuthIsExpired = jest.fn();
 jest.mock("../../../lib/isAuthenticated", () => ({
-  isAuthenticated: () => mockIsAuthenticated()
+  isAuthenticated: () => mockIsAuthenticated(),
+  authIsExpired: () => mockAuthIsExpired()
 }));
 
 const mockSetRequestedUrl = jest.fn();
@@ -24,6 +29,11 @@ jest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
 
 jest.mock("../../../app/components/providers/AuthConfigProvider", () => ({
   useAuthConfig: () => ({})
+}));
+
+const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
+jest.mock("../../../lib/localStorageManager", () => ({
+  getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
 }));
 
 describe("protected routes", () => {
@@ -43,6 +53,7 @@ describe("protected routes", () => {
 
   it("renders protected content when authenticated", async () => {
     mockIsAuthenticated.mockReturnValue(true);
+    mockAuthIsExpired.mockReturnValue(false);
     renderElement();
 
     await waitFor(() => {
@@ -53,6 +64,7 @@ describe("protected routes", () => {
   it("should navigate to login and set requested url when unauthenticated", async () => {
     mockLoggingOut = false;
     mockIsAuthenticated.mockReturnValue(false);
+    mockAuthIsExpired.mockReturnValue(false);
     renderElement();
 
     await waitFor(() => {
@@ -61,9 +73,26 @@ describe("protected routes", () => {
     });
   });
 
+  it("navigates to login, sets requested url, & logs the user out when auth expiry time is in the past", async () => {
+    mockLoggingOut = false;
+    mockIsAuthenticated.mockReturnValue(false);
+    mockAuthIsExpired.mockReturnValue(true);
+    mockGetUserFromLocalStorage.mockReturnValueOnce(mockExpiredUserState());
+    localStorage.setItem(LocalStorageKeys.USER, "mockUser");
+    renderElement();
+
+    await waitFor(() => {
+      expect(mockedUsedNavigate)
+        .toHaveBeenCalledWith("/login?info=You have been signed out because your session expired. Please log in.");
+      expect(mockSetRequestedUrl).toHaveBeenCalledWith("/");
+      expect(localStorage.getItem(LocalStorageKeys.USER)).toBe(null);
+    });
+  });
+
   it("should not set requested url when logging out", async () => {
     mockLoggingOut = true;
     mockIsAuthenticated.mockReturnValue(false);
+    mockAuthIsExpired.mockReturnValue(false);
     renderElement();
 
     await waitFor(() => {
@@ -71,42 +100,4 @@ describe("protected routes", () => {
       expect(mockSetRequestedUrl).not.toHaveBeenCalled();
     });
   });
-
-  // it("renders protected routes when auth is enabled and user is authenticated using access token", () => {
-  //   const store = getStore({ authConfig: { enableAuth: true } });
-  //   const mockDispatch = jest.spyOn(store, "dispatch");
-  //   renderElement(store);
-
-  //   store.dispatch({ type: "login/saveUser", payload: { token: "fakeToken" } });
-
-  //   expect(mockDispatch).toHaveBeenCalledTimes(2);
-  //   expect(mockDispatch).toHaveBeenCalledWith({
-  //     type: "login/saveUser",
-  //     payload: { token: "fakeToken" }
-  //   });
-  //   expect(mockedUsedNavigate).toHaveBeenCalledWith("/login");
-  // });
-
-  // it("redirects to login page when user is unauthenticated and authentication is enabled", () => {
-  //   const store = getStore({ authConfig: { enableAuth: true } });
-  //   const mockDispatch = jest.spyOn(store, "dispatch");
-  //   renderElement(store);
-  //   expect(mockDispatch).toHaveBeenCalledTimes(1);
-  //   expect(mockedUsedNavigate).toHaveBeenCalledWith("/login");
-  // });
-
-  // it("does not redirect to login page when user is unauthenticated and authentication is disabled", () => {
-  //   const store = getStore();
-  //   const mockDispatch = jest.spyOn(store, "dispatch");
-  //   renderElement(store);
-  //   expect(mockDispatch).toHaveBeenCalledTimes(1);
-  //   expect(mockedUsedNavigate).not.toHaveBeenCalledWith("/login");
-  // });
-
-  // it("does not render protected routes when user is unauthenticated using access token", () => {
-  //   const store = getStore();
-  //   const mockDispatch = jest.spyOn(store, "dispatch");
-  //   renderElement(store);
-  //   expect(mockDispatch).toHaveBeenCalledTimes(1);
-  // });
 });
