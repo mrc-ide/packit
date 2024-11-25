@@ -46,8 +46,8 @@ export const PacketGroupSummaryList = ({
         <div className="flex border rounded-md p-6 justify-center text-muted-foreground">No reports found</div>
       ) : (
         <ul className="flex flex-col border rounded-md">
-          {packetGroupSummary?.content?.map((packet) => (
-            <PacketGroupSummaryListItem key={packet.latestId} packet={packet} />
+          {packetGroupSummary?.content?.map((packetGroup) => (
+            <PacketGroupSummaryListItem key={packetGroup.latestId} packetGroup={packetGroup} />
           ))}
         </ul>
       )}

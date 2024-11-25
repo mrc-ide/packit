@@ -4,6 +4,9 @@ import { PacketTable } from "./PacketTable";
 export const PacketGroup = () => {
   const { packetName } = useParams();
 
+  // TODO: Get packet group display name, either from proxy DB or by using the metadata endpoint
+  //  (which goes via outpack_server)
+
   return (
     <div className="flex justify-center">
       <div className="h-full flex-1 flex-col space-y-8 p-8 max-w-7xl">

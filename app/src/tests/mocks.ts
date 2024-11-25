@@ -61,54 +61,63 @@ export const mockPacketGroupSummary: PageablePacketGroupSummary = {
       latestId: "20231130-082812-cd744153",
       latestTime: 1701332897,
       name: "test3",
+      latestDisplayName: "Test 3",
       packetCount: 3
     },
     {
       latestId: "20231130-082727-445fa3fa",
       latestTime: 1701332857,
       name: "test2",
+      latestDisplayName: "Test 2",
       packetCount: 3
     },
     {
       latestId: "20231130-082548-bf6d6f3f",
       latestTime: 1701332757,
       name: "test1",
+      latestDisplayName: "Test 1",
       packetCount: 2
     },
     {
       latestId: "20231130-082348-e1f8e7ca",
       latestTime: 1701332637,
       name: "incoming_data",
+      latestDisplayName: "Incoming Data",
       packetCount: 2
     },
     {
       latestId: "20231127-141002-6e6581d7",
       latestTime: 1701256330,
       name: "artefact-types",
+      latestDisplayName: "Artefact Types",
       packetCount: 3
     },
     {
       latestId: "20230427-150722-0ebd6545",
       latestTime: 1701096608,
       name: "parameters",
+      latestDisplayName: "Parameters",
       packetCount: 3
     },
     {
       latestId: "20230427-150755-2dbede93",
       latestTime: 1701096607,
       name: "explicit",
+      latestDisplayName: "Explicit",
       packetCount: 2
     },
     {
       latestId: "20230427-150828-68772cee",
       latestTime: 1701096605,
       name: "computed-resource",
+      latestDisplayName: "Computed Resource",
       packetCount: 1
     },
     {
       latestId: "20230427-150813-cd121720",
       latestTime: 1698173547,
       name: "depends",
+      latestDisplayName: "Dependencies",
       packetCount: 1
     }
   ],

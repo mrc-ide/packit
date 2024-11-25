@@ -129,6 +129,7 @@ class PacketRepositoryTest : RepositoryTest()
                 val name = it.getName()
                 val latestTime = it.getLatestTime()
                 val latestId = it.getLatestId()
+                val latestDisplayName = it.getLatestDisplayName()
                 val packetCount = it.getPacketCount()
             }
         }
@@ -136,6 +137,7 @@ class PacketRepositoryTest : RepositoryTest()
         assertEquals(result[0].name, "test1")
         assertEquals(result[0].latestId, "20170819-164847-7574333b")
         assertEquals(result[0].latestTime, now + 5)
+        assertEquals(result[0].latestDisplayName, "test name1")
         assertEquals(result[0].packetCount, 2)
     }
 
@@ -151,6 +153,7 @@ class PacketRepositoryTest : RepositoryTest()
                 val name = it.getName()
                 val latestTime = it.getLatestTime()
                 val latestId = it.getLatestId()
+                val latestDisplayName = it.getLatestDisplayName()
                 val packetCount = it.getPacketCount()
             }
         }
@@ -159,6 +162,7 @@ class PacketRepositoryTest : RepositoryTest()
         assertEquals(result[0].name, "test4")
         assertEquals(result[0].latestId, "20170819-164847-7574113a")
         assertEquals(result[0].latestTime, now + 4)
+        assertEquals(result[0].latestDisplayName, "test name4")
         assertEquals(result[0].packetCount, 2)
     }
 

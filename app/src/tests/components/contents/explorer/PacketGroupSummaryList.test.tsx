@@ -22,7 +22,7 @@ describe("PacketList test", () => {
 
     await waitFor(() => {
       mockPacketGroupSummary.content.forEach((packet, index) => {
-        expect(screen.getByRole("link", { name: packet.name })).toHaveAttribute("href", `/${packet.name}`);
+        expect(screen.getByRole("link", { name: packet.latestDisplayName })).toHaveAttribute("href", `/${packet.name}`);
         expect(screen.getAllByRole("link", { name: /latest/i })[index]).toHaveAttribute(
           "href",
           `/${packet.name}/${packet.latestId}`

@@ -28,6 +28,7 @@ export interface PacketGroupSummary {
   packetCount: number;
   latestId: string;
   latestTime: number;
+  latestDisplayName: string;
 }
 
 export interface Packet {

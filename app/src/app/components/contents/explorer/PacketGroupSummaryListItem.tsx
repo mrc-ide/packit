@@ -4,20 +4,22 @@ import { PacketGroupSummary } from "../../../../types";
 import { getTimeDifferenceToDisplay } from "../../../../lib/time";
 
 interface PacketGroupSummaryListItemProps {
-  packet: PacketGroupSummary;
+  packetGroup: PacketGroupSummary;
 }
 
-export const PacketGroupSummaryListItem = ({ packet }: PacketGroupSummaryListItemProps) => {
-  const { unit, value } = getTimeDifferenceToDisplay(packet.latestTime)[0];
+export const PacketGroupSummaryListItem = ({ packetGroup }: PacketGroupSummaryListItemProps) => {
+  const { unit, value } = getTimeDifferenceToDisplay(packetGroup.latestTime)[0];
 
   return (
-    <li key={packet.latestId} className="p-4 flex flex-col border-b space-y-1">
-      <Link to={`/${packet.name}`} className="hover:underline decoration-blue-500">
-        <h3 className="scroll-m-20 text-lg font-semibold tracking-tight text-blue-500">{packet.name}</h3>
+    <li key={packetGroup.latestId} className="p-4 flex flex-col border-b space-y-1">
+      <Link to={`/${packetGroup.name}`} className="hover:underline decoration-blue-500">
+        <h3 className="scroll-m-20 text-lg font-semibold tracking-tight text-blue-500">
+          {packetGroup.latestDisplayName}
+        </h3>
       </Link>
       <div className="flex space-x-3 items-center">
         <Link
-          to={`/${packet.name}/${packet.latestId}`}
+          to={`/${packetGroup.name}/${packetGroup.latestId}`}
           className=" text-blue-500 text-xs flex items-center gap-[1px] 
           hover:underline decoration-blue-500"
         >
@@ -26,7 +28,7 @@ export const PacketGroupSummaryListItem = ({ packet }: PacketGroupSummaryListIte
         </Link>
         <div className="text-muted-foreground text-xs flex items-center gap-[1px]">
           <History size={16} />
-          {packet.packetCount} Packets
+          {packetGroup.packetCount} Packets
         </div>
         <div className="text-muted-foreground text-xs flex items-center gap-[1px]">
           <Hourglass size={16} />

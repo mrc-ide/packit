@@ -15,6 +15,7 @@ export const PacketTable = () => {
   const { packetName } = useParams();
   const [pageNumber, setPageNumber] = useState(0);
 
+  // Rename useGetPacketGroups to useGetPacketGroupPages, and packetGroups to packetGroupPages?
   const { packetGroups, error, isLoading } = useGetPacketGroups(packetName, pageNumber, PAGE_SIZE);
 
   if (error?.status === HttpStatus.Unauthorized) return <Unauthorized />;

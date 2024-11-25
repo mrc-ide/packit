@@ -24,13 +24,15 @@ interface PacketRepository : JpaRepository<Packet, String>
                 SELECT 
                     name as name, 
                     start_time as latestTime, 
-                    id AS latestId, 
-                    id_count as packetCount  
+                    id AS latestId,
+                    id_count as packetCount,
+                    display_name as latestDisplayName
                 FROM ( 
                     SELECT 
-                        name, 
+                        name,
                         start_time, 
-                        id,     
+                        id,
+                        display_name,
                         ROW_NUMBER() OVER (PARTITION BY name ORDER BY start_time DESC) AS row_num, 
                         COUNT(id) OVER (PARTITION BY name) AS id_count 
                     FROM packet 
