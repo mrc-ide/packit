@@ -7,7 +7,7 @@ export default function Login() {
   return (
     <>
       {sessionExpiryInfo && (
-        <div className="text-xs text-info justify-self-center">{sessionExpiryMsg}</div>
+        <div className="text-xs text-info justify-self-center">{sessionExpiryInfo}</div>
       )}
       <div className="flex flex-col space-y-2 text-center">
         <h1 className="text-2xl font-semibold tracking-tight">Login to account</h1>
