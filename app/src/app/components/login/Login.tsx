@@ -3,10 +3,10 @@ import { useSearchParams } from "react-router-dom";
 
 export default function Login() {
   const [searchParams] = useSearchParams();
-  const sessionExpiryMsg = searchParams.get("info");
+  const sessionExpiryInfo = searchParams.get("info");
   return (
     <>
-      {sessionExpiryMsg && (
+      {sessionExpiryInfo && (
         <div className="text-xs text-info justify-self-center">{sessionExpiryMsg}</div>
       )}
       <div className="flex flex-col space-y-2 text-center">
