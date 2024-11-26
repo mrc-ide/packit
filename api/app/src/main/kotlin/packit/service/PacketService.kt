@@ -46,10 +46,9 @@ class BasePacketService(
 ) : PacketService
 {
     private fun getDisplayNameForPacket(packet: OutpackMetadata): String {
-        val metadata = outpackServerClient.getMetadataById(packet.id)
-        val orderlyMetadata = metadata?.custom?.get("orderly") as? Map<*, *>
+        val orderlyMetadata = packet.custom?.get("orderly") as? Map<*, *>
         val description = orderlyMetadata?.get("description") as? Map<*, *>
-        return description?.get("display") as? String ?: packet.name
+        return description?.get("display") as? String ?: packet.name // Fall back to name if no display name
     }
 
     override fun importPackets()
