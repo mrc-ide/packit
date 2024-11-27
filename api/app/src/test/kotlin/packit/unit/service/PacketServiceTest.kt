@@ -26,9 +26,9 @@ class PacketServiceTest
     private val newPackets =
         listOf(
             Packet(
-                "20190203-120000-1234dada",
+                "20240101-090000-4321gaga",
                 "test",
-                "test",
+                "",
                 mapOf("alpha" to 1),
                 false,
                 now,
@@ -38,14 +38,14 @@ class PacketServiceTest
             Packet(
                 "20190203-120000-1234dada",
                 "test",
-                "test",
+                "test name (latest display name)",
                 mapOf("beta" to 1),
                 true,
                 now,
                 now,
                 now
             ),
-            Packet("20190403-120000-1234dfdf", "test2", "test2", mapOf(), false, now, now, now)
+            Packet("20190403-120000-1234dfdf", "test2", "test2 name", mapOf(), false, now, now, now)
         )
 
     private val oldPackets =
@@ -53,7 +53,7 @@ class PacketServiceTest
             Packet(
                 "20180203-120000-abdefg56",
                 "test",
-                "test name",
+                "test name (old display name)",
                 mapOf("name" to "value"),
                 false,
                 now - 1,
@@ -63,7 +63,7 @@ class PacketServiceTest
             Packet(
                 "20180403-120000-a5bde567",
                 "test2",
-                "test2 name",
+                "",
                 mapOf("beta" to 1),
                 true,
                 now - 2,
@@ -73,7 +73,11 @@ class PacketServiceTest
         )
 
     private val metadata =
-        newPackets.map { OutpackMetadata(it.id, it.name, it.parameters, TimeMetadata(now, now)) }
+        newPackets.map {
+            OutpackMetadata(it.id, it.name, it.parameters, TimeMetadata(now, now),
+                mapOf("orderly" to mapOf("description" to mapOf("display" to it.displayName)))
+            )
+        }
     private val packetMetadata =
         PacketMetadata(
             "3",
@@ -213,6 +217,10 @@ class PacketServiceTest
         verify(packetRepository).saveAll(argumentCaptor.capture())
         val packets = argumentCaptor.allValues.flatten()
         assertEquals(packets.size, 3)
+        newPackets.forEach() {
+            val packet = packets.find { packet -> packet.id == it.id }
+            assertEquals(packet!!.displayName, it.displayName)
+        }
     }
 
     @Test
