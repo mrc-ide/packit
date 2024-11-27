@@ -119,11 +119,11 @@ class PacketRepositoryTest : RepositoryTest()
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
 
-    fun `can get right order and data expected from findPacketGroupSummaryByName`()
+    fun `can get right order and data expected from findPacketGroupSummaryBySearchString`()
     {
         packetRepository.saveAll(packets)
 
-        val result = packetRepository.findPacketGroupSummaryByName("").map {
+        val result = packetRepository.findPacketGroupSummaryBySearchString("").map {
             object
             {
                 val name = it.getName()
@@ -143,11 +143,36 @@ class PacketRepositoryTest : RepositoryTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `can filter correctly when calling findPacketGroupSummaryByName`()
+    fun `can filter correctly when calling findPacketGroupSummaryBySearchString with part of a packet group name`()
     {
         packetRepository.saveAll(packets)
 
-        val result = packetRepository.findPacketGroupSummaryByName("4").map {
+        val result = packetRepository.findPacketGroupSummaryBySearchString("est4").map {
+            object
+            {
+                val name = it.getName()
+                val latestTime = it.getLatestTime()
+                val latestId = it.getLatestId()
+                val latestDisplayName = it.getLatestDisplayName()
+                val packetCount = it.getPacketCount()
+            }
+        }
+
+        assertEquals(result.size, 1)
+        assertEquals(result[0].name, "test4")
+        assertEquals(result[0].latestId, "20170819-164847-7574113a")
+        assertEquals(result[0].latestTime, now + 4)
+        assertEquals(result[0].latestDisplayName, "test name4")
+        assertEquals(result[0].packetCount, 2)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
+    fun `can filter correctly when calling findPacketGroupSummaryBySearchString with part of a packet display name`()
+    {
+        packetRepository.saveAll(packets)
+
+        val result = packetRepository.findPacketGroupSummaryBySearchString("name4").map {
             object
             {
                 val name = it.getName()

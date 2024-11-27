@@ -36,14 +36,14 @@ interface PacketRepository : JpaRepository<Packet, String>
                         ROW_NUMBER() OVER (PARTITION BY name ORDER BY start_time DESC) AS row_num, 
                         COUNT(id) OVER (PARTITION BY name) AS id_count 
                     FROM packet 
-                ) as RankedData 
-                WHERE row_num = 1 AND name ILIKE %?1% 
+                ) as RankedData
+                WHERE row_num = 1 AND (name ILIKE %?1% OR display_name ILIKE %?1%)
                 ORDER BY start_time DESC
          """,
-        countQuery = "SELECT count(distinct name) from packet WHERE name ILIKE  %?1%",
+        countQuery = "SELECT count(distinct name) from packet WHERE name ILIKE %?1%",
         nativeQuery = true
     )
-    fun findPacketGroupSummaryByName(filterName: String): List<PacketGroupSummary>
+    fun findPacketGroupSummaryBySearchString(filterName: String): List<PacketGroupSummary>
 
     @PostFilter("@authz.canReadPacket(#root, filterObject.id, filterObject.name)")
     fun findAllByNameContainingAndIdContaining(name: String, id: String, sort: Sort): List<Packet>

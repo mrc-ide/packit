@@ -115,7 +115,7 @@ class PacketServiceTest
             on { findAll() } doReturn oldPackets
             on { findAllIds() } doReturn oldPackets.map { it.id }
             on { findTopByOrderByImportTimeDesc() } doReturn oldPackets.first()
-            on { findPacketGroupSummaryByName("random") } doReturn
+            on { findPacketGroupSummaryBySearchString("random") } doReturn
                     packetGroupSummaries
             on { findByName(anyString(), any()) } doReturn oldPackets
             on { findAllByNameContainingAndIdContaining(anyString(), anyString(), any<Sort>()) } doReturn oldPackets
@@ -178,7 +178,7 @@ class PacketServiceTest
 
         assertEquals(result.totalElements, 2)
         assertEquals(result.content, packetGroupSummaries)
-        verify(packetRepository).findPacketGroupSummaryByName("random")
+        verify(packetRepository).findPacketGroupSummaryBySearchString("random")
     }
 
     @Test

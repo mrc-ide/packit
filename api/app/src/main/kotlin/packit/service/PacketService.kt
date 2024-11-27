@@ -88,7 +88,7 @@ class BasePacketService(
         filteredName: String
     ): Page<PacketGroupSummary>
     {
-        val packetGroupSummaries = packetRepository.findPacketGroupSummaryByName(filteredName)
+        val packetGroupSummaries = packetRepository.findPacketGroupSummaryBySearchString(filteredName)
         return PagingHelper.convertListToPage(packetGroupSummaries, pageablePayload)
     }
 
