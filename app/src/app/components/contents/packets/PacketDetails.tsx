@@ -3,6 +3,7 @@ import { usePacketOutletContext } from "../../main/PacketOutlet";
 import PacketHeader from "./PacketHeader";
 import { PacketParameters } from "./PacketParameters";
 import { PacketReports } from "./PacketReports";
+import {Separator} from "../../Base/Separator";
 
 export default function PacketDetails() {
   const { packetId, packetName } = useParams();
@@ -10,7 +11,9 @@ export default function PacketDetails() {
 
   return (
     <>
-      <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} />
+      <PacketHeader displayName={packet?.displayName ?? ""} packetName={packetName ?? ""} packetId={packetId ?? ""} />
+      <p>{packet?.custom.orderly.description.long}</p>
+      <Separator className="mx-1"/>
       <PacketParameters parameters={packet?.parameters ?? {}} />
       <PacketReports packet={packet} />
     </>

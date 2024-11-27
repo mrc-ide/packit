@@ -1,13 +1,27 @@
 interface PacketHeaderProps {
+  displayName: string;
   packetName: string;
   packetId: string;
 }
 
-export default function PacketHeader({ packetName, packetId }: PacketHeaderProps) {
-  return (
-    <div>
-      <h2 className="text-2xl font-bold tracking-tight">{packetName}</h2>
-      <p className="text-muted-foreground">{packetId}</p>
-    </div>
-  );
-}
+export default function PacketHeader({ displayName, packetName, packetId }: PacketHeaderProps) {
+  if (displayName.length === 0) {
+    return (
+      <div>
+        <h2 className="text-2xl font-bold tracking-tight">{packetName}</h2>
+        <p className="text-muted-foreground">{packetId}</p>
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        <h2 className="text-2xl font-bold tracking-tight">{displayName}</h2>
+        <p>
+          <span className="text-muted-foreground">{packetName}</span>
+          <span> · </span> {/* or use a pipe?*/}
+          <span className="text-muted-foreground">{packetId}</span>
+        </p>
+      </div>
+  )
+  }
+  }

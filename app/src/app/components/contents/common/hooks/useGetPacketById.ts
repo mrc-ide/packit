@@ -9,8 +9,12 @@ export const useGetPacketById = (packetId: string | undefined) => {
     (url: string) => fetcher({ url })
   );
 
+  const displayName = data?.custom?.orderly?.description?.display;
+
+  const packet = displayName ? { ...data, displayName } : data;
+
   return {
-    packet: data,
+    packet,
     isLoading,
     error
   };

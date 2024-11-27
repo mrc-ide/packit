@@ -24,8 +24,9 @@ describe("download component", () => {
   it("can render packet header", async () => {
     renderComponent();
 
-    await screen.findAllByRole("button");
-    expect(screen.getByText(mockPacket.id)).toBeInTheDocument();
+    expect(await screen.findByText(mockPacket.id)).toBeVisible();
+    expect(await screen.findByText(mockPacket.name)).toBeVisible();
+    expect(await screen.findByText(mockPacket.custom.orderly.description.display as string)).toBeVisible();
   });
 
   it("render file and download button", async () => {

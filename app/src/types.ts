@@ -77,8 +77,9 @@ export interface Custom {
 }
 
 interface Description {
-  custom: Record<string, string> | null;
   display: string | null;
+  long: string | null;
+  custom: Record<string, any> | null;
 }
 
 interface Artefact {

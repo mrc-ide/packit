@@ -27,6 +27,15 @@ describe("packet details component", () => {
     );
   };
 
+  it("renders packet header and the long description", async () => {
+    renderComponent();
+
+    expect(await screen.findByText(mockPacket.id)).toBeVisible();
+    expect(await screen.findByText(mockPacket.name)).toBeVisible();
+    expect(await screen.findByText(mockPacket.custom.orderly.description.display as string)).toBeVisible();
+    expect(await screen.findByText(mockPacket.custom.orderly.description.long as string)).toBeVisible();
+  });
+
   it("renders parameters correctly", async () => {
     renderComponent();
 

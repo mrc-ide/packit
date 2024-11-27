@@ -169,7 +169,8 @@ export const mockPacket: PacketMetadata = {
       ],
       description: {
         custom: null,
-        display: null
+        display: "A packet with parameters and a report",
+        long: "This packet uses a number of parameters in order to eventually generate a report",
       }
     }
   }
