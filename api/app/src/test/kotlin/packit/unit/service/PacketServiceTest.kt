@@ -119,7 +119,7 @@ class PacketServiceTest
             on { findAll() } doReturn oldPackets
             on { findAllIds() } doReturn oldPackets.map { it.id }
             on { findTopByOrderByImportTimeDesc() } doReturn oldPackets.first()
-            on { findPacketGroupSummaryBySearchString("random") } doReturn
+            on { getPacketGroupSummariesBySearchString("random") } doReturn
                     packetGroupSummaries
             on { findByName(anyString(), any()) } doReturn oldPackets
             on { findAllByNameContainingAndIdContaining(anyString(), anyString(), any<Sort>()) } doReturn oldPackets
@@ -178,11 +178,11 @@ class PacketServiceTest
     {
         val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
 
-        val result = sut.getPacketGroupSummary(PageablePayload(0, 10), "random")
+        val result = sut.getPacketGroupSummaries(PageablePayload(0, 10), "random")
 
         assertEquals(result.totalElements, 2)
         assertEquals(result.content, packetGroupSummaries)
-        verify(packetRepository).findPacketGroupSummaryBySearchString("random")
+        verify(packetRepository).getPacketGroupSummariesBySearchString("random")
     }
 
     @Test

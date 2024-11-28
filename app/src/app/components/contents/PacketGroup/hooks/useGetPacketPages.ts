@@ -3,14 +3,16 @@ import appConfig from "../../../../../config/appConfig";
 import { fetcher } from "../../../../../lib/fetch";
 import { PageablePackets } from "../../../../../types";
 
-export const useGetPacketGroups = (packetName: string | undefined, pageNumber: number, pageSize: number) => {
+export const useGetPacketPages = (packetGroupName: string | undefined, pageNumber: number, pageSize: number) => {
   const { data, isLoading, error } = useSWR<PageablePackets>(
-    `${appConfig.apiUrl()}/packets/${packetName}?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+    packetGroupName ?
+      `${appConfig.apiUrl()}/packets/${packetGroupName}?pageNumber=${pageNumber}&pageSize=${pageSize}` : null,
     (url: string) => fetcher({ url })
   );
 
+
   return {
-    packetGroups: data,
+    packetPages: data,
     isLoading,
     error
   };

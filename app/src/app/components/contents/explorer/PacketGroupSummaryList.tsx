@@ -5,7 +5,7 @@ import { ErrorComponent } from "../common/ErrorComponent";
 import { Pagination } from "../common/Pagination";
 import { Unauthorized } from "../common/Unauthorized";
 import { PacketGroupSummaryListItem } from "./PacketGroupSummaryListItem";
-import { useGetPacketGroupSummary } from "./hooks/useGetPacketGroupSummary";
+import { useGetPacketGroupSummaries } from "./hooks/useGetPacketGroupSummaries";
 
 interface PacketGroupSummaryListProps {
   filterByName: string;
@@ -19,7 +19,7 @@ export const PacketGroupSummaryList = ({
   pageSize,
   setPageNumber
 }: PacketGroupSummaryListProps) => {
-  const { packetGroupSummary, isLoading, error } = useGetPacketGroupSummary(pageNumber, pageSize, filterByName);
+  const { packetGroupSummaries, isLoading, error } = useGetPacketGroupSummaries(pageNumber, pageSize, filterByName);
 
   if (error?.status === HttpStatus.Unauthorized) return <Unauthorized />;
   if (error) return <ErrorComponent message="Error fetching packet groups" error={error} />;
@@ -42,23 +42,23 @@ export const PacketGroupSummaryList = ({
 
   return (
     <>
-      {packetGroupSummary?.content?.length === 0 ? (
+      {packetGroupSummaries?.content?.length === 0 ? (
         <div className="flex border rounded-md p-6 justify-center text-muted-foreground">No reports found</div>
       ) : (
         <ul className="flex flex-col border rounded-md">
-          {packetGroupSummary?.content?.map((packetGroup) => (
+          {packetGroupSummaries?.content?.map((packetGroup) => (
             <PacketGroupSummaryListItem key={packetGroup.latestId} packetGroup={packetGroup} />
           ))}
         </ul>
       )}
 
-      {packetGroupSummary?.content.length ? (
+      {packetGroupSummaries?.content.length ? (
         <div className="flex items-center justify-center">
           <Pagination
             currentPageNumber={pageNumber}
-            totalPages={packetGroupSummary.totalPages}
-            isFirstPage={packetGroupSummary.first}
-            isLastPage={packetGroupSummary.last}
+            totalPages={packetGroupSummaries.totalPages}
+            isFirstPage={packetGroupSummaries.first}
+            isLastPage={packetGroupSummaries.last}
             setPageNumber={setPageNumber}
           />
         </div>

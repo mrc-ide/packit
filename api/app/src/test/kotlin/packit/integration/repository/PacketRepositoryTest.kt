@@ -123,7 +123,7 @@ class PacketRepositoryTest : RepositoryTest()
     {
         packetRepository.saveAll(packets)
 
-        val result = packetRepository.findPacketGroupSummaryBySearchString("").map {
+        val result = packetRepository.getPacketGroupSummariesBySearchString("").map {
             object
             {
                 val name = it.getName()
@@ -147,7 +147,7 @@ class PacketRepositoryTest : RepositoryTest()
     {
         packetRepository.saveAll(packets)
 
-        val result = packetRepository.findPacketGroupSummaryBySearchString("est4").map {
+        val result = packetRepository.getPacketGroupSummariesBySearchString("est4").map {
             object
             {
                 val name = it.getName()
@@ -172,7 +172,7 @@ class PacketRepositoryTest : RepositoryTest()
     {
         packetRepository.saveAll(packets)
 
-        val result = packetRepository.findPacketGroupSummaryBySearchString("name4").map {
+        val result = packetRepository.getPacketGroupSummariesBySearchString("name4").map {
             object
             {
                 val name = it.getName()

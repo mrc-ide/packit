@@ -30,7 +30,7 @@ interface PacketService
     fun importPackets()
     fun getMetadataBy(id: String): PacketMetadata
     fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<ByteArrayResource, HttpHeaders>
-    fun getPacketGroupSummary(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroupSummary>
+    fun getPacketGroupSummaries(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroupSummary>
     fun getPacketsByName(
         name: String, payload: PageablePayload
     ): Page<Packet>
@@ -83,12 +83,13 @@ class BasePacketService(
         return packetRepository.findAll()
     }
 
-    override fun getPacketGroupSummary(
+    // TODO: Move to packet group service
+    override fun getPacketGroupSummaries(
         pageablePayload: PageablePayload,
         filteredName: String
     ): Page<PacketGroupSummary>
     {
-        val packetGroupSummaries = packetRepository.findPacketGroupSummaryBySearchString(filteredName)
+        val packetGroupSummaries = packetRepository.getPacketGroupSummariesBySearchString(filteredName)
         return PagingHelper.convertListToPage(packetGroupSummaries, pageablePayload)
     }
 

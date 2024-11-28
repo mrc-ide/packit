@@ -8,11 +8,12 @@ import {Separator} from "../../Base/Separator";
 export default function PacketDetails() {
   const { packetId, packetName } = useParams();
   const { packet } = usePacketOutletContext();
+  const longDescription = packet?.custom.orderly.description.long
 
   return (
     <>
       <PacketHeader displayName={packet?.displayName ?? ""} packetName={packetName ?? ""} packetId={packetId ?? ""} />
-      <p>{packet?.custom.orderly.description.long}</p>
+      {longDescription && <p>{longDescription}</p>}
       <Separator className="mx-1"/>
       <PacketParameters parameters={packet?.parameters ?? {}} />
       <PacketReports packet={packet} />

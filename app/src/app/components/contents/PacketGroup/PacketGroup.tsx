@@ -1,16 +1,39 @@
-import { useParams } from "react-router-dom";
 import { PacketTable } from "./PacketTable";
+import {useParams} from "react-router-dom";
+import {useGetPacketGroupSummaries} from "../explorer/hooks/useGetPacketGroupSummaries";
+import {HttpStatus} from "../../../../lib/types/HttpStatus";
+import {Unauthorized} from "../common/Unauthorized";
+import {ErrorComponent} from "../common/ErrorComponent";
+import {useGetPacketById} from "../common/hooks/useGetPacketById";
 
 export const PacketGroup = () => {
-  const { packetName } = useParams();
+  const { packetGroupName } = useParams();
+  const { packetGroupSummaries, error: packetGroupError, isLoading: packetGroupLoading } =
+    useGetPacketGroupSummaries(0, 1, packetGroupName as string);
+
+  const latestPacketId = packetGroupSummaries?.content[0]?.latestId;
+  const { packet: latestPacket, error: packetError, isLoading: packetLoading } = useGetPacketById(latestPacketId)
+  const isLoading = packetGroupLoading || packetLoading || latestPacketId === undefined;
+  const packetGroupDisplayName = packetGroupSummaries?.content[0]?.latestDisplayName || "";
+
+  if (isLoading) return <p>Loading</p>;
+  if ([packetError?.status, packetGroupError?.status].includes(HttpStatus.Unauthorized)) return <Unauthorized />;
+  if (packetGroupError) return <ErrorComponent message="Error fetching packet groups" error={packetGroupError} />;
+  if (!packetGroupDisplayName) {
+    return <ErrorComponent message="Error fetching packet group" error={new Error("No packet groups found")} />;
+  }
+  if (packetError) return <ErrorComponent message="Error fetching packet" error={packetError} />;
 
   return (
     <div className="flex justify-center">
-      <div className="h-full flex-1 flex-col space-y-8 p-8 max-w-7xl">
+      <div className="h-full flex-1 flex-col p-8 max-w-7xl">
         <div className="flex items-center justify-between space-y-2">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">{packetName}</h2>
-            <p className="text-muted-foreground">Here&apos;s a list of all packets for the {packetName} packet group</p>
+            <h2 className="text-2xl font-bold tracking-tight">{packetGroupDisplayName}</h2>
+            <p className="text-muted-foreground">{latestPacket?.custom.orderly.description.long}</p>
+            <p className="text-primary my-4">
+              Here&apos;s a list of all packets for the &lsquo;{packetGroupDisplayName}&rsquo; packet group:
+            </p>
           </div>
         </div>
         <PacketTable />

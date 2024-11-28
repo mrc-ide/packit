@@ -5,7 +5,8 @@ import { PacketMetadata } from "../../../../../types";
 
 export const useGetPacketById = (packetId: string | undefined) => {
   const { data, isLoading, error } = useSWR<PacketMetadata>(
-    `${appConfig.apiUrl()}/packets/metadata/${packetId}`,
+    packetId ?
+      `${appConfig.apiUrl()}/packets/metadata/${packetId}` : null,
     (url: string) => fetcher({ url })
   );
 
