@@ -1,6 +1,9 @@
 # packit
 
-Web app for serving outpack and/or orderly2 metadata.
+Web app providing an interface for outpack (and/or orderly2) metadata, such as packets' timestamps, parameters, associated files, groups, etc. Intended to be used as a portal by researchers, to manage and track their packets, and by those who requested the analyses, to view packet outputs. Here's a screenshot of the app in action to give an impresssion:
+
+![Screenshot from 2024-12-03 18-14-12](https://github.com/user-attachments/assets/77f79ded-a900-48d1-9c73-fbae6131fd5a)
+
 
 ## Pre-requisites
 
