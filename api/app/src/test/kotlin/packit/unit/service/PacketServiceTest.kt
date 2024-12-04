@@ -79,7 +79,13 @@ class PacketServiceTest
                 it.name,
                 it.parameters,
                 TimeMetadata(now, now),
-                mapOf("orderly" to mapOf("description" to mapOf("display" to it.displayName)))
+                mapOf(
+                    "orderly" to mapOf(
+                        "description" to mapOf(
+                            "display" to it.displayName
+                        )
+                    )
+                )
             )
         }
     private val packetMetadata =
