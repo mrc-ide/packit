@@ -32,7 +32,9 @@ export const PacketGroup = () => {
           <div className="space-y-4 mb-4">
             <div>
               <h2 className="text-2xl font-bold tracking-tight">{packetGroupDisplayName}</h2>
-              <p className="text-muted-foreground">{packetGroupName}</p>
+              {packetGroupDisplayName !== packetGroupName ?
+                <p className="text-muted-foreground">{packetGroupName}</p> : null
+              }
             </div>
             {latestDescription && <p className="text-primary">{latestDescription}</p>}
             <p className="text-muted-foreground">
