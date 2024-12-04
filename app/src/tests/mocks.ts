@@ -163,7 +163,7 @@ export const mockPacketGroupSummaries: PageablePacketGroupSummary = {
       latestId: "20230427-150813-cd121720",
       latestTime: 1698173547,
       name: "depends",
-      latestDisplayName: "Dependencies",
+      latestDisplayName: "depends",
       packetCount: 1
     }
   ],
