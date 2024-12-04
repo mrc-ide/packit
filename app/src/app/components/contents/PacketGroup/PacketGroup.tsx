@@ -35,8 +35,8 @@ export const PacketGroup = () => {
               <p className="text-muted-foreground">{packetGroupName}</p>
             </div>
             {latestDescription && <p className="text-primary">{latestDescription}</p>}
-            <p className="text-primary">
-              Here&apos;s a list of all packets for the packet group &lsquo;{packetGroupDisplayName}&rsquo;:
+            <p className="text-muted-foreground">
+              Here&apos;s a list of all packets for the packet group &apos;{packetGroupDisplayName}&apos;:
             </p>
           </div>
         </div>
