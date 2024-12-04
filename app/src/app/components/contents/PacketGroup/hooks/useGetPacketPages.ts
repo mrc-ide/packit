@@ -4,9 +4,10 @@ import { fetcher } from "../../../../../lib/fetch";
 import { PageablePackets } from "../../../../../types";
 
 export const useGetPacketPages = (packetGroupName: string | undefined, pageNumber: number, pageSize: number) => {
+  const url = `${appConfig.apiUrl()}/packets/${packetGroupName}?pageNumber=${pageNumber}&pageSize=${pageSize}`
+
   const { data, isLoading, error } = useSWR<PageablePackets>(
-    packetGroupName ?
-      `${appConfig.apiUrl()}/packets/${packetGroupName}?pageNumber=${pageNumber}&pageSize=${pageSize}` : null,
+    packetGroupName ? url : null,
     (url: string) => fetcher({ url })
   );
 
