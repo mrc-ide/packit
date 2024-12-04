@@ -45,10 +45,23 @@ class BasePacketService(
     private val outpackServerClient: OutpackServer
 ) : PacketService
 {
+    // Return the display name for a packet if its custom metadata schema conforms to the orderly schema and contains
+    // a display name.
+    // Also check for 'display name' keys that may exist in non-orderly outpack custom schemas.
+    // Falls back to name if no display name.
     private fun getDisplayNameForPacket(packet: OutpackMetadata): String {
         val orderlyMetadata = packet.custom?.get("orderly") as? Map<*, *>
         val description = orderlyMetadata?.get("description") as? Map<*, *>
-        return description?.get("display") as? String ?: packet.name // Fall back to name if no display name
+        val orderlyDisplayName = description?.get("display") as? String
+        return if (!orderlyDisplayName.isNullOrBlank()) {
+            orderlyDisplayName
+        } else if (packet.custom?.get("display") is String) {
+            packet.custom["display"] as String
+        } else if (packet.custom?.get("display_name") is Map<*, *>) {
+            packet.custom["display_name"] as String
+        } else {
+            packet.name
+        }
     }
 
     override fun importPackets()

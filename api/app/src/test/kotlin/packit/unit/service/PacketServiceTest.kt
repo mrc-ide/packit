@@ -45,7 +45,16 @@ class PacketServiceTest
                 now,
                 now
             ),
-            Packet("20190403-120000-1234dfdf", "test2", "test2 name", mapOf(), false, now, now, now)
+            Packet(
+                "20190403-120000-1234dfdf",
+                "test2",
+                "test2 name",
+                mapOf(),
+                false,
+                now,
+                now,
+                now
+            )
         )
 
     private val oldPackets =
@@ -227,9 +236,14 @@ class PacketServiceTest
         verify(packetRepository).saveAll(argumentCaptor.capture())
         val packets = argumentCaptor.allValues.flatten()
         assertEquals(packets.size, 3)
+        val expectedDisplayNames = mapOf(
+            "20240101-090000-4321gaga" to "test", // This packet has no display name, so should fall back to its name.
+            "20190203-120000-1234dada" to "test name (latest display name)",
+            "20190403-120000-1234dfdf" to "test2 name"
+        )
         newPackets.forEach() {
             val packet = packets.find { packet -> packet.id == it.id }
-            assertEquals(packet!!.displayName, it.displayName)
+            assertEquals(packet!!.displayName, expectedDisplayNames[it.id])
         }
     }
 
