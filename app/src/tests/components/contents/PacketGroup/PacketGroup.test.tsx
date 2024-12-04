@@ -4,26 +4,50 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
 import { PacketGroup } from "../../../../app/components/contents/PacketGroup";
 import { server } from "../../../../msw/server";
-import { mockPacketGroupResponse } from "../../../mocks";
+import {
+  mockPacket,
+  mockPacketGroupResponse,
+  mockPacketGroupSummaries,
+  mockPacketGroupSummariesFiltered
+} from "../../../mocks";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
 describe("PacketGroup", () => {
-  const packetGroupName = mockPacketGroupResponse.content[0].name;
+  const packetGroupName = mockPacketGroupSummaries.content[5].name;
+  console.warn("packetGroupName in test suite", packetGroupName);
+  const packetGroupDisplayName = mockPacketGroupSummaries.content[5].latestDisplayName;
+  const latestPacketDescription = mockPacket.custom.orderly.description.long as string;
   const renderComponent = () =>
     render(
       <SWRConfig value={{ dedupingInterval: 0 }}>
         <MemoryRouter initialEntries={[`/${packetGroupName}`]}>
           <Routes>
-            <Route path="/:packetName" element={<PacketGroup />} />
+            <Route path="/:packetGroupName" element={<PacketGroup />} />
           </Routes>
         </MemoryRouter>
       </SWRConfig>
     );
 
-  it("should render title with packet name", async () => {
+  it("should render heading with the latest display name in the packet group", async () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByRole("heading", { name: packetGroupName })).toBeVisible();
+      expect(screen.getByRole("heading", { name: packetGroupDisplayName })).toBeVisible();
+    });
+  });
+
+  it("should render heading with the name of the packet group", async () => {
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText(packetGroupName)).toBeVisible();
+    });
+  });
+
+  it("should render the latest description in the packet group", async () => {
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText(latestPacketDescription)).toBeVisible();
     });
   });
 

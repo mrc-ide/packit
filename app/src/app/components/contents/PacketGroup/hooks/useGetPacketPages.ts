@@ -10,7 +10,6 @@ export const useGetPacketPages = (packetGroupName: string | undefined, pageNumbe
     (url: string) => fetcher({ url })
   );
 
-
   return {
     packetPages: data,
     isLoading,

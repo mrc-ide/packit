@@ -1,11 +1,16 @@
 import { rest } from "msw";
 import appConfig from "../../config/appConfig";
-import { mockPacketGroupSummary } from "../../tests/mocks";
+import { mockPacketGroupSummaries, mockPacketGroupSummariesFiltered } from "../../tests/mocks";
 
-const packetGroupSummaryIndexUri = `${appConfig.apiUrl()}/packets/packetGroupSummary`;
+const packetGroupSummaryIndexUri = `${appConfig.apiUrl()}/packets/packetGroupSummaries`;
 
 export const packetGroupSummaryHandlers = [
   rest.get(packetGroupSummaryIndexUri, (req, res, ctx) => {
-    return res(ctx.json(mockPacketGroupSummary));
+    const url = new URL(req.url)
+    if (url.searchParams.get("filterName")) {
+      return res(ctx.json(mockPacketGroupSummariesFiltered))
+    }
+
+    return res(ctx.json(mockPacketGroupSummaries));
   })
 ];
