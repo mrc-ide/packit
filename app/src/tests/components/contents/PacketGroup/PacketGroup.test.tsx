@@ -27,7 +27,7 @@ describe("PacketGroup", () => {
       </SWRConfig>
     );
 
-  it("should render packet header with the latest display name in the packet group, and the name of the packet group", async () => {
+  it("should render packet header with latest display name in the packet group, and name of packet group", async () => {
     renderComponent();
 
     await waitFor(() => {
@@ -36,7 +36,7 @@ describe("PacketGroup", () => {
     });
   });
 
-  it("should render heading with the name of the packet group when the display name is the same as the name", async () => {
+  it("should render heading with the name of the packet group when the display name is the same as name", async () => {
     const groupName = mockPacketGroupSummaries.content[mockPacketGroupSummaries.content.length - 1].name
     const mockGroupSummariesResponse = {
       ...mockPacketGroupSummariesFiltered,
