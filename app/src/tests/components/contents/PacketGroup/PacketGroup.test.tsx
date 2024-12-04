@@ -14,7 +14,7 @@ import appConfig from "../../../../config/appConfig";
 describe("PacketGroup", () => {
   const packetGroupName = mockPacketGroupSummaries.content[5].name;
   const packetGroupDisplayName = mockPacketGroupSummaries.content[5].latestDisplayName;
-  const latestPacketDescription = mockPacket.custom.orderly.description.long as string;
+  const latestPacketDescription = mockPacket.custom?.orderly.description.long as string;
   const renderComponent = () =>
     render(
       <SWRConfig value={{ dedupingInterval: 0 }}>

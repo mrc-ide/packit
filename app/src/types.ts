@@ -54,8 +54,8 @@ export interface PacketMetadata {
   parameters: Record<string, string> | null;
   time: TimeMetadata;
   files: FileMetadata[];
-  custom: Custom;
-  git?: GitMetadata;
+  custom: Custom | null;
+  git: GitMetadata | null;
 }
 
 export interface GitMetadata {

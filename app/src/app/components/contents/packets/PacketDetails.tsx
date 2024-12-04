@@ -8,7 +8,7 @@ import {Separator} from "../../Base/Separator";
 export default function PacketDetails() {
   const { packetId, packetName } = useParams();
   const { packet } = usePacketOutletContext();
-  const longDescription = packet?.custom.orderly.description.long
+  const longDescription = packet?.custom?.orderly.description.long
 
   return (
     <>

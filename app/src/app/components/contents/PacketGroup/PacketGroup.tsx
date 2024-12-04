@@ -13,7 +13,7 @@ export const PacketGroup = () => {
   const latestPacketId = packetGroupSummaries?.content[0]?.latestId;
   const { packet: latestPacket, error: packetError } = useGetPacketById(latestPacketId)
   const packetGroupDisplayName = packetGroupSummaries?.content[0]?.latestDisplayName || "";
-  const latestDescription = latestPacket?.custom.orderly.description.long;
+  const latestDescription = latestPacket?.custom?.orderly.description.long;
 
   if ([packetError?.status, packetGroupError?.status].includes(HttpStatus.Unauthorized)) return <Unauthorized />;
   if (packetGroupError || !packetGroupDisplayName) {

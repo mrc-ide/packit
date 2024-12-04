@@ -28,7 +28,7 @@ describe("Metadata component", () => {
 
     expect(await screen.findByText(mockPacket.id)).toBeVisible();
     expect(await screen.findByText(mockPacket.name)).toBeVisible();
-    expect(await screen.findByText(mockPacket.custom.orderly.description.display as string)).toBeVisible();
+    expect(await screen.findByText(mockPacket.custom?.orderly.description.display as string)).toBeVisible();
     expect(screen.getByText(/timings/i)).toBeInTheDocument();
     expect(screen.getByText(/started/i)).toBeInTheDocument();
     expect(screen.getByText(/elapsed/i)).toBeInTheDocument();
