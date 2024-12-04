@@ -10,6 +10,7 @@ import {
   mockPacketGroupSummaries,
 } from "../../../mocks";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
+import appConfig from "../../../../config/appConfig";
 describe("PacketGroup", () => {
   const packetGroupName = mockPacketGroupSummaries.content[5].name;
   const packetGroupDisplayName = mockPacketGroupSummaries.content[5].latestDisplayName;
@@ -64,22 +65,74 @@ describe("PacketGroup", () => {
     expect(screen.getByText(/none/i)).toBeVisible();
   });
 
-  it("should render error component when error fetching packets", async () => {
+  it("should render error component when error fetching latest packet", async () => {
     server.use(
-      rest.get("*", (req, res, ctx) => {
+      rest.get(`${appConfig.apiUrl()}/packets/metadata/*`, (req, res, ctx) => {
         return res(ctx.status(400));
       })
     );
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText(/error fetching/i)).toBeVisible();
+      expect(screen.getByText(/error fetching packet/i)).toBeVisible();
+    });
+  });
+
+  it("should render error component when error fetching latest packet", async () => {
+    server.use(
+      rest.get(`${appConfig.apiUrl()}/packets/metadata/*`, (req, res, ctx) => {
+        return res(ctx.status(400));
+      })
+    );
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText(/error fetching packet/i)).toBeVisible();
+    });
+  });
+
+  it("should render error component when error fetching packet group", async () => {
+    server.use(
+      rest.get(`${appConfig.apiUrl()}/packets/packetGroupSummaries`, (req, res, ctx) => {
+        return res(ctx.status(400));
+      })
+    );
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText(/error fetching packet group/i)).toBeVisible();
+    });
+  });
+
+  it("should render error component when error fetching packet group", async () => {
+    server.use(
+      rest.get(`${appConfig.apiUrl()}/packets/${packetGroupName}`, (req, res, ctx) => {
+        return res(ctx.status(400));
+      })
+    );
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText(/error fetching packets/i)).toBeVisible();
     });
   });
 
   it("should render unauthorized when 401 error fetching packets", async () => {
     server.use(
-      rest.get("*", (req, res, ctx) => {
+      rest.get(`${appConfig.apiUrl()}/packets/metadata/*`, (req, res, ctx) => {
+        return res(ctx.status(HttpStatus.Unauthorized));
+      })
+    );
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText(/unauthorized/i)).toBeVisible();
+    });
+  });
+
+  it("should render unauthorized when 401 error fetching packet group", async () => {
+    server.use(
+      rest.get(`${appConfig.apiUrl()}/packets/packetGroupSummaries`, (req, res, ctx) => {
         return res(ctx.status(HttpStatus.Unauthorized));
       })
     );

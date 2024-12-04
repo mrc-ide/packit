@@ -8,23 +8,21 @@ import {useGetPacketById} from "../common/hooks/useGetPacketById";
 
 export const PacketGroup = () => {
   const { packetGroupName } = useParams();
-  const { packetGroupSummaries, error: packetGroupError, isLoading: packetGroupLoading } =
+  const { packetGroupSummaries, error: packetGroupError } =
     useGetPacketGroupSummaries(0, 1, packetGroupName as string);
   const latestPacketId = packetGroupSummaries?.content[0]?.latestId;
-  const { packet: latestPacket, error: packetError, isLoading: packetLoading } = useGetPacketById(latestPacketId)
-  const isLoading = packetGroupLoading || packetLoading || latestPacketId === undefined;
+  const { packet: latestPacket, error: packetError } = useGetPacketById(latestPacketId)
   const packetGroupDisplayName = packetGroupSummaries?.content[0]?.latestDisplayName || "";
   const latestDescription = latestPacket?.custom.orderly.description.long;
 
-  if (isLoading) return <p>Loading</p>;
   if ([packetError?.status, packetGroupError?.status].includes(HttpStatus.Unauthorized)) return <Unauthorized />;
-  if (packetGroupError) return <ErrorComponent message="Error fetching packet groups" error={packetGroupError} />;
-  if (!packetGroupDisplayName) {
-    return <ErrorComponent message="Error fetching packet group" error={new Error("No packet groups found")} />;
+  if (packetGroupError || !packetGroupDisplayName) {
+    const error = packetGroupError || new Error("No packet groups found");
+    return <ErrorComponent message="Error fetching packet group" error={error} />;
   }
-  if (packetError) return <ErrorComponent message="Error fetching packet" error={packetError} />;
-  if (!latestPacket) {
-    return <ErrorComponent message="Error fetching packet" error={new Error("No packet found")} />;
+  if (packetError || !latestPacket) {
+    const error = packetError || new Error("No packet found");
+    return <ErrorComponent message="Error fetching packet" error={error} />;
   }
 
   return (
