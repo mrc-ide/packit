@@ -41,7 +41,6 @@ class PacketController(private val packetService: PacketService)
         )
     }
 
-    // TODO: Move this into the packet group controller
     @GetMapping("/packetGroupSummaries")
     fun getPacketGroupSummaries(
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,

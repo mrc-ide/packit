@@ -18,7 +18,6 @@ interface PacketRepository : JpaRepository<Packet, String>
     @PostFilter("@authz.canReadPacket(#root, filterObject.id, filterObject.name)")
     fun findByName(name: String, sort: Sort): List<Packet>
 
-    // TODO: Move this into the packet group repository
     @PostFilter("@authz.canReadPacketGroup(#root, filterObject.name)")
     @Query(
         value = """

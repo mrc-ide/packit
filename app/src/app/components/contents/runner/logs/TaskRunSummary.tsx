@@ -20,8 +20,6 @@ export const TaskRunSummary = ({ runInfo }: TaskRunSummaryProps) => {
     finishTime
   } = getStatusDisplayByStatus(runInfo);
 
-  // TODO, look up the latest display name using the runInfo.packetGroupName
-
   return (
     <div className={`flex border rounded-md flex-col ${borderColor}`}>
       <TaskRunSummaryTop

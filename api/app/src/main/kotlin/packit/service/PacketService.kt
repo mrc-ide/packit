@@ -83,7 +83,6 @@ class BasePacketService(
         return packetRepository.findAll()
     }
 
-    // TODO: Move to packet group service
     override fun getPacketGroupSummaries(
         pageablePayload: PageablePayload,
         filteredName: String
