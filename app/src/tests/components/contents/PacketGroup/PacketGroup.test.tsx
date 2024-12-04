@@ -8,12 +8,10 @@ import {
   mockPacket,
   mockPacketGroupResponse,
   mockPacketGroupSummaries,
-  mockPacketGroupSummariesFiltered
 } from "../../../mocks";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
 describe("PacketGroup", () => {
   const packetGroupName = mockPacketGroupSummaries.content[5].name;
-  console.warn("packetGroupName in test suite", packetGroupName);
   const packetGroupDisplayName = mockPacketGroupSummaries.content[5].latestDisplayName;
   const latestPacketDescription = mockPacket.custom.orderly.description.long as string;
   const renderComponent = () =>
