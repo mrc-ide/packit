@@ -74,7 +74,11 @@ class PacketServiceTest
 
     private val metadata =
         newPackets.map {
-            OutpackMetadata(it.id, it.name, it.parameters, TimeMetadata(now, now),
+            OutpackMetadata(
+                it.id,
+                it.name,
+                it.parameters,
+                TimeMetadata(now, now),
                 mapOf("orderly" to mapOf("description" to mapOf("display" to it.displayName)))
             )
         }
