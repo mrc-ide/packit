@@ -20,7 +20,7 @@ class BasePacketGroupService(
 {
     override fun getPacketGroups(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroup>
     {
-        val packetGroups = packetGroupRepository.findAllByNameContaining(filteredName, Sort.by("name"))
+        val packetGroups = packetGroupRepository.findPacketGroupsBySearchString(filteredName, Sort.by("name"))
         return PagingHelper.convertListToPage(packetGroups, pageablePayload)
     }
 }
