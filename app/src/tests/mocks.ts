@@ -744,7 +744,7 @@ export const mockCompleteRunInfo: RunInfo = {
     testParam3: "hello"
   },
   queuePosition: null,
-  ranBy: "Super Admin"
+  runBy: "Super Admin"
 };
 
 export const mockTasksRunInfo: PageableBasicRunInfo = {
@@ -759,7 +759,7 @@ export const mockTasksRunInfo: PageableBasicRunInfo = {
         testParam2: false,
         testParam3: "hello"
       },
-      ranBy: "user1",
+      runBy: "user1",
       commitHash: "1e0b69e099b28d0539c3cb6abfee328987e11d7a",
       packetId: "20240920-094300-78e4ae00",
       timeQueued: 1726825380.115
@@ -770,7 +770,7 @@ export const mockTasksRunInfo: PageableBasicRunInfo = {
       status: "ERROR",
       branch: "master2",
       parameters: null,
-      ranBy: "user2",
+      runBy: "user2",
       commitHash: "2e0b69e099b28d0539c3cb6abfee328987e11d7a",
       packetId: null,
       timeQueued: 1726775309.6623
@@ -781,7 +781,7 @@ export const mockTasksRunInfo: PageableBasicRunInfo = {
       status: "PENDING",
       branch: "master3",
       parameters: null,
-      ranBy: "user3",
+      runBy: "user3",
       commitHash: "3e0b69e099b28d0539c3cb6abfee328987e11d7a",
       packetId: null,
       timeQueued: 1726773690.4451
@@ -792,7 +792,7 @@ export const mockTasksRunInfo: PageableBasicRunInfo = {
       status: "RUNNING",
       branch: "master4",
       parameters: null,
-      ranBy: "user4",
+      runBy: "user4",
       commitHash: "4e0b69e099b28d0539c3cb6abfee328987e11d7a",
       packetId: null,
       timeQueued: 1726734163.4371

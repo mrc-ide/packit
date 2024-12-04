@@ -30,7 +30,7 @@ data class RunInfoDto(
     val packetId: String? = null,
     val parameters: Map<String, Any>? = null,
     val queuePosition: Int? = null,
-    val ranBy: String
+    val runBy: String
 )
 
 data class BasicRunInfoDto(
@@ -39,7 +39,7 @@ data class BasicRunInfoDto(
     val status: Status,
     val branch: String,
     val parameters: Map<String, Any>? = null,
-    val ranBy: String,
+    val runBy: String,
     val commitHash: String,
     val packetId: String? = null,
     val timeQueued: Double? = null,

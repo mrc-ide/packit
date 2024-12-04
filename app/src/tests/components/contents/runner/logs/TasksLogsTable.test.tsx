@@ -72,7 +72,7 @@ describe("TasksLogsTable component", () => {
 
     await waitFor(() => {
       mockTasksRunInfo.content.forEach((taskRun) => {
-        expect(screen.getByText(taskRun.ranBy)).toBeVisible();
+        expect(screen.getByText(taskRun.runBy)).toBeVisible();
         expect(screen.getByText(taskRun.branch)).toBeVisible();
         expect(screen.getByText(taskRun.commitHash.slice(0, 7))).toBeVisible();
       });

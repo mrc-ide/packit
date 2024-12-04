@@ -188,7 +188,7 @@ class RunnerControllerTest : IntegrationTest()
         assertEquals(taskId, statusRes.body!!.taskId)
         assertEquals(branch.name, statusRes.body!!.branch)
         assertEquals(branch.commitHash, statusRes.body!!.commitHash)
-        assertEquals(testUser.displayName, statusRes.body!!.ranBy)
+        assertEquals(testUser.displayName, statusRes.body!!.runBy)
     }
 
     @Test
@@ -222,7 +222,7 @@ class RunnerControllerTest : IntegrationTest()
         assertEquals(2, resultStatuses.size)
         resultStatuses.forEach {
             assertEquals(testPacketGroupName, it.packetGroupName)
-            assertEquals(testUser.displayName, it.ranBy)
+            assertEquals(testUser.displayName, it.runBy)
         }
         assertEquals(taskId1, resultStatuses[0].taskId)
         assertEquals(branch1.name, resultStatuses[0].branch)

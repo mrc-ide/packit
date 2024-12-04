@@ -27,11 +27,11 @@ export const runInfoColumns = [
       );
     }
   }),
-  columnHelper.accessor("ranBy", {
+  columnHelper.accessor("runBy", {
     header: "User",
     cell: ({ getValue }) => {
-      const ranBy = getValue();
-      return <div>{ranBy}</div>;
+      const runBy = getValue();
+      return <div>{runBy}</div>;
     }
   }),
   columnHelper.accessor("parameters", {
