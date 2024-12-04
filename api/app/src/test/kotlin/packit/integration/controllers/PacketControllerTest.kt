@@ -328,7 +328,7 @@ class PacketControllerTest : IntegrationTest()
     fun `getPacketGroupSummary returns of packet groups user can see`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/packetGroupSummary",
+            "/packets/packetGroupSummaries",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )

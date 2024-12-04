@@ -20,7 +20,7 @@ class PacketGroupServiceTest
         val filterName = "test"
         val packetGroups = listOf(PacketGroup("test1"), PacketGroup("test2"))
         whenever(
-            packetGroupRepository.findAllByNameContaining(
+            packetGroupRepository.findPacketGroupsBySearchString(
                 eq(filterName), any<Sort>()
             )
         ).thenReturn(packetGroups)
@@ -28,7 +28,7 @@ class PacketGroupServiceTest
         val result = sut.getPacketGroups(pageablePayload, filterName)
 
         assertEquals(packetGroups, result.content)
-        verify(packetGroupRepository).findAllByNameContaining(
+        verify(packetGroupRepository).findPacketGroupsBySearchString(
             filterName,
             Sort.by("name")
         )
