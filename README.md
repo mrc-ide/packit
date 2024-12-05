@@ -1,6 +1,18 @@
 # packit
 
-Web app for serving outpack and/or orderly2 metadata.
+Web application for surfacing packet data and metadata. Packets are sets of files with related metadata conforming to the [outpack](https://github.com/mrc-ide/outpack/) format. Packets are produced as the result of running analysis scripts, typically using a package which supports outpack format, such as [orderly](https://github.com/mrc-ide/orderly2) or [pyorderly](https://github.com/mrc-ide/pyorderly), which also add their own custom metadata to the packets produced. 
+
+Packet metadata includes:
+- timestamp
+- parameter
+- display name
+- file metadata e.g. whether a file is input ("resource") or output ("artefact")
+
+Packet data are the files included in the packet, which can be downloaded through the application. 
+
+The application can be used through the browser as a portal by researchers, to manage and track their packets, and by those who requested the analyses, to view packet outputs. Packets can also be created through the app by running an analysis. 
+
+Packit can also be used programmatically through its `/outpack` route, which forwards requests to [outpack server](https://github.com/mrc-ide/outpack_server). 
 
 ## Pre-requisites
 
