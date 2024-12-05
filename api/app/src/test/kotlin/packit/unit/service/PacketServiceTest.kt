@@ -26,9 +26,9 @@ class PacketServiceTest
     private val newPackets =
         listOf(
             Packet(
-                "20190203-120000-1234dada",
+                "20240101-090000-4321gaga",
                 "test",
-                "test",
+                "",
                 mapOf("alpha" to 1),
                 false,
                 now,
@@ -38,14 +38,23 @@ class PacketServiceTest
             Packet(
                 "20190203-120000-1234dada",
                 "test",
-                "test",
+                "test name (latest display name)",
                 mapOf("beta" to 1),
                 true,
                 now,
                 now,
                 now
             ),
-            Packet("20190403-120000-1234dfdf", "test2", "test2", mapOf(), false, now, now, now)
+            Packet(
+                "20190403-120000-1234dfdf",
+                "test2",
+                "test2 name",
+                mapOf(),
+                false,
+                now,
+                now,
+                now
+            )
         )
 
     private val oldPackets =
@@ -53,7 +62,7 @@ class PacketServiceTest
             Packet(
                 "20180203-120000-abdefg56",
                 "test",
-                "test name",
+                "test name (old display name)",
                 mapOf("name" to "value"),
                 false,
                 now - 1,
@@ -63,7 +72,7 @@ class PacketServiceTest
             Packet(
                 "20180403-120000-a5bde567",
                 "test2",
-                "test2 name",
+                "",
                 mapOf("beta" to 1),
                 true,
                 now - 2,
@@ -73,7 +82,21 @@ class PacketServiceTest
         )
 
     private val metadata =
-        newPackets.map { OutpackMetadata(it.id, it.name, it.parameters, TimeMetadata(now, now)) }
+        newPackets.map {
+            OutpackMetadata(
+                it.id,
+                it.name,
+                it.parameters,
+                TimeMetadata(now, now),
+                mapOf(
+                    "orderly" to mapOf(
+                        "description" to mapOf(
+                            "display" to it.displayName
+                        )
+                    )
+                )
+            )
+        }
     private val packetMetadata =
         PacketMetadata(
             "3",
@@ -96,6 +119,7 @@ class PacketServiceTest
                 override fun getPacketCount(): Int = 10
                 override fun getLatestId(): String = "20180818-164847-7574883b"
                 override fun getLatestTime(): Double = 1690902034.0
+                override fun getLatestDisplayName(): String = ""
             },
             object : PacketGroupSummary
             {
@@ -103,6 +127,7 @@ class PacketServiceTest
                 override fun getPacketCount(): Int = 10
                 override fun getLatestId(): String = "20180818-164847-7574883b"
                 override fun getLatestTime(): Double = 1690902034.0
+                override fun getLatestDisplayName(): String = ""
             }
         )
 
@@ -113,7 +138,7 @@ class PacketServiceTest
             on { findAll() } doReturn oldPackets
             on { findAllIds() } doReturn oldPackets.map { it.id }
             on { findTopByOrderByImportTimeDesc() } doReturn oldPackets.first()
-            on { findPacketGroupSummaryByName("random") } doReturn
+            on { getPacketGroupSummariesBySearchString("random") } doReturn
                     packetGroupSummaries
             on { findByName(anyString(), any()) } doReturn oldPackets
             on { findAllByNameContainingAndIdContaining(anyString(), anyString(), any<Sort>()) } doReturn oldPackets
@@ -172,11 +197,11 @@ class PacketServiceTest
     {
         val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
 
-        val result = sut.getPacketGroupSummary(PageablePayload(0, 10), "random")
+        val result = sut.getPacketGroupSummaries(PageablePayload(0, 10), "random")
 
         assertEquals(result.totalElements, 2)
         assertEquals(result.content, packetGroupSummaries)
-        verify(packetRepository).findPacketGroupSummaryByName("random")
+        verify(packetRepository).getPacketGroupSummariesBySearchString("random")
     }
 
     @Test
@@ -211,6 +236,15 @@ class PacketServiceTest
         verify(packetRepository).saveAll(argumentCaptor.capture())
         val packets = argumentCaptor.allValues.flatten()
         assertEquals(packets.size, 3)
+        val expectedDisplayNames = mapOf(
+            "20240101-090000-4321gaga" to "test", // This packet has no display name, so should fall back to its name.
+            "20190203-120000-1234dada" to "test name (latest display name)",
+            "20190403-120000-1234dfdf" to "test2 name"
+        )
+        newPackets.forEach() {
+            val packet = packets.find { packet -> packet.id == it.id }
+            assertEquals(packet!!.displayName, expectedDisplayNames[it.id])
+        }
     }
 
     @Test

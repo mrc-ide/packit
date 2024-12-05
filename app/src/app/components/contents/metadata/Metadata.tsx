@@ -4,6 +4,7 @@ import { usePacketOutletContext } from "../../main/PacketOutlet";
 import { PacketHeader } from "../packets";
 import { MetadataListItem } from "./MetadataListItem";
 import { Github, Timer } from "lucide-react";
+import {Separator} from "../../Base/Separator";
 
 export default function Metadata() {
   const { packetId, packetName } = useParams();
@@ -14,7 +15,7 @@ export default function Metadata() {
 
   return (
     <>
-      <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} />
+      <PacketHeader displayName={packet?.displayName ?? ""} packetName={packetName ?? ""} packetId={packetId ?? ""} />
       {packet && (
         <>
           <div className="space-y-3">
@@ -31,7 +32,7 @@ export default function Metadata() {
           </div>
           {packet.git && (
             <>
-              <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
+              <Separator className="mx-1"/>
               <div className="space-y-3">
                 <span className="flex gap-1 items-center text-muted-foreground">
                   <Github className="small-icon"/>

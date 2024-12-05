@@ -9,7 +9,7 @@ export default function Download() {
 
   return (
     <>
-      <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} />
+      <PacketHeader displayName={packet?.displayName ?? ""} packetName={packetName ?? ""} packetId={packetId ?? ""} />
       <ul>
         {packet?.files.map((data, key) => (
           <li key={key}>

@@ -4,7 +4,7 @@ import { Skeleton } from "../../Base/Skeleton";
 import { DataTable } from "../common/DataTable";
 import { ErrorComponent } from "../common/ErrorComponent";
 import { Pagination } from "../common/Pagination";
-import { useGetPacketGroups } from "./hooks/useGetPacketGroups";
+import { useGetPacketPages } from "./hooks/useGetPacketPages";
 import { packetColumns } from "./packetColumns";
 import { PAGE_SIZE } from "../../../../lib/constants";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
@@ -14,8 +14,7 @@ import { Unauthorized } from "../common/Unauthorized";
 export const PacketTable = () => {
   const { packetName } = useParams();
   const [pageNumber, setPageNumber] = useState(0);
-
-  const { packetGroups, error, isLoading } = useGetPacketGroups(packetName, pageNumber, PAGE_SIZE);
+  const { packetPages, error, isLoading } = useGetPacketPages(packetName, pageNumber, PAGE_SIZE);
 
   if (error?.status === HttpStatus.Unauthorized) return <Unauthorized />;
   if (error) return <ErrorComponent message="Error fetching packets" error={error} />;
@@ -38,15 +37,15 @@ export const PacketTable = () => {
 
   return (
     <>
-      {packetGroups && (
+      {packetPages && (
         <div className="space-y-4">
-          <DataTable columns={packetColumns} data={packetGroups.content} />
+          <DataTable columns={packetColumns} data={packetPages.content} />
           <div className="flex items-center justify-center">
             <Pagination
               currentPageNumber={pageNumber}
-              totalPages={packetGroups.totalPages}
-              isFirstPage={packetGroups.first}
-              isLastPage={packetGroups.last}
+              totalPages={packetPages.totalPages}
+              isFirstPage={packetPages.first}
+              isLastPage={packetPages.last}
               setPageNumber={setPageNumber}
             />
           </div>

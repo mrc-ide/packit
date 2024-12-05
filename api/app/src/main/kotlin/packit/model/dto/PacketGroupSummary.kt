@@ -7,4 +7,5 @@ interface PacketGroupSummary
     fun getPacketCount(): Int
     fun getLatestId(): String
     fun getLatestTime(): Double
+    fun getLatestDisplayName(): String
 }
