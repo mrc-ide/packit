@@ -15,7 +15,7 @@ interface TaskSummaryTopProps {
 export const TaskRunSummaryBottom = ({ runInfo, createdTime, startTime, finishTime }: TaskSummaryTopProps) => (
   <div className="p-4 flex justify-between space-x-4">
     <div className="flex flex-col text-muted-foreground space-y-2">
-      <div>Ran by {runInfo.ranBy}</div>
+      <div>Run by {runInfo.runBy}</div>
       <div className="flex flex-col text-sm space-y-0.5">
         <div>Created at {createdTime.toLocaleString()}</div>
         {startTime && <div>Started at {startTime.toLocaleString()}</div>}

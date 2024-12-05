@@ -13,7 +13,7 @@ export interface RunInfo {
   packetId?: string | null;
   parameters?: Record<string, string | number | boolean> | null;
   queuePosition?: number | null;
-  ranBy: string;
+  runBy: string;
 }
 export type BasicRunInfo = Omit<RunInfo, "logs" | "queuePosition" | "timeStarted" | "timeCompleted">;
 
