@@ -21,7 +21,7 @@ describe("PacketGroup", () => {
       <SWRConfig value={{ dedupingInterval: 0 }}>
         <MemoryRouter initialEntries={[`/${packetGroup}`]}>
           <Routes>
-            <Route path="/:packetGroupName" element={<PacketGroup />} />
+            <Route path="/:packetName" element={<PacketGroup />} />
           </Routes>
         </MemoryRouter>
       </SWRConfig>
@@ -81,19 +81,6 @@ describe("PacketGroup", () => {
     });
 
     expect(screen.getByText(/none/i)).toBeVisible();
-  });
-
-  it("should render error component when error fetching latest packet", async () => {
-    server.use(
-      rest.get(`${appConfig.apiUrl()}/packets/metadata/*`, (req, res, ctx) => {
-        return res(ctx.status(400));
-      })
-    );
-    renderComponent();
-
-    await waitFor(() => {
-      expect(screen.getByText(/error fetching packet/i)).toBeVisible();
-    });
   });
 
   it("should render error component when error fetching latest packet", async () => {

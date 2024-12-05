@@ -12,9 +12,9 @@ import { Unauthorized } from "../common/Unauthorized";
 
 // TODO: make table more feature rich (sorting, filter, etc). May need to fetch all data then and let tanstack handle
 export const PacketTable = () => {
-  const { packetGroupName } = useParams();
+  const { packetName } = useParams();
   const [pageNumber, setPageNumber] = useState(0);
-  const { packetPages, error, isLoading } = useGetPacketPages(packetGroupName, pageNumber, PAGE_SIZE);
+  const { packetPages, error, isLoading } = useGetPacketPages(packetName, pageNumber, PAGE_SIZE);
 
   if (error?.status === HttpStatus.Unauthorized) return <Unauthorized />;
   if (error) return <ErrorComponent message="Error fetching packets" error={error} />;

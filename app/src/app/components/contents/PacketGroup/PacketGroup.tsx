@@ -7,9 +7,9 @@ import {ErrorComponent} from "../common/ErrorComponent";
 import {useGetPacketById} from "../common/hooks/useGetPacketById";
 
 export const PacketGroup = () => {
-  const { packetGroupName } = useParams();
+  const { packetName } = useParams();
   const { packetGroupSummaries, error: packetGroupError } =
-    useGetPacketGroupSummaries(0, 1, packetGroupName as string);
+    useGetPacketGroupSummaries(0, 1, packetName as string);
   const latestPacketId = packetGroupSummaries?.content[0]?.latestId;
   const { packet: latestPacket, error: packetError } = useGetPacketById(latestPacketId)
   const packetGroupDisplayName = packetGroupSummaries?.content[0]?.latestDisplayName || "";
@@ -32,8 +32,8 @@ export const PacketGroup = () => {
           <div className="space-y-4 mb-4">
             <div>
               <h2 className="text-2xl font-bold tracking-tight">{packetGroupDisplayName}</h2>
-              {packetGroupDisplayName !== packetGroupName ?
-                <p className="text-muted-foreground">{packetGroupName}</p> : null
+              {packetGroupDisplayName !== packetName ?
+                <p className="text-muted-foreground">{packetName}</p> : null
               }
             </div>
             {latestDescription && <p className="text-primary">{latestDescription}</p>}

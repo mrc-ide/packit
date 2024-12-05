@@ -119,7 +119,7 @@ class PacketRepositoryTest : RepositoryTest()
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
 
-    fun `can get right order and data expected from findPacketGroupSummaryBySearchString`()
+    fun `can get right order and data expected from getPacketGroupSummariesBySearchString`()
     {
         packetRepository.saveAll(packets)
 
@@ -143,7 +143,7 @@ class PacketRepositoryTest : RepositoryTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `can filter correctly when calling findPacketGroupSummaryBySearchString with part of a packet group name`()
+    fun `can filter correctly when calling getPacketGroupSummariesBySearchString with part of a packet group name`()
     {
         packetRepository.saveAll(packets)
 
@@ -168,7 +168,7 @@ class PacketRepositoryTest : RepositoryTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `can filter correctly when calling findPacketGroupSummaryBySearchString with part of a packet display name`()
+    fun `can filter correctly when calling getPacketGroupSummariesBySearchString with part of a packet display name`()
     {
         packetRepository.saveAll(packets)
 

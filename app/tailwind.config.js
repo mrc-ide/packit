@@ -56,9 +56,6 @@ export const theme = {
       sans: ["Graphik", "sans-serif"],
       serif: ["Merriweather", "serif"]
     },
-    fontSize: {
-      "2xs": "0.625rem",
-    },
     keyframes: {
       "accordion-down": {
         from: { height: "0" },
