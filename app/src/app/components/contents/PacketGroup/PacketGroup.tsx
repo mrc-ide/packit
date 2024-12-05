@@ -1,17 +1,17 @@
 import { PacketTable } from "./PacketTable";
-import {useParams} from "react-router-dom";
-import {useGetPacketGroupSummaries} from "../explorer/hooks/useGetPacketGroupSummaries";
-import {HttpStatus} from "../../../../lib/types/HttpStatus";
-import {Unauthorized} from "../common/Unauthorized";
-import {ErrorComponent} from "../common/ErrorComponent";
-import {useGetPacketById} from "../common/hooks/useGetPacketById";
+import { useParams } from "react-router-dom";
+import { useGetPacketGroupSummaries } from "../explorer/hooks/useGetPacketGroupSummaries";
+import { HttpStatus } from "../../../../lib/types/HttpStatus";
+import { Unauthorized } from "../common/Unauthorized";
+import { ErrorComponent } from "../common/ErrorComponent";
+import { useGetPacketById } from "../common/hooks/useGetPacketById";
 
 export const PacketGroup = () => {
   const { packetName } = useParams();
   const { packetGroupSummaries, error: packetGroupError } =
     useGetPacketGroupSummaries(0, 1, packetName as string);
   const latestPacketId = packetGroupSummaries?.content[0]?.latestId;
-  const { packet: latestPacket, error: packetError } = useGetPacketById(latestPacketId)
+  const { packet: latestPacket, error: packetError } = useGetPacketById(latestPacketId);
   const packetGroupDisplayName = packetGroupSummaries?.content[0]?.latestDisplayName || "";
   const latestDescription = latestPacket?.custom?.orderly.description.long;
 
@@ -42,7 +42,7 @@ export const PacketGroup = () => {
             </p>
           </div>
         </div>
-        <PacketTable/>
+        <PacketTable />
       </div>
     </div>
   );
