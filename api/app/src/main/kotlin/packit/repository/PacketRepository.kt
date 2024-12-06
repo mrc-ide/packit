@@ -40,7 +40,6 @@ interface PacketRepository : JpaRepository<Packet, String>
                 WHERE row_num = 1 AND (name ILIKE %?1% OR display_name ILIKE %?1%)
                 ORDER BY start_time DESC
          """,
-        countQuery = "SELECT count(distinct name) from packet WHERE name ILIKE %?1%",
         nativeQuery = true
     )
     fun getFilteredPacketGroupSummaries(filter: String): List<PacketGroupSummary>
