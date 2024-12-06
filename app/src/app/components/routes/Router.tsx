@@ -3,7 +3,7 @@ import App from "../../App";
 import { NotFound } from "../NotFound";
 import { PacketGroup } from "../contents/PacketGroup";
 import { Download } from "../contents/download";
-import { Home } from "../contents/explorer";
+import { Home } from "../contents/home";
 import { Metadata } from "../contents/metadata";
 import PacketDetails from "../contents/packets/PacketDetails";
 import { PacketFileFullScreen } from "../contents/packets/PacketFileFullScreen";
