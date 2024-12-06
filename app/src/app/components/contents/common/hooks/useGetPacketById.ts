@@ -10,7 +10,9 @@ export const useGetPacketById = (packetId: string | undefined) => {
     (url: string) => fetcher({ url })
   );
 
-  const packet = { ...data, displayName: data?.custom?.orderly?.description?.display };
+  const displayName = data?.custom?.orderly?.description?.display;
+
+  const packet = displayName ? { ...data, displayName } : data;
 
   return {
     packet,
