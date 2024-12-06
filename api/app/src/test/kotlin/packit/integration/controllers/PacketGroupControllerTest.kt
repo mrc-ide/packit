@@ -57,7 +57,7 @@ class PacketGroupControllerTest : IntegrationTest()
     fun `getPacketGroups returns empty page if no permissions match`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packetGroup",
+            "/packetGroups",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -70,7 +70,7 @@ class PacketGroupControllerTest : IntegrationTest()
     fun `return correct page information for get pageable packet groups `()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packetGroup?pageNumber=0&pageSize=10&filterName=test-packetGroupName",
+            "/packetGroups?pageNumber=0&pageSize=10&filterName=test-packetGroupName",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -87,7 +87,7 @@ class PacketGroupControllerTest : IntegrationTest()
     fun `getPacketGroups can get second page with correct information`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packetGroup?pageNumber=1&pageSize=3&filterName=test-packetGroupName",
+            "/packetGroups?pageNumber=1&pageSize=3&filterName=test-packetGroupName",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -110,7 +110,7 @@ class PacketGroupControllerTest : IntegrationTest()
     fun `getPacketGroups returns of packet groups user can see`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packetGroup",
+            "/packetGroups",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -122,7 +122,7 @@ class PacketGroupControllerTest : IntegrationTest()
     fun `get ordered pageable packetGroups with filtered name`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packetGroup?pageNumber=0&pageSize=10&filterName=test-packetGroupName",
+            "/packetGroups?pageNumber=0&pageSize=10&filterName=test-packetGroupName",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )

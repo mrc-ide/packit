@@ -12,7 +12,7 @@ import packit.model.toDto
 import packit.service.PacketGroupService
 
 @Controller
-@RequestMapping("/packetGroup")
+@RequestMapping("/packetGroups")
 class PacketGroupController(
     private val packetGroupService: PacketGroupService
 )

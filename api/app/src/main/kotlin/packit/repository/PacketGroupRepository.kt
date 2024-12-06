@@ -9,6 +9,7 @@ import packit.model.PacketGroup
 @Repository
 interface PacketGroupRepository : JpaRepository<PacketGroup, Int>
 {
+    @PostFilter("@authz.canReadPacketGroup(#root, filterObject.name)")
     fun findByNameIn(names: List<String>): List<PacketGroup>
 
     @PostFilter("@authz.canReadPacketGroup(#root, filterObject.name)")

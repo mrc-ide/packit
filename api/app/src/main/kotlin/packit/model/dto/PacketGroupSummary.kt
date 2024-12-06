@@ -1,6 +1,6 @@
 package packit.model.dto
 
-// Projection class for PacketRepository.findPacketGroupSummaryByName
+// Projection class for PacketRepository.getFilteredPacketGroupSummaries
 interface PacketGroupSummary
 {
     fun getName(): String
