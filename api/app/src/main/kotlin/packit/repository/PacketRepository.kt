@@ -43,7 +43,7 @@ interface PacketRepository : JpaRepository<Packet, String>
         countQuery = "SELECT count(distinct name) from packet WHERE name ILIKE %?1%",
         nativeQuery = true
     )
-    fun getPacketGroupSummariesBySearchString(filterName: String): List<PacketGroupSummary>
+    fun getFilteredPacketGroupSummaries(filter: String): List<PacketGroupSummary>
 
     @PostFilter("@authz.canReadPacket(#root, filterObject.id, filterObject.name)")
     fun findAllByNameContainingAndIdContaining(name: String, id: String, sort: Sort): List<Packet>

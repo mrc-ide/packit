@@ -37,11 +37,11 @@ class PacketGroupControllerTest : IntegrationTest()
     {
         packetGroups = packetGroupRepository.saveAll(
             listOf(
-                PacketGroup(name = packetNames[1]),
-                PacketGroup(name = packetNames[0]),
-                PacketGroup(name = packetNames[4]),
-                PacketGroup(name = packetNames[3]),
-                PacketGroup(name = packetNames[2]),
+                PacketGroup(name = packetNames[1], latestDisplayName = packetNames[1]),
+                PacketGroup(name = packetNames[0], latestDisplayName = packetNames[0]),
+                PacketGroup(name = packetNames[4], latestDisplayName = packetNames[4]),
+                PacketGroup(name = packetNames[3], latestDisplayName = packetNames[3]),
+                PacketGroup(name = packetNames[2], latestDisplayName = packetNames[2]),
             )
         )
     }

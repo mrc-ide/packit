@@ -48,7 +48,7 @@ class PacketServiceTest
             Packet(
                 "20190403-120000-1234dfdf",
                 "test2",
-                "test2 name",
+                "test2 display name",
                 mapOf(),
                 false,
                 now,
@@ -138,7 +138,7 @@ class PacketServiceTest
             on { findAll() } doReturn oldPackets
             on { findAllIds() } doReturn oldPackets.map { it.id }
             on { findTopByOrderByImportTimeDesc() } doReturn oldPackets.first()
-            on { getPacketGroupSummariesBySearchString("random") } doReturn
+            on { getFilteredPacketGroupSummaries("random") } doReturn
                     packetGroupSummaries
             on { findByName(anyString(), any()) } doReturn oldPackets
             on { findAllByNameContainingAndIdContaining(anyString(), anyString(), any<Sort>()) } doReturn oldPackets
@@ -201,7 +201,7 @@ class PacketServiceTest
 
         assertEquals(result.totalElements, 2)
         assertEquals(result.content, packetGroupSummaries)
-        verify(packetRepository).getPacketGroupSummariesBySearchString("random")
+        verify(packetRepository).getFilteredPacketGroupSummaries("random")
     }
 
     @Test
@@ -239,7 +239,7 @@ class PacketServiceTest
         val expectedDisplayNames = mapOf(
             "20240101-090000-4321gaga" to "test", // This packet has no display name, so should fall back to its name.
             "20190203-120000-1234dada" to "test name (latest display name)",
-            "20190403-120000-1234dfdf" to "test2 name"
+            "20190403-120000-1234dfdf" to "test2 display name"
         )
         newPackets.forEach() {
             val packet = packets.find { packet -> packet.id == it.id }
@@ -258,23 +258,44 @@ class PacketServiceTest
         verify(packetGroupRepository).saveAll(argumentCaptor.capture())
         val packetGroups = argumentCaptor.allValues.flatten()
         assertEquals(packetGroups.size, 2)
+
+        assertEquals(packetGroups.first().name, "test")
+        // The latest packet has no display name, even though the previous packet has one.
+        assertEquals(packetGroups.first().latestDisplayName, "test")
+
+        assertEquals(packetGroups.last().name, "test2")
+        // The latest packet's display name is used.
+        assertEquals(packetGroups.last().latestDisplayName, "test2 display name")
     }
 
     @Test
-    fun `saveUniquePacketGroups saves unique packet groups`()
-    {
-        val packetGroupNames = listOf("test", "test2")
-        `when`(packetGroupRepository.findByNameIn(packetGroupNames)).doReturn(listOf(PacketGroup("test2")))
+    fun `saveUniquePacketGroups upserts unique packet groups`() {
+        val packetGroupData = mapOf(
+            "never_before_seen_packet" to "Brand-new packet display name",
+            "existing_packet" to "Updated display name for existing packet"
+        )
+        val packetGroupNames = packetGroupData.keys.toList()
+        `when`(packetGroupRepository.findByNameIn(packetGroupNames)).doReturn(listOf(
+            PacketGroup("existing_packet", "outdated display name", mutableListOf(), 9)
+        ))
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
-        val argumentCaptor = argumentCaptor<List<PacketGroup>>()
+        val newPacketGroupsArgumentCaptor = argumentCaptor<List<PacketGroup>>()
+        val existingPacketGroupsArgumentCaptor = argumentCaptor<PacketGroup>()
 
-        sut.saveUniquePacketGroups(packetGroupNames)
+        sut.saveUniquePacketGroups(packetGroupData)
 
-        verify(packetGroupRepository).findByNameIn(packetGroupNames)
-        verify(packetGroupRepository).saveAll(argumentCaptor.capture())
-        val packetGroups = argumentCaptor.firstValue
-        assertEquals(packetGroups.size, 1)
-        assertEquals(packetGroups.first().name, "test")
+        verify(packetGroupRepository).saveAll(newPacketGroupsArgumentCaptor.capture())
+        val newPacketGroups = newPacketGroupsArgumentCaptor.firstValue
+        assertEquals(newPacketGroups.size, 1)
+        assertEquals(newPacketGroups.first().name, "never_before_seen_packet")
+        assertEquals(newPacketGroups.first().latestDisplayName, "Brand-new packet display name")
+
+        verify(packetGroupRepository).save(existingPacketGroupsArgumentCaptor.capture())
+        val existingPacketGroup = existingPacketGroupsArgumentCaptor.firstValue
+        assertEquals(existingPacketGroup.name, "existing_packet")
+        assertEquals(existingPacketGroup.latestDisplayName, "Updated display name for existing packet")
+        assertEquals(existingPacketGroup.id, 9)
+
     }
 
     @Test

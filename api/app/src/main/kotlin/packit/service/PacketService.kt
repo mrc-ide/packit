@@ -30,7 +30,7 @@ interface PacketService
     fun importPackets()
     fun getMetadataBy(id: String): PacketMetadata
     fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<ByteArrayResource, HttpHeaders>
-    fun getPacketGroupSummaries(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroupSummary>
+    fun getPacketGroupSummaries(pageablePayload: PageablePayload, filter: String): Page<PacketGroupSummary>
     fun getPacketsByName(
         name: String, payload: PageablePayload
     ): Page<Packet>
@@ -76,19 +76,27 @@ class BasePacketService(
                     it.time.start, it.time.end
                 )
             }
-        val packetGroupNames = packets.groupBy { it.name }
-            .map { it.key }
+        val packetGroupData = packets.groupBy { it.name }
+            .mapValues { entry -> entry.value.sortedByDescending { it.startTime } }
+            .mapValues { it.value.first().displayName }
 
         packetRepository.saveAll(packets)
-        saveUniquePacketGroups(packetGroupNames)
+        saveUniquePacketGroups(packetGroupData)
     }
 
-    internal fun saveUniquePacketGroups(packetGroupNames: List<String>)
+    internal fun saveUniquePacketGroups(packetGroupData: Map<String, String>)
     {
-        val matchedPacketGroupNames = packetGroupRepository.findByNameIn(packetGroupNames).map { it.name }
-        val newPacketGroups =
-            packetGroupNames.filter { it !in matchedPacketGroupNames }
-        packetGroupRepository.saveAll(newPacketGroups.map { PacketGroup(name = it) })
+        val packetGroupNames = packetGroupData.keys.toList()
+        val matchedPacketGroups = packetGroupRepository.findByNameIn(packetGroupNames)
+        val matchedPacketGroupNames = matchedPacketGroups.map { it.name }
+        val newPacketGroups = packetGroupData
+            .filterKeys { it !in matchedPacketGroupNames }
+            .map { PacketGroup(name = it.key, latestDisplayName = it.value) }
+        packetGroupRepository.saveAll(newPacketGroups)
+        matchedPacketGroups.map {
+            it.latestDisplayName = packetGroupData[it.name]!!
+            packetGroupRepository.save(it)
+        }
     }
 
     override fun getPackets(): List<Packet>
@@ -98,10 +106,10 @@ class BasePacketService(
 
     override fun getPacketGroupSummaries(
         pageablePayload: PageablePayload,
-        filteredName: String
+        filter: String
     ): Page<PacketGroupSummary>
     {
-        val packetGroupSummaries = packetRepository.getPacketGroupSummariesBySearchString(filteredName)
+        val packetGroupSummaries = packetRepository.getFilteredPacketGroupSummaries(filter)
         return PagingHelper.convertListToPage(packetGroupSummaries, pageablePayload)
     }
 

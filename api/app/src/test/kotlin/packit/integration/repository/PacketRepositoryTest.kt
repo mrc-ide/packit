@@ -119,13 +119,11 @@ class PacketRepositoryTest : RepositoryTest()
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
 
-    fun `can get right order and data expected from getPacketGroupSummariesBySearchString`()
-    {
+    fun `can get right order and data expected from getFilteredPacketGroupSummaries`() {
         packetRepository.saveAll(packets)
 
-        val result = packetRepository.getPacketGroupSummariesBySearchString("").map {
-            object
-            {
+        val result = packetRepository.getFilteredPacketGroupSummaries("").map {
+            object {
                 val name = it.getName()
                 val latestTime = it.getLatestTime()
                 val latestId = it.getLatestId()
@@ -143,13 +141,11 @@ class PacketRepositoryTest : RepositoryTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `can filter correctly when calling getPacketGroupSummariesBySearchString with part of a packet group name`()
-    {
+    fun `can filter correctly when calling getFilteredPacketGroupSummaries with part of a packet group name`() {
         packetRepository.saveAll(packets)
 
-        val result = packetRepository.getPacketGroupSummariesBySearchString("est4").map {
-            object
-            {
+        val result = packetRepository.getFilteredPacketGroupSummaries("est4").map {
+            object {
                 val name = it.getName()
                 val latestTime = it.getLatestTime()
                 val latestId = it.getLatestId()
@@ -168,13 +164,11 @@ class PacketRepositoryTest : RepositoryTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `can filter correctly when calling getPacketGroupSummariesBySearchString with part of a packet display name`()
-    {
+    fun `can filter correctly when calling getFilteredPacketGroupSummaries with part of a packet display name`() {
         packetRepository.saveAll(packets)
 
-        val result = packetRepository.getPacketGroupSummariesBySearchString("name4").map {
-            object
-            {
+        val result = packetRepository.getFilteredPacketGroupSummaries("name4").map {
+            object {
                 val name = it.getName()
                 val latestTime = it.getLatestTime()
                 val latestId = it.getLatestId()

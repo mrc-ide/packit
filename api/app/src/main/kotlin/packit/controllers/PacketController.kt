@@ -45,11 +45,10 @@ class PacketController(private val packetService: PacketService)
     fun getPacketGroupSummaries(
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
         @RequestParam(required = false, defaultValue = "50") pageSize: Int,
-        @RequestParam(required = false, defaultValue = "") filterName: String,
-    ): ResponseEntity<Page<PacketGroupSummary>>
-    {
+        @RequestParam(required = false, defaultValue = "") filter: String,
+    ): ResponseEntity<Page<PacketGroupSummary>> {
         val payload = PageablePayload(pageNumber, pageSize)
-        return ResponseEntity.ok(packetService.getPacketGroupSummaries(payload, filterName))
+        return ResponseEntity.ok(packetService.getPacketGroupSummaries(payload, filter))
     }
 
     @GetMapping("/metadata/{id}")
