@@ -4,7 +4,7 @@ import { usePacketOutletContext } from "../../main/PacketOutlet";
 import { PacketHeader } from "../packets";
 import { MetadataListItem } from "./MetadataListItem";
 import { Github, Timer } from "lucide-react";
-import {Separator} from "../../Base/Separator";
+import { Separator } from "../../Base/Separator";
 
 export default function Metadata() {
   const { packetId, packetName } = useParams();
@@ -15,13 +15,13 @@ export default function Metadata() {
 
   return (
     <>
-      <PacketHeader displayName={packet?.displayName ?? ""} packetName={packetName ?? ""} packetId={packetId ?? ""} />
+      <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} displayName={packet?.displayName} />
       {packet && (
         <>
           <div className="space-y-3">
             {packet.git &&
               <span className="flex gap-1 items-center text-muted-foreground">
-                <Timer className="small-icon"/>
+                <Timer className="small-icon" />
                 <h3 className="text-lg font-bold tracking-tight">Timings</h3>
               </span>
             }
@@ -32,24 +32,24 @@ export default function Metadata() {
           </div>
           {packet.git && (
             <>
-              <Separator className="mx-1"/>
+              <Separator className="mx-1" />
               <div className="space-y-3">
                 <span className="flex gap-1 items-center text-muted-foreground">
-                  <Github className="small-icon"/>
+                  <Github className="small-icon" />
                   <h3 className="text-lg font-bold tracking-tight" data-testid="gitHeading">Git</h3>
                 </span>
                 <ul className="ps-1 flex flex-col space-y-3">
-                  <MetadataListItem label="Branch" value={packet.git.branch}/>
-                  <MetadataListItem label="Commit" value={packet.git.sha}/>
+                  <MetadataListItem label="Branch" value={packet.git.branch} />
+                  <MetadataListItem label="Commit" value={packet.git.sha} />
                   <li className="flex flex-col">
                     <span className="font-semibold mr-2">Remotes</span>
-                      <ul className="ps-1 list-disc list-inside">
-                        {packet.git.url?.map((url, index) => (
-                          <li key={index} className="text-muted-foreground">
-                            {url}
-                          </li>
-                        ))}
-                      </ul>
+                    <ul className="ps-1 list-disc list-inside">
+                      {packet.git.url?.map((url, index) => (
+                        <li key={index} className="text-muted-foreground">
+                          {url}
+                        </li>
+                      ))}
+                    </ul>
                   </li>
                 </ul>
               </div>
