@@ -248,6 +248,35 @@ class PacketServiceTest
     }
 
     @Test
+    fun `can import non-orderly packets that use the outpack custom property to specify a display name`()
+    {
+        val metadataWithDifferentCustomSchema = listOf(
+            OutpackMetadata(
+            "20240101-090000-4321gaga",
+            "test",
+            mapOf("alpha" to 1),
+            TimeMetadata(now, now),
+            mapOf(
+                "different" to mapOf(
+                    "display" to "the display name",
+                )
+            )
+        ))
+        val differentOutpackServerClient =
+            mock<OutpackServerClient> {
+                on { getMetadata(now - 1) } doReturn metadataWithDifferentCustomSchema
+            }
+        val sut = BasePacketService(packetRepository, packetGroupRepository, differentOutpackServerClient)
+        val argumentCaptor = argumentCaptor<List<Packet>>()
+
+        sut.importPackets()
+
+        verify(packetRepository).saveAll(argumentCaptor.capture())
+        val packets = argumentCaptor.allValues.flatten()
+        assertEquals(packets[0].displayName, "the display name")
+    }
+
+    @Test
     fun `importPackets saves unique packet groups`()
     {
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
