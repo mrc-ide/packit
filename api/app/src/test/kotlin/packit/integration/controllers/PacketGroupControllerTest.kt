@@ -148,16 +148,19 @@ class PacketGroupControllerTest : IntegrationTest()
     fun `getLatestPacketIdAndDisplayName returns correct id and display name`()
     {
         val now = Instant.now().epochSecond.toDouble()
-        packetRepository.save(Packet(
-            "20180818-164847-7574833b",
-            packetGroupNames[0],
-            "",
-            mapOf("a" to 1),
-            false,
-            now,
-            now,
-            now
-        ))
+        packetRepository.save(
+            Packet
+                (
+                "20180818-164847-7574833b",
+                packetGroupNames[0],
+                "",
+                mapOf("a" to 1),
+                false,
+                now,
+                now,
+                now
+            )
+        )
 
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packetGroups/${packetGroupNames[0]}/latestIdAndDisplayName",

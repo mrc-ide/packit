@@ -261,7 +261,8 @@ class PacketServiceTest
                     "display" to "the display name",
                 )
             )
-        ))
+        )
+        )
         val differentOutpackServerClient =
             mock<OutpackServerClient> {
                 on { getMetadata(now - 1) } doReturn metadataWithDifferentCustomSchema
@@ -304,9 +305,11 @@ class PacketServiceTest
             "existing_packet" to "Updated display name for existing packet"
         )
         val packetGroupNames = packetGroupData.keys.toList()
-        `when`(packetGroupRepository.findByNameIn(packetGroupNames)).doReturn(listOf(
+        `when`(packetGroupRepository.findByNameIn(packetGroupNames)).doReturn(
+            listOf(
             PacketGroup("existing_packet", "outdated display name", mutableListOf(), 9)
-        ))
+        )
+        )
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
         val newPacketGroupsArgumentCaptor = argumentCaptor<List<PacketGroup>>()
         val existingPacketGroupsArgumentCaptor = argumentCaptor<PacketGroup>()
@@ -324,7 +327,6 @@ class PacketServiceTest
         assertEquals(existingPacketGroup.name, "existing_packet")
         assertEquals(existingPacketGroup.latestDisplayName, "Updated display name for existing packet")
         assertEquals(existingPacketGroup.id, 9)
-
     }
 
     @Test
