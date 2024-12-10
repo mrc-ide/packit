@@ -167,7 +167,7 @@ class PacketGroupControllerTest : IntegrationTest()
 
         assertSuccess(result)
         val resultBody = jacksonObjectMapper().readTree(result.body)
-        assertEquals("20180818-164847-7574833b", resultBody.get("id").asText())
+        assertEquals("20180818-164847-7574833b", resultBody.get("latestPacketId").asText())
         assertEquals("test packetGroupName 1", resultBody.get("displayName").asText())
     }
 
