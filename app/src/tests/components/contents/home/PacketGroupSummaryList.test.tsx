@@ -2,7 +2,7 @@ import {render, screen, waitFor, within} from "@testing-library/react";
 import { rest } from "msw";
 import { MemoryRouter } from "react-router";
 import { SWRConfig } from "swr";
-import { PacketGroupSummaryList } from "../../../../app/components/contents/explorer/PacketGroupSummaryList";
+import { PacketGroupSummaryList } from "../../../../app/components/contents/home/PacketGroupSummaryList";
 import { server } from "../../../../msw/server";
 import { mockPacketGroupSummaries } from "../../../mocks";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";

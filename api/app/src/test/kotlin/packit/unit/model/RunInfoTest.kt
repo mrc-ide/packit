@@ -34,7 +34,7 @@ class RunInfoTest
         assertEquals(runInfo.packetId, runInfoDto.packetId)
         assertEquals(runInfo.parameters, runInfoDto.parameters)
         assertEquals(runInfo.timeQueued, runInfoDto.timeQueued)
-        assertEquals(runInfo.user.displayName, runInfoDto.ranBy)
+        assertEquals(runInfo.user.displayName, runInfoDto.runBy)
     }
 
     @Test
@@ -52,7 +52,7 @@ class RunInfoTest
         assertEquals(runInfo.commitHash, basicRunInfoDto.commitHash)
         assertEquals(runInfo.parameters, basicRunInfoDto.parameters)
         assertEquals(runInfo.packetId, basicRunInfoDto.packetId)
-        assertEquals(runInfo.user.displayName, basicRunInfoDto.ranBy)
+        assertEquals(runInfo.user.displayName, basicRunInfoDto.runBy)
     }
 
     @Test
@@ -64,7 +64,7 @@ class RunInfoTest
             1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input"), user = testUserNoDisplayName
         )
         val runInfoDto = runInfo.toDto()
-        assertEquals(runInfo.user.username, runInfoDto.ranBy)
+        assertEquals(runInfo.user.username, runInfoDto.runBy)
     }
 
     @Test
@@ -75,6 +75,6 @@ class RunInfoTest
             1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input"), user = testUserNoDisplayName
         )
         val basicRunInfoDto = runInfo.toBasicDto()
-        assertEquals(runInfo.user.username, basicRunInfoDto.ranBy)
+        assertEquals(runInfo.user.username, basicRunInfoDto.runBy)
     }
 }

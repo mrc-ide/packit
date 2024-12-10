@@ -25,7 +25,7 @@ describe("TaskRunSummary component", () => {
     expect(
       screen.getByText("Finished at " + new Date((mockCompleteRunInfo.timeCompleted as number) * 1000).toLocaleString())
     ).toBeVisible();
-    expect(screen.getByText(`Ran by ${mockCompleteRunInfo.ranBy}`)).toBeVisible();
+    expect(screen.getByText(`Run by ${mockCompleteRunInfo.runBy}`)).toBeVisible();
     expect(screen.getByText(mockCompleteRunInfo.commitHash.slice(0, 7))).toBeVisible();
     Object.entries(mockCompleteRunInfo.parameters as Record<string, string>).forEach(([key, value]) => {
       expect(screen.getByText(`${key}:`)).toBeVisible();
