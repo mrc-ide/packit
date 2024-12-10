@@ -4,14 +4,7 @@ import { PageableBasicRunInfo, RunInfo } from "../app/components/contents/runner
 import { Parameter, RunnerPacketGroup } from "../app/components/contents/runner/types/RunnerPacketGroup";
 import { AuthConfig } from "../app/components/providers/types/AuthConfigTypes";
 import { UserState } from "../app/components/providers/types/UserTypes";
-import {
-  Custom,
-  PacketGroupLatestIdAndDisplayName,
-  PacketMetadata,
-  PageableBasicDto,
-  PageablePacketGroupSummary,
-  PageablePackets
-} from "../types";
+import { Custom, PacketMetadata, PageableBasicDto, PageablePacketGroupSummary, PageablePackets } from "../types";
 
 export const mockPacketResponse = {
   id: "52fd88b2-8ee8-4ac0-a0e5-41b9a15554a4",
