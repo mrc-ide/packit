@@ -4,7 +4,14 @@ import { PageableBasicRunInfo, RunInfo } from "../app/components/contents/runner
 import { Parameter, RunnerPacketGroup } from "../app/components/contents/runner/types/RunnerPacketGroup";
 import { AuthConfig } from "../app/components/providers/types/AuthConfigTypes";
 import { UserState } from "../app/components/providers/types/UserTypes";
-import { Custom, PacketMetadata, PageableBasicDto, PageablePacketGroupSummary, PageablePackets } from "../types";
+import {
+  Custom,
+  PacketGroupLatestIdAndDisplayName,
+  PacketMetadata,
+  PageableBasicDto,
+  PageablePacketGroupSummary,
+  PageablePackets
+} from "../types";
 
 export const mockPacketResponse = {
   id: "52fd88b2-8ee8-4ac0-a0e5-41b9a15554a4",
@@ -193,13 +200,13 @@ export const mockPacketGroupSummariesFiltered: PageablePacketGroupSummary = {
   size: 50,
   number: 0,
   numberOfElements: 1
-}
+};
 
 export const mockPacketGroupResponse: PageablePackets = {
   content: [
     {
       id: mockPacket.id,
-      name: "parameters",
+      name: mockPacket.name,
       displayName: "Parameters Packet Group",
       parameters: {
         a: 3,
@@ -213,7 +220,7 @@ export const mockPacketGroupResponse: PageablePackets = {
     },
     {
       id: "20231205-073527-99db1138",
-      name: "parameters",
+      name: mockPacket.name,
       displayName: "parameters",
       parameters: {},
       published: false,
@@ -223,7 +230,7 @@ export const mockPacketGroupResponse: PageablePackets = {
     },
     {
       id: "20230427-150722-0ebd6545",
-      name: "parameters",
+      name: mockPacket.name,
       displayName: "parameters",
       parameters: {
         c: 30,
@@ -237,7 +244,7 @@ export const mockPacketGroupResponse: PageablePackets = {
     },
     {
       id: "20231127-133335-c8ced0bf",
-      name: "parameters",
+      name: mockPacket.name,
       displayName: "parameters",
       parameters: {
         a: 30,
@@ -251,7 +258,7 @@ export const mockPacketGroupResponse: PageablePackets = {
     },
     {
       id: "20231127-133612-c69df160",
-      name: "parameters",
+      name: mockPacket.name,
       displayName: "parameters",
       parameters: {
         b: 333,

@@ -9,13 +9,17 @@ import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
+import packit.model.Packet
 import packit.model.PacketGroup
 import packit.model.dto.PacketGroupDto
 import packit.model.toDto
 import packit.repository.PacketGroupRepository
+import packit.repository.PacketRepository
+import java.time.Instant
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -23,8 +27,10 @@ class PacketGroupControllerTest : IntegrationTest()
 {
     @Autowired
     private lateinit var packetGroupRepository: PacketGroupRepository
+    @Autowired
+    private lateinit var packetRepository: PacketRepository
     private lateinit var packetGroups: List<PacketGroup>
-    private val packetNames = listOf(
+    private val packetGroupNames = listOf(
         "test-packetGroupName-1",
         "test-packetGroupName-2",
         "test-packetGroupName-3",
@@ -36,13 +42,9 @@ class PacketGroupControllerTest : IntegrationTest()
     fun setupData()
     {
         packetGroups = packetGroupRepository.saveAll(
-            listOf(
-                PacketGroup(name = packetNames[1], latestDisplayName = packetNames[1]),
-                PacketGroup(name = packetNames[0], latestDisplayName = packetNames[0]),
-                PacketGroup(name = packetNames[4], latestDisplayName = packetNames[4]),
-                PacketGroup(name = packetNames[3], latestDisplayName = packetNames[3]),
-                PacketGroup(name = packetNames[2], latestDisplayName = packetNames[2]),
-            )
+            packetGroupNames.map { name ->
+                PacketGroup(name = name, latestDisplayName = name.replace("-", " "))
+            }
         )
     }
 
@@ -139,5 +141,46 @@ class PacketGroupControllerTest : IntegrationTest()
         assertEquals(5, resultPacketGroups.size)
         assertEquals("test-packetGroupName-1", resultPacketGroups[0].name)
         assertEquals("test-packetGroupName-5", resultPacketGroups[resultPacketGroups.size - 1].name)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:test-packetGroupName-1"])
+    fun `getLatestPacketIdAndDisplayName returns correct id and display name`()
+    {
+        val now = Instant.now().epochSecond.toDouble()
+        packetRepository.save(Packet(
+            "20180818-164847-7574833b",
+            packetGroupNames[0],
+            "",
+            mapOf("a" to 1),
+            false,
+            now,
+            now,
+            now
+        ))
+
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packetGroups/${packetGroupNames[0]}/latestIdAndDisplayName",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        assertSuccess(result)
+        val resultBody = jacksonObjectMapper().readTree(result.body)
+        assertEquals("20180818-164847-7574833b", resultBody.get("id").asText())
+        assertEquals("test packetGroupName 1", resultBody.get("displayName").asText())
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = [])
+    fun `getLatestPacketIdAndDisplayName returns 401 if authority is not provided`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packetGroups/${packetGroupNames[0]}/latestIdAndDisplayName",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        assertEquals(HttpStatus.UNAUTHORIZED, result.statusCode)
     }
 }

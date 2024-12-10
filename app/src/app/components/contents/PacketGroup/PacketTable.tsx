@@ -11,7 +11,7 @@ import { HttpStatus } from "../../../../lib/types/HttpStatus";
 import { Unauthorized } from "../common/Unauthorized";
 
 // TODO: make table more feature rich (sorting, filter, etc). May need to fetch all data then and let tanstack handle
-export const PacketTable = () => {
+export const PacketTable = ({ parentIsLoading }: { parentIsLoading: boolean }) => {
   const { packetName } = useParams();
   const [pageNumber, setPageNumber] = useState(0);
   const { packetPages, error, isLoading } = useGetPacketPages(packetName, pageNumber, PAGE_SIZE);
@@ -19,7 +19,7 @@ export const PacketTable = () => {
   if (error?.status === HttpStatus.Unauthorized) return <Unauthorized />;
   if (error) return <ErrorComponent message="Error fetching packets" error={error} />;
 
-  if (isLoading)
+  if (isLoading || parentIsLoading)
     return (
       <ul className="flex flex-col border rounded-md">
         {[...Array(2)].map((_val, index) => (

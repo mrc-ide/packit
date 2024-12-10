@@ -7,14 +7,13 @@ import { server } from "../../../../msw/server";
 import {
   mockPacket,
   mockPacketGroupResponse,
-  mockPacketGroupSummaries,
-  mockPacketGroupSummariesFiltered,
+  mockPacketGroupSummaries
 } from "../../../mocks";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
 import appConfig from "../../../../config/appConfig";
+
 describe("PacketGroup", () => {
-  const packetGroupName = mockPacketGroupSummaries.content[5].name;
-  const packetGroupDisplayName = mockPacketGroupSummaries.content[5].latestDisplayName;
+  const packetGroupName = mockPacket.name;
   const latestPacketDescription = mockPacket.custom?.orderly.description.long as string;
   const renderComponent = (packetGroup: string = packetGroupName) =>
     render(
@@ -31,32 +30,40 @@ describe("PacketGroup", () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByRole("heading", { name: packetGroupDisplayName })).toBeVisible();
+      expect(screen.getByRole("heading", { name: mockPacket.displayName })).toBeVisible();
       expect(screen.getByText(packetGroupName)).toBeVisible();
     });
   });
 
   it("should render heading with the name of the packet group when the display name is the same as name", async () => {
-    const groupName = mockPacketGroupSummaries.content[mockPacketGroupSummaries.content.length - 1].name
-    const mockGroupSummariesResponse = {
-      ...mockPacketGroupSummariesFiltered,
-      content: [
-        {
-          ...mockPacketGroupSummariesFiltered.content[0],
-          name: groupName,
-          latestDisplayName: groupName,
+    const dependsPacketGroup = mockPacketGroupSummaries.content[mockPacketGroupSummaries.content.length - 1];
+    const dependsPacket = {
+      ...mockPacket,
+      id: dependsPacketGroup.latestId,
+      name: dependsPacketGroup.name,
+      custom: {
+        orderly: {
+          description: {
+            custom: null,
+            display: null,
+            long: null
+          }
         }
-      ]
-    }
+      }
+    };
+    const packetGroupDetailsUrl = `${appConfig.apiUrl()}/packetGroups/${dependsPacketGroup.name}/latestIdAndDisplayName`;
     server.use(
-      rest.get(`${appConfig.apiUrl()}/packets/packetGroupSummaries`, (req, res, ctx) => {
-        return res(ctx.json(mockGroupSummariesResponse));
+      rest.get(packetGroupDetailsUrl, (req, res, ctx) => {
+        return res(ctx.json({ id: dependsPacketGroup.latestId, displayName: dependsPacketGroup.latestDisplayName }));
+      }),
+      rest.get(`${appConfig.apiUrl()}/packets/metadata/${dependsPacketGroup.latestId}`, (req, res, ctx) => {
+        return res(ctx.json(dependsPacket));
       })
     );
-    renderComponent(groupName);
+    renderComponent(dependsPacketGroup.name);
 
     await waitFor(() => {
-      expect(screen.getByRole("heading", { name: groupName })).toBeVisible();
+      expect(screen.getByRole("heading", { name: dependsPacketGroup.name })).toBeVisible();
     });
   });
 
@@ -98,7 +105,7 @@ describe("PacketGroup", () => {
 
   it("should render error component when error fetching packet group", async () => {
     server.use(
-      rest.get(`${appConfig.apiUrl()}/packets/packetGroupSummaries`, (req, res, ctx) => {
+      rest.get(`${appConfig.apiUrl()}/packetGroups/${mockPacket.name}/latestIdAndDisplayName`, (req, res, ctx) => {
         return res(ctx.status(400));
       })
     );
@@ -106,19 +113,6 @@ describe("PacketGroup", () => {
 
     await waitFor(() => {
       expect(screen.getByText(/error fetching packet group/i)).toBeVisible();
-    });
-  });
-
-  it("should render error component when error fetching packet group", async () => {
-    server.use(
-      rest.get(`${appConfig.apiUrl()}/packets/${packetGroupName}`, (req, res, ctx) => {
-        return res(ctx.status(400));
-      })
-    );
-    renderComponent();
-
-    await waitFor(() => {
-      expect(screen.getByText(/error fetching packets/i)).toBeVisible();
     });
   });
 
@@ -137,7 +131,7 @@ describe("PacketGroup", () => {
 
   it("should render unauthorized when 401 error fetching packet group", async () => {
     server.use(
-      rest.get(`${appConfig.apiUrl()}/packets/packetGroupSummaries`, (req, res, ctx) => {
+      rest.get(`${appConfig.apiUrl()}/packetGroups/${mockPacket.name}/latestIdAndDisplayName`, (req, res, ctx) => {
         return res(ctx.status(HttpStatus.Unauthorized));
       })
     );
