@@ -5,7 +5,7 @@ import { ErrorComponent } from "../common/ErrorComponent";
 import { Pagination } from "../common/Pagination";
 import { Unauthorized } from "../common/Unauthorized";
 import { PacketGroupSummaryListItem } from "./PacketGroupSummaryListItem";
-import { useGetPacketGroupSummaries } from "../home/hooks/useGetPacketGroupSummary";
+import { useGetPacketGroupSummaries } from "./hooks/useGetPacketGroupSummaries";
 
 interface PacketGroupSummaryListProps {
   filterByName: string;

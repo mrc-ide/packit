@@ -4,6 +4,6 @@ export const getPermissionScopePaths = (filterName: string) => {
     global: null,
     packet: `packets?filterName=${filter[0]}&filterId=${filter[1] || ""}`,
     tag: `tag?filterName=${filter[0]}`,
-    packetGroup: `packetGroup?filterName=${filter[0]}`
+    packetGroup: `packetGroups?filterName=${filter[0]}`
   };
 };

@@ -14,7 +14,7 @@ export const packetGroupHandlers = [
   }),
   rest.get(`${packetGroupIndexUri}/${mockPacket.name}/latestIdAndDisplayName`, (req, res, ctx) => {
     return res(ctx.json({
-      id: mockPacket.id,
+      latestPacketId: mockPacket.id,
       displayName: mockPacket.custom!!.orderly.description.display
     }));
   })

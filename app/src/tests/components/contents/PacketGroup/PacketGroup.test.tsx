@@ -54,7 +54,10 @@ describe("PacketGroup", () => {
     const packetGroupDetailsUrl = `${appConfig.apiUrl()}/packetGroups/${dependsPacketGroup.name}/latestIdAndDisplayName`;
     server.use(
       rest.get(packetGroupDetailsUrl, (req, res, ctx) => {
-        return res(ctx.json({ id: dependsPacketGroup.latestId, displayName: dependsPacketGroup.latestDisplayName }));
+        return res(ctx.json({
+          latestPacketId: dependsPacketGroup.latestId,
+          displayName: dependsPacketGroup.latestDisplayName
+        }));
       }),
       rest.get(`${appConfig.apiUrl()}/packets/metadata/${dependsPacketGroup.latestId}`, (req, res, ctx) => {
         return res(ctx.json(dependsPacket));
