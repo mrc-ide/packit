@@ -180,7 +180,7 @@ class PacketGroupControllerTest : IntegrationTest()
     fun `getDetail returns 401 if authority is not correct`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packetGroups/${packetGroupNames[0]}/detail",
+            "/packetGroups/${packetGroupNames[0]}/display",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
