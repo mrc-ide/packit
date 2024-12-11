@@ -4,7 +4,7 @@ import { PageableBasicRunInfo, RunInfo } from "../app/components/contents/runner
 import { Parameter, RunnerPacketGroup } from "../app/components/contents/runner/types/RunnerPacketGroup";
 import { AuthConfig } from "../app/components/providers/types/AuthConfigTypes";
 import { UserState } from "../app/components/providers/types/UserTypes";
-import { Custom, PacketMetadata, PageableBasicDto, PageablePacketGroupSummary, PageablePackets } from "../types";
+import { Custom, PacketMetadata, PageableBasicDto, PageablePacketGroupSummaries, PageablePackets } from "../types";
 
 export const mockPacketResponse = {
   id: "52fd88b2-8ee8-4ac0-a0e5-41b9a15554a4",
@@ -95,13 +95,13 @@ export const mockPacket: PacketMetadata = {
       description: {
         custom: null,
         display: "A packet with parameters and a report",
-        long: "This packet uses a number of parameters in order to eventually generate a report",
+        long: "This packet uses a number of parameters in order to eventually generate a report"
       }
     }
   }
 };
 
-export const mockPacketGroupSummaries: PageablePacketGroupSummary = {
+export const mockPacketGroupSummaries: PageablePacketGroupSummaries = {
   content: [
     {
       latestId: "20231130-082812-cd744153",
@@ -176,7 +176,7 @@ export const mockPacketGroupSummaries: PageablePacketGroupSummary = {
   numberOfElements: 9
 };
 
-export const mockPacketGroupSummariesFiltered: PageablePacketGroupSummary = {
+export const mockPacketGroupSummariesFiltered: PageablePacketGroupSummaries = {
   content: [
     {
       latestId: mockPacket.id,
@@ -184,7 +184,7 @@ export const mockPacketGroupSummariesFiltered: PageablePacketGroupSummary = {
       name: "parameters",
       latestDisplayName: "Parameters Packet Group",
       packetCount: 3
-    },
+    }
   ],
   totalPages: 1,
   totalElements: 1,
