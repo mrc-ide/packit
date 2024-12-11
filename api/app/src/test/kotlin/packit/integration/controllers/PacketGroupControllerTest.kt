@@ -21,6 +21,7 @@ import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
 import java.time.Instant
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PacketGroupControllerTest : IntegrationTest()
@@ -145,13 +146,13 @@ class PacketGroupControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:test-packetGroupName-1"])
-    fun `getLatestPacketIdAndDisplayName returns correct id and display name`()
+    fun `getDetail returns correct id, display name and description`()
     {
         val now = Instant.now().epochSecond.toDouble()
         packetRepository.save(
             Packet
                 (
-                "20180818-164847-7574833b",
+                "20241122-111130-544ddd35",
                 packetGroupNames[0],
                 "",
                 mapOf("a" to 1),
@@ -163,23 +164,24 @@ class PacketGroupControllerTest : IntegrationTest()
         )
 
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packetGroups/${packetGroupNames[0]}/latestIdAndDisplayName",
+            "/packetGroups/${packetGroupNames[0]}/detail",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
 
         assertSuccess(result)
         val resultBody = jacksonObjectMapper().readTree(result.body)
-        assertEquals("20180818-164847-7574833b", resultBody.get("latestPacketId").asText())
+        assertEquals("20241122-111130-544ddd35", resultBody.get("latestPacketId").asText())
         assertEquals("test packetGroupName 1", resultBody.get("displayName").asText())
+        assertTrue(resultBody.get("packetDescription").asText().startsWith("A longer description. Perhaps multiple sentences."))
     }
 
     @Test
-    @WithAuthenticatedUser(authorities = [])
-    fun `getLatestPacketIdAndDisplayName returns 401 if authority is not provided`()
+    @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:wrong-name"])
+    fun `getDetail returns 401 if authority is not correct`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packetGroups/${packetGroupNames[0]}/latestIdAndDisplayName",
+            "/packetGroups/${packetGroupNames[0]}/detail",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )

@@ -35,38 +35,25 @@ describe("PacketGroup", () => {
     });
   });
 
-  it("should render heading with the name of the packet group when the display name is the same as name", async () => {
-    const dependsPacketGroup = mockPacketGroupSummaries.content[mockPacketGroupSummaries.content.length - 1];
-    const dependsPacket = {
-      ...mockPacket,
-      id: dependsPacketGroup.latestId,
-      name: dependsPacketGroup.name,
-      custom: {
-        orderly: {
-          description: {
-            custom: null,
-            display: null,
-            long: null
-          }
-        }
-      }
-    };
-    const packetGroupDetailUrl = `${appConfig.apiUrl()}/packetGroups/${dependsPacketGroup.name}/latestIdAndDisplayName`;
+  it("should render heading with the name of the packet group when the display name is the same as name," +
+    "and be able to cope with a null packet description", async () => {
+    const dependsPg = mockPacketGroupSummaries.content[mockPacketGroupSummaries.content.length - 1];
+    const emptyCustomMetadata = { orderly: { description: { custom: null, display: null, long: null } } };
+    const dependsPacket = { ...mockPacket, id: dependsPg.latestId, name: dependsPg.name, custom: emptyCustomMetadata };
+    const packetGroupDetailUrl = `${appConfig.apiUrl()}/packetGroups/${dependsPg.name}/detail`;
     server.use(
       rest.get(packetGroupDetailUrl, (req, res, ctx) => {
         return res(ctx.json({
-          latestPacketId: dependsPacketGroup.latestId,
-          displayName: dependsPacketGroup.latestDisplayName
+          latestPacketId: dependsPg.latestId,
+          displayName: dependsPg.latestDisplayName,
+          packetDescription: null
         }));
-      }),
-      rest.get(`${appConfig.apiUrl()}/packets/metadata/${dependsPacketGroup.latestId}`, (req, res, ctx) => {
-        return res(ctx.json(dependsPacket));
       })
     );
-    renderComponent(dependsPacketGroup.name);
+    renderComponent(dependsPg.name);
 
     await waitFor(() => {
-      expect(screen.getByRole("heading", { name: dependsPacketGroup.name })).toBeVisible();
+      expect(screen.getByRole("heading", { name: dependsPg.name })).toBeVisible();
     });
   });
 
@@ -93,22 +80,9 @@ describe("PacketGroup", () => {
     expect(screen.getByText(/none/i)).toBeVisible();
   });
 
-  it("should render error component when error fetching latest packet", async () => {
-    server.use(
-      rest.get(`${appConfig.apiUrl()}/packets/metadata/*`, (req, res, ctx) => {
-        return res(ctx.status(400));
-      })
-    );
-    renderComponent();
-
-    await waitFor(() => {
-      expect(screen.getByText(/error fetching packet/i)).toBeVisible();
-    });
-  });
-
   it("should render error component when error fetching packet group", async () => {
     server.use(
-      rest.get(`${appConfig.apiUrl()}/packetGroups/${mockPacket.name}/latestIdAndDisplayName`, (req, res, ctx) => {
+      rest.get(`${appConfig.apiUrl()}/packetGroups/${mockPacket.name}/detail`, (req, res, ctx) => {
         return res(ctx.status(400));
       })
     );
@@ -119,22 +93,9 @@ describe("PacketGroup", () => {
     });
   });
 
-  it("should render unauthorized when 401 error fetching packets", async () => {
-    server.use(
-      rest.get(`${appConfig.apiUrl()}/packets/metadata/*`, (req, res, ctx) => {
-        return res(ctx.status(HttpStatus.Unauthorized));
-      })
-    );
-    renderComponent();
-
-    await waitFor(() => {
-      expect(screen.getByText(/unauthorized/i)).toBeVisible();
-    });
-  });
-
   it("should render unauthorized when 401 error fetching packet group", async () => {
     server.use(
-      rest.get(`${appConfig.apiUrl()}/packetGroups/${mockPacket.name}/latestIdAndDisplayName`, (req, res, ctx) => {
+      rest.get(`${appConfig.apiUrl()}/packetGroups/${mockPacket.name}/detail`, (req, res, ctx) => {
         return res(ctx.status(HttpStatus.Unauthorized));
       })
     );

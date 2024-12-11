@@ -3,34 +3,18 @@ import { useParams } from "react-router-dom";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
 import { Unauthorized } from "../common/Unauthorized";
 import { ErrorComponent } from "../common/ErrorComponent";
-import { useGetPacketById } from "../common/hooks/useGetPacketById";
-import { useGetPacketGroupLatestIdAndDisplayName } from "./hooks/useGetPacketGroupLatestIdAndDisplayName";
+import { useGetPacketGroupDetail } from "./hooks/useGetPacketGroupDetail";
 import { Skeleton } from "../../Base/Skeleton";
 
 export const PacketGroup = () => {
   const { packetName } = useParams();
-  const {
-    packetGroup,
-    error: packetGroupError,
-    isLoading: packetGroupIsLoading
-  } = useGetPacketGroupLatestIdAndDisplayName(packetName as string);
+  const { packetGroup, error, isLoading } = useGetPacketGroupDetail(packetName as string);
   const packetGroupDisplayName = packetGroup?.displayName;
-  const {
-    packet: latestPacket,
-    error: packetError,
-    isLoading: packetIsLoading
-  } = useGetPacketById(packetGroup?.latestPacketId);
-  const latestDescription = latestPacket?.custom?.orderly.description.long;
+  const latestDescription = packetGroup?.packetDescription;
 
-  const isLoading = (packetGroupIsLoading || packetIsLoading);
-  if ([packetError?.status, packetGroupError?.status].includes(HttpStatus.Unauthorized)) return <Unauthorized />;
-  if (!isLoading && (packetGroupError || !packetGroup)) {
-    const error = packetGroupError || new Error("No packet groups found");
-    return <ErrorComponent message="Error fetching packet group" error={error} />;
-  }
-  if (!isLoading && (packetError || !latestPacket)) {
-    const error = packetError || new Error("No packet found");
-    return <ErrorComponent message="Error fetching packet" error={error} />;
+  if (error?.status == HttpStatus.Unauthorized) return <Unauthorized />;
+  if (!isLoading && (error || !packetGroup)) {
+    return <ErrorComponent message="Error fetching packet group" error={error || new Error("Missing packet group")} />;
   }
 
   return (

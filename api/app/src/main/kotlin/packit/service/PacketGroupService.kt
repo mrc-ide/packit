@@ -8,19 +8,20 @@ import packit.exceptions.PackitException
 import packit.helpers.PagingHelper
 import packit.model.PacketGroup
 import packit.model.PageablePayload
-import packit.model.dto.PacketIdAndDisplayName
-import packit.model.dto.PacketIdAndDisplayNameImpl
+import packit.model.dto.PacketGroupDetail
+import packit.model.dto.PacketGroupDetailImpl
 import packit.repository.PacketGroupRepository
 
 interface PacketGroupService
 {
     fun getPacketGroups(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroup>
-    fun getLatestIdAndDisplayName(name: String): PacketIdAndDisplayName
+    fun getPacketGroupDetail(name: String): PacketGroupDetail
 }
 
 @Service
 class BasePacketGroupService(
-    private val packetGroupRepository: PacketGroupRepository
+    private val packetGroupRepository: PacketGroupRepository,
+    private val packetService: PacketService
 ) : PacketGroupService
 {
     override fun getPacketGroups(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroup>
@@ -29,12 +30,14 @@ class BasePacketGroupService(
         return PagingHelper.convertListToPage(packetGroups, pageablePayload)
     }
 
-    override fun getLatestIdAndDisplayName(name: String): PacketIdAndDisplayName{
+    override fun getPacketGroupDetail(name: String): PacketGroupDetail{
         val latestId = packetGroupRepository.findLatestPacketIdForGroup(name)?.id
         val packetGroup = packetGroupRepository.findByName(name)
         if (latestId == null || packetGroup == null) {
             throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
         }
-        return PacketIdAndDisplayNameImpl(latestId, packetGroup.latestDisplayName)
+        val packetOrderlyMetadata = packetService.getMetadataBy(latestId).custom?.get("orderly") as? Map<*, *>
+        val packetLongDescription = (packetOrderlyMetadata?.get("description") as? Map<*, *>)?.get("long") as? String
+        return PacketGroupDetailImpl(latestId, packetGroup.latestDisplayName, packetLongDescription)
     }
 }

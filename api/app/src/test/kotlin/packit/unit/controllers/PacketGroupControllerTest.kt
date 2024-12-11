@@ -8,28 +8,29 @@ import org.mockito.kotlin.verify
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import packit.controllers.PacketGroupController
-import packit.model.dto.PacketIdAndDisplayName
-import packit.model.dto.PacketIdAndDisplayNameImpl
+import packit.model.dto.PacketGroupDetail
+import packit.model.dto.PacketGroupDetailImpl
 import packit.service.PacketGroupService
+import packit.service.PacketService
 import kotlin.test.assertEquals
 
 class PacketGroupControllerTest {
     private val packetGroupService = mock<PacketGroupService> {
-        on { getLatestIdAndDisplayName(any()) } doReturn PacketIdAndDisplayNameImpl(
-            "20180818-164847-7574833b", "Display Name 1"
+        on { getPacketGroupDetail(any()) } doReturn PacketGroupDetailImpl(
+            "20180818-164847-7574833b", "Display Name 1", "Accurate description"
         )
     }
 
     private val sut = PacketGroupController(packetGroupService)
 
     @Test
-    fun `get latest packet id and display name`() {
-        val result: ResponseEntity<PacketIdAndDisplayName> =
-            sut.getLatestPacketIdAndDisplayName("test-packetGroupName-1")
+    fun `get packet group display name, latest packet id, and description`() {
+        val result: ResponseEntity<PacketGroupDetail> = sut.getDetail("test-packetGroupName-1")
 
         assertEquals(HttpStatus.OK, result.statusCode)
         assertEquals("20180818-164847-7574833b", result.body?.latestPacketId)
         assertEquals("Display Name 1", result.body?.displayName)
-        verify(packetGroupService).getLatestIdAndDisplayName("test-packetGroupName-1")
+        assertEquals("Accurate description", result.body?.packetDescription)
+        verify(packetGroupService).getPacketGroupDetail("test-packetGroupName-1")
     }
 }

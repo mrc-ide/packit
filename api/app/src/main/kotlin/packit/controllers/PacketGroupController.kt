@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import packit.model.PageablePayload
 import packit.model.dto.PacketGroupDto
-import packit.model.dto.PacketIdAndDisplayName
+import packit.model.dto.PacketGroupDetail
 import packit.model.toDto
 import packit.service.PacketGroupService
 
@@ -30,11 +30,12 @@ class PacketGroupController(
         return ResponseEntity.ok(packetGroupService.getPacketGroups(payload, filterName).map { it.toDto() })
     }
 
-    @GetMapping("/{name}/latestIdAndDisplayName")
-    fun getLatestPacketIdAndDisplayName(
+    @GetMapping("/{name}/detail")
+    fun getDetail(
         @PathVariable name: String
-    ): ResponseEntity<PacketIdAndDisplayName> {
-        val result = packetGroupService.getLatestIdAndDisplayName(name)
+    ): ResponseEntity<PacketGroupDetail> {
+        val result = packetGroupService.getPacketGroupDetail(name)
+
         return ResponseEntity.ok(result)
     }
 }
