@@ -38,9 +38,7 @@ describe("PacketGroup", () => {
   it("should render heading with the name of the packet group when the display name is the same as name," +
     "and be able to cope with a null packet description", async () => {
     const dependsPg = mockPacketGroupSummaries.content[mockPacketGroupSummaries.content.length - 1];
-    const emptyCustomMetadata = { orderly: { description: { custom: null, display: null, long: null } } };
-    const dependsPacket = { ...mockPacket, id: dependsPg.latestId, name: dependsPg.name, custom: emptyCustomMetadata };
-    const packetGroupDetailUrl = `${appConfig.apiUrl()}/packetGroups/${dependsPg.name}/detail`;
+    const packetGroupDetailUrl = `${appConfig.apiUrl()}/packetGroups/${dependsPg.name}/display`;
     server.use(
       rest.get(packetGroupDetailUrl, (req, res, ctx) => {
         return res(ctx.json({
@@ -82,7 +80,7 @@ describe("PacketGroup", () => {
 
   it("should render error component when error fetching packet group", async () => {
     server.use(
-      rest.get(`${appConfig.apiUrl()}/packetGroups/${mockPacket.name}/detail`, (req, res, ctx) => {
+      rest.get(`${appConfig.apiUrl()}/packetGroups/${mockPacket.name}/display`, (req, res, ctx) => {
         return res(ctx.status(400));
       })
     );
@@ -95,7 +93,7 @@ describe("PacketGroup", () => {
 
   it("should render unauthorized when 401 error fetching packet group", async () => {
     server.use(
-      rest.get(`${appConfig.apiUrl()}/packetGroups/${mockPacket.name}/detail`, (req, res, ctx) => {
+      rest.get(`${appConfig.apiUrl()}/packetGroups/${mockPacket.name}/display`, (req, res, ctx) => {
         return res(ctx.status(HttpStatus.Unauthorized));
       })
     );

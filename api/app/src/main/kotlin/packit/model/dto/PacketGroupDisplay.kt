@@ -1,13 +1,11 @@
 package packit.model.dto
 
-interface PacketGroupDetail {
-    val latestPacketId: String
+interface PacketGroupDisplay {
     val displayName: String
     val packetDescription: String?
 }
 
-data class PacketGroupDetailImpl(
-    override val latestPacketId: String,
+data class PacketGroupDisplayImpl(
     override val displayName: String,
     override val packetDescription: String?
-) : PacketGroupDetail
+) : PacketGroupDisplay

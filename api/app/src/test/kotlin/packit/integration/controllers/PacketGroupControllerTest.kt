@@ -146,7 +146,7 @@ class PacketGroupControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:test-packetGroupName-1"])
-    fun `getDetail returns correct id, display name and description`()
+    fun `getDisplay returns display name and description`()
     {
         val now = Instant.now().epochSecond.toDouble()
         packetRepository.save(
@@ -164,14 +164,13 @@ class PacketGroupControllerTest : IntegrationTest()
         )
 
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packetGroups/${packetGroupNames[0]}/detail",
+            "/packetGroups/${packetGroupNames[0]}/display",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
 
         assertSuccess(result)
         val resultBody = jacksonObjectMapper().readTree(result.body)
-        assertEquals("20241122-111130-544ddd35", resultBody.get("latestPacketId").asText())
         assertEquals("test packetGroupName 1", resultBody.get("displayName").asText())
         assertTrue(resultBody.get("packetDescription").asText().startsWith("A longer description. Perhaps multiple sentences."))
     }

@@ -40,7 +40,7 @@ class PacketGroupServiceTest
     }
 
     @Test
-    fun `getPacketGroupDetail returns correct id, display name, and description`()
+    fun `getPacketGroupDisplay returns display name, and description`()
     {
         val packetGroupRepository = mock<PacketGroupRepository>()
         val packetService = mock<PacketService>()
@@ -70,9 +70,8 @@ class PacketGroupServiceTest
 
         val sut = BasePacketGroupService(packetGroupRepository, packetService)
 
-        val result = sut.getPacketGroupDetail(groupName)
+        val result = sut.getPacketGroupDisplay(groupName)
 
-        assertEquals("20170818-164847-7574853b", result.latestPacketId)
         assertEquals("Display Name", result.displayName)
         assertEquals("Long description", result.packetDescription)
         verify(packetGroupRepository).findLatestPacketIdForGroup(groupName)

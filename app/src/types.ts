@@ -31,8 +31,7 @@ export interface PacketGroupSummary {
   latestDisplayName: string;
 }
 
-export interface PacketGroupDetail {
-  latestPacketId: string;
+export interface PacketGroupDisplay {
   displayName: string;
   packetDescription?: string;
 }

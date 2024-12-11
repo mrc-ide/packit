@@ -3,12 +3,12 @@ import { useParams } from "react-router-dom";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
 import { Unauthorized } from "../common/Unauthorized";
 import { ErrorComponent } from "../common/ErrorComponent";
-import { useGetPacketGroupDetail } from "./hooks/useGetPacketGroupDetail";
+import { useGetPacketGroupDisplay } from "./hooks/useGetPacketGroupDisplay";
 import { Skeleton } from "../../Base/Skeleton";
 
 export const PacketGroup = () => {
   const { packetName } = useParams();
-  const { packetGroup, error, isLoading } = useGetPacketGroupDetail(packetName as string);
+  const { packetGroup, error, isLoading } = useGetPacketGroupDisplay(packetName as string);
   const packetGroupDisplayName = packetGroup?.displayName;
   const latestDescription = packetGroup?.packetDescription;
 
