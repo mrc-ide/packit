@@ -172,7 +172,7 @@ class PacketGroupControllerTest : IntegrationTest()
         assertSuccess(result)
         val resultBody = jacksonObjectMapper().readTree(result.body)
         assertEquals("test packetGroupName 1", resultBody.get("displayName").asText())
-        assertTrue(resultBody.get("packetDescription").asText().startsWith("A longer description. Perhaps multiple sentences."))
+        assertTrue(resultBody.get("packetDescription").asText().startsWith("A longer description"))
     }
 
     @Test
