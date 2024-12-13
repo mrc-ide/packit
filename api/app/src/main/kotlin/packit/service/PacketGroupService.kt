@@ -9,7 +9,6 @@ import packit.helpers.PagingHelper
 import packit.model.PacketGroup
 import packit.model.PageablePayload
 import packit.model.dto.PacketGroupDisplay
-import packit.model.dto.PacketGroupDisplayImpl
 import packit.repository.PacketGroupRepository
 
 interface PacketGroupService
@@ -38,6 +37,6 @@ class BasePacketGroupService(
         }
         val packetOrderlyMetadata = packetService.getMetadataBy(latestPacketId).custom?.get("orderly") as? Map<*, *>
         val packetLongDescription = (packetOrderlyMetadata?.get("description") as? Map<*, *>)?.get("long") as? String
-        return PacketGroupDisplayImpl(packetGroup.latestDisplayName, packetLongDescription)
+        return PacketGroupDisplay(packetGroup.latestDisplayName, packetLongDescription)
     }
 }

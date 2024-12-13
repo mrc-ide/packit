@@ -38,13 +38,12 @@ describe("PacketGroup", () => {
   it("should render heading with the name of the packet group when the display name is the same as name," +
     "and be able to cope with a null packet description", async () => {
     const dependsPg = mockPacketGroupSummaries.content[mockPacketGroupSummaries.content.length - 1];
-    const packetGroupDetailUrl = `${appConfig.apiUrl()}/packetGroups/${dependsPg.name}/display`;
+    const packetGroupDisplayUrl = `${appConfig.apiUrl()}/packetGroups/${dependsPg.name}/display`;
     server.use(
-      rest.get(packetGroupDetailUrl, (req, res, ctx) => {
+      rest.get(packetGroupDisplayUrl, (req, res, ctx) => {
         return res(ctx.json({
-          latestPacketId: dependsPg.latestId,
-          displayName: dependsPg.latestDisplayName,
-          packetDescription: null
+          latestDisplayName: dependsPg.latestDisplayName,
+          description: null
         }));
       })
     );

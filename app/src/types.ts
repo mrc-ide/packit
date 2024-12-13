@@ -34,8 +34,8 @@ export interface PacketGroupSummary {
 }
 
 export interface PacketGroupDisplay {
-  displayName: string;
-  packetDescription?: string;
+  latestDisplayName: string;
+  description?: string;
 }
 
 export interface Packet {

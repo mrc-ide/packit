@@ -9,8 +9,8 @@ import { Skeleton } from "../../Base/Skeleton";
 export const PacketGroup = () => {
   const { packetName } = useParams();
   const { packetGroup, error, isLoading } = useGetPacketGroupDisplay(packetName as string);
-  const packetGroupDisplayName = packetGroup?.displayName;
-  const latestDescription = packetGroup?.packetDescription;
+  const displayName = packetGroup?.latestDisplayName;
+  const description = packetGroup?.description;
 
   if (error?.status == HttpStatus.Unauthorized) return <Unauthorized />;
   if (!isLoading && (error || !packetGroup)) {
@@ -23,12 +23,12 @@ export const PacketGroup = () => {
         <div className="flex items-center justify-between space-y-2">
           <div className="space-y-4 mb-4">
             {isLoading ? (<Skeleton className="h-4 w-64" />) : (<div>
-              <h2 className="text-2xl font-bold tracking-tight">{packetGroupDisplayName || packetName}</h2>
-              {packetGroupDisplayName !== packetName &&
+              <h2 className="text-2xl font-bold tracking-tight">{displayName || packetName}</h2>
+              {displayName !== packetName &&
                 <p className="text-muted-foreground">{packetName}</p>
               }
             </div>)}
-            {latestDescription && <p className="text-primary">{latestDescription}</p>}
+            {description && <p className="text-primary">{description}</p>}
           </div>
         </div>
         <PacketTable parentIsLoading={isLoading} />

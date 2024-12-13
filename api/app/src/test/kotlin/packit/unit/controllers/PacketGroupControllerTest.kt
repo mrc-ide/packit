@@ -9,13 +9,12 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import packit.controllers.PacketGroupController
 import packit.model.dto.PacketGroupDisplay
-import packit.model.dto.PacketGroupDisplayImpl
 import packit.service.PacketGroupService
 import kotlin.test.assertEquals
 
 class PacketGroupControllerTest {
     private val packetGroupService = mock<PacketGroupService> {
-        on { getPacketGroupDisplay(any()) } doReturn PacketGroupDisplayImpl(
+        on { getPacketGroupDisplay(any()) } doReturn PacketGroupDisplay(
             "Display Name 1", "Accurate description"
         )
     }
@@ -27,8 +26,8 @@ class PacketGroupControllerTest {
         val result: ResponseEntity<PacketGroupDisplay> = sut.getDisplay("test-packetGroupName-1")
 
         assertEquals(HttpStatus.OK, result.statusCode)
-        assertEquals("Display Name 1", result.body?.displayName)
-        assertEquals("Accurate description", result.body?.packetDescription)
+        assertEquals("Display Name 1", result.body?.latestDisplayName)
+        assertEquals("Accurate description", result.body?.description)
         verify(packetGroupService).getPacketGroupDisplay("test-packetGroupName-1")
     }
 }

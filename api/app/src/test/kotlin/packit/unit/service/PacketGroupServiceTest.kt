@@ -72,8 +72,8 @@ class PacketGroupServiceTest
 
         val result = sut.getPacketGroupDisplay(groupName)
 
-        assertEquals("Display Name", result.displayName)
-        assertEquals("Long description", result.packetDescription)
+        assertEquals("Display Name", result.latestDisplayName)
+        assertEquals("Long description", result.description)
         verify(packetGroupRepository).findLatestPacketIdForGroup(groupName)
         verify(packetGroupRepository).findByName(groupName)
         verify(packetService).getMetadataBy("20170818-164847-7574853b")
