@@ -1,12 +1,5 @@
 import { JwtPayload } from "jwt-decode";
 
-export enum PacketSideBarItems {
-  explorer,
-  packetRunner,
-  workflowRunner,
-  projectDoc
-}
-
 export interface Pageable {
   totalPages: number;
   totalElements: number;
