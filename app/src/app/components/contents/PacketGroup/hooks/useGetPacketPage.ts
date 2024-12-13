@@ -3,8 +3,8 @@ import appConfig from "../../../../../config/appConfig";
 import { fetcher } from "../../../../../lib/fetch";
 import { PageablePackets } from "../../../../../types";
 
-export const useGetPacketPages = (packetName: string | undefined, pageNumber: number, pageSize: number) => {
-  const url = `${appConfig.apiUrl()}/packets/${packetName}?pageNumber=${pageNumber}&pageSize=${pageSize}`
+export const useGetPacketPage = (packetName: string | undefined, pageNumber: number, pageSize: number) => {
+  const url = `${appConfig.apiUrl()}/packets/${packetName}?pageNumber=${pageNumber}&pageSize=${pageSize}`;
 
   const { data, isLoading, error } = useSWR<PageablePackets>(
     packetName ? url : null,
@@ -12,7 +12,7 @@ export const useGetPacketPages = (packetName: string | undefined, pageNumber: nu
   );
 
   return {
-    packetPages: data,
+    packetPage: data,
     isLoading,
     error
   };
