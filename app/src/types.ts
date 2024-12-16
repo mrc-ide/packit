@@ -68,10 +68,28 @@ export interface TimeMetadata {
   end: number;
 }
 
+interface Platform {
+  version: string;
+  os: string;
+  system: string;
+}
+
+interface Package {
+  package: string;
+  version: string;
+  attached: boolean;
+}
+
+interface Session {
+  platform: Platform;
+  packages: Package[];
+}
+
 export interface Custom {
   orderly: {
     artefacts: Artefact[];
     description: Description;
+    session: Session;
   };
 }
 

@@ -161,6 +161,20 @@ export const mockPacket: PacketMetadata = {
       description: {
         custom: null,
         display: null
+      },
+      session: {
+        packages: [
+          {
+            package: "library_of_interest",
+            version: "0.1.0",
+            attached: true
+          }
+        ],
+        platform: {
+          os: "Ubuntu 22.04.4 LTS",
+          system: "x86_64, linux-gnu",
+          version: "R version 4.4.1 (2024-06-14)"
+        }
       }
     }
   }
