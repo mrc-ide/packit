@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 
 import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
@@ -34,6 +34,17 @@ describe("Metadata component", () => {
     expect(screen.getByText(/branch/i)).toBeInTheDocument();
     expect(screen.getByText(/commit/i)).toBeInTheDocument();
     expect(screen.getByText(/remotes/i)).toBeInTheDocument();
+
+    act(() => screen.getByText(/platform/i).click());
+
+    expect(screen.getByText(/os/i)).toBeInTheDocument();
+    expect(screen.getByText(/system/i)).toBeInTheDocument();
+    expect(screen.getByText(/language/i)).toBeInTheDocument();
+
+    act(() => screen.getByText(/packages/i).click());
+
+    expect(screen.getByText(/library_of_interest/i)).toBeInTheDocument();
+    expect(screen.getByText(/0.1.0/i)).toBeInTheDocument();
   });
 
   it("does not render elapsed time when datetime has no difference", async () => {
@@ -57,7 +68,7 @@ describe("Metadata component", () => {
     expect(screen.queryByText("elapsed")).not.toBeInTheDocument();
   });
 
-  it("should not render git metadata or any sub-headings when git is not present", async () => {
+  it("should not render git metadata when git is not present", async () => {
     server.use(
       rest.get("*", (req, res, ctx) => {
         return res(
@@ -72,11 +83,29 @@ describe("Metadata component", () => {
 
     await screen.findByText(/started/i);
 
-    expect(screen.queryByText(/timings/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/git/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/branch/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/commit/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/remotes/i)).not.toBeInTheDocument();
+  });
+
+  it("should not render the platform/packages sections if orderly custom metadata is not present", async () => {
+    server.use(
+      rest.get("*", (req, res, ctx) => {
+        return res(
+          ctx.json({
+            ...mockPacket,
+            custom: null
+          })
+        );
+      })
+    );
+    renderComponent();
+
+    await screen.findByText(/started/i);
+
+    expect(screen.queryByText(/platform/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/packages/i)).not.toBeInTheDocument();
   });
 
   it("should not render any fields if packet is null", async () => {

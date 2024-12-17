@@ -17,7 +17,7 @@ export default function Metadata() {
 
   const startedTime = packet && getDateUTCString(packet.time);
   const elapsedTime = packet && getElapsedTime(packet.time);
-  const session = packet?.custom.orderly.session;
+  const session = packet?.custom?.orderly?.session;
 
   return (
     <>
@@ -80,7 +80,7 @@ export default function Metadata() {
                     <ul className="space-y-1">
                       <MetadataListItem label="OS" value={session.platform.os} />
                       <MetadataListItem label="System" value={session.platform.system} />
-                      <MetadataListItem label="Version" value={session.platform.version} />
+                      <MetadataListItem label="Language" value={session.platform.version} />
                     </ul>
                   </AccordionContent>
                 </AccordionItem>
@@ -92,7 +92,7 @@ export default function Metadata() {
                     </span>
                   </AccordionTrigger>
                   <AccordionContent>
-                    <ul className="space-y-1">
+                    <ul className="space-y-1 overflow-y-auto max-h-80">
                       {packet.custom.orderly.session.packages
                         ?.sort((a, b) => a.package.localeCompare(b.package))
                         ?.map((pkg, index) => (
