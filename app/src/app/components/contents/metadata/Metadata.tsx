@@ -18,6 +18,8 @@ export default function Metadata() {
   const startedTime = packet && getDateUTCString(packet.time);
   const elapsedTime = packet && getElapsedTime(packet.time);
   const session = packet?.custom?.orderly?.session;
+  const packages = session?.packages
+    ?.sort((a, b) => a.package.localeCompare(b.package));
 
   return (
     <>
@@ -93,11 +95,9 @@ export default function Metadata() {
                   </AccordionTrigger>
                   <AccordionContent>
                     <ul className="space-y-1 overflow-y-auto max-h-80">
-                      {packet.custom.orderly.session.packages
-                        ?.sort((a, b) => a.package.localeCompare(b.package))
-                        ?.map((pkg, index) => (
-                          <MetadataListItem key={index} label={pkg.package} value={`${pkg.version}`} />
-                        ))}
+                      {packages?.map((pkg, index) => (
+                        <MetadataListItem key={index} label={pkg.package} value={`${pkg.version}`} />
+                      ))}
                     </ul>
                   </AccordionContent>
                 </AccordionItem>
