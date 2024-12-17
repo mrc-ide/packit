@@ -168,6 +168,11 @@ export const mockPacket: PacketMetadata = {
             package: "library_of_interest",
             version: "0.1.0",
             attached: true
+          },
+          {
+            package: "other_library",
+            version: "1.0.0",
+            attached: false
           }
         ],
         platform: {
