@@ -27,9 +27,9 @@ export default function Metadata() {
           <Accordion type="multiple" defaultValue={["timings", "git"]}>
             <AccordionItem value="timings">
               <AccordionTrigger>
-                <span className="flex gap-1 items-center text-muted-foreground">
-                  <Timer className="small-icon" />
-                  <h3 className="text-lg font-bold tracking-tight">Timings</h3>
+                <span className="flex gap-1 items-center">
+                  <Timer className="small-icon text-muted-foreground" />
+                  <h3>Timings</h3>
                 </span>
               </AccordionTrigger>
               <AccordionContent>
@@ -43,13 +43,13 @@ export default function Metadata() {
               <>
                 <AccordionItem value="git">
                   <AccordionTrigger>
-                     <span className="flex gap-1 items-center text-muted-foreground">
-                       <Github className="small-icon" />
-                       <h3 className="text-lg font-bold tracking-tight" data-testid="gitHeading">Git</h3>
-                     </span>
+                    <span className="flex gap-1 items-center">
+                      <Github className="small-icon text-muted-foreground" />
+                      <h3 data-testid="gitHeading">Git</h3>
+                    </span>
                   </AccordionTrigger>
                   <AccordionContent>
-                    <ul className="ps-1 flex flex-col space-y-3">
+                    <ul className="space-y-1">
                       <MetadataListItem label="Branch" value={packet.git.branch} />
                       <MetadataListItem label="Commit" value={packet.git.sha} />
                       <li className="flex flex-col">
@@ -71,31 +71,32 @@ export default function Metadata() {
               <>
                 <AccordionItem value="platform">
                   <AccordionTrigger>
-                    <span className="flex gap-1 items-center text-muted-foreground">
-                      <Monitor className="small-icon" />
-                      <h3 className="text-lg font-bold tracking-tight">Platform</h3>
+                    <span className="flex gap-1 items-center">
+                      <Monitor className="small-icon text-muted-foreground" />
+                      <h3>Platform</h3>
                     </span>
                   </AccordionTrigger>
                   <AccordionContent>
-                    <MetadataListItem label="OS" value={session.platform.os} />
-                    <MetadataListItem label="System" value={session.platform.system} />
-                    <MetadataListItem label="Version" value={session.platform.version} />
+                    <ul className="space-y-1">
+                      <MetadataListItem label="OS" value={session.platform.os} />
+                      <MetadataListItem label="System" value={session.platform.system} />
+                      <MetadataListItem label="Version" value={session.platform.version} />
+                    </ul>
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="packages">
                   <AccordionTrigger>
-                    <span className="flex gap-1 items-center text-muted-foreground">
-                      <Library className="small-icon" />
-                      <h3 className="text-lg font-bold tracking-tight">Packages</h3>
+                    <span className="flex gap-1 items-center">
+                      <Library className="small-icon text-muted-foreground" />
+                      <h3>Packages</h3>
                     </span>
                   </AccordionTrigger>
                   <AccordionContent>
-                    <ul className="ps-1">
+                    <ul className="space-y-1">
                       {packet.custom.orderly.session.packages
                         ?.sort((a, b) => a.package.localeCompare(b.package))
                         ?.map((pkg, index) => (
-                          <MetadataListItem key={index} label={pkg.package}
-                                            value={`${pkg.version}${pkg.attached ? " (attached)" : ""}`} />
+                          <MetadataListItem key={index} label={pkg.package} value={`${pkg.version}`} />
                         ))}
                     </ul>
                   </AccordionContent>

@@ -16,6 +16,7 @@ export interface Pageable {
   number: number;
   first: boolean;
 }
+
 export interface PageablePackets extends Pageable {
   content: Packet[];
 }
@@ -23,6 +24,7 @@ export interface PageablePackets extends Pageable {
 export interface PageablePacketGroupSummary extends Pageable {
   content: PacketGroupSummary[];
 }
+
 export interface PacketGroupSummary {
   name: string;
   packetCount: number;
