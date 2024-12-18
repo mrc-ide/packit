@@ -13,8 +13,6 @@ plugins {
     kotlin("plugin.spring") version "1.7.22"
     kotlin("plugin.jpa") version "1.7.22"
 
-    id("io.freefair.lombok") version "8.11"
-
     // Expose Git revision as a property
     id("com.gorylenko.gradle-git-properties") version "2.4.2"
 
