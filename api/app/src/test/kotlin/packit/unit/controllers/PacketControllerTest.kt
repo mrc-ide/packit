@@ -13,7 +13,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import packit.controllers.PacketController
 import packit.model.*
-import packit.model.dto.PacketGroupSummary
 import packit.service.PacketService
 import java.time.Instant
 import kotlin.test.assertEquals
@@ -87,7 +86,7 @@ class PacketControllerTest
         on { getPackets(PageablePayload(0, 10), "", "") } doReturn mockPageablePackets
         on { getMetadataBy(anyString()) } doReturn packetMetadata
         on { getFileByHash(anyString(), anyBoolean(), anyString()) } doReturn inputStream
-        on { getPacketGroupSummaries(PageablePayload(0, 10), "") } doReturn mockPacketGroupsSummary
+        on { getPacketGroupDisplays(PageablePayload(0, 10), "") } doReturn mockPacketGroupsSummary
         on { getPacketsByName(anyString(), any()) } doReturn mockPageablePackets
     }
 
@@ -121,7 +120,7 @@ class PacketControllerTest
         val result = sut.getPacketGroupSummaries(0, 10, "")
         assertEquals(result.statusCode, HttpStatus.OK)
         assertEquals(result.body, mockPacketGroupsSummary)
-        verify(indexService).getPacketGroupSummaries(PageablePayload(0, 10), "")
+        verify(indexService).getPacketGroupDisplays(PageablePayload(0, 10), "")
     }
 
     @Test

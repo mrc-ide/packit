@@ -197,7 +197,7 @@ class PacketServiceTest
     {
         val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
 
-        val result = sut.getPacketGroupSummaries(PageablePayload(0, 10), "random")
+        val result = sut.getPacketGroupDisplays(PageablePayload(0, 10), "random")
 
         assertEquals(result.totalElements, 2)
         assertEquals(result.content, packetGroupSummaries)

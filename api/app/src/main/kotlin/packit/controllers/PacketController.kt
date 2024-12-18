@@ -5,10 +5,10 @@ import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
+import packit.model.PacketGroupDisplay
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
 import packit.model.dto.PacketDto
-import packit.model.dto.PacketGroupSummary
 import packit.model.toDto
 import packit.service.PacketService
 
@@ -46,9 +46,9 @@ class PacketController(private val packetService: PacketService)
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
         @RequestParam(required = false, defaultValue = "50") pageSize: Int,
         @RequestParam(required = false, defaultValue = "") filter: String,
-    ): ResponseEntity<Page<PacketGroupSummary>> {
+    ): ResponseEntity<Page<PacketGroupDisplay>> {
         val payload = PageablePayload(pageNumber, pageSize)
-        return ResponseEntity.ok(packetService.getPacketGroupSummaries(payload, filter))
+        return ResponseEntity.ok(packetService.getPacketGroupDisplays(payload, filter))
     }
 
     @GetMapping("/metadata/{id}")

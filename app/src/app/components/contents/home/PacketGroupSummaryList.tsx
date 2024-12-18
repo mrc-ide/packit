@@ -5,7 +5,7 @@ import { ErrorComponent } from "../common/ErrorComponent";
 import { Pagination } from "../common/Pagination";
 import { Unauthorized } from "../common/Unauthorized";
 import { PacketGroupSummaryListItem } from "./PacketGroupSummaryListItem";
-import { useGetPacketGroupSummaries } from "./hooks/useGetPacketGroupSummaries";
+import { useGetPacketGroupDisplays } from "./hooks/useGetPacketGroupDisplays";
 
 interface PacketGroupSummaryListProps {
   filterByName: string;
@@ -13,13 +13,14 @@ interface PacketGroupSummaryListProps {
   pageSize: number;
   setPageNumber: Dispatch<SetStateAction<number>>;
 }
+
 export const PacketGroupSummaryList = ({
-  filterByName,
-  pageNumber,
-  pageSize,
-  setPageNumber
-}: PacketGroupSummaryListProps) => {
-  const { packetGroupSummaries, isLoading, error } = useGetPacketGroupSummaries(pageNumber, pageSize, filterByName);
+                                         filterByName,
+                                         pageNumber,
+                                         pageSize,
+                                         setPageNumber
+                                       }: PacketGroupSummaryListProps) => {
+  const { packetGroupDisplays, isLoading, error } = useGetPacketGroupDisplays(pageNumber, pageSize, filterByName);
 
   if (error?.status === HttpStatus.Unauthorized) return <Unauthorized />;
   if (error) return <ErrorComponent message="Error fetching packet groups" error={error} />;
@@ -42,23 +43,23 @@ export const PacketGroupSummaryList = ({
 
   return (
     <>
-      {packetGroupSummaries?.content?.length === 0 ? (
+      {packetGroupDisplays?.content?.length === 0 ? (
         <div className="flex border rounded-md p-6 justify-center text-muted-foreground">No reports found</div>
       ) : (
         <ul className="flex flex-col border rounded-md">
-          {packetGroupSummaries?.content?.map((packetGroup) => (
-            <PacketGroupSummaryListItem key={packetGroup.latestId} packetGroup={packetGroup} />
+          {packetGroupDisplays?.content?.map((packetGroup) => (
+            <PacketGroupSummaryListItem key={packetGroup.latestPacketId} packetGroup={packetGroup} />
           ))}
         </ul>
       )}
 
-      {packetGroupSummaries?.content.length ? (
+      {packetGroupDisplays?.content.length ? (
         <div className="flex items-center justify-center">
           <Pagination
             currentPageNumber={pageNumber}
-            totalPages={packetGroupSummaries.totalPages}
-            isFirstPage={packetGroupSummaries.first}
-            isLastPage={packetGroupSummaries.last}
+            totalPages={packetGroupDisplays.totalPages}
+            isFirstPage={packetGroupDisplays.first}
+            isLastPage={packetGroupDisplays.last}
             setPageNumber={setPageNumber}
           />
         </div>

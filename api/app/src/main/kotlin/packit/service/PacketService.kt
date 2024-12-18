@@ -11,12 +11,9 @@ import org.springframework.stereotype.Service
 import packit.contentTypes
 import packit.exceptions.PackitException
 import packit.helpers.PagingHelper
-import packit.model.Packet
-import packit.model.PacketGroup
-import packit.model.PacketMetadata
-import packit.model.PageablePayload
+import packit.model.*
 import packit.model.dto.OutpackMetadata
-import packit.model.dto.PacketGroupSummary
+import packit.repository.PacketGroupDisplayRepository
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
 import java.security.MessageDigest
@@ -30,7 +27,7 @@ interface PacketService
     fun importPackets()
     fun getMetadataBy(id: String): PacketMetadata
     fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<ByteArrayResource, HttpHeaders>
-    fun getPacketGroupSummaries(pageablePayload: PageablePayload, filter: String): Page<PacketGroupSummary>
+    fun getPacketGroupDisplays(pageablePayload: PageablePayload, filter: String): Page<PacketGroupDisplay>
     fun getPacketsByName(
         name: String, payload: PageablePayload
     ): Page<Packet>
@@ -42,7 +39,8 @@ interface PacketService
 class BasePacketService(
     private val packetRepository: PacketRepository,
     private val packetGroupRepository: PacketGroupRepository,
-    private val outpackServerClient: OutpackServer
+    private val outpackServerClient: OutpackServer,
+    private val packetGroupDisplayRepository: PacketGroupDisplayRepository
 ) : PacketService
 {
     /**
@@ -111,13 +109,15 @@ class BasePacketService(
         return packetRepository.findAll()
     }
 
-    override fun getPacketGroupSummaries(
+    override fun getPacketGroupDisplays(
         pageablePayload: PageablePayload,
         filter: String
-    ): Page<PacketGroupSummary>
+    ): Page<PacketGroupDisplay>
     {
-        val packetGroupSummaries = packetRepository.getFilteredPacketGroupSummaries(filter)
-        return PagingHelper.convertListToPage(packetGroupSummaries, pageablePayload)
+        packetGroupDisplayRepository
+
+        val packetGroupDisplays = packetGroupDisplayRepository.findAllByNameContainingOrLatestDisplayNameContaining(filter, filter)
+        return PagingHelper.convertListToPage(packetGroupDisplays, pageablePayload)
     }
 
     override fun getPacketsByName(name: String, payload: PageablePayload): Page<Packet>
