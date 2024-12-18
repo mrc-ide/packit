@@ -19,7 +19,7 @@ class Packet(
     val importTime: Double,
     val startTime: Double,
     val endTime: Double,
-    val description: String?,
+    val description: String? = null,
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "packet_tag",

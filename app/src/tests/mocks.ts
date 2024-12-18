@@ -108,6 +108,7 @@ export const mockPacketGroupSummaries: PageablePacketGroupDisplays = {
       latestStartTime: 1701332897,
       name: "test3",
       latestDisplayName: "Test 3",
+      latestDescription: "A verbose, loquacious description of the packet group known as Test 3.",
       packetCount: 3,
       packetGroupId: 9999999999
     },
