@@ -4,7 +4,7 @@ import { PageableBasicRunInfo, RunInfo } from "../app/components/contents/runner
 import { Parameter, RunnerPacketGroup } from "../app/components/contents/runner/types/RunnerPacketGroup";
 import { AuthConfig } from "../app/components/providers/types/AuthConfigTypes";
 import { UserState } from "../app/components/providers/types/UserTypes";
-import { Custom, PacketMetadata, PageableBasicDto, PageablePacketGroupSummaries, PageablePackets } from "../types";
+import { Custom, PacketMetadata, PageableBasicDto, PageablePacketGroupDisplays, PageablePackets } from "../types";
 
 export const mockPacketResponse = {
   id: "52fd88b2-8ee8-4ac0-a0e5-41b9a15554a4",
@@ -101,70 +101,79 @@ export const mockPacket: PacketMetadata = {
   }
 };
 
-export const mockPacketGroupSummaries: PageablePacketGroupSummaries = {
+export const mockPacketGroupSummaries: PageablePacketGroupDisplays = {
   content: [
     {
-      latestId: "20231130-082812-cd744153",
-      latestTime: 1701332897,
+      latestPacketId: "20231130-082812-cd744153",
+      latestStartTime: 1701332897,
       name: "test3",
       latestDisplayName: "Test 3",
-      packetCount: 3
+      packetCount: 3,
+      packetGroupId: 9999999999
     },
     {
-      latestId: "20231130-082727-445fa3fa",
-      latestTime: 1701332857,
+      latestPacketId: "20231130-082727-445fa3fa",
+      latestStartTime: 1701332857,
       name: "test2",
       latestDisplayName: "Test 2",
-      packetCount: 3
+      packetCount: 3,
+      packetGroupId: 8888888888
     },
     {
-      latestId: "20231130-082548-bf6d6f3f",
-      latestTime: 1701332757,
+      latestPacketId: "20231130-082548-bf6d6f3f",
+      latestStartTime: 1701332757,
       name: "test1",
       latestDisplayName: "Test 1",
-      packetCount: 2
+      packetCount: 2,
+      packetGroupId: 7777777777
     },
     {
-      latestId: "20231130-082348-e1f8e7ca",
-      latestTime: 1701332637,
+      latestPacketId: "20231130-082348-e1f8e7ca",
+      latestStartTime: 1701332637,
       name: "incoming_data",
       latestDisplayName: "Incoming Data",
-      packetCount: 2
+      packetCount: 2,
+      packetGroupId: 6666666666
     },
     {
-      latestId: "20231127-141002-6e6581d7",
-      latestTime: 1701256330,
+      latestPacketId: "20231127-141002-6e6581d7",
+      latestStartTime: 1701256330,
       name: "artefact-types",
       latestDisplayName: "Artefact Types",
-      packetCount: 3
+      packetCount: 3,
+      packetGroupId: 5555555555
     },
     {
-      latestId: mockPacket.id,
-      latestTime: 1701096608,
+      latestPacketId: mockPacket.id,
+      latestStartTime: 1701096608,
       name: "parameters",
       latestDisplayName: "Parameters Packet Group",
-      packetCount: 3
+      packetCount: 3,
+      packetGroupId: 4444444444
     },
     {
-      latestId: "20230427-150755-2dbede93",
-      latestTime: 1701096607,
+      latestPacketId: "20230427-150755-2dbede93",
+      latestStartTime: 1701096607,
       name: "explicit",
       latestDisplayName: "Explicit",
-      packetCount: 2
+      packetCount: 2,
+      packetGroupId: 3333333333
     },
     {
-      latestId: "20230427-150828-68772cee",
-      latestTime: 1701096605,
+      latestPacketId: "20230427-150828-68772cee",
+      latestStartTime: 1701096605,
       name: "computed-resource",
       latestDisplayName: "Computed Resource",
-      packetCount: 1
+      packetCount: 1,
+      packetGroupId: 2222222222
     },
     {
-      latestId: "20230427-150813-cd121720",
-      latestTime: 1698173547,
+      latestPacketId: "20230427-150813-cd121720",
+      latestStartTime: 1698173547,
       name: "depends",
       latestDisplayName: "depends",
-      packetCount: 1
+      packetCount: 1,
+      packetGroupId: 1111111111
     }
   ],
   totalPages: 1,
@@ -176,14 +185,16 @@ export const mockPacketGroupSummaries: PageablePacketGroupSummaries = {
   numberOfElements: 9
 };
 
-export const mockPacketGroupSummariesFiltered: PageablePacketGroupSummaries = {
+export const mockPacketGroupDisplaysFiltered: PageablePacketGroupDisplays = {
   content: [
     {
-      latestId: mockPacket.id,
-      latestTime: 1701096608,
+      packetGroupId: 12345,
       name: "parameters",
       latestDisplayName: "Parameters Packet Group",
-      packetCount: 3
+      latestDescription: "This is a longer description of the 'parameters' group of packets.",
+      latestStartTime: 1701096608,
+      packetCount: 3,
+      latestPacketId: mockPacket.id
     }
   ],
   totalPages: 1,
