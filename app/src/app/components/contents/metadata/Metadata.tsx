@@ -19,7 +19,7 @@ export default function Metadata() {
   const elapsedTime = packet && getElapsedTime(packet.time);
   const session = packet?.custom?.orderly?.session;
   const packages = session?.packages
-    ?.sort((a, b) => a.package.localeCompare(b.package));
+    .sort((a, b) => a.package.localeCompare(b.package));
 
   return (
     <>
