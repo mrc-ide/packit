@@ -2,7 +2,9 @@ package packit.service
 
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Sort
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import packit.exceptions.PackitException
 import packit.helpers.PagingHelper
 import packit.model.PacketGroup
 import packit.model.PageablePayload
@@ -28,8 +30,8 @@ class BasePacketGroupService(
         return PagingHelper.convertListToPage(packetGroups, pageablePayload)
     }
 
-    override fun getPacketGroupDisplay(name: String): PacketGroupDisplay?{
+    override fun getPacketGroupDisplay(name: String): PacketGroupDisplay {
         return packetGroupDisplayRepository.findByName(name)
-//            ?: throw PackitException("Packet group with name $name not found", HttpStatus.NOT_FOUND)
+            ?: throw PackitException("packetGroupDisplayNotFound", HttpStatus.NOT_FOUND)
     }
 }
