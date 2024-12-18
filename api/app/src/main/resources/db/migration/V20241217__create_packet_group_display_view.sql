@@ -1,4 +1,3 @@
--- NB This view makes no reference to the packet_group table.
 CREATE VIEW packet_group_display_view AS
 WITH RankedPackets AS (SELECT id,
                               name,
