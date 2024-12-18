@@ -49,17 +49,19 @@ class PacketControllerTest
     private val packetGroupSummaries = listOf(
         object : PacketGroupSummary
         {
-            override fun getName(): String = ""
+            override fun getName(): String = "analysis 1"
             override fun getPacketCount(): Int = 10
             override fun getLatestId(): String = "20180818-164847-7574883b"
             override fun getLatestTime(): Double = 1690902034.0
+            override fun getLatestDisplayName(): String = "display name for analysis 1"
         },
         object : PacketGroupSummary
         {
-            override fun getName(): String = ""
+            override fun getName(): String = "analysis 2"
             override fun getPacketCount(): Int = 10
             override fun getLatestId(): String = "20180818-164847-7574883b"
             override fun getLatestTime(): Double = 1690902034.0
+            override fun getLatestDisplayName(): String = "display name for analysis 2"
         }
     )
 
@@ -85,7 +87,7 @@ class PacketControllerTest
         on { getPackets(PageablePayload(0, 10), "", "") } doReturn mockPageablePackets
         on { getMetadataBy(anyString()) } doReturn packetMetadata
         on { getFileByHash(anyString(), anyBoolean(), anyString()) } doReturn inputStream
-        on { getPacketGroupSummary(PageablePayload(0, 10), "") } doReturn mockPacketGroupsSummary
+        on { getPacketGroupSummaries(PageablePayload(0, 10), "") } doReturn mockPacketGroupsSummary
         on { getPacketsByName(anyString(), any()) } doReturn mockPageablePackets
     }
 
@@ -116,10 +118,10 @@ class PacketControllerTest
     fun `get packet groups summary`()
     {
         val sut = PacketController(indexService)
-        val result = sut.getPacketGroupSummary(0, 10, "")
+        val result = sut.getPacketGroupSummaries(0, 10, "")
         assertEquals(result.statusCode, HttpStatus.OK)
         assertEquals(result.body, mockPacketGroupsSummary)
-        verify(indexService).getPacketGroupSummary(PageablePayload(0, 10), "")
+        verify(indexService).getPacketGroupSummaries(PageablePayload(0, 10), "")
     }
 
     @Test

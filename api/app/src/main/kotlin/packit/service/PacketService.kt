@@ -15,6 +15,7 @@ import packit.model.Packet
 import packit.model.PacketGroup
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
+import packit.model.dto.OutpackMetadata
 import packit.model.dto.PacketGroupSummary
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
@@ -29,7 +30,7 @@ interface PacketService
     fun importPackets()
     fun getMetadataBy(id: String): PacketMetadata
     fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<ByteArrayResource, HttpHeaders>
-    fun getPacketGroupSummary(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroupSummary>
+    fun getPacketGroupSummaries(pageablePayload: PageablePayload, filter: String): Page<PacketGroupSummary>
     fun getPacketsByName(
         name: String, payload: PageablePayload
     ): Page<Packet>
@@ -44,6 +45,35 @@ class BasePacketService(
     private val outpackServerClient: OutpackServer
 ) : PacketService
 {
+    /**
+     * Check for 'display name' keys that may exist in non-orderly outpack custom schemas.
+     *
+     * @param packet The packet metadata.
+     * @return The display name for the packet.
+     */
+    private fun getOutpackPacketDisplayName(packet: OutpackMetadata): String? {
+        return packet.custom?.values
+            ?.filterIsInstance<Map<*, *>>()
+            ?.firstNotNullOfOrNull { (it["display_name"] as? String) ?: (it["display"] as? String) }
+    }
+
+    /**
+     * Return the display name for a packet if its custom metadata schema conforms to the orderly schema and contains
+     * a display name.
+     * Also check for 'display name' keys that may exist in non-orderly outpack custom schemas.
+     * Falls back to name if no display name.
+     *
+     * @param packet The packet metadata.
+     * @return The display name for the packet.
+     */
+    private fun getDisplayNameForPacket(packet: OutpackMetadata): String {
+        val orderlyMetadata = packet.custom?.get("orderly") as? Map<*, *>
+        val orderlyDisplayName = (orderlyMetadata?.get("description") as? Map<*, *>)?.get("display") as? String
+        return orderlyDisplayName?.takeIf { it.isNotBlank() }
+            ?: getOutpackPacketDisplayName(packet)
+            ?: packet.name
+    }
+
     override fun importPackets()
     {
         val mostRecent = packetRepository.findTopByOrderByImportTimeDesc()?.importTime
@@ -51,24 +81,32 @@ class BasePacketService(
         val packets = outpackServerClient.getMetadata(mostRecent)
             .map {
                 Packet(
-                    it.id, it.name, it.name,
+                    it.id, it.name, getDisplayNameForPacket(it),
                     it.parameters ?: mapOf(), false, now,
                     it.time.start, it.time.end
                 )
             }
-        val packetGroupNames = packets.groupBy { it.name }
-            .map { it.key }
+        val packetGroupData = packets.groupBy { it.name }
+            .mapValues { entry -> entry.value.sortedByDescending { it.startTime } }
+            .mapValues { it.value.first().displayName }
 
         packetRepository.saveAll(packets)
-        saveUniquePacketGroups(packetGroupNames)
+        saveUniquePacketGroups(packetGroupData)
     }
 
-    internal fun saveUniquePacketGroups(packetGroupNames: List<String>)
+    internal fun saveUniquePacketGroups(packetGroupData: Map<String, String>)
     {
-        val matchedPacketGroupNames = packetGroupRepository.findByNameIn(packetGroupNames).map { it.name }
-        val newPacketGroups =
-            packetGroupNames.filter { it !in matchedPacketGroupNames }
-        packetGroupRepository.saveAll(newPacketGroups.map { PacketGroup(name = it) })
+        val packetGroupNames = packetGroupData.keys.toList()
+        val matchedPacketGroups = packetGroupRepository.findByNameIn(packetGroupNames)
+        val matchedPacketGroupNames = matchedPacketGroups.map { it.name }
+        val newPacketGroups = packetGroupData
+            .filterKeys { it !in matchedPacketGroupNames }
+            .map { PacketGroup(name = it.key, latestDisplayName = it.value) }
+        packetGroupRepository.saveAll(newPacketGroups)
+        matchedPacketGroups.map {
+            it.latestDisplayName = packetGroupData[it.name]!!
+            packetGroupRepository.save(it)
+        }
     }
 
     override fun getPackets(): List<Packet>
@@ -76,12 +114,12 @@ class BasePacketService(
         return packetRepository.findAll()
     }
 
-    override fun getPacketGroupSummary(
+    override fun getPacketGroupSummaries(
         pageablePayload: PageablePayload,
-        filteredName: String
+        filter: String
     ): Page<PacketGroupSummary>
     {
-        val packetGroupSummaries = packetRepository.findPacketGroupSummaryByName(filteredName)
+        val packetGroupSummaries = packetRepository.getFilteredPacketGroupSummaries(filter)
         return PagingHelper.convertListToPage(packetGroupSummaries, pageablePayload)
     }
 
