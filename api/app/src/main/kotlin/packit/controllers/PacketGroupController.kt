@@ -33,7 +33,7 @@ class PacketGroupController(
     @GetMapping("/{name}/display")
     fun getDisplay(
         @PathVariable name: String
-    ): ResponseEntity<List<PacketGroupDisplay?>> {
+    ): ResponseEntity<PacketGroupDisplay?> {
         val result = packetGroupService.getPacketGroupDisplay(name)
 
         return ResponseEntity.ok(result)

@@ -13,7 +13,7 @@ import packit.repository.PacketGroupRepository
 interface PacketGroupService
 {
     fun getPacketGroups(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroup>
-    fun getPacketGroupDisplay(name: String): List<PacketGroupDisplay?>
+    fun getPacketGroupDisplay(name: String): PacketGroupDisplay?
 }
 
 @Service
@@ -28,7 +28,7 @@ class BasePacketGroupService(
         return PagingHelper.convertListToPage(packetGroups, pageablePayload)
     }
 
-    override fun getPacketGroupDisplay(name: String): List<PacketGroupDisplay?>{
+    override fun getPacketGroupDisplay(name: String): PacketGroupDisplay?{
         return packetGroupDisplayRepository.findByName(name)
 //            ?: throw PackitException("Packet group with name $name not found", HttpStatus.NOT_FOUND)
     }
