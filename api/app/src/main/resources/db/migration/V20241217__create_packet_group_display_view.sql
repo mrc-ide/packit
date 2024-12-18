@@ -16,4 +16,5 @@ SELECT pg.id           AS packet_group_id,
        rp.id           AS latest_packet_id
 FROM RankedPackets rp
          JOIN packet_group pg ON rp.name = pg.name
-WHERE rp.rank = 1;
+WHERE rp.rank = 1
+ORDER BY latest_start_time DESC;
