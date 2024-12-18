@@ -1,5 +1,7 @@
 package packit.model.dto
 
+// TODO - check if this file can be deleted
+
 // Projection class for PacketRepository.getFilteredPacketGroupSummaries
 interface PacketGroupSummary
 {

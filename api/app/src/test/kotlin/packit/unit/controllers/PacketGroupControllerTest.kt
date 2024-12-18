@@ -8,7 +8,7 @@ import org.mockito.kotlin.verify
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import packit.controllers.PacketGroupController
-import packit.model.dto.PacketGroupDisplay
+import packit.model.PacketGroupDisplay
 import packit.service.PacketGroupService
 import kotlin.test.assertEquals
 

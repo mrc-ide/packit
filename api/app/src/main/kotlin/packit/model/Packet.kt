@@ -19,6 +19,7 @@ class Packet(
     val importTime: Double,
     val startTime: Double,
     val endTime: Double,
+    val description: String?,
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "packet_tag",
@@ -31,7 +32,7 @@ class Packet(
 )
 
 fun Packet.toDto() = PacketDto(
-    id, name, displayName, parameters, published, importTime, startTime, endTime
+    id, name, displayName, parameters, published, importTime, startTime, endTime, description
 )
 
 fun Packet.toBasicDto() = BasicPacketDto(name, id)

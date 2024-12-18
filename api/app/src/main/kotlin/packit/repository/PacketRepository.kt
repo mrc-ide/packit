@@ -18,27 +18,18 @@ interface PacketRepository : JpaRepository<Packet, String>
     @PostFilter("@authz.canReadPacket(#root, filterObject.id, filterObject.name)")
     fun findByName(name: String, sort: Sort): List<Packet>
 
+    /*TODO: move this function to the PacketGroupDisplayRepository so we can use stuff like https://www.baeldung.com/spring-data-derived-queries#similarity-condition-keywords */
     @PostFilter("@authz.canReadPacketGroup(#root, filterObject.name)")
     @Query(
         value = """
                 SELECT 
                     name as name, 
-                    start_time as latestTime, 
-                    id AS latestId,
-                    id_count as packetCount,
-                    display_name as latestDisplayName
-                FROM ( 
-                    SELECT 
-                        name,
-                        start_time, 
-                        id,
-                        display_name,
-                        ROW_NUMBER() OVER (PARTITION BY name ORDER BY start_time DESC) AS row_num, 
-                        COUNT(id) OVER (PARTITION BY name) AS id_count 
-                    FROM packet 
-                ) as RankedData
-                WHERE row_num = 1 AND (name ILIKE %?1% OR display_name ILIKE %?1%)
-                ORDER BY start_time DESC
+                    latest_start_time as latestTime, 
+                    latest_packet_id AS latestId,
+                    packet_count as packetCount,
+                    latest_display_name as latestDisplayName
+                FROM packet_group_display_view
+                WHERE (name ILIKE %?1% OR latest_display_name ILIKE %?1%)
          """,
         nativeQuery = true
     )
