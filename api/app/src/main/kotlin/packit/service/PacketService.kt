@@ -11,7 +11,11 @@ import org.springframework.stereotype.Service
 import packit.contentTypes
 import packit.exceptions.PackitException
 import packit.helpers.PagingHelper
-import packit.model.*
+import packit.model.Packet
+import packit.model.PacketGroup
+import packit.model.PacketGroupDisplay
+import packit.model.PacketMetadata
+import packit.model.PageablePayload
 import packit.model.dto.OutpackMetadata
 import packit.repository.PacketGroupDisplayRepository
 import packit.repository.PacketGroupRepository
