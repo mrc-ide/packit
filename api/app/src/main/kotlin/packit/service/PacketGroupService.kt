@@ -15,7 +15,7 @@ import packit.repository.PacketGroupRepository
 interface PacketGroupService
 {
     fun getPacketGroups(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroup>
-    fun getPacketGroupDisplay(name: String): PacketGroupDisplay?
+    fun getPacketGroupDisplay(name: String): PacketGroupDisplay
 }
 
 @Service
