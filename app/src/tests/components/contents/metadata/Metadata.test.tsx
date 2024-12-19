@@ -7,6 +7,7 @@ import { Metadata } from "../../../../app/components/contents";
 import { PacketLayout } from "../../../../app/components/main";
 import { server } from "../../../../msw/server";
 import { mockPacket } from "../../../mocks";
+import userEvent from "@testing-library/user-event";
 
 describe("Metadata component", () => {
   const renderComponent = () => {
@@ -34,6 +35,15 @@ describe("Metadata component", () => {
     expect(screen.getByText(/branch/i)).toBeInTheDocument();
     expect(screen.getByText(/commit/i)).toBeInTheDocument();
     expect(screen.getByText(/remotes/i)).toBeInTheDocument();
+
+    userEvent.click(screen.getByText(/platform/i));
+    expect(screen.getByText(/os/i)).toBeInTheDocument();
+    expect(screen.getByText(/system/i)).toBeInTheDocument();
+    expect(screen.getByText(/language/i)).toBeInTheDocument();
+
+    userEvent.click(screen.getByText(/packages/i));
+    expect(screen.getByText(/library_of_interest/i)).toBeInTheDocument();
+    expect(screen.getByText(/0.1.0/i)).toBeInTheDocument();
   });
 
   it("does not render elapsed time when datetime has no difference", async () => {
@@ -57,7 +67,7 @@ describe("Metadata component", () => {
     expect(screen.queryByText("elapsed")).not.toBeInTheDocument();
   });
 
-  it("should not render git metadata or any sub-headings when git is not present", async () => {
+  it("should not render git metadata when git is not present", async () => {
     server.use(
       rest.get("*", (req, res, ctx) => {
         return res(
@@ -72,11 +82,29 @@ describe("Metadata component", () => {
 
     await screen.findByText(/started/i);
 
-    expect(screen.queryByText(/timings/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/git/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/branch/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/commit/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/remotes/i)).not.toBeInTheDocument();
+  });
+
+  it("should not render the platform/packages sections if orderly custom metadata is not present", async () => {
+    server.use(
+      rest.get("*", (req, res, ctx) => {
+        return res(
+          ctx.json({
+            ...mockPacket,
+            custom: null
+          })
+        );
+      })
+    );
+    renderComponent();
+
+    await screen.findByText(/started/i);
+
+    expect(screen.queryByText(/platform/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/packages/i)).not.toBeInTheDocument();
   });
 
   it("should not render any fields if packet is null", async () => {

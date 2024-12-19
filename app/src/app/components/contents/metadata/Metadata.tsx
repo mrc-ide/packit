@@ -3,7 +3,13 @@ import { getDateUTCString, getElapsedTime } from "../../../../helpers";
 import { usePacketOutletContext } from "../../main/PacketOutlet";
 import { PacketHeader } from "../packets";
 import { MetadataListItem } from "./MetadataListItem";
-import { Github, Timer } from "lucide-react";
+import { Github, Library, Monitor, Timer } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from "../../Base/Accordion";
 
 export default function Metadata() {
   const { packetId, packetName } = useParams();
@@ -11,49 +17,93 @@ export default function Metadata() {
 
   const startedTime = packet && getDateUTCString(packet.time);
   const elapsedTime = packet && getElapsedTime(packet.time);
+  const session = packet?.custom?.orderly?.session;
+  const packages = session?.packages
+    .sort((a, b) => a.package.localeCompare(b.package));
 
   return (
     <>
       <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} />
       {packet && (
         <>
-          <div className="space-y-3">
-            {packet.git &&
-              <span className="flex gap-1 items-center text-muted-foreground">
-                <Timer className="small-icon"/>
-                <h3 className="text-lg font-bold tracking-tight">Timings</h3>
-              </span>
-            }
-            <ul className="ps-1 flex gap-10">
-              {startedTime && <MetadataListItem label="Started" value={startedTime} />}
-              {elapsedTime && <MetadataListItem label="Elapsed" value={elapsedTime} />}
-            </ul>
-          </div>
-          {packet.git && (
-            <>
-              <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
-              <div className="space-y-3">
-                <span className="flex gap-1 items-center text-muted-foreground">
-                  <Github className="small-icon"/>
-                  <h3 className="text-lg font-bold tracking-tight" data-testid="gitHeading">Git</h3>
+          <Accordion type="multiple" defaultValue={["timings", "git"]}>
+            <AccordionItem value="timings">
+              <AccordionTrigger>
+                <span className="flex gap-1 items-center">
+                  <Timer className="small-icon text-muted-foreground" />
+                  <h3>Timings</h3>
                 </span>
-                <ul className="ps-1 flex flex-col space-y-3">
-                  <MetadataListItem label="Branch" value={packet.git.branch}/>
-                  <MetadataListItem label="Commit" value={packet.git.sha}/>
-                  <li className="flex flex-col">
-                    <span className="font-semibold mr-2">Remotes</span>
-                      <ul className="ps-1 list-disc list-inside">
-                        {packet.git.url?.map((url, index) => (
-                          <li key={index} className="text-muted-foreground">
-                            {url}
-                          </li>
-                        ))}
-                      </ul>
-                  </li>
+              </AccordionTrigger>
+              <AccordionContent>
+                <ul className="ps-1 flex gap-10">
+                  {startedTime && <MetadataListItem label="Started" value={startedTime} />}
+                  {elapsedTime && <MetadataListItem label="Elapsed" value={elapsedTime} />}
                 </ul>
-              </div>
-            </>
-          )}
+              </AccordionContent>
+            </AccordionItem>
+            {packet.git && (
+              <>
+                <AccordionItem value="git">
+                  <AccordionTrigger>
+                    <span className="flex gap-1 items-center">
+                      <Github className="small-icon text-muted-foreground" />
+                      <h3 data-testid="gitHeading">Git</h3>
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <ul className="space-y-1">
+                      <MetadataListItem label="Branch" value={packet.git.branch} />
+                      <MetadataListItem label="Commit" value={packet.git.sha} />
+                      <li className="flex flex-col">
+                        <span className="font-semibold mr-2">Remotes</span>
+                        <ul className="ps-1 list-disc list-inside">
+                          {packet.git.url?.map((url, index) => (
+                            <li key={index} className="text-muted-foreground">
+                              {url}
+                            </li>
+                          ))}
+                        </ul>
+                      </li>
+                    </ul>
+                  </AccordionContent>
+                </AccordionItem>
+              </>
+            )}
+            {session && (
+              <>
+                <AccordionItem value="platform">
+                  <AccordionTrigger>
+                    <span className="flex gap-1 items-center">
+                      <Monitor className="small-icon text-muted-foreground" />
+                      <h3>Platform</h3>
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <ul className="space-y-1">
+                      <MetadataListItem label="OS" value={session.platform.os} />
+                      <MetadataListItem label="System" value={session.platform.system} />
+                      <MetadataListItem label="Language" value={session.platform.version} />
+                    </ul>
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="packages">
+                  <AccordionTrigger>
+                    <span className="flex gap-1 items-center">
+                      <Library className="small-icon text-muted-foreground" />
+                      <h3>Packages</h3>
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <ul className="space-y-1 overflow-y-auto max-h-80">
+                      {packages?.map((pkg, index) => (
+                        <MetadataListItem key={index} label={pkg.package} value={`${pkg.version}`} />
+                      ))}
+                    </ul>
+                  </AccordionContent>
+                </AccordionItem>
+              </>
+            )}
+          </Accordion>
         </>
       )}
     </>
