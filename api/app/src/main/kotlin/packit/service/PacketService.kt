@@ -74,6 +74,11 @@ class BasePacketService(
             ?: packet.name
     }
 
+    private fun getDescriptionForPacket(packet: OutpackMetadata): String? {
+        val orderlyMetadata = packet.custom?.get("orderly") as? Map<*, *>
+        return (orderlyMetadata?.get("description") as? Map<*, *>)?.get("long") as? String
+    }
+
     override fun importPackets()
     {
         val mostRecent = packetRepository.findTopByOrderByImportTimeDesc()?.importTime
@@ -83,30 +88,22 @@ class BasePacketService(
                 Packet(
                     it.id, it.name, getDisplayNameForPacket(it),
                     it.parameters ?: mapOf(), false, now,
-                    it.time.start, it.time.end
+                    it.time.start, it.time.end, getDescriptionForPacket(it)
                 )
             }
-        val packetGroupData = packets.groupBy { it.name }
-            .mapValues { entry -> entry.value.sortedByDescending { it.startTime } }
-            .mapValues { it.value.first().displayName }
+        val packetGroupNames = packets.groupBy { it.name }
+            .map { it.key }
 
         packetRepository.saveAll(packets)
-        saveUniquePacketGroups(packetGroupData)
+        saveUniquePacketGroups(packetGroupNames)
     }
 
-    internal fun saveUniquePacketGroups(packetGroupData: Map<String, String>)
+    internal fun saveUniquePacketGroups(packetGroupNames: List<String>)
     {
-        val packetGroupNames = packetGroupData.keys.toList()
-        val matchedPacketGroups = packetGroupRepository.findByNameIn(packetGroupNames)
-        val matchedPacketGroupNames = matchedPacketGroups.map { it.name }
-        val newPacketGroups = packetGroupData
-            .filterKeys { it !in matchedPacketGroupNames }
-            .map { PacketGroup(name = it.key, latestDisplayName = it.value) }
-        packetGroupRepository.saveAll(newPacketGroups)
-        matchedPacketGroups.map {
-            it.latestDisplayName = packetGroupData[it.name]!!
-            packetGroupRepository.save(it)
-        }
+        val matchedPacketGroupNames = packetGroupRepository.findByNameIn(packetGroupNames).map { it.name }
+        val newPacketGroups =
+            packetGroupNames.filter { it !in matchedPacketGroupNames }
+        packetGroupRepository.saveAll(newPacketGroups.map { PacketGroup(name = it) })
     }
 
     override fun getPackets(): List<Packet>
