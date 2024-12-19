@@ -1,5 +1,6 @@
 package packit.security
 
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations
 import org.springframework.stereotype.Component
 import packit.service.PacketService
@@ -28,6 +29,7 @@ class AuthorizationLogic(
     fun canReadPacketGroup(operations: MethodSecurityExpressionOperations, name: String): Boolean
     {
         return operations.hasAnyAuthority("packet.read", "packet.read:packetGroup:$name") ||
-                operations.authentication.authorities.any { it.authority.contains("packet.read:packet:$name") }
+                operations.authentication.authorities.any { it.authority.contains("packet.read:packet:$name") } ||
+                throw AccessDeniedException("Access denied for packet group $name")
     }
 }
