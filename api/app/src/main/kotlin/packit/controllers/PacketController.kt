@@ -9,6 +9,7 @@ import packit.model.PacketGroupDisplay
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
 import packit.model.dto.PacketDto
+import packit.model.dto.PacketGroupDisplayDto
 import packit.model.toDto
 import packit.service.PacketService
 
@@ -46,9 +47,9 @@ class PacketController(private val packetService: PacketService)
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
         @RequestParam(required = false, defaultValue = "50") pageSize: Int,
         @RequestParam(required = false, defaultValue = "") filter: String,
-    ): ResponseEntity<Page<PacketGroupDisplay>> {
+    ): ResponseEntity<Page<PacketGroupDisplayDto>> {
         val payload = PageablePayload(pageNumber, pageSize)
-        return ResponseEntity.ok(packetService.getPacketGroupDisplays(payload, filter))
+        return ResponseEntity.ok(packetService.getPacketGroupDisplays(payload, filter).map { it.toDto() })
     }
 
     @GetMapping("/metadata/{id}")

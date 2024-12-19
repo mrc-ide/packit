@@ -9,6 +9,8 @@ import packit.helpers.PagingHelper
 import packit.model.PacketGroup
 import packit.model.PacketGroupDisplay
 import packit.model.PageablePayload
+import packit.model.dto.PacketGroupDisplayDto
+import packit.model.toDto
 import packit.repository.PacketGroupDisplayRepository
 import packit.repository.PacketGroupRepository
 
