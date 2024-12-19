@@ -31,7 +31,7 @@ class BasePacketGroupService(
     }
     override fun getPacketGroupDisplay(name: String): PacketGroupDisplayDto{
         val packetGroupSummary = packetGroupRepository.getFilteredPacketGroupSummaries(name).firstOrNull()
-            ?: throw PackitException("No packets found for group $name", HttpStatus.NOT_FOUND)
+            ?: throw PackitException("No packets groups found for name $name", HttpStatus.NOT_FOUND)
         return packetGroupSummary.toDisplayDto()
     }
 }
