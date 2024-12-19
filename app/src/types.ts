@@ -21,21 +21,18 @@ export interface PageablePackets extends Pageable {
   content: Packet[];
 }
 
-export interface PageablePacketGroupSummaries extends Pageable {
-  content: PacketGroupSummary[];
-}
-
-export interface PacketGroupSummary {
-  name: string;
-  packetCount: number;
-  latestId: string;
-  latestTime: number;
-  latestDisplayName: string;
-}
-
 export interface PacketGroupDisplay {
+  packetGroupId: number;
+  name: string;
   latestDisplayName: string;
-  description?: string;
+  latestDescription?: string;
+  latestStartTime: number;
+  packetCount: number;
+  latestPacketId: string;
+}
+
+export interface PageablePacketGroupDisplays extends Pageable {
+  content: PacketGroupDisplay[];
 }
 
 export interface Packet {

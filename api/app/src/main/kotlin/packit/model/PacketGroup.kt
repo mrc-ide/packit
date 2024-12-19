@@ -7,7 +7,6 @@ import packit.model.dto.PacketGroupDto
 @Table(name = "packet_group")
 class PacketGroup(
     var name: String,
-    var latestDisplayName: String,
     @OneToMany(mappedBy = "packetGroup", cascade = [CascadeType.ALL])
     var rolePermissions: MutableList<RolePermission> = mutableListOf(),
     @Id
@@ -15,4 +14,4 @@ class PacketGroup(
     var id: Int? = null
 )
 
-fun PacketGroup.toDto() = PacketGroupDto(name, latestDisplayName, id!!)
+fun PacketGroup.toDto() = PacketGroupDto(name, id!!)

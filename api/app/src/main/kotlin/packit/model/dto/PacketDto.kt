@@ -9,8 +9,9 @@ data class PacketDto(
     val importTime: Double,
     val startTime: Double,
     val endTime: Double,
+    val description: String?,
 )
 
 fun PacketDto.toPacket() = packit.model.Packet(
-    id, name, displayName, parameters, published, importTime, startTime, endTime
+    id, name, displayName, parameters, published, importTime, startTime, endTime, description
 )

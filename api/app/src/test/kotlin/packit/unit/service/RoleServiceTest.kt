@@ -453,7 +453,7 @@ class RoleServiceTest
                 RolePermission(
                     permission = Permission("permission2", "d2"),
                     role = this,
-                    packetGroup = PacketGroup("pg1", "name", id = 20),
+                    packetGroup = PacketGroup("pg1", id = 20),
                     id = 11
                 ),
                 RolePermission(permission = Permission("permission3", "d3"), role = this, id = 12),
