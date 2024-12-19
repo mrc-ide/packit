@@ -15,7 +15,13 @@ import kotlin.test.assertEquals
 class PacketGroupControllerTest {
     private val packetGroupService = mock<PacketGroupService> {
         on { getPacketGroupDisplay(any()) } doReturn PacketGroupDisplay(
-            "Display Name 1", "Accurate description"
+            1,
+            name = "my_packet",
+            latestDisplayName = "Display Name 1",
+            latestDescription = "Accurate description",
+            latestStartTime = 1234567890.0,
+            packetCount = 3,
+            latestPacketId = "uuid123"
         )
     }
 
@@ -27,7 +33,7 @@ class PacketGroupControllerTest {
 
         assertEquals(HttpStatus.OK, result.statusCode)
         assertEquals("Display Name 1", result.body?.latestDisplayName)
-        assertEquals("Accurate description", result.body?.description)
+        assertEquals("Accurate description", result.body?.latestDescription)
         verify(packetGroupService).getPacketGroupDisplay("test-packetGroupName-1")
     }
 }
