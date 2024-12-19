@@ -9,6 +9,7 @@ import packit.helpers.PagingHelper
 import packit.model.PacketGroup
 import packit.model.PageablePayload
 import packit.model.dto.PacketGroupDisplayDto
+import packit.model.dto.toDisplayDto
 import packit.repository.PacketGroupRepository
 
 interface PacketGroupService
@@ -28,11 +29,9 @@ class BasePacketGroupService(
         val packetGroups = packetGroupRepository.findAllByNameContaining(filteredName, Sort.by("name"))
         return PagingHelper.convertListToPage(packetGroups, pageablePayload)
     }
-
     override fun getPacketGroupDisplay(name: String): PacketGroupDisplayDto{
-        val latestPacketId = packetGroupRepository.findLatestPacketIdForGroup(name)?.id
+        val packetGroupSummary = packetGroupRepository.getFilteredPacketGroupSummaries(name).firstOrNull()
             ?: throw PackitException("No packets found for group $name", HttpStatus.NOT_FOUND)
-        val packet = packetService.getPacket(latestPacketId.toString())
-        return PacketGroupDisplayDto(packet.displayName, packet.description)
+        return packetGroupSummary.toDisplayDto()
     }
 }

@@ -13,12 +13,13 @@ interface PacketGroupSummaryListProps {
   pageSize: number;
   setPageNumber: Dispatch<SetStateAction<number>>;
 }
+
 export const PacketGroupSummaryList = ({
-  filterByName,
-  pageNumber,
-  pageSize,
-  setPageNumber
-}: PacketGroupSummaryListProps) => {
+                                         filterByName,
+                                         pageNumber,
+                                         pageSize,
+                                         setPageNumber
+                                       }: PacketGroupSummaryListProps) => {
   const { packetGroupSummaries, isLoading, error } = useGetPacketGroupSummaries(pageNumber, pageSize, filterByName);
 
   if (error?.status === HttpStatus.Unauthorized) return <Unauthorized />;
@@ -47,7 +48,7 @@ export const PacketGroupSummaryList = ({
       ) : (
         <ul className="flex flex-col border rounded-md">
           {packetGroupSummaries?.content?.map((packetGroup) => (
-            <PacketGroupSummaryListItem key={packetGroup.latestId} packetGroup={packetGroup} />
+            <PacketGroupSummaryListItem key={packetGroup.packetGroupId} packetGroup={packetGroup} />
           ))}
         </ul>
       )}

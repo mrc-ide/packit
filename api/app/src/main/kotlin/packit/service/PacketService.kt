@@ -116,7 +116,7 @@ class BasePacketService(
         filter: String
     ): Page<PacketGroupSummary>
     {
-        val packetGroupSummaries = packetRepository.getFilteredPacketGroupSummaries(filter)
+        val packetGroupSummaries = packetGroupRepository.getFilteredPacketGroupSummaries(filter)
         return PagingHelper.convertListToPage(packetGroupSummaries, pageablePayload)
     }
 
