@@ -1,4 +1,4 @@
-import { act, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 
 import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
@@ -7,6 +7,7 @@ import { Metadata } from "../../../../app/components/contents";
 import { PacketLayout } from "../../../../app/components/main";
 import { server } from "../../../../msw/server";
 import { mockPacket } from "../../../mocks";
+import userEvent from "@testing-library/user-event";
 
 describe("Metadata component", () => {
   const renderComponent = () => {
@@ -35,14 +36,12 @@ describe("Metadata component", () => {
     expect(screen.getByText(/commit/i)).toBeInTheDocument();
     expect(screen.getByText(/remotes/i)).toBeInTheDocument();
 
-    act(() => screen.getByText(/platform/i).click());
-
+    userEvent.click(screen.getByText(/platform/i));
     expect(screen.getByText(/os/i)).toBeInTheDocument();
     expect(screen.getByText(/system/i)).toBeInTheDocument();
     expect(screen.getByText(/language/i)).toBeInTheDocument();
 
-    act(() => screen.getByText(/packages/i).click());
-
+    userEvent.click(screen.getByText(/packages/i));
     expect(screen.getByText(/library_of_interest/i)).toBeInTheDocument();
     expect(screen.getByText(/0.1.0/i)).toBeInTheDocument();
   });
