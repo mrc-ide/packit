@@ -20,6 +20,7 @@ import packit.model.dto.OutpackMetadata
 import packit.repository.PacketGroupDisplayRepository
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
+import packit.repository.findAllBySearchFilter
 import java.security.MessageDigest
 import java.time.Instant
 
@@ -120,7 +121,7 @@ class BasePacketService(
     {
         packetGroupDisplayRepository
 
-        val packetGroupDisplays = packetGroupDisplayRepository.findAllByNameContainingOrLatestDisplayNameContaining(filter, filter)
+        val packetGroupDisplays = packetGroupDisplayRepository.findAllBySearchFilter(filter)
         return PagingHelper.convertListToPage(packetGroupDisplays, pageablePayload)
     }
 

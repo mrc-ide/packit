@@ -12,9 +12,7 @@ interface ViewRepository<T, K> : Repository<T, K> {
 
     fun existsById(id: K): Boolean
 
-    fun findAll(): List<T>?
-
-    fun findAllById(ids: Iterable<K>?): List<T>?
+    fun findAll(): List<T>
 
     fun findById(id: K): Optional<T>?
 }

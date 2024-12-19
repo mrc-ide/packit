@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
-import packit.model.PageablePayload
 import packit.model.PacketGroupDisplay
+import packit.model.PageablePayload
 import packit.model.dto.PacketGroupDto
 import packit.model.toDto
 import packit.service.PacketGroupService
@@ -33,7 +33,7 @@ class PacketGroupController(
     @GetMapping("/{name}/display")
     fun getDisplay(
         @PathVariable name: String
-    ): ResponseEntity<PacketGroupDisplay?> {
+    ): ResponseEntity<PacketGroupDisplay> {
         val result = packetGroupService.getPacketGroupDisplay(name)
 
         return ResponseEntity.ok(result)
