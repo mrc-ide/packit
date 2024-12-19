@@ -7,8 +7,11 @@ import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
 import packit.helpers.PagingHelper
 import packit.model.PacketGroup
+import packit.model.PacketGroupDisplay
 import packit.model.PageablePayload
-import packit.model.dto.PacketGroupDisplay
+import packit.model.dto.PacketGroupDisplayDto
+import packit.model.toDto
+import packit.repository.PacketGroupDisplayRepository
 import packit.repository.PacketGroupRepository
 
 interface PacketGroupService
@@ -20,7 +23,7 @@ interface PacketGroupService
 @Service
 class BasePacketGroupService(
     private val packetGroupRepository: PacketGroupRepository,
-    private val packetService: PacketService
+    private val packetGroupDisplayRepository: PacketGroupDisplayRepository
 ) : PacketGroupService
 {
     override fun getPacketGroups(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroup>
@@ -29,14 +32,8 @@ class BasePacketGroupService(
         return PagingHelper.convertListToPage(packetGroups, pageablePayload)
     }
 
-    override fun getPacketGroupDisplay(name: String): PacketGroupDisplay{
-        val latestPacketId = packetGroupRepository.findLatestPacketIdForGroup(name)?.id
-        val packetGroup = packetGroupRepository.findByName(name)
-        if (latestPacketId == null || packetGroup == null) {
-            throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
-        }
-        val packetOrderlyMetadata = packetService.getMetadataBy(latestPacketId).custom?.get("orderly") as? Map<*, *>
-        val packetLongDescription = (packetOrderlyMetadata?.get("description") as? Map<*, *>)?.get("long") as? String
-        return PacketGroupDisplay(packetGroup.latestDisplayName, packetLongDescription)
+    override fun getPacketGroupDisplay(name: String): PacketGroupDisplay {
+        return packetGroupDisplayRepository.findByName(name)
+            ?: throw PackitException("packetGroupDisplayNotFound", HttpStatus.NOT_FOUND)
     }
 }

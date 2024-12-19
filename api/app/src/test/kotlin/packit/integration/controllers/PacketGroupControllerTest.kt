@@ -44,7 +44,7 @@ class PacketGroupControllerTest : IntegrationTest()
     {
         packetGroups = packetGroupRepository.saveAll(
             packetGroupNames.map { name ->
-                PacketGroup(name = name, latestDisplayName = name.replace("-", " "))
+                PacketGroup(name = name)
             }
         )
     }
