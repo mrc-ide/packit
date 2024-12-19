@@ -32,7 +32,7 @@ export const mockUserState: () => UserState = () => {
     displayName: "LeBron James",
     userName: "goat",
     token:
-      // eslint-disable-next-line max-len
+    // eslint-disable-next-line max-len
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwYWNraXQiLCJpc3MiOiJwYWNraXQtYXBpIiwidXNlck5hbWUiOiJhYnN0ZXJuYXRvciIsImRpc3BsYXlOYW1lIjoiQW5tb2wgVGhhcGFyIiwiZGF0ZXRpbWUiOjE3MDI5NzgyMjgsImF1IjpbIltVU0VSXSJdLCJleHAiOjE3MDMwNjQ2Mjh9.o3b4PzZX76nP2tUxndGvusx-rytOkApodZ-geVPH9Pg",
     exp: Math.floor(Date.now() / 1000) + 3600, // expires in 1 hour
     authorities: ["user.manage", "packet.read", "packet.run"]
@@ -44,7 +44,7 @@ export const mockExpiredUserState: () => UserState = () => {
     displayName: "LeBron James",
     userName: "goat",
     token:
-      // eslint-disable-next-line max-len
+    // eslint-disable-next-line max-len
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwYWNraXQiLCJpc3MiOiJwYWNraXQtYXBpIiwidXNlck5hbWUiOiJhYnN0ZXJuYXRvciIsImRpc3BsYXlOYW1lIjoiQW5tb2wgVGhhcGFyIiwiZGF0ZXRpbWUiOjE3MDI5NzgyMjgsImF1IjpbIltVU0VSXSJdLCJleHAiOjE3MDMwNjQ2Mjh9.o3b4PzZX76nP2tUxndGvusx-rytOkApodZ-geVPH9Pg",
     exp: Math.floor(Date.now() / 1000) - 3600, // expired 1 hour ago
     authorities: ["user.manage", "packet.read", "packet.run"]
@@ -104,67 +104,85 @@ export const mockPacket: PacketMetadata = {
 export const mockPacketGroupSummaries: PageablePacketGroupSummaries = {
   content: [
     {
-      latestId: "20231130-082812-cd744153",
-      latestTime: 1701332897,
+      latestDescription: undefined,
+      latestPacketId: "20231130-082812-cd744153",
+      latestStartTime: 1701332897,
       name: "test3",
       latestDisplayName: "Test 3",
-      packetCount: 3
+      packetCount: 3,
+      packetGroupId: 999999999
     },
     {
-      latestId: "20231130-082727-445fa3fa",
-      latestTime: 1701332857,
+      latestDescription: undefined,
+      latestPacketId: "20231130-082727-445fa3fa",
+      latestStartTime: 1701332857,
       name: "test2",
       latestDisplayName: "Test 2",
-      packetCount: 3
+      packetCount: 3,
+      packetGroupId: 888888888
     },
     {
-      latestId: "20231130-082548-bf6d6f3f",
-      latestTime: 1701332757,
+      latestDescription: undefined,
+      latestPacketId: "20231130-082548-bf6d6f3f",
+      latestStartTime: 1701332757,
       name: "test1",
       latestDisplayName: "Test 1",
-      packetCount: 2
+      packetCount: 2,
+      packetGroupId: 777777777
     },
     {
-      latestId: "20231130-082348-e1f8e7ca",
-      latestTime: 1701332637,
+      latestDescription: undefined,
+      latestPacketId: "20231130-082348-e1f8e7ca",
+      latestStartTime: 1701332637,
       name: "incoming_data",
       latestDisplayName: "Incoming Data",
-      packetCount: 2
+      packetCount: 2,
+      packetGroupId: 666666666
     },
     {
-      latestId: "20231127-141002-6e6581d7",
-      latestTime: 1701256330,
+      latestDescription: undefined,
+      latestPacketId: "20231127-141002-6e6581d7",
+      latestStartTime: 1701256330,
       name: "artefact-types",
       latestDisplayName: "Artefact Types",
-      packetCount: 3
+      packetCount: 3,
+      packetGroupId: 555555555
     },
     {
-      latestId: mockPacket.id,
-      latestTime: 1701096608,
+      latestDescription: undefined,
+      latestPacketId: mockPacket.id,
+      latestStartTime: 1701096608,
       name: "parameters",
       latestDisplayName: "Parameters Packet Group",
-      packetCount: 3
+      packetCount: 3,
+      packetGroupId: 444444444
     },
     {
-      latestId: "20230427-150755-2dbede93",
-      latestTime: 1701096607,
+      latestDescription: undefined,
+      latestPacketId: "20230427-150755-2dbede93",
+      latestStartTime: 1701096607,
       name: "explicit",
       latestDisplayName: "Explicit",
-      packetCount: 2
+      packetCount: 2,
+      packetGroupId: 333333333
     },
     {
-      latestId: "20230427-150828-68772cee",
-      latestTime: 1701096605,
+      latestDescription: undefined,
+      latestPacketId: "20230427-150828-68772cee",
+      latestStartTime: 1701096605,
       name: "computed-resource",
       latestDisplayName: "Computed Resource",
-      packetCount: 1
+      packetCount: 1,
+      packetGroupId: 222222222
     },
     {
-      latestId: "20230427-150813-cd121720",
-      latestTime: 1698173547,
+      latestDescription: undefined,
+      latestPacketId: "20230427-150813-cd121720",
+      latestStartTime: 1698173547,
       name: "depends",
       latestDisplayName: "depends",
-      packetCount: 1
+      packetCount: 1,
+      packetGroupId: 111111111
     }
   ],
   totalPages: 1,
@@ -179,11 +197,13 @@ export const mockPacketGroupSummaries: PageablePacketGroupSummaries = {
 export const mockPacketGroupSummariesFiltered: PageablePacketGroupSummaries = {
   content: [
     {
-      latestId: mockPacket.id,
-      latestTime: 1701096608,
+      latestDescription: undefined,
+      latestPacketId: mockPacket.id,
+      latestStartTime: 1701096608,
       name: "parameters",
       latestDisplayName: "Parameters Packet Group",
-      packetCount: 3
+      packetCount: 3,
+      packetGroupId: 444444444
     }
   ],
   totalPages: 1,

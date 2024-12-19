@@ -26,16 +26,18 @@ export interface PageablePacketGroupSummaries extends Pageable {
 }
 
 export interface PacketGroupSummary {
+  latestDescription?: string;
+  latestDisplayName: string;
+  latestPacketId: string;
+  latestStartTime: number;
   name: string;
   packetCount: number;
-  latestId: string;
-  latestTime: number;
-  latestDisplayName: string;
+  packetGroupId: number;
 }
 
 export interface PacketGroupDisplay {
   latestDisplayName: string;
-  description?: string;
+  latestDescription?: string;
 }
 
 export interface Packet {

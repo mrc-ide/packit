@@ -49,19 +49,23 @@ class PacketControllerTest
     private val packetGroupSummaries = listOf(
         object : PacketGroupSummary
         {
+            override fun getLatestDescription(): String? = null
+            override fun getLatestDisplayName(): String = "display name for analysis 1"
+            override fun getLatestPacketId(): String = "20180818-164847-7574883b"
+            override fun getLatestStartTime(): Double = 1690902034.0
             override fun getName(): String = "analysis 1"
             override fun getPacketCount(): Int = 10
-            override fun getLatestId(): String = "20180818-164847-7574883b"
-            override fun getLatestTime(): Double = 1690902034.0
-            override fun getLatestDisplayName(): String = "display name for analysis 1"
+            override fun getPacketGroupId(): Int = 111111111
         },
         object : PacketGroupSummary
         {
+            override fun getLatestDescription(): String? = "My detailed description"
             override fun getName(): String = "analysis 2"
             override fun getPacketCount(): Int = 10
-            override fun getLatestId(): String = "20180818-164847-7574883b"
-            override fun getLatestTime(): Double = 1690902034.0
+            override fun getLatestPacketId(): String = "20180818-164847-7574883b"
+            override fun getLatestStartTime(): Double = 1690902034.0
             override fun getLatestDisplayName(): String = "display name for analysis 2"
+            override fun getPacketGroupId(): Int = 222222222
         }
     )
 

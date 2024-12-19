@@ -125,8 +125,8 @@ class PacketRepositoryTest : RepositoryTest()
         val result = packetRepository.getFilteredPacketGroupSummaries("").map {
             object {
                 val name = it.getName()
-                val latestTime = it.getLatestTime()
-                val latestId = it.getLatestId()
+                val latestTime = it.getLatestStartTime()
+                val latestId = it.getLatestPacketId()
                 val latestDisplayName = it.getLatestDisplayName()
                 val packetCount = it.getPacketCount()
             }
@@ -147,8 +147,8 @@ class PacketRepositoryTest : RepositoryTest()
         val result = packetRepository.getFilteredPacketGroupSummaries("est4").map {
             object {
                 val name = it.getName()
-                val latestTime = it.getLatestTime()
-                val latestId = it.getLatestId()
+                val latestTime = it.getLatestStartTime()
+                val latestId = it.getLatestPacketId()
                 val latestDisplayName = it.getLatestDisplayName()
                 val packetCount = it.getPacketCount()
             }
@@ -170,8 +170,8 @@ class PacketRepositoryTest : RepositoryTest()
         val result = packetRepository.getFilteredPacketGroupSummaries("name4").map {
             object {
                 val name = it.getName()
-                val latestTime = it.getLatestTime()
-                val latestId = it.getLatestId()
+                val latestTime = it.getLatestStartTime()
+                val latestId = it.getLatestPacketId()
                 val latestDisplayName = it.getLatestDisplayName()
                 val packetCount = it.getPacketCount()
             }

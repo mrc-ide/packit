@@ -117,16 +117,16 @@ class PacketServiceTest
             {
                 override fun getName(): String = ""
                 override fun getPacketCount(): Int = 10
-                override fun getLatestId(): String = "20180818-164847-7574883b"
-                override fun getLatestTime(): Double = 1690902034.0
+                override fun getLatestPacketId(): String = "20180818-164847-7574883b"
+                override fun getLatestStartTime(): Double = 1690902034.0
                 override fun getLatestDisplayName(): String = ""
             },
             object : PacketGroupSummary
             {
                 override fun getName(): String = ""
                 override fun getPacketCount(): Int = 10
-                override fun getLatestId(): String = "20180818-164847-7574883b"
-                override fun getLatestTime(): Double = 1690902034.0
+                override fun getLatestPacketId(): String = "20180818-164847-7574883b"
+                override fun getLatestStartTime(): Double = 1690902034.0
                 override fun getLatestDisplayName(): String = ""
             }
         )

@@ -1,6 +1,6 @@
 package packit.model.dto
 
-data class PacketGroupDisplay(
+data class PacketGroupDisplayDto(
     val latestDisplayName: String,
     val description: String?
 )

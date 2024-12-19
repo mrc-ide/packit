@@ -10,7 +10,7 @@ export const PacketGroup = () => {
   const { packetName } = useParams();
   const { packetGroup, error, isLoading } = useGetPacketGroupDisplay(packetName as string);
   const displayName = packetGroup?.latestDisplayName;
-  const description = packetGroup?.description;
+  const description = packetGroup?.latestDescription;
 
   if (error?.status == HttpStatus.Unauthorized) return <Unauthorized />;
   if (!isLoading && (error || !packetGroup)) {
