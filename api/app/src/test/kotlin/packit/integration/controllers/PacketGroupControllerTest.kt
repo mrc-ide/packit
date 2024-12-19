@@ -42,11 +42,7 @@ class PacketGroupControllerTest : IntegrationTest()
     @BeforeAll
     fun setupData()
     {
-        packetGroups = packetGroupRepository.saveAll(
-            packetGroupNames.map { name ->
-                PacketGroup(name = name, latestDisplayName = name.replace("-", " "))
-            }
-        )
+        packetGroups = packetGroupRepository.saveAll(packetGroupNames.map { name -> PacketGroup(name) })
     }
 
     @AfterAll
