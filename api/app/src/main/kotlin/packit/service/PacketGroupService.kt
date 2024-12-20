@@ -21,7 +21,6 @@ interface PacketGroupService
 @Service
 class BasePacketGroupService(
     private val packetGroupRepository: PacketGroupRepository,
-    private val packetService: PacketService
 ) : PacketGroupService
 {
     override fun getPacketGroups(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroup>
@@ -29,6 +28,7 @@ class BasePacketGroupService(
         val packetGroups = packetGroupRepository.findAllByNameContaining(filteredName, Sort.by("name"))
         return PagingHelper.convertListToPage(packetGroups, pageablePayload)
     }
+
     override fun getPacketGroupDisplay(name: String): PacketGroupDisplayDto{
         val packetGroupSummary = packetGroupRepository.getFilteredPacketGroupSummaries(name).firstOrNull()
             ?: throw PackitException("No packets groups found for name $name", HttpStatus.NOT_FOUND)

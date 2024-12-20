@@ -38,11 +38,24 @@ class PacketGroupControllerTest : IntegrationTest()
         "test-packetGroupName-4",
         "test-packetGroupName-5"
     )
+    val now = Instant.now().epochSecond.toDouble()
+    private val packet = Packet(
+        "20241122-111130-544ddd35",
+        packetGroupNames[0],
+        "Display Name for Packet",
+        mapOf("a" to 1),
+        false,
+        now,
+        now,
+        now,
+        "A little description"
+    )
 
     @BeforeAll
     fun setupData()
     {
-        packetGroups = packetGroupRepository.saveAll(packetGroupNames.map { name -> PacketGroup(name) })
+        println("count ${packetGroupRepository.count()}")
+//        packetGroups = packetGroupRepository.saveAll(packetGroupNames.map { name -> PacketGroup(name) })
     }
 
     @AfterAll
@@ -144,20 +157,7 @@ class PacketGroupControllerTest : IntegrationTest()
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:test-packetGroupName-1"])
     fun `getDisplay returns display name and description`()
     {
-        val now = Instant.now().epochSecond.toDouble()
-        packetRepository.save(
-            Packet
-                (
-                "20241122-111130-544ddd35",
-                packetGroupNames[0],
-                "",
-                mapOf("a" to 1),
-                false,
-                now,
-                now,
-                now
-            )
-        )
+        packetRepository.save(packet)
 
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packetGroups/${packetGroupNames[0]}/display",
@@ -167,20 +167,22 @@ class PacketGroupControllerTest : IntegrationTest()
 
         assertSuccess(result)
         val resultBody = jacksonObjectMapper().readTree(result.body)
-        assertEquals("test packetGroupName 1", resultBody.get("latestDisplayName").asText())
-        assertTrue(resultBody.get("description").asText().startsWith("A longer description"))
+        assertEquals("Display Name for Packet", resultBody.get("latestDisplayName").asText())
+        assertTrue(resultBody.get("description").asText().startsWith("A little description"))
     }
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:wrong-name"])
-    fun `getDetail returns 401 if authority is not correct`()
+    fun `getDisplay returns 404 if authority is not correct`()
     {
+        packetRepository.save(packet)
+
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packetGroups/${packetGroupNames[0]}/display",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
 
-        assertEquals(HttpStatus.UNAUTHORIZED, result.statusCode)
+        assertEquals(HttpStatus.NOT_FOUND, result.statusCode)
     }
 }

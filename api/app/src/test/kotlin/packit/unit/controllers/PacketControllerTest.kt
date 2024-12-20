@@ -125,6 +125,7 @@ class PacketControllerTest
         val result = sut.getPacketGroupSummaries(0, 10, "")
         assertEquals(result.statusCode, HttpStatus.OK)
         assertEquals(result.body, mockPacketGroupsSummary)
+        // todo: update to use packet GROUP index service
         verify(indexService).getPacketGroupSummaries(PageablePayload(0, 10), "")
     }
 

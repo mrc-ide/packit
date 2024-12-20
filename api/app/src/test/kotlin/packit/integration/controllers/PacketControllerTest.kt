@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
 import packit.model.Packet
+import packit.model.PacketGroup
+import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
 import kotlin.test.assertEquals
 
@@ -21,6 +23,9 @@ class PacketControllerTest : IntegrationTest()
 {
     @Autowired
     private lateinit var packetRepository: PacketRepository
+    @Autowired
+    private lateinit var packetGroupRepository: PacketGroupRepository
+
     private lateinit var packets: List<Packet>
     private val packetGroupNames = listOf(
         "test-packetGroupName-1",
@@ -38,7 +43,7 @@ class PacketControllerTest : IntegrationTest()
                 Packet(
                     "20240729-154633-10abe7d1",
                     packetGroupNames[0],
-                    "test-packetGroupName-1",
+                    packetGroupNames[0],
                     mapOf("name" to "value"),
                     false,
                     0.0,
@@ -58,7 +63,7 @@ class PacketControllerTest : IntegrationTest()
                 Packet(
                     "20230427-150755-2dbede95",
                     packetGroupNames[2],
-                    "test-packetGroupName-3",
+                    packetGroupNames[2],
                     mapOf("alpha" to true),
                     false,
                     0.0,
@@ -68,7 +73,7 @@ class PacketControllerTest : IntegrationTest()
                 Packet(
                     "20230427-150755-2dbede96",
                     packetGroupNames[3],
-                    "test-packetGroupName-4",
+                    packetGroupNames[3],
                     mapOf(),
                     true,
                     0.0,
@@ -78,7 +83,7 @@ class PacketControllerTest : IntegrationTest()
                 Packet(
                     "20230427-150755-2dbede97",
                     packetGroupNames[4],
-                    "test-packetGroupName-5",
+                    packetGroupNames[4],
                     mapOf(),
                     true,
                     0.0,
@@ -87,6 +92,7 @@ class PacketControllerTest : IntegrationTest()
                 ),
             )
         )
+        packetGroupRepository.saveAll(packetGroupNames.map { name -> PacketGroup(name) })
     }
 
     @AfterAll
@@ -325,7 +331,7 @@ class PacketControllerTest : IntegrationTest()
             "packet.read:packet:test-packetGroupName-3:20230427-150755-2dbede95"
         ]
     )
-    fun `getPacketGroupSummary returns of packet groups user can see`()
+    fun `getPacketGroupSummaries returns list of packet groups user can see`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets/packetGroupSummaries",
