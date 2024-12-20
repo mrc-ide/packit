@@ -4,11 +4,8 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.*
 import org.springframework.data.domain.Sort
 import packit.model.PacketGroup
-import packit.model.PacketMetadata
 import packit.model.PageablePayload
-import packit.model.TimeMetadata
 import packit.repository.PacketGroupRepository
-import packit.repository.PacketIdProjection
 import packit.service.BasePacketGroupService
 import packit.service.PacketService
 import kotlin.test.assertEquals

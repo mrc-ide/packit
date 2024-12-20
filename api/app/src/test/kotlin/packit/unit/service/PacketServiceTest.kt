@@ -4,7 +4,6 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.ArgumentMatchers.anyString
-import org.mockito.Mockito.`when`
 import org.mockito.kotlin.*
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpHeaders
@@ -15,10 +14,8 @@ import packit.model.dto.PacketGroupSummary
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketIdProjection
 import packit.repository.PacketRepository
-import packit.service.BasePacketGroupService
 import packit.service.BasePacketService
 import packit.service.OutpackServerClient
-import packit.service.PacketService
 import java.time.Instant
 import java.util.*
 import kotlin.test.assertEquals
@@ -105,7 +102,6 @@ class PacketServiceTest
         )
     }
 
-
     private val packetMetadata =
         PacketMetadata(
             "3",
@@ -165,7 +161,8 @@ class PacketServiceTest
         on { findAll() } doReturn packetGroups
     }
 
-    private val allMetadata = newPackets.map { packetToOutpackMetadata(it) } + oldPackets.map { packetToOutpackMetadata(it) }
+    private val allMetadata = newPackets.map { packetToOutpackMetadata(it) } +
+        oldPackets.map { packetToOutpackMetadata(it) }
     private val outpackServerClient =
         mock<OutpackServerClient> {
             on { getMetadata(oldPackets[0].importTime) } doReturn newPackets.map { packetToOutpackMetadata(it) }
@@ -411,7 +408,6 @@ class PacketServiceTest
         }
     }
 
-
     @Test
     fun `getPacketGroupDisplay returns display name and description using orderly custom metadata`()
     {
@@ -440,10 +436,12 @@ class PacketServiceTest
             git = null,
             time = TimeMetadata(start = 0.0, end = 0.0),
             custom = mapOf(
-                "orderly" to mapOf("description" to mapOf(
+                "orderly" to mapOf(
+                    "description" to mapOf(
                     "long" to null,
                     "display" to null
-                ))
+                )
+                )
             ),
             depends = null
         )

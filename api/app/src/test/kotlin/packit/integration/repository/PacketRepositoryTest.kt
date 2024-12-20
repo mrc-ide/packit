@@ -94,7 +94,6 @@ class PacketRepositoryTest : RepositoryTest()
         packetRepository.deleteAll()
     }
 
-
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `can get packets from db`()

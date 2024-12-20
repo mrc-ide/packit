@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.security.access.prepost.PostFilter
 import org.springframework.stereotype.Repository
 import packit.model.Packet
-import packit.model.dto.PacketGroupSummary
 
 @Repository
 interface PacketRepository : JpaRepository<Packet, String>

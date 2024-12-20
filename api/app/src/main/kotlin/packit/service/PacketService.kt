@@ -241,8 +241,8 @@ class BasePacketService(
 
     override fun getPacketGroupDisplay(name: String): PacketGroupDisplay
     {
-        val latestPacketId = packetGroupRepository.findLatestPacketIdForGroup(name)?.id ?:
-            throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
+        val latestPacketId = packetGroupRepository.findLatestPacketIdForGroup(name)?.id
+            ?: throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
         val metadata = getMetadataBy(latestPacketId)
         val displayName = getDisplayNameForPacket(metadata.custom, metadata.name)
         val description = getDescriptionForPacket(metadata.custom)
