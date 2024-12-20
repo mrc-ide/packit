@@ -43,7 +43,8 @@ class PacketServiceTest
                 true,
                 now,
                 now,
-                now
+                now,
+                "This packet has a description"
             ),
             Packet(
                 "20190403-120000-1234dfdf",
@@ -91,7 +92,8 @@ class PacketServiceTest
                 mapOf(
                     "orderly" to mapOf(
                         "description" to mapOf(
-                            "display" to it.displayName
+                            "display" to it.displayName,
+                            "long" to it.description
                         )
                     )
                 )
@@ -115,19 +117,23 @@ class PacketServiceTest
         listOf(
             object : PacketGroupSummary
             {
+                override fun getLatestDescription(): String? = ""
                 override fun getName(): String = ""
                 override fun getPacketCount(): Int = 10
                 override fun getLatestPacketId(): String = "20180818-164847-7574883b"
                 override fun getLatestStartTime(): Double = 1690902034.0
                 override fun getLatestDisplayName(): String = ""
+                override fun getPacketGroupId(): Int = 1
             },
             object : PacketGroupSummary
             {
+                override fun getLatestDescription(): String? = ""
                 override fun getName(): String = ""
                 override fun getPacketCount(): Int = 10
                 override fun getLatestPacketId(): String = "20180818-164847-7574883b"
                 override fun getLatestStartTime(): Double = 1690902034.0
                 override fun getLatestDisplayName(): String = ""
+                override fun getPacketGroupId(): Int = 2
             }
         )
 
@@ -138,8 +144,6 @@ class PacketServiceTest
             on { findAll() } doReturn oldPackets
             on { findAllIds() } doReturn oldPackets.map { it.id }
             on { findTopByOrderByImportTimeDesc() } doReturn oldPackets.first()
-            on { getFilteredPacketGroupSummaries("random") } doReturn
-                    packetGroupSummaries
             on { findByName(anyString(), any()) } doReturn oldPackets
             on { findAllByNameContainingAndIdContaining(anyString(), anyString(), any<Sort>()) } doReturn oldPackets
         }
@@ -150,7 +154,10 @@ class PacketServiceTest
             on { getMetadataById(anyString()) } doReturn packetMetadata
             on { getFileByHash(anyString()) } doReturn responseByte
         }
-    private val packetGroupRepository = mock<PacketGroupRepository>()
+    private val packetGroupRepository = mock<PacketGroupRepository> {
+        on { getFilteredPacketGroupSummaries("random") } doReturn
+                packetGroupSummaries
+    }
 
     @Test
     fun `gets packets`()
@@ -201,7 +208,7 @@ class PacketServiceTest
 
         assertEquals(result.totalElements, 2)
         assertEquals(result.content, packetGroupSummaries)
-        verify(packetRepository).getFilteredPacketGroupSummaries("random")
+        verify(packetGroupRepository).getFilteredPacketGroupSummaries("random")
     }
 
     @Test
@@ -241,9 +248,18 @@ class PacketServiceTest
             "20190203-120000-1234dada" to "test name (latest display name)",
             "20190403-120000-1234dfdf" to "test2 display name"
         )
+        val expectedDescriptions = mapOf(
+            "20240101-090000-4321gaga" to null,
+            "20190203-120000-1234dada" to "This packet has a description",
+            "20190403-120000-1234dfdf" to null
+        )
         newPackets.forEach() {
-            val packet = packets.find { packet -> packet.id == it.id }
-            assertEquals(packet!!.displayName, expectedDisplayNames[it.id])
+            val packet = packets.find { packet -> packet.id == it.id }!!
+            assertEquals(packet.displayName, expectedDisplayNames[it.id])
+
+            println(packet.id)
+            println("description: ${packet.description}")
+            assertEquals(packet.description, expectedDescriptions[it.id])
         }
     }
 
@@ -290,43 +306,7 @@ class PacketServiceTest
         assertEquals(packetGroups.size, 2)
 
         assertEquals(packetGroups.first().name, "test")
-        // The latest packet has no display name, even though the previous packet has one.
-        assertEquals(packetGroups.first().latestDisplayName, "test")
-
         assertEquals(packetGroups.last().name, "test2")
-        // The latest packet's display name is used.
-        assertEquals(packetGroups.last().latestDisplayName, "test2 display name")
-    }
-
-    @Test
-    fun `saveUniquePacketGroups upserts unique packet groups`() {
-        val packetGroupData = mapOf(
-            "never_before_seen_packet" to "Brand-new packet display name",
-            "existing_packet" to "Updated display name for existing packet"
-        )
-        val packetGroupNames = packetGroupData.keys.toList()
-        `when`(packetGroupRepository.findByNameIn(packetGroupNames)).doReturn(
-            listOf(
-            PacketGroup("existing_packet", "outdated display name", mutableListOf(), 9)
-        )
-        )
-        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
-        val newPacketGroupsArgumentCaptor = argumentCaptor<List<PacketGroup>>()
-        val existingPacketGroupsArgumentCaptor = argumentCaptor<PacketGroup>()
-
-        sut.saveUniquePacketGroups(packetGroupData)
-
-        verify(packetGroupRepository).saveAll(newPacketGroupsArgumentCaptor.capture())
-        val newPacketGroups = newPacketGroupsArgumentCaptor.firstValue
-        assertEquals(newPacketGroups.size, 1)
-        assertEquals(newPacketGroups.first().name, "never_before_seen_packet")
-        assertEquals(newPacketGroups.first().latestDisplayName, "Brand-new packet display name")
-
-        verify(packetGroupRepository).save(existingPacketGroupsArgumentCaptor.capture())
-        val existingPacketGroup = existingPacketGroupsArgumentCaptor.firstValue
-        assertEquals(existingPacketGroup.name, "existing_packet")
-        assertEquals(existingPacketGroup.latestDisplayName, "Updated display name for existing packet")
-        assertEquals(existingPacketGroup.id, 9)
     }
 
     @Test

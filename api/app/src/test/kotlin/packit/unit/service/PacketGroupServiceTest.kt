@@ -7,9 +7,10 @@ import packit.model.PacketGroup
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
 import packit.model.TimeMetadata
+import packit.model.dto.PacketGroupDisplayDto
+import packit.model.dto.PacketGroupSummary
 import packit.repository.PacketGroupRepository
 import packit.service.BasePacketGroupService
-import packit.service.PacketService
 import kotlin.test.assertEquals
 
 class PacketGroupServiceTest
@@ -18,11 +19,10 @@ class PacketGroupServiceTest
     fun `getPacketGroups calls repository with correct params and returns its result`()
     {
         val packetGroupRepository = mock<PacketGroupRepository>()
-        val packetService = mock<PacketService>()
-        val sut = BasePacketGroupService(packetGroupRepository, packetService)
+        val sut = BasePacketGroupService(packetGroupRepository)
         val pageablePayload = PageablePayload(0, 10)
         val filterName = "test"
-        val packetGroups = listOf(PacketGroup("test1", "display1"), PacketGroup("test2", "display2"))
+        val packetGroups = listOf(PacketGroup("test1"), PacketGroup("test2"))
         whenever(
             packetGroupRepository.findAllByNameContaining(
                 eq(filterName), any<Sort>()
@@ -39,42 +39,28 @@ class PacketGroupServiceTest
     }
 
     @Test
-    fun `getPacketGroupDisplay returns display name, and description`()
-    {
-//        val packetGroupRepository = mock<PacketGroupRepository>()
-//        val packetService = mock<PacketService>()
-//
-//        val groupName = "testGroup"
-//        val packetIdProjection = mock<PacketIdProjection> {
-//            on { id } doReturn "20170818-164847-7574853b"
-//        }
-//        whenever(packetGroupRepository.findLatestPacketIdForGroup(groupName)).thenReturn(packetIdProjection)
-//
-//        val packetGroup = PacketGroup("testGroup", "Display Name")
-//        whenever(packetGroupRepository.findByName(groupName)).thenReturn(packetGroup)
-//
-//        val mockPacketMetadata = PacketMetadata(
-//            id = "20170818-164847-7574853b",
-//            name = "testPacket",
-//            parameters = null,
-//            files = null,
-//            git = null,
-//            time = TimeMetadata(start = 0.0, end = 0.0),
-//            custom = mapOf(
-//                "orderly" to mapOf("description" to mapOf("long" to "Long description"))
-//            ),
-//            depends = null
-//        )
-//        whenever(packetService.getMetadataBy("20170818-164847-7574853b")).thenReturn(mockPacketMetadata)
-//
-//        val sut = BasePacketGroupService(packetGroupRepository, packetService)
-//
-//        val result = sut.getPacketGroupDisplay(groupName)
-//
-//        assertEquals("Display Name", result.latestDisplayName)
-//        assertEquals("Long description", result.description)
-//        verify(packetGroupRepository).findLatestPacketIdForGroup(groupName)
-//        verify(packetGroupRepository).findByName(groupName)
-//        verify(packetService).getMetadataBy("20170818-164847-7574853b")
+    fun `getPacketGroupDisplay returns display name, and description, for a packet group with a given name`() {
+        val packetGroupRepository = mock<PacketGroupRepository>()
+
+        val groupName = "namesAreHard"
+
+        val packetGroupSummary = object : PacketGroupSummary {
+            override fun getLatestDescription(): String? = "Short description"
+            override fun getLatestDisplayName(): String = "Display Name"
+            override fun getLatestPacketId(): String = "20170818-164847-7574853b"
+            override fun getLatestStartTime(): Double = 0.0
+            override fun getName(): String = groupName
+            override fun getPacketCount(): Int = 1
+            override fun getPacketGroupId(): Int = 1
+        }
+        whenever(packetGroupRepository.getFilteredPacketGroupSummaries(groupName)).thenReturn(listOf(packetGroupSummary))
+
+        val sut = BasePacketGroupService(packetGroupRepository)
+
+        val result = sut.getPacketGroupDisplay(groupName)
+
+        assertEquals("Display Name", result.latestDisplayName)
+        assertEquals("Short description", result.description)
+        verify(packetGroupRepository).getFilteredPacketGroupSummaries(groupName)
     }
 }
