@@ -12,11 +12,13 @@ import packit.model.dto.PacketGroupDisplay
 import packit.model.dto.PacketGroupDto
 import packit.model.toDto
 import packit.service.PacketGroupService
+import packit.service.PacketService
 
 @Controller
 @RequestMapping("/packetGroups")
 class PacketGroupController(
-    private val packetGroupService: PacketGroupService
+    private val packetGroupService: PacketGroupService,
+    private val packetService: PacketService
 )
 {
     @GetMapping
@@ -34,7 +36,7 @@ class PacketGroupController(
     fun getDisplay(
         @PathVariable name: String
     ): ResponseEntity<PacketGroupDisplay> {
-        val result = packetGroupService.getPacketGroupDisplay(name)
+        val result = packetService.getPacketGroupDisplay(name)
 
         return ResponseEntity.ok(result)
     }

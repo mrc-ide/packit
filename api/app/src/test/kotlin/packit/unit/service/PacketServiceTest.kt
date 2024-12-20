@@ -15,8 +15,10 @@ import packit.model.dto.PacketGroupSummary
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketIdProjection
 import packit.repository.PacketRepository
+import packit.service.BasePacketGroupService
 import packit.service.BasePacketService
 import packit.service.OutpackServerClient
+import packit.service.PacketService
 import java.time.Instant
 import java.util.*
 import kotlin.test.assertEquals
@@ -115,7 +117,14 @@ class PacketServiceTest
                 Instant.now().epochSecond.toDouble(),
                 Instant.now().epochSecond.toDouble()
             ),
-            emptyMap(),
+            mapOf(
+                "orderly" to mapOf(
+                    "description" to mapOf(
+                        "display" to "Testable Display Name",
+                        "long" to "A testable description"
+                    )
+                )
+            ),
             emptyList()
         )
     private val packetGroupSummaries =
@@ -161,7 +170,7 @@ class PacketServiceTest
         mock<OutpackServerClient> {
             on { getMetadata(oldPackets[0].importTime) } doReturn newPackets.map { packetToOutpackMetadata(it) }
             on { getMetadata() } doReturn allMetadata
-            on { getMetadataById(anyString()) } doReturn packetMetadata
+            on { getMetadataById(packetMetadata.id) } doReturn packetMetadata
             on { getFileByHash(anyString()) } doReturn responseByte
         }
 
@@ -355,7 +364,7 @@ class PacketServiceTest
     fun `can get packet metadata`()
     {
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
-        val result = sut.getMetadataBy("123")
+        val result = sut.getMetadataBy(packetMetadata.id)
 
         assertEquals(result, packetMetadata)
     }
@@ -400,5 +409,57 @@ class PacketServiceTest
         assertThrows<PackitException> {
             sut.getPacket(packetId)
         }
+    }
+
+
+    @Test
+    fun `getPacketGroupDisplay returns display name and description using orderly custom metadata`()
+    {
+        val packetIdProjection = mock<PacketIdProjection> {
+            on { id } doReturn packetMetadata.id
+        }
+        whenever(packetGroupRepository.findLatestPacketIdForGroup("test")).thenReturn(packetIdProjection)
+
+        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+
+        val result = sut.getPacketGroupDisplay("test")
+
+        assertEquals("Testable Display Name", result.latestDisplayName)
+        assertEquals("A testable description", result.description)
+        verify(packetGroupRepository).findLatestPacketIdForGroup("test")
+        verify(outpackServerClient).getMetadataById(packetMetadata.id)
+    }
+
+    @Test
+    fun `getPacketGroupDisplay falls back to name when there is no display name available in the metadata`() {
+        val basicPacket = PacketMetadata(
+            id = "20170818-164847-7574853z",
+            name = "basicPacket",
+            parameters = null,
+            files = null,
+            git = null,
+            time = TimeMetadata(start = 0.0, end = 0.0),
+            custom = mapOf(
+                "orderly" to mapOf("description" to mapOf(
+                    "long" to null,
+                    "display" to null
+                ))
+            ),
+            depends = null
+        )
+        val packetIdProjection = mock<PacketIdProjection> {
+            on { id } doReturn basicPacket.id
+        }
+        whenever(packetGroupRepository.findLatestPacketIdForGroup("basicPacket")).thenReturn(packetIdProjection)
+        whenever(outpackServerClient.getMetadataById(basicPacket.id)).thenReturn(basicPacket)
+
+        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+
+        val result = sut.getPacketGroupDisplay("basicPacket")
+
+        assertEquals("basicPacket", result.latestDisplayName)
+        assertEquals(null, result.description)
+        verify(packetGroupRepository).findLatestPacketIdForGroup("basicPacket")
+        verify(outpackServerClient).getMetadataById(basicPacket.id)
     }
 }
