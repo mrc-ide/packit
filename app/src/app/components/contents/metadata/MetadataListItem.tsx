@@ -2,6 +2,7 @@ interface MetadataItemProps {
   label: string;
   value: string;
 }
+
 export const MetadataListItem = ({ label, value }: MetadataItemProps) => {
   return (
     <li>

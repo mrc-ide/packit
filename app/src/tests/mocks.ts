@@ -96,6 +96,25 @@ export const mockPacket: PacketMetadata = {
         custom: null,
         display: "A packet with parameters and a report",
         long: "This packet uses a number of parameters in order to eventually generate a report"
+      },
+      session: {
+        packages: [
+          {
+            package: "library_of_interest",
+            version: "0.1.0",
+            attached: true
+          },
+          {
+            package: "other_library",
+            version: "1.0.0",
+            attached: false
+          }
+        ],
+        platform: {
+          os: "Ubuntu 22.04.4 LTS",
+          system: "x86_64, linux-gnu",
+          version: "R version 4.4.1 (2024-06-14)"
+        }
       }
     }
   }
