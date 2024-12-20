@@ -152,7 +152,7 @@ class BasePacketService(
                 } else {
                     null
                 }
-            }
+            }.sortedByDescending { it.getLatestTime() }
 
         return PagingHelper.convertListToPage(latestPackets, pageablePayload)
     }
