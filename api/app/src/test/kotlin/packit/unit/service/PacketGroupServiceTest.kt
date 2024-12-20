@@ -23,7 +23,7 @@ class PacketGroupServiceTest
         val sut = BasePacketGroupService(packetGroupRepository, packetService)
         val pageablePayload = PageablePayload(0, 10)
         val filterName = "test"
-        val packetGroups = listOf(PacketGroup("test1", "display1"), PacketGroup("test2", "display2"))
+        val packetGroups = listOf(PacketGroup("test1"), PacketGroup("test2"))
         whenever(
             packetGroupRepository.findAllByNameContaining(
                 eq(filterName), any<Sort>()

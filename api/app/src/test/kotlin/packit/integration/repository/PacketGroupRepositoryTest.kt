@@ -56,7 +56,6 @@ class PacketGroupRepositoryTest : RepositoryTest()
 
     val packetGroup = PacketGroup(
         "correct_group",
-        "Correct Group",
     )
 
     @BeforeEach
