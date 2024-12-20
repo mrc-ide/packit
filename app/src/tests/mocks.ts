@@ -4,7 +4,7 @@ import { PageableBasicRunInfo, RunInfo } from "../app/components/contents/runner
 import { Parameter, RunnerPacketGroup } from "../app/components/contents/runner/types/RunnerPacketGroup";
 import { AuthConfig } from "../app/components/providers/types/AuthConfigTypes";
 import { UserState } from "../app/components/providers/types/UserTypes";
-import { Custom, PacketMetadata, PageableBasicDto, PageablePacketGroupSummary, PageablePackets } from "../types";
+import { Custom, PacketMetadata, PageableBasicDto, PageablePacketGroupSummaries, PageablePackets } from "../types";
 
 export const mockPacketResponse = {
   id: "52fd88b2-8ee8-4ac0-a0e5-41b9a15554a4",
@@ -32,7 +32,7 @@ export const mockUserState: () => UserState = () => {
     displayName: "LeBron James",
     userName: "goat",
     token:
-    // eslint-disable-next-line max-len
+      // eslint-disable-next-line max-len
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwYWNraXQiLCJpc3MiOiJwYWNraXQtYXBpIiwidXNlck5hbWUiOiJhYnN0ZXJuYXRvciIsImRpc3BsYXlOYW1lIjoiQW5tb2wgVGhhcGFyIiwiZGF0ZXRpbWUiOjE3MDI5NzgyMjgsImF1IjpbIltVU0VSXSJdLCJleHAiOjE3MDMwNjQ2Mjh9.o3b4PzZX76nP2tUxndGvusx-rytOkApodZ-geVPH9Pg",
     exp: Math.floor(Date.now() / 1000) + 3600, // expires in 1 hour
     authorities: ["user.manage", "packet.read", "packet.run"]
@@ -44,7 +44,7 @@ export const mockExpiredUserState: () => UserState = () => {
     displayName: "LeBron James",
     userName: "goat",
     token:
-    // eslint-disable-next-line max-len
+      // eslint-disable-next-line max-len
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwYWNraXQiLCJpc3MiOiJwYWNraXQtYXBpIiwidXNlck5hbWUiOiJhYnN0ZXJuYXRvciIsImRpc3BsYXlOYW1lIjoiQW5tb2wgVGhhcGFyIiwiZGF0ZXRpbWUiOjE3MDI5NzgyMjgsImF1IjpbIltVU0VSXSJdLCJleHAiOjE3MDMwNjQ2Mjh9.o3b4PzZX76nP2tUxndGvusx-rytOkApodZ-geVPH9Pg",
     exp: Math.floor(Date.now() / 1000) - 3600, // expired 1 hour ago
     authorities: ["user.manage", "packet.read", "packet.run"]
@@ -55,74 +55,8 @@ export const mockToken =
   // eslint-disable-next-line max-len
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwYWNraXQiLCJpc3MiOiJwYWNraXQtYXBpIiwidXNlck5hbWUiOiJkQGdtYWlsLmNvbSIsImRpc3BsYXlOYW1lIjoicmFuZG9tIHB1c3NpbyIsImRhdGV0aW1lIjoxNzE1OTI5MjM5LCJhdSI6WyJkQGdtYWlsLmNvbSIsIkFETUlOIiwidXNlci5tYW5hZ2UiLCJwYWNrZXQucHVzaCIsInBhY2tldC5ydW4iLCJwYWNrZXQucmVhZCJdLCJleHAiOjE3MTYwMTU2Mzl9.l4GgV0YoENGT3tjS-2popxWxRHp_LRT5gIVP3nND838";
 
-export const mockPacketGroupSummary: PageablePacketGroupSummary = {
-  content: [
-    {
-      latestId: "20231130-082812-cd744153",
-      latestTime: 1701332897,
-      name: "test3",
-      packetCount: 3
-    },
-    {
-      latestId: "20231130-082727-445fa3fa",
-      latestTime: 1701332857,
-      name: "test2",
-      packetCount: 3
-    },
-    {
-      latestId: "20231130-082548-bf6d6f3f",
-      latestTime: 1701332757,
-      name: "test1",
-      packetCount: 2
-    },
-    {
-      latestId: "20231130-082348-e1f8e7ca",
-      latestTime: 1701332637,
-      name: "incoming_data",
-      packetCount: 2
-    },
-    {
-      latestId: "20231127-141002-6e6581d7",
-      latestTime: 1701256330,
-      name: "artefact-types",
-      packetCount: 3
-    },
-    {
-      latestId: "20230427-150722-0ebd6545",
-      latestTime: 1701096608,
-      name: "parameters",
-      packetCount: 3
-    },
-    {
-      latestId: "20230427-150755-2dbede93",
-      latestTime: 1701096607,
-      name: "explicit",
-      packetCount: 2
-    },
-    {
-      latestId: "20230427-150828-68772cee",
-      latestTime: 1701096605,
-      name: "computed-resource",
-      packetCount: 1
-    },
-    {
-      latestId: "20230427-150813-cd121720",
-      latestTime: 1698173547,
-      name: "depends",
-      packetCount: 1
-    }
-  ],
-  totalPages: 1,
-  totalElements: 9,
-  last: true,
-  first: true,
-  size: 50,
-  number: 0,
-  numberOfElements: 9
-};
-
 export const mockPacket: PacketMetadata = {
-  id: "20231205-073527-99db1138",
+  id: "20240000-012345-00aa0000",
   name: "parameters",
   parameters: {
     a: "3",
@@ -160,7 +94,8 @@ export const mockPacket: PacketMetadata = {
       ],
       description: {
         custom: null,
-        display: null
+        display: "A packet with parameters and a report",
+        long: "This packet uses a number of parameters in order to eventually generate a report"
       },
       session: {
         packages: [
@@ -185,12 +120,106 @@ export const mockPacket: PacketMetadata = {
   }
 };
 
+export const mockPacketGroupSummaries: PageablePacketGroupSummaries = {
+  content: [
+    {
+      latestId: "20231130-082812-cd744153",
+      latestTime: 1701332897,
+      name: "test3",
+      latestDisplayName: "Test 3",
+      packetCount: 3
+    },
+    {
+      latestId: "20231130-082727-445fa3fa",
+      latestTime: 1701332857,
+      name: "test2",
+      latestDisplayName: "Test 2",
+      packetCount: 3
+    },
+    {
+      latestId: "20231130-082548-bf6d6f3f",
+      latestTime: 1701332757,
+      name: "test1",
+      latestDisplayName: "Test 1",
+      packetCount: 2
+    },
+    {
+      latestId: "20231130-082348-e1f8e7ca",
+      latestTime: 1701332637,
+      name: "incoming_data",
+      latestDisplayName: "Incoming Data",
+      packetCount: 2
+    },
+    {
+      latestId: "20231127-141002-6e6581d7",
+      latestTime: 1701256330,
+      name: "artefact-types",
+      latestDisplayName: "Artefact Types",
+      packetCount: 3
+    },
+    {
+      latestId: mockPacket.id,
+      latestTime: 1701096608,
+      name: "parameters",
+      latestDisplayName: "Parameters Packet Group",
+      packetCount: 3
+    },
+    {
+      latestId: "20230427-150755-2dbede93",
+      latestTime: 1701096607,
+      name: "explicit",
+      latestDisplayName: "Explicit",
+      packetCount: 2
+    },
+    {
+      latestId: "20230427-150828-68772cee",
+      latestTime: 1701096605,
+      name: "computed-resource",
+      latestDisplayName: "Computed Resource",
+      packetCount: 1
+    },
+    {
+      latestId: "20230427-150813-cd121720",
+      latestTime: 1698173547,
+      name: "depends",
+      latestDisplayName: "depends",
+      packetCount: 1
+    }
+  ],
+  totalPages: 1,
+  totalElements: 9,
+  last: true,
+  first: true,
+  size: 50,
+  number: 0,
+  numberOfElements: 9
+};
+
+export const mockPacketGroupSummariesFiltered: PageablePacketGroupSummaries = {
+  content: [
+    {
+      latestId: mockPacket.id,
+      latestTime: 1701096608,
+      name: "parameters",
+      latestDisplayName: "Parameters Packet Group",
+      packetCount: 3
+    }
+  ],
+  totalPages: 1,
+  totalElements: 1,
+  last: true,
+  first: true,
+  size: 50,
+  number: 0,
+  numberOfElements: 1
+};
+
 export const mockPacketGroupResponse: PageablePackets = {
   content: [
     {
-      id: "20231205-073715-6635e044",
-      name: "parameters",
-      displayName: "parameters",
+      id: mockPacket.id,
+      name: mockPacket.name,
+      displayName: "Parameters Packet Group",
       parameters: {
         a: 3,
         b: false,
@@ -203,7 +232,7 @@ export const mockPacketGroupResponse: PageablePackets = {
     },
     {
       id: "20231205-073527-99db1138",
-      name: "parameters",
+      name: mockPacket.name,
       displayName: "parameters",
       parameters: {},
       published: false,
@@ -213,7 +242,7 @@ export const mockPacketGroupResponse: PageablePackets = {
     },
     {
       id: "20230427-150722-0ebd6545",
-      name: "parameters",
+      name: mockPacket.name,
       displayName: "parameters",
       parameters: {
         c: 30,
@@ -227,7 +256,7 @@ export const mockPacketGroupResponse: PageablePackets = {
     },
     {
       id: "20231127-133335-c8ced0bf",
-      name: "parameters",
+      name: mockPacket.name,
       displayName: "parameters",
       parameters: {
         a: 30,
@@ -241,7 +270,7 @@ export const mockPacketGroupResponse: PageablePackets = {
     },
     {
       id: "20231127-133612-c69df160",
-      name: "parameters",
+      name: mockPacket.name,
       displayName: "parameters",
       parameters: {
         b: 333,

@@ -7,6 +7,7 @@ import packit.model.PacketGroup
 import packit.model.PageablePayload
 import packit.repository.PacketGroupRepository
 import packit.service.BasePacketGroupService
+import packit.service.PacketService
 import kotlin.test.assertEquals
 
 class PacketGroupServiceTest
@@ -15,6 +16,7 @@ class PacketGroupServiceTest
     fun `getPacketGroups calls repository with correct params and returns its result`()
     {
         val packetGroupRepository = mock<PacketGroupRepository>()
+        val packetService = mock<PacketService>()
         val sut = BasePacketGroupService(packetGroupRepository)
         val pageablePayload = PageablePayload(0, 10)
         val filterName = "test"

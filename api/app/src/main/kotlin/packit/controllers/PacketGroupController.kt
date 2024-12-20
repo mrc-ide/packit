@@ -4,17 +4,21 @@ import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import packit.model.PageablePayload
+import packit.model.dto.PacketGroupDisplay
 import packit.model.dto.PacketGroupDto
 import packit.model.toDto
 import packit.service.PacketGroupService
+import packit.service.PacketService
 
 @Controller
-@RequestMapping("/packetGroup")
+@RequestMapping("/packetGroups")
 class PacketGroupController(
-    private val packetGroupService: PacketGroupService
+    private val packetGroupService: PacketGroupService,
+    private val packetService: PacketService
 )
 {
     @GetMapping
@@ -26,5 +30,14 @@ class PacketGroupController(
     {
         val payload = PageablePayload(pageNumber, pageSize)
         return ResponseEntity.ok(packetGroupService.getPacketGroups(payload, filterName).map { it.toDto() })
+    }
+
+    @GetMapping("/{name}/display")
+    fun getDisplay(
+        @PathVariable name: String
+    ): ResponseEntity<PacketGroupDisplay> {
+        val result = packetService.getPacketGroupDisplay(name)
+
+        return ResponseEntity.ok(result)
     }
 }

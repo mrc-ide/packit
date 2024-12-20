@@ -14,7 +14,7 @@ export interface PageablePackets extends Pageable {
   content: Packet[];
 }
 
-export interface PageablePacketGroupSummary extends Pageable {
+export interface PageablePacketGroupSummaries extends Pageable {
   content: PacketGroupSummary[];
 }
 
@@ -23,6 +23,12 @@ export interface PacketGroupSummary {
   packetCount: number;
   latestId: string;
   latestTime: number;
+  latestDisplayName: string;
+}
+
+export interface PacketGroupDisplay {
+  latestDisplayName: string;
+  description?: string;
 }
 
 export interface Packet {
@@ -48,8 +54,8 @@ export interface PacketMetadata {
   parameters: Record<string, string> | null;
   time: TimeMetadata;
   files: FileMetadata[];
-  custom: Custom;
-  git?: GitMetadata;
+  custom: Custom | null;
+  git: GitMetadata | null;
 }
 
 export interface GitMetadata {
@@ -89,8 +95,9 @@ export interface Custom {
 }
 
 interface Description {
-  custom: Record<string, string> | null;
   display: string | null;
+  long: string | null;
+  custom: Record<string, any> | null;
 }
 
 interface Artefact {

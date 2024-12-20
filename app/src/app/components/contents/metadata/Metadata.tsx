@@ -23,7 +23,7 @@ export default function Metadata() {
 
   return (
     <>
-      <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} />
+      <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} displayName={packet?.displayName} />
       {packet && (
         <>
           <Accordion type="multiple" defaultValue={["timings", "git"]}>

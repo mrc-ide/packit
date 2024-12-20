@@ -55,7 +55,7 @@ describe("redirect", () => {
     renderElement("/redirect");
 
     await waitFor(() => {
-      expect(screen.getByText(/parameters/i)).toBeInTheDocument();
+      expect(screen.getByText("Parameters Packet Group")).toBeInTheDocument();
       expect(screen.getByText(/manage packets/i)).toBeInTheDocument();
       expect(mockSetUser).not.toHaveBeenCalled();
       expect(mockSetRequestedUrl).toHaveBeenCalledWith(null);
@@ -67,7 +67,7 @@ describe("redirect", () => {
     renderElement(`/redirect?token=${userState.token}`);
 
     await waitFor(() => {
-      expect(screen.getByText(/parameters/i)).toBeInTheDocument();
+      expect(screen.getByText("Parameters Packet Group")).toBeInTheDocument();
       expect(screen.getByText(/manage packets/i)).toBeInTheDocument();
       expect(mockSetUser).toHaveBeenCalledWith(userState.token);
       expect(mockSetRequestedUrl).toHaveBeenCalledWith(null);
@@ -81,7 +81,7 @@ describe("redirect", () => {
     renderElement(`/redirect?token=${userState.token}`);
 
     await waitFor(() => {
-      expect(screen.getByText(/parameters/i)).toBeInTheDocument();
+      expect(screen.getByText("Parameters Packet Group")).toBeInTheDocument();
       expect(screen.getByText(/manage packets/i)).toBeInTheDocument();
       expect(mockSetRequestedUrl).toHaveBeenCalledWith(null);
       expect(mockSetUser).toHaveBeenCalledWith(userState.token);

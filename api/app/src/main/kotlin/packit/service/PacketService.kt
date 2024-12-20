@@ -7,15 +7,15 @@ import org.springframework.http.ContentDisposition
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service
 import packit.contentTypes
 import packit.exceptions.PackitException
 import packit.helpers.PagingHelper
-import packit.model.Packet
-import packit.model.PacketGroup
-import packit.model.PacketMetadata
-import packit.model.PageablePayload
+import packit.model.*
+import packit.model.dto.PacketGroupDisplay
 import packit.model.dto.PacketGroupSummary
+import packit.model.dto.toPacketGroupSummary
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
 import java.security.MessageDigest
@@ -29,11 +29,11 @@ interface PacketService
     fun importPackets()
     fun getMetadataBy(id: String): PacketMetadata
     fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<ByteArrayResource, HttpHeaders>
-    fun getPacketGroupSummary(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroupSummary>
+    fun getPacketGroupSummaries(pageablePayload: PageablePayload, filter: String): Page<PacketGroupSummary>
     fun getPacketsByName(
         name: String, payload: PageablePayload
     ): Page<Packet>
-
+    fun getPacketGroupDisplay(name: String): PacketGroupDisplay
     fun getPacket(id: String): Packet
 }
 
@@ -44,6 +44,47 @@ class BasePacketService(
     private val outpackServerClient: OutpackServer
 ) : PacketService
 {
+    /**
+     * Return the long description for a packet assuming its custom metadata schema conforms to the orderly schema.
+     *
+     * @param packetCustomMetadata The packet custom metadata.
+     * @return The description for the packet.
+     */
+    private fun getDescriptionForPacket(packetCustomMetadata: CustomMetadata): String? {
+        val orderlyMetadata = packetCustomMetadata?.get("orderly") as? Map<*, *>
+        return (orderlyMetadata?.get("description") as? Map<*, *>)?.get("long") as? String
+    }
+
+    /**
+     * Check for 'display name' keys that may exist in non-orderly outpack custom schemas.
+     *
+     * @param packetCustomMetadata The packet custom metadata.
+     * @return The display name for the packet.
+     */
+    private fun getOutpackPacketDisplayName(packetCustomMetadata: CustomMetadata): String? {
+        return packetCustomMetadata?.values
+            ?.filterIsInstance<Map<*, *>>()
+            ?.firstNotNullOfOrNull { (it["display_name"] as? String) ?: (it["display"] as? String) }
+    }
+
+    /**
+     * Return the display name for a packet if its custom metadata schema conforms to the orderly schema and contains
+     * a display name.
+     * Also check for 'display name' keys that may exist in non-orderly outpack custom schemas.
+     * Falls back to name if no display name.
+     *
+     * @param packetCustomMetadata The packet custom metadata.
+     * @param name The name of the packet.
+     * @return The display name for the packet.
+     */
+    private fun getDisplayNameForPacket(packetCustomMetadata: CustomMetadata, name: String): String {
+        val orderlyMetadata = packetCustomMetadata?.get("orderly") as? Map<*, *>
+        val orderlyDisplayName = (orderlyMetadata?.get("description") as? Map<*, *>)?.get("display") as? String
+        return orderlyDisplayName?.takeIf { it.isNotBlank() }
+            ?: getOutpackPacketDisplayName(packetCustomMetadata)
+            ?: name
+    }
+
     override fun importPackets()
     {
         val mostRecent = packetRepository.findTopByOrderByImportTimeDesc()?.importTime
@@ -76,13 +117,51 @@ class BasePacketService(
         return packetRepository.findAll()
     }
 
-    override fun getPacketGroupSummary(
-        pageablePayload: PageablePayload,
-        filteredName: String
-    ): Page<PacketGroupSummary>
+    /**
+     * Find the id of the latest packet per group, excluding cases where the user does not have access.
+     *
+     * @param names The names of the packet groups.
+     * @return For each group, an id of the latest packet in the group.
+     */
+    private fun findLatestPacketIdsForGroups(names: List<String>): List<String>
     {
-        val packetGroupSummaries = packetRepository.findPacketGroupSummaryByName(filteredName)
-        return PagingHelper.convertListToPage(packetGroupSummaries, pageablePayload)
+        return names.mapNotNull {
+            try {
+                packetGroupRepository.findLatestPacketIdForGroup(it)?.id
+            } catch (e: AccessDeniedException) {
+                null
+            }
+        }
+    }
+
+    /**
+     * This function, somewhat inefficiently, applies a filter to metadata from outpack_server, rather than in SQL.
+     * This is because we need to filter on the displayName, which is not stored in the database.
+     * We intend to move to a more efficient solution in the future once we have made architectural changes.
+     */
+    override fun getPacketGroupSummaries(
+        pageablePayload: PageablePayload,
+        filter: String
+    ): Page<PacketGroupSummary> {
+        val allPacketGroups = packetGroupRepository.findAll()
+        val packetIds = findLatestPacketIdsForGroups(allPacketGroups.map { it.name })
+        val allPacketsMetadata = outpackServerClient.getMetadata()
+        // Filter the metadata to include only the packets previously established as being the latest in their group,
+        // then, if the name or display name matches the search filter,
+        // calculate the packetCount, displayName and description to generate a PacketGroupSummary.
+        val latestPackets = allPacketsMetadata.filter { it.id in packetIds }
+            .mapNotNull {
+                val display = getDisplayNameForPacket(it.custom, it.name)
+
+                if (it.name.contains(filter, ignoreCase = true) || display.contains(filter, ignoreCase = true)) {
+                    val packetCount = allPacketsMetadata.count { p -> p.name == it.name }
+                    it.toPacketGroupSummary(packetCount, display, getDescriptionForPacket(it.custom))
+                } else {
+                    null
+                }
+            }.sortedByDescending { it.getLatestTime() }
+
+        return PagingHelper.convertListToPage(latestPackets, pageablePayload)
     }
 
     override fun getPacketsByName(name: String, payload: PageablePayload): Page<Packet>
@@ -158,5 +237,15 @@ class BasePacketService(
         }
 
         return byteArrayResource to headers
+    }
+
+    override fun getPacketGroupDisplay(name: String): PacketGroupDisplay
+    {
+        val latestPacketId = packetGroupRepository.findLatestPacketIdForGroup(name)?.id
+            ?: throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
+        val metadata = getMetadataBy(latestPacketId)
+        val displayName = getDisplayNameForPacket(metadata.custom, metadata.name)
+        val description = getDescriptionForPacket(metadata.custom)
+        return PacketGroupDisplay(displayName, description)
     }
 }

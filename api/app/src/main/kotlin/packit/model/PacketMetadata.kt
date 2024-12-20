@@ -7,9 +7,11 @@ data class PacketMetadata(
     val files: List<FileMetadata>?,
     val git: GitMetadata?,
     val time: TimeMetadata,
-    val custom: Map<String, Any>?,
+    val custom: CustomMetadata,
     val depends: List<DependsMetadata>?
 )
+
+typealias CustomMetadata = Map<String, Any>?
 
 data class DependsMetadata(
     val packet: String,
