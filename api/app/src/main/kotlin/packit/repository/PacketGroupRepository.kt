@@ -22,9 +22,6 @@ interface PacketGroupRepository : JpaRepository<PacketGroup, Int>
     fun findAllByNameContaining(name: String, sort: Sort): List<PacketGroup>
 
     @PreAuthorize("@authz.canReadPacketGroup(#root, #name)")
-    fun findByName(name: String): PacketGroup?
-
-    @PreAuthorize("@authz.canReadPacketGroup(#root, #name)")
     @Query(
         value = """
             SELECT p.id AS id
