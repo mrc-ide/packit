@@ -30,13 +30,14 @@ class BasePacketGroupService(
     }
 
     override fun getPacketGroupDisplay(name: String): PacketGroupDisplay{
-        val latestPacketId = packetGroupRepository.findLatestPacketIdForGroup(name)?.id
-        val packetGroup = packetGroupRepository.findByName(name)
-        if (latestPacketId == null || packetGroup == null) {
+        val latestPacketId = packetGroupRepository.findLatestPacketIdForGroup(name)?.id ?:
             throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
-        }
         val packetOrderlyMetadata = packetService.getMetadataBy(latestPacketId).custom?.get("orderly") as? Map<*, *>
-        val packetLongDescription = (packetOrderlyMetadata?.get("description") as? Map<*, *>)?.get("long") as? String
-        return PacketGroupDisplay(packetGroup.latestDisplayName, packetLongDescription)
+        val packetDescriptionMetadata = (packetOrderlyMetadata?.get("description") as? Map<*, *>) as? Map<*, *>
+        val packetDisplayName = packetDescriptionMetadata?.get("display") as? String
+        return PacketGroupDisplay(
+            packetDisplayName ?: name,
+            packetDescriptionMetadata?.get("long") as? String
+        )
     }
 }
