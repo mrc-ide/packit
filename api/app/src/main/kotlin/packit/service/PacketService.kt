@@ -155,9 +155,7 @@ class BasePacketService(
 
                 if (it.name.contains(filter, ignoreCase = true) || display.contains(filter, ignoreCase = true)) {
                     val packetCount = allPacketsMetadata.count { p -> p.name == it.name }
-                    val description = getDescriptionForPacket(it.custom)
-
-                    it.toPacketGroupSummary(packetCount, display, description)
+                    it.toPacketGroupSummary(packetCount, display, getDescriptionForPacket(it.custom))
                 } else {
                     null
                 }

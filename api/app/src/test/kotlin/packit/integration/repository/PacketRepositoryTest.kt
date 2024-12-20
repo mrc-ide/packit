@@ -1,7 +1,9 @@
 package packit.integration.repository
 
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Sort
 import packit.integration.WithAuthenticatedUser
@@ -10,6 +12,7 @@ import packit.repository.PacketRepository
 import java.time.Instant
 import kotlin.test.assertEquals
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PacketRepositoryTest : RepositoryTest()
 {
     @Autowired
@@ -85,6 +88,12 @@ class PacketRepositoryTest : RepositoryTest()
     {
         packetRepository.deleteAll()
     }
+
+    @AfterAll
+    fun cleanup() {
+        packetRepository.deleteAll()
+    }
+
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])

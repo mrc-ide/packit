@@ -42,16 +42,17 @@ class PacketGroupControllerTest : IntegrationTest()
     @BeforeAll
     fun setupData()
     {
+        packetRepository.deleteAll()
+        packetGroupRepository.deleteAll()
         packetGroups = packetGroupRepository.saveAll(
-            packetGroupNames.map { name ->
-                PacketGroup(name = name, latestDisplayName = name.replace("-", " "))
-            }
+            packetGroupNames.map { name -> PacketGroup(name = name) }
         )
     }
 
     @AfterAll
     fun cleanup()
     {
+        packetRepository.deleteAll()
         packetGroupRepository.deleteAll(packetGroups)
     }
 
@@ -148,18 +149,18 @@ class PacketGroupControllerTest : IntegrationTest()
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:test-packetGroupName-1"])
     fun `getDisplay returns display name and description`()
     {
-        val now = Instant.now().epochSecond.toDouble()
+        val now = Instant.now().toEpochMilli().toDouble()
+        val packetWithDescriptionAndDisplayNameId = "20241122-111130-544ddd35"
         packetRepository.save(
-            Packet
-                (
-                "20241122-111130-544ddd35",
-                packetGroupNames[0],
-                "",
-                mapOf("a" to 1),
-                false,
-                now,
-                now,
-                now
+            Packet(
+                name = packetGroupNames[0],
+                id = packetWithDescriptionAndDisplayNameId,
+                displayName = "This db display name isn't used by the display endpoint",
+                parameters = mapOf(),
+                published = false,
+                importTime = now,
+                startTime = now,
+                endTime = now,
             )
         )
 
@@ -171,7 +172,7 @@ class PacketGroupControllerTest : IntegrationTest()
 
         assertSuccess(result)
         val resultBody = jacksonObjectMapper().readTree(result.body)
-        assertEquals("test packetGroupName 1", resultBody.get("latestDisplayName").asText())
+        assertEquals("Packet with description", resultBody.get("latestDisplayName").asText())
         assertTrue(resultBody.get("description").asText().startsWith("A longer description"))
     }
 

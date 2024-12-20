@@ -54,6 +54,7 @@ class PacketControllerTest
             override fun getLatestId(): String = "20180818-164847-7574883b"
             override fun getLatestTime(): Double = 1690902034.0
             override fun getLatestDisplayName(): String = "display name for analysis 1"
+            override fun getLatestDescription(): String? = "My description of analysis 1"
         },
         object : PacketGroupSummary
         {
@@ -62,6 +63,7 @@ class PacketControllerTest
             override fun getLatestId(): String = "20180818-164847-7574883b"
             override fun getLatestTime(): Double = 1690902034.0
             override fun getLatestDisplayName(): String = "display name for analysis 2"
+            override fun getLatestDescription(): String? = null
         }
     )
 

@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
 import packit.model.Packet
+import packit.model.PacketGroup
+import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
 import kotlin.test.assertEquals
 
@@ -21,24 +23,28 @@ class PacketControllerTest : IntegrationTest()
 {
     @Autowired
     private lateinit var packetRepository: PacketRepository
+    @Autowired
+    private lateinit var packetGroupRepository: PacketGroupRepository
     private lateinit var packets: List<Packet>
+    private lateinit var packetGroups: List<PacketGroup>
     private val packetGroupNames = listOf(
-        "test-packetGroupName-1",
+        "artefact-types",
         "test-packetGroupName-2",
         "test-packetGroupName-3",
         "test-packetGroupName-4",
-        "test-packetGroupName-5"
+        "test-packetGroupName-5",
     )
 
+    private val idOfArtefactTypesPacket = "20240729-154633-10abe7d1"
     @BeforeAll
     fun setupData()
     {
         packets = packetRepository.saveAll(
             listOf(
                 Packet(
-                    "20240729-154633-10abe7d1",
+                    idOfArtefactTypesPacket,
                     packetGroupNames[0],
-                    "test-packetGroupName-1",
+                    packetGroupNames[0],
                     mapOf("name" to "value"),
                     false,
                     0.0,
@@ -87,12 +93,16 @@ class PacketControllerTest : IntegrationTest()
                 ),
             )
         )
+        packetGroups = packetGroupRepository.saveAll(
+            packetGroupNames.map { PacketGroup(it) }
+        )
     }
 
     @AfterAll
     fun cleanup()
     {
         packetRepository.deleteAll(packets)
+        packetGroupRepository.deleteAll(packetGroups)
     }
 
     @Test
@@ -149,7 +159,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `test can not get packets by name if notauthenticated`()
+    fun `test can not get packets by name if not authenticated`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets/random?pageNumber=3&pageSize=5",
@@ -198,7 +208,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser(authorities = ["packet.read:packet:test-packetGroupName-1:20240729-154633-10abe7d1"])
+    @WithAuthenticatedUser(authorities = ["packet.read:packet:artefact-types:20240729-154633-10abe7d1"])
     fun `findPacketMetadata returns metadata if user has correct specific permission`()
     {
 
@@ -224,7 +234,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser(authorities = ["packet.read:packet:test-packetGroupName-1:20240729-154633-10abe7d1"])
+    @WithAuthenticatedUser(authorities = ["packet.read:packet:artefact-types:20240729-154633-10abe7d1"])
     fun `findFile returns file if user has correct specific permission`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
@@ -266,7 +276,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:test-packetGroupName-1"])
+    @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:artefact-types"])
     fun `pageableIndex returns of packets user can see`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
@@ -283,7 +293,7 @@ class PacketControllerTest : IntegrationTest()
     fun `getPacketsByName returns empty page if no permissions match`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/test-packetGroupName-1",
+            "/packets/artefact-types",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -292,11 +302,11 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser(authorities = ["packet.read:packet:test-packetGroupName-1:20230427-150755-2dbede94"])
+    @WithAuthenticatedUser(authorities = ["packet.read:packet:artefact-types:20230427-150755-2dbede94"])
     fun `getPacketsByName returns of packets user can see`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/test-packetGroupName-1",
+            "/packets/artefact-types",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -307,10 +317,10 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:random-name"])
-    fun `getPacketGroupSummary returns empty page if no permissions match`()
+    fun `getPacketGroupSummaries returns empty page if no permissions match`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/packetGroupSummary",
+            "/packets/packetGroupSummaries",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -319,19 +329,14 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser(
-        authorities = [
-            "packet.read:packetGroup:test-packetGroupName-1",
-            "packet.read:packet:test-packetGroupName-3:20230427-150755-2dbede95"
-        ]
-    )
-    fun `getPacketGroupSummary returns of packet groups user can see`()
+    @WithAuthenticatedUser(authorities = ["packet.read"])
+    fun `getPacketGroupSummary returns list of packet groups user can see`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets/packetGroupSummaries",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
-        assertEquals(2, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
+        assertEquals(1, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
     }
 }

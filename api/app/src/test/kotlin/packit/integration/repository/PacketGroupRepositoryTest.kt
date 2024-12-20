@@ -1,7 +1,9 @@
 package packit.integration.repository
 
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import packit.integration.WithAuthenticatedUser
 import packit.model.Packet
@@ -11,6 +13,7 @@ import packit.repository.PacketRepository
 import java.time.Instant
 import kotlin.test.assertEquals
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PacketGroupRepositoryTest : RepositoryTest()
 {
     @Autowired
@@ -61,6 +64,12 @@ class PacketGroupRepositoryTest : RepositoryTest()
     @BeforeEach
     override fun setup()
     {
+        packetRepository.deleteAll()
+        packetGroupRepository.deleteAll()
+    }
+
+    @AfterAll
+    fun cleanup() {
         packetRepository.deleteAll()
         packetGroupRepository.deleteAll()
     }
