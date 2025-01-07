@@ -85,6 +85,7 @@ export interface Custom {
     artefacts: Artefact[];
     description: Description;
     session: Session;
+    role: Role[];
   };
 }
 
@@ -96,6 +97,18 @@ interface Description {
 interface Artefact {
   description: string;
   paths: string[];
+}
+
+interface Role {
+  path: string;
+  role: Roles;
+}
+
+export enum Roles {
+  Orderly = "orderly",
+  Resource = "resource",
+  Dependency = "dependency",
+  Shared = "shared",
 }
 
 export interface FileMetadata {
