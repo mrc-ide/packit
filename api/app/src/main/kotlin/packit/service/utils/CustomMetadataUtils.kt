@@ -9,8 +9,8 @@ import packit.model.CustomMetadata
  * @return The description for the packet.
  */
 fun getDescriptionForPacket(packetCustomMetadata: CustomMetadata): String? {
-    val orderlyMetadata = packetCustomMetadata?.get("orderly") as? Map<*, *>
-    return (orderlyMetadata?.get("description") as? Map<*, *>)?.get("long") as? String
+    val orderlyMetadata = packetCustomMetadata?.get("orderly") as? Map<String, *>
+    return (orderlyMetadata?.get("description") as? Map<String, String>)?.get("long")
 }
 
 /**
