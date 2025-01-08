@@ -63,7 +63,7 @@ class BasePacketService(
      */
     private fun getOutpackPacketDisplayName(packetCustomMetadata: CustomMetadata): String? {
         return packetCustomMetadata?.values
-            ?.filterIsInstance<Map<*, *>>()
+            ?.filterIsInstance<Map<String, Any>>()
             ?.firstNotNullOfOrNull { (it["display_name"] as? String) ?: (it["display"] as? String) }
     }
 
