@@ -160,7 +160,7 @@ class BasePacketService(
                 } else {
                     null
                 }
-            }.sortedByDescending { it.getLatestTime() }
+            }.sortedByDescending { it.latestTime }
 
         return PagingHelper.convertListToPage(latestPackets, pageablePayload)
     }

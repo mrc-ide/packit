@@ -1,11 +1,10 @@
 package packit.model.dto
 
-interface PacketGroupSummary
-{
-    fun getName(): String
-    fun getPacketCount(): Int
-    fun getLatestId(): String
-    fun getLatestTime(): Double
-    fun getLatestDisplayName(): String
-    fun getLatestDescription(): String?
-}
+data class PacketGroupSummary(
+    val name: String,
+    val packetCount: Int,
+    val latestId: String,
+    val latestTime: Double,
+    val latestDisplayName: String,
+    val latestDescription: String?
+)
