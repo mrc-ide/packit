@@ -10,6 +10,8 @@ import packit.model.PacketGroup
 import packit.model.PageablePayload
 import packit.model.dto.PacketGroupDisplay
 import packit.repository.PacketGroupRepository
+import packit.service.utils.getDescriptionForPacket
+import packit.service.utils.getDisplayNameForPacket
 
 interface PacketGroupService
 {
@@ -34,8 +36,8 @@ class BasePacketGroupService(
         val latestPacketId = packetGroupRepository.findLatestPacketIdForGroup(name)?.id
             ?: throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
         val metadata = packetService.getMetadataBy(latestPacketId)
-        val displayName = packetService.getDisplayNameForPacket(metadata.custom, metadata.name)
-        val description = packetService.getDescriptionForPacket(metadata.custom)
+        val displayName = getDisplayNameForPacket(metadata.custom, metadata.name)
+        val description = getDescriptionForPacket(metadata.custom)
         return PacketGroupDisplay(displayName, description)
     }
 }

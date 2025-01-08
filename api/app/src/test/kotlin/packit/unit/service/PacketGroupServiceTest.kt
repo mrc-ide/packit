@@ -13,6 +13,30 @@ import kotlin.test.assertEquals
 
 class PacketGroupServiceTest
 {
+    @Test
+    fun `getPacketGroups calls repository with correct params and returns its result`()
+    {
+        val packetGroupRepository = mock<PacketGroupRepository>()
+        val packetService = mock<PacketService>()
+        val sut = BasePacketGroupService(packetGroupRepository, packetService)
+        val pageablePayload = PageablePayload(0, 10)
+        val filterName = "test"
+        val packetGroups = listOf(PacketGroup("test1"), PacketGroup("test2"))
+        whenever(
+            packetGroupRepository.findAllByNameContaining(
+                eq(filterName), any<Sort>()
+            )
+        ).thenReturn(packetGroups)
+
+        val result = sut.getPacketGroups(pageablePayload, filterName)
+
+        assertEquals(packetGroups, result.content)
+        verify(packetGroupRepository).findAllByNameContaining(
+            filterName,
+            Sort.by("name")
+        )
+    }
+
     private val displayName = "Testable Display Name"
     private val description = "A testable description"
     private val packetMetadata =
@@ -38,31 +62,7 @@ class PacketGroupServiceTest
         )
 
     @Test
-    fun `getPacketGroups calls repository with correct params and returns its result`()
-    {
-        val packetGroupRepository = mock<PacketGroupRepository>()
-        val packetService = mock<PacketService>()
-        val sut = BasePacketGroupService(packetGroupRepository, packetService)
-        val pageablePayload = PageablePayload(0, 10)
-        val filterName = "test"
-        val packetGroups = listOf(PacketGroup("test1"), PacketGroup("test2"))
-        whenever(
-            packetGroupRepository.findAllByNameContaining(
-                eq(filterName), any<Sort>()
-            )
-        ).thenReturn(packetGroups)
-
-        val result = sut.getPacketGroups(pageablePayload, filterName)
-
-        assertEquals(packetGroups, result.content)
-        verify(packetGroupRepository).findAllByNameContaining(
-            filterName,
-            Sort.by("name")
-        )
-    }
-
-    @Test
-    fun `getPacketGroupDisplay returns display name and description`()
+    fun `getPacketGroupDisplay returns display name and description when there is a description and a display name`()
     {
         val packetGroupRepository = mock<PacketGroupRepository>()
         val packetService = mock<PacketService>()
@@ -71,10 +71,6 @@ class PacketGroupServiceTest
         }
         whenever(packetGroupRepository.findLatestPacketIdForGroup("test")).thenReturn(packetIdProjection)
         whenever(packetService.getMetadataBy(packetMetadata.id)).thenReturn(packetMetadata)
-        whenever(packetService.getDisplayNameForPacket(packetMetadata.custom, packetMetadata.name))
-            .thenReturn(displayName)
-        whenever(packetService.getDescriptionForPacket(packetMetadata.custom))
-            .thenReturn(description)
 
         val sut = BasePacketGroupService(packetGroupRepository, packetService)
 
@@ -84,7 +80,60 @@ class PacketGroupServiceTest
         assertEquals(description, result.description)
         verify(packetGroupRepository).findLatestPacketIdForGroup("test")
         verify(packetService).getMetadataBy(packetMetadata.id)
-        verify(packetService).getDisplayNameForPacket(packetMetadata.custom, packetMetadata.name)
-        verify(packetService).getDescriptionForPacket(packetMetadata.custom)
+    }
+
+    @Test
+    fun `getPacketGroupDisplay returns display name (=name) and description when there is no description`()
+    {
+        val packetMetadataWithNullDescription = packetMetadata.copy(
+            custom = mapOf(
+                "orderly" to mapOf(
+                    "description" to mapOf(
+                        "display" to null,
+                        "long" to null
+                    )
+                )
+            ),
+        )
+        val packetGroupRepository = mock<PacketGroupRepository>()
+        val packetService = mock<PacketService>()
+        val packetIdProjection = mock<PacketIdProjection> {
+            on { id } doReturn packetMetadataWithNullDescription.id
+        }
+        whenever(packetGroupRepository.findLatestPacketIdForGroup("test")).thenReturn(packetIdProjection)
+        whenever(packetService.getMetadataBy(packetMetadataWithNullDescription.id)).thenReturn(packetMetadataWithNullDescription)
+
+        val sut = BasePacketGroupService(packetGroupRepository, packetService)
+
+        val result = sut.getPacketGroupDisplay("test")
+
+        assertEquals(packetMetadataWithNullDescription.name, result.latestDisplayName)
+        assertEquals(null, result.description)
+        verify(packetGroupRepository).findLatestPacketIdForGroup("test")
+        verify(packetService).getMetadataBy(packetMetadataWithNullDescription.id)
+    }
+
+    @Test
+    fun `getPacketGroupDisplay returns display name (=name) and description when there is no custom data`()
+    {
+        val packetWithoutCustomMetadata = packetMetadata.copy(
+            custom = mapOf()
+        )
+        val packetGroupRepository = mock<PacketGroupRepository>()
+        val packetService = mock<PacketService>()
+        val packetIdProjection = mock<PacketIdProjection> {
+            on { id } doReturn packetWithoutCustomMetadata.id
+        }
+        whenever(packetGroupRepository.findLatestPacketIdForGroup("test")).thenReturn(packetIdProjection)
+        whenever(packetService.getMetadataBy(packetWithoutCustomMetadata.id)).thenReturn(packetWithoutCustomMetadata)
+
+        val sut = BasePacketGroupService(packetGroupRepository, packetService)
+
+        val result = sut.getPacketGroupDisplay("test")
+
+        assertEquals(packetWithoutCustomMetadata.name, result.latestDisplayName)
+        assertEquals(null, result.description)
+        verify(packetGroupRepository).findLatestPacketIdForGroup("test")
+        verify(packetService).getMetadataBy(packetWithoutCustomMetadata.id)
     }
 }
