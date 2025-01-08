@@ -171,7 +171,7 @@ class PacketGroupServiceTest
     @Test
     fun `getPacketGroupDisplay returns display name (=name) and description when there is no description`()
     {
-        val packetMetadataWithNullDescription = packetMetadata.copy(
+        val packetMetadataWithNullDesc = packetMetadata.copy(
             custom = mapOf(
                 "orderly" to mapOf(
                     "description" to mapOf(
@@ -182,19 +182,19 @@ class PacketGroupServiceTest
             ),
         )
         val packetIdProjection = mock<PacketIdProjection> {
-            on { id } doReturn packetMetadataWithNullDescription.id
+            on { id } doReturn packetMetadataWithNullDesc.id
         }
         whenever(packetGroupRepository.findLatestPacketIdForGroup("test")).thenReturn(packetIdProjection)
-        whenever(packetService.getMetadataBy(packetMetadataWithNullDescription.id)).thenReturn(packetMetadataWithNullDescription)
+        whenever(packetService.getMetadataBy(packetMetadataWithNullDesc.id)).thenReturn(packetMetadataWithNullDesc)
 
         val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
 
         val result = sut.getPacketGroupDisplay("test")
 
-        assertEquals(packetMetadataWithNullDescription.name, result.latestDisplayName)
+        assertEquals(packetMetadataWithNullDesc.name, result.latestDisplayName)
         assertEquals(null, result.description)
         verify(packetGroupRepository).findLatestPacketIdForGroup("test")
-        verify(packetService).getMetadataBy(packetMetadataWithNullDescription.id)
+        verify(packetService).getMetadataBy(packetMetadataWithNullDesc.id)
     }
 
     @Test

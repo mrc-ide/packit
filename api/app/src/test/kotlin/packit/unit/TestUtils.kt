@@ -1,8 +1,8 @@
 package packit.unit
 
 import packit.model.Packet
-import packit.model.dto.OutpackMetadata
 import packit.model.TimeMetadata
+import packit.model.dto.OutpackMetadata
 
 fun packetToOutpackMetadata(packet: Packet): OutpackMetadata
 {
