@@ -45,7 +45,7 @@ class BasePacketService(
 ) : PacketService
 {
     /**
-     * Return the long description for a packet assuming its custom metadata schema conforms to the orderly schema.
+     * Return the long description for a packet if its custom metadata schema conforms to the orderly schema.
      *
      * @param packetCustomMetadata The packet custom metadata.
      * @return The description for the packet.
