@@ -149,14 +149,14 @@ class BasePacketService(
         val allPacketsMetadata = outpackServerClient.getMetadata()
         // Filter the metadata to include only the packets previously established as being the latest in their group,
         // then, if the name or display name matches the search filter,
-        // calculate the packetCount, displayName and description to generate a PacketGroupSummary.
+        // calculate the packetCount and displayName to generate a PacketGroupSummary.
         val latestPackets = allPacketsMetadata.filter { it.id in packetIds }
             .mapNotNull {
                 val display = getDisplayNameForPacket(it.custom, it.name)
 
                 if (it.name.contains(filter, ignoreCase = true) || display.contains(filter, ignoreCase = true)) {
                     val packetCount = allPacketsMetadata.count { p -> p.name == it.name }
-                    it.toPacketGroupSummary(packetCount, display, getDescriptionForPacket(it.custom))
+                    it.toPacketGroupSummary(packetCount, display)
                 } else {
                     null
                 }

@@ -1,16 +1,12 @@
 package packit.unit.service
 
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.*
 import org.springframework.data.domain.Sort
 import packit.model.*
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketIdProjection
-import packit.repository.PacketRepository
 import packit.service.BasePacketGroupService
-import packit.service.BasePacketService
-import packit.service.OutpackServerClient
 import packit.service.PacketService
 import java.time.Instant
 import kotlin.test.assertEquals

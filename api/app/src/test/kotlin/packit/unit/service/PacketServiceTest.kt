@@ -132,7 +132,6 @@ class PacketServiceTest
                 override fun getLatestId(): String = testPacketLatestId
                 override fun getLatestTime(): Double = now + 100
                 override fun getLatestDisplayName(): String = "test name (latest display name)"
-                override fun getLatestDescription(): String? = "Description for test"
             },
             object : PacketGroupSummary
             {
@@ -141,7 +140,6 @@ class PacketServiceTest
                 override fun getLatestId(): String = test2PacketLatestId
                 override fun getLatestTime(): Double = now
                 override fun getLatestDisplayName(): String = "Test 2 Display Name"
-                override fun getLatestDescription(): String? = "Description for test2"
             }
         )
 
@@ -229,7 +227,6 @@ class PacketServiceTest
             assertEquals(result.content[i].getLatestId(), packetGroupSummaries[i].getLatestId())
             assertEquals(result.content[i].getLatestTime(), packetGroupSummaries[i].getLatestTime(), 1.0)
             assertEquals(result.content[i].getLatestDisplayName(), packetGroupSummaries[i].getLatestDisplayName())
-            assertEquals(result.content[i].getLatestDescription(), packetGroupSummaries[i].getLatestDescription())
         }
         verify(packetGroupRepository).findAll()
         verify(packetGroupRepository, times(2)).findLatestPacketIdForGroup(anyString())

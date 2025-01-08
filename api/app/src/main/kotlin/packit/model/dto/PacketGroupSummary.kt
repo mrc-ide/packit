@@ -7,5 +7,4 @@ interface PacketGroupSummary
     fun getLatestId(): String
     fun getLatestTime(): Double
     fun getLatestDisplayName(): String
-    fun getLatestDescription(): String?
 }
