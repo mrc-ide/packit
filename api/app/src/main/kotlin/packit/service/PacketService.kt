@@ -13,7 +13,6 @@ import packit.contentTypes
 import packit.exceptions.PackitException
 import packit.helpers.PagingHelper
 import packit.model.*
-import packit.model.dto.PacketGroupDisplay
 import packit.model.dto.PacketGroupSummary
 import packit.model.dto.toPacketGroupSummary
 import packit.repository.PacketGroupRepository

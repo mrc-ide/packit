@@ -12,7 +12,6 @@ import packit.model.dto.PacketGroupDisplay
 import packit.model.dto.PacketGroupDto
 import packit.model.toDto
 import packit.service.PacketGroupService
-import packit.service.PacketService
 
 @Controller
 @RequestMapping("/packetGroups")
