@@ -18,7 +18,6 @@ import packit.service.PacketService
 @RequestMapping("/packetGroups")
 class PacketGroupController(
     private val packetGroupService: PacketGroupService,
-    private val packetService: PacketService
 )
 {
     @GetMapping
@@ -36,7 +35,7 @@ class PacketGroupController(
     fun getDisplay(
         @PathVariable name: String
     ): ResponseEntity<PacketGroupDisplay> {
-        val result = packetService.getPacketGroupDisplay(name)
+        val result = packetGroupService.getPacketGroupDisplay(name)
 
         return ResponseEntity.ok(result)
     }
