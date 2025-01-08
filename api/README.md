@@ -50,7 +50,7 @@ Dependencies must be running for integration tests to pass.
 For database migrations, we use [Flyway](https://flywaydb.org/). Flyway will look in the `db/migration` directory for SQL scripts to run.
 A table called `flyway_schema_history` will be created in the database to keep track of which scripts have been run. To create a new migration
 script, create a new file in the `api/app/src/main/resources/db/migration` directory with the following naming convention: `V{version}__{description}.sql`.
-For example, `V1__create_table.sql`. The version number should be the current date in yyyymmdd and always greater than all existing version numbers. Flyway will run the scripts in order of version number.
+For example, `V20250107__create_table.sql`. The version number should be the current date in yyyymmdd and always greater than all existing version numbers. Flyway will run the scripts in order of version number.
 The config `spring.jpa.hibernate.ddl-auto=validate` in application.properties will ensure Entity classes are in sync with the database schema.
 The migrations and validation are run on application startup. If validation fails, the application will not start.
 
