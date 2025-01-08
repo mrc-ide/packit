@@ -9,13 +9,11 @@ import org.springframework.data.domain.Sort
 import org.springframework.http.HttpHeaders
 import packit.exceptions.PackitException
 import packit.model.*
-import packit.model.dto.OutpackMetadata
-import packit.model.dto.PacketGroupSummary
 import packit.repository.PacketGroupRepository
-import packit.repository.PacketIdProjection
 import packit.repository.PacketRepository
 import packit.service.BasePacketService
 import packit.service.OutpackServerClient
+import packit.unit.packetToOutpackMetadata
 import java.time.Instant
 import java.util.*
 import kotlin.test.assertEquals
@@ -84,24 +82,6 @@ class PacketServiceTest
             )
         )
 
-    private fun packetToOutpackMetadata(packet: Packet): OutpackMetadata
-    {
-        return OutpackMetadata(
-            packet.id,
-            packet.name,
-            packet.parameters,
-            TimeMetadata(packet.endTime, packet.startTime),
-            mapOf(
-                "orderly" to mapOf(
-                    "description" to mapOf(
-                        "display" to packet.displayName,
-                        "long" to "Description for ${packet.name}"
-                    )
-                )
-            )
-        )
-    }
-
     private val packetMetadata =
         PacketMetadata(
             "3",
@@ -123,25 +103,6 @@ class PacketServiceTest
             ),
             emptyList()
         )
-    private val packetGroupSummaries =
-        listOf(
-            object : PacketGroupSummary
-            {
-                override fun getName(): String = "test"
-                override fun getPacketCount(): Int = 3
-                override fun getLatestId(): String = testPacketLatestId
-                override fun getLatestTime(): Double = now + 100
-                override fun getLatestDisplayName(): String = "test name (latest display name)"
-            },
-            object : PacketGroupSummary
-            {
-                override fun getName(): String = "test2"
-                override fun getPacketCount(): Int = 2
-                override fun getLatestId(): String = test2PacketLatestId
-                override fun getLatestTime(): Double = now
-                override fun getLatestDisplayName(): String = "Test 2 Display Name"
-            }
-        )
 
     private val responseByte = "htmlContent".toByteArray() to HttpHeaders.EMPTY
 
@@ -159,12 +120,9 @@ class PacketServiceTest
         on { findAll() } doReturn packetGroups
     }
 
-    private val allMetadata = newPackets.map { packetToOutpackMetadata(it) } +
-        oldPackets.map { packetToOutpackMetadata(it) }
     private val outpackServerClient =
         mock<OutpackServerClient> {
             on { getMetadata(oldPackets[0].importTime) } doReturn newPackets.map { packetToOutpackMetadata(it) }
-            on { getMetadata() } doReturn allMetadata
             on { getMetadataById(packetMetadata.id) } doReturn packetMetadata
             on { getFileByHash(anyString()) } doReturn responseByte
         }
@@ -207,101 +165,6 @@ class PacketServiceTest
         assertEquals(result.content, oldPackets)
         verify(packetRepository)
             .findByName("pg1", Sort.by("startTime").descending())
-    }
-
-    @Test
-    fun `gets packet groups summaries`()
-    {
-        whenever(packetGroupRepository.findLatestPacketIdForGroup("test"))
-            .thenReturn(object : PacketIdProjection { override val id: String = testPacketLatestId })
-        whenever(packetGroupRepository.findLatestPacketIdForGroup("test2"))
-            .thenReturn(object : PacketIdProjection { override val id: String = test2PacketLatestId })
-        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
-
-        val result = sut.getPacketGroupSummaries(PageablePayload(0, 10), "")
-
-        assertEquals(result.totalElements, 2)
-        for (i in packetGroupSummaries.indices) {
-            assertEquals(result.content[i].getName(), packetGroupSummaries[i].getName())
-            assertEquals(result.content[i].getPacketCount(), packetGroupSummaries[i].getPacketCount())
-            assertEquals(result.content[i].getLatestId(), packetGroupSummaries[i].getLatestId())
-            assertEquals(result.content[i].getLatestTime(), packetGroupSummaries[i].getLatestTime(), 1.0)
-            assertEquals(result.content[i].getLatestDisplayName(), packetGroupSummaries[i].getLatestDisplayName())
-        }
-        verify(packetGroupRepository).findAll()
-        verify(packetGroupRepository, times(2)).findLatestPacketIdForGroup(anyString())
-        verify(outpackServerClient).getMetadata()
-    }
-
-    @Test
-    fun `can filter packet groups summaries by name`()
-    {
-        whenever(packetGroupRepository.findLatestPacketIdForGroup("test"))
-            .thenReturn(object : PacketIdProjection { override val id: String = testPacketLatestId })
-        whenever(packetGroupRepository.findLatestPacketIdForGroup("test2"))
-            .thenReturn(object : PacketIdProjection { override val id: String = test2PacketLatestId })
-        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
-
-        val result = sut.getPacketGroupSummaries(PageablePayload(0, 10), "test2")
-
-        assertEquals(result.totalElements, 1)
-        assertEquals(result.content[0].getName(), "test2")
-        verify(packetGroupRepository).findLatestPacketIdForGroup("test2")
-        verify(outpackServerClient).getMetadata()
-    }
-
-    @Test
-    fun `can filter packet groups summaries by display name`()
-    {
-        whenever(packetGroupRepository.findLatestPacketIdForGroup("test"))
-            .thenReturn(object : PacketIdProjection { override val id: String = testPacketLatestId })
-        whenever(packetGroupRepository.findLatestPacketIdForGroup("test2"))
-            .thenReturn(object : PacketIdProjection { override val id: String = test2PacketLatestId })
-        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
-
-        val result = sut.getPacketGroupSummaries(PageablePayload(0, 10), "2 Display")
-
-        assertEquals(result.totalElements, 1)
-        assertEquals(result.content[0].getLatestDisplayName(), "Test 2 Display Name")
-        verify(packetGroupRepository).findLatestPacketIdForGroup("test2")
-        verify(outpackServerClient).getMetadata()
-    }
-
-    @Test
-    fun `can get summaries for non-orderly packets that use the outpack custom property to specify a display name`()
-    {
-        val metadataWithDifferentCustomSchema = listOf(
-            OutpackMetadata(
-                testPacketLatestId,
-            "testing",
-                mapOf("alpha" to 1),
-                TimeMetadata(now, now),
-                mapOf(
-                    "different" to mapOf(
-                        "display" to "the display name",
-                    )
-                )
-            )
-        )
-        val differentOutpackServerClient = mock<OutpackServerClient> {
-            on { getMetadata() } doReturn metadataWithDifferentCustomSchema
-        }
-
-        val packetGroupRepo = mock<PacketGroupRepository> {
-            on { findAll() } doReturn listOf(PacketGroup("testing"))
-        }
-        whenever(packetGroupRepo.findLatestPacketIdForGroup("testing"))
-            .thenReturn(object : PacketIdProjection { override val id: String = testPacketLatestId })
-
-        val sut = BasePacketService(packetRepository, packetGroupRepo, differentOutpackServerClient)
-
-        val result = sut.getPacketGroupSummaries(PageablePayload(0, 10), "")
-
-        assertEquals(result.totalElements, 1)
-        assertEquals(result.content[0].getName(), "testing")
-        assertEquals(result.content[0].getLatestDisplayName(), "the display name")
-        verify(packetGroupRepo).findLatestPacketIdForGroup("testing")
-        verify(differentOutpackServerClient).getMetadata()
     }
 
     @Test

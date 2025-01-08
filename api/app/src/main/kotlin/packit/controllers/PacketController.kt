@@ -10,11 +10,15 @@ import packit.model.PageablePayload
 import packit.model.dto.PacketDto
 import packit.model.dto.PacketGroupSummary
 import packit.model.toDto
+import packit.service.PacketGroupService
 import packit.service.PacketService
 
 @RestController
 @RequestMapping("/packets")
-class PacketController(private val packetService: PacketService)
+class PacketController(
+    private val packetService: PacketService,
+    private val packetGroupService: PacketGroupService
+)
 {
     @GetMapping
     fun pageableIndex(
@@ -48,7 +52,7 @@ class PacketController(private val packetService: PacketService)
         @RequestParam(required = false, defaultValue = "") filter: String,
     ): ResponseEntity<Page<PacketGroupSummary>> {
         val payload = PageablePayload(pageNumber, pageSize)
-        return ResponseEntity.ok(packetService.getPacketGroupSummaries(payload, filter))
+        return ResponseEntity.ok(packetGroupService.getPacketGroupSummaries(payload, filter))
     }
 
     @GetMapping("/metadata/{id}")
