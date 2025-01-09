@@ -169,7 +169,7 @@ class PacketGroupServiceTest
     }
 
     @Test
-    fun `getPacketGroupDisplay returns display name (=name) and description when there is no description`()
+    fun `getPacketGroupDisplay returns display name (=name) and null description when there is no description`()
     {
         val packetMetadataWithNullDesc = packetMetadata.copy(
             custom = mapOf(
@@ -198,7 +198,7 @@ class PacketGroupServiceTest
     }
 
     @Test
-    fun `getPacketGroupDisplay returns display name (=name) and description when there is no custom data`()
+    fun `getPacketGroupDisplay returns display name (=name) and null description when there is no custom data`()
     {
         val packetWithoutCustomMetadata = packetMetadata.copy(
             custom = mapOf()
