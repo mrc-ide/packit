@@ -4,14 +4,21 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
 import { PacketGroup } from "../../../../app/components/contents/PacketGroup";
 import { server } from "../../../../msw/server";
-import { mockPacketGroupResponse } from "../../../mocks";
+import {
+  mockPacket,
+  mockPacketGroupResponse,
+  mockPacketGroupSummaries
+} from "../../../mocks";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
+import appConfig from "../../../../config/appConfig";
+
 describe("PacketGroup", () => {
-  const packetGroupName = mockPacketGroupResponse.content[0].name;
-  const renderComponent = () =>
+  const packetGroupName = mockPacket.name;
+  const latestPacketDescription = mockPacket.custom?.orderly.description.long as string;
+  const renderComponent = (packetGroup: string = packetGroupName) =>
     render(
       <SWRConfig value={{ dedupingInterval: 0 }}>
-        <MemoryRouter initialEntries={[`/${packetGroupName}`]}>
+        <MemoryRouter initialEntries={[`/${packetGroup}`]}>
           <Routes>
             <Route path="/:packetName" element={<PacketGroup />} />
           </Routes>
@@ -19,11 +26,39 @@ describe("PacketGroup", () => {
       </SWRConfig>
     );
 
-  it("should render title with packet name", async () => {
+  it("should render packet header with latest display name in the packet group, and name of packet group", async () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByRole("heading", { name: packetGroupName })).toBeVisible();
+      expect(screen.getByRole("heading", { name: mockPacket.displayName })).toBeVisible();
+      expect(screen.getByText(packetGroupName)).toBeVisible();
+    });
+  });
+
+  it("should render heading with the name of the packet group when the display name is the same as name," +
+    "and be able to cope with a null packet description", async () => {
+    const dependsPg = mockPacketGroupSummaries.content[mockPacketGroupSummaries.content.length - 1];
+    const packetGroupDisplayUrl = `${appConfig.apiUrl()}/packetGroups/${dependsPg.name}/display`;
+    server.use(
+      rest.get(packetGroupDisplayUrl, (req, res, ctx) => {
+        return res(ctx.json({
+          latestDisplayName: dependsPg.latestDisplayName,
+          description: null
+        }));
+      })
+    );
+    renderComponent(dependsPg.name);
+
+    await waitFor(() => {
+      expect(screen.getByRole("heading", { name: dependsPg.name })).toBeVisible();
+    });
+  });
+
+  it("should render the latest description in the packet group", async () => {
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText(latestPacketDescription)).toBeVisible();
     });
   });
 
@@ -42,22 +77,22 @@ describe("PacketGroup", () => {
     expect(screen.getByText(/none/i)).toBeVisible();
   });
 
-  it("should render error component when error fetching packets", async () => {
+  it("should render error component when error fetching packet group", async () => {
     server.use(
-      rest.get("*", (req, res, ctx) => {
+      rest.get(`${appConfig.apiUrl()}/packetGroups/${mockPacket.name}/display`, (req, res, ctx) => {
         return res(ctx.status(400));
       })
     );
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText(/error fetching/i)).toBeVisible();
+      expect(screen.getByText(/error fetching packet group/i)).toBeVisible();
     });
   });
 
-  it("should render unauthorized when 401 error fetching packets", async () => {
+  it("should render unauthorized when 401 error fetching packet group", async () => {
     server.use(
-      rest.get("*", (req, res, ctx) => {
+      rest.get(`${appConfig.apiUrl()}/packetGroups/${mockPacket.name}/display`, (req, res, ctx) => {
         return res(ctx.status(HttpStatus.Unauthorized));
       })
     );

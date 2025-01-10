@@ -10,10 +10,10 @@ class PacketGroupTest
     @Test
     fun `toDto returns correct PacketGroupDto for given PacketGroup`()
     {
-        val packetGroup = PacketGroup("group1")
+        val packetGroup = PacketGroup("name1")
         packetGroup.id = 1
         val packetGroupDto = packetGroup.toDto()
-        assertEquals("group1", packetGroupDto.name)
+        assertEquals("name1", packetGroupDto.name)
         assertEquals(1, packetGroupDto.id)
     }
 }

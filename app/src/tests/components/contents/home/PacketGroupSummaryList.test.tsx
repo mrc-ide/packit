@@ -1,10 +1,10 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import {render, screen, waitFor, within} from "@testing-library/react";
 import { rest } from "msw";
 import { MemoryRouter } from "react-router";
 import { SWRConfig } from "swr";
 import { PacketGroupSummaryList } from "../../../../app/components/contents/home/PacketGroupSummaryList";
 import { server } from "../../../../msw/server";
-import { mockPacketGroupSummary } from "../../../mocks";
+import { mockPacketGroupSummaries } from "../../../mocks";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
 
 describe("PacketList test", () => {
@@ -21,12 +21,14 @@ describe("PacketList test", () => {
     renderComponent();
 
     await waitFor(() => {
-      mockPacketGroupSummary.content.forEach((packet, index) => {
-        expect(screen.getByRole("link", { name: packet.name })).toHaveAttribute("href", `/${packet.name}`);
-        expect(screen.getAllByRole("link", { name: /latest/i })[index]).toHaveAttribute(
-          "href",
-          `/${packet.name}/${packet.latestId}`
-        );
+      mockPacketGroupSummaries.content.forEach((packetGroup, index) => {
+        const listItem = screen.getAllByRole("listitem")[index];
+        expect(within(listItem).getByRole("link", { name: packetGroup.latestDisplayName }))
+          .toHaveAttribute("href", `/${packetGroup.name}`);
+        expect(within(listItem).getByRole("link", { name: /latest/i }))
+          .toHaveAttribute("href", `/${packetGroup.name}/${packetGroup.latestId}`);
+        expect(within(listItem).getByText(new RegExp(`${packetGroup.packetCount} packet`))).toBeVisible();
+        expect(within(listItem).getByText(packetGroup.name)).toBeVisible();
       });
     });
 

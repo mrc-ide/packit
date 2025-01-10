@@ -1,7 +1,9 @@
 package packit.integration.repository
 
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Sort
 import packit.integration.WithAuthenticatedUser
@@ -10,6 +12,7 @@ import packit.repository.PacketRepository
 import java.time.Instant
 import kotlin.test.assertEquals
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PacketRepositoryTest : RepositoryTest()
 {
     @Autowired
@@ -86,6 +89,11 @@ class PacketRepositoryTest : RepositoryTest()
         packetRepository.deleteAll()
     }
 
+    @AfterAll
+    fun cleanup() {
+        packetRepository.deleteAll()
+    }
+
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `can get packets from db`()
@@ -114,52 +122,6 @@ class PacketRepositoryTest : RepositoryTest()
         assertEquals(result.size, 2)
         assertEquals(result[0].name, "test1")
         assertEquals(result[1].name, "test1")
-    }
-
-    @Test
-    @WithAuthenticatedUser(authorities = ["packet.read"])
-
-    fun `can get right order and data expected from findPacketGroupSummaryByName`()
-    {
-        packetRepository.saveAll(packets)
-
-        val result = packetRepository.findPacketGroupSummaryByName("").map {
-            object
-            {
-                val name = it.getName()
-                val latestTime = it.getLatestTime()
-                val latestId = it.getLatestId()
-                val packetCount = it.getPacketCount()
-            }
-        }
-        assertEquals(result.size, 4)
-        assertEquals(result[0].name, "test1")
-        assertEquals(result[0].latestId, "20170819-164847-7574333b")
-        assertEquals(result[0].latestTime, now + 5)
-        assertEquals(result[0].packetCount, 2)
-    }
-
-    @Test
-    @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `can filter correctly when calling findPacketGroupSummaryByName`()
-    {
-        packetRepository.saveAll(packets)
-
-        val result = packetRepository.findPacketGroupSummaryByName("4").map {
-            object
-            {
-                val name = it.getName()
-                val latestTime = it.getLatestTime()
-                val latestId = it.getLatestId()
-                val packetCount = it.getPacketCount()
-            }
-        }
-
-        assertEquals(result.size, 1)
-        assertEquals(result[0].name, "test4")
-        assertEquals(result[0].latestId, "20170819-164847-7574113a")
-        assertEquals(result[0].latestTime, now + 4)
-        assertEquals(result[0].packetCount, 2)
     }
 
     @Test
