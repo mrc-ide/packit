@@ -123,7 +123,16 @@ export const mockPacket: PacketMetadata = {
           version: "R version 4.4.1 (2024-06-14)"
         }
       },
-      role: []
+      role: [
+        {
+          path: "",
+          role: Roles.Resource
+        },
+        {
+          path: "orderly.R",
+          role: Roles.Orderly
+        }
+      ]
     }
   }
 };

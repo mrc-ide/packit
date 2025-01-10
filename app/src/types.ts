@@ -101,12 +101,12 @@ interface Description {
   custom: Record<string, any> | null;
 }
 
-interface Artefact {
+export interface Artefact {
   description: string;
   paths: string[];
 }
 
-interface Role {
+export interface Role {
   path: string;
   role: Roles;
 }

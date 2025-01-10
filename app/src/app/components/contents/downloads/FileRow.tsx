@@ -1,16 +1,19 @@
 import { ChartColumn, File, Presentation, TableProperties } from "lucide-react";
 import { bytesToSize } from "../../../../helpers";
-import { FileMetadata } from "../../../../types";
+import { FileMetadata, PacketMetadata } from "../../../../types";
 import DownloadButton from "./DownloadButton";
 
 interface FileRowProps {
-  file: FileMetadata;
-  packetId: string;
+  path: string;
+  packet: PacketMetadata;
 }
 
-export default function FileRow({ file, packetId }: FileRowProps) {
-  const extension = file.path.split(".").pop();
-  const fileName = file.path.split("/").pop();
+export default function FileRow({ path, packet }: FileRowProps) {
+  const extension = path.split(".").pop();
+  const file = packet.files.filter((file) => {
+    return file.path === path.replace("//", "/");
+  })[0];
+  const fileName = path.split("/").pop();
 
   return (
     <div className="p-2 flex justify-between">
@@ -34,7 +37,7 @@ export default function FileRow({ file, packetId }: FileRowProps) {
           <span className="small text-muted-foreground">{bytesToSize(file.size)}</span>
         </div>
       </div>
-      <DownloadButton file={file} packetId={packetId ?? ""} />
+      <DownloadButton file={file} packetId={packet.id ?? ""} />
     </div>
   );
 }
