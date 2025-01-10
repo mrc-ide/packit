@@ -6,6 +6,7 @@ import PacketDetails from "../../../../app/components/contents/packets/PacketDet
 import { PacketLayout } from "../../../../app/components/main";
 import { server } from "../../../../msw/server";
 import { mockPacket } from "../../../mocks";
+import {PacketMetadata} from "../../../../types";
 
 jest.mock("../../../../lib/download", () => ({
       getFileObjectUrl: async () => "fakeObjectUrl"
@@ -13,10 +14,10 @@ jest.mock("../../../../lib/download", () => ({
 );
 
 describe("packet details component", () => {
-  const renderComponent = () => {
+  const renderComponent = (packet: PacketMetadata = mockPacket) => {
     render(
       <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>
-        <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}`]}>
+        <MemoryRouter initialEntries={[`/${packet.name}/${packet.id}`]}>
           <Routes>
             <Route element={<PacketLayout />} path="/:packetName/:packetId">
               <Route path="/:packetName/:packetId" element={<PacketDetails />} />
@@ -26,6 +27,26 @@ describe("packet details component", () => {
       </SWRConfig>
     );
   };
+
+  it("renders packet header and the long description", async () => {
+    renderComponent();
+
+    expect(await screen.findByText(mockPacket.id)).toBeVisible();
+    expect(await screen.findByText(mockPacket.name)).toBeVisible();
+    expect(await screen.findByText(mockPacket.custom?.orderly.description.display as string)).toBeVisible();
+    expect(await screen.findByText(mockPacket.custom?.orderly.description.long as string)).toBeVisible();
+  });
+
+  it("renders packet header with name and id when there is no distinct display name", async () => {
+    const mockPacketWithNoCustomProps: PacketMetadata = {
+      ...mockPacket,
+      custom: null,
+    };
+    renderComponent(mockPacketWithNoCustomProps);
+
+    expect(await screen.findByText(mockPacket.id)).toBeVisible();
+    expect(await screen.findByText(mockPacket.name)).toBeVisible();
+  });
 
   it("renders parameters correctly", async () => {
     renderComponent();

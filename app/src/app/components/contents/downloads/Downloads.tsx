@@ -9,8 +9,8 @@ import FileRow from "./FileRow";
 export default function Downloads() {
   const { packetId, packetName } = useParams();
   const { packet } = usePacketOutletContext();
-  const artefacts = packet?.custom.orderly.artefacts;
-  const inputs = packet?.custom.orderly.role
+  const artefacts = packet?.custom?.orderly.artefacts;
+  const inputs = packet?.custom?.orderly.role
     .filter((input) => [Roles.Resource, Roles.Shared].includes(input.role));
 
   const getFileMetadataByPath = (path: string) => packet?.files
@@ -18,7 +18,7 @@ export default function Downloads() {
 
   return (
     <>
-      <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} />
+      <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} displayName={packet?.displayName} />
       {(!!artefacts?.length || !!inputs?.length) && (
         <Accordion type="multiple" defaultValue={["artefacts"]}>
           {!!artefacts?.length && (<AccordionItem value="artefacts">

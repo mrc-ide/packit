@@ -9,22 +9,29 @@ import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
+import packit.model.Packet
 import packit.model.PacketGroup
 import packit.model.dto.PacketGroupDto
 import packit.model.toDto
 import packit.repository.PacketGroupRepository
+import packit.repository.PacketRepository
+import java.time.Instant
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PacketGroupControllerTest : IntegrationTest()
 {
     @Autowired
     private lateinit var packetGroupRepository: PacketGroupRepository
+    @Autowired
+    private lateinit var packetRepository: PacketRepository
     private lateinit var packetGroups: List<PacketGroup>
-    private val packetNames = listOf(
+    private val packetGroupNames = listOf(
         "test-packetGroupName-1",
         "test-packetGroupName-2",
         "test-packetGroupName-3",
@@ -35,20 +42,17 @@ class PacketGroupControllerTest : IntegrationTest()
     @BeforeAll
     fun setupData()
     {
+        packetRepository.deleteAll()
+        packetGroupRepository.deleteAll()
         packetGroups = packetGroupRepository.saveAll(
-            listOf(
-                PacketGroup(name = packetNames[1]),
-                PacketGroup(name = packetNames[0]),
-                PacketGroup(name = packetNames[4]),
-                PacketGroup(name = packetNames[3]),
-                PacketGroup(name = packetNames[2]),
-            )
+            packetGroupNames.map { name -> PacketGroup(name = name) }
         )
     }
 
     @AfterAll
     fun cleanup()
     {
+        packetRepository.deleteAll()
         packetGroupRepository.deleteAll(packetGroups)
     }
 
@@ -57,7 +61,7 @@ class PacketGroupControllerTest : IntegrationTest()
     fun `getPacketGroups returns empty page if no permissions match`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packetGroup",
+            "/packetGroups",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -70,7 +74,7 @@ class PacketGroupControllerTest : IntegrationTest()
     fun `return correct page information for get pageable packet groups `()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packetGroup?pageNumber=0&pageSize=10&filterName=test-packetGroupName",
+            "/packetGroups?pageNumber=0&pageSize=10&filterName=test-packetGroupName",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -87,7 +91,7 @@ class PacketGroupControllerTest : IntegrationTest()
     fun `getPacketGroups can get second page with correct information`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packetGroup?pageNumber=1&pageSize=3&filterName=test-packetGroupName",
+            "/packetGroups?pageNumber=1&pageSize=3&filterName=test-packetGroupName",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -110,7 +114,7 @@ class PacketGroupControllerTest : IntegrationTest()
     fun `getPacketGroups returns of packet groups user can see`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packetGroup",
+            "/packetGroups",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -122,7 +126,7 @@ class PacketGroupControllerTest : IntegrationTest()
     fun `get ordered pageable packetGroups with filtered name`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packetGroup?pageNumber=0&pageSize=10&filterName=test-packetGroupName",
+            "/packetGroups?pageNumber=0&pageSize=10&filterName=test-packetGroupName",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -139,5 +143,49 @@ class PacketGroupControllerTest : IntegrationTest()
         assertEquals(5, resultPacketGroups.size)
         assertEquals("test-packetGroupName-1", resultPacketGroups[0].name)
         assertEquals("test-packetGroupName-5", resultPacketGroups[resultPacketGroups.size - 1].name)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:test-packetGroupName-1"])
+    fun `getDisplay returns display name and description`()
+    {
+        val now = Instant.now().toEpochMilli().toDouble()
+        val packetWithDescriptionAndDisplayNameId = "20241122-111130-544ddd35"
+        packetRepository.save(
+            Packet(
+                name = packetGroupNames[0],
+                id = packetWithDescriptionAndDisplayNameId,
+                displayName = "This db display name isn't used by the display endpoint",
+                parameters = mapOf(),
+                published = false,
+                importTime = now,
+                startTime = now,
+                endTime = now,
+            )
+        )
+
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packetGroups/${packetGroupNames[0]}/display",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        assertSuccess(result)
+        val resultBody = jacksonObjectMapper().readTree(result.body)
+        assertEquals("Packet with description", resultBody.get("latestDisplayName").asText())
+        assertTrue(resultBody.get("description").asText().startsWith("A longer description"))
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:wrong-name"])
+    fun `getDetail returns 401 if authority is not correct`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packetGroups/${packetGroupNames[0]}/display",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        assertEquals(HttpStatus.UNAUTHORIZED, result.statusCode)
     }
 }

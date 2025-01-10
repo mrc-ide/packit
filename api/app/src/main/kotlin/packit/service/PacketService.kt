@@ -11,11 +11,7 @@ import org.springframework.stereotype.Service
 import packit.contentTypes
 import packit.exceptions.PackitException
 import packit.helpers.PagingHelper
-import packit.model.Packet
-import packit.model.PacketGroup
-import packit.model.PacketMetadata
-import packit.model.PageablePayload
-import packit.model.dto.PacketGroupSummary
+import packit.model.*
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
 import java.security.MessageDigest
@@ -29,11 +25,9 @@ interface PacketService
     fun importPackets()
     fun getMetadataBy(id: String): PacketMetadata
     fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<ByteArrayResource, HttpHeaders>
-    fun getPacketGroupSummary(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroupSummary>
     fun getPacketsByName(
         name: String, payload: PageablePayload
     ): Page<Packet>
-
     fun getPacket(id: String): Packet
 }
 
@@ -74,15 +68,6 @@ class BasePacketService(
     override fun getPackets(): List<Packet>
     {
         return packetRepository.findAll()
-    }
-
-    override fun getPacketGroupSummary(
-        pageablePayload: PageablePayload,
-        filteredName: String
-    ): Page<PacketGroupSummary>
-    {
-        val packetGroupSummaries = packetRepository.findPacketGroupSummaryByName(filteredName)
-        return PagingHelper.convertListToPage(packetGroupSummaries, pageablePayload)
     }
 
     override fun getPacketsByName(name: String, payload: PageablePayload): Page<Packet>
