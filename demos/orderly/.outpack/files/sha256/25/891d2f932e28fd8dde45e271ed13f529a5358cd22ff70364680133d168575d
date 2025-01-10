@@ -1,6 +1,5 @@
 data <- read.csv("data.csv", stringsAsFactors = FALSE)
-png(paste0("artefact1/a_graph_with_such_a_long_file_name_that_it_begins_to_run_the_very_real_risk_of_needing_to_be",
-           "_truncated_in_the_front_end_so_long_as_the_file_names_length_exceeds_the_width_of_its_UI_container.png"))
+png("artefact1/a_graph_with_such_a_long_filename_that_it_begins_to_risk_needing_truncation_in_the_front_end.png")
 plot(data)
 dev.off()
 

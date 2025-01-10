@@ -4,7 +4,7 @@ import { PageableBasicRunInfo, RunInfo } from "../app/components/contents/runner
 import { Parameter, RunnerPacketGroup } from "../app/components/contents/runner/types/RunnerPacketGroup";
 import { AuthConfig } from "../app/components/providers/types/AuthConfigTypes";
 import { UserState } from "../app/components/providers/types/UserTypes";
-import { Custom, PacketMetadata, PageableBasicDto, PageablePacketGroupSummary, PageablePackets } from "../types";
+import { Custom, PacketMetadata, PageableBasicDto, PageablePacketGroupSummary, PageablePackets, Roles } from "../types";
 
 export const mockPacketResponse = {
   id: "52fd88b2-8ee8-4ac0-a0e5-41b9a15554a4",
@@ -180,7 +180,8 @@ export const mockPacket: PacketMetadata = {
           system: "x86_64, linux-gnu",
           version: "R version 4.4.1 (2024-06-14)"
         }
-      }
+      },
+      role: []
     }
   }
 };

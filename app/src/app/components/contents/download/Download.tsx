@@ -1,11 +1,10 @@
 import { useParams } from "react-router-dom";
 import { usePacketOutletContext } from "../../main/PacketOutlet";
 import { PacketHeader } from "../packets";
-import DownloadButton from "./DownloadButton";
 import { Card, CardContent, CardHeader } from "../../Base/Card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../Base/Accordion";
-import { Timer } from "lucide-react";
-import { FileMetadata, Roles } from "../../../../types";
+import { Roles } from "../../../../types";
+import FileRow from "./FileRow";
 
 export default function Download() {
   const { packetId, packetName } = useParams();
@@ -14,36 +13,31 @@ export default function Download() {
   const inputs = packet?.custom.orderly.role
     .filter((input) => [Roles.Resource, Roles.Shared].includes(input.role));
 
-  const getFileMetadataByPath = (path: string) => {
-    return packet?.files.filter((file) => file.path === path)[0];
-  };
+  const getFileMetadataByPath = (path: string) => packet?.files
+    .filter((file) => file.path === path.replace("//", "/"))[0];
 
   return (
     <>
       <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} />
-
-      {(artefacts || inputs) && (<Accordion type="multiple" defaultValue={["artefacts"]}>
+      {(<Accordion type="multiple" defaultValue={["artefacts"]}>
         {artefacts && (<AccordionItem value="artefacts">
           <AccordionTrigger>
-            <span className="flex gap-1 items-center">
-              <Timer className="small-icon text-muted-foreground" />
-              <h3>Artefacts</h3>
-            </span>
+            <h3>Artefacts</h3>
           </AccordionTrigger>
           <AccordionContent>
-            <ul className="space-y-1">
+            <ul className="space-y-4">
               {artefacts.map((artefact, key) => (
                 <li key={key}>
                   <Card>
-                    <CardHeader>
-                      <h3>{artefact.description}</h3>
+                    <CardHeader className="bg-muted p-4">
+                      <h3 className="">{artefact.description}</h3>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-0">
                       <ul>
                         {artefact.paths.map((path: string, index) => {
                           const file = getFileMetadataByPath(path);
-                          return (file && (<li key={index}>
-                            <DownloadButton file={file} packetId={packetId ?? ""} />
+                          return (file && (<li className="border-t" key={index}>
+                            <FileRow file={file} packetId={packetId ?? ""} />
                           </li>));
                         })}
                       </ul>
@@ -54,16 +48,27 @@ export default function Download() {
             </ul>
           </AccordionContent>
         </AccordionItem>)}
+        {inputs && (<AccordionItem value="inputs">
+          <AccordionTrigger>
+            <h3>Other files</h3>
+          </AccordionTrigger>
+          <AccordionContent>
+            <Card>
+              <CardContent className="p-0">
+                <ul>
+                  {inputs.map((input, index) => {
+                    const file = getFileMetadataByPath(input.path);
+                    // return (file && (<li key={index}>{index}</li>));
+                    return (file && (<li key={index}>
+                      <FileRow file={file} packetId={packetId ?? ""} />
+                    </li>));
+                  })}
+                </ul>
+              </CardContent>
+            </Card>
+          </AccordionContent>
+        </AccordionItem>)}
       </Accordion>)}
-
-      <h1>Old layout (reuse for outpack?)</h1>
-      <ul>
-        {packet?.files.map((data, key) => (
-          <li key={key}>
-            <DownloadButton file={data} packetId={packetId ?? ""} />
-          </li>
-        ))}
-      </ul>
     </>
   );
 }
