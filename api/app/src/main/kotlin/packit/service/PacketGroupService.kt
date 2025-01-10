@@ -49,7 +49,7 @@ class BasePacketGroupService(
     /**
      * This function, somewhat inefficiently, applies a filter to metadata from outpack_server, rather than in SQL.
      * This is because we need to filter on the displayName, which is not stored in the database.
-     * We intend to move to a more efficient solution in the future once we have made architectural changes.
+     * We intend to move to a more efficient solution once we have made architectural changes: ticket mrc-6153
      */
     override fun getPacketGroupSummaries(
         pageablePayload: PageablePayload,
