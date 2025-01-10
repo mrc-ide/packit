@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
 import { SWRConfig } from "swr";
-import { Download } from "../../../../app/components/contents";
+import { Downloads } from "../../../../app/components/contents";
 import { PacketLayout } from "../../../../app/components/main";
 import { mockPacket } from "../../../mocks";
 
@@ -13,7 +13,7 @@ describe("download component", () => {
         <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/downloads`]}>
           <Routes>
             <Route element={<PacketLayout />} path="/:packetName/:packetId">
-              <Route path="/:packetName/:packetId/downloads" element={<Download />} />
+              <Route path="/:packetName/:packetId/downloads" element={<Downloads />} />
             </Route>
           </Routes>
         </MemoryRouter>
