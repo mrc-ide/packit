@@ -2,7 +2,6 @@ import { ChartColumn, File, Presentation, TableProperties } from "lucide-react";
 import { bytesToSize } from "../../../../helpers";
 import { PacketMetadata } from "../../../../types";
 import DownloadButton from "./DownloadButton";
-import { Badge } from "../../Base/Badge";
 
 interface FileRowProps {
   path: string;
@@ -35,12 +34,15 @@ export default function FileRow({ path, packet, sharedResource }: FileRowProps) 
           })()}
         </span>
         <div className="flex flex-col ps-2 truncate">
-          <div className="flex gap-2">
-            <span className="font-semibold truncate">{fileName}</span>
-            {sharedResource &&
-              <Badge className="px-2 py-0 rounded-xl flex text-xs hover:bg-primary">Shared resource</Badge>}
-          </div>
-          <span className="small text-muted-foreground">{bytesToSize(file.size)}</span>
+          <span className="font-semibold truncate">{fileName}</span>
+          <p className="text-muted-foreground small">
+            <span>{bytesToSize(file.size)}</span>
+            {sharedResource && <>
+              <span> · </span>
+              <span>Shared resource</span>
+            </>
+            }
+          </p>
         </div>
       </div>
       <DownloadButton file={file} packetId={packet.id ?? ""} />
