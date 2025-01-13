@@ -16,7 +16,7 @@ export default function FileRow({ path, packet, sharedResource }: FileRowProps) 
   })[0];
   const fileName = path.split("/").pop();
 
-  return (
+  return (file &&
     <div className="p-2 flex justify-between">
       <div className="flex items-center truncate">
         <span className="min-w-fit">
