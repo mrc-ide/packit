@@ -23,14 +23,14 @@ export default function DownloadButton({ file, packetId }: DownloadButtonProps) 
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-end">
       <Button onClick={() => downloadFile(file)} variant="link" className="text-blue-500 py-0 pt-0">
         <span className="px-1">
           <FileDown />
         </span>
         Download
       </Button>
-      <div className="text-red-500">{error}</div>
+      <div className="text-red-500 pe-4">{error}</div>
     </div>
   );
 }
