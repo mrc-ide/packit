@@ -13,5 +13,4 @@ orderly2::orderly_artefact(description = "An artefact containing a single file",
 
 orderly2::orderly_resource("data.csv")
 
-# orderly2::orderly_shared_resource()
-
+orderly2::orderly_shared_resource("a_common_resource.csv")

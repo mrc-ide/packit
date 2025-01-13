@@ -1,21 +1,21 @@
 import { Card, CardContent } from "../../Base/Card";
 import FileRow from "./FileRow";
-import { PacketMetadata } from "../../../../types";
+import { PacketMetadata, Role, Roles } from "../../../../types";
 
 // 'Other files' are any files to display other than artefact groups.
 
 interface OtherFilesProps {
-  paths: string[];
+  inputs: Role[];
   packet: PacketMetadata;
 }
 
-export default function OtherFiles({ paths, packet }: OtherFilesProps) {
+export default function OtherFiles({ inputs, packet }: OtherFilesProps) {
   return (
     <Card>
       <CardContent className="p-0">
         <ul>
-          {paths.map((path, index) => (<li key={index}>
-            <FileRow path={path} packet={packet} />
+          {inputs.map((input, index) => (<li key={index}>
+            <FileRow path={input.path} packet={packet} sharedResource={input.role === Roles.Shared} />
           </li>))}
         </ul>
       </CardContent>
