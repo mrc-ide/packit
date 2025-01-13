@@ -1,6 +1,6 @@
 import { ChartColumn, File, Presentation, TableProperties } from "lucide-react";
 import { bytesToSize } from "../../../../helpers";
-import { FileMetadata, PacketMetadata } from "../../../../types";
+import { PacketMetadata } from "../../../../types";
 import DownloadButton from "./DownloadButton";
 
 interface FileRowProps {
