@@ -14,9 +14,11 @@ export default function OtherFiles({ inputs, packet }: OtherFilesProps) {
     <Card>
       <CardContent className="p-0">
         <ul>
-          {inputs.map((input, index) => (<li key={index}>
-            <FileRow path={input.path} packet={packet} sharedResource={input.role === Roles.Shared} />
-          </li>))}
+          {inputs.map((input, index) => (
+            <li key={index} className="[&:not(:first-child)]:border-t">
+              <FileRow path={input.path} packet={packet} sharedResource={input.role === Roles.Shared} />
+            </li>)
+          )}
         </ul>
       </CardContent>
     </Card>
