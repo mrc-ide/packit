@@ -33,23 +33,23 @@ export default function Downloads() {
           </Card>
         </>) : (<>
           {!!artefacts?.length && !!inputs?.length ? (
-            <Accordion type="multiple" defaultValue={["artefacts"]}>
-              {!!artefacts?.length && (<AccordionItem value="artefacts">
+            <Accordion type="multiple" defaultValue={["artefacts"]} data-testid="accordion">
+              <AccordionItem value="artefacts">
                 <AccordionTrigger>
                   <h3>Artefacts</h3>
                 </AccordionTrigger>
                 <AccordionContent>
                   <Artefacts artefacts={artefacts} packet={packet} />
                 </AccordionContent>
-              </AccordionItem>)}
-              {!!inputs?.length && (<AccordionItem value="inputs">
+              </AccordionItem>
+              <AccordionItem value="inputs">
                 <AccordionTrigger>
                   <h3>Other files</h3>
                 </AccordionTrigger>
                 <AccordionContent>
                   <OtherFiles inputs={inputs} packet={packet} />
                 </AccordionContent>
-              </AccordionItem>)}
+              </AccordionItem>
             </Accordion>
           ) : artefacts?.length ? (<>
             <h3>Artefacts</h3>
