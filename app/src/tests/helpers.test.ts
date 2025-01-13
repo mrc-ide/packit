@@ -1,4 +1,4 @@
-import {bytesToSize, getElapsedTime} from "../helpers";
+import { bytesToSize, getElapsedTime } from "../helpers";
 
 describe("helpers", () => {
 
@@ -32,28 +32,28 @@ describe("helpers", () => {
         expect(formattedTime).toBe("0 millisecond");
     });
 
-    test("can format size in bytes", () => {
-        const result = bytesToSize(42);
-        expect(result).toBe("42 bytes");
-    });
+  test("can format size in bytes", () => {
+    const result = bytesToSize(42);
+    expect(result).toBe("42 bytes");
+  });
 
-    test("can format size in kilobytes", () => {
-        const result = bytesToSize(1024);
-        expect(result).toBe("1 kilobytes");
-    });
+  test("can format size in kilobytes", () => {
+    const result = bytesToSize(1024);
+    expect(result).toBe("1 KB");
+  });
 
-    test("can format size in megabytes", () => {
-        const result = bytesToSize(1048576);
-        expect(result).toBe("1 megabytes");
-    });
+  test("can format size in megabytes", () => {
+    const result = bytesToSize(1048576);
+    expect(result).toBe("1 MB");
+  });
 
-    test("can format size in gigabytes", () => {
-        const result = bytesToSize(1073741824);
-        expect(result).toBe("1 gigabytes");
-    });
+  test("can format size in gigabytes", () => {
+    const result = bytesToSize(1073741824);
+    expect(result).toBe("1 GB");
+  });
 
-    test("can format size in terabytes", () => {
-        const result = bytesToSize(1099511627776);
-        expect(result).toBe("1 terabytes");
-    });
+  test("can format size in terabytes", () => {
+    const result = bytesToSize(1099511627776);
+    expect(result).toBe("1 TB");
+  });
 });
