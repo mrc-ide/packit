@@ -25,7 +25,7 @@ let mockUser: UserState | null = null;
 jest.mock("../../../app/components/providers/UserProvider.tsx", () => ({
   useUser: () => ({
     setUser: mockSetUser,
-    user: mockUser,
+    user: mockUser
   })
 }));
 

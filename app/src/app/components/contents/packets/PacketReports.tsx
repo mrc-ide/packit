@@ -1,15 +1,15 @@
 import { Fullscreen } from "lucide-react";
-import {FileMetadata, PacketMetadata} from "../../../../types";
-import {getHtmlFileIfExists} from "./utils/htmlFile";
-import {useEffect, useState} from "react";
-import {PacketReport} from "./PacketReport";
+import { FileMetadata, PacketMetadata } from "../../../../types";
+import { getHtmlFileIfExists } from "./utils/htmlFile";
+import { useEffect, useState } from "react";
+import { PacketReport } from "./PacketReport";
 
 interface PacketReportsProps {
   packet: PacketMetadata | undefined;
 }
 // TODO: add ability to load multiple reports (html files).
 export const PacketReports = ({ packet }: PacketReportsProps) => {
-  const [htmlFile, setHtmlFile] = useState<FileMetadata | null >(null);
+  const [htmlFile, setHtmlFile] = useState<FileMetadata | null>(null);
 
   useEffect(() => {
     setHtmlFile(packet ? getHtmlFileIfExists(packet) : null);
@@ -35,9 +35,8 @@ export const PacketReports = ({ packet }: PacketReportsProps) => {
           </div>
         </div>
       ) : (
-            <div className="italic text-sm">None</div>
-          )
-      }
+        <div className="italic text-sm">None</div>
+      )}
     </div>
   );
 };

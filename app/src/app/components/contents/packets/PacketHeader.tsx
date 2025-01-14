@@ -23,4 +23,4 @@ export default function PacketHeader({ packetName, packetId, displayName }: Pack
       </p>
     </div>
   );
-};
+}

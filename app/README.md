@@ -1,7 +1,8 @@
 #Packit Front End
-Interface is built with [React library](https://reactjs.org) 
+Interface is built with [React library](https://reactjs.org)
 
 ## Requirements
+
 Node 18.
 
 ## Available Scripts
@@ -17,6 +18,7 @@ The page will reload if you make edits.\
 You will also see any lint errors in the console. \
 
 To see a working app you will need to run dependencies. From the root directory:
+
 1. ./scripts/run-dependencies
 2. ./api/scripts/run OR ./api/gradlew -p api :app:bootRun
 
@@ -29,9 +31,9 @@ See the section about [running tests](https://facebook.github.io/create-react-ap
 
 Launches the test runner in the interactive watch mode, running only integration tests. \
 Dependencies must be running:
+
 1. ./scripts/run-dependencies
 2. ./api/scripts/run
-
 
 ### `npm run lint` or `npm run lint:fix`
 
@@ -48,14 +50,16 @@ Your app is ready to be deployed!
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
 ## Building a docker image
-The app is containerised into an image based on nginx. Note that in deployment this will be proxied, so no 
+
+The app is containerised into an image based on nginx. Note that in deployment this will be proxied, so no
 security configuration is required here.
+
 1. `./app/scripts/build` builds a docker image.
 2. `./app/scripts/build-and-push` builds and pushes an image to dockerhub. This script is run on CI.
 3. `./app/scripts/run` runs a built image with the current branch name.
 
-
 ### Mock Service Worker [MSW](https://mswjs.io/)
+
 MSW is currently used to mock API calls in tests. It is configured in `src/setupTests.js`.
 However, this can be used as a worker and be able to be if mocking of api is needed whilst development.
 Eg. if the api is not ready but you want to test the front end with that contract.
