@@ -330,7 +330,7 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `getPacketGroupSummary returns list of packet groups user can see`()
+    fun `getPacketGroupSummaries returns list of packet groups user can see`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets/packetGroupSummaries",

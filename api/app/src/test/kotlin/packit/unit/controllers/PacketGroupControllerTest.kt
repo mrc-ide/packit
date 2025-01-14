@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity
 import packit.controllers.PacketGroupController
 import packit.model.dto.PacketGroupDisplay
 import packit.service.PacketGroupService
-import packit.service.PacketService
 import kotlin.test.assertEquals
 
 class PacketGroupControllerTest {

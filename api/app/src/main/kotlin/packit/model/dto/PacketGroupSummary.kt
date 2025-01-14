@@ -6,5 +6,4 @@ data class PacketGroupSummary(
     val latestId: String,
     val latestTime: Double,
     val latestDisplayName: String,
-    val latestDescription: String?
 )

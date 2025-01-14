@@ -9,13 +9,11 @@ import org.springframework.data.domain.Sort
 import org.springframework.http.HttpHeaders
 import packit.exceptions.PackitException
 import packit.model.*
-import packit.model.dto.OutpackMetadata
-import packit.model.dto.PacketGroupSummary
 import packit.repository.PacketGroupRepository
-import packit.repository.PacketIdProjection
 import packit.repository.PacketRepository
 import packit.service.BasePacketService
 import packit.service.OutpackServerClient
+import packit.unit.packetToOutpackMetadata
 import java.time.Instant
 import java.util.*
 import kotlin.test.assertEquals
@@ -84,24 +82,6 @@ class PacketServiceTest
             )
         )
 
-    private fun packetToOutpackMetadata(packet: Packet): OutpackMetadata
-    {
-        return OutpackMetadata(
-            packet.id,
-            packet.name,
-            packet.parameters,
-            TimeMetadata(packet.endTime, packet.startTime),
-            mapOf(
-                "orderly" to mapOf(
-                    "description" to mapOf(
-                        "display" to packet.displayName,
-                        "long" to "Description for ${packet.name}"
-                    )
-                )
-            )
-        )
-    }
-
     private val packetMetadata =
         PacketMetadata(
             "3",
@@ -131,7 +111,6 @@ class PacketServiceTest
                 latestId = testPacketLatestId,
                 latestTime = now + 100,
                 latestDisplayName = "test name (latest display name)",
-                latestDescription = "Description for test"
             ),
             PacketGroupSummary(
                 name = "test2",
@@ -139,7 +118,6 @@ class PacketServiceTest
                 latestId = test2PacketLatestId,
                 latestTime = now,
                 latestDisplayName = "Test 2 Display Name",
-                latestDescription = "Description for test2"
             )
         )
 
@@ -159,12 +137,9 @@ class PacketServiceTest
         on { findAll() } doReturn packetGroups
     }
 
-    private val allMetadata = newPackets.map { packetToOutpackMetadata(it) } +
-        oldPackets.map { packetToOutpackMetadata(it) }
     private val outpackServerClient =
         mock<OutpackServerClient> {
             on { getMetadata(oldPackets[0].importTime) } doReturn newPackets.map { packetToOutpackMetadata(it) }
-            on { getMetadata() } doReturn allMetadata
             on { getMetadataById(packetMetadata.id) } doReturn packetMetadata
             on { getFileByHash(anyString()) } doReturn responseByte
         }
@@ -227,7 +202,6 @@ class PacketServiceTest
             assertEquals(result.content[i].latestId, packetGroupSummaries[i].latestId)
             assertEquals(result.content[i].latestTime, packetGroupSummaries[i].latestTime, 1.0)
             assertEquals(result.content[i].latestDisplayName, packetGroupSummaries[i].latestDisplayName)
-            assertEquals(result.content[i].latestDescription, packetGroupSummaries[i].latestDescription)
         }
         verify(packetGroupRepository).findAll()
         verify(packetGroupRepository, times(2)).findLatestPacketIdForGroup(anyString())

@@ -7,15 +7,11 @@ import org.springframework.http.ContentDisposition
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.security.access.AccessDeniedException
 import org.springframework.stereotype.Service
 import packit.contentTypes
 import packit.exceptions.PackitException
 import packit.helpers.PagingHelper
 import packit.model.*
-import packit.model.dto.PacketGroupDisplay
-import packit.model.dto.PacketGroupSummary
-import packit.model.dto.toPacketGroupSummary
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
 import java.security.MessageDigest
@@ -26,12 +22,9 @@ interface PacketService
     fun getPackets(pageablePayload: PageablePayload, filterName: String, filterId: String): Page<Packet>
     fun getPackets(): List<Packet>
     fun getChecksum(): String
-    fun getDescriptionForPacket(packetCustomMetadata: CustomMetadata): String?
-    fun getDisplayNameForPacket(packetCustomMetadata: CustomMetadata, name: String): String
     fun importPackets()
     fun getMetadataBy(id: String): PacketMetadata
     fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<ByteArrayResource, HttpHeaders>
-    fun getPacketGroupSummaries(pageablePayload: PageablePayload, filter: String): Page<PacketGroupSummary>
     fun getPacketsByName(
         name: String, payload: PageablePayload
     ): Page<Packet>
@@ -45,47 +38,6 @@ class BasePacketService(
     private val outpackServerClient: OutpackServer
 ) : PacketService
 {
-    /**
-     * Return the long description for a packet if its custom metadata schema conforms to the orderly schema.
-     *
-     * @param packetCustomMetadata The packet custom metadata.
-     * @return The description for the packet.
-     */
-    override fun getDescriptionForPacket(packetCustomMetadata: CustomMetadata): String? {
-        val orderlyMetadata = packetCustomMetadata?.get("orderly") as? Map<*, *>
-        return (orderlyMetadata?.get("description") as? Map<*, *>)?.get("long") as? String
-    }
-
-    /**
-     * Check for 'display name' keys that may exist in non-orderly outpack custom schemas.
-     *
-     * @param packetCustomMetadata The packet custom metadata.
-     * @return The display name for the packet.
-     */
-    private fun getOutpackPacketDisplayName(packetCustomMetadata: CustomMetadata): String? {
-        return packetCustomMetadata?.values
-            ?.filterIsInstance<Map<String, Any>>()
-            ?.firstNotNullOfOrNull { (it["display_name"] as? String) ?: (it["display"] as? String) }
-    }
-
-    /**
-     * Return the display name for a packet if its custom metadata schema conforms to the orderly schema and contains
-     * a display name.
-     * Also check for 'display name' keys that may exist in non-orderly outpack custom schemas.
-     * Falls back to name if no display name.
-     *
-     * @param packetCustomMetadata The packet custom metadata.
-     * @param name The name of the packet.
-     * @return The display name for the packet.
-     */
-    override fun getDisplayNameForPacket(packetCustomMetadata: CustomMetadata, name: String): String {
-        val orderlyMetadata = packetCustomMetadata?.get("orderly") as? Map<*, *>
-        val orderlyDisplayName = (orderlyMetadata?.get("description") as? Map<*, *>)?.get("display") as? String
-        return orderlyDisplayName?.takeIf { it.isNotBlank() }
-            ?: getOutpackPacketDisplayName(packetCustomMetadata)
-            ?: name
-    }
-
     override fun importPackets()
     {
         val mostRecent = packetRepository.findTopByOrderByImportTimeDesc()?.importTime
@@ -149,14 +101,14 @@ class BasePacketService(
         val allPacketsMetadata = outpackServerClient.getMetadata()
         // Filter the metadata to include only the packets previously established as being the latest in their group,
         // then, if the name or display name matches the search filter,
-        // calculate the packetCount, displayName and description to generate a PacketGroupSummary.
+        // calculate the packetCount and displayName to generate a PacketGroupSummary.
         val latestPackets = allPacketsMetadata.filter { it.id in packetIds }
             .mapNotNull {
                 val display = getDisplayNameForPacket(it.custom, it.name)
 
                 if (it.name.contains(filter, ignoreCase = true) || display.contains(filter, ignoreCase = true)) {
                     val packetCount = allPacketsMetadata.count { p -> p.name == it.name }
-                    it.toPacketGroupSummary(packetCount, display, getDescriptionForPacket(it.custom))
+                    it.toPacketGroupSummary(packetCount, display)
                 } else {
                     null
                 }
