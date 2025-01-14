@@ -130,7 +130,13 @@ export const mockPacket: PacketMetadata = {
         },
         {
           description: "An artefact containing multiple files",
-          paths: ["directory//graph.png", "artefact_data.csv", "excel_file.xlsx", "international_presentation.pdf", "other_extensions.txt"]
+          paths: [
+            "directory//graph.png",
+            "artefact_data.csv",
+            "excel_file.xlsx",
+            "internal_presentation.pdf",
+            "other_extensions.txt"
+          ]
         }
       ],
       description: {
