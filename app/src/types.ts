@@ -116,7 +116,7 @@ export enum Roles {
   Orderly = "orderly",
   Resource = "resource",
   Dependency = "dependency",
-  Shared = "shared",
+  Shared = "shared"
 }
 
 export interface SharedResource {

@@ -12,7 +12,7 @@ export default function Redirect() {
   const token = searchParams.get("token");
   const error = searchParams.get("error");
 
-  const navigateToRequestedUrl  = () => {
+  const navigateToRequestedUrl = () => {
     const url = requestedUrl || "/";
     setRequestedUrl(null); // reset requested url before redirecting
     navigate(url);

@@ -22,12 +22,14 @@ export const PacketGroup = () => {
       <div className="h-full flex-1 flex-col p-8 max-w-7xl">
         <div className="flex items-center justify-between space-y-2">
           <div className="space-y-4 mb-4">
-            {isLoading ? (<Skeleton className="h-4 w-64" />) : (<div>
-              <h2 className="text-2xl font-bold tracking-tight">{displayName || packetName}</h2>
-              {displayName !== packetName &&
-                <p className="text-muted-foreground">{packetName}</p>
-              }
-            </div>)}
+            {isLoading ? (
+              <Skeleton className="h-4 w-64" />
+            ) : (
+              <div>
+                <h2 className="text-2xl font-bold tracking-tight">{displayName || packetName}</h2>
+                {displayName !== packetName && <p className="text-muted-foreground">{packetName}</p>}
+              </div>
+            )}
             {description && <p className="text-primary">{description}</p>}
           </div>
         </div>

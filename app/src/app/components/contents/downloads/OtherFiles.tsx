@@ -17,10 +17,10 @@ export default function OtherFiles({ inputs, packet }: OtherFilesProps) {
           {inputs.map((input, index) => (
             <li key={index} className="[&:not(:first-child)]:border-t">
               <FileRow path={input.path} packet={packet} sharedResource={input.role === Roles.Shared} />
-            </li>)
-          )}
+            </li>
+          ))}
         </ul>
       </CardContent>
     </Card>
   );
-};
+}

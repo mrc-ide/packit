@@ -8,7 +8,6 @@ interface ArtefactProps {
 }
 
 export default function Artefacts({ artefacts, packet }: ArtefactProps) {
-
   return (
     <ul className="space-y-4">
       {artefacts.map((artefact, key) => (
@@ -19,9 +18,11 @@ export default function Artefacts({ artefacts, packet }: ArtefactProps) {
             </CardHeader>
             <CardContent className="p-0">
               <ul>
-                {artefact.paths.map((path, index) => (<li className="border-t" key={index}>
-                  <FileRow path={path} packet={packet} />
-                </li>))}
+                {artefact.paths.map((path, index) => (
+                  <li className="border-t" key={index}>
+                    <FileRow path={path} packet={packet} />
+                  </li>
+                ))}
               </ul>
             </CardContent>
           </Card>
@@ -29,4 +30,4 @@ export default function Artefacts({ artefacts, packet }: ArtefactProps) {
       ))}
     </ul>
   );
-};
+}
