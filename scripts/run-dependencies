@@ -81,7 +81,8 @@ docker run --rm -d --pull=always \
        -v $ORDERLY_VOLUME:$CONTAINER_ORDERLY_ROOT_PATH \
        -v $ORDERLY_LOGS_VOLUME:$CONTAINER_LOGS_DIR \
        $ORDERLY_RUNNER_IMAGE \
-       $CONTAINER_ORDERLY_ROOT_PATH
+       $CONTAINER_ORDERLY_ROOT_PATH \
+       /repositories
 
 # this is the worker, just a container that will pop tasks
 # off the queue and run the tasks, we expect to have 1 - n
