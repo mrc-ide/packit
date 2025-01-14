@@ -13,11 +13,11 @@ data class OutpackMetadata(
 
 fun OutpackMetadata.toPacketGroupSummary(packetCount: Int, displayName: String): PacketGroupSummary
 {
-    return object : PacketGroupSummary {
-        override fun getName(): String = name
-        override fun getPacketCount(): Int = packetCount
-        override fun getLatestId(): String = id
-        override fun getLatestTime(): Double = time.start
-        override fun getLatestDisplayName(): String = displayName
-    }
+    return PacketGroupSummary(
+        name = name,
+        packetCount = packetCount,
+        latestId = id,
+        latestTime = time.start,
+        latestDisplayName = displayName,
+    )
 }

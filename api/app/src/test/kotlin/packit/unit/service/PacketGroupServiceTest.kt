@@ -109,22 +109,20 @@ class PacketGroupServiceTest
     private val packetService = mock<PacketService>()
     private val packetGroupSummaries =
         listOf(
-            object : PacketGroupSummary
-            {
-                override fun getName(): String = "test"
-                override fun getPacketCount(): Int = 3
-                override fun getLatestId(): String = testPacketLatestId
-                override fun getLatestTime(): Double = now + 100
-                override fun getLatestDisplayName(): String = "test name (latest display name)"
-            },
-            object : PacketGroupSummary
-            {
-                override fun getName(): String = "test2"
-                override fun getPacketCount(): Int = 2
-                override fun getLatestId(): String = test2PacketLatestId
-                override fun getLatestTime(): Double = now
-                override fun getLatestDisplayName(): String = "Test 2 Display Name"
-            }
+            PacketGroupSummary(
+                name = "test",
+                packetCount = 3,
+                latestId = testPacketLatestId,
+                latestTime = now + 100,
+                latestDisplayName = "test name (latest display name)",
+            ),
+            PacketGroupSummary(
+                name = "test2",
+                packetCount = 2,
+                latestId = test2PacketLatestId,
+                latestTime = now,
+                latestDisplayName = "Test 2 Display Name",
+            )
         )
 
     @Test
@@ -232,11 +230,11 @@ class PacketGroupServiceTest
 
         assertEquals(result.totalElements, 2)
         for (i in packetGroupSummaries.indices) {
-            assertEquals(result.content[i].getName(), packetGroupSummaries[i].getName())
-            assertEquals(result.content[i].getPacketCount(), packetGroupSummaries[i].getPacketCount())
-            assertEquals(result.content[i].getLatestId(), packetGroupSummaries[i].getLatestId())
-            assertEquals(result.content[i].getLatestTime(), packetGroupSummaries[i].getLatestTime(), 1.0)
-            assertEquals(result.content[i].getLatestDisplayName(), packetGroupSummaries[i].getLatestDisplayName())
+            assertEquals(result.content[i].name, packetGroupSummaries[i].name)
+            assertEquals(result.content[i].packetCount, packetGroupSummaries[i].packetCount)
+            assertEquals(result.content[i].latestId, packetGroupSummaries[i].latestId)
+            assertEquals(result.content[i].latestTime, packetGroupSummaries[i].latestTime, 1.0)
+            assertEquals(result.content[i].latestDisplayName, packetGroupSummaries[i].latestDisplayName)
         }
         verify(packetGroupRepository).findAll()
         verify(packetGroupRepository, times(2)).findLatestPacketIdForGroup(anyString())
@@ -255,7 +253,7 @@ class PacketGroupServiceTest
         val result = sut.getPacketGroupSummaries(PageablePayload(0, 10), "test2")
 
         assertEquals(result.totalElements, 1)
-        assertEquals(result.content[0].getName(), "test2")
+        assertEquals(result.content[0].name, "test2")
         verify(packetGroupRepository).findLatestPacketIdForGroup("test2")
         verify(outpackServerClient).getMetadata()
     }
@@ -272,7 +270,7 @@ class PacketGroupServiceTest
         val result = sut.getPacketGroupSummaries(PageablePayload(0, 10), "2 Display")
 
         assertEquals(result.totalElements, 1)
-        assertEquals(result.content[0].getLatestDisplayName(), "Test 2 Display Name")
+        assertEquals(result.content[0].latestDisplayName, "Test 2 Display Name")
         verify(packetGroupRepository).findLatestPacketIdForGroup("test2")
         verify(outpackServerClient).getMetadata()
     }
@@ -308,8 +306,8 @@ class PacketGroupServiceTest
         val result = sut.getPacketGroupSummaries(PageablePayload(0, 10), "")
 
         assertEquals(result.totalElements, 1)
-        assertEquals(result.content[0].getName(), "testing")
-        assertEquals(result.content[0].getLatestDisplayName(), "the display name")
+        assertEquals(result.content[0].name, "testing")
+        assertEquals(result.content[0].latestDisplayName, "the display name")
         verify(packetGroupRepo).findLatestPacketIdForGroup("testing")
         verify(differentOutpackServerClient).getMetadata()
     }
