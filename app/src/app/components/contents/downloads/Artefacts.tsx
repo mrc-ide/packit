@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader } from "../../Base/Card";
 import FileRow from "./FileRow";
 import { Artefact, PacketMetadata } from "../../../../types";
 
-interface ArtefactProps {
+interface ArtefactsProps {
   artefacts: Artefact[];
   packet: PacketMetadata;
 }
