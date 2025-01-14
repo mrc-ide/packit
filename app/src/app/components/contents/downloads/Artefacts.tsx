@@ -2,12 +2,12 @@ import { Card, CardContent, CardHeader } from "../../Base/Card";
 import FileRow from "./FileRow";
 import { Artefact, PacketMetadata } from "../../../../types";
 
-interface ArtefactProps {
+interface ArtefactsProps {
   artefacts: Artefact[];
   packet: PacketMetadata;
 }
 
-export default function Artefacts({ artefacts, packet }: ArtefactProps) {
+export default function Artefacts({ artefacts, packet }: ArtefactsProps) {
   return (
     <ul className="space-y-4">
       {artefacts.map((artefact, key) => (
