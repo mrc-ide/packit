@@ -6,12 +6,11 @@ import PacketDetails from "../../../../app/components/contents/packets/PacketDet
 import { PacketLayout } from "../../../../app/components/main";
 import { server } from "../../../../msw/server";
 import { mockPacket } from "../../../mocks";
-import {PacketMetadata} from "../../../../types";
+import { PacketMetadata } from "../../../../types";
 
 jest.mock("../../../../lib/download", () => ({
-      getFileObjectUrl: async () => "fakeObjectUrl"
-    })
-);
+  getFileObjectUrl: async () => "fakeObjectUrl"
+}));
 
 describe("packet details component", () => {
   const renderComponent = (packet: PacketMetadata = mockPacket) => {
@@ -40,7 +39,7 @@ describe("packet details component", () => {
   it("renders packet header with name and id when there is no distinct display name", async () => {
     const mockPacketWithNoCustomProps: PacketMetadata = {
       ...mockPacket,
-      custom: null,
+      custom: null
     };
     renderComponent(mockPacketWithNoCustomProps);
 
