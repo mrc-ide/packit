@@ -2,13 +2,12 @@ import { Card, CardContent, CardHeader } from "../../Base/Card";
 import { FileRow } from "./FileRow";
 import { Artefact, PacketMetadata } from "../../../../types";
 
-interface ArtefactProps {
+interface ArtefactsProps {
   artefacts: Artefact[];
   packet: PacketMetadata;
 }
 
-export const Artefacts = ({ artefacts, packet }: ArtefactProps) => {
-
+export const Artefacts = ({ artefacts, packet }: ArtefactsProps) {
   return (
     <ul className="space-y-4">
       {artefacts.map((artefact, key) => (
@@ -19,9 +18,11 @@ export const Artefacts = ({ artefacts, packet }: ArtefactProps) => {
             </CardHeader>
             <CardContent className="p-0">
               <ul>
-                {artefact.paths.map((path, index) => (<li className="border-t" key={index}>
-                  <FileRow path={path} packet={packet} />
-                </li>))}
+                {artefact.paths.map((path, index) => (
+                  <li className="border-t" key={index}>
+                    <FileRow path={path} packet={packet} />
+                  </li>
+                ))}
               </ul>
             </CardContent>
           </Card>
@@ -29,4 +30,4 @@ export const Artefacts = ({ artefacts, packet }: ArtefactProps) => {
       ))}
     </ul>
   );
-};
+}
