@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import Artefacts from "../../../../app/components/contents/downloads/Artefacts";
+import { Artefacts } from "../../../../app/components/contents/downloads/Artefacts";
 import { mockPacket } from "../../../mocks";
 import { Artefact } from "../../../../types";
 

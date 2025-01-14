@@ -11,7 +11,7 @@ import {
   AccordionTrigger
 } from "../../Base/Accordion";
 
-export default function Metadata() {
+export const Metadata = () => {
   const { packetId, packetName } = useParams();
   const { packet } = usePacketOutletContext();
 
@@ -108,4 +108,4 @@ export default function Metadata() {
       )}
     </>
   );
-}
+};

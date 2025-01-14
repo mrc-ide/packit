@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader } from "../../Base/Card";
-import FileRow from "./FileRow";
+import { FileRow } from "./FileRow";
 import { Artefact, PacketMetadata } from "../../../../types";
 
 interface ArtefactProps {
@@ -7,7 +7,7 @@ interface ArtefactProps {
   packet: PacketMetadata;
 }
 
-export default function Artefacts({ artefacts, packet }: ArtefactProps) {
+export const Artefacts = ({ artefacts, packet }: ArtefactProps) => {
 
   return (
     <ul className="space-y-4">

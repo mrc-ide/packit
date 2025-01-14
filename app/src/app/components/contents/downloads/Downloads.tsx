@@ -3,12 +3,12 @@ import { usePacketOutletContext } from "../../main/PacketOutlet";
 import { PacketHeader } from "../packets";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../Base/Accordion";
 import { Roles } from "../../../../types";
-import Artefacts from "./Artefacts";
-import OtherFiles from "./OtherFiles";
+import { Artefacts } from "./Artefacts";
+import { OtherFiles } from "./OtherFiles";
 import { Card, CardContent } from "../../Base/Card";
-import FileRow from "./FileRow";
+import { FileRow } from "./FileRow";
 
-export default function Downloads() {
+export const Downloads = () => {
   const { packetId, packetName } = useParams();
   const { packet } = usePacketOutletContext();
   const artefacts = packet?.custom?.orderly.artefacts;
@@ -64,4 +64,4 @@ export default function Downloads() {
       </>)}
     </>
   );
-}
+};

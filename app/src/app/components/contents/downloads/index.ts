@@ -1,3 +1,3 @@
-import Downloads from "./Downloads";
+import { Downloads } from "./Downloads";
 
 export { Downloads };

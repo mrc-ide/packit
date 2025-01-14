@@ -12,7 +12,7 @@ import { GithubAuthForm } from "./GithubAuthForm";
 
 type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>;
 
-export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
+export const UserAuthForm = ({ className, ...props }: UserAuthFormProps) => {
   const navigate = useNavigate();
   const authConfig = useAuthConfig();
   const { user } = useUser();
@@ -33,4 +33,4 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       {authConfig?.enableGithubLogin && <GithubAuthForm />}
     </div>
   );
-}
+};

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import OtherFiles from "../../../../app/components/contents/downloads/OtherFiles";
 import { mockPacket } from "../../../mocks";
 import { Role, Roles } from "../../../../types";
+import { OtherFiles } from "../../../../app/components/contents/downloads/OtherFiles";
 
 describe("OtherFiles component", () => {
   const renderComponent = (inputs: Role[] = []) => {
