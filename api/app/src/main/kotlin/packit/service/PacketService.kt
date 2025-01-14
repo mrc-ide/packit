@@ -70,53 +70,6 @@ class BasePacketService(
         return packetRepository.findAll()
     }
 
-    /**
-     * Find the id of the latest packet per group, excluding cases where the user does not have access.
-     *
-     * @param names The names of the packet groups.
-     * @return For each group, an id of the latest packet in the group.
-     */
-    private fun findLatestPacketIdsForGroups(names: List<String>): List<String>
-    {
-        return names.mapNotNull {
-            try {
-                packetGroupRepository.findLatestPacketIdForGroup(it)?.id
-            } catch (e: AccessDeniedException) {
-                null
-            }
-        }
-    }
-
-    /**
-     * This function, somewhat inefficiently, applies a filter to metadata from outpack_server, rather than in SQL.
-     * This is because we need to filter on the displayName, which is not stored in the database.
-     * We intend to move to a more efficient solution in the future once we have made architectural changes.
-     */
-    override fun getPacketGroupSummaries(
-        pageablePayload: PageablePayload,
-        filter: String
-    ): Page<PacketGroupSummary> {
-        val allPacketGroups = packetGroupRepository.findAll()
-        val packetIds = findLatestPacketIdsForGroups(allPacketGroups.map { it.name })
-        val allPacketsMetadata = outpackServerClient.getMetadata()
-        // Filter the metadata to include only the packets previously established as being the latest in their group,
-        // then, if the name or display name matches the search filter,
-        // calculate the packetCount and displayName to generate a PacketGroupSummary.
-        val latestPackets = allPacketsMetadata.filter { it.id in packetIds }
-            .mapNotNull {
-                val display = getDisplayNameForPacket(it.custom, it.name)
-
-                if (it.name.contains(filter, ignoreCase = true) || display.contains(filter, ignoreCase = true)) {
-                    val packetCount = allPacketsMetadata.count { p -> p.name == it.name }
-                    it.toPacketGroupSummary(packetCount, display)
-                } else {
-                    null
-                }
-            }.sortedByDescending { it.latestTime }
-
-        return PagingHelper.convertListToPage(latestPackets, pageablePayload)
-    }
-
     override fun getPacketsByName(name: String, payload: PageablePayload): Page<Packet>
     {
         val packets = packetRepository.findByName(name, Sort.by("startTime").descending())
