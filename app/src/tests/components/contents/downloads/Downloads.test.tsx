@@ -70,7 +70,7 @@ describe("download component", () => {
     expect(screen.queryByTestId("accordion")).not.toBeInTheDocument();
   });
 
-  it("renders no accordion when there are no 'other files'", async () => {
+  it("renders no accordion when there are no artefacts", async () => {
     const packetWithNoArtefacts = {
       ...mockPacket,
       id: "packetWithNoArtefacts",
