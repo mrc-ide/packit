@@ -29,8 +29,9 @@ describe("file row component", () => {
   });
 
   it("when the file is a shared resource, this information is displayed", async () => {
-    const { container } = render(<FileRow path={"a_renamed_common_resource.csv"} packet={mockPacket}
-                                          sharedResource={true} />);
+    const { container } = render(
+      <FileRow path={"a_renamed_common_resource.csv"} packet={mockPacket} sharedResource={true} />
+    );
 
     expect(await screen.findByText("a_renamed_common_resource.csv")).toBeVisible();
     expect(await screen.findByText("11 bytes")).toBeVisible();

@@ -16,36 +16,40 @@ export default function FileRow({ path, packet, sharedResource }: FileRowProps) 
   })[0];
   const fileName = path.split("/").pop();
 
-  return (file &&
-    <div className="p-2 flex justify-between">
-      <div className="flex items-center truncate">
-        <span className="min-w-fit">
-          {extension && (() => {
-            switch (true) {
-              case ["pdf", "html", "ppt", "pptm", "pptx", "potx", "potm", "pps", "xps"].includes(extension):
-                return <Presentation />;
-              case ["csv", "xls", "xlsx", "xlsm", "xltx", "ods"].includes(extension):
-                return <TableProperties />;
-              case ["jpeg", "jpg", "png", "jiff", "bmp", "gif"].includes(extension):
-                return <ChartColumn />;
-              default:
-                return <File className="text-gray-400" />;
-            }
-          })()}
-        </span>
-        <div className="flex flex-col ps-2 truncate">
-          <span className="font-semibold truncate">{fileName}</span>
-          <p className="text-muted-foreground small">
-            <span>{bytesToSize(file.size)}</span>
-            {sharedResource && <>
-              <span> · </span>
-              <span>Shared resource</span>
-            </>
-            }
-          </p>
+  return (
+    file && (
+      <div className="p-2 flex justify-between">
+        <div className="flex items-center truncate">
+          <span className="min-w-fit">
+            {extension &&
+              (() => {
+                switch (true) {
+                  case ["pdf", "html", "ppt", "pptm", "pptx", "potx", "potm", "pps", "xps"].includes(extension):
+                    return <Presentation />;
+                  case ["csv", "xls", "xlsx", "xlsm", "xltx", "ods"].includes(extension):
+                    return <TableProperties />;
+                  case ["jpeg", "jpg", "png", "jiff", "bmp", "gif"].includes(extension):
+                    return <ChartColumn />;
+                  default:
+                    return <File className="text-gray-400" />;
+                }
+              })()}
+          </span>
+          <div className="flex flex-col ps-2 truncate">
+            <span className="font-semibold truncate">{fileName}</span>
+            <p className="text-muted-foreground small">
+              <span>{bytesToSize(file.size)}</span>
+              {sharedResource && (
+                <>
+                  <span> · </span>
+                  <span>Shared resource</span>
+                </>
+              )}
+            </p>
+          </div>
         </div>
+        <DownloadButton file={file} packetId={packet.id ?? ""} />
       </div>
-      <DownloadButton file={file} packetId={packet.id ?? ""} />
-    </div>
+    )
   );
 }

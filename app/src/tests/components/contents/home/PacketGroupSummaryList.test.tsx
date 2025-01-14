@@ -1,4 +1,4 @@
-import {render, screen, waitFor, within} from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import { rest } from "msw";
 import { MemoryRouter } from "react-router";
 import { SWRConfig } from "swr";
@@ -23,10 +23,14 @@ describe("PacketList test", () => {
     await waitFor(() => {
       mockPacketGroupSummaries.content.forEach((packetGroup, index) => {
         const listItem = screen.getAllByRole("listitem")[index];
-        expect(within(listItem).getByRole("link", { name: packetGroup.latestDisplayName }))
-          .toHaveAttribute("href", `/${packetGroup.name}`);
-        expect(within(listItem).getByRole("link", { name: /latest/i }))
-          .toHaveAttribute("href", `/${packetGroup.name}/${packetGroup.latestId}`);
+        expect(within(listItem).getByRole("link", { name: packetGroup.latestDisplayName })).toHaveAttribute(
+          "href",
+          `/${packetGroup.name}`
+        );
+        expect(within(listItem).getByRole("link", { name: /latest/i })).toHaveAttribute(
+          "href",
+          `/${packetGroup.name}/${packetGroup.latestId}`
+        );
         expect(within(listItem).getByText(new RegExp(`${packetGroup.packetCount} packet`))).toBeVisible();
         expect(within(listItem).getByText(packetGroup.name)).toBeVisible();
       });
