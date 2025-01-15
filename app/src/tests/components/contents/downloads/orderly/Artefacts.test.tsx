@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import Artefacts from "../../../../app/components/contents/downloads/Artefacts";
-import { mockPacket } from "../../../mocks";
-import { Artefact } from "../../../../types";
+import Artefacts from "../../../../../app/components/contents/downloads/orderly/Artefacts";
+import { mockPacket } from "../../../../mocks";
+import { Artefact } from "../../../../../types";
 import { createMemoryRouter, Outlet, RouterProvider } from "react-router-dom";
 
 const renderComponent = () => {

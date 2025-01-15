@@ -1,8 +1,8 @@
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../Base/Accordion";
-import { InputFileType } from "../../../../types";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../../Base/Accordion";
+import { InputFileType } from "../../../../../types";
 import Artefacts from "./Artefacts";
 import OtherFiles from "./OtherFiles";
-import { usePacketOutletContext } from "../../main/PacketOutlet";
+import { usePacketOutletContext } from "../../../main/PacketOutlet";
 
 export const OrderlyDownloads = () => {
   const { packet } = usePacketOutletContext();

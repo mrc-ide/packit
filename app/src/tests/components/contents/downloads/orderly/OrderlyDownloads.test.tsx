@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { mockPacket } from "../../../mocks";
-import { Custom } from "../../../../types";
-import { OrderlyDownloads } from "../../../../app/components/contents/downloads/OrderlyDownloads";
+import { mockPacket } from "../../../../mocks";
+import { Custom } from "../../../../../types";
+import { OrderlyDownloads } from "../../../../../app/components/contents/downloads/orderly/OrderlyDownloads";
 import { createMemoryRouter, Outlet, RouterProvider } from "react-router-dom";
 
 const renderComponent = (customMetadata: Custom) => {

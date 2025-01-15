@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader } from "../../Base/Card";
-import FileRow from "./FileRow";
-import { Artefact } from "../../../../types";
+import { Card, CardContent, CardHeader } from "../../../Base/Card";
+import FileRow from "../FileRow";
+import { Artefact } from "../../../../../types";
 
 interface ArtefactsProps {
   artefacts: Artefact[];

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import OtherFiles from "../../../../app/components/contents/downloads/OtherFiles";
-import { mockPacket } from "../../../mocks";
-import { InputFiles, InputFileType } from "../../../../types";
+import OtherFiles from "../../../../../app/components/contents/downloads/orderly/OtherFiles";
+import { mockPacket } from "../../../../mocks";
+import { InputFiles, InputFileType } from "../../../../../types";
 import { createMemoryRouter, Outlet, RouterProvider } from "react-router-dom";
 
 const renderComponent = (inputFiles: InputFiles[] = []) => {

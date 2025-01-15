@@ -1,6 +1,6 @@
-import { Card, CardContent } from "../../Base/Card";
-import FileRow from "./FileRow";
-import { InputFiles, InputFileType } from "../../../../types";
+import { Card, CardContent } from "../../../Base/Card";
+import FileRow from "../FileRow";
+import { InputFiles, InputFileType } from "../../../../../types";
 
 // 'Other files' are any files to display other than artefact groups.
 

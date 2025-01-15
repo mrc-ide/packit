@@ -3,7 +3,7 @@ import { usePacketOutletContext } from "../../main/PacketOutlet";
 import { PacketHeader } from "../packets";
 import { Card, CardContent } from "../../Base/Card";
 import FileRow from "./FileRow";
-import { OrderlyDownloads } from "./OrderlyDownloads";
+import { OrderlyDownloads } from "./orderly/OrderlyDownloads";
 
 export default function Downloads() {
   const { packetId, packetName } = useParams();
