@@ -4,6 +4,7 @@ import { PacketHeader } from "../packets";
 import { Card, CardContent } from "../../Base/Card";
 import { FileRow } from "./FileRow";
 import { OrderlyDownloads } from "./orderly/OrderlyDownloads";
+import { DownloadAllFilesButton } from "./orderly/DownloadAllFilesButton";
 
 export const Downloads = () => {
   const { packetId, packetName } = useParams();
@@ -11,10 +12,15 @@ export const Downloads = () => {
   const packetIsFromOrderly = !!packet?.custom?.orderly;
 
   return (
-    <>
+    <div className="space-y-0">
       {packet && (
         <>
           <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} displayName={packet.displayName} />
+          <div className="flex flex-col">
+            <span className="self-end mb-2">
+              <DownloadAllFilesButton />
+            </span>
+          </div>
           {packetIsFromOrderly && <OrderlyDownloads />}
           {!packetIsFromOrderly && (
             <>
@@ -34,6 +40,6 @@ export const Downloads = () => {
           )}
         </>
       )}
-    </>
+    </div>
   );
 };
