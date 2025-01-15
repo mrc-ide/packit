@@ -1,7 +1,7 @@
 import { ChangeLogs } from "./changelogs";
 import { ProjectDocumentation } from "./documents";
-import { Download } from "./download";
+import { Downloads } from "./downloads";
 import { Metadata } from "./metadata";
 import { WorkflowRunner } from "./workflow";
 
-export { ChangeLogs, Download, Metadata, ProjectDocumentation, WorkflowRunner };
+export { ChangeLogs, Downloads, Metadata, ProjectDocumentation, WorkflowRunner };

@@ -4,7 +4,14 @@ import { PageableBasicRunInfo, RunInfo } from "../app/components/contents/runner
 import { Parameter, RunnerPacketGroup } from "../app/components/contents/runner/types/RunnerPacketGroup";
 import { AuthConfig } from "../app/components/providers/types/AuthConfigTypes";
 import { UserState } from "../app/components/providers/types/UserTypes";
-import { Custom, PacketMetadata, PageableBasicDto, PageablePacketGroupSummaries, PageablePackets } from "../types";
+import {
+  Custom,
+  PacketMetadata,
+  PageableBasicDto,
+  PageablePacketGroupSummaries,
+  PageablePackets,
+  InputFileType
+} from "../types";
 
 export const mockPacketResponse = {
   id: "52fd88b2-8ee8-4ac0-a0e5-41b9a15554a4",
@@ -73,6 +80,36 @@ export const mockPacket: PacketMetadata = {
       path: "report.html",
       size: 40,
       hash: "sha256:715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1"
+    },
+    {
+      path: "a_renamed_common_resource.csv",
+      size: 11,
+      hash: "sha256:550494109169d3b64a3285cf9e56e117ed06bb643811378697eb73d714724ccf"
+    },
+    {
+      path: "directory/graph.png",
+      size: 7344,
+      hash: "sha256:154dba8290dd719800b56b9a3af6ee48fc5ac2e046610d76de5560b396d063a2"
+    },
+    {
+      path: "artefact_data.csv",
+      size: 51,
+      hash: "sha256:c7b512b2d14a7caae8968830760cb95980a98e18ca2c2991b87c71529e223164"
+    },
+    {
+      path: "excel_file.xlsx",
+      size: 4715,
+      hash: "sha256:2d45902d5232a91c53b51d4c2cb265338f40fb18e8b38a0fa850800e1cdb1f03"
+    },
+    {
+      path: "internal_presentation.pdf",
+      size: 14097,
+      hash: "sha256:ae7b14cb83e0964b7bdde11b96b1f1bf9960bc46fbcddcdbb0056307915c1d4f"
+    },
+    {
+      path: "other_extensions.txt",
+      size: 15,
+      hash: "sha256:c195ea0690238192d2a000c5e35f42469242bab0dc6a03b09dbffc5408a24170"
     }
   ],
   git: {
@@ -90,6 +127,16 @@ export const mockPacket: PacketMetadata = {
         {
           description: "An HTMl report",
           paths: ["report.html"]
+        },
+        {
+          description: "An artefact containing multiple files",
+          paths: [
+            "directory//graph.png",
+            "artefact_data.csv",
+            "excel_file.xlsx",
+            "internal_presentation.pdf",
+            "other_extensions.txt"
+          ]
         }
       ],
       description: {
@@ -115,7 +162,27 @@ export const mockPacket: PacketMetadata = {
           system: "x86_64, linux-gnu",
           version: "R version 4.4.1 (2024-06-14)"
         }
-      }
+      },
+      role: [
+        {
+          path: "data.csv",
+          role: InputFileType.Resource
+        },
+        {
+          path: "orderly.R",
+          role: InputFileType.Orderly
+        },
+        {
+          path: "a_renamed_common_resource.csv",
+          role: InputFileType.Shared
+        }
+      ],
+      shared: [
+        {
+          here: "a_renamed_common_resource.csv",
+          there: "a_common_resource.csv"
+        }
+      ]
     }
   }
 };

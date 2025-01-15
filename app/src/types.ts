@@ -88,9 +88,11 @@ interface Session {
 
 export interface Custom {
   orderly: {
-    artefacts: Artefact[];
+    artefacts: Artefact[]; // Artefacts are sets of (at least 1) output files that result from running a packet.
     description: Description;
     session: Session;
+    role: InputFiles[]; // Assigns a 'role' to input files. Any file that is not an output is considered an input.
+    shared: SharedResource[];
   };
 }
 
@@ -100,9 +102,26 @@ interface Description {
   custom: Record<string, any> | null;
 }
 
-interface Artefact {
+export interface Artefact {
   description: string;
   paths: string[];
+}
+
+export interface InputFiles {
+  path: string;
+  role: InputFileType;
+}
+
+export enum InputFileType {
+  Orderly = "orderly",
+  Resource = "resource",
+  Dependency = "dependency",
+  Shared = "shared"
+}
+
+export interface SharedResource {
+  here: string;
+  there: string;
 }
 
 export interface FileMetadata {

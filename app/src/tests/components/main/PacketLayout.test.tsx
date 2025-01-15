@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
-import { Download, Metadata } from "../../../app/components/contents";
+import { Downloads, Metadata } from "../../../app/components/contents";
 import { PacketDetails } from "../../../app/components/contents/packets";
 import { PacketLayout } from "../../../app/components/main";
 import { server } from "../../../msw/server";
@@ -23,7 +23,7 @@ describe("Packet Layout test", () => {
             <Route element={<PacketLayout />} path="/:packetName/:packetId">
               <Route path="/:packetName/:packetId" element={<PacketDetails />} />
               <Route path="/:packetName/:packetId/metadata" element={<Metadata />} />
-              <Route path="/:packetName/:packetId/downloads" element={<Download />} />
+              <Route path="/:packetName/:packetId/downloads" element={<Downloads />} />
               {/* <Route path="/:packetName/:packetId/changelogs" element={<ChangeLogs />} /> */}
             </Route>
           </Routes>
