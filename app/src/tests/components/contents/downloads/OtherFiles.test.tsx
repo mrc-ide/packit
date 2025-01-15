@@ -1,10 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import OtherFiles from "../../../../app/components/contents/downloads/OtherFiles";
 import { mockPacket } from "../../../mocks";
-import { Role, Roles } from "../../../../types";
+import { InputFiles, InputFileType } from "../../../../types";
 import { createMemoryRouter, Outlet, RouterProvider } from "react-router-dom";
 
-const renderComponent = (inputFiles: Role[] = []) => {
+const renderComponent = (inputFiles: InputFiles[] = []) => {
   const routes = [
     {
       path: "/",
@@ -19,9 +19,9 @@ const renderComponent = (inputFiles: Role[] = []) => {
 
 describe("OtherFiles component", () => {
   it("renders a list of files", async () => {
-    const inputs: Role[] = [
-      { path: "report.html", role: Roles.Resource },
-      { path: "artefact_data.csv", role: Roles.Resource }
+    const inputs: InputFiles[] = [
+      { path: "report.html", role: InputFileType.Resource },
+      { path: "artefact_data.csv", role: InputFileType.Resource }
     ];
     renderComponent(inputs);
 
@@ -30,7 +30,7 @@ describe("OtherFiles component", () => {
   });
 
   it("does not render 'Shared resource' text for resource files", async () => {
-    const inputs: Role[] = [{ path: "report.html", role: Roles.Resource }];
+    const inputs: InputFiles[] = [{ path: "report.html", role: InputFileType.Resource }];
     renderComponent(inputs);
 
     expect(await screen.findByText("report.html")).toBeVisible();
@@ -38,7 +38,7 @@ describe("OtherFiles component", () => {
   });
 
   it("renders 'Shared resource' text for shared files", async () => {
-    const inputs: Role[] = [{ path: "a_renamed_common_resource.csv", role: Roles.Shared }];
+    const inputs: InputFiles[] = [{ path: "a_renamed_common_resource.csv", role: InputFileType.Shared }];
     renderComponent(inputs);
 
     expect(await screen.findByText("a_renamed_common_resource.csv")).toBeVisible();

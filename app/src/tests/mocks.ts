@@ -10,7 +10,7 @@ import {
   PageableBasicDto,
   PageablePacketGroupSummaries,
   PageablePackets,
-  Roles
+  InputFileType
 } from "../types";
 
 export const mockPacketResponse = {
@@ -39,7 +39,7 @@ export const mockUserState: () => UserState = () => {
     displayName: "LeBron James",
     userName: "goat",
     token:
-    // eslint-disable-next-line max-len
+      // eslint-disable-next-line max-len
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwYWNraXQiLCJpc3MiOiJwYWNraXQtYXBpIiwidXNlck5hbWUiOiJhYnN0ZXJuYXRvciIsImRpc3BsYXlOYW1lIjoiQW5tb2wgVGhhcGFyIiwiZGF0ZXRpbWUiOjE3MDI5NzgyMjgsImF1IjpbIltVU0VSXSJdLCJleHAiOjE3MDMwNjQ2Mjh9.o3b4PzZX76nP2tUxndGvusx-rytOkApodZ-geVPH9Pg",
     exp: Math.floor(Date.now() / 1000) + 3600, // expires in 1 hour
     authorities: ["user.manage", "packet.read", "packet.run"]
@@ -166,15 +166,15 @@ export const mockPacket: PacketMetadata = {
       role: [
         {
           path: "data.csv",
-          role: Roles.Resource
+          role: InputFileType.Resource
         },
         {
           path: "orderly.R",
-          role: Roles.Orderly
+          role: InputFileType.Orderly
         },
         {
           path: "a_renamed_common_resource.csv",
-          role: Roles.Shared
+          role: InputFileType.Shared
         }
       ],
       shared: [

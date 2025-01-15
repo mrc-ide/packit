@@ -1,5 +1,5 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../Base/Accordion";
-import { Roles } from "../../../../types";
+import { InputFileType } from "../../../../types";
 import Artefacts from "./Artefacts";
 import OtherFiles from "./OtherFiles";
 import { usePacketOutletContext } from "../../main/PacketOutlet";
@@ -9,7 +9,7 @@ export const OrderlyDownloads = () => {
   console.warn("packet", packet);
   const artefacts = packet?.custom?.orderly.artefacts;
   const inputFiles = packet?.custom?.orderly.role.filter((input) =>
-    [Roles.Resource, Roles.Shared].includes(input.role)
+    [InputFileType.Resource, InputFileType.Shared].includes(input.role)
   );
 
   if (!!artefacts?.length && !!inputFiles?.length) {

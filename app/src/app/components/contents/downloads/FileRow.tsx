@@ -1,6 +1,5 @@
 import { ChartColumn, File, Presentation, TableProperties } from "lucide-react";
 import { bytesToSize } from "../../../../helpers";
-import { PacketMetadata } from "../../../../types";
 import DownloadButton from "./DownloadButton";
 import { usePacketOutletContext } from "../../main/PacketOutlet";
 
