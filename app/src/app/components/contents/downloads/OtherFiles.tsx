@@ -5,22 +5,22 @@ import { PacketMetadata, Role, Roles } from "../../../../types";
 // 'Other files' are any files to display other than artefact groups.
 
 interface OtherFilesProps {
-  inputs: Role[];
+  inputFiles: Role[];
   packet: PacketMetadata;
 }
 
-export default function OtherFiles({ inputs, packet }: OtherFilesProps) {
+export default function OtherFiles({ inputFiles, packet }: OtherFilesProps) {
   return (
     <Card>
       <CardContent className="p-0">
         <ul>
-          {inputs.map((input, index) => (
+          {inputFiles.map((input, index) => (
             <li key={index} className="[&:not(:first-child)]:border-t">
               <FileRow path={input.path} packet={packet} sharedResource={input.role === Roles.Shared} />
-            </li>)
-          )}
+            </li>
+          ))}
         </ul>
       </CardContent>
     </Card>
   );
-};
+}

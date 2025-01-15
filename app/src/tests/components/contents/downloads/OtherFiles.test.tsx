@@ -5,7 +5,7 @@ import { Role, Roles } from "../../../../types";
 
 describe("OtherFiles component", () => {
   const renderComponent = (inputs: Role[] = []) => {
-    render(<OtherFiles inputs={inputs} packet={mockPacket} />);
+    render(<OtherFiles inputFiles={inputs} packet={mockPacket} />);
   };
 
   it("renders a list of files", async () => {

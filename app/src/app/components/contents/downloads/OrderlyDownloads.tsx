@@ -9,9 +9,11 @@ interface OrderlyDownloadsProps {
 
 export const OrderlyDownloads = ({ packet }: OrderlyDownloadsProps) => {
   const artefacts = packet?.custom?.orderly.artefacts;
-  const inputs = packet?.custom?.orderly.role.filter((input) => [Roles.Resource, Roles.Shared].includes(input.role));
+  const inputFiles = packet?.custom?.orderly.role.filter((input) =>
+    [Roles.Resource, Roles.Shared].includes(input.role)
+  );
 
-  if (!!artefacts?.length && !!inputs?.length) {
+  if (!!artefacts?.length && !!inputFiles?.length) {
     return (
       <Accordion type="multiple" defaultValue={["artefacts"]} data-testid="accordion">
         <AccordionItem value="artefacts">
@@ -27,7 +29,7 @@ export const OrderlyDownloads = ({ packet }: OrderlyDownloadsProps) => {
             <h3>Other files</h3>
           </AccordionTrigger>
           <AccordionContent>
-            <OtherFiles inputs={inputs} packet={packet} />
+            <OtherFiles inputFiles={inputFiles} packet={packet} />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
@@ -39,11 +41,11 @@ export const OrderlyDownloads = ({ packet }: OrderlyDownloadsProps) => {
         <Artefacts artefacts={artefacts} packet={packet} />
       </>
     );
-  } else if (inputs?.length) {
+  } else if (inputFiles?.length) {
     return (
       <>
         <h3>Files</h3>
-        <OtherFiles inputs={inputs} packet={packet} />
+        <OtherFiles inputFiles={inputFiles} packet={packet} />
       </>
     );
   } else {
