@@ -6,7 +6,6 @@ import { usePacketOutletContext } from "../../../main/PacketOutlet";
 
 export const OrderlyDownloads = () => {
   const { packet } = usePacketOutletContext();
-  console.warn("packet", packet);
   const artefacts = packet?.custom?.orderly.artefacts;
   const inputFiles = packet?.custom?.orderly.role.filter((input) =>
     [InputFileType.Resource, InputFileType.Shared].includes(input.role)
