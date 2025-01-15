@@ -12,12 +12,12 @@ export const Downloads = () => {
   const packetIsFromOrderly = !!packet?.custom?.orderly;
 
   return (
-    <div className="space-y-0">
+    <>
       {packet && (
         <>
-          <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} displayName={packet.displayName} />
-          <div className="flex flex-col">
-            <span className="self-end mb-2">
+          <div className="md:flex justify-between">
+            <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} displayName={packet.displayName} />
+            <span className="self-end">
               <DownloadAllFilesButton />
             </span>
           </div>
@@ -40,6 +40,6 @@ export const Downloads = () => {
           )}
         </>
       )}
-    </div>
+    </>
   );
 };
