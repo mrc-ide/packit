@@ -30,7 +30,7 @@ describe("orderly downloads component", () => {
 
     userEvent.click(screen.getByText("Other files"));
     expect(await screen.findByText("a_renamed_common_resource.csv")).toBeVisible();
-    expect(screen.queryByText("orderly.R")).toBeNull(); // Excludes inputs with role 'orderly'.
+    expect(await screen.findByText("orderly.R")).toBeVisible();
   });
 
   it("renders no accordion when there are no 'other files'", async () => {

@@ -8,7 +8,7 @@ export const OrderlyDownloads = () => {
   const { packet } = usePacketOutletContext();
   const artefacts = packet?.custom?.orderly.artefacts;
   const inputFiles = packet?.custom?.orderly.role.filter((input) =>
-    [InputFileType.Resource, InputFileType.Shared].includes(input.role)
+    [InputFileType.Resource, InputFileType.Shared, InputFileType.Orderly].includes(input.role)
   );
 
   if (!!artefacts?.length && !!inputFiles?.length) {

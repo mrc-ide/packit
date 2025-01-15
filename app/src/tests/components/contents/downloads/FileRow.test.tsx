@@ -22,7 +22,7 @@ const renderComponent = (path: string, sharedResource?: boolean) => {
 };
 
 describe("file row component", () => {
-  it("can render file path, file size, relevant icon (determined by file extension). and download button", async () => {
+  it("can render file path, file size, relevant icon (determined by file extension), and download button", async () => {
     const { container } = renderComponent("report.html");
 
     expect(await screen.findByText("report.html")).toBeVisible();
@@ -57,6 +57,15 @@ describe("file row component", () => {
     expect(await screen.findByText("other_extensions.txt")).toBeVisible();
     expect(await screen.findByText("15 bytes")).toBeVisible();
     expectIconToBeRendered(container, "lucide-file");
+    expect(screen.queryByText("Shared resource")).not.toBeInTheDocument();
+  });
+
+  it("can render relevant icon for script files, case-insensitively", async () => {
+    const { container } = renderComponent("orderly.R");
+
+    expect(await screen.findByText("orderly.R")).toBeVisible();
+    expect(await screen.findByText("137 bytes")).toBeVisible();
+    expectIconToBeRendered(container, "lucide-file-code2");
     expect(screen.queryByText("Shared resource")).not.toBeInTheDocument();
   });
 });
