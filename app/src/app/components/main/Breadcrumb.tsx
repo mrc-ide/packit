@@ -18,8 +18,11 @@ export const Breadcrumb = () => {
             return index === pathNames.length - 1 ? (
               <div key={index}>{displayName}</div>
             ) : (
-              <div className="flex space-x-1 justify-between items-center" key={index}>
-                <NavLink to={routeTo} className="transition-colors hover:text-primary text-muted-foreground">
+              <div className="flex space-x-1 justify-between items-center truncate" key={index}>
+                <NavLink
+                  to={routeTo}
+                  className="transition-colors hover:text-primary text-muted-foreground truncate whitespace-nowrap"
+                >
                   {displayName}
                 </NavLink>
                 <ChevronRight />
