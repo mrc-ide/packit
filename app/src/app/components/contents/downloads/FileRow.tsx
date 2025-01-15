@@ -2,10 +2,10 @@ import { ChartColumn, File, Presentation, TableProperties } from "lucide-react";
 import { bytesToSize } from "../../../../helpers";
 import { PacketMetadata } from "../../../../types";
 import DownloadButton from "./DownloadButton";
+import { usePacketOutletContext } from "../../main/PacketOutlet";
 
 interface FileRowProps {
   path: string;
-  packet: PacketMetadata;
   sharedResource?: boolean;
 }
 
@@ -24,33 +24,34 @@ const getFileIcon = (extension: string | undefined) => {
   return defaultFileIcon;
 };
 
-export default function FileRow({ path, packet, sharedResource }: FileRowProps) {
+export default function FileRow({ path, sharedResource }: FileRowProps) {
+  const { packet } = usePacketOutletContext();
   const extension = path.split(".").pop();
-  const file = packet.files.filter((file) => {
+  const file = packet?.files.filter((file) => {
     return file.path === path.replace("//", "/");
   })[0];
+
   const fileName = path.split("/").pop();
 
+  if (!file || !packet) return null;
   return (
-    file && (
-      <div className="p-2 flex justify-between">
-        <div className="flex items-center truncate">
-          <span className="min-w-fit">{getFileIcon(extension)}</span>
-          <div className="flex flex-col ps-2 truncate">
-            <span className="font-semibold truncate">{fileName}</span>
-            <p className="text-muted-foreground small">
-              <span>{bytesToSize(file.size)}</span>
-              {sharedResource && (
-                <>
-                  <span> · </span>
-                  <span>Shared resource</span>
-                </>
-              )}
-            </p>
-          </div>
+    <div className="p-2 flex justify-between">
+      <div className="flex items-center truncate">
+        <span className="min-w-fit">{getFileIcon(extension)}</span>
+        <div className="flex flex-col ps-2 truncate">
+          <span className="font-semibold truncate">{fileName}</span>
+          <p className="text-muted-foreground small">
+            <span>{bytesToSize(file.size)}</span>
+            {sharedResource && (
+              <>
+                <span> · </span>
+                <span>Shared resource</span>
+              </>
+            )}
+          </p>
         </div>
-        <DownloadButton file={file} packetId={packet.id ?? ""} />
       </div>
-    )
+      <DownloadButton file={file} packetId={packet.id} />
+    </div>
   );
 }

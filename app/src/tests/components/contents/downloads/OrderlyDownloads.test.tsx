@@ -3,14 +3,23 @@ import userEvent from "@testing-library/user-event";
 import { mockPacket } from "../../../mocks";
 import { Custom } from "../../../../types";
 import { OrderlyDownloads } from "../../../../app/components/contents/downloads/OrderlyDownloads";
+import { createMemoryRouter, Outlet, RouterProvider } from "react-router-dom";
+
+const renderComponent = (customMetadata: Custom) => {
+  const packet = { ...mockPacket, custom: customMetadata };
+  const routes = [
+    {
+      path: "/",
+      element: <Outlet context={{ packet }} />,
+      children: [{ path: "/", element: <OrderlyDownloads /> }]
+    }
+  ];
+  const router = createMemoryRouter(routes, { initialEntries: ["/"] });
+
+  render(<RouterProvider router={router} />);
+};
 
 describe("orderly downloads component", () => {
-  const renderComponent = (customMetadata: Custom) => {
-    const packet = { ...mockPacket, custom: customMetadata };
-
-    render(<OrderlyDownloads packet={packet} />);
-  };
-
   it("renders the 'artefacts' and 'other files' accordion sections with only the first open", async () => {
     renderComponent(mockPacket.custom as Custom);
 

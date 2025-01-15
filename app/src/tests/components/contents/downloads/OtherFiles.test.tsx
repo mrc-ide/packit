@@ -2,12 +2,22 @@ import { render, screen } from "@testing-library/react";
 import OtherFiles from "../../../../app/components/contents/downloads/OtherFiles";
 import { mockPacket } from "../../../mocks";
 import { Role, Roles } from "../../../../types";
+import { createMemoryRouter, Outlet, RouterProvider } from "react-router-dom";
+
+const renderComponent = (inputFiles: Role[] = []) => {
+  const routes = [
+    {
+      path: "/",
+      element: <Outlet context={{ packet: mockPacket }} />,
+      children: [{ path: "/", element: <OtherFiles inputFiles={inputFiles} /> }]
+    }
+  ];
+  const router = createMemoryRouter(routes, { initialEntries: ["/"] });
+
+  render(<RouterProvider router={router} />);
+};
 
 describe("OtherFiles component", () => {
-  const renderComponent = (inputs: Role[] = []) => {
-    render(<OtherFiles inputFiles={inputs} packet={mockPacket} />);
-  };
-
   it("renders a list of files", async () => {
     const inputs: Role[] = [
       { path: "report.html", role: Roles.Resource },

@@ -4,10 +4,9 @@ import { Artefact, PacketMetadata } from "../../../../types";
 
 interface ArtefactsProps {
   artefacts: Artefact[];
-  packet: PacketMetadata;
 }
 
-export default function Artefacts({ artefacts, packet }: ArtefactsProps) {
+export default function Artefacts({ artefacts }: ArtefactsProps) {
   return (
     <ul className="space-y-4">
       {artefacts.map((artefact, key) => (
@@ -20,7 +19,7 @@ export default function Artefacts({ artefacts, packet }: ArtefactsProps) {
               <ul>
                 {artefact.paths.map((path, index) => (
                   <li className="border-t" key={index}>
-                    <FileRow path={path} packet={packet} />
+                    <FileRow path={path} />
                   </li>
                 ))}
               </ul>

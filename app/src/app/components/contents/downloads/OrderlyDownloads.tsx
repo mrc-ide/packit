@@ -1,13 +1,12 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../Base/Accordion";
-import { PacketMetadata, Roles } from "../../../../types";
+import { Roles } from "../../../../types";
 import Artefacts from "./Artefacts";
 import OtherFiles from "./OtherFiles";
+import { usePacketOutletContext } from "../../main/PacketOutlet";
 
-interface OrderlyDownloadsProps {
-  packet: PacketMetadata;
-}
-
-export const OrderlyDownloads = ({ packet }: OrderlyDownloadsProps) => {
+export const OrderlyDownloads = () => {
+  const { packet } = usePacketOutletContext();
+  console.warn("packet", packet);
   const artefacts = packet?.custom?.orderly.artefacts;
   const inputFiles = packet?.custom?.orderly.role.filter((input) =>
     [Roles.Resource, Roles.Shared].includes(input.role)
@@ -21,7 +20,7 @@ export const OrderlyDownloads = ({ packet }: OrderlyDownloadsProps) => {
             <h3>Artefacts</h3>
           </AccordionTrigger>
           <AccordionContent>
-            <Artefacts artefacts={artefacts} packet={packet} />
+            <Artefacts artefacts={artefacts} />
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="inputs">
@@ -29,7 +28,7 @@ export const OrderlyDownloads = ({ packet }: OrderlyDownloadsProps) => {
             <h3>Other files</h3>
           </AccordionTrigger>
           <AccordionContent>
-            <OtherFiles inputFiles={inputFiles} packet={packet} />
+            <OtherFiles inputFiles={inputFiles} />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
@@ -38,14 +37,14 @@ export const OrderlyDownloads = ({ packet }: OrderlyDownloadsProps) => {
     return (
       <>
         <h3>Artefacts</h3>
-        <Artefacts artefacts={artefacts} packet={packet} />
+        <Artefacts artefacts={artefacts} />
       </>
     );
   } else if (inputFiles?.length) {
     return (
       <>
         <h3>Files</h3>
-        <OtherFiles inputFiles={inputFiles} packet={packet} />
+        <OtherFiles inputFiles={inputFiles} />
       </>
     );
   } else {

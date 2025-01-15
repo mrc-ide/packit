@@ -14,8 +14,8 @@ export default function Downloads() {
     <>
       {packet && (
         <>
-          <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} displayName={packet?.displayName} />
-          {packetIsFromOrderly && <OrderlyDownloads packet={packet} />}
+          <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} displayName={packet.displayName} />
+          {packetIsFromOrderly && <OrderlyDownloads />}
           {!packetIsFromOrderly && (
             <>
               <h3>Downloads</h3>
@@ -24,7 +24,7 @@ export default function Downloads() {
                   <ul>
                     {packet.files.map((file, index) => (
                       <li key={index}>
-                        <FileRow path={file.path} packet={packet} />
+                        <FileRow path={file.path} />
                       </li>
                     ))}
                   </ul>
