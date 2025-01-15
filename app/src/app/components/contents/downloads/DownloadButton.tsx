@@ -10,7 +10,7 @@ interface DownloadButtonProps {
   packetId: string;
 }
 
-export default function DownloadButton({ file, packetId }: DownloadButtonProps) {
+export const DownloadButton = ({ file, packetId }: DownloadButtonProps) => {
   const [error, setError] = useState("");
 
   const downloadFile = (file: FileMetadata) => {
@@ -33,4 +33,4 @@ export default function DownloadButton({ file, packetId }: DownloadButtonProps) 
       <div className="text-red-500 pe-4">{error}</div>
     </div>
   );
-}
+};

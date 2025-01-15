@@ -1,7 +1,7 @@
 import { UserAuthForm } from "./UserAuthForm";
 import { useSearchParams } from "react-router-dom";
 
-export default function Login() {
+export const Login = () => {
   const [searchParams] = useSearchParams();
   const sessionExpiryInfo = searchParams.get("info");
   return (
@@ -15,4 +15,4 @@ export default function Login() {
       <UserAuthForm />
     </>
   );
-}
+};

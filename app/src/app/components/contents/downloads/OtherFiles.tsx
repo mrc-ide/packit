@@ -1,5 +1,5 @@
 import { Card, CardContent } from "../../Base/Card";
-import FileRow from "./FileRow";
+import { FileRow } from "./FileRow";
 import { PacketMetadata, Role, Roles } from "../../../../types";
 
 // 'Other files' are any files to display other than artefact groups.
@@ -9,7 +9,7 @@ interface OtherFilesProps {
   packet: PacketMetadata;
 }
 
-export default function OtherFiles({ inputs, packet }: OtherFilesProps) {
+export const OtherFiles = ({ inputs, packet }: OtherFilesProps) => {
   return (
     <Card>
       <CardContent className="p-0">

@@ -1,3 +1,3 @@
-import ProjectDocumentation from "./ProjectDocumentation";
+import { ProjectDocumentation } from "./ProjectDocumentation";
 
-export {ProjectDocumentation};
+export { ProjectDocumentation };

@@ -10,7 +10,7 @@ import { NavMenuMobile } from "./NavMenuMobile";
 import { LeftNav } from "./LeftNav";
 import { hasUserManagePermission } from "../../../lib/auth/hasPermission";
 
-export default function Header() {
+export const Header = () => {
   const { user } = useUser();
 
   return (
@@ -43,4 +43,4 @@ export default function Header() {
       </div>
     </header>
   );
-}
+};

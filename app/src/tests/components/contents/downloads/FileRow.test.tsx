@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { mockPacket } from "../../../mocks";
-import FileRow from "../../../../app/components/contents/downloads/FileRow";
+import { FileRow } from "../../../../app/components/contents/downloads/FileRow";
 
 const expectIconToBeRendered = (container: HTMLElement, iconName: string) => {
   const icon = container.querySelector(".lucide") as HTMLImageElement;

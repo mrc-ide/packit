@@ -1,7 +1,7 @@
 import { ChartColumn, File, Presentation, TableProperties } from "lucide-react";
 import { bytesToSize } from "../../../../helpers";
 import { PacketMetadata } from "../../../../types";
-import DownloadButton from "./DownloadButton";
+import { DownloadButton } from "./DownloadButton";
 
 interface FileRowProps {
   path: string;
@@ -24,7 +24,7 @@ const getFileIcon = (extension: string | undefined) => {
   return defaultFileIcon;
 };
 
-export default function FileRow({ path, packet, sharedResource }: FileRowProps) {
+export const FileRow = ({ path, packet, sharedResource }: FileRowProps) => {
   const extension = path.split(".").pop();
   const file = packet.files.filter((file) => {
     return file.path === path.replace("//", "/");
@@ -53,4 +53,4 @@ export default function FileRow({ path, packet, sharedResource }: FileRowProps) 
       </div>
     )
   );
-}
+};

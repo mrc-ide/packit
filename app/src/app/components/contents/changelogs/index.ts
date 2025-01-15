@@ -1,3 +1,3 @@
-import ChangeLogs from "./ChangeLogs";
+import { ChangeLogs } from "./ChangeLogs";
 
-export {ChangeLogs};
+export { ChangeLogs };

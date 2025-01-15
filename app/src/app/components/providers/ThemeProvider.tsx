@@ -15,7 +15,7 @@ export const useTheme = () => {
   return context;
 };
 
-export function ThemeProvider({ children, defaultTheme = "system", ...props }: ThemeProviderProps) {
+export const ThemeProvider = ({ children, defaultTheme = "system", ...props }: ThemeProviderProps) => {
   const [theme, setTheme] = useState<Theme>(
     () => (localStorage.getItem(LocalStorageKeys.THEME) as Theme) || defaultTheme
   );
@@ -48,4 +48,4 @@ export function ThemeProvider({ children, defaultTheme = "system", ...props }: T
       {children}
     </ThemeProviderContext.Provider>
   );
-}
+};

@@ -13,7 +13,7 @@ import {
 import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 import { useUser } from "../providers/UserProvider";
 
-export function AccountHeaderDropdown() {
+export const AccountHeaderDropdown = () => {
   const navigate = useNavigate();
   const { removeUser, user } = useUser();
   const { setLoggingOut } = useRedirectOnLogin();
@@ -52,4 +52,4 @@ export function AccountHeaderDropdown() {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
+};

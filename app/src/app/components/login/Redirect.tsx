@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../providers/UserProvider";
 import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 
-export default function Redirect() {
+export const Redirect = () => {
   const navigate = useNavigate();
   const { setUser } = useUser();
   const { requestedUrl, setRequestedUrl } = useRedirectOnLogin();
@@ -12,7 +12,7 @@ export default function Redirect() {
   const token = searchParams.get("token");
   const error = searchParams.get("error");
 
-  const navigateToRequestedUrl  = () => {
+  const navigateToRequestedUrl = () => {
     const url = requestedUrl || "/";
     setRequestedUrl(null); // reset requested url before redirecting
     navigate(url);
@@ -34,4 +34,4 @@ export default function Redirect() {
       <p>Redirecting user ...</p>
     </div>
   );
-}
+};

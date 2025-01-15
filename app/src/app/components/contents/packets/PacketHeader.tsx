@@ -4,7 +4,7 @@ interface PacketHeaderProps {
   displayName?: string;
 }
 
-export default function PacketHeader({ packetName, packetId, displayName }: PacketHeaderProps) {
+export const PacketHeader = ({ packetName, packetId, displayName }: PacketHeaderProps) => {
   if (!displayName || displayName === packetName) {
     return (
       <div>
