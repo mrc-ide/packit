@@ -5,14 +5,12 @@ HERE=$(realpath "$(dirname $0)")
 . "$HERE"/common
 
 docker rm -f \
-    packit-db \
-    $RUNNER_REDIS \
-    $RUNNER_GIT_SETUP \
     outpack_server \
+    packit-db \
+    packit-api \
+    $RUNNER_REDIS \
+    $RUNNER_GIT \
     $RUNNER_SERVER \
-    $RUNNER_WORKER \
-    packit-api
+    $RUNNER_WORKER
 
-docker network rm -f $RUNNER_NETWORK
-
-docker volume rm $ORDERLY_VOLUME $ORDERLY_REMOTE_VOLUME $ORDERLY_LOGS_VOLUME
+docker volume rm $ORDERLY_LOGS_VOLUME

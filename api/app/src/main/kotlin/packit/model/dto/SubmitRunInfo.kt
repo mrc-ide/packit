@@ -8,5 +8,5 @@ data class SubmitRunInfo(
     val branch: String,
     @JsonProperty("hash")
     val commitHash: String,
-    val parameters: Map<String, Any>?
+    val parameters: Map<String, Any>
 )

@@ -1,8 +1,9 @@
 package packit.integration.controllers
-
 import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.assertj.core.api.Assertions.assertThat
+import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -12,12 +13,14 @@ import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.test.context.TestPropertySource
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
 import packit.model.User
 import packit.model.dto.*
 import packit.repository.RunInfoRepository
 import packit.repository.UserRepository
+import java.time.Duration
 import kotlin.test.assertEquals
 
 class RunnerControllerTest : IntegrationTest()
@@ -28,16 +31,23 @@ class RunnerControllerTest : IntegrationTest()
     @Autowired
     private lateinit var userRepository: UserRepository
 
-    private val testPacketGroupName = "test-packetGroupName"
+    private val testPacketGroupName = "incoming_data"
     private val testUser = User("test.user@example.com", mutableListOf(), false, "source1", "Test User")
 
-    private fun getSubmitRunInfo(branch: String, commitHash: String): String
+    private fun getSubmitRunInfo(branch: String, commitHash: String): SubmitRunInfo
     {
-        return jacksonObjectMapper().writeValueAsString(SubmitRunInfo(testPacketGroupName, branch, commitHash, null))
+        return SubmitRunInfo(testPacketGroupName, branch, commitHash, emptyMap())
     }
 
     private fun submitTestRun(): Pair<String, GitBranchInfo>
     {
+        val fetchRes: ResponseEntity<Unit> = restTemplate.exchange(
+            "/runner/git/fetch",
+            HttpMethod.POST,
+            getTokenizedHttpEntity()
+        )
+        assertEquals(HttpStatus.NO_CONTENT, fetchRes.statusCode)
+
         val branchRes: ResponseEntity<GitBranches> = restTemplate.exchange(
             "/runner/git/branches",
             HttpMethod.GET,
@@ -113,7 +123,7 @@ class RunnerControllerTest : IntegrationTest()
     fun `can get git branches`()
     {
         val testBranchName = "master"
-        val testBranchMessages = listOf("first commit")
+        val testBranchMessage = "initial commit\n"
         val res: ResponseEntity<GitBranches> = restTemplate.exchange(
             "/runner/git/branches",
             HttpMethod.GET,
@@ -124,7 +134,7 @@ class RunnerControllerTest : IntegrationTest()
 
         assertEquals(testBranchName, resBody.defaultBranch)
         assertEquals(testBranchName, resBody.branches[0].name)
-        assertEquals(testBranchMessages, resBody.branches[0].message)
+        assertEquals(testBranchMessage, resBody.branches[0].message)
         assertEquals(Long::class.java, resBody.branches[0].time::class.java)
         assertEquals(String::class.java, resBody.branches[0].commitHash::class.java)
     }
@@ -228,5 +238,69 @@ class RunnerControllerTest : IntegrationTest()
         assertEquals(branch1.name, resultStatuses[0].branch)
         assertEquals(taskId2, resultStatuses[1].taskId)
         assertEquals(branch2.name, resultStatuses[1].branch)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.run", "outpack.read"])
+    fun `packet produced by runner is pushed to outpack`()
+    {
+        val (taskId, _) = submitTestRun()
+
+        val res: ResponseEntity<RunInfoDto> = await().atMost(Duration.ofSeconds(10)).pollInSameThread().until({
+            restTemplate.exchange(
+                "/runner/status/$taskId",
+                HttpMethod.GET,
+                getTokenizedHttpEntity()
+            )
+        }, { it.body?.status != Status.PENDING && it.body?.status != Status.RUNNING })
+
+        assertEquals(taskId, res.body!!.taskId)
+        assertEquals(Status.COMPLETE, res.body!!.status)
+
+        val metadataRes: ResponseEntity<String> = restTemplate.exchange(
+            "/outpack/metadata/${res.body!!.packetId!!}/text",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+        assertEquals(HttpStatus.OK, metadataRes.statusCode)
+        assertEquals(testPacketGroupName, jacksonObjectMapper().readTree(metadataRes.body).get("name").asText())
+    }
+}
+
+@TestPropertySource(properties = ["orderly.runner.repository.url=http://example.com"])
+class UnknownRepoRunnerControllerTest : IntegrationTest()
+{
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.run"])
+    fun `git branches of unknown repo is empty`()
+    {
+        val res: ResponseEntity<GitBranches> = restTemplate.exchange(
+            "/runner/git/branches",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+        assertSuccess(res)
+        assertEquals(0, res.body!!.branches.size)
+        assertEquals(null, res.body!!.defaultBranch)
+    }
+}
+
+@TestPropertySource(properties = ["orderly.runner.enabled=false"])
+class DisabledRunnerControllerTest : IntegrationTest()
+{
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.run"])
+    fun `cannot get orderly runner version`()
+    {
+        val res: ResponseEntity<JsonNode> = restTemplate.exchange(
+            "/runner/version",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        assertForbidden(res)
+
+        val error = res.body!!.required("error").required("detail").asText()
+        assertEquals("Orderly runner is not enabled", error)
     }
 }

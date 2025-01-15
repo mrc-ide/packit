@@ -1,10 +1,12 @@
 package packit.service
 
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
-import org.springframework.stereotype.Service
+import packit.config.RunnerConfig
 import packit.exceptions.PackitException
 import packit.model.PageablePayload
 import packit.model.RunInfo
@@ -16,17 +18,16 @@ interface RunnerService
     fun getVersion(): OrderlyRunnerVersion
     fun gitFetch()
     fun getBranches(): GitBranches
-    fun getParameters(packetGroupName: String, ref: String): List<Parameter>
+    fun getParameters(ref: String, packetGroupName: String): List<Parameter>
     fun getPacketGroups(ref: String): List<RunnerPacketGroup>
     fun submitRun(info: SubmitRunInfo, username: String): SubmitRunResponse
     fun getTaskStatus(taskId: String): RunInfo
     fun getTasksStatuses(payload: PageablePayload, filterPacketGroupName: String): Page<RunInfo>
 }
 
-@Service
 class BaseRunnerService(
+    private val config: RunnerConfig,
     private val orderlyRunnerClient: OrderlyRunner,
-    private val outpackServerClient: OutpackServer,
     private val runInfoRepository: RunInfoRepository,
     private val userService: UserService,
 ) : RunnerService
@@ -38,28 +39,44 @@ class BaseRunnerService(
 
     override fun gitFetch()
     {
-        outpackServerClient.gitFetch()
+        orderlyRunnerClient.gitFetch(config.repository.url)
     }
 
     override fun getBranches(): GitBranches
     {
-        return outpackServerClient.getBranches()
+        return orderlyRunnerClient.getBranches(config.repository.url)
     }
 
-    override fun getParameters(packetGroupName: String, ref: String): List<Parameter>
+    override fun getParameters(ref: String, packetGroupName: String): List<Parameter>
     {
-        return orderlyRunnerClient.getParameters(packetGroupName, ref)
+        return orderlyRunnerClient.getParameters(
+            config.repository.url,
+            ref,
+            packetGroupName
+        )
     }
 
     override fun getPacketGroups(ref: String): List<RunnerPacketGroup>
     {
-        return orderlyRunnerClient.getPacketGroups(ref)
+        return orderlyRunnerClient.getPacketGroups(
+            config.repository.url,
+            ref
+        )
     }
 
     override fun submitRun(info: SubmitRunInfo, username: String): SubmitRunResponse
     {
+        val request = RunnerSubmitRunInfo(
+            packetGroupName = info.packetGroupName,
+            branch = info.branch,
+            commitHash = info.commitHash,
+            parameters = info.parameters,
+            url = config.repository.url,
+            location = OrderlyLocation.http(config.locationUrl)
+        )
+
         val user = userService.getByUsername(username) ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
-        val res = orderlyRunnerClient.submitRun(info)
+        val res = orderlyRunnerClient.submitRun(request)
         val runInfo = RunInfo(
             res.taskId,
             packetGroupName = info.packetGroupName,
@@ -138,5 +155,38 @@ class BaseRunnerService(
         )
 
         return runInfoRepository.findAllByPacketGroupNameContaining(filterPacketGroupName, pageable)
+    }
+}
+
+class DisabledRunnerService : RunnerService {
+    fun error(): Nothing {
+        throw PackitException("runnerDisabled", HttpStatus.FORBIDDEN)
+    }
+
+    override fun getVersion(): OrderlyRunnerVersion = error()
+    override fun gitFetch() = error()
+    override fun getBranches(): GitBranches = error()
+    override fun getParameters(ref: String, packetGroupName: String): List<Parameter> = error()
+    override fun getPacketGroups(ref: String): List<RunnerPacketGroup> = error()
+    override fun submitRun(info: SubmitRunInfo, username: String): SubmitRunResponse = error()
+    override fun getTaskStatus(taskId: String): RunInfo = error()
+    override fun getTasksStatuses(payload: PageablePayload, filterPacketGroupName: String): Page<RunInfo> = error()
+}
+
+@Configuration
+class RunnerServiceConfiguration
+{
+    @Bean
+    fun runnerService(
+        config: RunnerConfig?,
+        runInfoRepository: RunInfoRepository,
+        userService: UserService,
+    ): RunnerService {
+        if (config != null) {
+            val client = OrderlyRunnerClient(config.url)
+            return BaseRunnerService(config, client, runInfoRepository, userService)
+        } else {
+            return DisabledRunnerService()
+        }
     }
 }

@@ -41,25 +41,27 @@ export const PacketRunForm = ({ defaultBranch, branches, mutate }: PacketRunForm
       parameters: []
     }
   });
-  const selectedBranch = branches.filter((branch) => branch.name === form.getValues("branch"))[0];
+  const selectedBranch = branches.find((branch) => branch.name === form.getValues("branch"));
 
   const onSubmit = async (values: z.infer<typeof packetRunFormSchema>) => {
-    const submitRunBody = constructSubmitRunBody(values.parameters, values.packetGroupName, selectedBranch);
+    if (selectedBranch !== undefined) {
+      const submitRunBody = constructSubmitRunBody(values.parameters, values.packetGroupName, selectedBranch);
 
-    try {
-      const { taskId } = await fetcher({
-        url: `${appConfig.apiUrl()}/runner/run`,
-        method: "POST",
-        body: submitRunBody
-      });
-      navigate(`/runner/logs/${taskId}`);
-    } catch (error) {
-      console.error(error);
-      if (error instanceof ApiError) {
-        return form.setError("root", { message: error.message });
+      try {
+        const { taskId } = await fetcher({
+          url: `${appConfig.apiUrl()}/runner/run`,
+          method: "POST",
+          body: submitRunBody
+        });
+        navigate(`/runner/logs/${taskId}`);
+      } catch (error) {
+        console.error(error);
+        if (error instanceof ApiError) {
+          return form.setError("root", { message: error.message });
+        }
+
+        form.setError("root", { message: "An unexpected error occurred. Please try again." });
       }
-
-      form.setError("root", { message: "An unexpected error occurred. Please try again." });
     }
   };
 
@@ -67,7 +69,7 @@ export const PacketRunForm = ({ defaultBranch, branches, mutate }: PacketRunForm
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
         <PacketRunBranchField branches={branches} selectedBranch={selectedBranch} form={form} mutate={mutate} />
-        <PacketRunPacketGroupFields form={form} branchCommit={selectedBranch.commitHash} />
+        <PacketRunPacketGroupFields form={form} branchCommit={selectedBranch?.commitHash} />
         <Button type="submit" size="lg">
           Run
         </Button>

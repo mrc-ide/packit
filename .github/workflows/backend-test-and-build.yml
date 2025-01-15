@@ -59,3 +59,11 @@ jobs:
       - name: Smoke test
         working-directory: api
         run: ./scripts/run && ./scripts/smoke-test
+      - name: Upload test reports
+        uses: actions/upload-artifact@v4
+        if: ${{ failure() }}
+        with:
+          name: reports
+          path: |
+            api/app/build/reports/
+            api/app/build/test-results/

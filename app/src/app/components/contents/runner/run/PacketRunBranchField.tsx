@@ -16,14 +16,29 @@ import { getTimeDifferenceToDisplay } from "../../../../../lib/time";
 
 interface PacketRunBranchFieldProps {
   branches: GitBranchInfo[];
-  selectedBranch: GitBranchInfo;
+  selectedBranch: GitBranchInfo | undefined;
   form: UseFormReturn<z.infer<typeof packetRunFormSchema>>;
   mutate: KeyedMutator<GitBranches>;
 }
-export const PacketRunBranchField = ({ branches, selectedBranch, form, mutate }: PacketRunBranchFieldProps) => {
-  const lastCommitTime = getTimeDifferenceToDisplay(selectedBranch.time)[0];
-  const [gitFetchError, setGitFetchError] = useState<string | null>(null);
 
+const SelectedBranchInfo = ({ branch }: { branch: GitBranchInfo }) => {
+  const lastCommitTime = getTimeDifferenceToDisplay(branch.time)[0];
+  return (
+    <div className="flex h-6 items-center space-x-2 text-muted-foreground text-sm">
+      <Github size={20} />
+      <div>{branch.name}</div>
+      <Separator orientation="vertical" />
+      <div>{branch.commitHash.slice(0, 7)}</div>
+      <Separator orientation="vertical" />
+      <div>
+        Updated {lastCommitTime.value} {lastCommitTime.unit} ago
+      </div>
+    </div>
+  );
+};
+
+export const PacketRunBranchField = ({ branches, selectedBranch, form, mutate }: PacketRunBranchFieldProps) => {
+  const [gitFetchError, setGitFetchError] = useState<string | null>(null);
   const gitFetch = async () => {
     try {
       await fetcher({
@@ -48,19 +63,21 @@ export const PacketRunBranchField = ({ branches, selectedBranch, form, mutate }:
             name="branch"
             render={({ field }) => (
               <FormItem>
-                <Select defaultValue={field.value} onValueChange={field.onChange}>
+                <Select defaultValue={field.value ? field.value : undefined} onValueChange={field.onChange}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a branch..." />
+                      <SelectValue placeholder={branches.length > 0 ? "Select a branch..." : "No branches found"} />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent>
-                    {branches.map((branch) => (
-                      <SelectItem key={branch.name} value={branch.name}>
-                        {branch.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
+                  {branches.length > 0 && (
+                    <SelectContent>
+                      {branches.map((branch) => (
+                        <SelectItem key={branch.name} value={branch.name}>
+                          {branch.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  )}
                 </Select>
                 <FormMessage />
               </FormItem>
@@ -81,16 +98,7 @@ export const PacketRunBranchField = ({ branches, selectedBranch, form, mutate }:
         </TooltipProvider>
       </div>
       {gitFetchError && <div className="text-red-500 text-xs">{gitFetchError}</div>}
-      <div className="flex h-6 items-center space-x-2 text-muted-foreground text-sm">
-        <Github size={20} />
-        <div>{selectedBranch.name}</div>
-        <Separator orientation="vertical" />
-        <div>{selectedBranch.commitHash.slice(0, 7)}</div>
-        <Separator orientation="vertical" />
-        <div>
-          Updated {lastCommitTime.value} {lastCommitTime.unit} ago
-        </div>
-      </div>
+      {selectedBranch && <SelectedBranchInfo branch={selectedBranch} />}
     </div>
   );
 };
