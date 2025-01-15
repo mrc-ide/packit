@@ -10,7 +10,7 @@ const imageExtensions = ["jpeg", "jpg", "png", "jiff", "bmp", "gif"];
 const defaultFileIcon = <File className="text-gray-400" />;
 
 export const ExtensionIcon = ({ path }: FileIconProps) => {
-  const extension = path.split(".").pop();
+  const extension = path.split(".").pop()?.toLowerCase();
 
   if (!extension) return defaultFileIcon;
 
