@@ -7,9 +7,10 @@ import { PacketMetadata } from "../../../../types";
 
 interface PacketReportProps {
   packet: PacketMetadata;
-  fileName: string;
+  fileHash: string;
 }
-export const PacketReport = ({ fileName, packet }: PacketReportProps) => {
+
+export const PacketReport = ({ packet, fileHash }: PacketReportProps) => {
   const [error, setError] = useState<null | Error>(null);
   const [htmlFileObjectUrl, setHtmlFileObjectUrl] = useState(undefined as string | undefined);
 
@@ -27,14 +28,14 @@ export const PacketReport = ({ fileName, packet }: PacketReportProps) => {
 
   useEffect(() => {
     const file = getHtmlFileIfExists(packet);
-    if (file?.path != fileName) {
+    if (file?.hash != fileHash) {
       // NB Currently we only support displaying the first html file in a packet, but we may support multiple
       // in future
       setError(new Error("File name not found"));
     } else {
       getHtmlFileObjectUrl(packet);
     }
-  }, [packet, fileName]);
+  }, [packet, fileHash]);
 
   return (
     <>

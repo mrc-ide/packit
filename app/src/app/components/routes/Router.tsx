@@ -48,7 +48,7 @@ export const Router = () => {
         </Route>
       </Route>
       <Route element={<ProtectedRoute />}>
-        <Route path="/:packetName/:packetId/file/:fileName" element={<PacketFileFullScreen />} />
+        <Route path="/:packetName/:packetId/file/:fileHash" element={<PacketFileFullScreen />} />
       </Route>
     </Routes>
   );

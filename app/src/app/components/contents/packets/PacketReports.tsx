@@ -7,6 +7,7 @@ import { PacketReport } from "./PacketReport";
 interface PacketReportsProps {
   packet: PacketMetadata | undefined;
 }
+
 // TODO: add ability to load multiple reports (html files).
 export const PacketReports = ({ packet }: PacketReportsProps) => {
   const [htmlFile, setHtmlFile] = useState<FileMetadata | null>(null);
@@ -21,13 +22,13 @@ export const PacketReports = ({ packet }: PacketReportsProps) => {
       {packet && htmlFile ? (
         <div className="h-screen">
           <div className="w-full h-2/3 border">
-            <PacketReport fileName={htmlFile.path} packet={packet}></PacketReport>
+            <PacketReport fileHash={htmlFile.hash} packet={packet}></PacketReport>
           </div>
           <div className="py-2 flex justify-end">
             <a
               className="text-blue-500 flex items-center gap-1
         hover:underline decoration-blue-500"
-              href={`${packet.id}/file/${htmlFile.path}`}
+              href={`${packet.id}/file/${htmlFile.hash}`}
             >
               <Fullscreen size={20} />
               View Fullscreen
