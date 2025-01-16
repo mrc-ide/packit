@@ -13,7 +13,7 @@ describe("PacketReport component", () => {
   } as unknown as PacketMetadata;
 
   const renderComponent = (fileName = "test.html") => {
-    render(<PacketReport packet={packet} fileName={fileName} />);
+    render(<PacketReport packet={packet} fileHash={fileName} />);
   };
 
   beforeEach(() => {
