@@ -82,8 +82,9 @@ describe("protected routes", () => {
     renderElement();
 
     await waitFor(() => {
-      expect(mockedUsedNavigate)
-        .toHaveBeenCalledWith("/login?info=You have been signed out because your session expired. Please log in.");
+      expect(mockedUsedNavigate).toHaveBeenCalledWith(
+        "/login?info=You have been signed out because your session expired. Please log in."
+      );
       expect(mockSetRequestedUrl).toHaveBeenCalledWith("/");
       expect(localStorage.getItem(LocalStorageKeys.USER)).toBe(null);
     });

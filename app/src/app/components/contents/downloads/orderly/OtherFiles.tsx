@@ -22,4 +22,4 @@ export const OtherFiles = ({ inputFiles }: OtherFilesProps) => {
       </CardContent>
     </Card>
   );
-}
+};

@@ -29,4 +29,4 @@ export const Artefacts = ({ artefacts }: ArtefactsProps) => {
       ))}
     </ul>
   );
-}
+};

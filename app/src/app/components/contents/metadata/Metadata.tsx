@@ -4,12 +4,7 @@ import { usePacketOutletContext } from "../../main/PacketOutlet";
 import { PacketHeader } from "../packets";
 import { MetadataListItem } from "./MetadataListItem";
 import { Github, Library, Monitor, Timer } from "lucide-react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger
-} from "../../Base/Accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../Base/Accordion";
 
 export const Metadata = () => {
   const { packetId, packetName } = useParams();
@@ -18,8 +13,7 @@ export const Metadata = () => {
   const startedTime = packet && getDateUTCString(packet.time);
   const elapsedTime = packet && getElapsedTime(packet.time);
   const session = packet?.custom?.orderly?.session;
-  const packages = session?.packages
-    .sort((a, b) => a.package.localeCompare(b.package));
+  const packages = session?.packages.sort((a, b) => a.package.localeCompare(b.package));
 
   return (
     <>

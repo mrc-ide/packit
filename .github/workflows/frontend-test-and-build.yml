@@ -50,13 +50,13 @@ jobs:
         uses: ./.github/actions/build-api
       - name: Installing dependencies
         run: npm ci --prefix=app
-      - name: Check formatting
+      - name: Check formatting with prettier
         run: npm run format:check --prefix=app
-      - name: Building app
+      - name: Build app
         run: npm run build --prefix=app
-      - name: Running eslint
+      - name: Run eslint
         run: npm run lint --prefix=app
-      - name: Testing app
+      - name: Test app
         run: npm test --prefix=app -- --coverage
       - name: Run dependencies
         run: ./scripts/run-dependencies && ./api/scripts/run && ./api/scripts/smoke-test

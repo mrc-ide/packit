@@ -9,9 +9,8 @@ import { PacketMetadata } from "../../../../types";
 import { PacketDetails } from "../../../../app/components/contents/packets";
 
 jest.mock("../../../../lib/download", () => ({
-    getFileObjectUrl: async () => "fakeObjectUrl"
-  })
-);
+  getFileObjectUrl: async () => "fakeObjectUrl"
+}));
 
 describe("packet details component", () => {
   const renderComponent = (packet: PacketMetadata = mockPacket) => {
