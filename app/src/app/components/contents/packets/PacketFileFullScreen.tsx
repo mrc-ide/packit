@@ -9,20 +9,16 @@ export const PacketFileFullScreen = () => {
   const { packetId, fileHash } = useParams();
   const { packet, error } = useGetPacketById(packetId);
 
-  if (error) {
-    return <ErrorComponent error={error} message="Error Fetching Packet details" />;
+  if (error || !packet) {
+    return <ErrorComponent error={error} message="Error fetching Packet details" />;
   }
 
-  const file = packet?.files.filter((file) => file.hash === fileHash)[0];
-  let isImageFile = false;
-  let isHtmlFile = false;
-  if (file) {
-    const extension = filePathToExtension(file.path);
-    isImageFile = imageExtensions.includes(extension);
-    isHtmlFile = extension === "html";
-  }
+  const file = packet.files.filter((file) => file.hash === fileHash)[0];
+  const extension = file ? filePathToExtension(file.path) : "";
+  const isImageFile = imageExtensions.includes(extension);
+  const isHtmlFile = extension === "html";
 
-  return packet && fileHash ? (
+  return fileHash ? (
     <div className="h-screen">
       {isImageFile && <ImageTab packet={packet} fileHash={fileHash} />}
       {isHtmlFile && <PacketReport packet={packet} fileHash={fileHash} />}

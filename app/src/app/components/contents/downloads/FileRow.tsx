@@ -7,8 +7,7 @@ import { Link } from "react-router-dom";
 import { ExternalLinkIcon } from "lucide-react";
 import { HoverCard } from "../../Base/HoverCard";
 import { HoverCardContent, HoverCardTrigger } from "@radix-ui/react-hover-card";
-import { getFileObjectUrl, getFileUrl } from "../../../../lib/download";
-import { useEffect, useState } from "react";
+import { useFileObjectUrl } from "./hooks/useFileObjectUrl";
 
 interface FileRowProps {
   path: string;
@@ -17,20 +16,12 @@ interface FileRowProps {
 
 export const FileRow = ({ path, sharedResource }: FileRowProps) => {
   const { packet } = usePacketOutletContext();
-  const [fileObjectUrl, setFileObjectUrl] = useState<string | undefined>(undefined);
-
   const file = packet?.files.filter((file) => {
     return file.path === path.replace("//", "/");
   })[0];
   const fileName = path.split("/").pop();
   const isImageFile = imageExtensions.includes(filePathToExtension(path));
-
-  useEffect(() => {
-    if (file && packet && isImageFile) {
-      const fileUrl = getFileUrl(file, packet.id);
-      getFileObjectUrl(fileUrl, file.path).then(setFileObjectUrl);
-    }
-  }, [file, packet]);
+  const fileObjectUrl = isImageFile ? useFileObjectUrl(packet, file) : undefined;
 
   if (!file || !packet) return null;
   return (
@@ -42,7 +33,7 @@ export const FileRow = ({ path, sharedResource }: FileRowProps) => {
         <div className="flex flex-col ps-2 truncate">
           <span className="font-semibold truncate">
             {!isImageFile && <span>{fileName}</span>}
-            {isImageFile && fileObjectUrl && (
+            {isImageFile && (
               <HoverCard openDelay={0} closeDelay={0}>
                 <HoverCardTrigger>
                   <Link
@@ -55,7 +46,7 @@ export const FileRow = ({ path, sharedResource }: FileRowProps) => {
                   </Link>
                 </HoverCardTrigger>
                 <HoverCardContent className="w-60 bg-card border p-2" align="start">
-                  <img src={fileObjectUrl} alt="Preview of the image download" />
+                  {fileObjectUrl && <img src={fileObjectUrl} alt="Preview of the image download" />}
                 </HoverCardContent>
               </HoverCard>
             )}
