@@ -3,11 +3,7 @@ import { DownloadButton } from "./DownloadButton";
 import { usePacketOutletContext } from "../../main/PacketOutlet";
 import { ExtensionIcon } from "./ExtensionIcon";
 import { filePathToExtension, imageExtensions } from "./utils/extensions";
-import { Link } from "react-router-dom";
-import { ExternalLinkIcon } from "lucide-react";
-import { HoverCard } from "../../Base/HoverCard";
-import { HoverCardContent, HoverCardTrigger } from "@radix-ui/react-hover-card";
-import { useFileObjectUrl } from "./hooks/useFileObjectUrl";
+import { ImageFileLabel } from "./ImageFileLabel";
 
 interface FileRowProps {
   path: string;
@@ -22,7 +18,6 @@ export const FileRow = ({ path, sharedResource }: FileRowProps) => {
   })[0];
   const fileName = path.split("/").pop();
   const isImageFile = imageExtensions.includes(filePathToExtension(path));
-  const fileObjectUrl = isImageFile ? useFileObjectUrl(packet, file) : undefined;
 
   if (!file || !packet) return null;
   return (
@@ -34,23 +29,7 @@ export const FileRow = ({ path, sharedResource }: FileRowProps) => {
         <div className="flex flex-col ps-2 truncate">
           <span className="font-semibold truncate">
             {!isImageFile && <span>{fileName}</span>}
-            {isImageFile && (
-              <HoverCard openDelay={0} closeDelay={0}>
-                <HoverCardTrigger>
-                  <Link
-                    to={`/${packet.name}/${packet.id}/file/${file.hash}`}
-                    target="_blank"
-                    className="flex truncate text-blue-500 hover:underline"
-                  >
-                    <span className="truncate">{fileName}</span>
-                    <ExternalLinkIcon size={15} className="min-w-fit ms-1" />
-                  </Link>
-                </HoverCardTrigger>
-                <HoverCardContent className="w-60 bg-card border p-2" align="start">
-                  {fileObjectUrl && <img src={fileObjectUrl} alt="Preview of the image download" />}
-                </HoverCardContent>
-              </HoverCard>
-            )}
+            {isImageFile && <ImageFileLabel packet={packet} file={file} fileName={fileName} />}
           </span>
           <p className="text-muted-foreground small">
             <span>{bytesToSize(file.size)}</span>
