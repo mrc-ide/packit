@@ -27,7 +27,7 @@ export const ImageFileLabel = ({ packet, file, fileName }: ImageFileLabelProps) 
         </Link>
       </HoverCardTrigger>
       <HoverCardContent className="w-60 bg-card border p-2" align="start">
-        {fileObjectUrl && <img src={fileObjectUrl} alt="Preview of the image download" />}
+        {fileObjectUrl && <img src={fileObjectUrl} alt={`Preview of the image download ${fileName}`} />}
       </HoverCardContent>
     </HoverCard>
   );

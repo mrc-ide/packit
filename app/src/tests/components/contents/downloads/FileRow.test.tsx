@@ -34,12 +34,20 @@ describe("file row component", () => {
   });
 
   it("when the file path includes a directory it excludes this from the displayed file name", async () => {
+    URL.createObjectURL = jest.fn(() => "fakeObjectUrl");
+
     const { container } = renderComponent("directory//graph.png");
 
     expect(await screen.findByText(/^graph.png$/)).toBeVisible();
     expect(await screen.findByText("7.17 KB")).toBeVisible();
     expectIconToBeRendered(container, "lucide-chart-column");
     expect(screen.queryByText("Shared resource")).not.toBeInTheDocument();
+  });
+
+  it("when the file extension indicates an image file, it renders a link to the image", async () => {
+    renderComponent("directory//graph.png");
+
+    expect(screen.getByRole("link")).toHaveTextContent(/^graph.png$/);
   });
 
   it("when the file is a shared resource, this information is displayed", async () => {

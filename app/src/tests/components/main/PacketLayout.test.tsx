@@ -11,6 +11,7 @@ import { mockPacket } from "../../mocks";
 import { HttpStatus } from "../../../lib/types/HttpStatus";
 
 jest.mock("../../../lib/download", () => ({
+  ...jest.requireActual("../../../lib/download"),
   getFileObjectUrl: async () => "fakeObjectUrl"
 }));
 

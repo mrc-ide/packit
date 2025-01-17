@@ -1,8 +1,11 @@
 import { render, screen } from "@testing-library/react";
 import { Artefacts } from "../../../../../app/components/contents/downloads/orderly/Artefacts";
 import { mockPacket } from "../../../../mocks";
-import { Artefact } from "../../../../../types";
-import { createMemoryRouter, Outlet, RouterProvider } from "react-router-dom";
+import { Artefact, PacketMetadata } from "../../../../../types";
+import { createMemoryRouter, MemoryRouter, Outlet, Route, RouterProvider, Routes } from "react-router-dom";
+import { SWRConfig } from "swr";
+import { PacketLayout } from "../../../../../app/components/main";
+import { Downloads } from "../../../../../app/components/contents";
 
 const renderComponent = () => {
   const routes = [
