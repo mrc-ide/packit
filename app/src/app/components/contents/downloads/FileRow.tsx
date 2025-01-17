@@ -16,6 +16,7 @@ interface FileRowProps {
 
 export const FileRow = ({ path, sharedResource }: FileRowProps) => {
   const { packet } = usePacketOutletContext();
+
   const file = packet?.files.filter((file) => {
     return file.path === path.replace("//", "/");
   })[0];
