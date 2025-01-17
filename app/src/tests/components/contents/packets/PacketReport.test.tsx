@@ -6,14 +6,15 @@ const mockGetFileObjectUrl = jest.fn();
 jest.mock("../../../../lib/download", () => ({
   getFileObjectUrl: async (...args: any[]) => mockGetFileObjectUrl(...args)
 }));
+const mockHash = "sha256:12345";
 describe("PacketReport component", () => {
   const packet = {
-    files: [{ path: "test.html", hash: "sha256:12345" }],
+    files: [{ path: "test.html", hash: mockHash }],
     id: "20231130-082812-cd744153"
   } as unknown as PacketMetadata;
 
-  const renderComponent = (fileName = "test.html") => {
-    render(<PacketReport packet={packet} fileHash={fileName} />);
+  const renderComponent = (fileHash = mockHash) => {
+    render(<PacketReport packet={packet} fileHash={fileHash} />);
   };
 
   beforeEach(() => {
@@ -28,7 +29,7 @@ describe("PacketReport component", () => {
       expect(iframe).toBeVisible();
       expect(iframe.getAttribute("src")).toBe("fakeObjectUrl");
       expect(mockGetFileObjectUrl).toHaveBeenCalledWith(
-        `http://localhost:8080/packets/file/${packet.id}?hash=sha256:12345?inline=true&filename=test.html`,
+        `http://localhost:8080/packets/file/${packet.id}?hash=${mockHash}?inline=true&filename=test.html`,
         ""
       );
     });
@@ -45,8 +46,8 @@ describe("PacketReport component", () => {
     });
   });
 
-  it("renders error component if fileName prop does not match packet report file", async () => {
-    renderComponent("wrong.html");
+  it("renders error component if fileHash prop does not match packet report file", async () => {
+    renderComponent("sha256:wrong");
     await waitFor(() => {
       expect(screen.getByText(/Error loading report/i)).toBeVisible();
       expect(screen.queryByTestId("report-iframe")).not.toBeInTheDocument();

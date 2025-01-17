@@ -107,6 +107,7 @@ export interface Artefact {
   paths: string[];
 }
 
+// TODO: in some branch, rename to singular
 export interface InputFiles {
   path: string;
   role: InputFileType;

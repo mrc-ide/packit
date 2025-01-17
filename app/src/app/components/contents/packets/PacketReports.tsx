@@ -28,7 +28,7 @@ export const PacketReports = ({ packet }: PacketReportsProps) => {
             <a
               className="text-blue-500 flex items-center gap-1
         hover:underline decoration-blue-500"
-              href={`${packet.id}/file/${htmlFile.hash}`}
+              href={`${packet.id}/file/${htmlFile.path}`}
             >
               <Fullscreen size={20} />
               View Fullscreen

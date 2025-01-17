@@ -2,34 +2,39 @@ import { bytesToSize } from "../../../../helpers";
 import { DownloadButton } from "./DownloadButton";
 import { usePacketOutletContext } from "../../main/PacketOutlet";
 import { ExtensionIcon } from "./ExtensionIcon";
-import { filePathToExtension, imageExtensions } from "./utils/extensions";
-import { ImageFileLabel } from "./ImageFileLabel";
+import { isHtmlFile, isImageFile } from "./utils/extensions";
+import { PreviewableFile } from "./PreviewableFile";
+import { FileLink } from "./FileLink";
+import { FileMetadata } from "../../../../types";
 
 interface FileRowProps {
-  path: string;
+  file: FileMetadata;
   sharedResource?: boolean;
 }
 
-export const FileRow = ({ path, sharedResource }: FileRowProps) => {
+export const FileRow = ({ file, sharedResource }: FileRowProps) => {
   const { packet } = usePacketOutletContext();
 
-  const file = packet?.files.filter((file) => {
-    return file.path === path.replace("//", "/");
-  })[0];
-  const fileName = path.split("/").pop();
-  const isImageFile = imageExtensions.includes(filePathToExtension(path));
+  const fileName = file.path.split("/").pop();
+  const isPreviewable = file && isImageFile(file);
+  const isLinkable = file && isHtmlFile(file);
 
   if (!file || !packet) return null;
   return (
     <div className="p-2 flex justify-between">
       <div className="flex items-center truncate">
         <span className="min-w-fit">
-          <ExtensionIcon path={path} />
+          <ExtensionIcon path={file.path} />
         </span>
         <div className="flex flex-col ps-2 truncate">
           <span className="font-semibold truncate">
-            {!isImageFile && <span>{fileName}</span>}
-            {isImageFile && <ImageFileLabel packet={packet} file={file} fileName={fileName} />}
+            {!isPreviewable && (
+              <>
+                {!isLinkable && <span>{fileName}</span>}
+                {isLinkable && <FileLink file={file} fileName={fileName} />}
+              </>
+            )}
+            {isPreviewable && <PreviewableFile file={file} fileName={fileName} />}
           </span>
           <p className="text-muted-foreground small">
             <span>{bytesToSize(file.size)}</span>

@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { getFileObjectUrl, getFileUrl } from "../../../../../lib/download";
 import { FileMetadata, PacketMetadata } from "../../../../../types";
+import { usePacketOutletContext } from "../../../main/PacketOutlet";
 
-export const useFileObjectUrl = (packet: PacketMetadata | undefined, file: FileMetadata | undefined) => {
+export const useFileObjectUrl = (file: FileMetadata | undefined) => {
+  const { packet } = usePacketOutletContext();
+
   const [fileObjectUrl, setFileObjectUrl] = useState<string | undefined>(undefined);
 
   useEffect(() => {

@@ -1,19 +1,14 @@
 import { PacketMetadata } from "../../../../types";
 import { useFileObjectUrl } from "./hooks/useFileObjectUrl";
 
-interface ImageTabProps {
+interface ImageDisplayProps {
   packet: PacketMetadata;
   fileHash: string;
 }
 
-export const ImageTab = ({ packet, fileHash }: ImageTabProps) => {
+export const ImageDisplay = ({ packet, fileHash }: ImageDisplayProps) => {
   const file = packet.files.filter((file) => file.hash === fileHash)[0];
-  const fileObjectUrl = useFileObjectUrl(packet, file);
+  const fileObjectUrl = useFileObjectUrl(file);
 
-  return (
-    <>
-      <p>{file.path}</p>
-      <img src={fileObjectUrl} />
-    </>
-  );
+  return <img src={fileObjectUrl} alt={file.path} />;
 };

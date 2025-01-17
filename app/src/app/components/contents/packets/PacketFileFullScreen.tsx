@@ -1,27 +1,22 @@
 import { useParams } from "react-router-dom";
-import { useGetPacketById } from "../common/hooks/useGetPacketById";
-import { ErrorComponent } from "../common/ErrorComponent";
 import { PacketReport } from "./PacketReport";
-import { ImageTab } from "../downloads/ImageTab";
-import { filePathToExtension, imageExtensions } from "../downloads/utils/extensions";
+import { ImageDisplay } from "../downloads/ImageDisplay";
+import { isHtmlFile, isImageFile } from "../downloads/utils/extensions";
+import { getFileByPath } from "../downloads/utils/getFileByPath";
+import { usePacketOutletContext } from "../../main/PacketOutlet";
 
 export const PacketFileFullScreen = () => {
-  const { packetId, fileHash } = useParams();
-  const { packet, error } = useGetPacketById(packetId);
+  // The * or 'splat' parameter lets us handle file paths that contain slashes.
+  const { "*": filePath } = useParams();
+  const { packet } = usePacketOutletContext();
+  if (!packet || !filePath) return null;
 
-  if (error || !packet) {
-    return <ErrorComponent error={error} message="Error fetching Packet details" />;
-  }
+  const file = getFileByPath(filePath, packet);
 
-  const file = packet.files.filter((file) => file.hash === fileHash)[0];
-  const extension = file ? filePathToExtension(file.path) : "";
-  const isImageFile = imageExtensions.includes(extension);
-  const isHtmlFile = extension === "html";
-
-  return fileHash ? (
+  return file ? (
     <div className="h-screen">
-      {isImageFile && <ImageTab packet={packet} fileHash={fileHash} />}
-      {isHtmlFile && <PacketReport packet={packet} fileHash={fileHash} />}
+      {isImageFile(file) && <ImageDisplay packet={packet} fileHash={file.hash} />}
+      {isHtmlFile(file) && <PacketReport packet={packet} fileHash={file.hash} />}
     </div>
   ) : null;
 };
