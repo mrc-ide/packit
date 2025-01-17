@@ -6,6 +6,7 @@ import appConfig from "../../../../config/appConfig";
 let errorOnDownload = false;
 const mockDownload = jest.fn();
 jest.mock("../../../../lib/download", () => ({
+  ...jest.requireActual("../../../../lib/download"),
   download: async (...args: any[]) => mockDownload(...args)
 }));
 
