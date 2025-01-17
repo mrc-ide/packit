@@ -16,7 +16,7 @@ export const ImageFileLabel = ({ packet, file, fileName }: ImageFileLabelProps) 
 
   return (
     <HoverCard openDelay={0} closeDelay={0}>
-      <HoverCardTrigger>
+      <HoverCardTrigger asChild={true}>
         <Link
           to={`/${packet.name}/${packet.id}/file/${file.hash}`}
           target="_blank"
