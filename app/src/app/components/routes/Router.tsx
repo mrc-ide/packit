@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import App from "../../App";
 import { NotFound } from "../NotFound";
 import { PacketGroup } from "../contents/PacketGroup";
-import { Download } from "../contents/download";
+import { Downloads } from "../contents/downloads";
 import { Home } from "../contents/home";
 import { Metadata } from "../contents/metadata";
 import PacketDetails from "../contents/packets/PacketDetails";
@@ -44,7 +44,7 @@ export function Router() {
             <Route element={<PacketLayout />}>
               <Route path="/:packetName/:packetId" element={<PacketDetails />} />
               <Route path="/:packetName/:packetId/metadata" element={<Metadata />} />
-              <Route path="/:packetName/:packetId/downloads" element={<Download />} />
+              <Route path="/:packetName/:packetId/downloads" element={<Downloads />} />
               {/* <Route path="/:packetName/:packetId/changelogs" element={<ChangeLogs />} /> */}
             </Route>
             <Route element={<ManageAccessLayout />}>

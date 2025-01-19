@@ -1,7 +1,6 @@
-import { DownloadCloud } from "lucide-react";
+import { FileDown } from "lucide-react";
 import { useState } from "react";
 import appConfig from "../../../../config/appConfig";
-import { bytesToSize } from "../../../../helpers";
 import { download } from "../../../../lib/download";
 import { FileMetadata } from "../../../../types";
 import { Button } from "../../Base/Button";
@@ -24,15 +23,14 @@ export default function DownloadButton({ file, packetId }: DownloadButtonProps) 
   };
 
   return (
-    <>
-      <Button onClick={() => downloadFile(file)} variant="outline">
-        {file.path}
-        <span className="sidebar-icon p-2">
-          <DownloadCloud />
+    <div className="flex flex-col items-end">
+      <Button onClick={() => downloadFile(file)} variant="link" className="text-blue-500 py-0 pt-0">
+        <span className="px-1">
+          <FileDown />
         </span>
+        Download
       </Button>
-      <span className="small p-2 text-muted-foreground">({bytesToSize(file.size)})</span>
-      <div className="text-red-500 h-6">{error}</div>
-    </>
+      <div className="text-red-500 pe-4">{error}</div>
+    </div>
   );
 }
