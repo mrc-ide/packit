@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import OtherFiles from "../../../../../app/components/contents/downloads/orderly/OtherFiles";
+import { OtherFiles } from "../../../../../app/components/contents/downloads/orderly/OtherFiles";
 import { mockPacket } from "../../../../mocks";
 import { InputFiles, InputFileType } from "../../../../../types";
 import { createMemoryRouter, Outlet, RouterProvider } from "react-router-dom";

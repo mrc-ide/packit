@@ -1,5 +1,5 @@
 import { bytesToSize } from "../../../../helpers";
-import DownloadButton from "./DownloadButton";
+import { DownloadButton } from "./DownloadButton";
 import { usePacketOutletContext } from "../../main/PacketOutlet";
 import { ExtensionIcon } from "./ExtensionIcon";
 
@@ -8,7 +8,7 @@ interface FileRowProps {
   sharedResource?: boolean;
 }
 
-export default function FileRow({ path, sharedResource }: FileRowProps) {
+export const FileRow = ({ path, sharedResource }: FileRowProps) => {
   const { packet } = usePacketOutletContext();
   const file = packet?.files.filter((file) => {
     return file.path === path.replace("//", "/");
@@ -38,4 +38,4 @@ export default function FileRow({ path, sharedResource }: FileRowProps) {
       <DownloadButton file={file} packetId={packet.id} />
     </div>
   );
-}
+};

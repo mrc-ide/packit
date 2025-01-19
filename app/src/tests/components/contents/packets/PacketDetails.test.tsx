@@ -2,15 +2,15 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
-import PacketDetails from "../../../../app/components/contents/packets/PacketDetails";
 import { PacketLayout } from "../../../../app/components/main";
 import { server } from "../../../../msw/server";
 import { mockPacket } from "../../../mocks";
-import {PacketMetadata} from "../../../../types";
+import { PacketMetadata } from "../../../../types";
+import { PacketDetails } from "../../../../app/components/contents/packets";
 
 jest.mock("../../../../lib/download", () => ({
-      getFileObjectUrl: async () => "fakeObjectUrl"
-    })
+    getFileObjectUrl: async () => "fakeObjectUrl"
+  })
 );
 
 describe("packet details component", () => {
@@ -40,7 +40,7 @@ describe("packet details component", () => {
   it("renders packet header with name and id when there is no distinct display name", async () => {
     const mockPacketWithNoCustomProps: PacketMetadata = {
       ...mockPacket,
-      custom: null,
+      custom: null
     };
     renderComponent(mockPacketWithNoCustomProps);
 

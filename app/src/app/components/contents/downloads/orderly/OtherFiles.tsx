@@ -1,5 +1,5 @@
 import { Card, CardContent } from "../../../Base/Card";
-import FileRow from "../FileRow";
+import { FileRow } from "../FileRow";
 import { InputFiles, InputFileType } from "../../../../../types";
 
 // 'Other files' are any files to display other than artefact groups.
@@ -8,7 +8,7 @@ interface OtherFilesProps {
   inputFiles: InputFiles[];
 }
 
-export default function OtherFiles({ inputFiles }: OtherFilesProps) {
+export const OtherFiles = ({ inputFiles }: OtherFilesProps) => {
   return (
     <Card>
       <CardContent className="p-0">

@@ -2,10 +2,10 @@ import { useParams } from "react-router-dom";
 import { usePacketOutletContext } from "../../main/PacketOutlet";
 import { PacketHeader } from "../packets";
 import { Card, CardContent } from "../../Base/Card";
-import FileRow from "./FileRow";
+import { FileRow } from "./FileRow";
 import { OrderlyDownloads } from "./orderly/OrderlyDownloads";
 
-export default function Downloads() {
+export const Downloads = () => {
   const { packetId, packetName } = useParams();
   const { packet } = usePacketOutletContext();
   const packetIsFromOrderly = !!packet?.custom?.orderly;
@@ -36,4 +36,4 @@ export default function Downloads() {
       )}
     </>
   );
-}
+};

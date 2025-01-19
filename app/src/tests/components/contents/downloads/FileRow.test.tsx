@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { mockPacket } from "../../../mocks";
-import FileRow from "../../../../app/components/contents/downloads/FileRow";
+import { FileRow } from "../../../../app/components/contents/downloads/FileRow";
 import { createMemoryRouter, Outlet, RouterProvider } from "react-router-dom";
 
 const expectIconToBeRendered = (container: HTMLElement, iconName: string) => {

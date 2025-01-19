@@ -1,11 +1,11 @@
 import { useParams } from "react-router-dom";
 import { usePacketOutletContext } from "../../main/PacketOutlet";
-import PacketHeader from "./PacketHeader";
+import { PacketHeader } from "./PacketHeader";
 import { PacketParameters } from "./PacketParameters";
 import { PacketReports } from "./PacketReports";
 import { Separator } from "../../Base/Separator";
 
-export default function PacketDetails() {
+export const PacketDetails = () => {
   const { packetId, packetName } = useParams();
   const { packet } = usePacketOutletContext();
   const longDescription = packet?.custom?.orderly.description.long;
@@ -18,4 +18,4 @@ export default function PacketDetails() {
       <PacketReports packet={packet} />
     </>
   );
-}
+};

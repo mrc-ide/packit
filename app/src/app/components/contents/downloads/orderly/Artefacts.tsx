@@ -1,12 +1,12 @@
 import { Card, CardContent, CardHeader } from "../../../Base/Card";
-import FileRow from "../FileRow";
+import { FileRow } from "../FileRow";
 import { Artefact } from "../../../../../types";
 
 interface ArtefactsProps {
   artefacts: Artefact[];
 }
 
-export default function Artefacts({ artefacts }: ArtefactsProps) {
+export const Artefacts = ({ artefacts }: ArtefactsProps) => {
   return (
     <ul className="space-y-4">
       {artefacts.map((artefact, key) => (
