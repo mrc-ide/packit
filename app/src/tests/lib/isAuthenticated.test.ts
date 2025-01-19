@@ -33,7 +33,7 @@ describe("isAuthenticated", () => {
     const authConfig = { enableAuth: true } as AuthConfig;
     const user = null;
     expect(isAuthenticated(authConfig, user)).toBe(false);
-  })
+  });
 });
 
 describe("authIsExpired", () => {
