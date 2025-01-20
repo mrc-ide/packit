@@ -2,6 +2,7 @@ import { render, waitFor, screen } from "@testing-library/react";
 import { PacketReports } from "../../../../app/components/contents/packets/PacketReports";
 import { mockPacket } from "../../../mocks";
 import { PacketMetadata } from "../../../../types";
+import { Accordion } from "../../../../app/components/Base/Accordion";
 
 jest.mock("../../../../lib/download", () => ({
   getFileObjectUrl: async () => "fakeObjectUrl"
@@ -9,7 +10,11 @@ jest.mock("../../../../lib/download", () => ({
 
 describe("Packet reports component", () => {
   const renderComponent = (packet: PacketMetadata) => {
-    render(<PacketReports packet={packet} />);
+    render(
+      <Accordion type="single" defaultValue="reports">
+        <PacketReports packet={packet} />
+      </Accordion>
+    );
   };
 
   it("renders PacketReport component and link", async () => {
