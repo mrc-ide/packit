@@ -10,6 +10,8 @@ interface PacketReportProps {
   fileHash: string;
 }
 
+// NB Currently we only support displaying the first html file in a packet, but we may support multiple
+// in future
 export const PacketReport = ({ packet, fileHash }: PacketReportProps) => {
   const [error, setError] = useState<null | Error>(null);
   const [htmlFileObjectUrl, setHtmlFileObjectUrl] = useState(undefined as string | undefined);
@@ -29,8 +31,6 @@ export const PacketReport = ({ packet, fileHash }: PacketReportProps) => {
   useEffect(() => {
     const file = getHtmlFileIfExists(packet);
     if (file?.hash != fileHash) {
-      // NB Currently we only support displaying the first html file in a packet, but we may support multiple
-      // in future
       setError(new Error("File name not found"));
     } else {
       getHtmlFileObjectUrl(packet);

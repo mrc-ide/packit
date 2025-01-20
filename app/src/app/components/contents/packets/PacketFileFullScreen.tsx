@@ -6,7 +6,7 @@ import { getFileByPath } from "../downloads/utils/getFileByPath";
 import { usePacketOutletContext } from "../../main/PacketOutlet";
 
 export const PacketFileFullScreen = () => {
-  // The * or 'splat' parameter lets us handle file paths that contain slashes.
+  // The * (or 'splat') parameter lets us handle file paths that contain slashes.
   const { "*": filePath } = useParams();
   const { packet } = usePacketOutletContext();
   if (!packet || !filePath) return null;
