@@ -9,6 +9,7 @@ export const PacketFileFullScreen = () => {
   // The * (or 'splat') parameter lets us handle file paths that contain slashes.
   const { "*": filePath } = useParams();
   const { packet } = usePacketOutletContext();
+
   if (!packet || !filePath) return null;
 
   const file = getFileByPath(filePath, packet);

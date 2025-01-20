@@ -8,7 +8,7 @@ interface ImageDisplayProps {
 
 export const ImageDisplay = ({ packet, fileHash }: ImageDisplayProps) => {
   const file = packet.files.filter((file) => file.hash === fileHash)[0];
-  const fileObjectUrl = useFileObjectUrl(file);
+  const { fileObjectUrl, error } = useFileObjectUrl(file);
 
-  return <img src={fileObjectUrl} alt={file.path} />;
+  return fileObjectUrl && <img src={fileObjectUrl} alt={file.path} />;
 };

@@ -12,6 +12,8 @@ interface PacketOutletProps {
 export const PacketOutlet = ({ packetId }: PacketOutletProps) => {
   const { packet, isLoading, error } = useGetPacketById(packetId);
 
+  console.error("The value of packet in PacketOutlet is: ", packet);
+
   if (error?.status === HttpStatus.Unauthorized) return <Unauthorized />;
   if (error) return <ErrorComponent error={error} message="Error fetching packet details" />;
 
