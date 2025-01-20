@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 
-export default function Main() {
+export const Main = () => {
   return (
     <main data-testid="main">
       <div data-testid="content">
@@ -8,4 +8,4 @@ export default function Main() {
       </div>
     </main>
   );
-}
+};

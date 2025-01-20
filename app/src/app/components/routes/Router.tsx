@@ -1,23 +1,16 @@
 import { Route, Routes } from "react-router-dom";
-import App from "../../App";
+import { App } from "../../App";
 import { NotFound } from "../NotFound";
-import { PacketGroup } from "../contents/PacketGroup";
-import { Download } from "../contents/download";
-import { Home } from "../contents/home";
-import { Metadata } from "../contents/metadata";
-import PacketDetails from "../contents/packets/PacketDetails";
-import { PacketFileFullScreen } from "../contents/packets/PacketFileFullScreen";
-import { Login, Redirect } from "../login";
+import { Downloads, Home, Metadata, PacketGroup } from "../contents";
+import { PacketDetails, PacketFileFullScreen } from "../contents/packets";
+import { Login, Redirect, UpdatePassword, AuthLayoutForm } from "../login";
 import { Breadcrumb } from "../main/Breadcrumb";
-import { PacketLayout } from "../main/PacketLayout";
-import ProtectedRoute from "./ProtectedRoute";
-import { UpdatePassword } from "../login";
-import { AuthLayoutForm } from "../login";
+import { PacketLayout } from "../main";
+import { ProtectedRoute } from "./ProtectedRoute";
 import { ManageAccessLayout, ManageRoles, ManageUsers } from "../contents/manageAccess";
-import { PacketRun, PacketRunTasksLogs, PacketRunnerLayout } from "../contents/runner";
-import { PacketRunTaskLogs } from "../contents/runner/PacketRunTaskLogs";
+import { PacketRun, PacketRunTaskLogs, PacketRunTasksLogs, PacketRunnerLayout } from "../contents/runner";
 
-export function Router() {
+export const Router = () => {
   return (
     <Routes>
       <Route element={<App />}>
@@ -44,7 +37,7 @@ export function Router() {
             <Route element={<PacketLayout />}>
               <Route path="/:packetName/:packetId" element={<PacketDetails />} />
               <Route path="/:packetName/:packetId/metadata" element={<Metadata />} />
-              <Route path="/:packetName/:packetId/downloads" element={<Download />} />
+              <Route path="/:packetName/:packetId/downloads" element={<Downloads />} />
               {/* <Route path="/:packetName/:packetId/changelogs" element={<ChangeLogs />} /> */}
             </Route>
             <Route element={<ManageAccessLayout />}>
@@ -59,4 +52,4 @@ export function Router() {
       </Route>
     </Routes>
   );
-}
+};

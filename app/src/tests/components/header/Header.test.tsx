@@ -1,12 +1,12 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
-import Header from "../../../app/components/header/Header";
 import { RedirectOnLoginProvider } from "../../../app/components/providers/RedirectOnLoginProvider";
 import { ThemeProvider } from "../../../app/components/providers/ThemeProvider";
 import { UserProvider } from "../../../app/components/providers/UserProvider";
 import { UserState } from "../../../app/components/providers/types/UserTypes";
 import { mockUserState } from "../../mocks";
+import { Header } from "../../../app/components/header";
 
 const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
 jest.mock("../../../lib/localStorageManager", () => ({

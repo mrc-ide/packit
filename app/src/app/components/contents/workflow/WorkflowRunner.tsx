@@ -1,3 +1,3 @@
-export default function WorkflowRunner() {
+export const WorkflowRunner = () => {
   return <div className="content">Workflow runner page</div>;
-}
+};

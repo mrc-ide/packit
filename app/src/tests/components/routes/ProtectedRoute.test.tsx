@@ -1,10 +1,10 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { UserProvider } from "../../../app/components/providers/UserProvider";
-import ProtectedRoute from "../../../app/components/routes/ProtectedRoute";
-import {UserState} from "../../../app/components/providers/types/UserTypes";
-import {mockExpiredUserState} from "../../mocks";
-import {LocalStorageKeys} from "../../../lib/types/LocalStorageKeys";
+import { UserState } from "../../../app/components/providers/types/UserTypes";
+import { mockExpiredUserState } from "../../mocks";
+import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
+import { ProtectedRoute } from "../../../app/components/routes/ProtectedRoute";
 
 const mockedUsedNavigate = jest.fn();
 jest.mock("react-router-dom", () => ({
@@ -82,8 +82,9 @@ describe("protected routes", () => {
     renderElement();
 
     await waitFor(() => {
-      expect(mockedUsedNavigate)
-        .toHaveBeenCalledWith("/login?info=You have been signed out because your session expired. Please log in.");
+      expect(mockedUsedNavigate).toHaveBeenCalledWith(
+        "/login?info=You have been signed out because your session expired. Please log in."
+      );
       expect(mockSetRequestedUrl).toHaveBeenCalledWith("/");
       expect(localStorage.getItem(LocalStorageKeys.USER)).toBe(null);
     });

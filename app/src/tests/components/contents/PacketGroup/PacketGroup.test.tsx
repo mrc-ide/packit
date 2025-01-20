@@ -4,11 +4,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
 import { PacketGroup } from "../../../../app/components/contents/PacketGroup";
 import { server } from "../../../../msw/server";
-import {
-  mockPacket,
-  mockPacketGroupResponse,
-  mockPacketGroupSummaries
-} from "../../../mocks";
+import { mockPacket, mockPacketGroupResponse, mockPacketGroupSummaries } from "../../../mocks";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
 import appConfig from "../../../../config/appConfig";
 
@@ -35,24 +31,29 @@ describe("PacketGroup", () => {
     });
   });
 
-  it("should render heading with the name of the packet group when the display name is the same as name," +
-    "and be able to cope with a null packet description", async () => {
-    const dependsPg = mockPacketGroupSummaries.content[mockPacketGroupSummaries.content.length - 1];
-    const packetGroupDisplayUrl = `${appConfig.apiUrl()}/packetGroups/${dependsPg.name}/display`;
-    server.use(
-      rest.get(packetGroupDisplayUrl, (req, res, ctx) => {
-        return res(ctx.json({
-          latestDisplayName: dependsPg.latestDisplayName,
-          description: null
-        }));
-      })
-    );
-    renderComponent(dependsPg.name);
+  it(
+    "should render heading with the name of the packet group when the display name is the same as name," +
+      "and be able to cope with a null packet description",
+    async () => {
+      const dependsPg = mockPacketGroupSummaries.content[mockPacketGroupSummaries.content.length - 1];
+      const packetGroupDisplayUrl = `${appConfig.apiUrl()}/packetGroups/${dependsPg.name}/display`;
+      server.use(
+        rest.get(packetGroupDisplayUrl, (req, res, ctx) => {
+          return res(
+            ctx.json({
+              latestDisplayName: dependsPg.latestDisplayName,
+              description: null
+            })
+          );
+        })
+      );
+      renderComponent(dependsPg.name);
 
-    await waitFor(() => {
-      expect(screen.getByRole("heading", { name: dependsPg.name })).toBeVisible();
-    });
-  });
+      await waitFor(() => {
+        expect(screen.getByRole("heading", { name: dependsPg.name })).toBeVisible();
+      });
+    }
+  );
 
   it("should render the latest description in the packet group", async () => {
     renderComponent();

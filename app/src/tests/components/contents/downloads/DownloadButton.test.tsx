@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import DownloadButton from "../../../../app/components/contents/download/DownloadButton";
+import { DownloadButton } from "../../../../app/components/contents/downloads/DownloadButton";
 import appConfig from "../../../../config/appConfig";
 
 let errorOnDownload = false;
@@ -32,9 +32,10 @@ describe("DownloadButton", () => {
   });
 
   it("renders as expected", () => {
-    renderComponent();
-    expect(screen.getByRole("button")).toHaveTextContent("test.txt");
-    expect(screen.getByText("(1 kilobytes)")).toBeInTheDocument();
+    const { container } = render(<DownloadButton file={file} packetId={packetId} />);
+    expect(screen.getByRole("button")).toHaveTextContent("Download");
+    const icon = container.querySelector(".lucide") as HTMLImageElement;
+    expect(icon.classList).toContain("lucide-file-down");
   });
 
   it("downloads file", () => {
