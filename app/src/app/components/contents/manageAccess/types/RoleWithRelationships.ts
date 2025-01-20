@@ -1,16 +1,4 @@
-export interface BasicPacket {
-  name: string;
-  id: string;
-}
-
-export interface BasicPacketGroup {
-  name: string;
-  id: number;
-}
-export interface Tag {
-  name: string;
-  id: number;
-}
+import { BasicPacket, BasicPacketGroup, Tag } from "../../../../../types";
 
 export interface RolePermission extends BaseRolePermission {
   id: number;

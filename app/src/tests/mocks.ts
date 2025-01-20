@@ -117,7 +117,8 @@ export const mockPacket: PacketMetadata = {
         }
       }
     }
-  }
+  },
+  depends: []
 };
 
 export const mockPacketGroupSummaries: PageablePacketGroupSummaries = {

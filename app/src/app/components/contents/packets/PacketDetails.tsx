@@ -4,6 +4,8 @@ import PacketHeader from "./PacketHeader";
 import { PacketParameters } from "./PacketParameters";
 import { PacketReports } from "./PacketReports";
 import { Separator } from "../../Base/Separator";
+import { PacketDependencies } from "./PacketDependencies";
+import { Accordion } from "../../Base/Accordion";
 
 export default function PacketDetails() {
   const { packetId, packetName } = useParams();
@@ -14,8 +16,11 @@ export default function PacketDetails() {
       <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} displayName={packet?.displayName} />
       {longDescription && <p>{longDescription}</p>}
       <Separator className="mx-1" />
-      <PacketParameters parameters={packet?.parameters ?? {}} />
-      <PacketReports packet={packet} />
+      <Accordion type="multiple" defaultValue={["parameters", "dependencies", "reports"]}>
+        <PacketParameters parameters={packet?.parameters ?? {}} />
+        <PacketDependencies depends={packet?.depends ?? []} />
+        <PacketReports packet={packet} />
+      </Accordion>
     </>
   );
 }

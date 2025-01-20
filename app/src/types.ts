@@ -56,8 +56,18 @@ export interface PacketMetadata {
   files: FileMetadata[];
   custom: Custom | null;
   git: GitMetadata | null;
+  depends: PacketDepends[];
 }
 
+export interface PacketDepends {
+  packet: string;
+  query: string;
+  files: PacketDependsFiles[];
+}
+export interface PacketDependsFiles {
+  here: string;
+  there: string;
+}
 export interface GitMetadata {
   branch: string;
   sha: string;
@@ -131,4 +141,18 @@ export interface PageableBasicDto extends Pageable {
     name: string;
     id: string | number;
   }[];
+}
+
+export interface BasicPacket {
+  name: string;
+  id: string;
+}
+
+export interface BasicPacketGroup {
+  name: string;
+  id: number;
+}
+export interface Tag {
+  name: string;
+  id: number;
 }
