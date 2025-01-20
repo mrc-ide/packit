@@ -64,7 +64,7 @@ describe("packet details component", () => {
     });
   });
 
-  it("should not render parameters or files when none", async () => {
+  it("should not render parameters, dependencies or files when none", async () => {
     server.use(
       rest.get("*", (req, res, ctx) => {
         return res(ctx.json({ ...mockPacket, parameters: {}, files: [] }));
@@ -76,6 +76,6 @@ describe("packet details component", () => {
 
     expect(screen.queryByText((mockPacket as any).parameters["a"])).not.toBeInTheDocument();
     expect(screen.queryByText(/fullscreen/i)).not.toBeInTheDocument();
-    expect(screen.getAllByText(/none/i)).toHaveLength(2);
+    expect(screen.getAllByText(/none/i)).toHaveLength(3);
   });
 });
