@@ -40,15 +40,14 @@ describe("PacketReport component", () => {
 
   it("gets file object url for report src", async () => {
     renderComponent();
-    await waitFor(() => {
-      const iframe = screen.getByTestId("report-iframe");
-      expect(iframe).toBeVisible();
-      expect(iframe.getAttribute("src")).toBe("fakeObjectUrl");
-      expect(mockGetFileObjectUrl).toHaveBeenCalledWith(
-        `http://localhost:8080/packets/file/${packet.id}?hash=${mockHash}&filename=test.html&inline=true`,
-        "test.html"
-      );
-    });
+
+    const iframe = await screen.findByTestId("report-iframe");
+    expect(iframe).toBeVisible();
+    expect(iframe.getAttribute("src")).toBe("fakeObjectUrl");
+    expect(mockGetFileObjectUrl).toHaveBeenCalledWith(
+      `http://localhost:8080/packets/file/${packet.id}?hash=${mockHash}&filename=test.html&inline=true`,
+      "test.html"
+    );
   });
 
   it("renders error component if error fetching report data", async () => {
@@ -56,18 +55,16 @@ describe("PacketReport component", () => {
       throw new Error("test error");
     });
     renderComponent();
-    await waitFor(() => {
-      expect(screen.getByText(/Error loading report/i)).toBeVisible();
-      expect(screen.queryByTestId("report-iframe")).not.toBeInTheDocument();
-    });
+
+    expect(await screen.findByText(/Error loading report/i)).toBeVisible();
+    expect(screen.queryByTestId("report-iframe")).not.toBeInTheDocument();
   });
 
   it("renders error component if fileHash prop does not match packet report file", async () => {
     renderComponent("sha256:wrong");
-    await waitFor(() => {
-      expect(screen.getByText(/Error loading report/i)).toBeVisible();
-      expect(screen.queryByTestId("report-iframe")).not.toBeInTheDocument();
-    });
+
+    expect(await screen.findByText(/Error loading report/i)).toBeVisible();
+    expect(screen.queryByTestId("report-iframe")).not.toBeInTheDocument();
   });
 
   it("revokes the object URL when the component is unmounted", async () => {

@@ -34,7 +34,5 @@ export const useFileObjectUrl = (file: FileMetadata | undefined) => {
     };
   }, [file, packet]);
 
-  // TODO: test error component for imagedisplay component
-  // TODO: test error component for previewablefile component
   return { fileObjectUrl, error };
 };

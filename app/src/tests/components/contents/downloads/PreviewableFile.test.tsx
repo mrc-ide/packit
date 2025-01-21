@@ -65,4 +65,16 @@ describe("previewable file component", () => {
 
     expect(revokeObjectURL).toHaveBeenCalledWith("fakeObjectUrl");
   });
+
+  it("renders error component if error fetching file data", async () => {
+    const mockCreateObjectUrl = jest.fn();
+    URL.createObjectURL = mockCreateObjectUrl;
+    mockCreateObjectUrl.mockImplementation(() => {
+      throw new Error("test error");
+    });
+    renderComponent(imageFile, "plot.gif");
+
+    expect(await screen.findByText(/Error loading file/i)).toBeVisible();
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
+  });
 });
