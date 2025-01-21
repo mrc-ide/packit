@@ -1,10 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import { mockPacket } from "../../../mocks";
 import { FileRow } from "../../../../app/components/contents/downloads/FileRow";
-import { createMemoryRouter, MemoryRouter, Outlet, Route, RouterProvider, Routes } from "react-router-dom";
-import { Artefact, FileMetadata } from "../../../../types";
+import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
+import { FileMetadata } from "../../../../types";
 import { SWRConfig } from "swr";
-import { Artefacts } from "../../../../app/components/contents/downloads/orderly/Artefacts";
 
 const expectIconToBeRendered = (container: HTMLElement, iconName: string) => {
   const icon = container.querySelector(".lucide") as HTMLImageElement;
@@ -16,7 +15,7 @@ const renderComponent = (filePath: string, sharedResource?: boolean) => {
 
   return render(
     <SWRConfig value={{ dedupingInterval: 0 }}>
-      <MemoryRouter initialEntries={[`/`]}>
+      <MemoryRouter initialEntries={["/"]}>
         <Routes>
           <Route element={<Outlet context={{ packet: mockPacket }} />}>
             <Route path="/" element={<FileRow file={file} sharedResource={sharedResource} />} />
@@ -42,45 +41,45 @@ describe("file row component", () => {
   it("when the file path includes a directory it excludes this from the displayed file name", async () => {
     URL.createObjectURL = jest.fn(() => "fakeObjectUrl");
 
-    const { container } = renderComponent("directory//graph.png");
+    const { container } = renderComponent("directory/graph.png");
 
     expect(await screen.findByText(/^graph.png$/)).toBeVisible();
-    expect(await screen.findByText(/directory/)).not.toBeVisible();
+    expect(screen.queryByText(/directory/)).not.toBeInTheDocument();
     expect(await screen.findByText("7.17 KB")).toBeVisible();
     expectIconToBeRendered(container, "lucide-chart-column");
     expect(screen.queryByText("Shared resource")).not.toBeInTheDocument();
   });
 
   it("when the file extension indicates an image file, it renders a link to the image", async () => {
-    renderComponent("directory//graph.png");
+    renderComponent("directory/graph.png");
 
     expect(screen.getByRole("link")).toHaveTextContent(/^graph.png$/);
   });
-  //
-  //   it("when the file is a shared resource, this information is displayed", async () => {
-  //     const { container } = renderComponent("a_renamed_common_resource.csv", true);
-  //
-  //     expect(await screen.findByText("a_renamed_common_resource.csv")).toBeVisible();
-  //     expect(await screen.findByText("11 bytes")).toBeVisible();
-  //     expectIconToBeRendered(container, "lucide-table-properties");
-  //     expect(await screen.findByText("Shared resource")).toBeVisible();
-  //   });
-  //
-  //   it("when the file extension is not recognised, the icon defaults to a file icon", async () => {
-  //     const { container } = renderComponent("other_extensions.txt");
-  //
-  //     expect(await screen.findByText("other_extensions.txt")).toBeVisible();
-  //     expect(await screen.findByText("15 bytes")).toBeVisible();
-  //     expectIconToBeRendered(container, "lucide-file");
-  //     expect(screen.queryByText("Shared resource")).not.toBeInTheDocument();
-  //   });
-  //
-  //   it("can render relevant icon for script files, case-insensitively", async () => {
-  //     const { container } = renderComponent("orderly.R");
-  //
-  //     expect(await screen.findByText("orderly.R")).toBeVisible();
-  //     expect(await screen.findByText("137 bytes")).toBeVisible();
-  //     expectIconToBeRendered(container, "lucide-file-code2");
-  //     expect(screen.queryByText("Shared resource")).not.toBeInTheDocument();
-  //   });
+
+  it("when the file is a shared resource, the user is informed", async () => {
+    const { container } = renderComponent("a_renamed_common_resource.csv", true);
+
+    expect(await screen.findByText("a_renamed_common_resource.csv")).toBeVisible();
+    expect(await screen.findByText("11 bytes")).toBeVisible();
+    expectIconToBeRendered(container, "lucide-table-properties");
+    expect(await screen.findByText("Shared resource")).toBeVisible();
+  });
+
+  it("when the file extension is not recognised, the icon defaults to a file icon", async () => {
+    const { container } = renderComponent("other_extensions.txt");
+
+    expect(await screen.findByText("other_extensions.txt")).toBeVisible();
+    expect(await screen.findByText("15 bytes")).toBeVisible();
+    expectIconToBeRendered(container, "lucide-file");
+    expect(screen.queryByText("Shared resource")).not.toBeInTheDocument();
+  });
+
+  it("can render relevant icon for script files, case-insensitively", async () => {
+    const { container } = renderComponent("orderly.R");
+
+    expect(await screen.findByText("orderly.R")).toBeVisible();
+    expect(await screen.findByText("137 bytes")).toBeVisible();
+    expectIconToBeRendered(container, "lucide-file-code2");
+    expect(screen.queryByText("Shared resource")).not.toBeInTheDocument();
+  });
 });

@@ -2,14 +2,13 @@ import { render, screen } from "@testing-library/react";
 import { Artefacts } from "../../../../../app/components/contents/downloads/orderly/Artefacts";
 import { mockPacket } from "../../../../mocks";
 import { Artefact } from "../../../../../types";
-import { createMemoryRouter, MemoryRouter, Outlet, Route, RouterProvider, Routes } from "react-router-dom";
+import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
-import { PacketFileFullScreen } from "../../../../../app/components/contents/packets";
 
 const renderComponent = () => {
   render(
     <SWRConfig value={{ dedupingInterval: 0 }}>
-      <MemoryRouter initialEntries={[`/`]}>
+      <MemoryRouter initialEntries={["/"]}>
         <Routes>
           <Route element={<Outlet context={{ packet: mockPacket }} />}>
             <Route path="/" element={<Artefacts artefacts={mockPacket.custom?.orderly.artefacts as Artefact[]} />} />

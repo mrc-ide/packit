@@ -8,7 +8,6 @@ const imageFile = mockPacket.files.filter((file) => file.path === "directory/gra
 
 describe("PacketFileFullScreen", () => {
   const renderComponent = (filePath: string) => {
-    // TODO: Make other test setups more similar to this one
     return render(
       <SWRConfig value={{ dedupingInterval: 0 }}>
         <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/file/${filePath}`]}>

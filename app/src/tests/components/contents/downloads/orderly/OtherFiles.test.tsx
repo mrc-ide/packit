@@ -1,15 +1,14 @@
 import { render, screen } from "@testing-library/react";
 import { OtherFiles } from "../../../../../app/components/contents/downloads/orderly/OtherFiles";
 import { mockPacket } from "../../../../mocks";
-import { Artefact, InputFiles, InputFileType } from "../../../../../types";
-import { createMemoryRouter, MemoryRouter, Outlet, Route, RouterProvider, Routes } from "react-router-dom";
+import { InputFiles, InputFileType } from "../../../../../types";
+import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
-import { Artefacts } from "../../../../../app/components/contents/downloads/orderly/Artefacts";
 
 const renderComponent = (inputFiles: InputFiles[] = []) => {
   render(
     <SWRConfig value={{ dedupingInterval: 0 }}>
-      <MemoryRouter initialEntries={[`/`]}>
+      <MemoryRouter initialEntries={["/"]}>
         <Routes>
           <Route element={<Outlet context={{ packet: mockPacket }} />}>
             <Route path="/" element={<OtherFiles inputFiles={inputFiles} />} />

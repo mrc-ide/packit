@@ -1,17 +1,16 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { mockPacket } from "../../../../mocks";
-import { Artefact, Custom } from "../../../../../types";
+import { Custom } from "../../../../../types";
 import { OrderlyDownloads } from "../../../../../app/components/contents/downloads/orderly/OrderlyDownloads";
-import { createMemoryRouter, MemoryRouter, Outlet, Route, RouterProvider, Routes } from "react-router-dom";
+import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
-import { Artefacts } from "../../../../../app/components/contents/downloads/orderly/Artefacts";
 
 const renderComponent = (customMetadata: Custom) => {
   const packet = { ...mockPacket, custom: customMetadata };
   render(
     <SWRConfig value={{ dedupingInterval: 0 }}>
-      <MemoryRouter initialEntries={[`/`]}>
+      <MemoryRouter initialEntries={["/"]}>
         <Routes>
           <Route element={<Outlet context={{ packet }} />}>
             <Route path="/" element={<OrderlyDownloads />} />

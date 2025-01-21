@@ -1,10 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { PacketReport } from "../../../../app/components/contents/packets/PacketReport";
-import { Artefact, PacketMetadata } from "../../../../types";
-import { createMemoryRouter, MemoryRouter, Outlet, Route, RouterProvider, Routes } from "react-router-dom";
+import { PacketMetadata } from "../../../../types";
+import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
-import { mockPacket } from "../../../mocks";
-import { Artefacts } from "../../../../app/components/contents/downloads/orderly/Artefacts";
 
 const mockGetFileObjectUrl = jest.fn();
 jest.mock("../../../../lib/download", () => ({
@@ -24,7 +22,7 @@ describe("PacketReport component", () => {
   const renderComponent = (fileHash = mockHash) => {
     return render(
       <SWRConfig value={{ dedupingInterval: 0 }}>
-        <MemoryRouter initialEntries={[`/`]}>
+        <MemoryRouter initialEntries={["/"]}>
           <Routes>
             <Route element={<Outlet context={{ packet }} />}>
               <Route path="/" element={<PacketReport packet={packet} fileHash={fileHash} />} />

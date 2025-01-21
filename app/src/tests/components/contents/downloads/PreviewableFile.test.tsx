@@ -1,18 +1,17 @@
 import { render, screen } from "@testing-library/react";
 import { PreviewableFile } from "../../../../app/components/contents/downloads/PreviewableFile";
 import { mockPacket } from "../../../mocks";
-import { createMemoryRouter, MemoryRouter, Outlet, Route, RouterProvider, Routes } from "react-router-dom";
-import { Artefact, FileMetadata } from "../../../../types";
+import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
+import { FileMetadata } from "../../../../types";
 import userEvent from "@testing-library/user-event";
 import { SWRConfig } from "swr";
-import { Artefacts } from "../../../../app/components/contents/downloads/orderly/Artefacts";
 
 const imageFile = mockPacket.files.filter((file) => file.path === "directory/graph.png")[0];
 
 const renderComponent = (file: FileMetadata, fileName: string) => {
   return render(
     <SWRConfig value={{ dedupingInterval: 0 }}>
-      <MemoryRouter initialEntries={[`/`]}>
+      <MemoryRouter initialEntries={["/"]}>
         <Routes>
           <Route element={<Outlet context={{ packet: mockPacket }} />}>
             <Route path="/" element={<PreviewableFile file={file} fileName={fileName}></PreviewableFile>} />
