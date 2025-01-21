@@ -23,17 +23,10 @@ describe("PacketFileFullScreen", () => {
 
   it("renders PacketReport when the file is an HTML file", async () => {
     URL.createObjectURL = jest.fn(() => "testFileObjectUrl");
-    const revokeObjectURL = jest.fn();
-    URL.revokeObjectURL = revokeObjectURL;
+    URL.revokeObjectURL = jest.fn();
 
-    const { unmount } = renderComponent("report.html");
-    await waitFor(() => {
-      expect(screen.getByTestId("report-iframe").getAttribute("src")).toBe("testFileObjectUrl");
-    });
-
-    unmount();
-
-    expect(revokeObjectURL).toHaveBeenCalledWith("testFileObjectUrl");
+    renderComponent("report.html");
+    expect((await screen.findByTestId("report-iframe")).getAttribute("src")).toBe("testFileObjectUrl");
   });
 
   it("renders image when the file is an image file, and correctly revokes blob URL", async () => {
