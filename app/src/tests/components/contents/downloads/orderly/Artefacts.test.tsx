@@ -2,19 +2,22 @@ import { render, screen } from "@testing-library/react";
 import { Artefacts } from "../../../../../app/components/contents/downloads/orderly/Artefacts";
 import { mockPacket } from "../../../../mocks";
 import { Artefact } from "../../../../../types";
-import { createMemoryRouter, Outlet, RouterProvider } from "react-router-dom";
+import { createMemoryRouter, MemoryRouter, Outlet, Route, RouterProvider, Routes } from "react-router-dom";
+import { SWRConfig } from "swr";
+import { PacketFileFullScreen } from "../../../../../app/components/contents/packets";
 
 const renderComponent = () => {
-  const routes = [
-    {
-      path: "/",
-      element: <Outlet context={{ packet: mockPacket }} />,
-      children: [{ path: "/", element: <Artefacts artefacts={mockPacket.custom?.orderly.artefacts as Artefact[]} /> }]
-    }
-  ];
-  const router = createMemoryRouter(routes, { initialEntries: ["/"] });
-
-  render(<RouterProvider router={router} />);
+  render(
+    <SWRConfig value={{ dedupingInterval: 0 }}>
+      <MemoryRouter initialEntries={[`/`]}>
+        <Routes>
+          <Route element={<Outlet context={{ packet: mockPacket }} />}>
+            <Route path="/" element={<Artefacts artefacts={mockPacket.custom?.orderly.artefacts as Artefact[]} />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    </SWRConfig>
+  );
 };
 
 describe("Artefacts component", () => {

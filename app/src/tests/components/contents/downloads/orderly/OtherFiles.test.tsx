@@ -1,20 +1,23 @@
 import { render, screen } from "@testing-library/react";
 import { OtherFiles } from "../../../../../app/components/contents/downloads/orderly/OtherFiles";
 import { mockPacket } from "../../../../mocks";
-import { InputFiles, InputFileType } from "../../../../../types";
-import { createMemoryRouter, Outlet, RouterProvider } from "react-router-dom";
+import { Artefact, InputFiles, InputFileType } from "../../../../../types";
+import { createMemoryRouter, MemoryRouter, Outlet, Route, RouterProvider, Routes } from "react-router-dom";
+import { SWRConfig } from "swr";
+import { Artefacts } from "../../../../../app/components/contents/downloads/orderly/Artefacts";
 
 const renderComponent = (inputFiles: InputFiles[] = []) => {
-  const routes = [
-    {
-      path: "/",
-      element: <Outlet context={{ packet: mockPacket }} />,
-      children: [{ path: "/", element: <OtherFiles inputFiles={inputFiles} /> }]
-    }
-  ];
-  const router = createMemoryRouter(routes, { initialEntries: ["/"] });
-
-  render(<RouterProvider router={router} />);
+  render(
+    <SWRConfig value={{ dedupingInterval: 0 }}>
+      <MemoryRouter initialEntries={[`/`]}>
+        <Routes>
+          <Route element={<Outlet context={{ packet: mockPacket }} />}>
+            <Route path="/" element={<OtherFiles inputFiles={inputFiles} />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    </SWRConfig>
+  );
 };
 
 describe("OtherFiles component", () => {

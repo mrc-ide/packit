@@ -13,7 +13,6 @@ describe("PacketFileFullScreen", () => {
       <SWRConfig value={{ dedupingInterval: 0 }}>
         <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/file/${filePath}`]}>
           <Routes>
-            {/*Should next line have path?*/}
             <Route element={<Outlet context={{ packet: mockPacket }} />}>
               <Route path="/:packetName/:packetId/file/*" element={<PacketFileFullScreen />} />
             </Route>

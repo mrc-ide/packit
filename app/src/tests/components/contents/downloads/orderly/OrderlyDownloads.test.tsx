@@ -1,22 +1,25 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { mockPacket } from "../../../../mocks";
-import { Custom } from "../../../../../types";
+import { Artefact, Custom } from "../../../../../types";
 import { OrderlyDownloads } from "../../../../../app/components/contents/downloads/orderly/OrderlyDownloads";
-import { createMemoryRouter, Outlet, RouterProvider } from "react-router-dom";
+import { createMemoryRouter, MemoryRouter, Outlet, Route, RouterProvider, Routes } from "react-router-dom";
+import { SWRConfig } from "swr";
+import { Artefacts } from "../../../../../app/components/contents/downloads/orderly/Artefacts";
 
 const renderComponent = (customMetadata: Custom) => {
   const packet = { ...mockPacket, custom: customMetadata };
-  const routes = [
-    {
-      path: "/",
-      element: <Outlet context={{ packet }} />,
-      children: [{ path: "/", element: <OrderlyDownloads /> }]
-    }
-  ];
-  const router = createMemoryRouter(routes, { initialEntries: ["/"] });
-
-  render(<RouterProvider router={router} />);
+  render(
+    <SWRConfig value={{ dedupingInterval: 0 }}>
+      <MemoryRouter initialEntries={[`/`]}>
+        <Routes>
+          <Route element={<Outlet context={{ packet }} />}>
+            <Route path="/" element={<OrderlyDownloads />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    </SWRConfig>
+  );
 };
 
 describe("orderly downloads component", () => {

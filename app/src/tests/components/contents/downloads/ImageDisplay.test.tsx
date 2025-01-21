@@ -1,7 +1,10 @@
 import { render, screen } from "@testing-library/react";
-import { PacketMetadata } from "../../../../types";
-import { createMemoryRouter, Outlet, RouterProvider } from "react-router-dom";
+import { Artefact, PacketMetadata } from "../../../../types";
+import { createMemoryRouter, MemoryRouter, Outlet, Route, RouterProvider, Routes } from "react-router-dom";
 import { ImageDisplay } from "../../../../app/components/contents/downloads/ImageDisplay";
+import { SWRConfig } from "swr";
+import { mockPacket } from "../../../mocks";
+import { Artefacts } from "../../../../app/components/contents/downloads/orderly/Artefacts";
 
 const mockGetFileObjectUrl = jest.fn();
 jest.mock("../../../../lib/download", () => ({
@@ -11,6 +14,7 @@ jest.mock("../../../../lib/download", () => ({
 const mockHash = "sha256:12345";
 const revokeObjectURL = jest.fn();
 URL.revokeObjectURL = revokeObjectURL;
+
 describe("image display component", () => {
   const packet = {
     files: [{ path: "test.png", hash: mockHash }],
@@ -18,16 +22,17 @@ describe("image display component", () => {
   } as unknown as PacketMetadata;
 
   const renderComponent = (fileHash = mockHash) => {
-    const routes = [
-      {
-        path: "/",
-        element: <Outlet context={{ packet }} />,
-        children: [{ path: "/", element: <ImageDisplay packet={packet} fileHash={fileHash} /> }]
-      }
-    ];
-    const router = createMemoryRouter(routes, { initialEntries: ["/"] });
-
-    return render(<RouterProvider router={router} />);
+    return render(
+      <SWRConfig value={{ dedupingInterval: 0 }}>
+        <MemoryRouter initialEntries={[`/`]}>
+          <Routes>
+            <Route element={<Outlet context={{ packet }} />}>
+              <Route path="/" element={<ImageDisplay packet={packet} fileHash={fileHash} />} />
+            </Route>
+          </Routes>
+        </MemoryRouter>
+      </SWRConfig>
+    );
   };
 
   beforeEach(() => {

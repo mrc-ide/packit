@@ -1,8 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import { mockPacket } from "../../../mocks";
 import { FileRow } from "../../../../app/components/contents/downloads/FileRow";
-import { createMemoryRouter, Outlet, RouterProvider } from "react-router-dom";
-import { FileMetadata } from "../../../../types";
+import { createMemoryRouter, MemoryRouter, Outlet, Route, RouterProvider, Routes } from "react-router-dom";
+import { Artefact, FileMetadata } from "../../../../types";
+import { SWRConfig } from "swr";
+import { Artefacts } from "../../../../app/components/contents/downloads/orderly/Artefacts";
 
 const expectIconToBeRendered = (container: HTMLElement, iconName: string) => {
   const icon = container.querySelector(".lucide") as HTMLImageElement;
@@ -11,16 +13,18 @@ const expectIconToBeRendered = (container: HTMLElement, iconName: string) => {
 
 const renderComponent = (filePath: string, sharedResource?: boolean) => {
   const file = mockPacket.files.find((file) => file.path === filePath) as FileMetadata;
-  const routes = [
-    {
-      path: "/",
-      element: <Outlet context={{ packet: mockPacket }} />,
-      children: [{ path: "/", element: <FileRow file={file} sharedResource={sharedResource} /> }]
-    }
-  ];
-  const router = createMemoryRouter(routes, { initialEntries: ["/"] });
 
-  return render(<RouterProvider router={router} />);
+  return render(
+    <SWRConfig value={{ dedupingInterval: 0 }}>
+      <MemoryRouter initialEntries={[`/`]}>
+        <Routes>
+          <Route element={<Outlet context={{ packet: mockPacket }} />}>
+            <Route path="/" element={<FileRow file={file} sharedResource={sharedResource} />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    </SWRConfig>
+  );
 };
 
 describe("file row component", () => {
