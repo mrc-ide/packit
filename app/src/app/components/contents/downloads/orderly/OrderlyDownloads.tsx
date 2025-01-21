@@ -13,24 +13,28 @@ export const OrderlyDownloads = () => {
 
   if (!!artefacts?.length && !!inputFiles?.length) {
     return (
-      <Accordion type="multiple" defaultValue={["artefacts"]} data-testid="accordion">
-        <AccordionItem value="artefacts">
-          <AccordionTrigger>
-            <h3>Artefacts</h3>
-          </AccordionTrigger>
-          <AccordionContent>
-            <Artefacts artefacts={artefacts} />
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="inputs">
-          <AccordionTrigger>
-            <h3>Other files</h3>
-          </AccordionTrigger>
-          <AccordionContent>
-            <OtherFiles inputFiles={inputFiles} />
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+      <div className="relative">
+        <Accordion type="multiple" defaultValue={["artefacts"]} data-testid="accordion">
+          <AccordionItem value="artefacts">
+            <AccordionTrigger>
+              <h3>Artefacts</h3>
+            </AccordionTrigger>
+            <AccordionContent>
+              <Artefacts artefacts={artefacts} />
+            </AccordionContent>
+          </AccordionItem>
+          <div className="relative">
+            <AccordionItem value="inputs">
+              <AccordionTrigger>
+                <h3>Other files</h3>
+              </AccordionTrigger>
+              <AccordionContent>
+                <OtherFiles inputFiles={inputFiles} />
+              </AccordionContent>
+            </AccordionItem>
+          </div>
+        </Accordion>
+      </div>
     );
   } else if (artefacts?.length) {
     return (
