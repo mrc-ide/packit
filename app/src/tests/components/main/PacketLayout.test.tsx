@@ -15,6 +15,9 @@ jest.mock("../../../lib/download", () => ({
   getFileObjectUrl: async () => "fakeObjectUrl"
 }));
 
+URL.createObjectURL = jest.fn();
+URL.revokeObjectURL = jest.fn();
+
 describe("Packet Layout test", () => {
   const renderComponent = () => {
     render(

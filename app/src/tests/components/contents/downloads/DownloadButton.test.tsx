@@ -43,7 +43,7 @@ describe("DownloadButton", () => {
     renderComponent();
 
     userEvent.click(screen.getByRole("button"));
-    const url = `${appConfig.apiUrl()}/packets/file/${packetId}?hash=${file.hash}&filename=${file.path}`;
+    const url = `${appConfig.apiUrl()}/packets/file/${packetId}?hash=${file.hash}&filename=${file.path}&inline=false`;
     expect(mockDownload).toHaveBeenCalledWith(url, "test.txt");
   });
 
