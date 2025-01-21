@@ -3,7 +3,6 @@ package packit.unit.controllers
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyBoolean
 import org.mockito.ArgumentMatchers.anyString
-import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
@@ -86,7 +85,7 @@ class PacketControllerTest
         on { getPackets(PageablePayload(0, 10), "", "") } doReturn mockPageablePackets
         on { getMetadataBy(anyString()) } doReturn packetMetadata
         on { getFileByHash(anyString(), anyBoolean(), anyString()) } doReturn inputStream
-        on { getPacketsByName(anyString(), any()) } doReturn mockPageablePackets
+        on { getPacketsByName(anyString()) } doReturn mockPageablePackets
     }
     private val packetGroupService = mock<PacketGroupService> {
         on { getPacketGroupSummaries(PageablePayload(0, 10), "") } doReturn mockPacketGroupsSummary
@@ -112,7 +111,7 @@ class PacketControllerTest
 
         assertEquals(result.statusCode, HttpStatus.OK)
         assertEquals(result.body, mockPageablePackets.map { it.toDto() })
-        verify(packetService).getPacketsByName("pg1", PageablePayload(0, 10))
+        verify(packetService).getPacketsByName("pg1")
     }
 
     @Test
