@@ -1,13 +1,13 @@
 import { Card, CardContent } from "../../../Base/Card";
 import { FileRow } from "../FileRow";
-import { InputFiles, InputFileType } from "../../../../../types";
+import { InputFile, InputFileType } from "../../../../../types";
 import { usePacketOutletContext } from "../../../main/PacketOutlet";
 import { getFileByPath } from "../utils/getFileByPath";
 
 // 'Other files' are any files to display other than artefact groups.
 
 interface OtherFilesProps {
-  inputFiles: InputFiles[];
+  inputFiles: InputFile[];
 }
 
 export const OtherFiles = ({ inputFiles }: OtherFilesProps) => {
