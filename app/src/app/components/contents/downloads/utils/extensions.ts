@@ -10,5 +10,3 @@ export const filePathToExtension = (path: string) => path.split(".").pop()?.toLo
 export const isImageFile = (file: FileMetadata) => {
   return imageExtensions.includes(filePathToExtension(file.path));
 };
-
-export const isHtmlFile = (file: FileMetadata) => filePathToExtension(file.path) === "html";

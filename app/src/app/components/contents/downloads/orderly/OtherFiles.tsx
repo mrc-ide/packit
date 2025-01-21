@@ -13,21 +13,25 @@ interface OtherFilesProps {
 export const OtherFiles = ({ inputFiles }: OtherFilesProps) => {
   const { packet } = usePacketOutletContext();
 
+  const inputsWithFileMetadata = packet
+    ? inputFiles.map((input) => {
+        return { ...input, file: getFileByPath(input.path, packet) };
+      })
+    : [];
+
   return (
     <Card>
       <CardContent className="p-0">
         <ul>
-          {packet &&
-            inputFiles.map((input, index) => {
-              const file = getFileByPath(input.path, packet);
-              return (
-                file && (
-                  <li key={index} className="[&:not(:first-child)]:border-t">
-                    <FileRow file={file} sharedResource={input.role === InputFileType.Shared} />
-                  </li>
-                )
-              );
-            })}
+          {inputsWithFileMetadata.map((input, index) => {
+            return (
+              input.file && (
+                <li key={index} className="[&:not(:first-child)]:border-t">
+                  <FileRow file={input.file} sharedResource={input.role === InputFileType.Shared} />
+                </li>
+              )
+            );
+          })}
         </ul>
       </CardContent>
     </Card>

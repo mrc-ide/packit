@@ -19,13 +19,13 @@ describe("image display component", () => {
     id: "20231130-082812-cd744153"
   } as unknown as PacketMetadata;
 
-  const renderComponent = (fileHash = mockHash) => {
+  const renderComponent = () => {
     return render(
       <SWRConfig value={{ dedupingInterval: 0 }}>
         <MemoryRouter initialEntries={["/"]}>
           <Routes>
             <Route element={<Outlet context={{ packet }} />}>
-              <Route path="/" element={<ImageDisplay packet={packet} fileHash={fileHash} />} />
+              <Route path="/" element={<ImageDisplay file={packet.files[0]} />} />
             </Route>
           </Routes>
         </MemoryRouter>
@@ -59,13 +59,6 @@ describe("image display component", () => {
       throw new Error("test error");
     });
     renderComponent();
-
-    expect(await screen.findByText(/Error loading image file/i)).toBeVisible();
-    expect(screen.queryByRole("img")).not.toBeInTheDocument();
-  });
-
-  it("renders error component if fileHash prop does not match file", async () => {
-    renderComponent("sha256:wrong");
 
     expect(await screen.findByText(/Error loading image file/i)).toBeVisible();
     expect(screen.queryByRole("img")).not.toBeInTheDocument();

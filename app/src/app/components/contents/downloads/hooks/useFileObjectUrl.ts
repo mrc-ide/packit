@@ -9,7 +9,8 @@ export const useFileObjectUrl = (file: FileMetadata | undefined) => {
 
   const [error, setError] = useState<null | Error>(null);
   const [fileObjectUrl, setFileObjectUrl] = useState<string | undefined>(undefined);
-  // By using useRef, we make the latest value of fileObjectUrlRef available to the clean-up function.
+  // By using useRef, we make the latest value of fileObjectUrlRef available to the clean-up function:
+  // for state variables, useEffect clean-up functions use the values from the previous render.
   const fileObjectUrlRef = useRef<string | undefined>(undefined);
 
   useEffect(() => {
@@ -18,12 +19,12 @@ export const useFileObjectUrl = (file: FileMetadata | undefined) => {
       const fileUrl = getFileUrl(file, packet.id, extension === "html");
       getFileObjectUrl(fileUrl, file.path)
         .then((url) => {
-          setFileObjectUrl(url); // Set reactive state.
-          fileObjectUrlRef.current = url; // Update non-reactive ref for internal use by hook.
+          setFileObjectUrl(url);
+          fileObjectUrlRef.current = url;
           setError(null);
         })
         .catch((e) => {
-          setError(e); // Set error state on failure
+          setError(e);
         });
     }
 
