@@ -185,7 +185,14 @@ export const mockPacket: PacketMetadata = {
       ]
     }
   },
-  depends: []
+  depends: [
+    {
+      packet: "20231130-082812-cd744153",
+      query: 'single(id == "20231130-082812-cd744153" && name == "test3")',
+      files: []
+    },
+    { packet: "20231130-082727-445fa3fa", query: 'latest(name == "test2")', files: [] }
+  ]
 };
 
 export const mockPacketGroupSummaries: PageablePacketGroupSummaries = {

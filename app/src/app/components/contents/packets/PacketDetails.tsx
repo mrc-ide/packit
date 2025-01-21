@@ -14,8 +14,12 @@ export const PacketDetails = () => {
   return (
     <>
       <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} displayName={packet?.displayName} />
-      {longDescription && <p>{longDescription}</p>}
-      <Separator className="mx-1" />
+      {longDescription && (
+        <div>
+          <p>{longDescription}</p>
+          <Separator className="mt-3" />
+        </div>
+      )}
       <Accordion type="multiple" defaultValue={["parameters", "dependencies", "reports"]}>
         <PacketParameters parameters={packet?.parameters ?? {}} />
         <PacketDependencies depends={packet?.depends ?? []} />

@@ -1,9 +1,9 @@
-import { BookOpenText, Fullscreen } from "lucide-react";
-import { FileMetadata, PacketMetadata } from "../../../../types";
-import { getHtmlFileIfExists } from "./utils/htmlFile";
+import { Fullscreen, Presentation } from "lucide-react";
 import { useEffect, useState } from "react";
-import { PacketReport } from "./PacketReport";
+import { FileMetadata, PacketMetadata } from "../../../../types";
 import { AccordionContent, AccordionItem, AccordionTrigger } from "../../Base/Accordion";
+import { PacketReport } from "./PacketReport";
+import { getHtmlFileIfExists } from "./utils/htmlFile";
 
 interface PacketReportsProps {
   packet: PacketMetadata | undefined;
@@ -20,7 +20,7 @@ export const PacketReports = ({ packet }: PacketReportsProps) => {
     <AccordionItem value="reports">
       <AccordionTrigger>
         <span className="flex gap-1 items-center">
-          <BookOpenText className="small-icon text-muted-foreground" />
+          <Presentation className="small-icon text-muted-foreground" />
           <h3>Reports</h3>
         </span>
       </AccordionTrigger>
