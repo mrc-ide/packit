@@ -1,13 +1,9 @@
-import { act, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { PreviewableFile } from "../../../../app/components/contents/downloads/PreviewableFile";
 import { mockPacket } from "../../../mocks";
-import { createMemoryRouter, MemoryRouter, Outlet, Route, RouterProvider, Routes } from "react-router-dom";
-import { FileMetadata, PacketMetadata } from "../../../../types";
+import { createMemoryRouter, Outlet, RouterProvider } from "react-router-dom";
+import { FileMetadata } from "../../../../types";
 import userEvent from "@testing-library/user-event";
-import { SWRConfig } from "swr";
-import { PacketLayout } from "../../../../app/components/main";
-import { PacketDetails } from "../../../../app/components/contents/packets";
-import { FileRow } from "../../../../app/components/contents/downloads/FileRow";
 
 const imageFile = mockPacket.files.filter((file) => file.path === "directory/graph.png")[0];
 
