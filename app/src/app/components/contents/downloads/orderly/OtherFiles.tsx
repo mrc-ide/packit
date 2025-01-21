@@ -12,12 +12,11 @@ interface OtherFilesProps {
 
 export const OtherFiles = ({ inputFiles }: OtherFilesProps) => {
   const { packet } = usePacketOutletContext();
+  if (!packet) return null;
 
-  const inputsWithFileMetadata = packet
-    ? inputFiles.map((input) => {
-        return { ...input, file: getFileByPath(input.path, packet) };
-      })
-    : [];
+  const inputsWithFileMetadata = inputFiles.map((input) => {
+    return { ...input, file: getFileByPath(input.path, packet) };
+  });
 
   return (
     <Card>

@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import { mockPacket } from "../../../mocks";
 import { PacketFileFullScreen } from "../../../../app/components/contents/packets";

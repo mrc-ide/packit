@@ -1,10 +1,9 @@
-import { render, waitFor, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { PacketReports } from "../../../../app/components/contents/packets/PacketReports";
 import { mockPacket } from "../../../mocks";
 import { PacketMetadata } from "../../../../types";
 import { SWRConfig } from "swr";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
-import { PacketReport } from "../../../../app/components/contents/packets/PacketReport";
 
 jest.mock("../../../../lib/download", () => ({
   ...jest.requireActual("../../../../lib/download"),

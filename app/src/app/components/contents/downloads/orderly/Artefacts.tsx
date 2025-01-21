@@ -10,11 +10,10 @@ interface ArtefactsProps {
 
 export const Artefacts = ({ artefacts }: ArtefactsProps) => {
   const { packet } = usePacketOutletContext();
-  const filesForArtefact = (artefact: Artefact) => {
-    return packet
-      ? artefact.paths.map((path) => getFileByPath(path, packet)).filter((file): file is FileMetadata => !!file)
-      : [];
-  };
+  if (!packet) return null;
+
+  const filesForArtefact = (artefact: Artefact) =>
+    artefact.paths.map((path) => getFileByPath(path, packet)).filter((file): file is FileMetadata => !!file);
 
   return (
     <ul className="space-y-4">
