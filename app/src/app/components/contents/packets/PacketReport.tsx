@@ -3,6 +3,8 @@ import { ErrorComponent } from "../common/ErrorComponent";
 import { PacketMetadata } from "../../../../types";
 import { useFileObjectUrl } from "../downloads/hooks/useFileObjectUrl";
 
+const defaultErrorMessage = "Error loading report";
+
 interface PacketReportProps {
   packet: PacketMetadata;
   fileHash: string;
@@ -12,22 +14,15 @@ interface PacketReportProps {
 // in future
 export const PacketReport = ({ packet, fileHash }: PacketReportProps) => {
   const file = getHtmlFileIfExists(packet);
-  if (file?.hash !== fileHash) {
-    const error = new Error("File name not found");
-    return <ErrorComponent message="Error loading report" error={error} />;
-  }
+  if (file?.hash !== fileHash)
+    return <ErrorComponent message={defaultErrorMessage} error={new Error("File not found")} />;
 
   const { fileObjectUrl, error } = useFileObjectUrl(file);
 
-  // TODO: Make sure we have tests for the error component existing
+  if (error) return <ErrorComponent message={defaultErrorMessage} error={error} />;
 
   return (
-    <>
-      {fileObjectUrl ? (
-        <iframe className="w-full h-full" data-testid="report-iframe" src={fileObjectUrl}></iframe>
-      ) : error ? (
-        <ErrorComponent message="Error loading report" error={error} />
-      ) : null}
-    </>
+    (fileObjectUrl && <iframe className="w-full h-full" data-testid="report-iframe" src={fileObjectUrl}></iframe>) ||
+    null
   );
 };

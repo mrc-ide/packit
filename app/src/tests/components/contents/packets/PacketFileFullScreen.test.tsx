@@ -53,4 +53,16 @@ describe("PacketFileFullScreen", () => {
 
     expect(revokeObjectURL).toHaveBeenCalledWith("testFileObjectUrl");
   });
+
+  it("renders an error message when the file name is not recognised", async () => {
+    renderComponent("no_such.file");
+
+    expect(screen.getByText(/File not found/i)).toBeVisible();
+  });
+
+  it("renders a helpful message when the file type is not supported", async () => {
+    renderComponent("orderly.R");
+
+    expect(screen.getByText(/not supported/i)).toBeVisible();
+  });
 });

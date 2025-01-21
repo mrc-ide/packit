@@ -5,6 +5,7 @@ import { useFileObjectUrl } from "./hooks/useFileObjectUrl";
 import { ExternalLinkIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { usePacketOutletContext } from "../../main/PacketOutlet";
+import { ErrorComponent } from "../common/ErrorComponent";
 
 interface PreviewableFileProps {
   file: FileMetadata;
@@ -13,7 +14,9 @@ interface PreviewableFileProps {
 
 export const PreviewableFile = ({ file, fileName }: PreviewableFileProps) => {
   const { packet } = usePacketOutletContext();
-  const fileObjectUrl = useFileObjectUrl(file);
+  const { fileObjectUrl, error } = useFileObjectUrl(file);
+
+  if (error) return <ErrorComponent message="Error loading file" error={error} />;
 
   return (
     <HoverCard openDelay={0} closeDelay={0}>

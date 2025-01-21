@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { getFileObjectUrl, getFileUrl } from "../../../../../lib/download";
 import { FileMetadata } from "../../../../../types";
 import { usePacketOutletContext } from "../../../main/PacketOutlet";
+import { filePathToExtension } from "../utils/extensions";
 
 export const useFileObjectUrl = (file: FileMetadata | undefined) => {
   const { packet } = usePacketOutletContext();
@@ -13,7 +14,8 @@ export const useFileObjectUrl = (file: FileMetadata | undefined) => {
 
   useEffect(() => {
     if (file && packet) {
-      const fileUrl = getFileUrl(file, packet.id);
+      const extension = filePathToExtension(file?.path);
+      const fileUrl = getFileUrl(file, packet.id, extension === "html");
       getFileObjectUrl(fileUrl, file.path)
         .then((url) => {
           setFileObjectUrl(url); // Set reactive state.
@@ -25,8 +27,6 @@ export const useFileObjectUrl = (file: FileMetadata | undefined) => {
         });
     }
 
-    // TODO: Make sure unit tests check that the clean up function is called.
-    // including those for packetreport(s).tsx!
     return () => {
       if (fileObjectUrlRef.current) {
         URL.revokeObjectURL(fileObjectUrlRef.current);

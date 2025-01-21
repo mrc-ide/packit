@@ -10,10 +10,10 @@ interface PacketReportsProps {
 
 // TODO: add ability to load multiple reports (html files).
 export const PacketReports = ({ packet }: PacketReportsProps) => {
-  const [htmlFile, setHtmlFile] = useState<FileMetadata | null>(null);
+  const [htmlFile, setHtmlFile] = useState<FileMetadata | undefined>(undefined);
 
   useEffect(() => {
-    setHtmlFile(packet ? getHtmlFileIfExists(packet) : null);
+    setHtmlFile(packet ? getHtmlFileIfExists(packet) : undefined);
   }, [packet]);
 
   return (
