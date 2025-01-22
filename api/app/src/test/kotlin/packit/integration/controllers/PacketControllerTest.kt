@@ -290,7 +290,7 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:random-name"])
-    fun `getPacketsByName returns empty page if no permissions match`()
+    fun `getPacketsByName returns empty list if no permissions match`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets/artefact-types",
@@ -298,7 +298,7 @@ class PacketControllerTest : IntegrationTest()
             getTokenizedHttpEntity()
         )
 
-        assertEquals(0, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
+        assertEquals(0, jacksonObjectMapper().readValue(result.body, List::class.java).size)
     }
 
     @Test
