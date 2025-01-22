@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { PacketMetadata } from "../../../../types";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import { ImageDisplay } from "../../../../app/components/contents/downloads/ImageDisplay";
@@ -44,9 +44,11 @@ describe("image display component", () => {
   it("gets file object url for image src", async () => {
     renderComponent();
 
-    const image = await screen.findByRole("img");
-    expect(image).toHaveAttribute("src", "fakeObjectUrl");
-    expect(image).toHaveAttribute("alt", "test.png");
+    await waitFor(() => {
+      const image = screen.getByRole("img");
+      expect(image).toHaveAttribute("src", "fakeObjectUrl");
+      expect(image).toHaveAttribute("alt", "test.png");
+    });
 
     expect(mockGetFileObjectUrl).toHaveBeenCalledWith(
       `http://localhost:8080/packets/file/${packet.id}?hash=${mockHash}&filename=test.png&inline=false`,

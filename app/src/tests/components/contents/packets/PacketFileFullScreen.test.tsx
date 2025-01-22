@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import { mockPacket } from "../../../mocks";
 import { PacketFileFullScreen } from "../../../../app/components/contents/packets";
@@ -36,9 +36,11 @@ describe("PacketFileFullScreen", () => {
 
     const { unmount } = renderComponent(imageFile.path);
 
-    const image = await screen.findByRole("img");
-    expect(image).toHaveAttribute("src", "testFileObjectUrl");
-    expect(image).toHaveAttribute("alt", imageFile.path);
+    await waitFor(() => {
+      const image = screen.getByRole("img");
+      expect(image).toHaveAttribute("src", "testFileObjectUrl");
+      expect(image).toHaveAttribute("alt", imageFile.path);
+    });
 
     unmount();
 
