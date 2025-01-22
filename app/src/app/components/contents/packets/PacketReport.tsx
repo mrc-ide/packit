@@ -21,8 +21,7 @@ export const PacketReport = ({ packet, fileHash }: PacketReportProps) => {
 
   if (error) return <ErrorComponent message={defaultErrorMessage} error={error} />;
 
-  return (
-    (fileObjectUrl && <iframe className="w-full h-full" data-testid="report-iframe" src={fileObjectUrl}></iframe>) ||
-    null
-  );
+  return fileObjectUrl ? (
+    <iframe className="w-full h-full" data-testid="report-iframe" src={fileObjectUrl}></iframe>
+  ) : null;
 };
