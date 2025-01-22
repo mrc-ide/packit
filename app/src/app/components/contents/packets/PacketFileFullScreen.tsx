@@ -17,12 +17,18 @@ export const PacketFileFullScreen = () => {
   const isImage = file && isImageFile(file);
   const isHtml = file && filePathToExtension(file.path) === "html";
 
+  const content = () => {
+    if (isImage) {
+      return <ImageDisplay file={file} />;
+    } else if (isHtml) {
+      return <PacketReport packet={packet} fileHash={file.hash} />;
+    } else {
+      return <p>File type not supported</p>;
+    }
+  };
+
   return file ? (
-    <div className="h-screen">
-      {isImage && <ImageDisplay file={file} />}
-      {isHtml && <PacketReport packet={packet} fileHash={file.hash} />}
-      {!isImage && !isHtml && <p>File type not supported</p>}
-    </div>
+    <div className="h-screen">{content()}</div>
   ) : (
     <ErrorComponent message={"File not found"} error={new Error("File not found")} />
   );

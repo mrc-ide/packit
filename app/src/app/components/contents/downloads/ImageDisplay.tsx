@@ -13,5 +13,5 @@ export const ImageDisplay = ({ file }: ImageDisplayProps) => {
 
   if (error) return <ErrorComponent message={defaultErrorMessage} error={error} />;
 
-  return fileObjectUrl ? <img src={fileObjectUrl} alt={file.path} /> : null;
+  return <img src={fileObjectUrl} alt={file.path} />;
 };
