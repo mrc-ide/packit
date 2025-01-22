@@ -25,6 +25,10 @@ export const PreviewableFile = ({ file, fileName }: PreviewableFileProps) => {
           to={`/${packet?.name}/${packet?.id}/file/${file.path}`}
           target="_blank"
           className="flex truncate text-blue-500 hover:underline"
+          // The default, undocumented behaviour on mousedown is to toggle the 'open' state some number of times,
+          // depending whether it's already open. (There is another complicated undocumented reaction on click.)
+          // We prevent that mousedown behaviour so that the HoverCard is closed when the link to a new tab is opened.
+          onMouseDown={(e) => e.preventDefault()}
         >
           <span className="truncate">{fileName}</span>
           <ExternalLinkIcon size={15} className="min-w-fit ms-1" />
