@@ -19,4 +19,19 @@ describe("FilterByName component", () => {
     expect(screen.getByPlaceholderText(placeholder)).toBeVisible();
     expect(postFilterAction).toHaveBeenCalledTimes(1);
   });
+
+  it("should add classnames to input if passed in", async () => {
+    render(
+      <FilterInput
+        setFilter={jest.fn()}
+        postFilterAction={jest.fn()}
+        placeholder={"placeholder"}
+        inputClassNames="sm:w-[1000px] h-14"
+      />
+    );
+
+    const input = screen.getByPlaceholderText(/placeholder/i);
+    expect(input).toHaveClass("sm:w-[1000px]");
+    expect(input).toHaveClass("h-14");
+  });
 });

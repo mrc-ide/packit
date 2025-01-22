@@ -162,7 +162,7 @@ class PacketServiceTest
 
         val result = sut.getPacketsByName("pg1")
 
-        assertEquals(result.content, oldPackets)
+        assertEquals(result, oldPackets)
         verify(packetRepository)
             .findByName("pg1", Sort.by("startTime").descending())
     }

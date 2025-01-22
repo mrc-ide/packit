@@ -85,7 +85,7 @@ class PacketControllerTest
         on { getPackets(PageablePayload(0, 10), "", "") } doReturn mockPageablePackets
         on { getMetadataBy(anyString()) } doReturn packetMetadata
         on { getFileByHash(anyString(), anyBoolean(), anyString()) } doReturn inputStream
-        on { getPacketsByName(anyString()) } doReturn mockPageablePackets
+        on { getPacketsByName(anyString()) } doReturn packets
     }
     private val packetGroupService = mock<PacketGroupService> {
         on { getPacketGroupSummaries(PageablePayload(0, 10), "") } doReturn mockPacketGroupsSummary
@@ -107,10 +107,10 @@ class PacketControllerTest
     {
         val sut = PacketController(packetService, packetGroupService)
 
-        val result = sut.getPacketsByName("pg1", 0, 10)
+        val result = sut.getPacketsByName("pg1")
 
         assertEquals(result.statusCode, HttpStatus.OK)
-        assertEquals(result.body, mockPageablePackets.map { it.toDto() })
+        assertEquals(result.body, packets.map { it.toDto() })
         verify(packetService).getPacketsByName("pg1")
     }
 

@@ -6,12 +6,12 @@ import { Button } from "../../Base/Button";
 import { FilterInput } from "../common/FilterInput";
 import { ParameterContainer } from "../common/ParameterContainer";
 
-const columnHelper = createColumnHelper<Packet>();
-const getSortingIcon = (sortedDirection: false | SortDirection) => {
+const SortIcon = ({ sortedDirection }: { sortedDirection: false | SortDirection }) => {
   if (!sortedDirection) return <ArrowUpDown className="ml-2 h-4 w-4" />;
   return sortedDirection === "asc" ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />;
 };
 
+const columnHelper = createColumnHelper<Packet>();
 export const packetColumns = [
   columnHelper.accessor("id", {
     header: ({ column }) => {
@@ -26,7 +26,7 @@ export const packetColumns = [
             onClick={() => column.toggleSorting(sortedDirection === "asc")}
           >
             Packet
-            {getSortingIcon(sortedDirection)}
+            <SortIcon sortedDirection={sortedDirection} />
           </Button>
           <FilterInput
             setFilter={column.setFilterValue}
