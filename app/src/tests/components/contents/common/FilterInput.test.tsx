@@ -34,4 +34,22 @@ describe("FilterByName component", () => {
     expect(input).toHaveClass("sm:w-[1000px]");
     expect(input).toHaveClass("h-14");
   });
+
+  it("should not show reset button if showResetButton false", async () => {
+    render(
+      <FilterInput
+        setFilter={jest.fn()}
+        postFilterAction={jest.fn()}
+        placeholder={"placeholder"}
+        inputClassNames="sm:w-[1000px] h-14"
+      />
+    );
+
+    const filterInput = await screen.findByPlaceholderText(/placeholder/i);
+    userEvent.type(filterInput, "random");
+
+    await waitFor(() => {
+      expect(screen.queryByRole("button", { name: /reset/i })).not.toBeInTheDocument();
+    });
+  });
 });

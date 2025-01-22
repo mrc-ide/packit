@@ -32,6 +32,7 @@ export const packetColumns = [
             setFilter={column.setFilterValue}
             placeholder="Search..."
             inputClassNames="h-8 sm:w-36 lg:w-48"
+            showResetButton={false}
           />
         </div>
       );
@@ -71,6 +72,7 @@ export const packetColumns = [
             setFilter={column.setFilterValue}
             placeholder="Search..."
             inputClassNames="h-8 sm:w-36 lg:w-48"
+            showResetButton={false}
           />
         </div>
       );

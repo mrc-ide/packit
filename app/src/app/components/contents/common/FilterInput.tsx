@@ -10,8 +10,15 @@ interface FilterByNameProps {
   postFilterAction?: () => void;
   placeholder: string;
   inputClassNames?: string;
+  showResetButton?: boolean;
 }
-export const FilterInput = ({ setFilter, postFilterAction, placeholder, inputClassNames }: FilterByNameProps) => {
+export const FilterInput = ({
+  setFilter,
+  postFilterAction,
+  placeholder,
+  inputClassNames,
+  showResetButton = true
+}: FilterByNameProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSetNameFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,7 +48,7 @@ export const FilterInput = ({ setFilter, postFilterAction, placeholder, inputCla
         className={cn("h-8 sm:w-[450px] lg:w-[600px]", inputClassNames)}
         ref={inputRef}
       />
-      {inputRef.current?.value && (
+      {showResetButton && inputRef.current?.value && (
         <Button variant="ghost" onClick={handleResetFilter} className="h-8 px-2">
           Reset
           <X className="ml-2 h-4 w-4" />
