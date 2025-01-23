@@ -52,7 +52,7 @@ describe("Packet table", () => {
     });
   });
 
-  it("should be able to sort by packet column", async () => {
+  it("should show correct icons when sorting by packet column", async () => {
     const { container } = renderComponent();
 
     await screen.findByRole("table");
@@ -78,6 +78,8 @@ describe("Packet table", () => {
 
     await screen.findByRole("table");
 
+    expect(screen.getAllByRole("cell")).toHaveLength(10);
+
     userEvent.type(screen.getAllByPlaceholderText("Search...")[0], filterSearch);
 
     await waitFor(() => {
@@ -90,6 +92,8 @@ describe("Packet table", () => {
     renderComponent();
 
     await screen.findByRole("table");
+
+    expect(screen.getAllByRole("cell")).toHaveLength(10);
 
     userEvent.type(screen.getAllByPlaceholderText("Search...")[1], filterSearch);
 

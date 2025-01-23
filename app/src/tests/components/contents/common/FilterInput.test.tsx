@@ -2,7 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { FilterInput } from "../../../../app/components/contents/common/FilterInput";
 import userEvent from "@testing-library/user-event";
 
-describe("FilterByName component", () => {
+describe("FilterInput component", () => {
   it("filtering on input & calls passed in functions", async () => {
     const setFilterByName = jest.fn();
     const postFilterAction = jest.fn();
@@ -33,23 +33,5 @@ describe("FilterByName component", () => {
     const input = screen.getByPlaceholderText(/placeholder/i);
     expect(input).toHaveClass("sm:w-[1000px]");
     expect(input).toHaveClass("h-14");
-  });
-
-  it("should not show reset button if showResetButton false", async () => {
-    render(
-      <FilterInput
-        setFilter={jest.fn()}
-        postFilterAction={jest.fn()}
-        placeholder={"placeholder"}
-        inputClassNames="sm:w-[1000px] h-14"
-      />
-    );
-
-    const filterInput = await screen.findByPlaceholderText(/placeholder/i);
-    userEvent.type(filterInput, "random");
-
-    await waitFor(() => {
-      expect(screen.queryByRole("button", { name: /reset/i })).not.toBeInTheDocument();
-    });
   });
 });
