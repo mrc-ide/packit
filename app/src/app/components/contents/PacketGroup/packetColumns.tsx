@@ -7,8 +7,10 @@ import { FilterInput } from "../common/FilterInput";
 import { ParameterContainer } from "../common/ParameterContainer";
 
 const SortIcon = ({ sortedDirection }: { sortedDirection: false | SortDirection }) => {
-  if (!sortedDirection) return <ArrowUpDown className="ml-2 h-4 w-4" />;
-  return sortedDirection === "asc" ? <ArrowUp className="ml-2 h-4 w-4" /> : <ArrowDown className="ml-2 h-4 w-4" />;
+  const iconClassName = "ml-2 h-4 w-4";
+
+  if (!sortedDirection) return <ArrowUpDown className={iconClassName} />;
+  return sortedDirection === "asc" ? <ArrowUp className={iconClassName} /> : <ArrowDown className={iconClassName} />;
 };
 
 const columnHelper = createColumnHelper<Packet>();
@@ -19,11 +21,11 @@ export const setupPacketColumns = (allParametersKeys: Set<string>) => {
         const sortedDirection = column.getIsSorted();
 
         return (
-          <div className="flex flex-col items-start space-y-1 mb-2">
+          <div className="flex flex-col items-start space-y-1 mb-1 mt-0.5">
             <Button
               variant="ghost"
               size="sm"
-              className="sm:w-36 lg:w-48 justify-start"
+              className="sm:w-32 lg:w-40 justify-start h-fit py-1.5"
               onClick={() => column.toggleSorting(sortedDirection === "asc")}
             >
               Packet
@@ -32,8 +34,7 @@ export const setupPacketColumns = (allParametersKeys: Set<string>) => {
             <FilterInput
               setFilter={column.setFilterValue}
               placeholder="Search..."
-              inputClassNames="h-8 sm:w-36 lg:w-48"
-              showResetButton={false}
+              inputClassNames="h-8 sm:w-32 lg:w-40"
             />
           </div>
         );
@@ -67,13 +68,12 @@ export const setupPacketColumns = (allParametersKeys: Set<string>) => {
     columnHelper.accessor("parameters", {
       header: ({ column }) => {
         return (
-          <div className="flex flex-col items-start space-y-2 mb-2 content-center">
-            <div className="px-3 h-9 sm:w-36 lg:w-48 content-center">Parameters</div>
+          <div className="flex flex-col items-start space-y-1 mb-1 mt-0.5 content-center">
+            <div className="px-3 h-fit py-1.5 sm:w-32 lg:w-40 content-center">Parameters</div>
             <FilterInput
               setFilter={column.setFilterValue}
               placeholder="Search..."
-              inputClassNames="h-8 sm:w-36 lg:w-48"
-              showResetButton={false}
+              inputClassNames="h-8 sm:w-32 lg:w-40"
             />
           </div>
         );
@@ -111,11 +111,11 @@ export const setupPacketColumns = (allParametersKeys: Set<string>) => {
         const sortedDirection = column.getIsSorted();
 
         return (
-          <div className="flex flex-col items-start space-y-1 mb-2">
+          <div className="flex flex-col items-start space-y-1 mb-1 mt-0.5">
             <Button
               variant="ghost"
               size="sm"
-              className="sm:w-24 lg:w-32 justify-start"
+              className="sm:w-24 lg:w-32 justify-start h-fit py-1.5"
               onClick={() => column.toggleSorting(sortedDirection === "asc")}
             >
               {key}
@@ -125,7 +125,6 @@ export const setupPacketColumns = (allParametersKeys: Set<string>) => {
               setFilter={column.setFilterValue}
               placeholder="Search..."
               inputClassNames="h-8 sm:w-24 lg:w-32"
-              showResetButton={false}
             />
           </div>
         );

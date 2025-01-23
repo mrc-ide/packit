@@ -3,12 +3,12 @@ import { HttpStatus } from "../../../../lib/types/HttpStatus";
 import { Skeleton } from "../../Base/Skeleton";
 import { ErrorComponent } from "../common/ErrorComponent";
 import { Unauthorized } from "../common/Unauthorized";
-import { useGetPacketPage } from "./hooks/useGetPacketPage";
 import { PacketDataTable } from "./PacketDataTable";
+import { useGetPacketsInGroup } from "./hooks/useGetPacketsInGroup";
 
 export const PacketTable = ({ parentIsLoading }: { parentIsLoading: boolean }) => {
   const { packetName } = useParams();
-  const { packets, error, isLoading } = useGetPacketPage(packetName);
+  const { packets, error, isLoading } = useGetPacketsInGroup(packetName);
 
   if (error?.status === HttpStatus.Unauthorized) return <Unauthorized />;
   if (error) return <ErrorComponent message="Error fetching packets" error={error} />;

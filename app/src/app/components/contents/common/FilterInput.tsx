@@ -8,16 +8,14 @@ import { cn } from "../../../../lib/cn";
 interface FilterByNameProps {
   setFilter: Dispatch<SetStateAction<string>>;
   postFilterAction?: () => void;
-  placeholder: string;
+  placeholder?: string;
   inputClassNames?: string;
-  showResetButton?: boolean;
 }
 export const FilterInput = ({
   setFilter,
   postFilterAction,
-  placeholder,
-  inputClassNames,
-  showResetButton = true
+  placeholder = "Search...",
+  inputClassNames
 }: FilterByNameProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -41,17 +39,16 @@ export const FilterInput = ({
   }, []);
 
   return (
-    <div className="flex space-x-3">
+    <div className="flex space-x-2 items-center">
       <Input
         placeholder={placeholder}
         onChange={debouncedSetFilterByName}
         className={cn("h-8 sm:w-[450px] lg:w-[600px]", inputClassNames)}
         ref={inputRef}
-      />
-      {showResetButton && inputRef.current?.value && (
-        <Button variant="ghost" onClick={handleResetFilter} className="h-8 px-2">
-          Reset
-          <X className="ml-2 h-4 w-4" />
+      ></Input>
+      {inputRef.current?.value && (
+        <Button variant="ghost" onClick={handleResetFilter} className="h-6 w-6" size="icon" aria-label="reset filter">
+          <X className="h-4 w-4" />
         </Button>
       )}
     </div>
