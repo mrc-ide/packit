@@ -1,8 +1,9 @@
-import { Fullscreen } from "lucide-react";
-import { FileMetadata, PacketMetadata } from "../../../../types";
-import { getHtmlFileIfExists } from "./utils/htmlFile";
+import { Fullscreen, Presentation } from "lucide-react";
 import { useEffect, useState } from "react";
+import { FileMetadata, PacketMetadata } from "../../../../types";
+import { AccordionContent, AccordionItem, AccordionTrigger } from "../../Base/Accordion";
 import { PacketReport } from "./PacketReport";
+import { getHtmlFileIfExists } from "./utils/htmlFile";
 
 interface PacketReportsProps {
   packet: PacketMetadata | undefined;
@@ -16,27 +17,34 @@ export const PacketReports = ({ packet }: PacketReportsProps) => {
   }, [packet]);
 
   return (
-    <div>
-      <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Reports</h4>
-      {packet && htmlFile ? (
-        <div className="h-screen">
-          <div className="w-full h-2/3 border">
-            <PacketReport fileName={htmlFile.path} packet={packet}></PacketReport>
-          </div>
-          <div className="py-2 flex justify-end">
-            <a
-              className="text-blue-500 flex items-center gap-1
+    <AccordionItem value="reports">
+      <AccordionTrigger>
+        <span className="flex gap-1 items-center">
+          <Presentation className="small-icon text-muted-foreground" />
+          <h3>Reports</h3>
+        </span>
+      </AccordionTrigger>
+      <AccordionContent>
+        {packet && htmlFile ? (
+          <div className="h-screen">
+            <div className="w-full h-2/3 border">
+              <PacketReport fileName={htmlFile.path} packet={packet}></PacketReport>
+            </div>
+            <div className="py-2 flex justify-end">
+              <a
+                className="text-blue-500 flex items-center gap-1
         hover:underline decoration-blue-500"
-              href={`${packet.id}/file/${htmlFile.path}`}
-            >
-              <Fullscreen size={20} />
-              View Fullscreen
-            </a>
+                href={`${packet.id}/file/${htmlFile.path}`}
+              >
+                <Fullscreen size={20} />
+                View Fullscreen
+              </a>
+            </div>
           </div>
-        </div>
-      ) : (
-        <div className="italic text-sm">None</div>
-      )}
-    </div>
+        ) : (
+          <div className="italic text-sm">None</div>
+        )}
+      </AccordionContent>
+    </AccordionItem>
   );
 };
