@@ -1,12 +1,10 @@
 import { useParams } from "react-router-dom";
-import { PAGE_SIZE } from "../../../../lib/constants";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
 import { Skeleton } from "../../Base/Skeleton";
-import { DataTable } from "../common/DataTable";
 import { ErrorComponent } from "../common/ErrorComponent";
 import { Unauthorized } from "../common/Unauthorized";
 import { useGetPacketPage } from "./hooks/useGetPacketPage";
-import { packetColumns } from "./packetColumns";
+import { PacketDataTable } from "./PacketDataTable";
 
 export const PacketTable = ({ parentIsLoading }: { parentIsLoading: boolean }) => {
   const { packetName } = useParams();
@@ -31,7 +29,5 @@ export const PacketTable = ({ parentIsLoading }: { parentIsLoading: boolean }) =
       </ul>
     );
 
-  return packets ? (
-    <DataTable columns={packetColumns} data={packets} pagination={{ pageSize: PAGE_SIZE }} clientFiltering />
-  ) : null;
+  return packets ? <PacketDataTable packets={packets} /> : null;
 };

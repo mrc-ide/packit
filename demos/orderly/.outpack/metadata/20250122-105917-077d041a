@@ -1,0 +1,170 @@
+{
+  "schema_version": "0.1.1",
+  "name": "parameters",
+  "id": "20250122-105917-077d041a",
+  "time": {
+    "start": 1737543557.0487,
+    "end": 1737543557.1813
+  },
+  "parameters": {
+    "a": "jess",
+    "c": 100,
+    "d": 69
+  },
+  "files": [
+    {
+      "path": "data.rds",
+      "size": 103,
+      "hash": "sha256:9387296fffa62d97e51fd5738ac997b01ada74d77b72db2b03297b52c5afc2de"
+    },
+    {
+      "path": "orderly.R",
+      "size": 104,
+      "hash": "sha256:621c60605940a3de7d9311e0989c195a9ae442ae7a9ecb59c7fef2fc51444e89"
+    }
+  ],
+  "depends": [],
+  "git": {
+    "sha": "c6435c5d36d295116dbbcb77e8d525b171ef3354",
+    "branch": "mrc-6165-param-to-column",
+    "url": [
+      "https://github.com/mrc-ide/packit.git"
+    ]
+  },
+  "custom": {
+    "orderly": {
+      "artefacts": [],
+      "role": [
+        {
+          "path": "orderly.R",
+          "role": "orderly"
+        }
+      ],
+      "description": {
+        "display": null,
+        "long": null,
+        "custom": null
+      },
+      "shared": [],
+      "session": {
+        "platform": {
+          "version": "R version 4.4.2 (2024-10-31)",
+          "os": "Ubuntu 22.04.5 LTS",
+          "system": "x86_64, linux-gnu"
+        },
+        "packages": [
+          {
+            "package": "orderly2",
+            "version": "1.99.34",
+            "attached": false
+          },
+          {
+            "package": "utf8",
+            "version": "1.2.4",
+            "attached": false
+          },
+          {
+            "package": "R6",
+            "version": "2.5.1",
+            "attached": false
+          },
+          {
+            "package": "magrittr",
+            "version": "2.0.3",
+            "attached": false
+          },
+          {
+            "package": "glue",
+            "version": "1.8.0",
+            "attached": false
+          },
+          {
+            "package": "tibble",
+            "version": "3.2.1",
+            "attached": false
+          },
+          {
+            "package": "orderly.runner",
+            "version": "0.1.0",
+            "attached": false
+          },
+          {
+            "package": "pkgconfig",
+            "version": "2.0.3",
+            "attached": false
+          },
+          {
+            "package": "lifecycle",
+            "version": "1.0.4",
+            "attached": false
+          },
+          {
+            "package": "cli",
+            "version": "3.6.3",
+            "attached": false
+          },
+          {
+            "package": "askpass",
+            "version": "1.2.1",
+            "attached": false
+          },
+          {
+            "package": "fansi",
+            "version": "1.0.6",
+            "attached": false
+          },
+          {
+            "package": "openssl",
+            "version": "2.2.2",
+            "attached": false
+          },
+          {
+            "package": "vctrs",
+            "version": "0.6.5",
+            "attached": false
+          },
+          {
+            "package": "withr",
+            "version": "3.0.1",
+            "attached": false
+          },
+          {
+            "package": "compiler",
+            "version": "4.4.2",
+            "attached": false
+          },
+          {
+            "package": "tools",
+            "version": "4.4.2",
+            "attached": false
+          },
+          {
+            "package": "pillar",
+            "version": "1.9.0",
+            "attached": false
+          },
+          {
+            "package": "yaml",
+            "version": "2.3.10",
+            "attached": false
+          },
+          {
+            "package": "rlang",
+            "version": "1.1.4",
+            "attached": false
+          },
+          {
+            "package": "jsonlite",
+            "version": "1.8.9",
+            "attached": false
+          },
+          {
+            "package": "fs",
+            "version": "1.6.4",
+            "attached": false
+          }
+        ]
+      }
+    }
+  }
+}

@@ -7,6 +7,7 @@ import {
   getSortedRowModel,
   useReactTable
 } from "@tanstack/react-table";
+import { Dispatch, SetStateAction } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../Base/Table";
 import { Pagination } from "./Pagination";
 
@@ -16,10 +17,20 @@ interface DataTableProps<TData> {
   pagination?: {
     pageSize: number;
   };
+  visibility?: {
+    columnVisibility: Record<string, boolean>;
+    setColumnVisibility: Dispatch<SetStateAction<Record<string, boolean>>>;
+  };
   clientFiltering?: boolean;
 }
 
-export const DataTable = <TData,>({ data, columns, pagination, clientFiltering = false }: DataTableProps<TData>) => {
+export const DataTable = <TData,>({
+  data,
+  columns,
+  pagination,
+  visibility,
+  clientFiltering = false
+}: DataTableProps<TData>) => {
   const table = useReactTable({
     columns,
     data,
@@ -34,7 +45,13 @@ export const DataTable = <TData,>({ data, columns, pagination, clientFiltering =
         }
       })
     },
-    manualFiltering: clientFiltering ? false : true
+    state: {
+      ...(visibility && {
+        columnVisibility: visibility.columnVisibility
+      })
+    },
+    manualFiltering: clientFiltering ? false : true,
+    onColumnVisibilityChange: visibility?.setColumnVisibility
   });
   const rows = table.getRowModel().rows;
 
