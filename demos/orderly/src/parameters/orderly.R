@@ -1,2 +1,2 @@
-orderly2::orderly_parameters(a = NULL, c = NULL, d = 69)
-saveRDS(list(a = a, c = c, d = d), "data.rds")
+orderly2::orderly_parameters(a = NULL, b = 2, c = NULL)
+saveRDS(list(a = a, b = b, c = c), "data.rds")

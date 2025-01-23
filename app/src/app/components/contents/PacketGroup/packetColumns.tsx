@@ -86,8 +86,8 @@ export const setupPacketColumns = (allParametersKeys: Set<string>) => {
         const parameters = getValue();
         const visibleParamColumns = table
           .getVisibleLeafColumns()
-          .filter((col) => col.id.startsWith("parameters_"))
-          .map((col) => col.id.split("_")[1]);
+          .filter(({ id }) => id.startsWith("parameters_"))
+          .map(({ id }) => id.split("_")[1]);
 
         return (
           <div className="flex flex-wrap gap-1">

@@ -38,6 +38,7 @@ export const DataTable = <TData,>({
     getSortedRowModel: getSortedRowModel(),
     ...(pagination && { getPaginationRowModel: getPaginationRowModel() }),
     ...(clientFiltering && { getFilteredRowModel: getFilteredRowModel() }),
+    ...(visibility && { onColumnVisibilityChange: visibility.setColumnVisibility }),
     initialState: {
       ...(pagination && {
         pagination: {
@@ -50,8 +51,7 @@ export const DataTable = <TData,>({
         columnVisibility: visibility.columnVisibility
       })
     },
-    manualFiltering: clientFiltering ? false : true,
-    onColumnVisibilityChange: visibility?.setColumnVisibility
+    manualFiltering: clientFiltering ? false : true
   });
   const rows = table.getRowModel().rows;
 
