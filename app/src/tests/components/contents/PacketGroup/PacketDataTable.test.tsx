@@ -118,4 +118,29 @@ describe("PacketDataTable component", () => {
     const cell1 = screen.getAllByRole("cell")[1];
     expect(cell1.textContent).not.toContain("a:");
   });
+
+  it("should show correct icons when sorting by parameters column", async () => {
+    const DOWN_ARROW = { keyCode: 40 };
+    const { container } = renderComponent();
+
+    await screen.findByRole("table");
+
+    const toggle = await screen.findByRole("button", { name: /parameter columns/i });
+    fireEvent.keyDown(toggle, DOWN_ARROW);
+
+    const menuItemA = await screen.findByRole("menuitemcheckbox", { name: "a" });
+    userEvent.click(menuItemA);
+
+    const headerA = await screen.findByRole("button", { name: "a" });
+
+    userEvent.click(headerA);
+    await waitFor(() => {
+      expect(container.querySelector(".lucide-arrow-up")).toBeVisible();
+    });
+
+    userEvent.click(headerA);
+    await waitFor(() => {
+      expect(container.querySelector(".lucide-arrow-down")).toBeVisible();
+    });
+  });
 });
