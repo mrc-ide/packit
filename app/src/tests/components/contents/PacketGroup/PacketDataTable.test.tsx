@@ -119,7 +119,7 @@ describe("PacketDataTable component", () => {
     expect(cell1.textContent).not.toContain("a:");
   });
 
-  it("should show correct icons when sorting by parameters column", async () => {
+  it("should show correct icons when sorting by single parameter column", async () => {
     const DOWN_ARROW = { keyCode: 40 };
     const { container } = renderComponent();
 
