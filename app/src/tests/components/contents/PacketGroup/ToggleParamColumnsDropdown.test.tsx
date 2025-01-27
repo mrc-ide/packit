@@ -27,7 +27,7 @@ describe("ToggleParamColumnsDropdown", () => {
     });
   });
 
-  it("should call setColumnVisibility with correct value when item clicked", async () => {
+  it("should call setColumnVisibility with correct value when all parameter columns selected", async () => {
     const setColumnVisibility = jest.fn();
     const mockPrevState = {
       parameters_key1: true,
@@ -53,7 +53,39 @@ describe("ToggleParamColumnsDropdown", () => {
 
     expect(newState).toEqual({
       parameters_key1: true,
+      parameters_key2: true,
+      parameters: false
+    });
+  });
+
+  it("should call setColumnVisibility with correct value when any parameter unselected", async () => {
+    const setColumnVisibility = jest.fn();
+    const mockPrevState = {
+      parameters_key1: true,
       parameters_key2: true
+    };
+    render(
+      <ToggleParamColumnsDropdownColumns
+        columnVisibility={mockPrevState}
+        allParametersKeys={allParammetersKeys}
+        setColumnVisibility={setColumnVisibility}
+      />
+    );
+
+    fireEvent.keyDown(screen.getByRole("button", { name: /parameter columns/i }), DOWN_ARROW);
+
+    const menuItem = await screen.findByRole("menuitemcheckbox", { name: /key2/i });
+
+    userEvent.click(menuItem);
+
+    expect(setColumnVisibility).toHaveBeenCalledTimes(1);
+    const updateFunction = setColumnVisibility.mock.calls[0][0];
+    const newState = updateFunction(mockPrevState);
+
+    expect(newState).toEqual({
+      parameters_key1: true,
+      parameters_key2: false,
+      parameters: true
     });
   });
 });

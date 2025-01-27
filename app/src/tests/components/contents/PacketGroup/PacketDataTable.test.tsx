@@ -1,8 +1,8 @@
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { mockPacketGroupResponse } from "../../../mocks";
-import { PacketDataTable } from "../../../../app/components/contents/PacketGroup/PacketDataTable";
 import { MemoryRouter } from "react-router-dom";
+import { PacketDataTable } from "../../../../app/components/contents/PacketGroup/PacketDataTable";
+import { mockPacketGroupResponse } from "../../../mocks";
 
 const renderComponent = () =>
   render(
@@ -32,7 +32,8 @@ describe("PacketDataTable component", () => {
   });
 
   it("should be able to filter by packet column", async () => {
-    const filterSearch = mockPacketGroupResponse.content[1].id.substring(0, 8);
+    const mockPacket = mockPacketGroupResponse.content[1];
+    const filterSearch = mockPacket.id.substring(0, 8);
     renderComponent();
 
     await screen.findByRole("table");
@@ -44,6 +45,9 @@ describe("PacketDataTable component", () => {
     await waitFor(() => {
       expect(screen.getAllByRole("cell")).toHaveLength(2); // packet + parameter cell
     });
+    const cells = screen.getAllByRole("cell");
+    expect(cells[0].textContent).toContain(mockPacket.id);
+    expect(cells[1].textContent).toBe("None");
   });
 
   it("should be able to filter parameter value for parameter column", async () => {

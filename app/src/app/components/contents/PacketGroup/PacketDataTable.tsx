@@ -14,6 +14,7 @@ export const PacketDataTable = ({ packets }: PacketDataTableProps) => {
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>(
     initializeColumnVisibility(allParametersKeys)
   );
+
   return (
     <div className="space-y-4 flex flex-col">
       <div className="flex justify-end">
