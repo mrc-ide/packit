@@ -1,5 +1,6 @@
 package packit.integration.controllers
 
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -14,6 +15,7 @@ import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
 import packit.model.Packet
 import packit.model.PacketGroup
+import packit.model.dto.PacketDto
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
 import kotlin.test.assertEquals
@@ -23,6 +25,7 @@ class PacketControllerTest : IntegrationTest()
 {
     @Autowired
     private lateinit var packetRepository: PacketRepository
+
     @Autowired
     private lateinit var packetGroupRepository: PacketGroupRepository
     private lateinit var packets: List<Packet>
@@ -36,6 +39,7 @@ class PacketControllerTest : IntegrationTest()
     )
 
     private val idOfArtefactTypesPacket = "20240729-154633-10abe7d1"
+
     @BeforeAll
     fun setupData()
     {
@@ -290,7 +294,7 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:random-name"])
-    fun `getPacketsByName returns empty page if no permissions match`()
+    fun `getPacketsByName returns empty list if no permissions match`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets/artefact-types",
@@ -298,7 +302,7 @@ class PacketControllerTest : IntegrationTest()
             getTokenizedHttpEntity()
         )
 
-        assertEquals(0, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
+        assertEquals(0, jacksonObjectMapper().readValue(result.body, List::class.java).size)
     }
 
     @Test
@@ -310,9 +314,14 @@ class PacketControllerTest : IntegrationTest()
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
-        val packetId = jacksonObjectMapper().readTree(result.body).get("content")[0].get("id").asText()
-        assertEquals(1, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
-        assertEquals("20230427-150755-2dbede94", packetId)
+
+        val packets = jacksonObjectMapper().readValue(
+            result.body,
+            object : TypeReference<List<PacketDto>>()
+            {}
+        )
+        assertEquals(1, packets.size)
+        assertEquals("20230427-150755-2dbede94", packets[0].id)
     }
 
     @Test

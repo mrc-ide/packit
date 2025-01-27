@@ -9,7 +9,7 @@ export const packetHandlers = [
     return res(ctx.json(mockPacket));
   }),
   rest.get(`${packetIndexUri}/${mockPacketGroupResponse.content[0].name}`, (req, res, ctx) => {
-    return res(ctx.json(mockPacketGroupResponse));
+    return res(ctx.json(mockPacketGroupResponse.content));
   }),
   rest.get(`${packetIndexUri}`, (req, res, ctx) => {
     return res(ctx.json(mockPacketGroupResponse));

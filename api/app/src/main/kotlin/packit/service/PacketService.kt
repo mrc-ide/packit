@@ -11,7 +11,10 @@ import org.springframework.stereotype.Service
 import packit.contentTypes
 import packit.exceptions.PackitException
 import packit.helpers.PagingHelper
-import packit.model.*
+import packit.model.Packet
+import packit.model.PacketGroup
+import packit.model.PacketMetadata
+import packit.model.PageablePayload
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
 import java.security.MessageDigest
@@ -26,8 +29,9 @@ interface PacketService
     fun getMetadataBy(id: String): PacketMetadata
     fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<ByteArrayResource, HttpHeaders>
     fun getPacketsByName(
-        name: String, payload: PageablePayload
-    ): Page<Packet>
+        name: String
+    ): List<Packet>
+
     fun getPacket(id: String): Packet
 }
 
@@ -70,10 +74,9 @@ class BasePacketService(
         return packetRepository.findAll()
     }
 
-    override fun getPacketsByName(name: String, payload: PageablePayload): Page<Packet>
+    override fun getPacketsByName(name: String): List<Packet>
     {
-        val packets = packetRepository.findByName(name, Sort.by("startTime").descending())
-        return PagingHelper.convertListToPage(packets, payload)
+        return packetRepository.findByName(name, Sort.by("startTime").descending())
     }
 
     override fun getPacket(id: String): Packet

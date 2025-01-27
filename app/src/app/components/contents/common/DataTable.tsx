@@ -1,4 +1,12 @@
-import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable
+} from "@tanstack/react-table";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../Base/Table";
 import { Pagination } from "./Pagination";
 
@@ -8,14 +16,17 @@ interface DataTableProps<TData> {
   pagination?: {
     pageSize: number;
   };
+  clientFiltering?: boolean;
 }
 
-export const DataTable = <TData,>({ data, columns, pagination }: DataTableProps<TData>) => {
+export const DataTable = <TData,>({ data, columns, pagination, clientFiltering = false }: DataTableProps<TData>) => {
   const table = useReactTable({
     columns,
     data,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     ...(pagination && { getPaginationRowModel: getPaginationRowModel() }),
+    ...(clientFiltering && { getFilteredRowModel: getFilteredRowModel() }),
     initialState: {
       ...(pagination && {
         pagination: {
@@ -23,7 +34,7 @@ export const DataTable = <TData,>({ data, columns, pagination }: DataTableProps<
         }
       })
     },
-    manualFiltering: true
+    manualFiltering: clientFiltering ? false : true
   });
   const rows = table.getRowModel().rows;
 
