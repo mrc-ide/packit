@@ -18,7 +18,6 @@
   },
   "plugins": ["react", "@typescript-eslint"],
   "rules": {
-    "quotes": ["error", "double"],
     "max-len": [2, 120, 4],
     "eol-last": 2,
     "@typescript-eslint/no-explicit-any": "off"
