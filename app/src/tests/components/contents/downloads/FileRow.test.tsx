@@ -1,24 +1,29 @@
 import { render, screen } from "@testing-library/react";
 import { mockPacket } from "../../../mocks";
 import { FileRow } from "../../../../app/components/contents/downloads/FileRow";
-import { createMemoryRouter, Outlet, RouterProvider } from "react-router-dom";
+import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
+import { FileMetadata } from "../../../../types";
+import { SWRConfig } from "swr";
 
 const expectIconToBeRendered = (container: HTMLElement, iconName: string) => {
   const icon = container.querySelector(".lucide") as HTMLImageElement;
   expect(icon.classList).toContain(iconName);
 };
 
-const renderComponent = (path: string, sharedResource?: boolean) => {
-  const routes = [
-    {
-      path: "/",
-      element: <Outlet context={{ packet: mockPacket }} />,
-      children: [{ path: "/", element: <FileRow path={path} sharedResource={sharedResource} /> }]
-    }
-  ];
-  const router = createMemoryRouter(routes, { initialEntries: ["/"] });
+const renderComponent = (filePath: string, sharedResource?: boolean) => {
+  const file = mockPacket.files.find((file) => file.path === filePath) as FileMetadata;
 
-  return render(<RouterProvider router={router} />);
+  return render(
+    <SWRConfig value={{ dedupingInterval: 0 }}>
+      <MemoryRouter initialEntries={["/"]}>
+        <Routes>
+          <Route element={<Outlet context={{ packet: mockPacket }} />}>
+            <Route path="/" element={<FileRow file={file} sharedResource={sharedResource} />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    </SWRConfig>
+  );
 };
 
 describe("file row component", () => {
@@ -34,15 +39,24 @@ describe("file row component", () => {
   });
 
   it("when the file path includes a directory it excludes this from the displayed file name", async () => {
-    const { container } = renderComponent("directory//graph.png");
+    URL.createObjectURL = jest.fn(() => "fakeObjectUrl");
+
+    const { container } = renderComponent("directory/graph.png");
 
     expect(await screen.findByText(/^graph.png$/)).toBeVisible();
+    expect(screen.queryByText(/directory/)).not.toBeInTheDocument();
     expect(await screen.findByText("7.17 KB")).toBeVisible();
     expectIconToBeRendered(container, "lucide-chart-column");
     expect(screen.queryByText("Shared resource")).not.toBeInTheDocument();
   });
 
-  it("when the file is a shared resource, this information is displayed", async () => {
+  it("when the file extension indicates an image file, it renders a link to the image", async () => {
+    renderComponent("directory/graph.png");
+
+    expect(screen.getByRole("link")).toHaveTextContent(/^graph.png$/);
+  });
+
+  it("when the file is a shared resource, the user is informed", async () => {
     const { container } = renderComponent("a_renamed_common_resource.csv", true);
 
     expect(await screen.findByText("a_renamed_common_resource.csv")).toBeVisible();

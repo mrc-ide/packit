@@ -8,12 +8,13 @@ import { getHtmlFileIfExists } from "./utils/htmlFile";
 interface PacketReportsProps {
   packet: PacketMetadata | undefined;
 }
+
 // TODO: add ability to load multiple reports (html files).
 export const PacketReports = ({ packet }: PacketReportsProps) => {
-  const [htmlFile, setHtmlFile] = useState<FileMetadata | null>(null);
+  const [htmlFile, setHtmlFile] = useState<FileMetadata | undefined>(undefined);
 
   useEffect(() => {
-    setHtmlFile(packet ? getHtmlFileIfExists(packet) : null);
+    setHtmlFile(packet ? getHtmlFileIfExists(packet) : undefined);
   }, [packet]);
 
   return (
@@ -28,7 +29,7 @@ export const PacketReports = ({ packet }: PacketReportsProps) => {
         {packet && htmlFile ? (
           <div className="h-screen">
             <div className="w-full h-2/3 border">
-              <PacketReport fileName={htmlFile.path} packet={packet}></PacketReport>
+              <PacketReport fileHash={htmlFile.hash} packet={packet}></PacketReport>
             </div>
             <div className="py-2 flex justify-end">
               <a

@@ -1,48 +1,27 @@
-import { getHtmlFileIfExists, getHtmlFilePath } from "./utils/htmlFile";
-import { useEffect, useState } from "react";
+import { getHtmlFileIfExists } from "./utils/htmlFile";
 import { ErrorComponent } from "../common/ErrorComponent";
-import { getFileObjectUrl } from "../../../../lib/download";
-import appConfig from "../../../../config/appConfig";
 import { PacketMetadata } from "../../../../types";
+import { useFileObjectUrl } from "../downloads/hooks/useFileObjectUrl";
+
+const defaultErrorMessage = "Error loading report";
 
 interface PacketReportProps {
   packet: PacketMetadata;
-  fileName: string;
+  fileHash: string;
 }
-export const PacketReport = ({ fileName, packet }: PacketReportProps) => {
-  const [error, setError] = useState<null | Error>(null);
-  const [htmlFileObjectUrl, setHtmlFileObjectUrl] = useState(undefined as string | undefined);
 
-  const getHtmlFileObjectUrl = async (packet: PacketMetadata) => {
-    const htmlFilePath = getHtmlFilePath(packet);
-    getFileObjectUrl(`${appConfig.apiUrl()}/${htmlFilePath}`, "")
-      .then((url) => {
-        setError(null);
-        setHtmlFileObjectUrl(url);
-      })
-      .catch((e) => {
-        setError(e);
-      });
-  };
+// NB Currently we only support displaying the first html file in a packet, but we may support multiple
+// in future
+export const PacketReport = ({ packet, fileHash }: PacketReportProps) => {
+  const file = getHtmlFileIfExists(packet);
+  if (file?.hash !== fileHash)
+    return <ErrorComponent message={defaultErrorMessage} error={new Error("File not found")} />;
 
-  useEffect(() => {
-    const file = getHtmlFileIfExists(packet);
-    if (file?.path != fileName) {
-      // NB Currently we only support displaying the first html file in a packet, but we may support multiple
-      // in future
-      setError(new Error("File name not found"));
-    } else {
-      getHtmlFileObjectUrl(packet);
-    }
-  }, [packet, fileName]);
+  const { fileObjectUrl, error } = useFileObjectUrl(file);
 
-  return (
-    <>
-      {htmlFileObjectUrl ? (
-        <iframe className="w-full h-full" data-testid="report-iframe" src={htmlFileObjectUrl}></iframe>
-      ) : error ? (
-        <ErrorComponent message="Error loading report" error={error} />
-      ) : null}
-    </>
-  );
+  if (error) return <ErrorComponent message={defaultErrorMessage} error={error} />;
+
+  return fileObjectUrl ? (
+    <iframe className="w-full h-full" data-testid="report-iframe" src={fileObjectUrl}></iframe>
+  ) : null;
 };
