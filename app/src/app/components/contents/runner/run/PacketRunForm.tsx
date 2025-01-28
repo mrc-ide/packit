@@ -55,7 +55,6 @@ export const PacketRunForm = ({ defaultBranch, branches, mutate }: PacketRunForm
         });
         navigate(`/runner/logs/${taskId}`);
       } catch (error) {
-        console.error(error);
         if (error instanceof ApiError) {
           return form.setError("root", { message: error.message });
         }
