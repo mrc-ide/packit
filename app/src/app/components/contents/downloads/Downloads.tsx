@@ -30,7 +30,7 @@ export const Downloads = () => {
                   <ul>
                     {packet.files.map((file, index) => (
                       <li key={index}>
-                        <FileRow path={file.path} />
+                        <FileRow file={file} />
                       </li>
                     ))}
                   </ul>

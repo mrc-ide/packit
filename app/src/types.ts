@@ -56,8 +56,18 @@ export interface PacketMetadata {
   files: FileMetadata[];
   custom: Custom | null;
   git: GitMetadata | null;
+  depends: PacketDepends[];
 }
 
+export interface PacketDepends {
+  packet: string;
+  query: string;
+  files: PacketDependsFiles[];
+}
+export interface PacketDependsFiles {
+  here: string;
+  there: string;
+}
 export interface GitMetadata {
   branch: string;
   sha: string;
@@ -91,7 +101,7 @@ export interface Custom {
     artefacts: Artefact[]; // Artefacts are sets of (at least 1) output files that result from running a packet.
     description: Description;
     session: Session;
-    role: InputFiles[]; // Assigns a 'role' to input files. Any file that is not an output is considered an input.
+    role: InputFile[]; // Assigns a 'role' to input files. Any file that is not an output is considered an input.
     shared: SharedResource[];
   };
 }
@@ -107,7 +117,7 @@ export interface Artefact {
   paths: string[];
 }
 
-export interface InputFiles {
+export interface InputFile {
   path: string;
   role: InputFileType;
 }
@@ -150,4 +160,18 @@ export interface PageableBasicDto extends Pageable {
     name: string;
     id: string | number;
   }[];
+}
+
+export interface BasicPacket {
+  name: string;
+  id: string;
+}
+
+export interface BasicPacketGroup {
+  name: string;
+  id: number;
+}
+export interface Tag {
+  name: string;
+  id: number;
 }

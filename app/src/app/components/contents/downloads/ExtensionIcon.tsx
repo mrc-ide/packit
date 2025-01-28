@@ -1,17 +1,20 @@
 import { ChartColumn, File, FileCode2, Presentation, TableProperties } from "lucide-react";
+import {
+  presentationExtensions,
+  tableExtensions,
+  imageExtensions,
+  scriptExtensions,
+  filePathToExtension
+} from "./utils/extensions";
 
 interface FileIconProps {
   path: string;
 }
 
-const presentationExtensions = ["pdf", "html", "ppt", "pptm", "pptx", "potx", "potm", "pps", "xps"];
-const tableExtensions = ["csv", "xls", "xlsx", "xlsm", "xltx", "ods"];
-const imageExtensions = ["jpeg", "jpg", "png", "jiff", "bmp", "gif"];
-const scriptExtensions = ["r", "rmd", "py", "ipynb", "sql", "sh", "bat", "ps1", "cmd"];
 const defaultFileIcon = <File className="text-gray-400" />;
 
 export const ExtensionIcon = ({ path }: FileIconProps) => {
-  const extension = path.split(".").pop()?.toLowerCase();
+  const extension = filePathToExtension(path);
 
   if (!extension) return defaultFileIcon;
 

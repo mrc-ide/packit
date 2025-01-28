@@ -10,6 +10,8 @@ import { rest } from "msw";
 import appConfig from "../../../../config/appConfig";
 
 describe("download component", () => {
+  URL.createObjectURL = jest.fn(() => "fakeObjectUrl");
+
   const renderComponent = (packet: PacketMetadata = mockPacket) => {
     render(
       <SWRConfig value={{ dedupingInterval: 0 }}>

@@ -2,28 +2,30 @@ import { bytesToSize } from "../../../../helpers";
 import { DownloadButton } from "./DownloadButton";
 import { usePacketOutletContext } from "../../main/PacketOutlet";
 import { ExtensionIcon } from "./ExtensionIcon";
+import { isImageFile } from "./utils/extensions";
+import { PreviewableFile } from "./PreviewableFile";
+import { FileMetadata } from "../../../../types";
 
 interface FileRowProps {
-  path: string;
+  file: FileMetadata;
   sharedResource?: boolean;
 }
 
-export const FileRow = ({ path, sharedResource }: FileRowProps) => {
+export const FileRow = ({ file, sharedResource }: FileRowProps) => {
   const { packet } = usePacketOutletContext();
-  const file = packet?.files.find((file) => {
-    return file.path === path.replace("//", "/");
-  });
-  const fileName = path.split("/").pop();
+  const fileName = file.path.split("/").pop();
 
   if (!file || !packet) return null;
   return (
     <div className="p-2 flex justify-between">
       <div className="flex items-center truncate">
         <span className="min-w-fit">
-          <ExtensionIcon path={path} />
+          <ExtensionIcon path={file.path} />
         </span>
         <div className="flex flex-col ps-2 truncate">
-          <span className="font-semibold truncate">{fileName}</span>
+          <span className="font-semibold truncate">
+            {isImageFile(file) ? <PreviewableFile file={file} fileName={fileName} /> : <span>{fileName}</span>}
+          </span>
           <p className="text-muted-foreground small">
             <span>{bytesToSize(file.size)}</span>
             {sharedResource && (

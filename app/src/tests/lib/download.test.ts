@@ -1,14 +1,21 @@
 import { downloadFileUri } from "../../msw/handlers/downloadFileHandlers";
-import { download, getFileObjectUrl } from "../../lib/download";
+import { download, getFileObjectUrl, getFileUrl } from "../../lib/download";
 import { mockFileBlob } from "../mocks";
 import { server } from "../../msw/server";
 import { rest } from "msw";
+import { FileMetadata } from "../../types";
+import appConfig from "../../config/appConfig";
 
 jest.mock("../../lib/auth/getAuthHeader", () => ({
   getAuthHeader: () => ({ Authorization: "fakeAuthHeader" })
 }));
 
 const url = `${downloadFileUri}?filename=test.txt`;
+const testFile: FileMetadata = {
+  hash: "testHash",
+  path: "testPath",
+  size: 30
+};
 
 describe("download", () => {
   const fakeObjectUrl = "fakeObjectUrl";
@@ -80,5 +87,17 @@ describe("download", () => {
     const result = await getFileObjectUrl(url, "test.txt");
     expect(result).toBe(fakeObjectUrl);
     expect(mockCreateObjectUrl).toHaveBeenCalledWith(mockFileBlob);
+  });
+
+  it("can get file url for request a file with inline content-disposition", () => {
+    const result = getFileUrl(testFile, "testPacketId", true);
+
+    expect(result).toBe(`${appConfig.apiUrl()}/packets/file/testPacketId?hash=testHash&filename=testPath&inline=true`);
+  });
+
+  it("can get file url for request a file with attachment content-disposition", () => {
+    const result = getFileUrl(testFile, "testPacketId");
+
+    expect(result).toBe(`${appConfig.apiUrl()}/packets/file/testPacketId?hash=testHash&filename=testPath&inline=false`);
   });
 });

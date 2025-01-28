@@ -11,8 +11,12 @@ import { mockPacket } from "../../mocks";
 import { HttpStatus } from "../../../lib/types/HttpStatus";
 
 jest.mock("../../../lib/download", () => ({
+  ...jest.requireActual("../../../lib/download"),
   getFileObjectUrl: async () => "fakeObjectUrl"
 }));
+
+URL.createObjectURL = jest.fn();
+URL.revokeObjectURL = jest.fn();
 
 describe("Packet Layout test", () => {
   const renderComponent = () => {

@@ -6,6 +6,7 @@ import appConfig from "../../../../config/appConfig";
 let errorOnDownload = false;
 const mockDownload = jest.fn();
 jest.mock("../../../../lib/download", () => ({
+  ...jest.requireActual("../../../../lib/download"),
   download: async (...args: any[]) => mockDownload(...args)
 }));
 
@@ -42,7 +43,7 @@ describe("DownloadButton", () => {
     renderComponent();
 
     userEvent.click(screen.getByRole("button"));
-    const url = `${appConfig.apiUrl()}/packets/file/${packetId}?hash=${file.hash}&filename=${file.path}`;
+    const url = `${appConfig.apiUrl()}/packets/file/${packetId}?hash=${file.hash}&filename=${file.path}&inline=false`;
     expect(mockDownload).toHaveBeenCalledWith(url, "test.txt");
   });
 
