@@ -12,5 +12,3 @@ docker rm -f \
     $RUNNER_GIT \
     $RUNNER_SERVER \
     $RUNNER_WORKER
-
-docker volume rm $ORDERLY_LOGS_VOLUME

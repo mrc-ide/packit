@@ -67,6 +67,20 @@ class RunnerControllerTest : IntegrationTest()
         return Pair(res.body!!.taskId, branch)
     }
 
+    private fun waitForTask(taskId: String, timeout: Duration = Duration.ofSeconds(10)): RunInfoDto {
+        val res: ResponseEntity<RunInfoDto> = await().atMost(timeout).pollInSameThread().until({
+            restTemplate.exchange(
+                "/runner/status/$taskId",
+                HttpMethod.GET,
+                getTokenizedHttpEntity()
+            )
+        }, { it.body?.status != Status.PENDING && it.body?.status != Status.RUNNING })
+
+        assertSuccess(res)
+
+        return res.body!!
+    }
+
     @BeforeEach
     fun setupData()
     {
@@ -241,29 +255,37 @@ class RunnerControllerTest : IntegrationTest()
     }
 
     @Test
+    @WithAuthenticatedUser(authorities = ["packet.run"])
+    fun `can get logs of run`()
+    {
+        val (taskId) = submitTestRun()
+
+        val info = waitForTask(taskId)
+        assertEquals(taskId, info.taskId)
+        assertEquals(Status.COMPLETE, info.status)
+
+        assertThat(info.logs).anySatisfy({
+            assertThat(it).contains("Starting packet 'incoming_data'")
+        })
+    }
+
+    @Test
     @WithAuthenticatedUser(authorities = ["packet.run", "outpack.read"])
     fun `packet produced by runner is pushed to outpack`()
     {
-        val (taskId, _) = submitTestRun()
+        val (taskId) = submitTestRun()
 
-        val res: ResponseEntity<RunInfoDto> = await().atMost(Duration.ofSeconds(10)).pollInSameThread().until({
-            restTemplate.exchange(
-                "/runner/status/$taskId",
-                HttpMethod.GET,
-                getTokenizedHttpEntity()
-            )
-        }, { it.body?.status != Status.PENDING && it.body?.status != Status.RUNNING })
+        val info = waitForTask(taskId)
+        assertEquals(taskId, info.taskId)
+        assertEquals(Status.COMPLETE, info.status)
 
-        assertEquals(taskId, res.body!!.taskId)
-        assertEquals(Status.COMPLETE, res.body!!.status)
-
-        val metadataRes: ResponseEntity<String> = restTemplate.exchange(
-            "/outpack/metadata/${res.body!!.packetId!!}/text",
+        val res: ResponseEntity<String> = restTemplate.exchange(
+            "/outpack/metadata/${info.packetId!!}/text",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
-        assertEquals(HttpStatus.OK, metadataRes.statusCode)
-        assertEquals(testPacketGroupName, jacksonObjectMapper().readTree(metadataRes.body).get("name").asText())
+        assertEquals(HttpStatus.OK, res.statusCode)
+        assertEquals(testPacketGroupName, jacksonObjectMapper().readTree(res.body).get("name").asText())
     }
 }
 
