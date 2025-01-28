@@ -78,4 +78,14 @@ describe("packet details component", () => {
     expect(screen.queryByText(/fullscreen/i)).not.toBeInTheDocument();
     expect(screen.getAllByText(/none/i)).toHaveLength(2);
   });
+
+  it("should render dependencies when present", async () => {
+    renderComponent();
+
+    await waitFor(() => {
+      mockPacket.depends.forEach((depend) => {
+        expect(screen.getByText(depend.packet)).toBeVisible();
+      });
+    });
+  });
 });

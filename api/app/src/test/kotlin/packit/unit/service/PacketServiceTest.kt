@@ -160,9 +160,9 @@ class PacketServiceTest
     {
         val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
 
-        val result = sut.getPacketsByName("pg1", PageablePayload(0, 10))
+        val result = sut.getPacketsByName("pg1")
 
-        assertEquals(result.content, oldPackets)
+        assertEquals(result, oldPackets)
         verify(packetRepository)
             .findByName("pg1", Sort.by("startTime").descending())
     }

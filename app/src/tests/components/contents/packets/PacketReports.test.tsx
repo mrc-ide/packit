@@ -4,6 +4,7 @@ import { mockPacket } from "../../../mocks";
 import { PacketMetadata } from "../../../../types";
 import { SWRConfig } from "swr";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
+import { Accordion } from "../../../../app/components/Base/Accordion";
 
 jest.mock("../../../../lib/download", () => ({
   ...jest.requireActual("../../../../lib/download"),
@@ -19,7 +20,10 @@ describe("Packet reports component", () => {
         <MemoryRouter initialEntries={["/"]}>
           <Routes>
             <Route element={<Outlet context={{ packet }} />}>
-              <Route path="/" element={<PacketReports packet={packet} />} />
+              <Route path="/" element={
+                <Accordion type="single" defaultValue="reports">
+                  <PacketReports packet={packet} />
+                </Accordion>} />
             </Route>
           </Routes>
         </MemoryRouter>

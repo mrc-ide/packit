@@ -35,13 +35,10 @@ class PacketController(
     @GetMapping("/{name}")
     fun getPacketsByName(
         @PathVariable name: String,
-        @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
-        @RequestParam(required = false, defaultValue = "50") pageSize: Int,
-    ): ResponseEntity<Page<PacketDto>>
+    ): ResponseEntity<List<PacketDto>>
     {
-        val payload = PageablePayload(pageNumber, pageSize)
         return ResponseEntity.ok(
-            packetService.getPacketsByName(name, payload).map { it.toDto() }
+            packetService.getPacketsByName(name).map { it.toDto() }
         )
     }
 
@@ -50,7 +47,8 @@ class PacketController(
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
         @RequestParam(required = false, defaultValue = "50") pageSize: Int,
         @RequestParam(required = false, defaultValue = "") filter: String,
-    ): ResponseEntity<Page<PacketGroupSummary>> {
+    ): ResponseEntity<Page<PacketGroupSummary>>
+    {
         val payload = PageablePayload(pageNumber, pageSize)
         return ResponseEntity.ok(packetGroupService.getPacketGroupSummaries(payload, filter))
     }
