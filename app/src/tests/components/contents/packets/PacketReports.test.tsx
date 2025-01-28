@@ -20,10 +20,14 @@ describe("Packet reports component", () => {
         <MemoryRouter initialEntries={["/"]}>
           <Routes>
             <Route element={<Outlet context={{ packet }} />}>
-              <Route path="/" element={
-                <Accordion type="single" defaultValue="reports">
-                  <PacketReports packet={packet} />
-                </Accordion>} />
+              <Route
+                path="/"
+                element={
+                  <Accordion type="single" defaultValue="reports">
+                    <PacketReports packet={packet} />
+                  </Accordion>
+                }
+              />
             </Route>
           </Routes>
         </MemoryRouter>
