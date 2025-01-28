@@ -10,9 +10,9 @@ interface FileRowProps {
 
 export const FileRow = ({ path, sharedResource }: FileRowProps) => {
   const { packet } = usePacketOutletContext();
-  const file = packet?.files.filter((file) => {
+  const file = packet?.files.find((file) => {
     return file.path === path.replace("//", "/");
-  })[0];
+  });
   const fileName = path.split("/").pop();
 
   if (!file || !packet) return null;

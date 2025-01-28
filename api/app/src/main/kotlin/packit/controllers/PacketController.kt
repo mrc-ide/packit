@@ -1,10 +1,12 @@
 package packit.controllers
 
+import org.springframework.http.MediaType
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
 import packit.model.dto.PacketDto
@@ -12,12 +14,14 @@ import packit.model.dto.PacketGroupSummary
 import packit.model.toDto
 import packit.service.PacketGroupService
 import packit.service.PacketService
+import packit.service.ZipService
 
 @RestController
 @RequestMapping("/packets")
 class PacketController(
     private val packetService: PacketService,
-    private val packetGroupService: PacketGroupService
+    private val packetGroupService: PacketGroupService,
+    private val zipService: ZipService,
 )
 {
     @GetMapping
@@ -78,5 +82,30 @@ class PacketController(
             .ok()
             .headers(response.second)
             .body(response.first)
+    }
+
+    @GetMapping("/{name}/{id}/zip")
+    @PreAuthorize("@authz.canReadPacket(#root, #id, #name)")
+    // TODO: Verify authorization for accessing specific files: whether user has access to all files, or artefacts only.
+    fun downloadZip(
+        @PathVariable id: String,
+        @PathVariable name: String,
+        @RequestParam(required = true) hashes: List<String>,
+        @RequestParam(required = true) filenames: List<String>,
+    ): ResponseEntity<StreamingResponseBody> // Note: when using this option it is highly recommended to configure explicitly the TaskExecutor used in Spring MVC for executing asynchronous requests. Both the MVC Java config and the MVC namespaces provide options to configure asynchronous handling. If not using those, an application can set the taskExecutor property of RequestMappingHandlerAdapter.
+    {
+        val filesWithNames = hashes.mapIndexed { index, hash ->
+            val fileResource = packetService.getFileByHash(hash, false, hash).first
+            fileResource to filenames[index]
+        }
+
+        val streamingResponseBody = StreamingResponseBody { outputStream ->
+            zipService.zipByteArraysToOutputStream(filesWithNames, outputStream)
+        }
+
+        return ResponseEntity
+            .ok()
+            .header("Content-Disposition", "attachment; filename=\"${name}.zip\"")
+            .body(streamingResponseBody)
     }
 }

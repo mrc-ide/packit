@@ -1,4 +1,5 @@
 import { getAuthHeader } from "./auth/getAuthHeader";
+import appConfig from "../config/appConfig";
 
 export const getFileObjectUrl = async (url: string, filename: string) => {
   const headers = getAuthHeader();
@@ -29,3 +30,6 @@ export const download = async (url: string, filename: string) => {
   document.body.removeChild(fileLink);
   window.URL.revokeObjectURL(fileUrl);
 };
+
+export const baseZipUrl = (packetName: string, packetId: string) =>
+  `${appConfig.apiUrl()}/packets/${packetName}/${packetId}/zip`;
