@@ -25,20 +25,20 @@ export const OtherFiles = ({ inputFiles }: OtherFilesProps) => {
         <DownloadAllOtherFilesButton />
       </span>
       <Card>
-      <CardContent className="p-0">
-        <ul>
-          {inputsWithFileMetadata.map((input, index) => {
-            return (
-              input.file && (
-                <li key={index} className="[&:not(:first-child)]:border-t">
-                  <FileRow file={input.file} sharedResource={input.role === InputFileType.Shared} />
-                </li>
-              )
-            );
-          })}
-        </ul>
-      </CardContent>
-    </Card>
+        <CardContent className="p-0">
+          <ul>
+            {inputsWithFileMetadata.map((input, index) => {
+              return (
+                input.file && (
+                  <li key={index} className="[&:not(:first-child)]:border-t">
+                    <FileRow file={input.file} sharedResource={input.role === InputFileType.Shared} />
+                  </li>
+                )
+              );
+            })}
+          </ul>
+        </CardContent>
+      </Card>
     </div>
   );
 };

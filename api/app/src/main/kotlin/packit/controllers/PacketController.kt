@@ -90,7 +90,7 @@ class PacketController(
         @PathVariable name: String,
         @RequestParam(required = true) hashes: List<String>,
         @RequestParam(required = true) filenames: List<String>,
-    ): ResponseEntity<StreamingResponseBody> // Note: when using this option it is highly recommended to configure explicitly the TaskExecutor used in Spring MVC for executing asynchronous requests. Both the MVC Java config and the MVC namespaces provide options to configure asynchronous handling. If not using those, an application can set the taskExecutor property of RequestMappingHandlerAdapter.
+    ): ResponseEntity<StreamingResponseBody>
     {
         val filesWithNames = hashes.mapIndexed { index, hash ->
             val fileResource = packetService.getFileByHash(hash, false, hash).first
