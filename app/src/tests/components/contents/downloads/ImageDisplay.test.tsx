@@ -1,7 +1,7 @@
-import { render, screen } from "@testing-library/react";
-import { PacketReport } from "../../../../app/components/contents/packets/PacketReport";
+import { render, screen, waitFor } from "@testing-library/react";
 import { PacketMetadata } from "../../../../types";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
+import { ImageDisplay } from "../../../../app/components/contents/downloads/ImageDisplay";
 import { SWRConfig } from "swr";
 
 const mockGetFileObjectUrl = jest.fn();
@@ -13,19 +13,19 @@ const mockHash = "sha256:12345";
 const revokeObjectURL = jest.fn();
 URL.revokeObjectURL = revokeObjectURL;
 
-describe("PacketReport component", () => {
+describe("image display component", () => {
   const packet = {
-    files: [{ path: "test.html", hash: mockHash }],
+    files: [{ path: "test.png", hash: mockHash }],
     id: "20231130-082812-cd744153"
   } as unknown as PacketMetadata;
 
-  const renderComponent = (fileHash = mockHash) => {
+  const renderComponent = () => {
     return render(
       <SWRConfig value={{ dedupingInterval: 0 }}>
         <MemoryRouter initialEntries={["/"]}>
           <Routes>
             <Route element={<Outlet context={{ packet }} />}>
-              <Route path="/" element={<PacketReport packet={packet} fileHash={fileHash} />} />
+              <Route path="/" element={<ImageDisplay file={packet.files[0]} />} />
             </Route>
           </Routes>
         </MemoryRouter>
@@ -41,39 +41,35 @@ describe("PacketReport component", () => {
     jest.clearAllMocks();
   });
 
-  it("gets file object url for report src", async () => {
+  it("gets file object url for image src", async () => {
     renderComponent();
 
-    const iframe = await screen.findByTestId("report-iframe");
-    expect(iframe).toBeVisible();
-    expect(iframe.getAttribute("src")).toBe("fakeObjectUrl");
+    await waitFor(() => {
+      const image = screen.getByRole("img");
+      expect(image).toHaveAttribute("src", "fakeObjectUrl");
+      expect(image).toHaveAttribute("alt", "test.png");
+    });
+
     expect(mockGetFileObjectUrl).toHaveBeenCalledWith(
-      `http://localhost:8080/packets/file/${packet.id}?hash=${mockHash}&filename=test.html&inline=true`,
-      "test.html"
+      `http://localhost:8080/packets/file/${packet.id}?hash=${mockHash}&filename=test.png&inline=false`,
+      "test.png"
     );
   });
 
-  it("renders error component if error fetching report data", async () => {
+  it("renders error component if error fetching file data", async () => {
     mockGetFileObjectUrl.mockImplementation(() => {
       throw new Error("test error");
     });
     renderComponent();
 
-    expect(await screen.findByText(/Error loading report/i)).toBeVisible();
-    expect(screen.queryByTestId("report-iframe")).not.toBeInTheDocument();
-  });
-
-  it("renders error component if fileHash prop does not match packet report file", async () => {
-    renderComponent("sha256:wrong");
-
-    expect(await screen.findByText(/Error loading report/i)).toBeVisible();
-    expect(screen.queryByTestId("report-iframe")).not.toBeInTheDocument();
+    expect(await screen.findByText(/Error loading image file/i)).toBeVisible();
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
   });
 
   it("revokes the object URL when the component is unmounted", async () => {
     const { unmount } = renderComponent();
 
-    await screen.findByTestId("report-iframe");
+    await screen.findByRole("img");
 
     unmount();
 

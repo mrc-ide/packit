@@ -13,7 +13,7 @@ export const PacketOutlet = ({ packetId }: PacketOutletProps) => {
   const { packet, isLoading, error } = useGetPacketById(packetId);
 
   if (error?.status === HttpStatus.Unauthorized) return <Unauthorized />;
-  if (error) return <ErrorComponent error={error} message="Error Fetching Packet details" />;
+  if (error) return <ErrorComponent error={error} message="Error fetching packet details" />;
 
   if (isLoading)
     return (

@@ -1,12 +1,20 @@
 import { Card, CardContent, CardHeader } from "../../../Base/Card";
 import { FileRow } from "../FileRow";
-import { Artefact } from "../../../../../types";
+import { Artefact, FileMetadata } from "../../../../../types";
+import { usePacketOutletContext } from "../../../main/PacketOutlet";
+import { getFileByPath } from "../utils/getFileByPath";
 
 interface ArtefactsProps {
   artefacts: Artefact[];
 }
 
 export const Artefacts = ({ artefacts }: ArtefactsProps) => {
+  const { packet } = usePacketOutletContext();
+  if (!packet) return null;
+
+  const filesForArtefact = (artefact: Artefact) =>
+    artefact.paths.map((path) => getFileByPath(path, packet)).filter((file): file is FileMetadata => !!file);
+
   return (
     <ul className="space-y-4">
       {artefacts.map((artefact, key) => (
@@ -17,9 +25,9 @@ export const Artefacts = ({ artefacts }: ArtefactsProps) => {
             </CardHeader>
             <CardContent className="p-0">
               <ul>
-                {artefact.paths.map((path, index) => (
+                {filesForArtefact(artefact).map((file, index) => (
                   <li className="border-t" key={index}>
-                    <FileRow path={path} />
+                    <FileRow file={file} />
                   </li>
                 ))}
               </ul>

@@ -101,7 +101,7 @@ export interface Custom {
     artefacts: Artefact[]; // Artefacts are sets of (at least 1) output files that result from running a packet.
     description: Description;
     session: Session;
-    role: InputFiles[]; // Assigns a 'role' to input files. Any file that is not an output is considered an input.
+    role: InputFile[]; // Assigns a 'role' to input files. Any file that is not an output is considered an input.
     shared: SharedResource[];
   };
 }
@@ -117,7 +117,7 @@ export interface Artefact {
   paths: string[];
 }
 
-export interface InputFiles {
+export interface InputFile {
   path: string;
   role: InputFileType;
 }

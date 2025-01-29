@@ -1,7 +1,6 @@
 import { FileDown } from "lucide-react";
 import { useState } from "react";
-import appConfig from "../../../../config/appConfig";
-import { download } from "../../../../lib/download";
+import { download, getFileUrl } from "../../../../lib/download";
 import { FileMetadata } from "../../../../types";
 import { Button } from "../../Base/Button";
 
@@ -14,7 +13,7 @@ export const DownloadButton = ({ file, packetId }: DownloadButtonProps) => {
   const [error, setError] = useState("");
 
   const downloadFile = (file: FileMetadata) => {
-    const url = `${appConfig.apiUrl()}/packets/file/${packetId}?hash=${file.hash}&filename=${file.path}`;
+    const url = getFileUrl(file, packetId);
     download(url, file.path)
       .then(() => setError(""))
       .catch((e) => {
