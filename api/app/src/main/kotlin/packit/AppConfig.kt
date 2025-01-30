@@ -1,13 +1,16 @@
 package packit
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.core.env.Environment
 import org.springframework.core.env.get
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
+import packit.config.TaskExecutorProperties
 
 @Component
+@EnableConfigurationProperties(TaskExecutorProperties::class)
 class AppConfig(private val environment: Environment)
 {
     internal final fun requiredEnvValue(key: String): String
