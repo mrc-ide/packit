@@ -2,9 +2,11 @@ package packit.controllers
 
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.Page
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
+import packit.exceptions.PackitException
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
 import packit.model.dto.PacketDto
@@ -54,14 +56,14 @@ class PacketController(
     }
 
     @GetMapping("/metadata/{id}")
-    @PreAuthorize("@authz.canReadPacketMetadata(#root, #id)")
+    @PreAuthorize("@authz.canReadPacket(#root, #id)")
     fun findPacketMetadata(@PathVariable id: String): ResponseEntity<PacketMetadata>
     {
         return ResponseEntity.ok(packetService.getMetadataBy(id))
     }
 
     @GetMapping("/file/{id}")
-    @PreAuthorize("@authz.canReadPacketMetadata(#root, #id)")
+    @PreAuthorize("@authz.canReadPacket(#root, #id)")
     @ResponseBody
     fun findFile(
         @PathVariable id: String,
@@ -70,8 +72,12 @@ class PacketController(
         @RequestParam filename: String,
     ): ResponseEntity<ByteArrayResource>
     {
-        val response = packetService.getFileByHash(hash, inline, filename)
+        val packet = packetService.getMetadataBy(id)
+        if (packet.files.none { it.hash == hash }) {
+            throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
+        }
 
+        val response = packetService.getFileByHash(hash, inline, filename)
         return ResponseEntity
             .ok()
             .headers(response.second)
