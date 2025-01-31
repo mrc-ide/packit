@@ -4,6 +4,7 @@ import { PacketHeader } from "../packets";
 import { Card, CardContent } from "../../Base/Card";
 import { FileRow } from "./FileRow";
 import { OrderlyDownloads } from "./orderly/OrderlyDownloads";
+import { DownloadAllFilesButton } from "./orderly/DownloadAllFilesButton";
 
 export const Downloads = () => {
   const { packetId, packetName } = useParams();
@@ -14,7 +15,12 @@ export const Downloads = () => {
     <>
       {packet && (
         <>
-          <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} displayName={packet.displayName} />
+          <div className="md:flex justify-between">
+            <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} displayName={packet.displayName} />
+            <span className="self-end">
+              <DownloadAllFilesButton />
+            </span>
+          </div>
           {packetIsFromOrderly && <OrderlyDownloads />}
           {!packetIsFromOrderly && (
             <>

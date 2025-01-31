@@ -3,9 +3,10 @@ import appConfig from "../config/appConfig";
 import { FileMetadata } from "../types";
 
 export const getFileUrl = (file: FileMetadata, packetId: string, inline?: boolean) =>
-  `${appConfig.apiUrl()}/packets/file/${packetId}?hash=${file.hash}&filename=${file.path}&inline=${
-    inline ? "true" : "false"
-  }`;
+  `${appConfig.apiUrl()}/packets/file/${packetId}?hash=${file.hash}&filename=${file.path}&inline=${inline}`;
+
+export const baseZipUrl = (packetName: string, packetId: string) =>
+  `${appConfig.apiUrl()}/packets/${packetName}/${packetId}/zip`;
 
 export const getFileObjectUrl = async (url: string, filename: string) => {
   const headers = getAuthHeader();

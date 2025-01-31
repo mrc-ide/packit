@@ -15,6 +15,7 @@ import packit.model.*
 import packit.model.dto.PacketGroupSummary
 import packit.service.PacketGroupService
 import packit.service.PacketService
+import packit.service.ZipService
 import java.time.Instant
 import kotlin.test.assertEquals
 
@@ -90,11 +91,12 @@ class PacketControllerTest
     private val packetGroupService = mock<PacketGroupService> {
         on { getPacketGroupSummaries(PageablePayload(0, 10), "") } doReturn mockPacketGroupsSummary
     }
+    private val zipService = mock<ZipService>()
 
     @Test
     fun `get pageable packets`()
     {
-        val sut = PacketController(packetService, packetGroupService)
+        val sut = PacketController(packetService, packetGroupService, zipService)
         val result = sut.pageableIndex(0, 10, "", "")
         assertEquals(result.statusCode, HttpStatus.OK)
         assertEquals(result.body, mockPageablePackets.map { it.toDto() })
@@ -105,7 +107,7 @@ class PacketControllerTest
     @Test
     fun `get packets by packet group name`()
     {
-        val sut = PacketController(packetService, packetGroupService)
+        val sut = PacketController(packetService, packetGroupService, zipService)
 
         val result = sut.getPacketsByName("pg1")
 
@@ -117,7 +119,7 @@ class PacketControllerTest
     @Test
     fun `get packet groups summary`()
     {
-        val sut = PacketController(packetService, packetGroupService)
+        val sut = PacketController(packetService, packetGroupService, zipService)
         val result = sut.getPacketGroupSummaries(0, 10, "")
         assertEquals(result.statusCode, HttpStatus.OK)
         assertEquals(result.body, mockPacketGroupsSummary)
@@ -127,7 +129,7 @@ class PacketControllerTest
     @Test
     fun `get packet metadata by id`()
     {
-        val sut = PacketController(packetService, packetGroupService)
+        val sut = PacketController(packetService, packetGroupService, zipService)
         val result = sut.findPacketMetadata("1")
         val responseBody = result.body
         assertEquals(result.statusCode, HttpStatus.OK)
@@ -137,7 +139,7 @@ class PacketControllerTest
     @Test
     fun `get packet file by id`()
     {
-        val sut = PacketController(packetService, packetGroupService)
+        val sut = PacketController(packetService, packetGroupService, zipService)
         val result = sut.findFile("123", "sha123", false, "test.html")
         val responseBody = result.body
 
