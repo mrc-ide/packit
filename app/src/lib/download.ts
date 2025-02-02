@@ -2,7 +2,7 @@ import { getAuthHeader } from "./auth/getAuthHeader";
 import appConfig from "../config/appConfig";
 import { FileMetadata } from "../types";
 
-export const getFileUrl = (file: FileMetadata, packetId: string, inline?: boolean) =>
+export const getFileUrl = (file: FileMetadata, packetId: string, inline = false) =>
   `${appConfig.apiUrl()}/packets/file/${packetId}?hash=${file.hash}&filename=${file.path}&inline=${inline}`;
 
 export const baseZipUrl = (packetName: string, packetId: string) =>
