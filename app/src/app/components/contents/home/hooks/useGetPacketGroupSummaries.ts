@@ -5,7 +5,7 @@ import { PageablePacketGroupSummaries } from "../../../../../types";
 
 export const useGetPacketGroupSummaries = (pageNumber: number, pageSize: number, filter: string) => {
   const { data, isLoading, error } = useSWR<PageablePacketGroupSummaries>(
-    `${appConfig.apiUrl()}/packets/packetGroupSummaries?pageNumber=${pageNumber}&pageSize=${pageSize}` +
+    `${appConfig.apiUrl()}/packetGroupSummaries?pageNumber=${pageNumber}&pageSize=${pageSize}` +
       `&filter=${filter}`,
     (url: string) => fetcher({ url })
   );

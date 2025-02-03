@@ -44,7 +44,7 @@ describe("download component", () => {
   it("renders files when the packet is not from orderly", async () => {
     const packetNotFromOrderly = { ...mockPacket, id: "packetNotFromOrderly", custom: null };
     server.use(
-      rest.get(`${appConfig.apiUrl()}/packets/metadata/${packetNotFromOrderly.id}`, (req, res, ctx) => {
+      rest.get(`${appConfig.apiUrl()}/packets/${packetNotFromOrderly.id}`, (req, res, ctx) => {
         return res(ctx.json(packetNotFromOrderly));
       })
     );

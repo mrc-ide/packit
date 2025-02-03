@@ -51,7 +51,7 @@ describe("image display component", () => {
     });
 
     expect(mockGetFileObjectUrl).toHaveBeenCalledWith(
-      `http://localhost:8080/packets/file/${packet.id}?hash=${mockHash}&filename=test.png&inline=false`,
+      `http://localhost:8080/packets/${packet.id}/file?hash=${mockHash}&filename=test.png&inline=false`,
       "test.png"
     );
   });

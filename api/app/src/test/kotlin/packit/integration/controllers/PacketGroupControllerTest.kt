@@ -15,6 +15,7 @@ import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
 import packit.model.Packet
 import packit.model.PacketGroup
+import packit.model.dto.PacketDto
 import packit.model.dto.PacketGroupDto
 import packit.model.toDto
 import packit.repository.PacketGroupRepository
@@ -187,5 +188,106 @@ class PacketGroupControllerTest : IntegrationTest()
         )
 
         assertEquals(HttpStatus.UNAUTHORIZED, result.statusCode)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
+    fun `test can get packets by name if authenticated`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packetGroups/random?pageNumber=0&pageSize=5",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+        assertSuccess(result)
+    }
+
+    @Test
+    fun `test can not get packets by name if not authenticated`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packetGroups/random?pageNumber=3&pageSize=5",
+            HttpMethod.GET
+        )
+        assertUnauthorized(result)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
+    fun `test can get packet group summary if authenticated`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packetGroupSummaries?pageNumber=0&pageSize=5&filterName=hell",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+        assertSuccess(result)
+    }
+
+    @Test
+    fun `test can not get packet group summary if not authenticated`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packetGroupSummaries?pageNumber=0&pageSize=5&filterName=hell",
+            HttpMethod.GET
+        )
+        assertUnauthorized(result)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:random-name"])
+    fun `getPacketGroupSummaries returns empty page if no permissions match`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packetGroupSummaries",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        assertEquals(0, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
+    fun `getPacketGroupSummaries returns list of packet groups user can see`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packetGroupSummaries",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+        assertEquals(1, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:random-name"])
+    fun `getPacketsByName returns empty list if no permissions match`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packetGroups/artefact-types/packets",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        assertEquals(0, jacksonObjectMapper().readValue(result.body, List::class.java).size)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read:packet:artefact-types:20230427-150755-2dbede94"])
+    fun `getPacketsByName returns of packets user can see`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packetGroups/artefact-types/packets",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        val packets = jacksonObjectMapper().readValue(
+            result.body,
+            object : TypeReference<List<PacketDto>>()
+            {}
+        )
+        assertEquals(1, packets.size)
+        assertEquals("20230427-150755-2dbede94", packets[0].id)
     }
 }

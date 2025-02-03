@@ -1,6 +1,5 @@
 package packit.integration.controllers
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -15,7 +14,6 @@ import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
 import packit.model.Packet
 import packit.model.PacketGroup
-import packit.model.dto.PacketDto
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
 import kotlin.test.assertEquals
@@ -35,7 +33,7 @@ class PacketControllerTest : IntegrationTest()
         const val idOfArtefactTypesPacket1 = "20240729-154633-10abe7d1"
         const val idOfArtefactTypesPacket2 = "20240729-155513-1432bfa7"
         const val idOfComputedResourcePacket = "20240729-154635-88c5c1eb"
-        const val hashOfReport = "715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1"
+        const val hashOfReport = "sha256:715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1"
     }
 
     @BeforeAll
@@ -76,7 +74,7 @@ class PacketControllerTest : IntegrationTest()
             )
         )
         packetGroups = packetGroupRepository.saveAll(
-            packets.map { it.name}.distinct().map{PacketGroup(it)}
+            packets.map { it.name }.distinct().map{PacketGroup(it)}
         )
     }
 
@@ -108,50 +106,6 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `test can get packet group summary if authenticated`()
-    {
-        val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/packetGroupSummary?pageNumber=0&pageSize=5&filterName=hell",
-            HttpMethod.GET,
-            getTokenizedHttpEntity()
-        )
-        assertSuccess(result)
-    }
-
-    @Test
-    fun `test can not get packet group summary if not authenticated`()
-    {
-        val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/overview?packetGroupSummary=3&pageSize=5&filterName=hell",
-            HttpMethod.GET
-        )
-        assertUnauthorized(result)
-    }
-
-    @Test
-    @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `test can get packets by name if authenticated`()
-    {
-        val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/random?pageNumber=0&pageSize=5",
-            HttpMethod.GET,
-            getTokenizedHttpEntity()
-        )
-        assertSuccess(result)
-    }
-
-    @Test
-    fun `test can not get packets by name if not authenticated`()
-    {
-        val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/random?pageNumber=3&pageSize=5",
-            HttpMethod.GET
-        )
-        assertUnauthorized(result)
-    }
-
-    @Test
-    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `can get non pageable packets`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
@@ -167,7 +121,7 @@ class PacketControllerTest : IntegrationTest()
     fun `get packet metadata by packet id`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/metadata/$idOfArtefactTypesPacket1",
+            "/packets/$idOfArtefactTypesPacket1",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -179,7 +133,7 @@ class PacketControllerTest : IntegrationTest()
     fun `get packet file by hash`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/file/$idOfArtefactTypesPacket1?hash=sha256:$hashOfReport&filename=report.html",
+            "/packets/$idOfArtefactTypesPacket1/file?hash=$hashOfReport&filename=report.html",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -193,7 +147,7 @@ class PacketControllerTest : IntegrationTest()
     {
 
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/metadata/$idOfArtefactTypesPacket1",
+            "/packets/$idOfArtefactTypesPacket1",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -206,7 +160,7 @@ class PacketControllerTest : IntegrationTest()
     {
 
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/metadata/$idOfArtefactTypesPacket1",
+            "/packets/$idOfArtefactTypesPacket1",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -218,7 +172,7 @@ class PacketControllerTest : IntegrationTest()
     fun `findFile returns file if user has correct specific permission`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/file/$idOfArtefactTypesPacket1?hash=sha256:$hashOfReport&filename=report.html",
+            "/packets/$idOfArtefactTypesPacket1/file?hash=$hashOfReport&filename=report.html",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -231,7 +185,7 @@ class PacketControllerTest : IntegrationTest()
     fun `findFile returns 404 if the packet does not contain the file hash`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/file/$idOfComputedResourcePacket?hash=sha256:$hashOfReport&filename=report.html",
+            "/packets/file/$idOfComputedResourcePacket?hash=$hashOfReport&filename=report.html",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -243,7 +197,7 @@ class PacketControllerTest : IntegrationTest()
     fun `findFile returns 401 if incorrect specific permission`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/file/$idOfArtefactTypesPacket1?hash=sha256:$hashOfReport&filename=report.html",
+            "/packets/$idOfArtefactTypesPacket1/file?hash=$hashOfReport&filename=report.html",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -273,76 +227,6 @@ class PacketControllerTest : IntegrationTest()
             getTokenizedHttpEntity()
         )
 
-        assertEquals(2, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
-    }
-
-    @Test
-    @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `pageableIndex can return all packets`()
-    {
-        val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets",
-            HttpMethod.GET,
-            getTokenizedHttpEntity()
-        )
-
-        assertEquals(3, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
-    }
-
-    @Test
-    @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:random-name"])
-    fun `getPacketsByName returns empty list if no permissions match`()
-    {
-        val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/artefact-types",
-            HttpMethod.GET,
-            getTokenizedHttpEntity()
-        )
-
-        assertEquals(0, jacksonObjectMapper().readValue(result.body, List::class.java).size)
-    }
-
-    @Test
-    @WithAuthenticatedUser(authorities = ["packet.read:packet:artefact-types:$idOfArtefactTypesPacket1"])
-    fun `getPacketsByName returns packets user can see`()
-    {
-        val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/artefact-types",
-            HttpMethod.GET,
-            getTokenizedHttpEntity()
-        )
-
-        val packets = jacksonObjectMapper().readValue(
-            result.body,
-            object : TypeReference<List<PacketDto>>()
-            {}
-        )
-        assertEquals(1, packets.size)
-        assertEquals(idOfArtefactTypesPacket1, packets[0].id)
-    }
-
-    @Test
-    @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:random-name"])
-    fun `getPacketGroupSummaries returns empty page if no permissions match`()
-    {
-        val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/packetGroupSummaries",
-            HttpMethod.GET,
-            getTokenizedHttpEntity()
-        )
-
-        assertEquals(0, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
-    }
-
-    @Test
-    @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `getPacketGroupSummaries returns list of packet groups user can see`()
-    {
-        val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/packetGroupSummaries",
-            HttpMethod.GET,
-            getTokenizedHttpEntity()
-        )
         assertEquals(2, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
     }
 }
