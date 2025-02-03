@@ -1,6 +1,6 @@
 package packit.integration.controllers
-
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -12,26 +12,25 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
-import packit.model.Packet
-import packit.model.PacketGroup
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
+import packit.service.PacketService
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PacketControllerTest : IntegrationTest()
 {
     @Autowired
+    private lateinit var packetService: PacketService
+
+    @Autowired
     private lateinit var packetRepository: PacketRepository
 
     @Autowired
     private lateinit var packetGroupRepository: PacketGroupRepository
-    private lateinit var packets: List<Packet>
-    private lateinit var packetGroups: List<PacketGroup>
 
     companion object {
-        const val idOfArtefactTypesPacket1 = "20240729-154633-10abe7d1"
-        const val idOfArtefactTypesPacket2 = "20240729-155513-1432bfa7"
+        const val idOfArtefactTypesPacket = "20240729-154633-10abe7d1"
         const val idOfComputedResourcePacket = "20240729-154635-88c5c1eb"
         const val hashOfReport = "sha256:715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1"
     }
@@ -39,50 +38,14 @@ class PacketControllerTest : IntegrationTest()
     @BeforeAll
     fun setupData()
     {
-        packets = packetRepository.saveAll(
-            listOf(
-                Packet(
-                    idOfArtefactTypesPacket1,
-                    "artefact-types",
-                    "artefact-types",
-                    emptyMap(),
-                    false,
-                    0.0,
-                    0.0,
-                    0.0
-                ),
-                Packet(
-                    idOfArtefactTypesPacket2,
-                    "artefact-types",
-                    "artefact-types",
-                    emptyMap(),
-                    false,
-                    0.0,
-                    0.0,
-                    0.0
-                ),
-                Packet(
-                    idOfComputedResourcePacket,
-                    "computed-resource",
-                    "computed-resource",
-                    emptyMap(),
-                    false,
-                    0.0,
-                    0.0,
-                    0.0
-                ),
-            )
-        )
-        packetGroups = packetGroupRepository.saveAll(
-            packets.map { it.name }.distinct().map{PacketGroup(it)}
-        )
+        packetService.importPackets()
     }
 
     @AfterAll
     fun cleanup()
     {
-        packetRepository.deleteAll(packets)
-        packetGroupRepository.deleteAll(packetGroups)
+        packetRepository.deleteAll()
+        packetGroupRepository.deleteAll()
     }
 
     @Test
@@ -121,7 +84,7 @@ class PacketControllerTest : IntegrationTest()
     fun `get packet metadata by packet id`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/$idOfArtefactTypesPacket1",
+            "/packets/$idOfArtefactTypesPacket",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -133,7 +96,7 @@ class PacketControllerTest : IntegrationTest()
     fun `get packet file by hash`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/$idOfArtefactTypesPacket1/file?hash=$hashOfReport&filename=report.html",
+            "/packets/$idOfArtefactTypesPacket/file?hash=$hashOfReport&filename=report.html",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -142,12 +105,12 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser(authorities = ["packet.read:packet:artefact-types:$idOfArtefactTypesPacket1"])
+    @WithAuthenticatedUser(authorities = ["packet.read:packet:artefact-types:$idOfArtefactTypesPacket"])
     fun `findPacketMetadata returns metadata if user has correct specific permission`()
     {
 
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/$idOfArtefactTypesPacket1",
+            "/packets/$idOfArtefactTypesPacket",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -160,7 +123,7 @@ class PacketControllerTest : IntegrationTest()
     {
 
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/$idOfArtefactTypesPacket1",
+            "/packets/$idOfArtefactTypesPacket",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -168,11 +131,11 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser(authorities = ["packet.read:packet:artefact-types:$idOfArtefactTypesPacket1"])
+    @WithAuthenticatedUser(authorities = ["packet.read:packet:artefact-types:$idOfArtefactTypesPacket"])
     fun `findFile returns file if user has correct specific permission`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/$idOfArtefactTypesPacket1/file?hash=$hashOfReport&filename=report.html",
+            "/packets/$idOfArtefactTypesPacket/file?hash=$hashOfReport&filename=report.html",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -197,7 +160,7 @@ class PacketControllerTest : IntegrationTest()
     fun `findFile returns 401 if incorrect specific permission`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/$idOfArtefactTypesPacket1/file?hash=$hashOfReport&filename=report.html",
+            "/packets/$idOfArtefactTypesPacket/file?hash=$hashOfReport&filename=report.html",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -227,6 +190,11 @@ class PacketControllerTest : IntegrationTest()
             getTokenizedHttpEntity()
         )
 
-        assertEquals(2, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
+        val body = jacksonObjectMapper().readTree(result.body)
+
+        assertThat(body.get("totalElements").intValue()).isGreaterThan(0)
+        assertThat(body.get("content")).allSatisfy {
+            assertThat(it.get("name").textValue()).isEqualTo("artefact-types")
+        }
     }
 }
