@@ -30,15 +30,13 @@ class PacketControllerTest : IntegrationTest()
     private lateinit var packetGroupRepository: PacketGroupRepository
     private lateinit var packets: List<Packet>
     private lateinit var packetGroups: List<PacketGroup>
-    private val packetGroupNames = listOf(
-        "artefact-types",
-        "test-packetGroupName-2",
-        "test-packetGroupName-3",
-        "test-packetGroupName-4",
-        "test-packetGroupName-5",
-    )
 
-    private val idOfArtefactTypesPacket = "20240729-154633-10abe7d1"
+    companion object {
+        const val idOfArtefactTypesPacket1 = "20240729-154633-10abe7d1"
+        const val idOfArtefactTypesPacket2 = "20240729-155513-1432bfa7"
+        const val idOfComputedResourcePacket = "20240729-154635-88c5c1eb"
+        const val hashOfReport = "715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1"
+    }
 
     @BeforeAll
     fun setupData()
@@ -46,51 +44,31 @@ class PacketControllerTest : IntegrationTest()
         packets = packetRepository.saveAll(
             listOf(
                 Packet(
-                    idOfArtefactTypesPacket,
-                    packetGroupNames[0],
-                    packetGroupNames[0],
-                    mapOf("name" to "value"),
+                    idOfArtefactTypesPacket1,
+                    "artefact-types",
+                    "artefact-types",
+                    emptyMap(),
                     false,
                     0.0,
                     0.0,
                     0.0
                 ),
                 Packet(
-                    "20230427-150755-2dbede94",
-                    packetGroupNames[0],
-                    packetGroupNames[0],
-                    mapOf("a" to 1),
+                    idOfArtefactTypesPacket2,
+                    "artefact-types",
+                    "artefact-types",
+                    emptyMap(),
                     false,
                     0.0,
                     0.0,
                     0.0
                 ),
                 Packet(
-                    "20230427-150755-2dbede95",
-                    packetGroupNames[2],
-                    "test-packetGroupName-3",
-                    mapOf("alpha" to true),
+                    idOfComputedResourcePacket,
+                    "computed-resource",
+                    "computed-resource",
+                    emptyMap(),
                     false,
-                    0.0,
-                    0.0,
-                    0.0
-                ),
-                Packet(
-                    "20230427-150755-2dbede96",
-                    packetGroupNames[3],
-                    "test-packetGroupName-4",
-                    mapOf(),
-                    true,
-                    0.0,
-                    0.0,
-                    0.0
-                ),
-                Packet(
-                    "20230427-150755-2dbede97",
-                    packetGroupNames[4],
-                    "test-packetGroupName-5",
-                    mapOf(),
-                    true,
                     0.0,
                     0.0,
                     0.0
@@ -98,7 +76,7 @@ class PacketControllerTest : IntegrationTest()
             )
         )
         packetGroups = packetGroupRepository.saveAll(
-            packetGroupNames.map { PacketGroup(it) }
+            packets.map { it.name}.distinct().map{PacketGroup(it)}
         )
     }
 
@@ -189,7 +167,7 @@ class PacketControllerTest : IntegrationTest()
     fun `get packet metadata by packet id`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/metadata/20240729-154633-10abe7d1",
+            "/packets/metadata/$idOfArtefactTypesPacket1",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -201,9 +179,7 @@ class PacketControllerTest : IntegrationTest()
     fun `get packet file by hash`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/file/20240729-154633-10abe7d1" +
-                    "?hash=sha256:715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1" +
-                    "&filename=report.html",
+            "/packets/file/$idOfArtefactTypesPacket1?hash=sha256:$hashOfReport&filename=report.html",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -212,12 +188,12 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser(authorities = ["packet.read:packet:artefact-types:20240729-154633-10abe7d1"])
+    @WithAuthenticatedUser(authorities = ["packet.read:packet:artefact-types:$idOfArtefactTypesPacket1"])
     fun `findPacketMetadata returns metadata if user has correct specific permission`()
     {
 
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/metadata/20240729-154633-10abe7d1",
+            "/packets/metadata/$idOfArtefactTypesPacket1",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -230,7 +206,7 @@ class PacketControllerTest : IntegrationTest()
     {
 
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/metadata/20240729-154633-10abe7d1",
+            "/packets/metadata/$idOfArtefactTypesPacket1",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -238,13 +214,11 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser(authorities = ["packet.read:packet:artefact-types:20240729-154633-10abe7d1"])
+    @WithAuthenticatedUser(authorities = ["packet.read:packet:artefact-types:$idOfArtefactTypesPacket1"])
     fun `findFile returns file if user has correct specific permission`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/file/20240729-154633-10abe7d1" +
-                    "?hash=sha256:715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1" +
-                    "&filename=report.html",
+            "/packets/file/$idOfArtefactTypesPacket1?hash=sha256:$hashOfReport&filename=report.html",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -253,13 +227,23 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
+    @WithAuthenticatedUser(authorities = ["packet.read:packet:computed-resource:$idOfComputedResourcePacket"])
+    fun `findFile returns 404 if the packet does not contain the file hash`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packets/file/$idOfComputedResourcePacket?hash=sha256:$hashOfReport&filename=report.html",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+        assertEquals(HttpStatus.NOT_FOUND, result.statusCode)
+    }
+
+    @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packet:wrong-id"])
     fun `findFile returns 401 if incorrect specific permission`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/file/20240729-154633-10abe7d1" +
-                    "?hash=sha256:715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1" +
-                    "&filename=report.html",
+            "/packets/file/$idOfArtefactTypesPacket1?hash=sha256:$hashOfReport&filename=report.html",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -281,7 +265,7 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:artefact-types"])
-    fun `pageableIndex returns of packets user can see`()
+    fun `pageableIndex returns packets user can see`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets",
@@ -290,6 +274,19 @@ class PacketControllerTest : IntegrationTest()
         )
 
         assertEquals(2, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
+    fun `pageableIndex can return all packets`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packets",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        assertEquals(3, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
     }
 
     @Test
@@ -306,8 +303,8 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser(authorities = ["packet.read:packet:artefact-types:20230427-150755-2dbede94"])
-    fun `getPacketsByName returns of packets user can see`()
+    @WithAuthenticatedUser(authorities = ["packet.read:packet:artefact-types:$idOfArtefactTypesPacket1"])
+    fun `getPacketsByName returns packets user can see`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets/artefact-types",
@@ -321,7 +318,7 @@ class PacketControllerTest : IntegrationTest()
             {}
         )
         assertEquals(1, packets.size)
-        assertEquals("20230427-150755-2dbede94", packets[0].id)
+        assertEquals(idOfArtefactTypesPacket1, packets[0].id)
     }
 
     @Test
@@ -346,6 +343,6 @@ class PacketControllerTest : IntegrationTest()
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
-        assertEquals(1, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
+        assertEquals(2, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
     }
 }
