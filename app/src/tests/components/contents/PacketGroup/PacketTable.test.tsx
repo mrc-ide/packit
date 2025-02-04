@@ -27,7 +27,7 @@ describe("Packet table", () => {
 
   it("should render error component when error fetching packets", async () => {
     server.use(
-      rest.get(`${appConfig.apiUrl()}/packetGroup/${mockPacket.name}`, (req, res, ctx) => {
+      rest.get(`${appConfig.apiUrl()}/packetGroups/${mockPacket.name}/packets`, (req, res, ctx) => {
         return res(ctx.status(400));
       })
     );
@@ -40,7 +40,7 @@ describe("Packet table", () => {
 
   it("should render unauthorized when 401 error fetching packets", async () => {
     server.use(
-      rest.get(`${appConfig.apiUrl()}/packetGroup/${mockPacket.name}`, (req, res, ctx) => {
+      rest.get(`${appConfig.apiUrl()}/packetGroups/${mockPacket.name}/packets`, (req, res, ctx) => {
         return res(ctx.status(HttpStatus.Unauthorized));
       })
     );
