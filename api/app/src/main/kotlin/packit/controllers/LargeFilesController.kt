@@ -1,9 +1,11 @@
 package packit.controllers
 
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 import packit.AppConfig
+import packit.service.GenericClient
 import java.io.IOException
 import java.net.URL
 import java.util.zip.ZipEntry
@@ -32,7 +34,7 @@ class LargeFilesController(
 {
     @GetMapping("/download-large-files")
     @Throws(IOException::class)
-    fun downloadAndZipLargeFiles(response: HttpServletResponse) {
+    fun downloadAndZipLargeFiles(request: HttpServletRequest, response: HttpServletResponse) {
         // NB the 500mb file comes back as zip by default so we can't tell if we are zipping it
         val largeFileLink1 = "https://link.testfile.org/PDF200MB"
         val largeFileLink2 = config.outpackServerUrl + "/file/sha256:1c04a8f0157f267002f1e5a8cda59c17b26bd3097eb7467da970f7c288299d2b"
@@ -50,22 +52,24 @@ class LargeFilesController(
 
         ZipOutputStream(response.outputStream).use { zipOut ->
             for (fileLink in allFilesToDownload) {
-                URL(fileLink).openStream().use { inputStream ->
-                    val filename = fileLink.substring(fileLink.lastIndexOf("/") + 1)
-                    zipOut.putNextEntry(ZipEntry(filename))
+                GenericClient.extractResponse(fileLink, request, response, false) { serverResponse ->
+                    serverResponse.body.use { inputStream ->
+                        val filename = fileLink.substring(fileLink.lastIndexOf("/") + 1)
+                        zipOut.putNextEntry(ZipEntry(filename))
 
-                    val buffer = ByteArray(1024)
-                    var len: Int
-                    // The read method returns -1 to indicate the end of the stream
-                    while ((inputStream.read(buffer).also { len = it }) > 0) {
+                        val buffer = ByteArray(1024)
+                        var len: Int
+                        // The read method returns -1 to indicate the end of the stream
+                        while ((inputStream.read(buffer).also { len = it }) > 0) {
 //                        The write method takes three arguments:
 //                        buffer: The byte array containing the data to be written.
 //                        offset: The start offset in the data.
 //                        length: The number of bytes to write.
-                        zipOut.write(buffer, 0, len)
+                            zipOut.write(buffer, 0, len)
+                        }
                     }
-                }
                 zipOut.closeEntry()
+                }
             }
         }
     }
