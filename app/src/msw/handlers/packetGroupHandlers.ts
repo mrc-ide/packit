@@ -15,8 +15,8 @@ export const packetGroupHandlers = [
         description: mockPacket.custom?.orderly.description.long
       })
     );
-  })
+  }),
   rest.get(`${packetGroupIndexUri}/${mockPacket.name}/packets`, (req, res, ctx) => {
     return res(ctx.json(mockPacketGroupResponse.content));
-  }),
+  })
 ];
