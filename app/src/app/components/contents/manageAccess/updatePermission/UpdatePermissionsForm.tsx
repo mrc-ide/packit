@@ -46,7 +46,7 @@ export const UpdatePermissionsForm = ({ roleName, rolePermissions, mutate, setOp
     }
     try {
       await fetcher({
-        url: `${appConfig.apiUrl()}/role/${roleName}/permissions`,
+        url: `${appConfig.apiUrl()}/roles/${roleName}/permissions`,
         body: convertUpdatePermissionsForFetch(updatePermissions),
         method: "PUT"
       });

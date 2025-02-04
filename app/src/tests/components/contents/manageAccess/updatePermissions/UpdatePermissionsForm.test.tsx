@@ -48,7 +48,7 @@ describe("UpdatePermissionsForm", () => {
 
     await waitFor(() => {
       expect(fetchSpy).toHaveBeenCalledWith({
-        url: `${appConfig.apiUrl()}/role/test-role/permissions`,
+        url: `${appConfig.apiUrl()}/roles/test-role/permissions`,
         body: {
           addPermissions: [],
           removePermissions: [

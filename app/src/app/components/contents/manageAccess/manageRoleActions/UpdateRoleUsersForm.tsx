@@ -44,7 +44,7 @@ export const UpdateRoleUsersForm = ({ role, users, mutate, setOpen }: UpdateRole
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await fetcher({
-        url: `${appConfig.apiUrl()}/role/${role.name}/users`,
+        url: `${appConfig.apiUrl()}/roles/${role.name}/users`,
         body: values,
         method: "PUT"
       });

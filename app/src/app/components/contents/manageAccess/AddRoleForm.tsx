@@ -41,7 +41,7 @@ export const AddRoleForm = ({ mutate, setOpen }: AddRoleFormProps) => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await fetcher({
-        url: `${appConfig.apiUrl()}/role`,
+        url: `${appConfig.apiUrl()}/roles`,
         body: values,
         method: "POST"
       });

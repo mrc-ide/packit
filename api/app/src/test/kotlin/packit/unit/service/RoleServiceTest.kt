@@ -333,18 +333,6 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getRoleNames returns role names`()
-    {
-        val roles = listOf(Role(name = "role1"), Role(name = "role2"))
-        whenever(roleRepository.findAll(Sort.by("name").ascending())).thenReturn(roles)
-
-        val result = roleService.getRoleNames()
-
-        assertEquals(2, result.size)
-        assertTrue(result.containsAll(listOf("role1", "role2")))
-    }
-
-    @Test
     fun `getRolesWithRelationships returns all roles when no isUsernamesflag set`()
     {
         val roles = listOf(Role(name = "role1"), Role(name = "role2"))

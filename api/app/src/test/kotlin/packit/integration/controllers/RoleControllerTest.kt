@@ -66,7 +66,7 @@ class RoleControllerTest : IntegrationTest()
     {
         val result =
             restTemplate.postForEntity(
-                "/role",
+                "/roles",
                 getTokenizedHttpEntity(data = createTestRoleBody),
                 String::class.java
             )
@@ -86,7 +86,7 @@ class RoleControllerTest : IntegrationTest()
     {
         val result =
             restTemplate.postForEntity(
-                "/role",
+                "/roles",
                 getTokenizedHttpEntity(data = createTestRoleBody),
                 String::class.java
             )
@@ -100,7 +100,7 @@ class RoleControllerTest : IntegrationTest()
     {
         val result =
             restTemplate.postForEntity(
-                "/role",
+                "/roles",
                 getTokenizedHttpEntity(data = "{}"),
                 String::class.java
             )
@@ -116,7 +116,7 @@ class RoleControllerTest : IntegrationTest()
 
         val result =
             restTemplate.exchange(
-                "/role/testRole",
+                "/roles/testRole",
                 HttpMethod.DELETE,
                 getTokenizedHttpEntity(),
                 String::class.java
@@ -134,7 +134,7 @@ class RoleControllerTest : IntegrationTest()
 
         val result =
             restTemplate.exchange(
-                "/role/testRole",
+                "/roles/testRole",
                 HttpMethod.DELETE,
                 getTokenizedHttpEntity(data = createTestRoleBody),
                 String::class.java
@@ -154,7 +154,7 @@ class RoleControllerTest : IntegrationTest()
         roleRepository.save(baseRole)
 
         val result = restTemplate.exchange(
-            "/role/testRole/permissions",
+            "/roles/testRole/permissions",
             HttpMethod.PUT,
             getTokenizedHttpEntity(data = updateRolePermissions),
             String::class.java
@@ -174,7 +174,7 @@ class RoleControllerTest : IntegrationTest()
         roleRepository.save(Role(name = "testRole"))
 
         val result = restTemplate.exchange(
-            "/role/testRole/permissions",
+            "/roles/testRole/permissions",
             HttpMethod.PUT,
             getTokenizedHttpEntity(data = updateRolePermissions),
             String::class.java
@@ -185,32 +185,13 @@ class RoleControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `user with manage authority can read role names`()
-    {
-        roleRepository.save(Role(name = "testRole"))
-
-        val result =
-            restTemplate.exchange(
-                "/role/names",
-                HttpMethod.GET,
-                getTokenizedHttpEntity(),
-                String::class.java
-            )
-
-        assertSuccess(result)
-
-        assert(jacksonObjectMapper().readValue(result.body, List::class.java).containsAll(listOf("ADMIN", "testRole")))
-    }
-
-    @Test
-    @WithAuthenticatedUser(authorities = ["user.manage"])
     fun `users can get all roles with relationships`()
     {
         val adminRole = roleRepository.findByName("ADMIN")!!
         val userRole = roleRepository.save(Role(name = "testRole", isUsername = true))
         val result =
             restTemplate.exchange(
-                "/role",
+                "/roles",
                 HttpMethod.GET,
                 getTokenizedHttpEntity(),
                 String::class.java
@@ -242,7 +223,7 @@ class RoleControllerTest : IntegrationTest()
         roleRepository.save(Role("test-username", isUsername = true))
         val result =
             restTemplate.exchange(
-                "/role?isUsername=true",
+                "/roles?isUsername=true",
                 HttpMethod.GET,
                 getTokenizedHttpEntity(),
                 String::class.java
@@ -268,7 +249,7 @@ class RoleControllerTest : IntegrationTest()
         val adminRole = roleRepository.findByName("ADMIN")!!.toDto()
         val result =
             restTemplate.exchange(
-                "/role?isUsername=false",
+                "/roles?isUsername=false",
                 HttpMethod.GET,
                 getTokenizedHttpEntity(),
                 String::class.java
@@ -294,7 +275,7 @@ class RoleControllerTest : IntegrationTest()
         val roleDto = roleRepository.findByName("ADMIN")!!.toDto()
         val result =
             restTemplate.exchange(
-                "/role/ADMIN",
+                "/roles/ADMIN",
                 HttpMethod.GET,
                 getTokenizedHttpEntity(),
                 String::class.java
@@ -316,7 +297,7 @@ class RoleControllerTest : IntegrationTest()
     {
         val result =
             restTemplate.exchange(
-                "/role/ADMIN/users",
+                "/roles/ADMIN/users",
                 HttpMethod.PUT,
                 getTokenizedHttpEntity(data = "{}"),
                 String::class.java
@@ -352,7 +333,7 @@ class RoleControllerTest : IntegrationTest()
         )
 
         val result = restTemplate.exchange(
-            "/role/${testRole.name}/users",
+            "/roles/${testRole.name}/users",
             HttpMethod.PUT,
             getTokenizedHttpEntity(data = updateRoleUsers),
             String::class.java

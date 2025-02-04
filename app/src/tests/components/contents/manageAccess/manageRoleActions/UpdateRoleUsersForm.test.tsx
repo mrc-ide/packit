@@ -83,7 +83,7 @@ describe("UpdateRoleUsersForm", () => {
 
     await waitFor(() => {
       expect(fetcherSpy).toHaveBeenCalledWith({
-        url: `${appConfig.apiUrl()}/role/${testRole.name}/users`,
+        url: `${appConfig.apiUrl()}/roles/${testRole.name}/users`,
         body: { usernamesToAdd: ["user3", "user4"], usernamesToRemove: ["user1", "user2"] },
         method: "PUT"
       });

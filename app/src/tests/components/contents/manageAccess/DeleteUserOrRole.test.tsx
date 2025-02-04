@@ -35,7 +35,7 @@ describe("DeleteUserOrRole", () => {
 
     await waitFor(() => {
       expect(fetcherSpy).toHaveBeenCalledWith({
-        url: `${appConfig.apiUrl()}/role/${roleName}`,
+        url: `${appConfig.apiUrl()}/roles/${roleName}`,
         method: "DELETE"
       });
     });
