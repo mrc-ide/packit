@@ -37,6 +37,9 @@ jobs:
         uses: ./.github/actions/build-db
       - name: Run dependencies
         run: ./scripts/run-dependencies
+        env:
+          ORDERLY_RUNNER_LOGS_PATH: "${{ runner.temp }}/runner-logs"
+
       - name: Set up Java JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v3
         with:
@@ -59,6 +62,13 @@ jobs:
       - name: Smoke test
         working-directory: api
         run: ./scripts/run && ./scripts/smoke-test
+
+      - name: Collect docker logs
+        if: failure()
+        uses: jwalton/gh-docker-logs@v2
+        with:
+          dest: '${{ runner.temp }}/docker-logs'
+
       - name: Upload test reports
         uses: actions/upload-artifact@v4
         if: ${{ failure() }}
@@ -67,3 +77,5 @@ jobs:
           path: |
             api/app/build/reports/
             api/app/build/test-results/
+            ${{ runner.temp }}/docker-logs
+            ${{ runner.temp }}/runner-logs

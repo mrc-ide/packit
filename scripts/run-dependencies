@@ -22,7 +22,7 @@ docker run --pull=always --rm -d --network=host \
   --name=$RUNNER_SERVER \
   --env=REDIS_URL=redis://localhost \
   --env=ORDERLY_RUNNER_QUEUE_ID \
-  --volume=/logs \
+  --volume=${ORDERLY_RUNNER_LOGS_PATH:+"$ORDERLY_RUNNER_LOGS_PATH:"}/logs \
   $ORDERLY_RUNNER_IMAGE \
   /usr/local/bin/orderly.runner.server \
   /data
