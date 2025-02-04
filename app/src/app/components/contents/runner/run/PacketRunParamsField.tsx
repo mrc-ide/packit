@@ -14,7 +14,7 @@ interface PacketRunParamsFieldProps {
   form: UseFormReturn<z.infer<typeof packetRunFormSchema>>;
 }
 export const PacketRunParamsField = ({ packetGroupName, branchCommit, form }: PacketRunParamsFieldProps) => {
-  const { parameters, isLoading, error } = useGetParameters(packetGroupName ?? null, branchCommit ?? null);
+  const { parameters, isLoading, error } = useGetParameters(packetGroupName, branchCommit);
   const { fields, replace } = useFieldArray({
     control: form.control,
     name: "parameters"

@@ -12,7 +12,7 @@ interface PacketRunPacketGroupFieldsProps {
   branchCommit: string | undefined;
 }
 export const PacketRunPacketGroupFields = ({ form, branchCommit }: PacketRunPacketGroupFieldsProps) => {
-  const { packetGroups, isLoading, error } = useGetRunnerPacketGroups(branchCommit ?? null);
+  const { packetGroups, isLoading, error } = useGetRunnerPacketGroups(branchCommit);
 
   if (error) {
     return <ErrorComponent message="Error loading packet groups" error={error} />;
