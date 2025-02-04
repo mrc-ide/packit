@@ -14,15 +14,6 @@ The application can be used through the browser as a portal by researchers, to m
 
 Packit can also be used programmatically through its `/outpack` route, which forwards requests to [outpack server](https://github.com/mrc-ide/outpack_server). 
 
-## Pre-requisites
-
-Ensure you have logged into vault. If not, Run the following command to login with github PAT token:
-
-```
-export VAULT_ADDR=https://vault.dide.ic.ac.uk:8200
-vault login -method=github
-```
-
 ## Quick start
 
 To run the whole app (default is github auth):
