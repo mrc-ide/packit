@@ -1,29 +1,18 @@
 package packit.controllers
 
-import org.springframework.http.MediaType
 import org.springframework.core.io.ByteArrayResource
-import org.springframework.core.io.buffer.DataBuffer
 import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
-import org.springframework.http.server.reactive.ServerHttpResponse
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.bodyToFlux
-import org.springframework.web.servlet.function.support.HandlerFunctionAdapter
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
 import packit.model.dto.PacketDto
 import packit.model.dto.PacketGroupSummary
 import packit.model.toDto
-import packit.service.OutpackResponseStreamer
 import packit.service.PacketGroupService
 import packit.service.PacketService
-import packit.service.ZipService
-import reactor.core.publisher.Mono
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
+
 
 @RestController
 @RequestMapping("/packets")
@@ -92,58 +81,112 @@ class PacketController(
             .body(response.first)
     }
 
-    @GetMapping("/{name}/{id}/zip")
-    @PreAuthorize("@authz.canReadPacket(#root, #id, #name)")
-//     TODO: Verify authorization for accessing specific files: whether user has access to all files, or artefacts only.
-    fun downloadZip(
-        @PathVariable id: String,
-        @PathVariable name: String,
-        @RequestParam(required = true) hashes: List<String>,
-        @RequestParam(required = true) filenames: List<String>,
-    ): ResponseEntity<StreamingResponseBody>
-    {
-        // Call streaming version of 'get file' inside streamingResponseBody to make sure it happens on the thread pool;
-        // that is to say, to make sure it is not blocking the main thread. It's not that this implementation uses
-        // multiple threads itself, but rather that we want to allow multiple of these requests to be processed
-        // at the same time.
-        val streamingResponseBody = StreamingResponseBody { outputStream ->
-            ZipOutputStream(outputStream).use { zipOutputStream ->
-                hashes.mapIndexed { index, hash ->
-                    // Get an input stream for the file with given hash
-                    // (Use the filename provided by request)
-                    // Pass the inputStream to zip functions
-                    // error handle with try catch
-                    try {
-                        val filename = filenames[index]
-                        val zipEntry = ZipEntry(filename)
-                        zipOutputStream.putNextEntry(zipEntry)
-                        val client = WebClient.create("http://localhost:8000")
-                        client.get()
-                            .uri("/file/$hash")
-                            .retrieve()
-                            .bodyToFlux<DataBuffer>()
-                            .doOnNext { dataBuffer ->
-                                val inputStream = dataBuffer.asInputStream(true)
-                                inputStream.use { it.copyTo(zipOutputStream) }
-                            }
-                            .doOnComplete {
-                                zipOutputStream.closeEntry()
-                            }
-                            // Block current thread until last data buffer is written to zip entry, to
-                            // ensure that the entry is complete before ... what? TODO: verify this is needed and isn't
-                            // made redundant by 'do on complete'.
-                            .blockLast()
-                    } catch (e: Exception) {
-                        e.printStackTrace() // TODO: proper error handling
-                    }
-                }
-            }
-        }
+    // Trying to use WebClient
 
-        // TODO: Do we need to set content type to application/zip as in [link] or is that already happening? https://dzone.com/articles/streaming-data-with-spring-boot-restful-web-servic
-        return ResponseEntity
-            .ok()
-            .header("Content-Disposition", "attachment; filename=\"${name}.zip\"")
-            .body(streamingResponseBody)
-    }
+//    @GetMapping("/{name}/{id}/zip")
+//    @PreAuthorize("@authz.canReadPacket(#root, #id, #name)")
+////     TODO: Verify authorization for accessing specific files: whether user has access to all files, or artefacts only.
+//    fun downloadZip(
+//        @PathVariable id: String,
+//        @PathVariable name: String,
+//        @RequestParam(required = true) hashes: List<String>,
+//        @RequestParam(required = true) filenames: List<String>,
+//    ): ResponseEntity<StreamingResponseBody>
+//    {
+//        val client = WebClient.create("http://localhost:8000")
+//
+//        // Call streaming version of 'get file' inside streamingResponseBody to make sure it happens on the thread pool;
+//        // that is to say, to make sure it is not blocking the main thread. It's not that this implementation uses
+//        // multiple threads itself, but rather that we want to allow multiple of these requests to be processed
+//        // at the same time.
+//        val streamingResponseBody = StreamingResponseBody { outputStream ->
+//            ZipOutputStream(outputStream).use { zipOutputStream ->
+//                hashes.mapIndexed { index, hash ->
+//                    // Get an input stream for the file with given hash
+//                    // (Use the filename provided by request)
+//                    // Pass the inputStream to zip functions
+//                    // error handle with try catch
+//                    try {
+//                        val filename = filenames[index]
+//                        val zipEntry = ZipEntry(filename)
+//                        zipOutputStream.putNextEntry(zipEntry)
+//                        client.get()
+//                            .uri("/file/$hash")
+//                            .retrieve()
+//                            .bodyToFlux<DataBuffer>()
+//                            .doOnNext { dataBuffer ->
+//                                val inputStream = dataBuffer.asInputStream(true)
+//                                inputStream.use { it.copyTo(zipOutputStream) }
+//                            }
+//                            .doOnComplete {
+//                                zipOutputStream.closeEntry()
+//                            }
+//                            // Block current thread until last data buffer is written to zip entry, to
+//                            // ensure that the entry is complete before ... what? TODO: verify this is needed and isn't
+//                            // made redundant by 'do on complete'.
+////                            .blockLast()
+//                            // "Use subscribe instead of blockLast to handle the response asynchronously."
+//                            .subscribe()
+//                    } catch (e: Exception) {
+//                        e.printStackTrace() // TODO: proper error handling
+//                    }
+//                }
+//            }
+//        }
+//
+//        // TODO: Do we need to set content type to application/zip as in [link] or is that already happening? https://dzone.com/articles/streaming-data-with-spring-boot-restful-web-servic
+//        return ResponseEntity
+//            .ok()
+//            .header("Content-Disposition", "attachment; filename=\"${name}.zip\"")
+//            .body(streamingResponseBody)
+//    }
+
+
+    // Trying to use WebClient a second time
+
+
+//    @GetMapping("/{name}/{id}/zip")
+//    @PreAuthorize("@authz.canReadPacket(#root, #id, #name)")
+//    fun downloadZip(
+//        @PathVariable id: String,
+//        @PathVariable name: String,
+//        @RequestParam(required = true) hashes: List<String>,
+//        @RequestParam(required = true) filenames: List<String>,
+//    ): ResponseEntity<StreamingResponseBody> {
+//        val client = WebClient.create("http://localhost:8000")
+//
+//        val streamingResponseBody = StreamingResponseBody { outputStream ->
+//            ZipOutputStream(outputStream).use { zipOutputStream ->
+//                val monos = hashes.mapIndexed { index, hash ->
+//                    val filename = filenames[index]
+//                    val zipEntry = ZipEntry(filename)
+//                    zipOutputStream.putNextEntry(zipEntry)
+//                    client.get()
+//                        .uri("/file/$hash")
+//                        .retrieve()
+//                        .bodyToFlux<DataBuffer>()
+//                        .doOnNext { dataBuffer ->
+//                            val inputStream = dataBuffer.asInputStream(true)
+//                            inputStream.use { it.copyTo(zipOutputStream) }
+//                        }
+//                        .doOnComplete {
+//                            zipOutputStream.closeEntry()
+//                        }
+//                        .doOnError { e ->
+//                            e.printStackTrace() // TODO: proper error handling
+//                        }
+//                        .then()
+//                }
+//
+//                Mono.zip(monos).block() // Wait for all entries to be written before closing the ZipOutputStream
+//            }
+//        }
+//
+//        return ResponseEntity
+//            .ok()
+//            .header("Content-Disposition", "attachment; filename=\"${name}.zip\"")
+//            .body(streamingResponseBody)
+//    }
+
+
 }
