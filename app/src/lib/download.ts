@@ -3,7 +3,7 @@ import appConfig from "../config/appConfig";
 import { FileMetadata } from "../types";
 
 export const getFileUrl = (file: FileMetadata, packetId: string, inline?: boolean) =>
-  `${appConfig.apiUrl()}/packets/file/${packetId}?hash=${file.hash}&filename=${file.path}&inline=${
+  `${appConfig.apiUrl()}/packets/${packetId}/file?hash=${file.hash}&filename=${file.path}&inline=${
     inline ? "true" : "false"
   }`;
 

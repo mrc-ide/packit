@@ -14,7 +14,7 @@ class PackitExceptionHandlerTest : IntegrationTest()
     fun `throws exception when client error occurred`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/metadata/nonsense",
+            "/packets/nonsense",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )

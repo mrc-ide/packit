@@ -3,7 +3,7 @@ import appConfig from "../../config/appConfig";
 import { mockPacketGroupSummaries, mockPacketGroupSummariesFiltered } from "../../tests/mocks";
 
 export const packetGroupSummaryHandlers = [
-  rest.get(`${appConfig.apiUrl()}/packets/packetGroupSummaries`, (req, res, ctx) => {
+  rest.get(`${appConfig.apiUrl()}/packetGroupSummaries`, (req, res, ctx) => {
     const url = new URL(req.url);
     if (url.searchParams.get("filterName")) {
       return res(ctx.json(mockPacketGroupSummariesFiltered));

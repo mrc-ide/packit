@@ -48,7 +48,7 @@ describe("PacketReport component", () => {
     expect(iframe).toBeVisible();
     expect(iframe.getAttribute("src")).toBe("fakeObjectUrl");
     expect(mockGetFileObjectUrl).toHaveBeenCalledWith(
-      `http://localhost:8080/packets/file/${packet.id}?hash=${mockHash}&filename=test.html&inline=true`,
+      `http://localhost:8080/packets/${packet.id}/file?hash=${mockHash}&filename=test.html&inline=true`,
       "test.html"
     );
   });
