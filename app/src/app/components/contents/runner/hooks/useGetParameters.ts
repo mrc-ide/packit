@@ -3,9 +3,11 @@ import { Parameter } from "../types/RunnerPacketGroup";
 import { fetcher } from "../../../../../lib/fetch";
 import appConfig from "../../../../../config/appConfig";
 
-export const useGetParameters = (packetGroupName: string, branchCommit: string) => {
+export const useGetParameters = (packetGroupName: string | undefined, branchCommit: string | undefined) => {
   const { data, isLoading, error } = useSWR<Parameter[]>(
-    packetGroupName ? `${appConfig.apiUrl()}/runner/${packetGroupName}/parameters?ref=${branchCommit}` : null,
+    packetGroupName && branchCommit
+      ? `${appConfig.apiUrl()}/runner/${packetGroupName}/parameters?ref=${branchCommit}`
+      : null,
     (url: string) => fetcher({ url })
   );
 

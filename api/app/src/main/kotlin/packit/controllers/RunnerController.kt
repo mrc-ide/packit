@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.client.HttpClientErrorException
 import packit.model.PageablePayload
 import packit.model.dto.*
 import packit.model.toBasicDto
@@ -31,10 +32,22 @@ class RunnerController(private val runnerService: RunnerService)
         return ResponseEntity.noContent().build()
     }
 
-    @GetMapping("git/branches")
+    @GetMapping("/git/branches")
     fun getBranches(): ResponseEntity<GitBranches>
     {
-        return ResponseEntity.ok(runnerService.getBranches())
+        try {
+            return ResponseEntity.ok(runnerService.getBranches())
+        } catch (e: HttpClientErrorException.NotFound) {
+            // The runner API returns a 404 if we've never fetched that repository.
+            // It is simpler for the frontend if this case is simply reported as an empty list of branch.
+            // The user can then sync the repo which will cause the initial clone.
+            return ResponseEntity.ok(
+                GitBranches(
+                    defaultBranch = null,
+                    branches = emptyList(),
+                )
+            )
+        }
     }
 
     @GetMapping("/{packetGroupName}/parameters")
@@ -43,7 +56,7 @@ class RunnerController(private val runnerService: RunnerService)
         @RequestParam(defaultValue = "HEAD") ref: String
     ): ResponseEntity<List<Parameter>>
     {
-        return ResponseEntity.ok(runnerService.getParameters(packetGroupName, ref))
+        return ResponseEntity.ok(runnerService.getParameters(ref, packetGroupName))
     }
 
     @GetMapping("/packetGroups")

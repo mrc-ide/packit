@@ -26,19 +26,19 @@ object GenericClient
         RestTemplate(requestFactory)
     }
 
-    inline fun <reified T : Any> get(url: String): T
+    inline fun <reified T : Any> get(url: String, uriVariables: Map<String, Any> = emptyMap()): T
     {
         val response = restTemplate.exchange(
             url,
             HttpMethod.GET,
             HttpEntity.EMPTY,
-            object : ParameterizedTypeReference<ServerResponse<T>>()
-            {}
+            object : ParameterizedTypeReference<ServerResponse<T>>() {},
+            uriVariables
         )
         return handleResponse(response)
     }
 
-    inline fun <reified T> post(url: String, body: Any? = null): T
+    inline fun <reified T> post(url: String, body: Any? = null, uriVariables: Map<String, Any> = emptyMap()): T
     {
         log.debug("Posting to {}", url)
 
@@ -46,8 +46,8 @@ object GenericClient
             url,
             HttpMethod.POST,
             body?.let { HttpEntity(it) } ?: HttpEntity.EMPTY,
-            object : ParameterizedTypeReference<ServerResponse<T>>()
-            {}
+            object : ParameterizedTypeReference<ServerResponse<T>>() {},
+            uriVariables
         )
 
         return handleResponse(response)
