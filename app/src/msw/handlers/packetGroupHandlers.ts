@@ -1,6 +1,6 @@
 import { rest } from "msw";
 import appConfig from "../../config/appConfig";
-import { mockPacket, mockPacketGroupDtos } from "../../tests/mocks";
+import { mockPacket, mockPacketGroupResponse, mockPacketGroupDtos } from "../../tests/mocks";
 
 const packetGroupIndexUri = `${appConfig.apiUrl()}/packetGroups`;
 
