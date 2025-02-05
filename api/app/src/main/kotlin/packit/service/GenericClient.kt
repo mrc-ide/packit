@@ -61,12 +61,44 @@ object GenericClient
         return handleResponse(response)
     }
 
-    // TODO: Refactor extractResponse back into proxyRequest, and write a separate streamFile.
-    fun <T> extractResponse(
+    fun proxyRequest(
         url: String,
         request: HttpServletRequest,
         response: HttpServletResponse,
-        copyRequestBody: Boolean,
+        copyRequestBody: Boolean
+    )
+    {
+        val method = request.method
+        log.debug("{} {}", method, url)
+        try
+        {
+            restTemplate.execute(
+                URI(url),
+                HttpMethod.valueOf(method),
+                { serverRequest: ClientHttpRequest ->
+                    request.headerNames.asIterator().forEach {
+                        serverRequest.headers.set(it, request.getHeader(it))
+                    }
+                    if (copyRequestBody) {
+                        IOUtils.copy(request.inputStream, serverRequest.body)
+                    }
+                }
+            ) { serverResponse ->
+                response.status = serverResponse.statusCode.value()
+                serverResponse.headers.map { response.setHeader(it.key, it.value.first()) }
+                IOUtils.copy(serverResponse.body, response.outputStream)
+                true
+            }
+        } catch (e: HttpStatusCodeException)
+        {
+            throw GenericClientException(e)
+        }
+    }
+
+    fun <T> streamFile(
+        url: String,
+        request: HttpServletRequest,
+        response: HttpServletResponse,
         responseExtractor: (ClientHttpResponse) -> T
     ): T
     {
@@ -80,9 +112,6 @@ object GenericClient
                     request.headerNames.asIterator().forEach {
                         serverRequest.headers.set(it, request.getHeader(it))
                     }
-                    if (copyRequestBody) {
-                        IOUtils.copy(request.inputStream, serverRequest.body)
-                    }
                 }
             ) { serverResponse ->
                 if (serverResponse.statusCode.is5xxServerError) {
@@ -90,26 +119,12 @@ object GenericClient
                 } else if (serverResponse.statusCode.is4xxClientError) {
                     throw HttpClientErrorException(serverResponse.statusCode)
                 }
+                response.status = serverResponse.statusCode.value()
                 responseExtractor(serverResponse)
             } ?: throw PackitException("Empty response body", HttpStatus.INTERNAL_SERVER_ERROR)
         } catch (e: HttpStatusCodeException)
         {
             throw GenericClientException(e)
-        }
-    }
-
-    fun proxyRequest2(
-        url: String,
-        request: HttpServletRequest,
-        response: HttpServletResponse,
-        copyRequestBody: Boolean
-    )
-    {
-        extractResponse(url, request, response, copyRequestBody) { serverResponse ->
-            response.status = serverResponse.statusCode.value()
-            serverResponse.headers.map { response.setHeader(it.key, it.value.first()) }
-            // copy "all the data from one stream to another": (inputstream, outputstream)
-            IOUtils.copy(serverResponse.body, response.outputStream)
         }
     }
 

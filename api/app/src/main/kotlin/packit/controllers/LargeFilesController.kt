@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RestController
 import packit.AppConfig
 import packit.service.GenericClient
 import java.io.IOException
-import java.net.URL
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
@@ -35,16 +34,13 @@ class LargeFilesController(
     @GetMapping("/download-large-files")
     @Throws(IOException::class)
     fun downloadAndZipLargeFiles(request: HttpServletRequest, response: HttpServletResponse) {
-        // NB the 500mb file comes back as zip by default so we can't tell if we are zipping it
-        val largeFileLink1 = "https://link.testfile.org/PDF200MB"
-        val largeFileLink2 = config.outpackServerUrl + "/file/sha256:1c04a8f0157f267002f1e5a8cda59c17b26bd3097eb7467da970f7c288299d2b"
+        val largeFileLink = config.outpackServerUrl + "/file/sha256:1c04a8f0157f267002f1e5a8cda59c17b26bd3097eb7467da970f7c288299d2b"
 
-            // files can't be the same - causes java.util.zip.ZipException: duplicate entry: PDF200MB
-            // but that could be a useful case for us to test our error handling!
+        // files can't be the same - causes "java.util.zip.ZipException: duplicate entry"
+        // ^ could be useful for testing our error handling.
 
         val allFilesToDownload: List<String> = java.util.List.of(
-            largeFileLink1,
-            largeFileLink2
+            largeFileLink
         )
 
         response.contentType = "application/zip"
@@ -52,7 +48,7 @@ class LargeFilesController(
 
         ZipOutputStream(response.outputStream).use { zipOut ->
             for (fileLink in allFilesToDownload) {
-                GenericClient.extractResponse(fileLink, request, response, false) { serverResponse ->
+                GenericClient.streamFile(fileLink, request, response) { serverResponse ->
                     serverResponse.body.use { inputStream ->
                         val filename = fileLink.substring(fileLink.lastIndexOf("/") + 1)
                         zipOut.putNextEntry(ZipEntry(filename))
