@@ -3,6 +3,7 @@ import { InputFileType } from "../../../../../types";
 import { Artefacts } from "./Artefacts";
 import { OtherFiles } from "./OtherFiles";
 import { usePacketOutletContext } from "../../../main/PacketOutlet";
+import { DownloadAllOtherFilesButton } from "./DownloadAllOtherFilesButton";
 
 export const OrderlyDownloads = () => {
   const { packet } = usePacketOutletContext();
@@ -29,7 +30,12 @@ export const OrderlyDownloads = () => {
                 <h3>Other files</h3>
               </AccordionTrigger>
               <AccordionContent>
-                <OtherFiles inputFiles={inputFiles} />
+                <div className="flex flex-col gap-2">
+                  <span className="self-end absolute top-3 right-8">
+                    <DownloadAllOtherFilesButton />
+                  </span>
+                  <OtherFiles inputFiles={inputFiles} />
+                </div>
               </AccordionContent>
             </AccordionItem>
           </div>

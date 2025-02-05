@@ -1,5 +1,7 @@
 package packit.controllers
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.core.io.ByteArrayResource
@@ -8,6 +10,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import packit.AppConfig
+import packit.exceptions.PackitException
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
 import packit.model.dto.PacketDto
@@ -16,10 +19,10 @@ import packit.model.toDto
 import packit.service.GenericClient
 import packit.service.PacketGroupService
 import packit.service.PacketService
-import java.io.IOException
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
+typealias HashesByFilename = Map<String, String>
 
 @RestController
 @RequestMapping("/packets")
@@ -215,26 +218,39 @@ class PacketController(
 // Trying to adapt a blog post: https://woroniecki.pl/efficient-rest-endpoint-in-spring-boot-for-streaming-multiple-files-to-an-instant-zip-download/
 
 
-    @GetMapping("/download-large-files")
+    @GetMapping("/{id}/zip")
     // TODO: authorization
-    fun downloadAndZipLargeFiles(request: HttpServletRequest, response: HttpServletResponse) {
-        val largeFileLink = config.outpackServerUrl + "/file/sha256:1c04a8f0157f267002f1e5a8cda59c17b26bd3097eb7467da970f7c288299d2b"
+    fun downloadAndZipLargeFiles(
+        @PathVariable id: String,
+        @RequestParam requestParams: Map<String, String>,
+        request: HttpServletRequest,
+        response: HttpServletResponse
+    ) {
+        println(requestParams)
+        val hashesByFilename: Map<String, String> = jacksonObjectMapper().readValue(requestParams["hashesByFilename"] ?: "{}")
+
+        println("hashesByFilename")
+        println(hashesByFilename)
+        hashesByFilename.forEach { (filename, hash) ->
+            println("filename: $filename, hash: $hash")
+        }
+
+        val fileHashesFromMetadata = packetService.getMetadataBy(id).files?.map { it.hash } ?: emptyList()
+        if (hashesByFilename.values.any { it !in fileHashesFromMetadata }) {
+            throw PackitException("fileHashNotFound")
+        }
 
         // files can't be the same - causes "java.util.zip.ZipException: duplicate entry"
         // ^ could be useful for testing our error handling.
-
-        val allFilesToDownload: List<String> = java.util.List.of(
-            largeFileLink
-        )
 
         response.contentType = "application/zip"
         response.setHeader("Content-Disposition", "attachment; filename=large-files.zip")
 
         ZipOutputStream(response.outputStream).use { zipOut ->
-            for (fileLink in allFilesToDownload) {
+            hashesByFilename.forEach { (filename, hash) ->
+                val fileLink = config.outpackServerUrl + "/file/$hash"
                 GenericClient.streamFile(fileLink, request, response) { serverResponse ->
                     serverResponse.body.use { inputStream ->
-                        val filename = fileLink.substring(fileLink.lastIndexOf("/") + 1)
                         zipOut.putNextEntry(ZipEntry(filename))
 
                         val buffer = ByteArray(1024)

@@ -11,19 +11,32 @@ interface DownloadButtonProps {
 
 export const DownloadButton = ({ file, packetId }: DownloadButtonProps) => {
   const [error, setError] = useState("");
+  const [downloading, setDownloading] = useState(false);
+
+  // TODO: cope with very large files! currently we see
+  //  java.lang.OutOfMemoryError: Java heap space (when limiting heap space)
 
   const downloadFile = (file: FileMetadata) => {
+    setDownloading(true);
     const url = getFileUrl(file, packetId);
     download(url, file.path)
       .then(() => setError(""))
       .catch((e) => {
         setError(e.message);
+      })
+      .finally(() => {
+        setDownloading(false);
       });
   };
 
   return (
     <div className="flex flex-col items-end">
-      <Button onClick={() => downloadFile(file)} variant="link" className="text-blue-500 py-0 pt-0">
+      <Button
+        onClick={() => downloadFile(file)}
+        variant="link"
+        className="text-blue-500 py-0 pt-0"
+        disabled={downloading}
+      >
         <span className="px-1">
           <FileDown />
         </span>

@@ -5,8 +5,18 @@ import { FileMetadata } from "../types";
 export const getFileUrl = (file: FileMetadata, packetId: string, inline = false) =>
   `${appConfig.apiUrl()}/packets/file/${packetId}?hash=${file.hash}&filename=${file.path}&inline=${inline}`;
 
-export const baseZipUrl = (packetName: string, packetId: string) =>
-  `${appConfig.apiUrl()}/packets/${packetName}/${packetId}/zip`;
+export const getZipUrl = (packetId: string, files: FileMetadata[]) => {
+  const hashesByFilename = files.reduce(
+    (acc, file) => {
+      acc[file.path] = file.hash;
+      return acc;
+    },
+    {} as Record<string, string>
+  );
+  return `${appConfig.apiUrl()}/packets/${packetId}/zip?hashesByFilename=${encodeURIComponent(
+    JSON.stringify(hashesByFilename)
+  )}`;
+};
 
 export const getFileObjectUrl = async (url: string, filename: string) => {
   const headers = getAuthHeader();

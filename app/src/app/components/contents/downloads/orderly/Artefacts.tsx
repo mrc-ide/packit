@@ -19,9 +19,11 @@ export const Artefacts = ({ artefacts }: ArtefactsProps) => {
 
   return (
     <>
-      <span className="self-end absolute top-3 right-8">
-        <DownloadAllArtefactsButton />
-      </span>
+      {artefacts.length > 1 && (
+        <span className="self-end absolute top-3 right-8">
+          <DownloadAllArtefactsButton />
+        </span>
+      )}
       <ul className="space-y-2">
         {artefacts.map((artefact, key) => {
           const files = filesForArtefact(artefact);
