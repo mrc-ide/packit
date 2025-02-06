@@ -14,7 +14,9 @@ import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate
 import packit.exceptions.PackitException
 import packit.model.ServerResponse
+import java.io.OutputStream
 import java.net.URI
+import java.util.zip.ZipOutputStream
 
 object GenericClient
 {
@@ -59,7 +61,7 @@ object GenericClient
         request: HttpServletRequest,
         response: HttpServletResponse,
         copyRequestBody: Boolean,
-        responseExtractor: ((ClientHttpResponse) -> Boolean)? = null
+        outputStream: OutputStream? = response.outputStream,
     )
     {
         val method = request.method
@@ -74,18 +76,18 @@ object GenericClient
                         serverRequest.headers.set(it, request.getHeader(it))
                     }
                     if (copyRequestBody) {
-                        IOUtils.copy(request.inputStream, serverRequest.body)
+                        IOUtils.copyLarge(request.inputStream, serverRequest.body)
                     }
                 }
             ) { serverResponse ->
                 response.status = serverResponse.statusCode.value()
-                if (responseExtractor == null) {
+                if (outputStream !is ZipOutputStream) {
                     serverResponse.headers.map { response.setHeader(it.key, it.value.first()) }
-                    IOUtils.copy(serverResponse.body, response.outputStream)
-                    true
-                } else {
-                    responseExtractor(serverResponse)
                 }
+                serverResponse.body.use { inputStream ->
+                    IOUtils.copyLarge(inputStream, outputStream)
+                }
+                true
             }
         } catch (e: HttpStatusCodeException)
         {

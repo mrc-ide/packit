@@ -2,13 +2,13 @@ package packit.service
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.apache.commons.io.IOUtils
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Service
 import packit.AppConfig
 import packit.model.PacketMetadata
 import packit.model.dto.GitBranches
 import packit.model.dto.OutpackMetadata
-import packit.service.utils.streamInputToOutput
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
@@ -26,7 +26,7 @@ interface OutpackServer
     fun getChecksum(): String
     fun gitFetch()
     fun getBranches(): GitBranches
-    fun addFileToZip(filename: String, hash: String, zipOutputStream: ZipOutputStream, request: HttpServletRequest, response: HttpServletResponse)
+    fun addFileToZip(hashToFilename: Map.Entry<String, String>, zipOutputStream: ZipOutputStream, request: HttpServletRequest, response: HttpServletResponse)
 }
 
 @Service
@@ -80,21 +80,17 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
     }
 
     override fun addFileToZip(
-        filename: String,
-        hash: String,
+        hashToFilename: Map.Entry<String, String>,
         zipOutputStream: ZipOutputStream,
         request: HttpServletRequest,
         response: HttpServletResponse
     ) {
+        val hash = hashToFilename.key
+        val filename = hashToFilename.value
         val url = constructUrl("/file/$hash")
-        GenericClient.proxyRequest(url, request, response, false) { serverResponse ->
-            serverResponse.body.use { inputStream ->
-                zipOutputStream.putNextEntry(ZipEntry(filename))
-                streamInputToOutput(inputStream, zipOutputStream)
-            }
-            zipOutputStream.closeEntry()
-            true
-        }
+        zipOutputStream.putNextEntry(ZipEntry(filename))
+        GenericClient.proxyRequest(url, request, response, copyRequestBody = false, zipOutputStream)
+        zipOutputStream.closeEntry()
     }
 
     private fun constructUrl(urlFragment: String): String

@@ -22,7 +22,7 @@ import packit.service.PacketService
 @RequestMapping("/packets")
 class PacketController(
     private val packetService: PacketService,
-    private val packetGroupService: PacketGroupService,
+    private val packetGroupService: PacketGroupService
 )
 {
     @GetMapping

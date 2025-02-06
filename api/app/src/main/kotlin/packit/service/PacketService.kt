@@ -121,17 +121,17 @@ class BasePacketService(
     }
 
     override fun streamZip(hashes: List<String>, id: String, request: HttpServletRequest, response: HttpServletResponse) {
-        val hashesByFilename = getMetadataBy(id).files
+        val hashesByPath = getMetadataBy(id).files
             ?.filter { it.hash in hashes }
             ?.associateBy({ it.path }, { it.hash })
 
-        if (hashesByFilename == null || hashesByFilename.size != hashes.size) {
+        if (hashesByPath == null || hashesByPath.size != hashes.size) {
             throw PackitException("Not all hashes found for packet $id")
         }
 
         ZipOutputStream(response.outputStream).use { zipOutputStream ->
-            hashesByFilename.forEach { (filename, hash) ->
-                outpackServerClient.addFileToZip(filename, hash, zipOutputStream, request, response)
+            hashesByPath.forEach { hashToPath ->
+                outpackServerClient.addFileToZip(hashToPath, zipOutputStream, request, response)
             }
         }
     }
