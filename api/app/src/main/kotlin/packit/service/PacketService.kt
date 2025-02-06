@@ -1,5 +1,7 @@
 package packit.service
 
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Sort
@@ -19,6 +21,7 @@ import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
 import java.security.MessageDigest
 import java.time.Instant
+import java.util.zip.ZipOutputStream
 
 interface PacketService
 {
@@ -31,7 +34,7 @@ interface PacketService
     fun getPacketsByName(
         name: String
     ): List<Packet>
-
+    fun streamZip(hashes: List<String>, id: String, request: HttpServletRequest, response: HttpServletResponse)
     fun getPacket(id: String): Packet
 }
 
@@ -115,6 +118,22 @@ class BasePacketService(
     private fun ByteArray.toHex(): String
     {
         return this.joinToString("") { "%02x".format(it) }
+    }
+
+    override fun streamZip(hashes: List<String>, id: String, request: HttpServletRequest, response: HttpServletResponse) {
+        val hashesByFilename = getMetadataBy(id).files
+            ?.filter { it.hash in hashes }
+            ?.associateBy({ it.path }, { it.hash })
+
+        if (hashesByFilename == null || hashesByFilename.size != hashes.size) {
+            throw PackitException("Not all hashes found for packet $id")
+        }
+
+        ZipOutputStream(response.outputStream).use { zipOutputStream ->
+            hashesByFilename.forEach { (filename, hash) ->
+                outpackServerClient.addFileToZip(filename, hash, zipOutputStream, request, response)
+            }
+        }
     }
 
     override fun getMetadataBy(id: String): PacketMetadata

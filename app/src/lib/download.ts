@@ -6,16 +6,8 @@ export const getFileUrl = (file: FileMetadata, packetId: string, inline = false)
   `${appConfig.apiUrl()}/packets/file/${packetId}?hash=${file.hash}&filename=${file.path}&inline=${inline}`;
 
 export const getZipUrl = (packetId: string, files: FileMetadata[]) => {
-  const hashesByFilename = files.reduce(
-    (acc, file) => {
-      acc[file.path] = file.hash;
-      return acc;
-    },
-    {} as Record<string, string>
-  );
-  return `${appConfig.apiUrl()}/packets/${packetId}/zip?hashesByFilename=${encodeURIComponent(
-    JSON.stringify(hashesByFilename)
-  )}`;
+  const hashes = files.map((file) => file.hash);
+  return `${appConfig.apiUrl()}/packets/${packetId}/zip?hashes=${hashes.join(",")}`;
 };
 
 export const getFileObjectUrl = async (url: string, filename: string) => {

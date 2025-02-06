@@ -10,18 +10,13 @@ import org.springframework.http.*
 import org.springframework.http.client.ClientHttpRequest
 import org.springframework.http.client.ClientHttpResponse
 import org.springframework.http.client.SimpleClientHttpRequestFactory
-import org.springframework.util.StreamUtils
-import org.springframework.web.client.HttpClientErrorException
-import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.client.HttpStatusCodeException
-import org.springframework.web.client.ResponseExtractor
 import org.springframework.web.client.RestTemplate
 import packit.exceptions.PackitException
 import packit.model.ServerResponse
-import java.io.OutputStream
 import java.net.URI
-import org.springframework.web.reactive.function.client.WebClient
-import java.io.InputStream
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 object GenericClient
 {
@@ -65,7 +60,8 @@ object GenericClient
         url: String,
         request: HttpServletRequest,
         response: HttpServletResponse,
-        copyRequestBody: Boolean
+        copyRequestBody: Boolean,
+        responseExtractor: ((ClientHttpResponse) -> Boolean)? = null
     )
     {
         val method = request.method
@@ -85,43 +81,14 @@ object GenericClient
                 }
             ) { serverResponse ->
                 response.status = serverResponse.statusCode.value()
-                serverResponse.headers.map { response.setHeader(it.key, it.value.first()) }
-                IOUtils.copy(serverResponse.body, response.outputStream)
-                true
+                if (responseExtractor == null) {
+                    serverResponse.headers.map { response.setHeader(it.key, it.value.first()) }
+                    IOUtils.copy(serverResponse.body, response.outputStream)
+                    true
+                } else {
+                    responseExtractor(serverResponse)
+                }
             }
-        } catch (e: HttpStatusCodeException)
-        {
-            throw GenericClientException(e)
-        }
-    }
-
-    fun <T> streamFile(
-        url: String,
-        request: HttpServletRequest,
-        response: HttpServletResponse,
-        responseExtractor: (ClientHttpResponse) -> T
-    ): T
-    {
-        log.debug("{} {}", request.method, url)
-        try
-        {
-            return restTemplate.execute(
-                URI(url),
-                HttpMethod.valueOf(request.method),
-                { serverRequest: ClientHttpRequest ->
-                    request.headerNames.asIterator().forEach {
-                        serverRequest.headers.set(it, request.getHeader(it))
-                    }
-                }
-            ) { serverResponse ->
-                if (serverResponse.statusCode.is5xxServerError) {
-                    throw HttpServerErrorException(serverResponse.statusCode)
-                } else if (serverResponse.statusCode.is4xxClientError) {
-                    throw HttpClientErrorException(serverResponse.statusCode)
-                }
-                response.status = serverResponse.statusCode.value()
-                responseExtractor(serverResponse)
-            } ?: throw PackitException("Empty response body", HttpStatus.INTERNAL_SERVER_ERROR)
         } catch (e: HttpStatusCodeException)
         {
             throw GenericClientException(e)
@@ -153,6 +120,25 @@ object GenericClient
         return handleFileResponse(response)
     }
 
+    fun zipResponseToOutputStream(
+        serverResponse: ClientHttpResponse,
+        zipOutputStream: ZipOutputStream,
+        filename: String
+    ): Boolean {
+        serverResponse.body.use { inputStream ->
+            zipOutputStream.putNextEntry(ZipEntry(filename))
+
+            val buffer = ByteArray(1024)
+            var len: Int
+            // The read method returns -1 to indicate the end of the stream
+            while ((inputStream.read(buffer).also { len = it }) > 0) {
+                zipOutputStream.write(buffer, 0, len)
+            }
+        }
+        zipOutputStream.closeEntry()
+        return true
+    }
+
     private fun handleFileResponse(response: ResponseEntity<ByteArray>): Pair<ByteArray, HttpHeaders>
     {
         if (response.statusCode.isError)
@@ -161,35 +147,6 @@ object GenericClient
         }
         return response.body!! to response.headers
     }
-
-//    fun streamFile(url: String, outputStream: OutputStream) {
-//        log.debug("Streaming {}", url)
-//
-//        try {
-//            restTemplate.execute(
-//                url,
-//                HttpMethod.GET,
-//                null,
-//                { clientHttpResponse ->
-//                    IOUtils.copy(clientHttpResponse.body, outputStream)
-//                    true
-//                }
-//            )
-//        } catch (e: HttpStatusCodeException) {
-//            throw GenericClientException(e)
-//        }
-//
-//        // TODO: Remember about closing streams.
-//        // TODO: Could the below be preferable to IOUtils.copy?
-////        StreamUtils.copy(inputStream, outputStream) - as used by https://stackoverflow.com/a/56569356
-//
-//        // TODO: can we use this little library? https://github.com/ItamarBenjamin/stream-rest-template linked from above stackoverflow thread
-//
-//        // TODO: consider resttemplate's author said not to use it for streaming, but use 'WebClient' instead:
-//        // https://github.com/spring-projects/spring-framework/issues/21424#issuecomment-453472592
-//
-//    }
-
 }
 
 class GenericClientException(e: HttpStatusCodeException) : Exception(e)
