@@ -8,6 +8,8 @@ import packit.AppConfig
 import packit.model.PacketMetadata
 import packit.model.dto.GitBranches
 import packit.model.dto.OutpackMetadata
+import packit.service.utils.streamInputToOutput
+import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 interface OutpackServer
@@ -86,7 +88,12 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
     ) {
         val url = constructUrl("/file/$hash")
         GenericClient.proxyRequest(url, request, response, false) { serverResponse ->
-            GenericClient.zipResponseToOutputStream(serverResponse, zipOutputStream, filename)
+            serverResponse.body.use { inputStream ->
+                zipOutputStream.putNextEntry(ZipEntry(filename))
+                streamInputToOutput(inputStream, zipOutputStream)
+            }
+            zipOutputStream.closeEntry()
+            true
         }
     }
 

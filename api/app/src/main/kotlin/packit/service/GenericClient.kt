@@ -15,8 +15,6 @@ import org.springframework.web.client.RestTemplate
 import packit.exceptions.PackitException
 import packit.model.ServerResponse
 import java.net.URI
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
 
 object GenericClient
 {
@@ -118,25 +116,6 @@ object GenericClient
             ByteArray::class.java
         )
         return handleFileResponse(response)
-    }
-
-    fun zipResponseToOutputStream(
-        serverResponse: ClientHttpResponse,
-        zipOutputStream: ZipOutputStream,
-        filename: String
-    ): Boolean {
-        serverResponse.body.use { inputStream ->
-            zipOutputStream.putNextEntry(ZipEntry(filename))
-
-            val buffer = ByteArray(1024)
-            var len: Int
-            // The read method returns -1 to indicate the end of the stream
-            while ((inputStream.read(buffer).also { len = it }) > 0) {
-                zipOutputStream.write(buffer, 0, len)
-            }
-        }
-        zipOutputStream.closeEntry()
-        return true
     }
 
     private fun handleFileResponse(response: ResponseEntity<ByteArray>): Pair<ByteArray, HttpHeaders>
