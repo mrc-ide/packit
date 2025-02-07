@@ -91,7 +91,6 @@ class PacketController(
     fun streamZip(
         @PathVariable id: String,
         @RequestParam paths: List<String>,
-        request: HttpServletRequest,
         response: HttpServletResponse
     ) {
         // files can't be the same - causes "java.util.zip.ZipException: duplicate entry"
@@ -100,6 +99,6 @@ class PacketController(
         response.contentType = "application/zip"
         response.setHeader("Content-Disposition", "attachment; filename=$id.zip")
 
-        packetService.streamZip(paths, id, request, response)
+        packetService.streamZip(paths, id, response.outputStream)
     }
 }

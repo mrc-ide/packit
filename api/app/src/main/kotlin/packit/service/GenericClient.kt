@@ -80,11 +80,24 @@ object GenericClient
                 }
             ) { serverResponse ->
                 response.status = serverResponse.statusCode.value()
-                if (outputStream !is ZipOutputStream) {
-                    serverResponse.headers.map { response.setHeader(it.key, it.value.first()) }
-                }
+
                 serverResponse.body.use { inputStream ->
                     IOUtils.copy(inputStream, outputStream)
+                }
+                true
+            }
+        } catch (e: HttpStatusCodeException)
+        {
+            throw GenericClientException(e)
+        }
+    }
+
+    fun streamingGet(url: String, output: OutputStream) {
+        try
+        {
+            restTemplate.execute(URI(url), HttpMethod.GET, {}) { serverResponse ->
+                serverResponse.body.use { input ->
+                    IOUtils.copy(input, output)
                 }
                 true
             }

@@ -24,10 +24,10 @@ interface OutpackServer
         copyRequestBody: Boolean
     )
     fun getChecksum(): String
-    fun streamFile(hash: String, outputStream: OutputStream, request: HttpServletRequest, response: HttpServletResponse)
+    fun streamFile(hash: String, outputStream: OutputStream)
     fun gitFetch()
     fun getBranches(): GitBranches
-    fun addFileToZip(filenameToHash: Map.Entry<String, String>, zipOutputStream: ZipOutputStream, request: HttpServletRequest, response: HttpServletResponse)
+    fun addFileToZip(filenameToHash: Map.Entry<String, String>, zipOutputStream: ZipOutputStream)
 }
 
 @Service
@@ -82,25 +82,21 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
 
     override fun addFileToZip(
         filenameToHash: Map.Entry<String, String>,
-        zipOutputStream: ZipOutputStream,
-        request: HttpServletRequest,
-        response: HttpServletResponse
+        zipOutputStream: ZipOutputStream
     ) {
         val (filename, hash) = filenameToHash
         val url = constructUrl("file/$hash")
         zipOutputStream.putNextEntry(ZipEntry(filename))
-        GenericClient.proxyRequest(url, request, response, copyRequestBody = false, zipOutputStream)
+        GenericClient.streamingGet(url, zipOutputStream)
         zipOutputStream.closeEntry()
     }
 
     override fun streamFile(
         hash: String,
         outputStream: OutputStream,
-        request: HttpServletRequest,
-        response: HttpServletResponse
     ) {
         val url = constructUrl("file/$hash")
-        GenericClient.proxyRequest(url, request, response, copyRequestBody = false, outputStream)
+        GenericClient.streamingGet(url, outputStream)
     }
 
     private fun constructUrl(urlFragment: String): String

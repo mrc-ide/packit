@@ -19,6 +19,7 @@ import packit.model.PacketMetadata
 import packit.model.PageablePayload
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
+import java.io.OutputStream
 import java.security.MessageDigest
 import java.time.Instant
 import java.util.zip.ZipOutputStream
@@ -34,7 +35,7 @@ interface PacketService
     fun getPacketsByName(
         name: String
     ): List<Packet>
-    fun streamZip(paths: List<String>, id: String, request: HttpServletRequest, response: HttpServletResponse)
+    fun streamZip(paths: List<String>, id: String, output: OutputStream)
     fun getPacket(id: String): Packet
 }
 
@@ -120,7 +121,7 @@ class BasePacketService(
         return this.joinToString("") { "%02x".format(it) }
     }
 
-    override fun streamZip(paths: List<String>, id: String, request: HttpServletRequest, response: HttpServletResponse) {
+    override fun streamZip(paths: List<String>, id: String, output: OutputStream) {
         val hashesByPath = getMetadataBy(id).files
             ?.filter { it.path in paths }
             ?.associateBy({ it.path }, { it.hash })
@@ -129,9 +130,9 @@ class BasePacketService(
             throw PackitException("Not all hashes found for packet $id")
         }
 
-        ZipOutputStream(response.outputStream).use { zipOutputStream ->
+        ZipOutputStream(output).use { zipOutputStream ->
             hashesByPath.forEach { pathToHash ->
-                outpackServerClient.addFileToZip(pathToHash, zipOutputStream, request, response)
+                outpackServerClient.addFileToZip(pathToHash, zipOutputStream)
             }
         }
     }
