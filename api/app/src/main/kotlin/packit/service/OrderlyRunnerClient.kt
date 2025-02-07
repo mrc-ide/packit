@@ -1,50 +1,76 @@
 package packit.service
 
-import org.springframework.stereotype.Service
-import packit.AppConfig
+import packit.model.dto.GitBranches
 import packit.model.dto.OrderlyRunnerVersion
 import packit.model.dto.Parameter
+import packit.model.dto.RepositoryFetch
 import packit.model.dto.RunnerPacketGroup
-import packit.model.dto.SubmitRunInfo
+import packit.model.dto.RunnerSubmitRunInfo
 import packit.model.dto.SubmitRunResponse
 import packit.model.dto.TaskStatus
 
 interface OrderlyRunner
 {
     fun getVersion(): OrderlyRunnerVersion
-    fun getParameters(packetGroupName: String, ref: String): List<Parameter>
-    fun getPacketGroups(ref: String): List<RunnerPacketGroup>
-    fun submitRun(info: SubmitRunInfo): SubmitRunResponse
+    fun gitFetch(url: String)
+    fun getBranches(url: String): GitBranches
+    fun getParameters(url: String, ref: String, packetGroupName: String): List<Parameter>
+    fun getPacketGroups(url: String, ref: String): List<RunnerPacketGroup>
+    fun submitRun(info: RunnerSubmitRunInfo): SubmitRunResponse
     fun getTaskStatuses(taskIds: List<String>, includeLogs: Boolean): List<TaskStatus>
 }
 
-@Service
-class OrderlyRunnerClient(appConfig: AppConfig) : OrderlyRunner
+class OrderlyRunnerClient(val baseUrl: String) : OrderlyRunner
 {
-    val baseUrl: String = appConfig.orderlyRunnerUrl
     override fun getVersion(): OrderlyRunnerVersion
     {
         return GenericClient.get(constructUrl("/"))
     }
 
-    override fun getParameters(packetGroupName: String, ref: String): List<Parameter>
+    override fun gitFetch(url: String)
     {
-        return GenericClient.get(constructUrl("/report/$packetGroupName/parameters?ref=$ref"))
+        return GenericClient.post(
+            constructUrl("repository/fetch"),
+            RepositoryFetch(url = url)
+        )
     }
 
-    override fun getPacketGroups(ref: String): List<RunnerPacketGroup>
+    override fun getBranches(url: String): GitBranches
     {
-        return GenericClient.get(constructUrl("/report/list?ref=$ref"))
+        return GenericClient.get(
+            constructUrl("repository/branches?url={url}"),
+            mapOf("url" to url)
+        )
     }
 
-    override fun submitRun(info: SubmitRunInfo): SubmitRunResponse
+    override fun getPacketGroups(url: String, ref: String): List<RunnerPacketGroup>
+    {
+        return GenericClient.get(
+            constructUrl("/report/list?url={url}&ref={ref}"),
+            mapOf("url" to url, "ref" to ref)
+        )
+    }
+
+    override fun getParameters(url: String, ref: String, packetGroupName: String): List<Parameter>
+    {
+        return GenericClient.get(
+            constructUrl("report/parameters?url={url}&ref={ref}&name={name}"),
+            mapOf("url" to url, "ref" to ref, "name" to packetGroupName)
+        )
+    }
+
+    override fun submitRun(info: RunnerSubmitRunInfo): SubmitRunResponse
     {
         return GenericClient.post(constructUrl("/report/run"), info)
     }
 
     override fun getTaskStatuses(taskIds: List<String>, includeLogs: Boolean): List<TaskStatus>
     {
-        return GenericClient.post(constructUrl("/report/status?include_logs=$includeLogs"), taskIds)
+        return GenericClient.post(
+            constructUrl("/report/status?include_logs={includeLogs}"),
+            taskIds,
+            mapOf("includeLogs" to includeLogs)
+        )
     }
 
     private fun constructUrl(urlFragment: String): String

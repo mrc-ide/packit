@@ -13,5 +13,5 @@ data class GitBranchInfo(
     @JsonAlias("commit_hash")
     val commitHash: String,
     val time: Long,
-    val message: List<String>
+    val message: String
 )

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -eu
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -22,7 +22,15 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-psql -U packituser -d packit -c \
-"INSERT INTO \"user\" (\"id\", \"username\", \"display_name\", \"password\", \"email\", \"disabled\", \"user_source\", \"last_logged_in\") 
-VALUES ('$ADMIN_UUID', '$ADMIN_EMAIL', 'Super Admin', '$ADMIN_PASSWORD_ENCODED', '$ADMIN_EMAIL', FALSE, 'basic', NOW());
-INSERT INTO \"user_role\" (\"user_id\", \"role_id\") values ('$ADMIN_UUID', 1)"
+psql -U packituser -d packit \
+    --single-transaction \
+    -v ON_ERROR_STOP=on \
+    -v "uuid=$ADMIN_UUID" \
+    -v "email=$ADMIN_EMAIL" \
+    -v "password=$ADMIN_PASSWORD_ENCODED" <<EOF
+INSERT INTO "user" (id, username, display_name, password, email, disabled, user_source, last_logged_in)
+VALUES (:'uuid', :'email', 'Super Admin', :'password', :'email', FALSE, 'basic', NOW());
+
+INSERT INTO "user_role" (user_id, role_id)
+SELECT :'uuid', role.id FROM role WHERE role.name = 'ADMIN';
+EOF

@@ -3,8 +3,9 @@ package packit.unit.security
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.mockito.kotlin.*
-import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations
-import org.springframework.security.core.Authentication
+import org.springframework.security.access.expression.SecurityExpressionOperations
+import org.springframework.security.access.expression.SecurityExpressionRoot
+import org.springframework.security.authentication.TestingAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import packit.model.Packet
 import packit.security.AuthorizationLogic
@@ -14,7 +15,6 @@ import kotlin.test.Test
 
 class AuthorizationLogicTest
 {
-    private var packetService = mock<PacketService>()
     private val now = Instant.now().epochSecond.toDouble()
     private val packet = Packet(
         "20180203-120000-abdefg56",
@@ -26,104 +26,82 @@ class AuthorizationLogicTest
         now,
         now
     )
-    private val mockAuthentication = mock<Authentication>()
-    private val mockOperations = mock<MethodSecurityExpressionOperations> {
-        on { authentication } doReturn mockAuthentication
+
+    private var packetService = mock<PacketService>() {
+        on { getPacket(packet.id) } doReturn packet
+    }
+
+    private val sut = AuthorizationLogic(packetService)
+
+    private fun createOps(authorities: List<String>): SecurityExpressionOperations {
+        val token = TestingAuthenticationToken("", "", authorities.map{SimpleGrantedAuthority(it)})
+        return object : SecurityExpressionRoot(token) {}
     }
 
     @Test
-    fun `canReadPacketMetadata calls packetService and returns true when hasAnyAuthority returns true`()
+    fun `canReadPacket returns true if has global authority`()
     {
-
-        whenever(packetService.getPacket(packet.id)).thenReturn(packet)
-        whenever(
-            mockOperations.hasAnyAuthority(
-                "packet.read",
-                "packet.read:packet:${packet.name}:${packet.id}",
-                "packet.read:packetGroup:${packet.name}"
-            )
-        ).thenReturn(true)
-
-        val result = AuthorizationLogic(packetService).canReadPacketMetadata(mockOperations, packet.id)
-
-        assertTrue(result)
-        verify(packetService).getPacket(packet.id)
+        val ops = createOps(listOf("packet.read"))
+        assertTrue(sut.canReadPacket(ops, packet))
+        assertTrue(sut.canReadPacket(ops, packet.id))
     }
 
     @Test
-    fun `canReadPacketMetadata  calls packetService and returns false when hasAnyAuthority returns false`()
+    fun `canReadPacket returns true if has packet authority`()
     {
-
-        whenever(packetService.getPacket(packet.id)).thenReturn(packet)
-        whenever(mockOperations.hasAnyAuthority(any())).thenReturn(false)
-
-        val result = AuthorizationLogic(packetService).canReadPacketMetadata(mockOperations, packet.id)
-
-        assertFalse(result)
-        verify(packetService).getPacket(packet.id)
+        val ops = createOps(listOf("packet.read:packet:${packet.name}:${packet.id}"))
+        assertTrue(sut.canReadPacket(ops, packet))
+        assertTrue(sut.canReadPacket(ops, packet.id))
     }
 
     @Test
-    fun `canReadPacket calls hasAnyAuthority and returns true when hasAnyAuthority returns true`()
+    fun `canReadPacket returns true if has packetGroup authority`()
     {
-
-        whenever(
-            mockOperations.hasAnyAuthority(
-                "packet.read",
-                "packet.read:packet:${packet.name}:${packet.id}",
-                "packet.read:packetGroup:${packet.name}"
-            )
-        ).thenReturn(true)
-
-        val result = AuthorizationLogic(packetService).canReadPacket(mockOperations, packet.id, packet.name)
-
-        assertTrue(result)
+        val ops = createOps(listOf("packet.read:packetGroup:${packet.name}"))
+        assertTrue(sut.canReadPacket(ops, packet))
+        assertTrue(sut.canReadPacket(ops, packet.id))
     }
 
     @Test
-    fun `canReadPacket calls hasAnyAuthority and returns false when hasAnyAuthority returns false`()
+    fun `canReadPacket returns false if has no authority`()
     {
-
-        whenever(mockOperations.hasAnyAuthority(any())).thenReturn(false)
-
-        val result = AuthorizationLogic(packetService).canReadPacket(mockOperations, packet.id, packet.name)
-
-        assertFalse(result)
+        val ops = createOps(emptyList())
+        assertFalse(sut.canReadPacket(ops, packet))
+        assertFalse(sut.canReadPacket(ops, packet.id))
     }
 
     @Test
-    fun `canReadPacketGroup calls hasAnyAuthority and returns true when hasAnyAuthority returns true`()
+    fun `canReadPacketGroup returns true if has global authority`()
     {
-
-        whenever(mockOperations.hasAnyAuthority("packet.read", "packet.read:packetGroup:${packet.name}")).thenReturn(
-            true
-        )
-
-        val result = AuthorizationLogic(packetService).canReadPacketGroup(mockOperations, packet.name)
-
-        assertTrue(result)
+        val ops = createOps(listOf("packet.read"))
+        assertTrue(sut.canReadPacketGroup(ops, packet.name))
     }
 
     @Test
-    fun `canReadPacketGroup returns true if the authentication authorities contain packet read packet name`()
+    fun `canReadPacketGroup returns true if has packet authority`()
     {
-        whenever(mockAuthentication.authorities).thenReturn(
-            listOf(SimpleGrantedAuthority("packet.read:packet:${packet.name}:${packet.id}"))
-        )
-
-        val result = AuthorizationLogic(packetService).canReadPacketGroup(mockOperations, packet.name)
-
-        assertTrue(result)
+        val ops = createOps(listOf("packet.read:packet:${packet.name}:${packet.id}"))
+        assertTrue(sut.canReadPacketGroup(ops, packet.name))
     }
 
     @Test
-    fun `canReadPacketGroup calls hasAnyAuthority and returns false when hasAnyAuthority returns false`()
+    fun `canReadPacketGroup returns true if has packetGroup authority`()
     {
+        val ops = createOps(listOf("packet.read:packetGroup:${packet.name}"))
+        assertTrue(sut.canReadPacketGroup(ops, packet.name))
+    }
 
-        whenever(mockOperations.hasAnyAuthority(any())).thenReturn(false)
+    @Test
+    fun `canReadPacketGroup returns false if has no authority`()
+    {
+        val ops = createOps(emptyList())
+        assertFalse(sut.canReadPacketGroup(ops, packet.name))
+    }
 
-        val result = AuthorizationLogic(packetService).canReadPacketGroup(mockOperations, packet.name)
-
-        assertFalse(result)
+    @Test
+    fun `canReadPacketGroup returns false if has authority for different group`()
+    {
+        val ops = createOps(emptyList())
+        assertFalse(sut.canReadPacketGroup(ops, "test2"))
     }
 }

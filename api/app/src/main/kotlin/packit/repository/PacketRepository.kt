@@ -14,9 +14,9 @@ interface PacketRepository : JpaRepository<Packet, String>
     fun findAllIds(): List<String>
     fun findTopByOrderByImportTimeDesc(): Packet?
 
-    @PostFilter("@authz.canReadPacket(#root, filterObject.id, filterObject.name)")
+    @PostFilter("@authz.canReadPacket(#root, filterObject)")
     fun findByName(name: String, sort: Sort): List<Packet>
 
-    @PostFilter("@authz.canReadPacket(#root, filterObject.id, filterObject.name)")
+    @PostFilter("@authz.canReadPacket(#root, filterObject)")
     fun findAllByNameContainingAndIdContaining(name: String, id: String, sort: Sort): List<Packet>
 }

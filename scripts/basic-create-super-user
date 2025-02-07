@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
-# Ensure already logged into vault. FOR BASIC AUTH ONLY!!!
-# ensure api has ran and tables and initial data have been created 
-ADMIN_EMAIL=$(vault read -field=superUserEmail secret/packit/basicauth)
-ADMIN_PASSWORD_ENCODED=$(vault read -field=superUserEncodedPassword secret/packit/basicauth)
-ADMIN_UUID=$(vault read -field=superAdminUUID secret/packit/basicauth)
+# This is a super user account, intended for local development / testing only.
+# The password is "password".
+# Ensure api has ran and tables and initial data have been created.
+ADMIN_EMAIL='resideUser@resideAdmin.ic.ac.uk'
+ADMIN_PASSWORD_ENCODED='$2y$10$snpZ8bgdkh2hy8lDtyHF7ejD5.K1vsMqaFteCkmBhdBQj3JTlJRM6'
+ADMIN_UUID='2754daf8-fea0-4bf4-af60-810764f24d71'
 
-docker exec packit-db create-super-user --email $ADMIN_EMAIL --password $ADMIN_PASSWORD_ENCODED --uuid $ADMIN_UUID
+docker exec packit-db create-super-user --email "$ADMIN_EMAIL" --password "$ADMIN_PASSWORD_ENCODED" --uuid "$ADMIN_UUID"

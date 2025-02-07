@@ -6,7 +6,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Service
 import packit.AppConfig
 import packit.model.PacketMetadata
-import packit.model.dto.GitBranches
 import packit.model.dto.OutpackMetadata
 import java.io.OutputStream
 
@@ -23,8 +22,6 @@ interface OutpackServer
         copyRequestBody: Boolean
     )
     fun getChecksum(): String
-    fun gitFetch()
-    fun getBranches(): GitBranches
 }
 
 @Service
@@ -60,16 +57,6 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
     override fun getChecksum(): String
     {
         return GenericClient.get(constructUrl("checksum"))
-    }
-
-    override fun gitFetch()
-    {
-        return GenericClient.post(constructUrl("git/fetch"))
-    }
-
-    override fun getBranches(): GitBranches
-    {
-        return GenericClient.get(constructUrl("git/branches"))
     }
 
     override fun getMetadata(from: Double?): List<OutpackMetadata>

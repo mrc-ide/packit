@@ -9,8 +9,8 @@ import { useGetParameters } from "../hooks/useGetParameters";
 import { packetRunFormSchema } from "./PacketRunForm";
 
 interface PacketRunParamsFieldProps {
-  packetGroupName: string;
-  branchCommit: string;
+  packetGroupName: string | undefined;
+  branchCommit: string | undefined;
   form: UseFormReturn<z.infer<typeof packetRunFormSchema>>;
 }
 export const PacketRunParamsField = ({ packetGroupName, branchCommit, form }: PacketRunParamsFieldProps) => {

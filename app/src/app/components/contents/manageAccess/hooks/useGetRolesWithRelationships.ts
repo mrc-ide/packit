@@ -6,7 +6,7 @@ import { getUsersWithRoles } from "../utils/getUsersWithRoles";
 
 export const useGetRolesWithRelationships = () => {
   const { data, isLoading, error, mutate } = useSWR<RoleWithRelationships[]>(
-    `${appConfig.apiUrl()}/role`,
+    `${appConfig.apiUrl()}/roles`,
     (url: string) => fetcher({ url })
   );
   const nonUsernameRoles = data ? data.filter((role) => !role.isUsername) : [];

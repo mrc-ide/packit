@@ -31,7 +31,6 @@ class AppConfig(private val environment: Environment)
     }
 
     val outpackServerUrl: String = requiredEnvValue("outpack.server.url")
-    val orderlyRunnerUrl: String = requiredEnvValue("orderly.runner.url")
     val dbUrl: String = requiredEnvValue("db.url")
     val dbUser: String = requiredEnvValue("db.user")
     val dbPassword: String = requiredEnvValue("db.password")

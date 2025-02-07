@@ -4,11 +4,11 @@ data class PacketMetadata(
     val id: String,
     val name: String,
     val parameters: Map<String, Any>?,
-    val files: List<FileMetadata>?,
+    val files: List<FileMetadata>,
     val git: GitMetadata?,
     val time: TimeMetadata,
     val custom: CustomMetadata,
-    val depends: List<DependsMetadata>?
+    val depends: List<DependsMetadata>
 )
 
 typealias CustomMetadata = Map<String, Any>?
