@@ -1,15 +1,17 @@
 package packit.controllers
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.web.bind.annotation.*
-import packit.exceptions.PackitException
+import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.RequestMapping
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
 import packit.model.dto.PacketDto
@@ -22,7 +24,7 @@ import packit.service.PacketService
 @RequestMapping("/packets")
 class PacketController(
     private val packetService: PacketService,
-    private val packetGroupService: PacketGroupService
+    private val packetGroupService: PacketGroupService,
 )
 {
     @GetMapping
@@ -88,7 +90,7 @@ class PacketController(
     // TODO: Verify differential authorization for artefacts vs non-artefact files
     fun streamZip(
         @PathVariable id: String,
-        @RequestParam hashes: List<String>,
+        @RequestParam paths: List<String>,
         request: HttpServletRequest,
         response: HttpServletResponse
     ) {
@@ -98,6 +100,6 @@ class PacketController(
         response.contentType = "application/zip"
         response.setHeader("Content-Disposition", "attachment; filename=$id.zip")
 
-        packetService.streamZip(hashes, id, request, response)
+        packetService.streamZip(paths, id, request, response)
     }
 }

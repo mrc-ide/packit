@@ -34,7 +34,7 @@ interface PacketService
     fun getPacketsByName(
         name: String
     ): List<Packet>
-    fun streamZip(hashes: List<String>, id: String, request: HttpServletRequest, response: HttpServletResponse)
+    fun streamZip(paths: List<String>, id: String, request: HttpServletRequest, response: HttpServletResponse)
     fun getPacket(id: String): Packet
 }
 
@@ -120,12 +120,12 @@ class BasePacketService(
         return this.joinToString("") { "%02x".format(it) }
     }
 
-    override fun streamZip(hashes: List<String>, id: String, request: HttpServletRequest, response: HttpServletResponse) {
+    override fun streamZip(paths: List<String>, id: String, request: HttpServletRequest, response: HttpServletResponse) {
         val hashesByPath = getMetadataBy(id).files
-            ?.filter { it.hash in hashes }
+            ?.filter { it.path in paths }
             ?.associateBy({ it.path }, { it.hash })
 
-        if (hashesByPath == null || hashesByPath.size != hashes.size) {
+        if (hashesByPath == null || hashesByPath.size != paths.size) {
             throw PackitException("Not all hashes found for packet $id")
         }
 

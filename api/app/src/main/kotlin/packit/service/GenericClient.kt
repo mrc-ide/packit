@@ -2,13 +2,12 @@ package packit.service
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.apache.tomcat.util.http.fileupload.IOUtils
+import org.apache.commons.io.IOUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.*
 import org.springframework.http.client.ClientHttpRequest
-import org.springframework.http.client.ClientHttpResponse
 import org.springframework.http.client.SimpleClientHttpRequestFactory
 import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate

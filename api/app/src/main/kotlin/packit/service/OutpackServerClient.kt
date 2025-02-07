@@ -2,13 +2,13 @@ package packit.service
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.apache.commons.io.IOUtils
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Service
 import packit.AppConfig
 import packit.model.PacketMetadata
 import packit.model.dto.GitBranches
 import packit.model.dto.OutpackMetadata
+import java.io.OutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
@@ -24,6 +24,7 @@ interface OutpackServer
         copyRequestBody: Boolean
     )
     fun getChecksum(): String
+    fun streamFile(hash: String, outputStream: OutputStream, request: HttpServletRequest, response: HttpServletResponse)
     fun gitFetch()
     fun getBranches(): GitBranches
     fun addFileToZip(filenameToHash: Map.Entry<String, String>, zipOutputStream: ZipOutputStream, request: HttpServletRequest, response: HttpServletResponse)
@@ -90,6 +91,16 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
         zipOutputStream.putNextEntry(ZipEntry(filename))
         GenericClient.proxyRequest(url, request, response, copyRequestBody = false, zipOutputStream)
         zipOutputStream.closeEntry()
+    }
+
+    override fun streamFile(
+        hash: String,
+        outputStream: OutputStream,
+        request: HttpServletRequest,
+        response: HttpServletResponse
+    ) {
+        val url = constructUrl("file/$hash")
+        GenericClient.proxyRequest(url, request, response, copyRequestBody = false, outputStream)
     }
 
     private fun constructUrl(urlFragment: String): String
