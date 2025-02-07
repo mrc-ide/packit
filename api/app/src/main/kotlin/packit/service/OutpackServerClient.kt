@@ -26,7 +26,7 @@ interface OutpackServer
     fun getChecksum(): String
     fun gitFetch()
     fun getBranches(): GitBranches
-    fun addFileToZip(hashToFilename: Map.Entry<String, String>, zipOutputStream: ZipOutputStream, request: HttpServletRequest, response: HttpServletResponse)
+    fun addFileToZip(filenameToHash: Map.Entry<String, String>, zipOutputStream: ZipOutputStream, request: HttpServletRequest, response: HttpServletResponse)
 }
 
 @Service
@@ -80,13 +80,12 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
     }
 
     override fun addFileToZip(
-        hashToFilename: Map.Entry<String, String>,
+        filenameToHash: Map.Entry<String, String>,
         zipOutputStream: ZipOutputStream,
         request: HttpServletRequest,
         response: HttpServletResponse
     ) {
-        val filename = hashToFilename.key
-        val hash = hashToFilename.value
+        val (filename, hash) = filenameToHash
         val url = constructUrl("file/$hash")
         zipOutputStream.putNextEntry(ZipEntry(filename))
         GenericClient.proxyRequest(url, request, response, copyRequestBody = false, zipOutputStream)

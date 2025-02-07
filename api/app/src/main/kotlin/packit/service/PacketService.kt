@@ -130,8 +130,8 @@ class BasePacketService(
         }
 
         ZipOutputStream(response.outputStream).use { zipOutputStream ->
-            hashesByPath.forEach { hashToPath ->
-                outpackServerClient.addFileToZip(hashToPath, zipOutputStream, request, response)
+            hashesByPath.forEach { pathToHash ->
+                outpackServerClient.addFileToZip(pathToHash, zipOutputStream, request, response)
             }
         }
     }
