@@ -1,6 +1,5 @@
 package packit.controllers
 
-import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.Page

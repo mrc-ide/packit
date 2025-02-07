@@ -1,7 +1,5 @@
 package packit.service
 
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Sort
@@ -22,6 +20,7 @@ import packit.repository.PacketRepository
 import java.io.OutputStream
 import java.security.MessageDigest
 import java.time.Instant
+import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 interface PacketService
@@ -127,12 +126,14 @@ class BasePacketService(
             ?.associateBy({ it.path }, { it.hash })
 
         if (hashesByPath == null || hashesByPath.size != paths.size) {
-            throw PackitException("Not all hashes found for packet $id")
+            throw PackitException("Not all files found")
         }
 
         ZipOutputStream(output).use { zipOutputStream ->
-            hashesByPath.forEach { pathToHash ->
-                outpackServerClient.addFileToZip(pathToHash, zipOutputStream)
+            hashesByPath.forEach { (filename, hash) ->
+                zipOutputStream.putNextEntry(ZipEntry(filename))
+                outpackServerClient.getFileByHash(hash, zipOutputStream)
+                zipOutputStream.closeEntry()
             }
         }
     }

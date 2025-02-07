@@ -9,14 +9,13 @@ import packit.model.PacketMetadata
 import packit.model.dto.GitBranches
 import packit.model.dto.OutpackMetadata
 import java.io.OutputStream
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
 
 interface OutpackServer
 {
     fun getMetadata(from: Double? = null): List<OutpackMetadata>
     fun getMetadataById(id: String): PacketMetadata?
     fun getFileByHash(hash: String): Pair<ByteArray, HttpHeaders>?
+    fun getFileByHash(hash: String, output: OutputStream)
     fun proxyRequest(
         urlFragment: String,
         request: HttpServletRequest,
@@ -24,10 +23,8 @@ interface OutpackServer
         copyRequestBody: Boolean
     )
     fun getChecksum(): String
-    fun streamFile(hash: String, outputStream: OutputStream)
     fun gitFetch()
     fun getBranches(): GitBranches
-    fun addFileToZip(filenameToHash: Map.Entry<String, String>, zipOutputStream: ZipOutputStream)
 }
 
 @Service
@@ -55,6 +52,11 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
         return GenericClient.getFile(constructUrl("file/$hash"))
     }
 
+    override fun getFileByHash(hash: String, output: OutputStream)
+    {
+        GenericClient.streamingGet(constructUrl("file/$hash"), output)
+    }
+
     override fun getChecksum(): String
     {
         return GenericClient.get(constructUrl("checksum"))
@@ -78,25 +80,6 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
             url = "$url?known_since=$from"
         }
         return GenericClient.get(constructUrl(url))
-    }
-
-    override fun addFileToZip(
-        filenameToHash: Map.Entry<String, String>,
-        zipOutputStream: ZipOutputStream
-    ) {
-        val (filename, hash) = filenameToHash
-        val url = constructUrl("file/$hash")
-        zipOutputStream.putNextEntry(ZipEntry(filename))
-        GenericClient.streamingGet(url, zipOutputStream)
-        zipOutputStream.closeEntry()
-    }
-
-    override fun streamFile(
-        hash: String,
-        outputStream: OutputStream,
-    ) {
-        val url = constructUrl("file/$hash")
-        GenericClient.streamingGet(url, outputStream)
     }
 
     private fun constructUrl(urlFragment: String): String

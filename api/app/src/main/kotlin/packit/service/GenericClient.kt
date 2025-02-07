@@ -15,7 +15,6 @@ import packit.exceptions.PackitException
 import packit.model.ServerResponse
 import java.io.OutputStream
 import java.net.URI
-import java.util.zip.ZipOutputStream
 
 object GenericClient
 {
