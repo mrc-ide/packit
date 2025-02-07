@@ -25,7 +25,6 @@ interface RoleService
     fun createUsernameRole(username: String): Role
     fun deleteRole(roleName: String)
     fun deleteUsernameRole(username: String)
-    fun getRoleNames(): List<String>
     fun getRolesByRoleNames(roleNames: List<String>): List<Role>
     fun getAllRoles(isUsernames: Boolean?): List<Role>
     fun getRole(roleName: String): Role
@@ -127,11 +126,6 @@ class BaseRoleService(
             rolePermissionService.getRolePermissionsToAdd(role, addRolePermissions)
         role.rolePermissions.addAll(rolePermissionsToAdd)
         return roleRepository.save(role)
-    }
-
-    override fun getRoleNames(): List<String>
-    {
-        return roleRepository.findAll(Sort.by("name").ascending()).map { it.name }
     }
 
     override fun getAllRoles(isUsernames: Boolean?): List<Role>

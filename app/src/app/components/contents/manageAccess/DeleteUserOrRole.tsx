@@ -26,8 +26,9 @@ interface DeleteUserOrRoleProps {
 export const DeleteUserOrRole = ({ mutate, data: { name, type } }: DeleteUserOrRoleProps) => {
   const onDelete = async (roleName: string) => {
     try {
+      const endpoint = type === "role" ? "roles" : type;
       await fetcher({
-        url: `${appConfig.apiUrl()}/${type}/${roleName}`,
+        url: `${appConfig.apiUrl()}/${endpoint}/${roleName}`,
         method: "DELETE"
       });
       mutate();

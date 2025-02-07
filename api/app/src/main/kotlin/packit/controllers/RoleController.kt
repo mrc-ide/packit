@@ -16,7 +16,7 @@ import java.net.URI
 
 @Controller
 @PreAuthorize("hasAuthority('user.manage')")
-@RequestMapping("/role")
+@RequestMapping("/roles")
 class RoleController(private val roleService: RoleService, private val userRoleService: UserRoleService)
 {
     @PostMapping()
@@ -24,7 +24,7 @@ class RoleController(private val roleService: RoleService, private val userRoleS
     {
         val role = roleService.createRole(createRole)
 
-        return ResponseEntity.created(URI.create("/role/${role.id}")).body(role.toDto())
+        return ResponseEntity.created(URI.create("/roles/${role.name}")).body(role.toDto())
     }
 
     @DeleteMapping("/{roleName}")
@@ -48,7 +48,7 @@ class RoleController(private val roleService: RoleService, private val userRoleS
         return ResponseEntity.ok(updatedRole.toDto())
     }
 
-    @PutMapping("{roleName}/users")
+    @PutMapping("/{roleName}/users")
     fun updateUsersToRole(
         @RequestBody @Validated usersToUpdate: UpdateRoleUsers,
         @PathVariable roleName: String
@@ -59,14 +59,8 @@ class RoleController(private val roleService: RoleService, private val userRoleS
         return ResponseEntity.ok(updatedRole.toDto())
     }
 
-    @GetMapping("/names")
-    fun getRoleNames(): ResponseEntity<List<String>>
-    {
-        return ResponseEntity.ok(roleService.getRoleNames())
-    }
-
     @GetMapping
-    fun getRolesWithRelationships(@RequestParam isUsername: Boolean?): ResponseEntity<List<RoleDto>>
+    fun getRoles(@RequestParam isUsername: Boolean?): ResponseEntity<List<RoleDto>>
     {
         val roles = roleService.getAllRoles(isUsername)
 
@@ -74,7 +68,7 @@ class RoleController(private val roleService: RoleService, private val userRoleS
     }
 
     @GetMapping("/{roleName}")
-    fun getRole(@PathVariable roleName: String): ResponseEntity<RoleDto>
+    fun getRoleByName(@PathVariable roleName: String): ResponseEntity<RoleDto>
     {
         val role = roleService.getRole(roleName)
         return ResponseEntity.ok(role.toDto())
