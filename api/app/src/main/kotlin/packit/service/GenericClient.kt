@@ -61,7 +61,7 @@ object GenericClient
         request: HttpServletRequest,
         response: HttpServletResponse,
         copyRequestBody: Boolean,
-        outputStream: OutputStream? = response.outputStream,
+        outputStream: OutputStream = response.outputStream,
     )
     {
         val method = request.method

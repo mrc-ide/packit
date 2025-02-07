@@ -85,8 +85,8 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
         request: HttpServletRequest,
         response: HttpServletResponse
     ) {
-        val hash = hashToFilename.key
-        val filename = hashToFilename.value
+        val filename = hashToFilename.key
+        val hash = hashToFilename.value
         val url = constructUrl("file/$hash")
         zipOutputStream.putNextEntry(ZipEntry(filename))
         GenericClient.proxyRequest(url, request, response, copyRequestBody = false, zipOutputStream)
