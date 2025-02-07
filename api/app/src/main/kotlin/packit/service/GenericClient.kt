@@ -76,7 +76,7 @@ object GenericClient
                         serverRequest.headers.set(it, request.getHeader(it))
                     }
                     if (copyRequestBody) {
-                        IOUtils.copyLarge(request.inputStream, serverRequest.body)
+                        IOUtils.copy(request.inputStream, serverRequest.body)
                     }
                 }
             ) { serverResponse ->
@@ -85,7 +85,7 @@ object GenericClient
                     serverResponse.headers.map { response.setHeader(it.key, it.value.first()) }
                 }
                 serverResponse.body.use { inputStream ->
-                    IOUtils.copyLarge(inputStream, outputStream)
+                    IOUtils.copy(inputStream, outputStream)
                 }
                 true
             }
