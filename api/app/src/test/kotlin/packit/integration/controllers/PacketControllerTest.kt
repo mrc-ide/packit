@@ -18,7 +18,13 @@ import packit.model.PacketGroup
 import packit.model.dto.PacketDto
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
+import java.net.URI
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PacketControllerTest : IntegrationTest()
@@ -35,6 +41,7 @@ class PacketControllerTest : IntegrationTest()
         const val idOfArtefactTypesPacket1 = "20240729-154633-10abe7d1"
         const val idOfArtefactTypesPacket2 = "20240729-155513-1432bfa7"
         const val idOfComputedResourcePacket = "20240729-154635-88c5c1eb"
+        const val idOfDownloadTypesPacket3 = "20250122-142620-c741b061"
         const val hashOfReport = "715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1"
     }
 
@@ -344,5 +351,46 @@ class PacketControllerTest : IntegrationTest()
             getTokenizedHttpEntity()
         )
         assertEquals(2, jacksonObjectMapper().readTree(result.body).get("totalElements").asInt())
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
+    fun `streamZip streams a zip file`()
+    {
+        val paths = listOf(
+            "a_renamed_common_resource.csv",
+            "artefact1/artefact_data.csv",
+            "artefact1/excel_file.xlsx",
+            "artefact1/internal_presentation.pdf",
+            "artefact1/other_extensions.txt",
+            "data.csv",
+            "input_files/plot.png",
+            "orderly.R",
+            "presentation.html"
+        )
+        val encodedPaths = paths.joinToString(",") { URLEncoder.encode(it, StandardCharsets.UTF_8.toString()) }
+
+        val result: ResponseEntity<ByteArray> = restTemplate.exchange(
+            URI("/packets/$idOfDownloadTypesPacket3/zip?paths=$encodedPaths"),
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+        assertEquals(result.statusCode, HttpStatus.OK)
+        assertEquals(result.headers["Transfer-Encoding"]?.firstOrNull(), "chunked") // Header denoting streaming
+        assertEquals(result.headers.contentType.toString(), "application/zip")
+
+        // Read the stream into a zip file
+        val zipInputStream = ZipInputStream(result.body!!.inputStream())
+        val entries = mutableListOf<String>()
+        var entry: ZipEntry? = zipInputStream.nextEntry!!
+        while (entry != null) {
+            println("entry.name: " + entry.name)
+            entries.add(entry.name)
+            entry = zipInputStream.nextEntry
+        }
+        zipInputStream.close()
+
+        // Check that all expected files are in the zip
+        assertTrue(paths.all { it in entries })
     }
 }

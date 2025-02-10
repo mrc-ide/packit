@@ -14,8 +14,11 @@ import packit.repository.PacketRepository
 import packit.service.BasePacketService
 import packit.service.OutpackServerClient
 import packit.unit.packetToOutpackMetadata
+import java.io.ByteArrayOutputStream
+import java.io.OutputStream
 import java.time.Instant
 import java.util.*
+import java.util.zip.ZipInputStream
 import kotlin.test.assertEquals
 
 class PacketServiceTest
@@ -87,7 +90,10 @@ class PacketServiceTest
             "3",
             "test",
             mapOf("name" to "value"),
-            emptyList(),
+            files = listOf(
+                FileMetadata("file1.txt", 10,"sha256:hash1"),
+                FileMetadata("file2.txt", 10,"sha256:hash2")
+            ),
             GitMetadata("git", "sha", emptyList()),
             TimeMetadata(
                 Instant.now().epochSecond.toDouble(),
@@ -125,6 +131,10 @@ class PacketServiceTest
             on { getMetadata(oldPackets[0].importTime) } doReturn newPackets.map { packetToOutpackMetadata(it) }
             on { getMetadataById(packetMetadata.id) } doReturn packetMetadata
             on { getFileByHash(anyString()) } doReturn responseByte
+            on { getFileByHash(anyString(), any()) } doAnswer { invocationOnMock ->
+                val outputStream = invocationOnMock.getArgument<OutputStream>(1)
+                outputStream.write("mocked output content".toByteArray())
+            }
         }
 
     @Test
@@ -265,6 +275,36 @@ class PacketServiceTest
 
         assertThrows<PackitException> {
             sut.getPacket(packetId)
+        }
+    }
+
+    @Test
+    fun `streamZip should write files to zip output stream`() {
+        val outputStream = ByteArrayOutputStream()
+        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+        sut.streamZip(listOf("file1.txt", "file2.txt"), packetMetadata.id, outputStream)
+
+        val zipInputStream = ZipInputStream(outputStream.toByteArray().inputStream())
+
+        val entryNames = mutableListOf<String>()
+        val entryContents = mutableListOf<String>()
+        var entry = zipInputStream.nextEntry
+        while (entry != null) {
+            entryNames.add(entry.name)
+            entryContents.add(zipInputStream.readBytes().toString(Charsets.UTF_8))
+            entry = zipInputStream.nextEntry
+        }
+        assertEquals(listOf("file1.txt", "file2.txt"), entryNames)
+        assertEquals(listOf("mocked output content", "mocked output content"), entryContents)
+    }
+
+    @Test
+    fun `streamZip should throw PackitException if not all files are found`() {
+        val outputStream = ByteArrayOutputStream()
+        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+
+        assertThrows<PackitException> {
+            sut.streamZip(listOf("file1.txt", "file2.txt", "no-such-file.txt"), packetMetadata.id, outputStream)
         }
     }
 }
