@@ -96,7 +96,7 @@ class OrderlyRunnerClientTest(
         val mainBranch = branchInfo.branches[0]
         val parameters = mapOf("a" to 1, "b" to 2)
         val submitInfo = RunnerSubmitRunInfo(
-            ssh_key = null,
+            sshKey = null,
             packetGroupName = "parameters",
             branch = mainBranch.name,
             commitHash = mainBranch.commitHash,
@@ -116,7 +116,7 @@ class OrderlyRunnerClientTest(
         val mainBranch = branchInfo.branches[0]
         val parameters = mapOf("a" to 1, "b" to 2)
         val submitInfo = RunnerSubmitRunInfo(
-            ssh_key = null,
+            sshKey = null,
             packetGroupName = "parameters",
             branch = mainBranch.name,
             commitHash = mainBranch.commitHash,

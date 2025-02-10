@@ -31,7 +31,7 @@ class OrderlyRunnerClient(val baseUrl: String) : OrderlyRunner
     {
         return GenericClient.post(
             constructUrl("repository/fetch?url={url}"),
-            RepositoryFetch(ssh_key = null),
+            RepositoryFetch(sshKey = null),
             mapOf("url" to url)
         )
     }

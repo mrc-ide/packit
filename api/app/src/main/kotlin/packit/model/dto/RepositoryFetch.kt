@@ -1,3 +1,8 @@
 package packit.model.dto
 
-data class RepositoryFetch(val ssh_key: String?)
+import com.fasterxml.jackson.annotation.JsonProperty
+
+data class RepositoryFetch(
+    @JsonProperty("ssh_key")
+    val sshKey: String?
+)
