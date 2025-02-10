@@ -144,16 +144,17 @@ class RunnerServiceTest
         )
         val res = sut.submitRun(info, testUser.username)
 
+        val expectedRunnerSubmitRunInfo = RunnerSubmitRunInfo(
+            null,
+            info.packetGroupName,
+            info.branch,
+            info.commitHash,
+            info.parameters,
+            OrderlyLocation.http(runnerConfig.locationUrl)
+        )
         verify(client).submitRun(
             runnerConfig.repository.url,
-            check {
-                assertEquals(it.ssh_key, null)
-                assertEquals(it.packetGroupName, "report-name")
-                assertEquals(it.branch, "branch")
-                assertEquals(it.commitHash, "hash")
-                assertEquals(it.location.type, "http")
-                assertEquals(it.location.args["url"], runnerConfig.locationUrl)
-            }
+            expectedRunnerSubmitRunInfo
         )
         verify(userService).getByUsername(testUser.username)
         verify(runInfoRepository).save(
