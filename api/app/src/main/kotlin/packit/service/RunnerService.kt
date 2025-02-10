@@ -71,12 +71,12 @@ class BaseRunnerService(
             branch = info.branch,
             commitHash = info.commitHash,
             parameters = info.parameters,
-            url = config.repository.url,
-            location = OrderlyLocation.http(config.locationUrl)
+            location = OrderlyLocation.http(config.locationUrl),
+            ssh_key = null
         )
 
         val user = userService.getByUsername(username) ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
-        val res = orderlyRunnerClient.submitRun(request)
+        val res = orderlyRunnerClient.submitRun(config.repository.url, request)
         val runInfo = RunInfo(
             res.taskId,
             packetGroupName = info.packetGroupName,

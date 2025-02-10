@@ -134,7 +134,7 @@ class RunnerServiceTest
     {
         val mockRes = SubmitRunResponse("task-id")
 
-        `when`(client.submitRun(any())).thenReturn(mockRes)
+        `when`(client.submitRun(any(), any())).thenReturn(mockRes)
 
         val info = SubmitRunInfo(
             packetGroupName = "report-name",
@@ -145,8 +145,9 @@ class RunnerServiceTest
         val res = sut.submitRun(info, testUser.username)
 
         verify(client).submitRun(
+            runnerConfig.repository.url,
             check {
-                assertEquals(it.url, runnerConfig.repository.url)
+                assertEquals(it.ssh_key, null)
                 assertEquals(it.packetGroupName, "report-name")
                 assertEquals(it.branch, "branch")
                 assertEquals(it.commitHash, "hash")

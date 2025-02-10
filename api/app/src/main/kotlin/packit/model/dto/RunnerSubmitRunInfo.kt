@@ -14,7 +14,7 @@ data class OrderlyLocation(
 }
 
 data class RunnerSubmitRunInfo(
-    val url: String?,
+    val ssh_key: String?,
     @JsonProperty("name")
     val packetGroupName: String,
     val branch: String,

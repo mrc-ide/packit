@@ -1,3 +1,3 @@
 package packit.model.dto
 
-data class RepositoryFetch(val url: String)
+data class RepositoryFetch(val ssh_key: String?)

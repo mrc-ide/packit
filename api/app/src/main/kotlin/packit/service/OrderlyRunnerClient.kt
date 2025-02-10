@@ -16,7 +16,7 @@ interface OrderlyRunner
     fun getBranches(url: String): GitBranches
     fun getParameters(url: String, ref: String, packetGroupName: String): List<Parameter>
     fun getPacketGroups(url: String, ref: String): List<RunnerPacketGroup>
-    fun submitRun(info: RunnerSubmitRunInfo): SubmitRunResponse
+    fun submitRun(url: String, info: RunnerSubmitRunInfo): SubmitRunResponse
     fun getTaskStatuses(taskIds: List<String>, includeLogs: Boolean): List<TaskStatus>
 }
 
@@ -30,8 +30,9 @@ class OrderlyRunnerClient(val baseUrl: String) : OrderlyRunner
     override fun gitFetch(url: String)
     {
         return GenericClient.post(
-            constructUrl("repository/fetch"),
-            RepositoryFetch(url = url)
+            constructUrl("repository/fetch?url={url}"),
+            RepositoryFetch(ssh_key = null),
+            mapOf("url" to url)
         )
     }
 
@@ -59,9 +60,13 @@ class OrderlyRunnerClient(val baseUrl: String) : OrderlyRunner
         )
     }
 
-    override fun submitRun(info: RunnerSubmitRunInfo): SubmitRunResponse
+    override fun submitRun(url: String, info: RunnerSubmitRunInfo): SubmitRunResponse
     {
-        return GenericClient.post(constructUrl("/report/run"), info)
+        return GenericClient.post(
+            constructUrl("/report/run?url={url}"),
+            info,
+            mapOf("url" to url)
+        )
     }
 
     override fun getTaskStatuses(taskIds: List<String>, includeLogs: Boolean): List<TaskStatus>
