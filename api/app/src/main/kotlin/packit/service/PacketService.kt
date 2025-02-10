@@ -122,11 +122,11 @@ class BasePacketService(
 
     override fun streamZip(paths: List<String>, id: String, output: OutputStream) {
         val hashesByPath = getMetadataBy(id).files
-            ?.filter { it.path in paths }
-            ?.associateBy({ it.path }, { it.hash })
+            .filter { it.path in paths }
+            .associateBy({ it.path }, { it.hash })
 
-        if (hashesByPath == null || hashesByPath.size != paths.size) {
-            throw PackitException("Not all files found")
+        if (hashesByPath.size != paths.size) {
+            throw PackitException("Not all files found", HttpStatus.NOT_FOUND)
         }
 
         ZipOutputStream(output).use { zipOutputStream ->
