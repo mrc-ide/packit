@@ -11,6 +11,9 @@ export const getZipUrl = (packetId: string, files: FileMetadata[]) => {
 export const getFileUrl = (file: FileMetadata, packetId: string, inline = false) =>
   `${appConfig.apiUrl()}/packets/${packetId}/file?hash=${file.hash}&filename=${file.path}&inline=${inline}`;
 
+export const streamFileUrl = (file: FileMetadata, packetId: string) =>
+  `${appConfig.apiUrl()}/packets/${packetId}/file/${file.hash}/stream?filename=${file.path}`;
+
 export const getFileObjectUrl = async (url: string, filename: string) => {
   const headers = getAuthHeader();
   const res = await fetch(url, { method: "GET", headers });

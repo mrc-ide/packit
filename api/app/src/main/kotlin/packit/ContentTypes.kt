@@ -6,6 +6,12 @@ val contentTypes = mapOf(
     "binarydata" to "application/octet-stream",
     "zip" to "application/zip",
     "html" to "text/html",
-    "text" to "text/plain",
-    "multipart" to "multipart/form-data"
+    "txt" to "text/plain",
+    "multipart" to "multipart/form-data",
+    "png" to "image/png",
+    "pdf" to "application/pdf",
+    "gif" to "image/gif",
+    "jpeg" to "image/jpeg",
+    "jpg" to "image/jpeg",
+    "svg" to "image/svg+xml",
 )
