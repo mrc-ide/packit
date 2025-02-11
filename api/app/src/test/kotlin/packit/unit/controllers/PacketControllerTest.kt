@@ -160,4 +160,16 @@ class PacketControllerTest
         assertEquals("attachment; filename=$packetId.zip", response.getHeader("Content-Disposition"))
         assertEquals(HttpStatus.OK.value(), response.status)
     }
+
+    @Test
+    fun `streamFile should set correct response headers and content type`() {
+        val response = MockHttpServletResponse()
+
+        val sut = PacketController(packetService)
+        sut.streamFile(packetId, "sha256:87bfc90d2294c957bf1487506dacb2aeb6455d6caba94910e48434211a7c639b", "test.html", response)
+
+        assertEquals("attachment; filename=\"test.html\"", response.getHeader("Content-Disposition"))
+        assertEquals("text/html", response.contentType)
+        assertEquals(HttpStatus.OK.value(), response.status)
+    }
 }

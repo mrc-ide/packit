@@ -48,7 +48,7 @@ describe("DownloadButton", () => {
     const button = screen.getByRole("button");
     userEvent.click(button);
     expect(button).toBeDisabled();
-    const url = `${appConfig.apiUrl()}/packets/${packetId}/file?hash=${file.hash}&filename=${file.path}&inline=false`;
+    const url = `${appConfig.apiUrl()}/packets/${packetId}/file/${file.hash}/stream?filename=${file.path}`;
     expect(mockDownload).toHaveBeenCalledWith(url, "test.txt");
     await waitFor(() => {
       expect(button).not.toBeDisabled();

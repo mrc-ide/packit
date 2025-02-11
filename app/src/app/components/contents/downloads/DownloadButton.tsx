@@ -1,6 +1,6 @@
 import { FileDown } from "lucide-react";
 import { useState } from "react";
-import { download, getFileUrl } from "../../../../lib/download";
+import { download, streamFileUrl } from "../../../../lib/download";
 import { FileMetadata } from "../../../../types";
 import { Button } from "../../Base/Button";
 
@@ -15,8 +15,7 @@ export const DownloadButton = ({ file, packetId }: DownloadButtonProps) => {
 
   const downloadFile = (file: FileMetadata) => {
     setDownloading(true);
-    const url = getFileUrl(file, packetId);
-    download(url, file.path)
+    download(streamFileUrl(file, packetId), file.path)
       .then(() => setError(""))
       .catch((e) => {
         setError(e.message);

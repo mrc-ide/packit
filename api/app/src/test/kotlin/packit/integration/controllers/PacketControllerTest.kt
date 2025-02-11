@@ -7,9 +7,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.exchange
-import org.springframework.http.HttpMethod
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
+import org.springframework.http.*
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
 import packit.repository.PacketGroupRepository
@@ -273,5 +271,18 @@ class PacketControllerTest : IntegrationTest()
             mapOf("id" to idOfDownloadTypesPacket3, "paths" to paths.joinToString(","))
         )
         assertNotFound(result)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
+    fun `streamFile streams a file`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            URI("/packets/$idOfArtefactTypesPacket/file/$hashOfReport/stream?filename=report.html"),
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        assertHtmlFileSuccess(result)
     }
 }

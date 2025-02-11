@@ -17,6 +17,7 @@ import packit.model.PacketMetadata
 import packit.model.PageablePayload
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
+import packit.service.utils.filenameToMediaType
 import java.io.OutputStream
 import java.security.MessageDigest
 import java.time.Instant
@@ -31,6 +32,7 @@ interface PacketService
     fun importPackets()
     fun getMetadataBy(id: String): PacketMetadata
     fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<ByteArrayResource, HttpHeaders>
+    fun streamFile(hash: String, filename: String, output: OutputStream)
     fun getPacketsByName(
         name: String
     ): List<Packet>
@@ -158,25 +160,23 @@ class BasePacketService(
     override fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<ByteArrayResource, HttpHeaders>
     {
         val response = outpackServerClient.getFileByHash(hash)
-
         if (response?.first == null || response.first.isEmpty())
         {
             throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
         }
 
         val byteArrayResource = ByteArrayResource(response.first)
-
         val disposition = if (inline) "inline" else "attachment"
-
-        val extension = filename.substringAfterLast(".")
-
-        val contentMediaType = contentTypes[extension] ?: MediaType.APPLICATION_OCTET_STREAM_VALUE
-
         val headers = HttpHeaders().apply {
-            contentType = MediaType.valueOf(contentMediaType)
+            contentType = MediaType.valueOf(filenameToMediaType(filename))
             contentDisposition = ContentDisposition.parse("$disposition; filename=$filename")
         }
 
         return byteArrayResource to headers
+    }
+
+    override fun streamFile(hash: String, filename: String, output: OutputStream)
+    {
+        outpackServerClient.getFileByHash(hash, output)
     }
 }
