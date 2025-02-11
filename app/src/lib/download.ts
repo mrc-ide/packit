@@ -13,10 +13,7 @@ export const getZipUrl = (packetId: string, files: FileMetadata[]) => {
 
 export const getFileObjectUrl = async (url: string, filename: string) => {
   const headers = getAuthHeader();
-  const res = await fetch(url, {
-    method: "GET",
-    headers
-  });
+  const res = await fetch(url, { method: "GET", headers });
 
   if (!res.ok) {
     const json = await res.json();

@@ -103,6 +103,8 @@ object GenericClient
         } catch (e: HttpStatusCodeException)
         {
             throw GenericClientException(e)
+        } catch (e: Exception) {
+            throw PackitException("couldNotStream", HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 

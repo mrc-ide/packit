@@ -126,15 +126,20 @@ class BasePacketService(
             .associateBy({ it.path }, { it.hash })
 
         if (hashesByPath.size != paths.size) {
-            throw PackitException("Not all files found", HttpStatus.NOT_FOUND)
+            throw PackitException("notAllFilesFound", HttpStatus.NOT_FOUND)
         }
 
-        ZipOutputStream(output).use { zipOutputStream ->
-            hashesByPath.forEach { (filename, hash) ->
-                zipOutputStream.putNextEntry(ZipEntry(filename))
-                outpackServerClient.getFileByHash(hash, zipOutputStream)
-                zipOutputStream.closeEntry()
+        try {
+            ZipOutputStream(output).use { zipOutputStream ->
+                hashesByPath.forEach { (filename, hash) ->
+                    zipOutputStream.putNextEntry(ZipEntry(filename))
+                    outpackServerClient.getFileByHash(hash, zipOutputStream)
+                    zipOutputStream.closeEntry()
+                }
             }
+        } catch (e: Exception) {
+            // Log error on the back end (does not affect front end, client just downloads an incomplete file)
+            throw PackitException("errorCreatingZip", HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 

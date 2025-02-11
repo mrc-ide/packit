@@ -98,9 +98,6 @@ class PacketController(
         @RequestParam paths: List<String>,
         response: HttpServletResponse
     ) {
-        // files can't be the same - causes "java.util.zip.ZipException: duplicate entry"
-        // ^ could be useful for testing our error handling.
-
         response.contentType = "application/zip"
         response.setHeader("Content-Disposition", "attachment; filename=$id.zip")
 
