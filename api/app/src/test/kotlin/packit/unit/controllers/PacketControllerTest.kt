@@ -151,7 +151,7 @@ class PacketControllerTest
         val response = MockHttpServletResponse()
         val paths = listOf("file1.txt", "file2.txt")
 
-        val sut = PacketController(packetService, packetGroupService)
+        val sut = PacketController(packetService)
         sut.streamZip(packetId, paths, response)
 
         assertEquals("application/zip", response.contentType)

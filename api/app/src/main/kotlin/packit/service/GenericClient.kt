@@ -79,7 +79,7 @@ object GenericClient
                 }
             ) { serverResponse ->
                 response.status = serverResponse.statusCode.value()
-
+                serverResponse.headers.map { response.setHeader(it.key, it.value.first()) }
                 serverResponse.body.use { inputStream ->
                     IOUtils.copy(inputStream, outputStream)
                 }
