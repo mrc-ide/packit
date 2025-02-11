@@ -178,7 +178,7 @@ class PacketServiceTest
     }
 
     @Test
-    fun `throws exception if packet metadata does not exist`()
+    fun `getMetadataBy throws exception if packet metadata does not exist`()
     {
         val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
 
@@ -305,6 +305,17 @@ class PacketServiceTest
 
         assertThrows<PackitException> {
             sut.streamZip(listOf("file1.txt", "file2.txt", "no-such-file.txt"), packetMetadata.id, outputStream)
+        }
+    }
+
+    @Test
+    fun `streamZip should throw PackitException if there is an error creating the zip`() {
+        val outputStream = ByteArrayOutputStream()
+        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+        whenever(outpackServerClient.getFileByHash(anyString(), any())).thenThrow(RuntimeException("error"))
+
+        assertThrows<PackitException> {
+            sut.streamZip(listOf("file1.txt", "file2.txt"), packetMetadata.id, outputStream)
         }
     }
 }
