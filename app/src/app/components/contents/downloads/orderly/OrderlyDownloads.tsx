@@ -11,9 +11,9 @@ export const OrderlyDownloads = () => {
   const { packetId, packetName } = useParams();
   const { packet } = usePacketOutletContext();
   const artefacts = packet?.custom?.orderly.artefacts;
-  const inputs = packet?.custom?.orderly.role.filter((input) =>
-    [InputFileType.Resource, InputFileType.Shared, InputFileType.Orderly].includes(input.role)
-  );
+  const inputs = packet?.custom?.orderly.role.filter((input) => {
+    return input.role !== InputFileType.Dependency;
+  });
   if (!packet) return null;
   const inputsFiles = inputs
     ?.map((input) => {

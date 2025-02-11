@@ -35,7 +35,7 @@ export const DownloadButton = ({ file, packetId }: DownloadButtonProps) => {
         disabled={downloading}
       >
         <span className="px-1">
-          <FileDown />
+          <FileDown size={22} />
         </span>
         Download
       </Button>
