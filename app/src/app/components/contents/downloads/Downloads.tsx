@@ -4,7 +4,7 @@ import { PacketHeader } from "../packets";
 import { Card, CardContent } from "../../Base/Card";
 import { FileRow } from "./FileRow";
 import { OrderlyDownloads } from "./orderly/OrderlyDownloads";
-import { FileGroupDownloadButton } from "./orderly/FileGroupDownloadButton";
+import { FileGroupDownloadButton } from "./FileGroupDownloadButton";
 
 export const Downloads = () => {
   const { packetId, packetName } = useParams();

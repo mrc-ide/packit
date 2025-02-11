@@ -13,9 +13,6 @@ export const DownloadButton = ({ file, packetId }: DownloadButtonProps) => {
   const [error, setError] = useState("");
   const [downloading, setDownloading] = useState(false);
 
-  // TODO: cope with very large files! currently we see
-  //  java.lang.OutOfMemoryError: Java heap space (when limiting heap space)
-
   const downloadFile = (file: FileMetadata) => {
     setDownloading(true);
     const url = getFileUrl(file, packetId);

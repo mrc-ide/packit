@@ -3,7 +3,7 @@ import { FileMetadata, InputFileType } from "../../../../../types";
 import { Artefacts } from "./Artefacts";
 import { OtherFiles } from "./OtherFiles";
 import { usePacketOutletContext } from "../../../main/PacketOutlet";
-import { FileGroupDownloadButton } from "./FileGroupDownloadButton";
+import { FileGroupDownloadButton } from "../FileGroupDownloadButton";
 import { useParams } from "react-router-dom";
 import { getFileByPath } from "../utils/getFileByPath";
 

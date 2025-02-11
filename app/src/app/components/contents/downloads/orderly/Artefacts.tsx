@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader } from "../../../Base/Card";
 import { FileRow } from "../FileRow";
-import { FileGroupDownloadButton } from "./FileGroupDownloadButton";
+import { FileGroupDownloadButton } from "../FileGroupDownloadButton";
 import { Artefact, FileMetadata } from "../../../../../types";
 import { usePacketOutletContext } from "../../../main/PacketOutlet";
 import { getFileByPath } from "../utils/getFileByPath";
