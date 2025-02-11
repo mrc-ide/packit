@@ -8,7 +8,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
-import packit.contentTypes
 import packit.exceptions.PackitException
 import packit.helpers.PagingHelper
 import packit.model.Packet
