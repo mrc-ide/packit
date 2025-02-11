@@ -29,7 +29,7 @@ export const FileGroupDownloadButton = ({
   const [downloading, setDownloading] = useState(false);
 
   const downloadFiles = async () => {
-    if (!packet || !packetId || !files) {
+    if (!packet || !packetId || files.length < 1) {
       return;
     }
     setDownloading(true);

@@ -16,7 +16,7 @@ jest.mock("../../../../lib/download", () => ({
 }));
 
 describe("FileGroupDownloadButton", () => {
-  const files = [
+  const filesToDownload = [
     {
       path: "test.txt",
       size: 1024,
@@ -31,7 +31,7 @@ describe("FileGroupDownloadButton", () => {
   const zipName = "myCompressedFiles.zip";
   const buttonText = "Custom text";
 
-  const renderComponent = () => {
+  const renderComponent = (files = filesToDownload) => {
     return render(
       <SWRConfig value={{ dedupingInterval: 0 }}>
         <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/downloads`]}>
@@ -99,5 +99,12 @@ describe("FileGroupDownloadButton", () => {
     await waitFor(() => {
       expect(screen.queryByText("test download error")).not.toBeInTheDocument();
     });
+  });
+
+  it("does not download if the files list is empty", async () => {
+    renderComponent([]);
+    const button = await screen.findByRole("button");
+    userEvent.click(button);
+    expect(mockDownload).not.toHaveBeenCalled();
   });
 });
