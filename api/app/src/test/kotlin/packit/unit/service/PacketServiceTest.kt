@@ -91,8 +91,8 @@ class PacketServiceTest
             "test",
             mapOf("name" to "value"),
             files = listOf(
-                FileMetadata("file1.txt", 10,"sha256:hash1"),
-                FileMetadata("file2.txt", 10,"sha256:hash2")
+                FileMetadata("file1.txt", 10, "sha256:hash1"),
+                FileMetadata("file2.txt", 10, "sha256:hash2")
             ),
             GitMetadata("git", "sha", emptyList()),
             TimeMetadata(

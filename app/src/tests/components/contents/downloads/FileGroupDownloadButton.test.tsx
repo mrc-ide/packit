@@ -1,6 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { DownloadButton } from "../../../../app/components/contents/downloads/DownloadButton";
 import appConfig from "../../../../config/appConfig";
 import { FileGroupDownloadButton } from "../../../../app/components/contents/downloads/FileGroupDownloadButton";
 import { FileMetadata, PacketMetadata } from "../../../../types";
@@ -8,7 +7,6 @@ import { mockPacket } from "../../../mocks";
 import { SWRConfig } from "swr";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { PacketLayout } from "../../../../app/components/main";
-import { Downloads } from "../../../../app/components/contents";
 
 let errorOnDownload = false;
 const mockDownload = jest.fn();

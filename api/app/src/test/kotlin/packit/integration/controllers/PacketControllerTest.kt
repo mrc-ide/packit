@@ -14,12 +14,12 @@ import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
+import packit.service.PacketService
 import java.net.URI
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
-import packit.service.PacketService
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
