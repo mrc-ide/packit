@@ -1,4 +1,4 @@
-import { FileDown } from "lucide-react";
+import { FileDown, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { download, streamFileUrl } from "../../../../lib/download";
 import { FileMetadata } from "../../../../types";
@@ -34,7 +34,8 @@ export const DownloadButton = ({ file, packetId }: DownloadButtonProps) => {
         disabled={downloading}
       >
         <span className="px-1">
-          <FileDown size={22} />
+          {downloading && <Loader2 size={18} className="animate-spin" />}
+          {!downloading && <FileDown size={18} />}
         </span>
         Download
       </Button>
