@@ -2,14 +2,14 @@ import { getAuthHeader } from "./auth/getAuthHeader";
 import appConfig from "../config/appConfig";
 import { FileMetadata } from "../types";
 
-export const getFileUrl = (file: FileMetadata, packetId: string, inline = false) =>
-  `${appConfig.apiUrl()}/packets/file/${packetId}?hash=${file.hash}&filename=${file.path}&inline=${inline}`;
-
 export const getZipUrl = (packetId: string, files: FileMetadata[]) => {
   const paths = files.map((file) => file.path);
 
   return `${appConfig.apiUrl()}/packets/${packetId}/zip?paths=${encodeURIComponent(paths.join(","))}`;
 };
+
+export const getFileUrl = (file: FileMetadata, packetId: string, inline = false) =>
+  `${appConfig.apiUrl()}/packets/${packetId}/file?hash=${file.hash}&filename=${file.path}&inline=${inline}`;
 
 export const getFileObjectUrl = async (url: string, filename: string) => {
   const headers = getAuthHeader();

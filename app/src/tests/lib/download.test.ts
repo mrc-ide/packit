@@ -92,12 +92,12 @@ describe("download", () => {
   it("can get file url for request a file with inline content-disposition", () => {
     const result = getFileUrl(testFile, "testPacketId", true);
 
-    expect(result).toBe(`${appConfig.apiUrl()}/packets/file/testPacketId?hash=testHash&filename=testPath&inline=true`);
+    expect(result).toBe(`${appConfig.apiUrl()}/packets/testPacketId/file?hash=testHash&filename=testPath&inline=true`);
   });
 
   it("can get file url for request a file with attachment content-disposition", () => {
     const result = getFileUrl(testFile, "testPacketId");
 
-    expect(result).toBe(`${appConfig.apiUrl()}/packets/file/testPacketId?hash=testHash&filename=testPath&inline=false`);
+    expect(result).toBe(`${appConfig.apiUrl()}/packets/testPacketId/file?hash=testHash&filename=testPath&inline=false`);
   });
 });

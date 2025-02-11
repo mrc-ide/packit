@@ -2,7 +2,7 @@ import appConfig from "../../config/appConfig";
 import { rest } from "msw";
 import { mockFileBlob } from "../../tests/mocks";
 
-export const downloadFileUri = `${appConfig.apiUrl()}/packets/file/sha:fakehash`;
+export const downloadFileUri = `${appConfig.apiUrl()}/packets/fakePacketId/file`;
 
 export const downloadFileHandlers = [
   rest.get(downloadFileUri, (req, res, ctx) => {
