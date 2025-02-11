@@ -63,8 +63,7 @@ class PacketController(private val packetService: PacketService)
     }
 
     @GetMapping("/{id}/zip")
-    // TODO: authorize packet
-    // TODO: Verify differential authorization for artefacts vs non-artefact files
+    @PreAuthorize("@authz.canReadPacket(#root, #id)")
     fun streamZip(
         @PathVariable id: String,
         @RequestParam paths: List<String>,
