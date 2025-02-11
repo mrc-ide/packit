@@ -279,6 +279,15 @@ class PacketServiceTest
     }
 
     @Test
+    fun `streamFile should write file to output stream`() {
+        val outputStream = ByteArrayOutputStream()
+        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+        sut.streamFile("sha256:hash1", "file1.txt", outputStream)
+
+        assertEquals("mocked output content", outputStream.toString(Charsets.UTF_8))
+    }
+
+    @Test
     fun `streamZip should write files to zip output stream`() {
         val outputStream = ByteArrayOutputStream()
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
