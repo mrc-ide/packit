@@ -96,14 +96,14 @@ class OrderlyRunnerClientTest(
         val mainBranch = branchInfo.branches[0]
         val parameters = mapOf("a" to 1, "b" to 2)
         val submitInfo = RunnerSubmitRunInfo(
-            url = repositoryUrl,
+            sshKey = null,
             packetGroupName = "parameters",
             branch = mainBranch.name,
             commitHash = mainBranch.commitHash,
             parameters = parameters,
             location = OrderlyLocation.http(locationUrl)
         )
-        val res = sut.submitRun(submitInfo)
+        val res = sut.submitRun(repositoryUrl, submitInfo)
 
         assertEquals(String::class.java, res.taskId::class.java)
     }
@@ -116,15 +116,15 @@ class OrderlyRunnerClientTest(
         val mainBranch = branchInfo.branches[0]
         val parameters = mapOf("a" to 1, "b" to 2)
         val submitInfo = RunnerSubmitRunInfo(
-            url = repositoryUrl,
+            sshKey = null,
             packetGroupName = "parameters",
             branch = mainBranch.name,
             commitHash = mainBranch.commitHash,
             parameters = parameters,
             location = OrderlyLocation.http(locationUrl)
         )
-        val res1 = sut.submitRun(submitInfo)
-        val res2 = sut.submitRun(submitInfo)
+        val res1 = sut.submitRun(repositoryUrl, submitInfo)
+        val res2 = sut.submitRun(repositoryUrl, submitInfo)
 
         val taskIds = listOf(res1.taskId, res2.taskId)
 
