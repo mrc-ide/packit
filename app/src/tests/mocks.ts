@@ -110,6 +110,11 @@ export const mockPacket: PacketMetadata = {
       path: "other_extensions.txt",
       size: 15,
       hash: "sha256:c195ea0690238192d2a000c5e35f42469242bab0dc6a03b09dbffc5408a24170"
+    },
+    {
+      path: "data.csv",
+      size: 51,
+      hash: "sha256:c7b512b2d14a7caae8968830760cb95980a98e18ca2c2991b87c71529e223164"
     }
   ],
   git: {

@@ -7,14 +7,14 @@ import { getFileByPath } from "../utils/getFileByPath";
 // 'Other files' are any files to display other than artefact groups.
 
 interface OtherFilesProps {
-  inputFiles: InputFile[];
+  inputs: InputFile[];
 }
 
-export const OtherFiles = ({ inputFiles }: OtherFilesProps) => {
+export const OtherFiles = ({ inputs }: OtherFilesProps) => {
   const { packet } = usePacketOutletContext();
   if (!packet) return null;
 
-  const inputsWithFileMetadata = inputFiles.map((input) => {
+  const inputsWithFileMetadata = inputs.map((input) => {
     return { ...input, file: getFileByPath(input.path, packet) };
   });
 

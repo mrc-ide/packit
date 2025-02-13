@@ -8,14 +8,14 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
 
 @Component
-class AppConfig(private val enviroment: Environment)
+class AppConfig(private val environment: Environment)
 {
-    internal fun requiredEnvValue(key: String): String
+    internal final fun requiredEnvValue(key: String): String
     {
-        return enviroment[key] ?: throw IllegalArgumentException("$key not set $enviroment")
+        return environment[key] ?: throw IllegalArgumentException("$key not set $environment")
     }
 
-    internal fun splitList(value: String): List<String>
+    internal final fun splitList(value: String): List<String>
     {
         if (value.isBlank()) {
             return listOf()

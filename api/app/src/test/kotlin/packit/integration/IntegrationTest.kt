@@ -73,6 +73,16 @@ abstract class IntegrationTest
         assertEquals(responseEntity.statusCode, HttpStatus.FORBIDDEN)
     }
 
+    protected fun <T>assertBadRequest(responseEntity: ResponseEntity<T>)
+    {
+        assertEquals(responseEntity.statusCode, HttpStatus.BAD_REQUEST)
+    }
+
+    protected fun <T>assertNotFound(responseEntity: ResponseEntity<T>)
+    {
+        assertEquals(responseEntity.statusCode, HttpStatus.NOT_FOUND)
+    }
+
     protected fun assertHtmlFileSuccess(responseEntity: ResponseEntity<String>)
     {
         assertEquals(responseEntity.statusCode, HttpStatus.OK)

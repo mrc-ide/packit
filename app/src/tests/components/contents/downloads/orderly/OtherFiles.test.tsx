@@ -11,7 +11,7 @@ const renderComponent = (inputFiles: InputFile[] = [], packet: PacketMetadata | 
       <MemoryRouter initialEntries={["/"]}>
         <Routes>
           <Route element={<Outlet context={{ packet }} />}>
-            <Route path="/" element={<OtherFiles inputFiles={inputFiles} />} />
+            <Route path="/" element={<OtherFiles inputs={inputFiles} />} />
           </Route>
         </Routes>
       </MemoryRouter>

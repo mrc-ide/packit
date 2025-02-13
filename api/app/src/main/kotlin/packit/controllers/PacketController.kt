@@ -1,11 +1,16 @@
 package packit.controllers
 
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.Page
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 import packit.exceptions.PackitException
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
@@ -15,9 +20,7 @@ import packit.service.PacketService
 
 @RestController
 @RequestMapping("/packets")
-class PacketController(
-    private val packetService: PacketService,
-)
+class PacketController(private val packetService: PacketService)
 {
     @GetMapping
     fun pageableIndex(
@@ -57,5 +60,18 @@ class PacketController(
             .ok()
             .headers(response.second)
             .body(response.first)
+    }
+
+    @GetMapping("/{id}/zip")
+    @PreAuthorize("@authz.canReadPacket(#root, #id)")
+    fun streamZip(
+        @PathVariable id: String,
+        @RequestParam paths: List<String>,
+        response: HttpServletResponse
+    ) {
+        response.contentType = "application/zip"
+        response.setHeader("Content-Disposition", "attachment; filename=$id.zip")
+
+        packetService.streamZip(paths, id, response.outputStream)
     }
 }

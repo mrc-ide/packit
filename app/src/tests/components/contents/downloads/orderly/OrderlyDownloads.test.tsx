@@ -1,19 +1,26 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { mockPacket } from "../../../../mocks";
 import { Custom } from "../../../../../types";
 import { OrderlyDownloads } from "../../../../../app/components/contents/downloads/orderly/OrderlyDownloads";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
+import appConfig from "../../../../../config/appConfig";
+
+const mockDownload = jest.fn();
+jest.mock("../../../../../lib/download", () => ({
+  ...jest.requireActual("../../../../../lib/download"),
+  download: async (...args: any[]) => mockDownload(...args)
+}));
 
 const renderComponent = (customMetadata: Custom) => {
   const packet = { ...mockPacket, custom: customMetadata };
   render(
     <SWRConfig value={{ dedupingInterval: 0 }}>
-      <MemoryRouter initialEntries={["/"]}>
+      <MemoryRouter initialEntries={[`/${packet.name}/${packet.id}/downloads`]}>
         <Routes>
           <Route element={<Outlet context={{ packet }} />}>
-            <Route path="/" element={<OrderlyDownloads />} />
+            <Route path="/:packetName/:packetId/downloads" element={<OrderlyDownloads />} />
           </Route>
         </Routes>
       </MemoryRouter>
@@ -22,6 +29,10 @@ const renderComponent = (customMetadata: Custom) => {
 };
 
 describe("orderly downloads component", () => {
+  afterAll(() => {
+    jest.clearAllMocks();
+  });
+
   it("renders the 'artefacts' and 'other files' accordion sections with only the first open", async () => {
     renderComponent(mockPacket.custom as Custom);
 
@@ -61,5 +72,22 @@ describe("orderly downloads component", () => {
     expect(screen.queryByText("Artefacts")).not.toBeInTheDocument();
     expect(screen.queryByText("Files")).not.toBeInTheDocument();
     expect(screen.queryByTestId("accordion")).not.toBeInTheDocument();
+  });
+
+  it("renders the 'Download' button which downloads the 'other' files as a group", async () => {
+    renderComponent(mockPacket.custom as Custom);
+
+    const otherFiles = ["data.csv", "orderly.R", "a_renamed_common_resource.csv"];
+    const otherFilesDownloadButtonMatcher = /Download \(\d+.\d+ bytes\)/;
+
+    userEvent.click(await screen.findByText("Other files"));
+
+    await waitFor(async () => {
+      expect(await screen.findByText(otherFilesDownloadButtonMatcher)).toBeVisible();
+    });
+
+    userEvent.click(await screen.findByText(otherFilesDownloadButtonMatcher));
+    const url = `${appConfig.apiUrl()}/packets/${mockPacket.id}/zip?paths=${encodeURIComponent(otherFiles.join(","))}`;
+    expect(mockDownload).toHaveBeenCalledWith(url, `parameters_other_resources_${mockPacket.id}.zip`);
   });
 });

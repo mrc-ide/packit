@@ -2,7 +2,7 @@ package packit.service
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.apache.tomcat.util.http.fileupload.IOUtils
+import org.apache.commons.io.IOUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.core.ParameterizedTypeReference
@@ -13,6 +13,7 @@ import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate
 import packit.exceptions.PackitException
 import packit.model.ServerResponse
+import java.io.OutputStream
 import java.net.URI
 
 object GenericClient
@@ -57,7 +58,7 @@ object GenericClient
         url: String,
         request: HttpServletRequest,
         response: HttpServletResponse,
-        copyRequestBody: Boolean
+        copyRequestBody: Boolean,
     )
     {
         val method = request.method
@@ -76,14 +77,31 @@ object GenericClient
                     }
                 }
             ) { serverResponse ->
-                response.status = response.status
+                response.status = serverResponse.statusCode.value()
                 serverResponse.headers.map { response.setHeader(it.key, it.value.first()) }
-                IOUtils.copy(serverResponse.body, response.outputStream)
-                true
+                serverResponse.body.use { inputStream ->
+                    IOUtils.copy(inputStream, response.outputStream)
+                }
             }
         } catch (e: HttpStatusCodeException)
         {
             throw GenericClientException(e)
+        }
+    }
+
+    fun streamingGet(url: String, output: OutputStream) {
+        try
+        {
+            restTemplate.execute(URI(url), HttpMethod.GET, {}) { serverResponse ->
+                serverResponse.body.use { input ->
+                    IOUtils.copy(input, output)
+                }
+            }
+        } catch (e: HttpStatusCodeException)
+        {
+            throw GenericClientException(e)
+        } catch (e: Exception) {
+            throw PackitException("couldNotStream", HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
