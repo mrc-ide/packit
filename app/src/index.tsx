@@ -8,6 +8,7 @@ import { RedirectOnLoginProvider } from "./app/components/providers/RedirectOnLo
 import reportWebVitals from "./reportWebVitals";
 import "./styles/globals.css";
 import { Router } from "./app/components/routes/Router";
+import { publicUrl } from "./config/appConfig";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
@@ -15,7 +16,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <AuthConfigProvider>
         <UserProvider>
           <RedirectOnLoginProvider>
-            <BrowserRouter basename={process.env.PUBLIC_URL}>
+            <BrowserRouter basename={publicUrl()}>
               <Router />
             </BrowserRouter>
           </RedirectOnLoginProvider>
