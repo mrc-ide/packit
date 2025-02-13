@@ -4,12 +4,12 @@ import { download, streamFileUrl } from "../../../../lib/download";
 import { FileMetadata } from "../../../../types";
 import { Button } from "../../Base/Button";
 
-interface DownloadButtonProps {
+interface FileDownloadButtonProps {
   file: FileMetadata;
   packetId: string;
 }
 
-export const DownloadButton = ({ file, packetId }: DownloadButtonProps) => {
+export const FileDownloadButton = ({ file, packetId }: FileDownloadButtonProps) => {
   const [error, setError] = useState("");
   const [downloading, setDownloading] = useState(false);
 

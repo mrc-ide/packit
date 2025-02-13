@@ -1,5 +1,5 @@
 import { bytesToSize } from "../../../../helpers";
-import { DownloadButton } from "./DownloadButton";
+import { FileDownloadButton } from "./FileDownloadButton";
 import { usePacketOutletContext } from "../../main/PacketOutlet";
 import { ExtensionIcon } from "./ExtensionIcon";
 import { isImageFile } from "./utils/extensions";
@@ -37,7 +37,7 @@ export const FileRow = ({ file, sharedResource }: FileRowProps) => {
           </p>
         </div>
       </div>
-      <DownloadButton file={file} packetId={packet.id} />
+      <FileDownloadButton file={file} packetId={packet.id} />
     </div>
   );
 };
