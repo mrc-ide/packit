@@ -134,7 +134,7 @@ class RunnerServiceTest
     {
         val mockRes = SubmitRunResponse("task-id")
 
-        `when`(client.submitRun(any())).thenReturn(mockRes)
+        `when`(client.submitRun(any(), any())).thenReturn(mockRes)
 
         val info = SubmitRunInfo(
             packetGroupName = "report-name",
@@ -144,15 +144,17 @@ class RunnerServiceTest
         )
         val res = sut.submitRun(info, testUser.username)
 
+        val expectedRunnerSubmitRunInfo = RunnerSubmitRunInfo(
+            null,
+            info.packetGroupName,
+            info.branch,
+            info.commitHash,
+            info.parameters,
+            OrderlyLocation.http(runnerConfig.locationUrl)
+        )
         verify(client).submitRun(
-            check {
-                assertEquals(it.url, runnerConfig.repository.url)
-                assertEquals(it.packetGroupName, "report-name")
-                assertEquals(it.branch, "branch")
-                assertEquals(it.commitHash, "hash")
-                assertEquals(it.location.type, "http")
-                assertEquals(it.location.args["url"], runnerConfig.locationUrl)
-            }
+            runnerConfig.repository.url,
+            expectedRunnerSubmitRunInfo
         )
         verify(userService).getByUsername(testUser.username)
         verify(runInfoRepository).save(
