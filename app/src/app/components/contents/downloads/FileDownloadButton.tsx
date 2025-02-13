@@ -15,8 +15,8 @@ export const FileDownloadButton = ({ file, packetId }: FileDownloadButtonProps) 
 
   const downloadFile = (file: FileMetadata) => {
     setDownloading(true);
+    setError("");
     download(streamFileUrl(file, packetId), file.path)
-      .then(() => setError(""))
       .catch((e) => {
         setError(e.message);
       })
