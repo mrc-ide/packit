@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { DownloadButton } from "../../../../app/components/contents/downloads/DownloadButton";
+import { FileDownloadButton } from "../../../../app/components/contents/downloads/FileDownloadButton";
 import appConfig from "../../../../config/appConfig";
 
 let errorOnDownload = false;
@@ -10,7 +10,7 @@ jest.mock("../../../../lib/download", () => ({
   download: async (...args: any[]) => mockDownload(...args)
 }));
 
-describe("DownloadButton", () => {
+describe("FileDownloadButton", () => {
   const file = {
     path: "test.txt",
     size: 1024,
@@ -19,7 +19,7 @@ describe("DownloadButton", () => {
   const packetId = "fakePacketId";
 
   const renderComponent = () => {
-    return render(<DownloadButton file={file} packetId={packetId} />);
+    return render(<FileDownloadButton file={file} packetId={packetId} />);
   };
 
   beforeEach(() => {
