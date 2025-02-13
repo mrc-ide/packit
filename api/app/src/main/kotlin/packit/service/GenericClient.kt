@@ -89,10 +89,12 @@ object GenericClient
         }
     }
 
-    fun streamingGet(url: String, output: OutputStream) {
+    // TODO: use this function for ALL of the file downloads
+    fun streamingGet(url: String, output: OutputStream, copyHeaders: (HttpHeaders) -> Unit) {
         try
         {
             restTemplate.execute(URI(url), HttpMethod.GET, {}) { serverResponse ->
+                copyHeaders(serverResponse.headers)
                 serverResponse.body.use { input ->
                     IOUtils.copy(input, output)
                 }

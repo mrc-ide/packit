@@ -7,6 +7,7 @@ import org.springframework.http.ContentDisposition
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.http.MediaTypeFactory.getMediaType
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
 import packit.helpers.PagingHelper
@@ -16,7 +17,6 @@ import packit.model.PacketMetadata
 import packit.model.PageablePayload
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
-import packit.service.utils.filenameToMediaType
 import java.io.OutputStream
 import java.security.MessageDigest
 import java.time.Instant
@@ -31,7 +31,7 @@ interface PacketService
     fun importPackets()
     fun getMetadataBy(id: String): PacketMetadata
     fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<ByteArrayResource, HttpHeaders>
-    fun streamFile(hash: String, filename: String, output: OutputStream)
+    fun streamFile(hash: String, output: OutputStream, copyHeaders: (HttpHeaders) -> Unit)
     fun getPacketsByName(
         name: String
     ): List<Packet>
@@ -140,7 +140,7 @@ class BasePacketService(
             ZipOutputStream(output).use { zipOutputStream ->
                 hashesByPath.forEach { (filename, hash) ->
                     zipOutputStream.putNextEntry(ZipEntry(filename))
-                    outpackServerClient.getFileByHash(hash, zipOutputStream)
+                    outpackServerClient.getFileByHash(hash, zipOutputStream) {}
                     zipOutputStream.closeEntry()
                 }
             }
@@ -164,18 +164,19 @@ class BasePacketService(
             throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
         }
 
+        // TODO: move this headers stuff to the controller as that seems like a better place to handle headers stuff
         val byteArrayResource = ByteArrayResource(response.first)
         val disposition = if (inline) "inline" else "attachment"
         val headers = HttpHeaders().apply {
-            contentType = MediaType.valueOf(filenameToMediaType(filename))
+            contentType = MediaType.valueOf(getMediaType(filename).toString())
             contentDisposition = ContentDisposition.parse("$disposition; filename=$filename")
         }
 
         return byteArrayResource to headers
     }
 
-    override fun streamFile(hash: String, filename: String, output: OutputStream)
+    override fun streamFile(hash: String, output: OutputStream, copyHeaders: (HttpHeaders) -> Unit)
     {
-        outpackServerClient.getFileByHash(hash, output)
+        outpackServerClient.getFileByHash(hash, output, copyHeaders)
     }
 }
