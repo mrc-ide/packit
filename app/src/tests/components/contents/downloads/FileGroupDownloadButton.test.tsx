@@ -2,7 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import appConfig from "../../../../config/appConfig";
 import { FileGroupDownloadButton } from "../../../../app/components/contents/downloads/FileGroupDownloadButton";
-import { FileMetadata, PacketMetadata } from "../../../../types";
+import { FileMetadata } from "../../../../types";
 import { mockPacket } from "../../../mocks";
 import { SWRConfig } from "swr";
 import { MemoryRouter, Route, Routes } from "react-router-dom";

@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { DownloadButton } from "../../../../app/components/contents/downloads/DownloadButton";
+import { FileDownloadButton } from "../../../../app/components/contents/downloads/FileDownloadButton";
 import appConfig from "../../../../config/appConfig";
 
 let errorOnDownload = false;
@@ -10,7 +10,7 @@ jest.mock("../../../../lib/download", () => ({
   download: async (...args: any[]) => mockDownload(...args)
 }));
 
-describe("DownloadButton", () => {
+describe("FileDownloadButton", () => {
   const file = {
     path: "test.txt",
     size: 1024,
@@ -19,7 +19,7 @@ describe("DownloadButton", () => {
   const packetId = "fakePacketId";
 
   const renderComponent = () => {
-    return render(<DownloadButton file={file} packetId={packetId} />);
+    return render(<FileDownloadButton file={file} packetId={packetId} />);
   };
 
   beforeEach(() => {
@@ -48,7 +48,7 @@ describe("DownloadButton", () => {
     const button = screen.getByRole("button");
     userEvent.click(button);
     expect(button).toBeDisabled();
-    const url = `${appConfig.apiUrl()}/packets/${packetId}/file?hash=${file.hash}&filename=${file.path}&inline=false`;
+    const url = `${appConfig.apiUrl()}/packets/${packetId}/file/${file.hash}/stream?filename=${file.path}`;
     expect(mockDownload).toHaveBeenCalledWith(url, "test.txt");
     await waitFor(() => {
       expect(button).not.toBeDisabled();
@@ -57,15 +57,16 @@ describe("DownloadButton", () => {
 
   it("shows download error, and resets on success", async () => {
     renderComponent();
-    errorOnDownload = true;
+    const button = screen.getByRole("button");
 
-    userEvent.click(screen.getByRole("button"));
+    errorOnDownload = true;
+    userEvent.click(button);
     await waitFor(() => {
       expect(screen.queryByText("test download error")).toBeInTheDocument();
     });
 
     errorOnDownload = false;
-    userEvent.click(screen.getByRole("button"));
+    userEvent.click(button);
     await waitFor(() => {
       expect(screen.queryByText("test download error")).not.toBeInTheDocument();
     });

@@ -3,8 +3,7 @@ package packit.controllers
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.Page
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
+import org.springframework.http.*
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -17,6 +16,7 @@ import packit.model.PageablePayload
 import packit.model.dto.PacketDto
 import packit.model.toDto
 import packit.service.PacketService
+import packit.service.utils.filenameToMediaType
 
 @RestController
 @RequestMapping("/packets")
@@ -60,6 +60,29 @@ class PacketController(private val packetService: PacketService)
             .ok()
             .headers(response.second)
             .body(response.first)
+    }
+
+    @GetMapping("/{id}/file/{hash}/stream")
+    @PreAuthorize("@authz.canReadPacket(#root, #id)")
+    fun streamFile(
+        @PathVariable id: String,
+        @PathVariable hash: String,
+        @RequestParam filename: String,
+        response: HttpServletResponse
+    )
+    {
+        val packet = packetService.getMetadataBy(id)
+        if (packet.files.none { it.hash == hash }) {
+            throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
+        }
+
+        val headers = HttpHeaders().apply {
+            contentType = MediaType.valueOf(filenameToMediaType(filename))
+            contentDisposition = ContentDisposition.parse("attachment; filename=$filename")
+        }
+        headers.map { response.setHeader(it.key, it.value.first()) }
+
+        packetService.streamFile(hash, filename, response.outputStream)
     }
 
     @GetMapping("/{id}/zip")
