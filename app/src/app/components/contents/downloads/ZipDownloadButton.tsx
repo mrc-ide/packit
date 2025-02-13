@@ -16,7 +16,7 @@ interface FileGroupDownloadButtonProps {
   className?: string;
 }
 
-export const FileGroupDownloadButton = ({
+export const ZipDownloadButton = ({
   files,
   zipName,
   buttonText = "Download",
@@ -33,8 +33,8 @@ export const FileGroupDownloadButton = ({
       return;
     }
     setDownloading(true);
+    setError("");
     await download(getZipUrl(packetId, files), zipName)
-      .then(() => setError(""))
       .catch((e) => {
         setError(e.message);
       })

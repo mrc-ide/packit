@@ -1,8 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import appConfig from "../../../../config/appConfig";
-import { FileGroupDownloadButton } from "../../../../app/components/contents/downloads/FileGroupDownloadButton";
-import { FileMetadata, PacketMetadata } from "../../../../types";
+import { ZipDownloadButton } from "../../../../app/components/contents/downloads/ZipDownloadButton";
+import { FileMetadata } from "../../../../types";
 import { mockPacket } from "../../../mocks";
 import { SWRConfig } from "swr";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
@@ -15,7 +15,7 @@ jest.mock("../../../../lib/download", () => ({
   download: async (...args: any[]) => mockDownload(...args)
 }));
 
-describe("FileGroupDownloadButton", () => {
+describe("ZipDownloadButton", () => {
   const filesToDownload = [
     {
       path: "test.txt",
@@ -39,9 +39,7 @@ describe("FileGroupDownloadButton", () => {
             <Route element={<PacketLayout />} path="/:packetName/:packetId">
               <Route
                 path="/:packetName/:packetId/downloads"
-                element={
-                  <FileGroupDownloadButton files={files} zipName={zipName} buttonText={buttonText} variant="ghost" />
-                }
+                element={<ZipDownloadButton files={files} zipName={zipName} buttonText={buttonText} variant="ghost" />}
               />
             </Route>
           </Routes>
@@ -85,17 +83,18 @@ describe("FileGroupDownloadButton", () => {
     });
   });
 
-  it("shows download error, and resets on success", async () => {
+  it("shows download error, and resets on re-trying", async () => {
     renderComponent();
-    errorOnDownload = true;
+    const button = await screen.findByRole("button");
 
-    userEvent.click(await screen.findByRole("button"));
+    errorOnDownload = true;
+    userEvent.click(button);
     await waitFor(() => {
       expect(screen.queryByText("test download error")).toBeInTheDocument();
     });
 
     errorOnDownload = false;
-    userEvent.click(screen.getByRole("button"));
+    userEvent.click(button);
     await waitFor(() => {
       expect(screen.queryByText("test download error")).not.toBeInTheDocument();
     });

@@ -2,10 +2,10 @@ package packit.unit.controllers
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.mockito.ArgumentMatchers.anyBoolean
-import org.mockito.ArgumentMatchers.anyString
+import org.mockito.ArgumentMatchers.*
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.HttpHeaders
@@ -147,12 +147,14 @@ class PacketControllerTest
     }
 
     @Test
-    fun `streamZip should set correct response headers and content type`() {
+    fun `streamZip should set correct response headers and content type, and call PacketService`() {
         val response = MockHttpServletResponse()
         val paths = listOf("file1.txt", "file2.txt")
 
         val sut = PacketController(packetService)
         sut.streamZip(packetId, paths, response)
+
+        verify(packetService).streamZip(listOf("file1.txt", "file2.txt"), packetId, response.outputStream)
 
         assertEquals("application/zip", response.contentType)
         assertEquals("attachment; filename=$packetId.zip", response.getHeader("Content-Disposition"))

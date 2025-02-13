@@ -3,7 +3,7 @@ import { FileMetadata, InputFileType } from "../../../../../types";
 import { Artefacts } from "./Artefacts";
 import { OtherFiles } from "./OtherFiles";
 import { usePacketOutletContext } from "../../../main/PacketOutlet";
-import { FileGroupDownloadButton } from "../FileGroupDownloadButton";
+import { ZipDownloadButton } from "../ZipDownloadButton";
 import { useParams } from "react-router-dom";
 import { getFileByPath } from "../utils/getFileByPath";
 
@@ -42,7 +42,7 @@ export const OrderlyDownloads = () => {
                 <div className="flex flex-col gap-2">
                   <span className="self-end absolute top-3 right-8">
                     <div className="flex flex-col items-end gap-1">
-                      <FileGroupDownloadButton
+                      <ZipDownloadButton
                         files={inputsFiles}
                         zipName={`${packetName}_other_resources_${packetId}.zip`}
                         variant="ghost"

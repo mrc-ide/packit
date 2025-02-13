@@ -121,12 +121,18 @@ class BasePacketService(
     }
 
     override fun streamZip(paths: List<String>, id: String, output: OutputStream) {
-        val hashesByPath = getMetadataBy(id).files
+        val metadataFiles = getMetadataBy(id).files
+        val hashesByPath = metadataFiles
             .filter { it.path in paths }
             .associateBy({ it.path }, { it.hash })
+        val notFoundPaths = paths.filter { path -> metadataFiles.none { it.path == path } }
 
-        if (hashesByPath.size != paths.size) {
-            throw PackitException("notAllFilesFound", HttpStatus.NOT_FOUND)
+        if (notFoundPaths.isNotEmpty()) {
+            throw PackitException("notAllFilesFound: ${notFoundPaths.joinToString(", ")}", HttpStatus.NOT_FOUND)
+        }
+
+        if (paths.isEmpty()) {
+            throw PackitException("noFilesProvided", HttpStatus.BAD_REQUEST)
         }
 
         try {

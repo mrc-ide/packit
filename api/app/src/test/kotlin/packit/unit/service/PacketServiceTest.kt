@@ -309,6 +309,16 @@ class PacketServiceTest
     }
 
     @Test
+    fun `streamZip should throw PackitException if no paths supplied`() {
+        val outputStream = ByteArrayOutputStream()
+        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+
+        assertThrows<PackitException> {
+            sut.streamZip(listOf(), packetMetadata.id, outputStream)
+        }
+    }
+
+    @Test
     fun `streamZip should throw PackitException if there is an error creating the zip`() {
         val outputStream = ByteArrayOutputStream()
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)

@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader } from "../../../Base/Card";
 import { FileRow } from "../FileRow";
-import { FileGroupDownloadButton } from "../FileGroupDownloadButton";
+import { ZipDownloadButton } from "../ZipDownloadButton";
 import { Artefact, FileMetadata } from "../../../../../types";
 import { usePacketOutletContext } from "../../../main/PacketOutlet";
 import { getFileByPath } from "../utils/getFileByPath";
@@ -26,7 +26,7 @@ export const Artefacts = ({ artefacts }: ArtefactsProps) => {
     <>
       {artefacts.length > 1 && allArtefactsFiles && (
         <span className="self-end absolute top-3 right-8">
-          <FileGroupDownloadButton
+          <ZipDownloadButton
             files={allArtefactsFiles}
             zipName={`${packetName}_artefacts_${packetId}.zip`}
             buttonText="Download all artefacts"
@@ -43,7 +43,7 @@ export const Artefacts = ({ artefacts }: ArtefactsProps) => {
                 <CardHeader className="bg-muted p-2 ps-6 flex-row justify-between items-center space-y-0">
                   <h3 className="">{artefact.description}</h3>
                   {files.length > 1 && (
-                    <FileGroupDownloadButton
+                    <ZipDownloadButton
                       files={files}
                       zipName={`${artefact.description.substring(0, 20)}_${packet.id}.zip`}
                       variant="outline"

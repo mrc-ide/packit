@@ -206,7 +206,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser(authorities = ["packet.read"])
+    @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:download-types"])
     fun `streamZip streams a zip file`()
     {
         val paths = listOf(
@@ -236,13 +236,11 @@ class PacketControllerTest : IntegrationTest()
         val entries = mutableListOf<String>()
         var entry: ZipEntry? = zipInputStream.nextEntry!!
         while (entry != null) {
-            println("entry.name: " + entry.name)
             entries.add(entry.name)
             entry = zipInputStream.nextEntry
         }
         zipInputStream.close()
 
-        // Check that all expected files are in the zip
-        assertTrue(paths.all { it in entries })
+        assertThat(entries).containsExactlyInAnyOrderElementsOf(paths)
     }
 }
