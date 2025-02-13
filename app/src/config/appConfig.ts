@@ -13,7 +13,7 @@ const getUrlSubPath = () => {
   if (!Number.isInteger(numericDepth)) {
     throw new Error("REACT_APP_SUB_URL_DEPTH must be an integer");
   }
-
+  console.log(numericDepth === 0 ? null : window.location.pathname.split("/").slice(1, 1 + numericDepth))
   return numericDepth === 0 ? null : window.location.pathname.split("/").slice(1, 1 + numericDepth);
 };
 
