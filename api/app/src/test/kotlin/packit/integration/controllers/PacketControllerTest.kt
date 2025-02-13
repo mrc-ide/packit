@@ -15,13 +15,9 @@ import packit.integration.WithAuthenticatedUser
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
 import packit.service.PacketService
-import java.net.URI
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PacketControllerTest : IntegrationTest()
