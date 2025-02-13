@@ -59,7 +59,6 @@ object GenericClient
         request: HttpServletRequest,
         response: HttpServletResponse,
         copyRequestBody: Boolean,
-        outputStream: OutputStream = response.outputStream,
     )
     {
         val method = request.method
@@ -81,9 +80,8 @@ object GenericClient
                 response.status = serverResponse.statusCode.value()
                 serverResponse.headers.map { response.setHeader(it.key, it.value.first()) }
                 serverResponse.body.use { inputStream ->
-                    IOUtils.copy(inputStream, outputStream)
+                    IOUtils.copy(inputStream, response.outputStream)
                 }
-                true
             }
         } catch (e: HttpStatusCodeException)
         {
@@ -98,7 +96,6 @@ object GenericClient
                 serverResponse.body.use { input ->
                     IOUtils.copy(input, output)
                 }
-                true
             }
         } catch (e: HttpStatusCodeException)
         {
