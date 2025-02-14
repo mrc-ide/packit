@@ -13,8 +13,8 @@ describe("local storage keys", () => {
   });
 
   test("local storage keys are namespaced correctly", () => {
-    const ns = "test-ns";
-    process.env.REACT_APP_PACKIT_NAMESPACE = ns;
+    process.env.REACT_APP_SUB_URL_DEPTH = "2";
+    const ns = "foo-bar";
     /* eslint-disable */
     const keys = require("../../../lib/types/LocalStorageKeys").LocalStorageKeys;
     expect(keys).toStrictEqual({

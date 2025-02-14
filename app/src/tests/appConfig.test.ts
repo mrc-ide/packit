@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 export {};
 
 describe("api service", () => {
@@ -12,35 +13,56 @@ describe("api service", () => {
     process.env = OLD_ENV; // Restore old environment
   });
 
-  test("uses API URL from environment", () => {
-    process.env.REACT_APP_PACKIT_API_URL = "http://localhost/foo/api";
-    /* eslint-disable */
+  test("uses sub depth as expected", () => {
     const appConfig = require("../config/appConfig").default;
-    /* eslint-enable */
-    expect(appConfig.apiUrl()).toBe("http://localhost/foo/api");
+
+    process.env.REACT_APP_SUB_URL_DEPTH = "2";
+    expect(appConfig.apiUrl()).toBe("/foo/bar/packit/api");
+
+    process.env.REACT_APP_SUB_URL_DEPTH = "1";
+    expect(appConfig.apiUrl()).toBe("/foo/packit/api");
+
+    process.env.REACT_APP_SUB_URL_DEPTH = "0";
+    expect(appConfig.apiUrl()).toBe("http://localhost:8080");
   });
 
   test("throw error if environment variable is missing", () => {
-    delete process.env["REACT_APP_PACKIT_API_URL"];
-    /* eslint-disable */
     const appConfig = require("../config/appConfig").default;
-    /* eslint-enable */
+
+    delete process.env["REACT_APP_SUB_URL_DEPTH"];
     expect(appConfig.apiUrl).toThrow();
   });
 
-  test("uses PACKIT NAMESPACE from environment", () => {
-    process.env.REACT_APP_PACKIT_NAMESPACE = "my-repo";
-    /* eslint-disable */
+  test("returns null when SUB_URL_DEPTH is 0", () => {
     const appConfig = require("../config/appConfig").default;
-    /* eslint-enable */
-    expect(appConfig.appNamespace()).toBe("my-repo");
+
+    process.env.REACT_APP_SUB_URL_DEPTH = "2";
+    expect(appConfig.appNamespace()).toBe("foo-bar");
+
+    process.env.REACT_APP_SUB_URL_DEPTH = "1";
+    expect(appConfig.appNamespace()).toBe("foo");
+
+    process.env.REACT_APP_SUB_URL_DEPTH = "0";
+    expect(appConfig.appNamespace()).toBe(null);
   });
 
-  test("returns null when PACKIT NAMESPACE is missing", () => {
-    delete process.env["REACT_APP_PACKIT_NAMESPACE"];
-    /* eslint-disable */
-    const appConfig = require("../config/appConfig").default;
-    /* eslint-enable */
-    expect(appConfig.appNamespace()).toBe(null);
+  test("returns correct github auth endpoint url", () => {
+    const { default: appConfig, githubAuthEndpoint } = require("../config/appConfig");
+
+    process.env.REACT_APP_SUB_URL_DEPTH = "2";
+    expect(githubAuthEndpoint(appConfig)).toBe("/foo/bar/packit/api/oauth2/authorization/github");
+  });
+
+  test("returns correct public url", () => {
+    const { publicUrl } = require("../config/appConfig");
+
+    process.env.REACT_APP_SUB_URL_DEPTH = "2";
+    expect(publicUrl("/foo/bar")).toBe("/foo/bar");
+
+    process.env.REACT_APP_SUB_URL_DEPTH = "1";
+    expect(publicUrl("/foo/bar")).toBe("/foo");
+
+    process.env.REACT_APP_SUB_URL_DEPTH = "0";
+    expect(publicUrl("/foo/bar")).toBe("/");
   });
 });

@@ -27,6 +27,13 @@ Object.defineProperty(window, "matchMedia", {
     dispatchEvent: jest.fn()
   }))
 });
+
+delete (global as any).window.location;
+Object.defineProperty(global.window, "location", {
+  writable: true,
+  value: { pathname: "/foo/bar" }
+});
+
 // Checkbox component needs ResizeObserver
 window.ResizeObserver = ResizeObserverPolyFill;
 
