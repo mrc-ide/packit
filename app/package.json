@@ -76,7 +76,7 @@
     "format:check": "prettier --check .",
     "format:write": "prettier --write ."
   },
-  "homepage": "/",
+  "homepage": "./",
   "eslintConfig": {
     "extends": [
       "react-app",
