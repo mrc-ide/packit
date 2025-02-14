@@ -33,6 +33,13 @@ describe("api service", () => {
     expect(appConfig.apiUrl).toThrow();
   });
 
+  test("throw error if environment variable is not integer", () => {
+    const appConfig = require("../config/appConfig").default;
+
+    process.env.REACT_APP_SUB_URL_DEPTH = "0.1";
+    expect(appConfig.apiUrl).toThrow();
+  });
+
   test("returns null when SUB_URL_DEPTH is 0", () => {
     const appConfig = require("../config/appConfig").default;
 

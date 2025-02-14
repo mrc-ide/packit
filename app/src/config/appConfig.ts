@@ -9,7 +9,7 @@ const getUrlSubPath = () => {
     throw new Error("REACT_APP_SUB_URL_DEPTH must be set");
   }
 
-  const numericDepth = parseInt(process.env.REACT_APP_SUB_URL_DEPTH);
+  const numericDepth = parseFloat(process.env.REACT_APP_SUB_URL_DEPTH);
   if (!Number.isInteger(numericDepth)) {
     throw new Error("REACT_APP_SUB_URL_DEPTH must be an integer");
   }
