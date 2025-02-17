@@ -36,16 +36,16 @@ class PacketControllerTest : IntegrationTest()
         const val idOfComputedResourcePacket = "20240729-154635-88c5c1eb"
         const val idOfDownloadTypesPacket3 = "20250122-142620-c741b061"
         const val hashOfReport = "sha256:715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1"
-        val filePathsForDownloadTypesPacket = listOf(
-            "a_renamed_common_resource.csv",
-            "artefact1/artefact_data.csv",
-            "artefact1/excel_file.xlsx",
-            "artefact1/internal_presentation.pdf",
-            "artefact1/other_extensions.txt",
-            "data.csv",
-            "input_files/plot.png",
-            "orderly.R",
-            "presentation.html"
+        val filePathsAndSizesForDownloadTypesPacket = mapOf(
+            "a_renamed_common_resource.csv" to 11L,
+            "artefact1/artefact_data.csv" to 51L,
+            "artefact1/excel_file.xlsx" to 4715L,
+            "artefact1/internal_presentation.pdf" to 14097L,
+            "artefact1/other_extensions.txt" to 15L,
+            "data.csv" to 51L,
+            "input_files/plot.png" to 7344L,
+            "orderly.R" to 884L,
+            "presentation.html" to 40L
         )
     }
 
@@ -216,11 +216,12 @@ class PacketControllerTest : IntegrationTest()
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:download-types"])
     fun `streamZip streams a zip file`()
     {
+        val paths = filePathsAndSizesForDownloadTypesPacket.keys
         val result: ResponseEntity<ByteArray> = restTemplate.exchange(
             "/packets/{id}/zip?paths={paths}",
             HttpMethod.GET,
             getTokenizedHttpEntity(),
-            mapOf("id" to idOfDownloadTypesPacket3, "paths" to filePathsForDownloadTypesPacket.joinToString(","))
+            mapOf("id" to idOfDownloadTypesPacket3, "paths" to paths.joinToString(","))
         )
         assertEquals(result.statusCode, HttpStatus.OK)
         assertEquals(result.headers["Transfer-Encoding"]?.firstOrNull(), "chunked") // Header denoting streaming
@@ -229,14 +230,21 @@ class PacketControllerTest : IntegrationTest()
         // Read the stream into a zip file
         val zipInputStream = ZipInputStream(result.body!!.inputStream())
         val entries = mutableListOf<String>()
+        val uncompressedSizes = mutableListOf<Long>()
         var entry: ZipEntry? = zipInputStream.nextEntry!!
         while (entry != null) {
             entries.add(entry.name)
-            entry = zipInputStream.nextEntry
+            val nextEntry = zipInputStream.nextEntry
+            // entry.size is not available until nextEntry has been called: see
+            // https://stackoverflow.com/questions/25602406/zipentry-unknown-size-although-set
+            uncompressedSizes.add(entry.size)
+            entry = nextEntry
         }
         zipInputStream.close()
 
-        assertThat(entries).containsExactlyInAnyOrderElementsOf(filePathsForDownloadTypesPacket)
+        assertThat(entries).containsExactlyInAnyOrderElementsOf(paths)
+        val expectedSizes = filePathsAndSizesForDownloadTypesPacket.values
+        assertThat(uncompressedSizes).containsExactlyInAnyOrderElementsOf(expectedSizes)
     }
 
     @Test
@@ -256,7 +264,7 @@ class PacketControllerTest : IntegrationTest()
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:download-types"])
     fun `streamZip 404s when passed any files not associated with the packet in question`()
     {
-        val paths = filePathsForDownloadTypesPacket + "not_a_file.txt"
+        val paths = filePathsAndSizesForDownloadTypesPacket.keys + "not_a_file.txt"
 
         val result: ResponseEntity<ByteArray> = restTemplate.exchange(
             "/packets/{id}/zip?paths={paths}",
