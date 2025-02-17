@@ -15,6 +15,8 @@ import packit.integration.WithAuthenticatedUser
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
 import packit.service.PacketService
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -32,7 +34,19 @@ class PacketControllerTest : IntegrationTest()
     companion object {
         const val idOfArtefactTypesPacket = "20240729-154633-10abe7d1"
         const val idOfComputedResourcePacket = "20240729-154635-88c5c1eb"
+        const val idOfDownloadTypesPacket3 = "20250122-142620-c741b061"
         const val hashOfReport = "sha256:715f397632046e65e0cc878b852fa5945681d07ab0de67dcfea010bb6421cca1"
+        val filePathsAndSizesForDownloadTypesPacket = mapOf(
+            "a_renamed_common_resource.csv" to 11L,
+            "artefact1/artefact_data.csv" to 51L,
+            "artefact1/excel_file.xlsx" to 4715L,
+            "artefact1/internal_presentation.pdf" to 14097L,
+            "artefact1/other_extensions.txt" to 15L,
+            "data.csv" to 51L,
+            "input_files/plot.png" to 7344L,
+            "orderly.R" to 884L,
+            "presentation.html" to 40L
+        )
     }
 
     @BeforeAll
@@ -196,5 +210,68 @@ class PacketControllerTest : IntegrationTest()
         assertThat(body.get("content")).allSatisfy {
             assertThat(it.get("name").textValue()).isEqualTo("artefact-types")
         }
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:download-types"])
+    fun `streamZip streams a zip file`()
+    {
+        val paths = filePathsAndSizesForDownloadTypesPacket.keys
+        val result: ResponseEntity<ByteArray> = restTemplate.exchange(
+            "/packets/{id}/zip?paths={paths}",
+            HttpMethod.GET,
+            getTokenizedHttpEntity(),
+            mapOf("id" to idOfDownloadTypesPacket3, "paths" to paths.joinToString(","))
+        )
+        assertEquals(result.statusCode, HttpStatus.OK)
+        assertEquals(result.headers["Transfer-Encoding"]?.firstOrNull(), "chunked") // Header denoting streaming
+        assertEquals(result.headers.contentType.toString(), "application/zip")
+
+        // Read the stream into a zip file
+        val zipInputStream = ZipInputStream(result.body!!.inputStream())
+        val entries = mutableListOf<String>()
+        val uncompressedSizes = mutableListOf<Long>()
+        var entry: ZipEntry? = zipInputStream.nextEntry!!
+        while (entry != null) {
+            entries.add(entry.name)
+            val nextEntry = zipInputStream.nextEntry
+            // entry.size is not available until nextEntry has been called: see
+            // https://stackoverflow.com/questions/25602406/zipentry-unknown-size-although-set
+            uncompressedSizes.add(entry.size)
+            entry = nextEntry
+        }
+        zipInputStream.close()
+
+        assertThat(entries).containsExactlyInAnyOrderElementsOf(paths)
+        val expectedSizes = filePathsAndSizesForDownloadTypesPacket.values
+        assertThat(uncompressedSizes).containsExactlyInAnyOrderElementsOf(expectedSizes)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:download-types"])
+    fun `streamZip 400s when passed an empty list of paths`()
+    {
+        val result: ResponseEntity<ByteArray> = restTemplate.exchange(
+            "/packets/{id}/zip?paths={paths}",
+            HttpMethod.GET,
+            getTokenizedHttpEntity(),
+            mapOf("id" to idOfDownloadTypesPacket3, "paths" to "")
+        )
+        assertBadRequest(result)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:download-types"])
+    fun `streamZip 404s when passed any files not associated with the packet in question`()
+    {
+        val paths = filePathsAndSizesForDownloadTypesPacket.keys + "not_a_file.txt"
+
+        val result: ResponseEntity<ByteArray> = restTemplate.exchange(
+            "/packets/{id}/zip?paths={paths}",
+            HttpMethod.GET,
+            getTokenizedHttpEntity(),
+            mapOf("id" to idOfDownloadTypesPacket3, "paths" to paths.joinToString(","))
+        )
+        assertNotFound(result)
     }
 }

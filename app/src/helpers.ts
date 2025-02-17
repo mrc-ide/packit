@@ -1,6 +1,6 @@
-import { TimeMetadata } from "./types";
+import { FileMetadata, TimeMetadata } from "./types";
 
-export function bytesToSize(bytes: number): string {
+export const bytesToSize = (bytes: number): string => {
   const units = ["bytes", "KB", "MB", "GB", "TB"];
 
   const unitIndex = Math.max(0, Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1));
@@ -8,7 +8,11 @@ export function bytesToSize(bytes: number): string {
   const size = (bytes / 1024 ** unitIndex).toFixed(2);
 
   return `${parseFloat(size)} ${units[unitIndex]}`;
-}
+};
+
+export const filesToSize = (files: FileMetadata[]): string => {
+  return bytesToSize(files.reduce((acc, file) => acc + file.size, 0));
+};
 
 export const getDateUTCString = (time: TimeMetadata) => {
   return new Date(time.start * 1000).toUTCString();
