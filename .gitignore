@@ -1,3 +1,5 @@
 .idea
 .vscode
 packit.iml
+app/test-results
+app/playwright-report

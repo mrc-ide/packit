@@ -60,3 +60,9 @@ See [app/README.md](https://github.com/mrc-ide/packit/blob/main/app/README.md)
 ## Authentication in Packit
 
 See [docs/auth.md](docs/auth.md)
+
+## e2e Tests
+
+Playwright tests are in `./app/e2e`. They can be configured to use `PLAYWRIGHT_BASE_URL` env var, but will fall back to 
+`http://localhost:3000`. They expect basic auth super user to be available, so you can run `./scripts/dev-start --super-user`
+to start the api and app, then from `./app` run `npm run test:e2e` to run the tests. 
