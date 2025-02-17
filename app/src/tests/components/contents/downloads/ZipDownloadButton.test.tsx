@@ -83,18 +83,21 @@ describe("ZipDownloadButton", () => {
     });
   });
 
-  it("shows download error, and resets on re-trying", async () => {
+  it("shows any download errors, and resets error display on re-trying the download", async () => {
     renderComponent();
-    const button = await screen.findByRole("button");
+
+    await waitFor(() => {
+      expect(screen.getByRole("button")).toBeVisible();
+    });
 
     errorOnDownload = true;
-    userEvent.click(button);
+    userEvent.click(screen.getByRole("button"));
     await waitFor(() => {
       expect(screen.queryByText("test download error")).toBeInTheDocument();
     });
 
     errorOnDownload = false;
-    userEvent.click(button);
+    userEvent.click(screen.getByRole("button"));
     await waitFor(() => {
       expect(screen.queryByText("test download error")).not.toBeInTheDocument();
     });

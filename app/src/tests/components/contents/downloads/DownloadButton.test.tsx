@@ -55,10 +55,10 @@ describe("DownloadButton", () => {
     });
   });
 
-  it("shows download error, and resets on success", async () => {
+  it("shows any download errors, and resets on success", async () => {
     renderComponent();
-    errorOnDownload = true;
 
+    errorOnDownload = true;
     userEvent.click(screen.getByRole("button"));
     await waitFor(() => {
       expect(screen.queryByText("test download error")).toBeInTheDocument();
