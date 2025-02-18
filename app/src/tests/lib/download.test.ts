@@ -1,5 +1,5 @@
 import { downloadFileUri } from "../../msw/handlers/downloadFileHandlers";
-import { download, getFileObjectUrl, streamFileUrl } from "../../lib/download";
+import { download, getFileObjectUrl, getFileUrl } from "../../lib/download";
 import { mockFileBlob } from "../mocks";
 import { server } from "../../msw/server";
 import { rest } from "msw";
@@ -90,13 +90,13 @@ describe("download", () => {
   });
 
   it("can get the stream file url for request a file with inline content-disposition", () => {
-    const result = streamFileUrl(testFile, "testPacketId", true);
+    const result = getFileUrl(testFile, "testPacketId", true);
 
     expect(result).toBe(`${appConfig.apiUrl()}/packets/testPacketId/file?hash=testHash&filename=testPath&inline=true`);
   });
 
   it("can get the stream file url for request a file with attachment content-disposition", () => {
-    const result = streamFileUrl(testFile, "testPacketId");
+    const result = getFileUrl(testFile, "testPacketId");
 
     expect(result).toBe(`${appConfig.apiUrl()}/packets/testPacketId/file?hash=testHash&filename=testPath&inline=false`);
   });

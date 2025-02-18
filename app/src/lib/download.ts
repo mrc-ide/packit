@@ -8,7 +8,7 @@ export const getZipUrl = (packetId: string, files: FileMetadata[]) => {
   return `${appConfig.apiUrl()}/packets/${packetId}/zip?paths=${encodeURIComponent(paths.join(","))}`;
 };
 
-export const streamFileUrl = (file: FileMetadata, packetId: string, inline = false) =>
+export const getFileUrl = (file: FileMetadata, packetId: string, inline = false) =>
   `${appConfig.apiUrl()}/packets/${packetId}/file?hash=${file.hash}&filename=${file.path}&inline=${inline}`;
 
 export const getFileObjectUrl = async (url: string, filename: string) => {
