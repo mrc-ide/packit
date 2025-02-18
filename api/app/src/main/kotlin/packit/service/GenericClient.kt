@@ -89,7 +89,6 @@ object GenericClient
         }
     }
 
-    // TODO: use this function for ALL of the file downloads
     fun streamingGet(url: String, output: OutputStream, copyHeaders: (HttpHeaders) -> Unit) {
         try
         {

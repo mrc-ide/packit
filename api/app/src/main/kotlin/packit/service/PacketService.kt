@@ -30,7 +30,6 @@ interface PacketService
     fun getChecksum(): String
     fun importPackets()
     fun getMetadataBy(id: String): PacketMetadata
-    fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<ByteArrayResource, HttpHeaders>
     fun streamFile(hash: String, output: OutputStream, copyHeaders: (HttpHeaders) -> Unit)
     fun getPacketsByName(
         name: String
@@ -156,27 +155,9 @@ class BasePacketService(
             ?: throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
     }
 
-    override fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<ByteArrayResource, HttpHeaders>
-    {
-        val response = outpackServerClient.getFileByHash(hash)
-        if (response?.first == null || response.first.isEmpty())
-        {
-            throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
-        }
-
-        // TODO: move this headers stuff to the controller as that seems like a better place to handle headers stuff
-        val byteArrayResource = ByteArrayResource(response.first)
-        val disposition = if (inline) "inline" else "attachment"
-        val headers = HttpHeaders().apply {
-            contentType = MediaType.valueOf(getMediaType(filename).toString())
-            contentDisposition = ContentDisposition.parse("$disposition; filename=$filename")
-        }
-
-        return byteArrayResource to headers
-    }
-
     override fun streamFile(hash: String, output: OutputStream, copyHeaders: (HttpHeaders) -> Unit)
     {
+        //TODO: add in missing functionality lost by deleting getFileByHash
         outpackServerClient.getFileByHash(hash, output, copyHeaders)
     }
 }

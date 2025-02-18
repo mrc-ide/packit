@@ -13,7 +13,6 @@ interface OutpackServer
 {
     fun getMetadata(from: Double? = null): List<OutpackMetadata>
     fun getMetadataById(id: String): PacketMetadata?
-    fun getFileByHash(hash: String): Pair<ByteArray, HttpHeaders>?
     fun getFileByHash(hash: String, output: OutputStream, copyHeaders: (HttpHeaders) -> Unit)
     fun proxyRequest(
         urlFragment: String,
@@ -42,11 +41,6 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
     override fun getMetadataById(id: String): PacketMetadata
     {
         return GenericClient.get(constructUrl("metadata/$id/json"))
-    }
-
-    override fun getFileByHash(hash: String): Pair<ByteArray, HttpHeaders>
-    {
-        return GenericClient.getFile(constructUrl("file/$hash"))
     }
 
     override fun getFileByHash(hash: String, output: OutputStream, copyHeaders: (HttpHeaders) -> Unit)
