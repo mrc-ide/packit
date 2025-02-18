@@ -93,10 +93,6 @@ object GenericClient
         try
         {
             restTemplate.execute(URI(url), HttpMethod.GET, {}) { serverResponse ->
-                if (serverResponse.statusCode.isError) {
-                    log.error("Error response: {}", serverResponse.statusText)
-                    throw PackitException("couldNotGetFile", HttpStatus.valueOf(serverResponse.statusCode.value()))
-                }
                 copyHeaders(serverResponse.headers)
                 serverResponse.body.use { input ->
                     IOUtils.copy(input, output)
@@ -104,9 +100,8 @@ object GenericClient
             }
         } catch (e: HttpStatusCodeException)
         {
-            throw GenericClientException(e)
-        } catch (e: Exception) {
-            throw PackitException("couldNotStream", HttpStatus.INTERNAL_SERVER_ERROR)
+            log.error("Error response: {}", e.statusText)
+            throw PackitException("couldNotGetFile", HttpStatus.valueOf(e.statusCode.value()))
         }
     }
 
