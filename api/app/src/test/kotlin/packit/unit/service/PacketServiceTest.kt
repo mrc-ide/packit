@@ -128,7 +128,13 @@ class PacketServiceTest
         mock<OutpackServerClient> {
             on { getMetadata(oldPackets[0].importTime) } doReturn newPackets.map { packetToOutpackMetadata(it) }
             on { getMetadataById(packetMetadata.id) } doReturn packetMetadata
-            on { getFileByHash(anyString(), any<OutputStream>(), any<(HttpHeaders) -> Unit>()) } doAnswer { invocationOnMock ->
+            on {
+                getFileByHash(
+                anyString(),
+                any<OutputStream>(),
+                any<(HttpHeaders) -> Unit>()
+            )
+            } doAnswer { invocationOnMock ->
                 val outputStream = invocationOnMock.getArgument<OutputStream>(1)
                 outputStream.write("mocked output content".toByteArray())
             }

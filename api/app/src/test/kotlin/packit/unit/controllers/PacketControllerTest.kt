@@ -82,7 +82,13 @@ class PacketControllerTest
     private val testHeaders = HttpHeaders().apply { contentLength = 100L }
     private val packetService = mock<PacketService> {
         on { getPackets(PageablePayload(0, 10), "", "") } doReturn mockPageablePackets
-        on { getFileByHash(anyString(), any<OutputStream>(), any<(HttpHeaders) -> Unit>()) } doAnswer { invocationOnMock ->
+        on {
+            getFileByHash(
+            anyString(),
+            any<OutputStream>(),
+            any<(HttpHeaders) -> Unit>()
+        )
+        } doAnswer { invocationOnMock ->
             val outputStream = invocationOnMock.getArgument<OutputStream>(1)
             outputStream.write("mocked output content".toByteArray())
             val callback = invocationOnMock.getArgument<(HttpHeaders) -> Unit>(2)
@@ -131,7 +137,7 @@ class PacketControllerTest
 
         assertEquals(response.status, HttpStatus.OK.value())
         assertEquals(response.contentType, "text/html")
-        assertEquals(response.getHeader("Content-Disposition"), "attachment; filename=\"test.html\"");
+        assertEquals(response.getHeader("Content-Disposition"), "attachment; filename=\"test.html\"")
         assertEquals(response.getHeader("Content-Length"), "100")
     }
 
@@ -149,7 +155,7 @@ class PacketControllerTest
 
         assertEquals(response.status, HttpStatus.OK.value())
         assertEquals(response.contentType, "text/html")
-        assertEquals(response.getHeader("Content-Disposition"), "inline; filename=\"test.html\"");
+        assertEquals(response.getHeader("Content-Disposition"), "inline; filename=\"test.html\"")
         assertEquals(response.getHeader("Content-Length"), "100")
     }
 

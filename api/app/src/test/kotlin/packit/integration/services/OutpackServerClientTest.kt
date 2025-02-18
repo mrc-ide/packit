@@ -33,7 +33,7 @@ class OutpackServerClientTest : IntegrationTest()
         // Hash of computed-resource/orderly.R
         val hash = "sha256:1a1b649d911106d45dcb58e535aae97904f465e66b11a38d7a70828b53e3a2eb"
         val outputStream = ByteArrayOutputStream()
-        var headerHolder = "";
+        var headerHolder = ""
 
         sut.getFileByHash(hash, outputStream) { outpackResponseHeaders ->
             headerHolder = outpackResponseHeaders.contentType.toString()
