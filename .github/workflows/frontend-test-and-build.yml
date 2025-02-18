@@ -71,3 +71,6 @@ jobs:
       - name: Smoke test
         working-directory: app
         run: ./scripts/run && ./scripts/smoke-test
+      - name: E2E tests
+        working-directory: app
+        run: npm run test:e2e

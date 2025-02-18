@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+# Expect first parameter to be packit base url and second parameter to be auth method
+if [[ "$1" =~ ^https?://([^/]+) ]]; then
+    BASE_URL=$1
+else
+    echo "Invalid Packit server URL: $1"
+    exit 1
+fi
+
+if [[ $2 != "basic" || $2 != "github" ]]; then
+  AUTH_METHOD=$2
+else
+  echo "Unknown auth method: $2"
+  exit 1
+fi
+
+export PACKIT_E2E_BASE_URL=$BASE_URL
+export PACKIT_E2E_AUTH_METHOD=$AUTH_METHOD
+
+echo "Server is $BASE_URL. Auth method is $AUTH_METHOD."
+echo "Please provide user credentials for running e2e tests. User will need to have admin permissions in Packit."
+
+if [[ $AUTH_METHOD == "basic" ]]; then
+  read -p 'Username: ' BASIC_USER
+  read -sp 'Password (will be hidden):' BASIC_PASSWORD
+  echo
+  export PACKIT_E2E_BASiC_USER=$BASIC_USER
+  export PACKIT_E2E_BASIC_PASSWORD=$BASIC_PASSWORD
+fi
+
+# 5. If auth method is github, get packit token from github
+# 6. ... and use it in the e2e tests - set in local storage
+# 7. run e2e tests in app folder
+# 8. readonly tests by default - opt in to be writable! And even then, check if localhost of packit-dev
