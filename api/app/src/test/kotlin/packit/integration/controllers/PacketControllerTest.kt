@@ -104,19 +104,6 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `get packet file by hash`()
-    {
-        val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/$idOfArtefactTypesPacket/file?hash=$hashOfReport&filename=report.html",
-            HttpMethod.GET,
-            getTokenizedHttpEntity()
-        )
-
-        assertHtmlFileSuccess(result)
-    }
-
-    @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packet:artefact-types:$idOfArtefactTypesPacket"])
     fun `findPacketMetadata returns metadata if user has correct specific permission`()
     {
@@ -144,7 +131,7 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packet:artefact-types:$idOfArtefactTypesPacket"])
-    fun `findFile returns file if user has correct specific permission`()
+    fun `streamFile returns file if user has correct specific permission`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets/$idOfArtefactTypesPacket/file?hash=$hashOfReport&filename=report.html",
@@ -157,7 +144,7 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packet:computed-resource:$idOfComputedResourcePacket"])
-    fun `findFile returns 404 if the packet does not contain the file hash`()
+    fun `streamFile returns 404 if the packet does not contain the file hash`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets/file/$idOfComputedResourcePacket?hash=$hashOfReport&filename=report.html",
@@ -169,7 +156,7 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packet:wrong-id"])
-    fun `findFile returns 401 if incorrect specific permission`()
+    fun `streamFile returns 401 if incorrect specific permission`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets/$idOfArtefactTypesPacket/file?hash=$hashOfReport&filename=report.html",
@@ -271,18 +258,5 @@ class PacketControllerTest : IntegrationTest()
             mapOf("id" to idOfDownloadTypesPacket3, "paths" to paths.joinToString(","))
         )
         assertNotFound(result)
-    }
-
-    @Test
-    @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `streamFile streams a file`()
-    {
-        val result: ResponseEntity<String> = restTemplate.exchange(
-            URI("/packets/$idOfArtefactTypesPacket/file/$hashOfReport/stream?filename=report.html"),
-            HttpMethod.GET,
-            getTokenizedHttpEntity()
-        )
-
-        assertHtmlFileSuccess(result)
     }
 }
