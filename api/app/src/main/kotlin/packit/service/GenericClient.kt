@@ -93,6 +93,10 @@ object GenericClient
         try
         {
             restTemplate.execute(URI(url), HttpMethod.GET, {}) { serverResponse ->
+                if (serverResponse.statusCode.isError) {
+                    log.error("Error response: {}", serverResponse.statusText)
+                    throw PackitException("couldNotGetFile", HttpStatus.valueOf(serverResponse.statusCode.value()))
+                }
                 copyHeaders(serverResponse.headers)
                 serverResponse.body.use { input ->
                     IOUtils.copy(input, output)
@@ -116,28 +120,6 @@ object GenericClient
         {
             return response.body!!.data
         }
-    }
-
-    fun getFile(url: String): Pair<ByteArray, HttpHeaders>
-    {
-        log.debug("Fetching {}", url)
-
-        val response = restTemplate.exchange(
-            url,
-            HttpMethod.GET,
-            HttpEntity.EMPTY,
-            ByteArray::class.java
-        )
-        return handleFileResponse(response)
-    }
-
-    private fun handleFileResponse(response: ResponseEntity<ByteArray>): Pair<ByteArray, HttpHeaders>
-    {
-        if (response.statusCode.isError)
-        {
-            throw PackitException("couldNotGetFile", HttpStatus.valueOf(response.statusCode.value()))
-        }
-        return response.body!! to response.headers
     }
 }
 

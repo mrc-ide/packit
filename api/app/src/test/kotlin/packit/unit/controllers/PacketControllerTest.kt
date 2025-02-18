@@ -77,11 +77,8 @@ class PacketControllerTest
     )
 
     private val htmlContentByteArray = "<html><body><h1>Test html file</h1></body></html>".toByteArray()
-
     private val inputStream = ByteArrayResource(htmlContentByteArray) to HttpHeaders.EMPTY
-
     private val mockPageablePackets = PageImpl(packets)
-
     private val packetService = mock<PacketService> {
         on { getPackets(PageablePayload(0, 10), "", "") } doReturn mockPageablePackets
         on { getFileByHash(anyString(), anyBoolean(), anyString()) } doReturn inputStream
@@ -92,6 +89,7 @@ class PacketControllerTest
         }
     }
 
+    private val response = MockHttpServletResponse()
     private val sut = PacketController(packetService)
 
     @Test
@@ -117,11 +115,12 @@ class PacketControllerTest
     @Test
     fun `get packet file by id`()
     {
-        val result = sut.findFile(
+        val result = sut.streamFile(
             id = packetId,
             hash = "sha256:87bfc90d2294c957bf1487506dacb2aeb6455d6caba94910e48434211a7c639b",
             false,
-            "test.html"
+            "test.html",
+            response = response
         )
         val responseBody = result.body
 
@@ -136,11 +135,12 @@ class PacketControllerTest
     fun `cannot get file from different packet`()
     {
         val error = assertThrows<PackitException> {
-            sut.findFile(
+            sut.streamFile(
                 id = "20170819-164847-7574883b",
                 hash = "sha256:87bfc90d2294c957bf1487506dacb2aeb6455d6caba94910e48434211a7c639b",
                 false,
-                "test.html"
+                "test.html",
+                response = response
             )
         }
         assertEquals("doesNotExist", error.key)
@@ -148,7 +148,6 @@ class PacketControllerTest
 
     @Test
     fun `streamZip should set correct response headers and content type, and call PacketService`() {
-        val response = MockHttpServletResponse()
         val paths = listOf("file1.txt", "file2.txt")
 
         val sut = PacketController(packetService)
@@ -163,14 +162,12 @@ class PacketControllerTest
 
     @Test
     fun `streamFile should set correct response headers and content type`() {
-        val response = MockHttpServletResponse()
-
         val sut = PacketController(packetService)
         sut.streamFile(
             id = packetId,
             hash = "sha256:87bfc90d2294c957bf1487506dacb2aeb6455d6caba94910e48434211a7c639b",
             filename = "test.html",
-            response
+            response = response
         )
 
         assertEquals("attachment; filename=\"test.html\"", response.getHeader("Content-Disposition"))

@@ -1,13 +1,9 @@
 package packit.service
 
-import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Sort
-import org.springframework.http.ContentDisposition
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
-import org.springframework.http.MediaTypeFactory.getMediaType
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
 import packit.helpers.PagingHelper
@@ -30,7 +26,7 @@ interface PacketService
     fun getChecksum(): String
     fun importPackets()
     fun getMetadataBy(id: String): PacketMetadata
-    fun streamFile(hash: String, output: OutputStream, copyHeaders: (HttpHeaders) -> Unit)
+    fun getFileByHash(hash: String, output: OutputStream, copyHeaders: (HttpHeaders) -> Unit)
     fun getPacketsByName(
         name: String
     ): List<Packet>
@@ -155,9 +151,8 @@ class BasePacketService(
             ?: throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
     }
 
-    override fun streamFile(hash: String, output: OutputStream, copyHeaders: (HttpHeaders) -> Unit)
+    override fun getFileByHash(hash: String, output: OutputStream, copyHeaders: (HttpHeaders) -> Unit)
     {
-        //TODO: add in missing functionality lost by deleting getFileByHash
         outpackServerClient.getFileByHash(hash, output, copyHeaders)
     }
 }

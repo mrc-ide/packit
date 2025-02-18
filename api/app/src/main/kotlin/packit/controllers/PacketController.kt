@@ -1,7 +1,6 @@
 package packit.controllers
 
 import jakarta.servlet.http.HttpServletResponse
-import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.Page
 import org.springframework.http.*
 import org.springframework.http.MediaTypeFactory.getMediaType
@@ -39,7 +38,7 @@ class PacketController(private val packetService: PacketService)
 
     @GetMapping("/{id}/file")
     @PreAuthorize("@authz.canReadPacket(#root, #id)")
-    fun findFile(
+    fun streamFile(
         @PathVariable id: String,
         @RequestParam hash: String,
         @RequestParam inline: Boolean = false,
@@ -59,7 +58,7 @@ class PacketController(private val packetService: PacketService)
         }
         headers.map { response.setHeader(it.key, it.value.first()) }
 
-        packetService.streamFile(hash, response.outputStream) { outpackHeaders ->
+        packetService.getFileByHash(hash, response.outputStream) { outpackHeaders ->
             response.setContentLengthLong(outpackHeaders.contentLength)
         }
     }
