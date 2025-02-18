@@ -14,6 +14,7 @@ token_header = packit_authorisation(server_url, pat)
 # However, for the purposes of the e2e tests, we just need the [token] part, which will be passed to redirect url
 token = token_header["Authorization"].split(" ")[1]
 
+# write the token out to a file which the calling bash script will read
 with open(".token", "w") as f:
     f.write(token)
 
