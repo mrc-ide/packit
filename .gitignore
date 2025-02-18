@@ -1,5 +1,6 @@
 .idea
 .vscode
+.token
 packit.iml
 app/test-results
 app/playwright-report

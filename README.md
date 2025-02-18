@@ -66,3 +66,15 @@ See [docs/auth.md](docs/auth.md)
 Playwright tests are in `./app/e2e`. They can be configured to use `PLAYWRIGHT_BASE_URL` env var, but will fall back to 
 `http://localhost:3000`. They expect basic auth super user to be available, so you can run `./scripts/dev-start --super-user`
 to start the api and app, then from `./app` run `npm run test:e2e` to run the tests. 
+
+Playwright tests can also be run against a server by running `./scripts/run-e2e-tests-on-server` providing args for server url and auth method
+("basic" or "github"), e.g. ` ./scripts/run-e2e-tests-on-server https://packit-dev.dide.ic.ac.uk/reside-dev/ github`.
+The github auth part uses `pyorderly` and so if you want to use github auth, you will need to first be 
+running in a context where pyorderly is installed, e.g. by running:
+```
+hatch shell 
+pip install pyorderly
+```
+
+NB If you're testing with a server url which is not a domain root, ensure that you append a "/". In this case it's also 
+important to use `./` as the base in the Playwright tests, not `/`.
