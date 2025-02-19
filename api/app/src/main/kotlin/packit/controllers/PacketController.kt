@@ -67,7 +67,10 @@ class PacketController(private val packetService: PacketService)
         response: HttpServletResponse
     ) {
         response.contentType = "application/zip"
-        response.setHeader("Content-Disposition", ContentDisposition.attachment().filename("filename").build().toString())
+        response.setHeader(
+            "Content-Disposition",
+            ContentDisposition.attachment().filename("$id.zip").build().toString()
+        )
 
         packetService.streamZip(paths, id, response.outputStream)
     }

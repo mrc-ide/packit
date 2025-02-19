@@ -89,10 +89,10 @@ class PacketControllerTest
             any<(HttpHeaders) -> Unit>()
         )
         } doAnswer { invocationOnMock ->
-            val outputStream = invocationOnMock.getArgument<OutputStream>(1)
-            outputStream.write("mocked output content".toByteArray())
             val callback = invocationOnMock.getArgument<(HttpHeaders) -> Unit>(2)
             callback(testHeaders)
+            val outputStream = invocationOnMock.getArgument<OutputStream>(1)
+            outputStream.write("mocked output content".toByteArray())
         }
         on { getPacketsByName(anyString()) } doReturn packets
 
@@ -101,7 +101,6 @@ class PacketControllerTest
         }
     }
 
-    private val response = MockHttpServletResponse()
     private val sut = PacketController(packetService)
 
     @Test
@@ -126,6 +125,8 @@ class PacketControllerTest
     @Test
     fun `get packet file by id`()
     {
+        val response = MockHttpServletResponse()
+
         sut.streamFile(
             id = packetId,
             hash = "sha256:exampleHash",
@@ -144,6 +145,8 @@ class PacketControllerTest
     @Test
     fun `get packet file by id, with inline disposition`()
     {
+        val response = MockHttpServletResponse()
+
         sut.streamFile(
             id = packetId,
             hash = "sha256:exampleHash",
@@ -162,6 +165,8 @@ class PacketControllerTest
     @Test
     fun `cannot get file from different packet`()
     {
+        val response = MockHttpServletResponse()
+
         val error = assertThrows<PackitException> {
             sut.streamFile(
                 id = "20170819-164847-7574883b",
@@ -176,6 +181,8 @@ class PacketControllerTest
 
     @Test
     fun `streamZip should set correct response headers and content type, and call PacketService`() {
+        val response = MockHttpServletResponse()
+
         val paths = listOf("file1.txt", "file2.txt")
         sut.streamZip(packetId, paths, response)
 
