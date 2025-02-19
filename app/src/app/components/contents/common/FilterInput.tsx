@@ -2,7 +2,7 @@ import debounce from "lodash.debounce";
 import { Dispatch, SetStateAction, useCallback, useEffect, useRef } from "react";
 import { Input } from "../../Base/Input";
 import { Button } from "../../Base/Button";
-import { X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { cn } from "../../../../lib/cn";
 
 interface FilterByNameProps {
@@ -11,6 +11,7 @@ interface FilterByNameProps {
   placeholder?: string;
   inputClassNames?: string;
 }
+
 export const FilterInput = ({
   setFilter,
   postFilterAction,
@@ -40,6 +41,7 @@ export const FilterInput = ({
 
   return (
     <div className="flex space-x-2 items-center">
+      <Search className="opacity-50" />
       <Input
         placeholder={placeholder}
         onChange={debouncedSetFilterByName}

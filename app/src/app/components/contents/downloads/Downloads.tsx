@@ -19,6 +19,7 @@ export const Downloads = () => {
             <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} displayName={packet.displayName} />
             <span className="self-end">
               <ZipDownloadButton
+                packetId={packet.id}
                 files={packet.files}
                 zipName={`${packetName}_${packetId}.zip`}
                 buttonText="Download all files"
