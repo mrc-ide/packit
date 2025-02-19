@@ -1,8 +1,6 @@
-import { useParams } from "react-router-dom";
 import { download, getZipUrl } from "../../../../lib/download";
 import { Button, buttonVariants } from "../../Base/Button";
 import { FolderDown, Loader2 } from "lucide-react";
-import { usePacketOutletContext } from "../../main/PacketOutlet";
 import { FileMetadata } from "../../../../types";
 import { useState } from "react";
 import { filesToSize } from "../../../../helpers";
@@ -14,6 +12,8 @@ interface FileGroupDownloadButtonProps {
   buttonText?: string;
   variant?: VariantProps<typeof buttonVariants>["variant"];
   className?: string;
+  containerClassName?: string;
+  packetId: string;
 }
 
 export const ZipDownloadButton = ({
@@ -21,15 +21,15 @@ export const ZipDownloadButton = ({
   zipName,
   buttonText = "Download",
   variant = "default",
-  className
+  className,
+  containerClassName,
+  packetId
 }: FileGroupDownloadButtonProps) => {
-  const { packetId } = useParams();
-  const { packet } = usePacketOutletContext();
   const [error, setError] = useState("");
   const [downloading, setDownloading] = useState(false);
 
   const downloadFiles = async () => {
-    if (!packet || !packetId || files.length < 1) {
+    if (!packetId || files.length < 1) {
       return;
     }
     setDownloading(true);
@@ -44,7 +44,7 @@ export const ZipDownloadButton = ({
   };
 
   return (
-    <div className="flex flex-col items-end gap-1">
+    <div className={`flex flex-col items-end gap-1 ${containerClassName}`}>
       <Button onClick={downloadFiles} variant={variant} className={`px-3 h-fit ${className}`} disabled={downloading}>
         {downloading && <Loader2 size={18} className="animate-spin" />}
         {!downloading && <FolderDown size={18} />}

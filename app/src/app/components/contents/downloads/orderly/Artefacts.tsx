@@ -27,6 +27,7 @@ export const Artefacts = ({ artefacts }: ArtefactsProps) => {
       {artefacts.length > 1 && allArtefactsFiles && (
         <span className="self-end absolute top-3 right-8">
           <ZipDownloadButton
+            packetId={packet.id}
             files={allArtefactsFiles}
             zipName={`${packetName}_artefacts_${packetId}.zip`}
             buttonText="Download all artefacts"
@@ -44,6 +45,7 @@ export const Artefacts = ({ artefacts }: ArtefactsProps) => {
                   <h3 className="">{artefact.description}</h3>
                   {files.length > 1 && (
                     <ZipDownloadButton
+                      packetId={packet.id}
                       files={files}
                       zipName={`${artefact.description.substring(0, 20)}_${packet.id}.zip`}
                       variant="outline"
