@@ -52,7 +52,7 @@ class PacketController(private val packetService: PacketService)
 
         val disposition = if (inline) ContentDisposition.inline() else ContentDisposition.attachment()
         response.contentType = getMediaType(filename).orElse(MediaType.APPLICATION_OCTET_STREAM).toString()
-        response.setHeader("Content-Disposition", disposition.filename("filename").build().toString())
+        response.setHeader("Content-Disposition", disposition.filename(filename).build().toString())
 
         packetService.getFileByHash(hash, response.outputStream) { outpackHeaders ->
             response.setContentLengthLong(outpackHeaders.contentLength)
