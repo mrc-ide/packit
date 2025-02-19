@@ -11,6 +11,7 @@ import org.mockito.kotlin.verify
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.client.ClientHttpResponse
 import org.springframework.mock.web.MockHttpServletResponse
 import packit.controllers.PacketController
 import packit.exceptions.PackitException
@@ -79,18 +80,21 @@ class PacketControllerTest
     )
 
     private val mockPageablePackets = PageImpl(packets)
-    private val testHeaders = HttpHeaders().apply { contentLength = 100L }
+    private val mockClientHttpResponse = mock<ClientHttpResponse> {
+        on { headers } doReturn HttpHeaders().apply { contentLength = 100L }
+    }
+
     private val packetService = mock<PacketService> {
         on { getPackets(PageablePayload(0, 10), "", "") } doReturn mockPageablePackets
         on {
             getFileByHash(
             anyString(),
             any<OutputStream>(),
-            any<(HttpHeaders) -> Unit>()
+            any<(ClientHttpResponse) -> Unit>()
         )
         } doAnswer { invocationOnMock ->
-            val callback = invocationOnMock.getArgument<(HttpHeaders) -> Unit>(2)
-            callback(testHeaders)
+            val callback = invocationOnMock.getArgument<(ClientHttpResponse) -> Unit>(2)
+            callback(mockClientHttpResponse)
             val outputStream = invocationOnMock.getArgument<OutputStream>(1)
             outputStream.write("mocked output content".toByteArray())
         }

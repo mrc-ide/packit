@@ -2,8 +2,8 @@ package packit.service
 
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Sort
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.client.ClientHttpResponse
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
 import packit.helpers.PagingHelper
@@ -26,7 +26,7 @@ interface PacketService
     fun getChecksum(): String
     fun importPackets()
     fun getMetadataBy(id: String): PacketMetadata
-    fun getFileByHash(hash: String, output: OutputStream, copyHeaders: (HttpHeaders) -> Unit)
+    fun getFileByHash(hash: String, output: OutputStream, preStream: (ClientHttpResponse) -> Unit = {})
     fun getPacketsByName(
         name: String
     ): List<Packet>
@@ -135,7 +135,7 @@ class BasePacketService(
             ZipOutputStream(output).use { zipOutputStream ->
                 hashesByPath.forEach { (filename, hash) ->
                     zipOutputStream.putNextEntry(ZipEntry(filename))
-                    outpackServerClient.getFileByHash(hash, zipOutputStream) {}
+                    outpackServerClient.getFileByHash(hash, zipOutputStream)
                     zipOutputStream.closeEntry()
                 }
             }
@@ -151,8 +151,8 @@ class BasePacketService(
             ?: throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
     }
 
-    override fun getFileByHash(hash: String, output: OutputStream, copyHeaders: (HttpHeaders) -> Unit)
+    override fun getFileByHash(hash: String, output: OutputStream, preStream: (ClientHttpResponse) -> Unit)
     {
-        outpackServerClient.getFileByHash(hash, output, copyHeaders)
+        outpackServerClient.getFileByHash(hash, output, preStream)
     }
 }

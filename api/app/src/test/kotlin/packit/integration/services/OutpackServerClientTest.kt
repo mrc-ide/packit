@@ -40,8 +40,8 @@ class OutpackServerClientTest : IntegrationTest()
         val outputStream = ByteArrayOutputStream()
         var headerHolder = ""
 
-        sut.getFileByHash(hash, outputStream) { outpackResponseHeaders ->
-            headerHolder = outpackResponseHeaders.contentType.toString()
+        sut.getFileByHash(hash, outputStream) { outpackResponse ->
+            headerHolder = outpackResponse.headers.contentType.toString()
         }
 
         val result = outputStream.toString("UTF-8")
@@ -54,7 +54,7 @@ class OutpackServerClientTest : IntegrationTest()
     {
         val validButIncorrectHash = hash.substring(0, hash.length - 1) + "a"
 
-        assertThrows<PackitException> { sut.getFileByHash(validButIncorrectHash, ByteArrayOutputStream()) { } }.apply {
+        assertThrows<PackitException> { sut.getFileByHash(validButIncorrectHash, ByteArrayOutputStream()) }.apply {
             assertEquals("couldNotGetFile", key)
             assertEquals(HttpStatus.NOT_FOUND, httpStatus)
         }
@@ -63,7 +63,7 @@ class OutpackServerClientTest : IntegrationTest()
     @Test
     fun `getFileByHash throws a PackitException with 'bad request' when the hash is malformed`()
     {
-        assertThrows<PackitException> { sut.getFileByHash("notAValidHash", ByteArrayOutputStream()) { } }.apply {
+        assertThrows<PackitException> { sut.getFileByHash("notAValidHash", ByteArrayOutputStream()) }.apply {
             assertEquals("couldNotGetFile", key)
             assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
         }

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.*
 import org.springframework.data.domain.Sort
-import org.springframework.http.HttpHeaders
+import org.springframework.http.client.ClientHttpResponse
 import packit.exceptions.PackitException
 import packit.model.*
 import packit.repository.PacketGroupRepository
@@ -132,7 +132,7 @@ class PacketServiceTest
                 getFileByHash(
                 anyString(),
                 any<OutputStream>(),
-                any<(HttpHeaders) -> Unit>()
+                any<(ClientHttpResponse) -> Unit>()
             )
             } doAnswer { invocationOnMock ->
                 val outputStream = invocationOnMock.getArgument<OutputStream>(1)
@@ -266,7 +266,7 @@ class PacketServiceTest
     fun `getFileByHash should forward all its arguments to outpack_server client`() {
         val outputStream = ByteArrayOutputStream()
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
-        val mockLambda = mock<(HttpHeaders) -> Unit>()
+        val mockLambda = mock<(ClientHttpResponse) -> Unit>()
         sut.getFileByHash("sha256:hash1", outputStream, mockLambda)
         verify(outpackServerClient).getFileByHash("sha256:hash1", outputStream, mockLambda)
     }
@@ -315,8 +315,9 @@ class PacketServiceTest
     fun `streamZip should throw PackitException if there is an error creating the zip`() {
         val outputStream = ByteArrayOutputStream()
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
-        whenever(outpackServerClient.getFileByHash(anyString(), any<OutputStream>(), any<(HttpHeaders) -> Unit>()))
-            .thenThrow(RuntimeException("error"))
+        whenever(
+            outpackServerClient.getFileByHash(anyString(), any<OutputStream>(), any<(ClientHttpResponse) -> Unit>())
+        ).thenThrow(RuntimeException("error"))
 
         assertThrows<PackitException> {
             sut.streamZip(listOf("file1.txt", "file2.txt"), packetMetadata.id, outputStream)
