@@ -50,13 +50,9 @@ class PacketController(private val packetService: PacketService)
             throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
         }
 
-        val disposition = if (inline) "inline" else "attachment"
-        val mediaType = getMediaType(filename).orElse(MediaType.APPLICATION_OCTET_STREAM)
-        val headers = HttpHeaders().apply {
-            contentType = MediaType.valueOf(mediaType.toString())
-            contentDisposition = ContentDisposition.parse("$disposition; filename=$filename")
-        }
-        headers.map { response.setHeader(it.key, it.value.first()) }
+        val disposition = if (inline) ContentDisposition.inline() else ContentDisposition.attachment()
+        response.contentType = getMediaType(filename).orElse(MediaType.APPLICATION_OCTET_STREAM).toString()
+        response.setHeader("Content-Disposition", disposition.filename("filename").build().toString())
 
         packetService.getFileByHash(hash, response.outputStream) { outpackHeaders ->
             response.setContentLengthLong(outpackHeaders.contentLength)
@@ -70,11 +66,8 @@ class PacketController(private val packetService: PacketService)
         @RequestParam paths: List<String>,
         response: HttpServletResponse
     ) {
-        val headers = HttpHeaders().apply {
-            contentType = MediaType.valueOf("application/zip")
-            contentDisposition = ContentDisposition.parse("attachment; filename=$id.zip")
-        }
-        headers.map { response.setHeader(it.key, it.value.first()) }
+        response.contentType = "application/zip"
+        response.setHeader("Content-Disposition", ContentDisposition.attachment().filename("filename").build().toString())
 
         packetService.streamZip(paths, id, response.outputStream)
     }
