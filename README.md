@@ -63,14 +63,19 @@ See [docs/auth.md](docs/auth.md)
 
 ## e2e Tests
 
-Playwright tests are in `./app/e2e`. By default, they will run against localhost, andexpect basic auth super user to be
-available, so you can run `./scripts/dev-start --super-user` to start the api and app, then from `./app` 
-run `npm run test:e2e` to run the tests. 
+e2e tests are written generically - not assuming any particular packet groups - because they are intended to be run both
+against local demo data or against any packit server to test deployment. e2e test are currently all readonly, a feature
+to allow tests which change the state of the system for non-prod servers only will be added in a future branch. 
+
+Playwright tests are in `./app/e2e`. By default, they will run against localhost, and expect basic auth super user to be
+available, so you should run:
+1.  `./scripts/dev-start --super-user` to start the dependencies, api and app
+2. `npm run test:e2e` from `./app` 
 
 Playwright tests can also be run against a server by running `./scripts/run-e2e-tests-on-server` providing args for server url and auth method
 ("basic" or "github"), e.g. ` ./scripts/run-e2e-tests-on-server https://packit-dev.dide.ic.ac.uk/reside-dev/ github`.
 The github auth part uses `pyorderly` and so if you want to use github auth, you will need to first be 
-running in a context where pyorderly is installed, e.g. by running:
+running in a context where pyorderly is available, e.g. by running:
 ```
 hatch shell 
 pip install pyorderly
