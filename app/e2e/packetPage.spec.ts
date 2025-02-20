@@ -117,6 +117,7 @@ test.describe("Packet page", () => {
   });
 });
 
-
+// TODO: make tickets for:
 // Manage roles - view roles
 // manage roles - view users
+// and for tests which write - running report, adding users etc - only to be run locally on or dev!
