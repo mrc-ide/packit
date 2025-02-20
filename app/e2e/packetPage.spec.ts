@@ -122,6 +122,7 @@ test.describe("Packet page", () => {
 // packet group - each list item display
 // packet group - each list item link
 // packet group - parameter search
+// packet group - id search
 
 // Manage roles - view roles
 // manage roles - view users
