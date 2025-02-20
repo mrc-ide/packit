@@ -29,7 +29,6 @@ test.describe("Packet page", () => {
       const content = await getContentLocator(page);
       const parametersDiv = await getPacketPageAccordionSection(content, "Parameters");
       // Section should contain either "None" or at least one parameter pill
-      await expect(parametersDiv).toBeVisible();
       const noneDiv = await parametersDiv.locator(".italic");
       if ((await noneDiv.count()) > 0) {
         await expect(noneDiv).toHaveText("None");
@@ -41,7 +40,6 @@ test.describe("Packet page", () => {
     test("can see Dependencies section", async ({ page }) => {
       const content = await getContentLocator(page);
       const dependenciesDiv = await getPacketPageAccordionSection(content, "Dependencies");
-      await expect(dependenciesDiv).toBeVisible();
       // Section should contain either no depencies text, or at least one list item with link
       const noneDiv = await dependenciesDiv.locator(".italic");
       if ((await noneDiv.count()) > 0) {
@@ -61,7 +59,6 @@ test.describe("Packet page", () => {
     test("can see Reports section", async ({ page }) => {
       const content = await getContentLocator(page);
       const reportsDiv = await getPacketPageAccordionSection(content, "Reports");
-      await expect(reportsDiv).toBeVisible();
       // Reports should contain either "None" or at least one iframe
       const noneDiv = await reportsDiv.locator(".italic");
       if ((await noneDiv.count()) > 0) {
@@ -83,10 +80,23 @@ test.describe("Packet page", () => {
       await expect(await timingItems.first()).toHaveText(/Started/);
       await expect(await timingItems.last()).toHaveText(/Elapsed\d+/);
     });
+
+    test("can see Git section", async ({ page }) => {
+        const content = await getContentLocator(page);
+        await selectPacketPageTab(content, "Metadata");
+        const gitDiv = await getPacketPageAccordionSection(content, "Git");
+        // get top level list items
+        const listItems = await gitDiv.locator("ul.space-y-1 > li").all();
+        await expect(await listItems.length).toBe(3);
+        await expect(listItems[0]).toHaveText(/^Branch/);
+        await expect(listItems[1]).toHaveText(/^Commit[\da-g]{40}$/);
+        await expect(await listItems[2].locator("span")).toHaveText("Remotes");
+        const remoteItems = await listItems[2].getByRole("listitem");
+        await expect(await remoteItems.count()).toBeGreaterThan(0);
+    });
   });
 
   // metadata
-  // Git - branch, commit, remotes
   // Platform (expand)- OS, System, Language
   // Packages (expand) - list
 

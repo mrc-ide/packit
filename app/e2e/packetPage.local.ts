@@ -19,7 +19,6 @@ test.describe("Local packet page", () => {
       await page.goto(`./parameters/${parametersPacketId}`);
       const content = await getContentLocator(page);
       const parametersDiv = await getPacketPageAccordionSection(content, "Parameters");
-      await expect(parametersDiv).toBeVisible();
       await expect(parametersDiv.getByText("a: 1")).toBeVisible();
       await expect(parametersDiv.getByText("b: hello")).toBeVisible();
       await expect(parametersDiv.getByText("c: false")).toBeVisible();
@@ -29,7 +28,6 @@ test.describe("Local packet page", () => {
       await page.goto(`/depends/${dependsPacketId}`);
       const content = await getContentLocator(page);
       const dependsDiv = await getPacketPageAccordionSection(content, "Dependencies");
-      await expect(dependsDiv).toBeVisible();
       const depItems = await dependsDiv.getByRole("listitem");
       await expect(depItems).toHaveCount(2);
       const dep1Name = "explicit";
@@ -46,7 +44,6 @@ test.describe("Local packet page", () => {
       await page.goto(`/artefact-types/${artefactTypesPacketId}`);
       const content = await getContentLocator(page);
       const reportsDiv = await getPacketPageAccordionSection(content, "Reports");
-      await expect(reportsDiv).toBeVisible();
       const reportFrame = await reportsDiv.locator("iframe");
       await expect(reportFrame).toBeVisible();
       await expect(await reportFrame.contentFrame().getByRole("heading")).toHaveText("TEST");
@@ -73,9 +70,14 @@ test.describe("Local packet page", () => {
     test("can see git", async () => {
       const gitDiv = await getPacketPageAccordionSection(content, "Git");
       // get top level list items
-      const listItems = await gitDiv.locator("ul.space-y-1 > li");
-      await expect(await listItems).toHaveCount(3);
-      //await expect(await listItems.at??)
+      const listItems = await gitDiv.locator("ul.space-y-1 > li").all();
+      await expect(await listItems.length).toBe(3);
+      await expect(listItems[0]).toHaveText("Branch" + "mrc-5661-fe-run-params");
+      await expect(listItems[1]).toHaveText("Commit" + "4c2b5d37deada04981a906f9705f0414b8ea0dfc");
+      await expect(await listItems[2].locator("span")).toHaveText("Remotes");
+      const remoteItems = await listItems[2].getByRole("listitem");
+      await expect(remoteItems).toHaveCount(1);
+      await expect(remoteItems.first()).toHaveText("https://github.com/mrc-ide/packit.git");
     });
   });
 });

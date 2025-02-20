@@ -1,4 +1,4 @@
-import { Locator, Page } from "@playwright/test";
+import { Locator, Page, expect } from "@playwright/test";
 
 export const getContentLocator = async (page: Page) => {
   return page.getByTestId("content");
@@ -33,7 +33,9 @@ export const navigateToFirstPacketGroupLatestPacket = async (content: Locator) =
 };
 
 export const getPacketPageAccordionSection = async (content: Locator, title: string) => {
-  return content.locator("div.border-b:has(h3[data-orientation='vertical'])").filter({ hasText: title });
+  const section = content.locator("div.border-b:has(h3[data-orientation='vertical'])").filter({ hasText: title });
+  await expect(await section).toBeVisible();
+  return section;
 };
 
 export const selectPacketPageTab = async (content: Locator, tab: string) => {
