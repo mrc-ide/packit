@@ -6,7 +6,7 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.*
 import org.springframework.data.domain.Sort
-import org.springframework.http.HttpHeaders
+import org.springframework.http.client.ClientHttpResponse
 import packit.exceptions.PackitException
 import packit.model.*
 import packit.repository.PacketGroupRepository
@@ -110,8 +110,6 @@ class PacketServiceTest
             emptyList()
         )
 
-    private val responseByte = "htmlContent".toByteArray() to HttpHeaders.EMPTY
-
     private val packetRepository =
         mock<PacketRepository> {
             on { findAll() } doReturn oldPackets
@@ -130,8 +128,13 @@ class PacketServiceTest
         mock<OutpackServerClient> {
             on { getMetadata(oldPackets[0].importTime) } doReturn newPackets.map { packetToOutpackMetadata(it) }
             on { getMetadataById(packetMetadata.id) } doReturn packetMetadata
-            on { getFileByHash(anyString()) } doReturn responseByte
-            on { getFileByHash(anyString(), any()) } doAnswer { invocationOnMock ->
+            on {
+                getFileByHash(
+                anyString(),
+                any<OutputStream>(),
+                any<(ClientHttpResponse) -> Unit>()
+            )
+            } doAnswer { invocationOnMock ->
                 val outputStream = invocationOnMock.getArgument<OutputStream>(1)
                 outputStream.write("mocked output content".toByteArray())
             }
@@ -237,25 +240,6 @@ class PacketServiceTest
     }
 
     @Test
-    fun `can get packet file`()
-    {
-        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
-        val result = sut.getFileByHash("sha123", true, "test.html")
-
-        assertEquals(result.first.isReadable, true)
-    }
-
-    @Test
-    fun `throws exception if client could not get file from outpack`()
-    {
-        val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
-
-        assertThatThrownBy { sut.getFileByHash("123", true, "test.html") }
-            .isInstanceOf(PackitException::class.java)
-            .hasMessageContaining("PackitException with key doesNotExist")
-    }
-
-    @Test
     fun `getPacket returns packet when packet exists with given id`()
     {
         whenever(packetRepository.findById(oldPackets[0].id)).thenReturn(Optional.of(oldPackets[0]))
@@ -276,6 +260,15 @@ class PacketServiceTest
         assertThrows<PackitException> {
             sut.getPacket(packetId)
         }
+    }
+
+    @Test
+    fun `getFileByHash should forward all its arguments to outpack_server client`() {
+        val outputStream = ByteArrayOutputStream()
+        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+        val mockLambda = mock<(ClientHttpResponse) -> Unit>()
+        sut.getFileByHash("sha256:hash1", outputStream, mockLambda)
+        verify(outpackServerClient).getFileByHash("sha256:hash1", outputStream, mockLambda)
     }
 
     @Test
@@ -322,7 +315,9 @@ class PacketServiceTest
     fun `streamZip should throw PackitException if there is an error creating the zip`() {
         val outputStream = ByteArrayOutputStream()
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
-        whenever(outpackServerClient.getFileByHash(anyString(), any())).thenThrow(RuntimeException("error"))
+        whenever(
+            outpackServerClient.getFileByHash(anyString(), any<OutputStream>(), any<(ClientHttpResponse) -> Unit>())
+        ).thenThrow(RuntimeException("error"))
 
         assertThrows<PackitException> {
             sut.streamZip(listOf("file1.txt", "file2.txt"), packetMetadata.id, outputStream)

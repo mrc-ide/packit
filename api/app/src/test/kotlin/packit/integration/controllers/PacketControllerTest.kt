@@ -7,9 +7,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.exchange
-import org.springframework.http.HttpMethod
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
+import org.springframework.http.*
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
 import packit.repository.PacketGroupRepository
@@ -106,19 +104,6 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `get packet file by hash`()
-    {
-        val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/$idOfArtefactTypesPacket/file?hash=$hashOfReport&filename=report.html",
-            HttpMethod.GET,
-            getTokenizedHttpEntity()
-        )
-
-        assertHtmlFileSuccess(result)
-    }
-
-    @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packet:artefact-types:$idOfArtefactTypesPacket"])
     fun `findPacketMetadata returns metadata if user has correct specific permission`()
     {
@@ -146,7 +131,7 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packet:artefact-types:$idOfArtefactTypesPacket"])
-    fun `findFile returns file if user has correct specific permission`()
+    fun `streamFile returns file if user has correct specific permission`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets/$idOfArtefactTypesPacket/file?hash=$hashOfReport&filename=report.html",
@@ -159,7 +144,7 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packet:computed-resource:$idOfComputedResourcePacket"])
-    fun `findFile returns 404 if the packet does not contain the file hash`()
+    fun `streamFile returns 404 if the packet does not contain the file hash`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets/file/$idOfComputedResourcePacket?hash=$hashOfReport&filename=report.html",
@@ -171,7 +156,7 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packet:wrong-id"])
-    fun `findFile returns 401 if incorrect specific permission`()
+    fun `streamFile returns 401 if incorrect specific permission`()
     {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets/$idOfArtefactTypesPacket/file?hash=$hashOfReport&filename=report.html",

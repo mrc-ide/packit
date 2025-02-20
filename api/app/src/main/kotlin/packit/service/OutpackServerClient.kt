@@ -2,7 +2,7 @@ package packit.service
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.springframework.http.HttpHeaders
+import org.springframework.http.client.ClientHttpResponse
 import org.springframework.stereotype.Service
 import packit.AppConfig
 import packit.model.PacketMetadata
@@ -13,8 +13,7 @@ interface OutpackServer
 {
     fun getMetadata(from: Double? = null): List<OutpackMetadata>
     fun getMetadataById(id: String): PacketMetadata?
-    fun getFileByHash(hash: String): Pair<ByteArray, HttpHeaders>?
-    fun getFileByHash(hash: String, output: OutputStream)
+    fun getFileByHash(hash: String, output: OutputStream, preStream: (ClientHttpResponse) -> Unit = {})
     fun proxyRequest(
         urlFragment: String,
         request: HttpServletRequest,
@@ -44,14 +43,9 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
         return GenericClient.get(constructUrl("metadata/$id/json"))
     }
 
-    override fun getFileByHash(hash: String): Pair<ByteArray, HttpHeaders>
+    override fun getFileByHash(hash: String, output: OutputStream, preStream: (ClientHttpResponse) -> Unit)
     {
-        return GenericClient.getFile(constructUrl("file/$hash"))
-    }
-
-    override fun getFileByHash(hash: String, output: OutputStream)
-    {
-        GenericClient.streamingGet(constructUrl("file/$hash"), output)
+        GenericClient.streamingGet(constructUrl("file/$hash"), output, preStream)
     }
 
     override fun getChecksum(): String

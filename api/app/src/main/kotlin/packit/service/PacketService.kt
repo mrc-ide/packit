@@ -1,14 +1,10 @@
 package packit.service
 
-import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Sort
-import org.springframework.http.ContentDisposition
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
+import org.springframework.http.client.ClientHttpResponse
 import org.springframework.stereotype.Service
-import packit.contentTypes
 import packit.exceptions.PackitException
 import packit.helpers.PagingHelper
 import packit.model.Packet
@@ -30,7 +26,7 @@ interface PacketService
     fun getChecksum(): String
     fun importPackets()
     fun getMetadataBy(id: String): PacketMetadata
-    fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<ByteArrayResource, HttpHeaders>
+    fun getFileByHash(hash: String, output: OutputStream, preStream: (ClientHttpResponse) -> Unit = {})
     fun getPacketsByName(
         name: String
     ): List<Packet>
@@ -155,28 +151,8 @@ class BasePacketService(
             ?: throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
     }
 
-    override fun getFileByHash(hash: String, inline: Boolean, filename: String): Pair<ByteArrayResource, HttpHeaders>
+    override fun getFileByHash(hash: String, output: OutputStream, preStream: (ClientHttpResponse) -> Unit)
     {
-        val response = outpackServerClient.getFileByHash(hash)
-
-        if (response?.first == null || response.first.isEmpty())
-        {
-            throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
-        }
-
-        val byteArrayResource = ByteArrayResource(response.first)
-
-        val disposition = if (inline) "inline" else "attachment"
-
-        val extension = filename.substringAfterLast(".")
-
-        val contentMediaType = contentTypes[extension] ?: MediaType.APPLICATION_OCTET_STREAM_VALUE
-
-        val headers = HttpHeaders().apply {
-            contentType = MediaType.valueOf(contentMediaType)
-            contentDisposition = ContentDisposition.parse("$disposition; filename=$filename")
-        }
-
-        return byteArrayResource to headers
+        outpackServerClient.getFileByHash(hash, output, preStream)
     }
 }

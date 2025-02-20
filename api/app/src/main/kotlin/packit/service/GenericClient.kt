@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.*
 import org.springframework.http.client.ClientHttpRequest
+import org.springframework.http.client.ClientHttpResponse
 import org.springframework.http.client.SimpleClientHttpRequestFactory
 import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate
@@ -89,19 +90,21 @@ object GenericClient
         }
     }
 
-    fun streamingGet(url: String, output: OutputStream) {
+    // Takes a lambda argument 'preStream' that can be used to do anything that needs to be done before streaming, such
+    // as setting headers of the response (which must be done before the response is 'committed').
+    fun streamingGet(url: String, output: OutputStream, preStream: (ClientHttpResponse) -> Unit = {}) {
         try
         {
             restTemplate.execute(URI(url), HttpMethod.GET, {}) { serverResponse ->
+                preStream(serverResponse)
                 serverResponse.body.use { input ->
                     IOUtils.copy(input, output)
                 }
             }
         } catch (e: HttpStatusCodeException)
         {
-            throw GenericClientException(e)
-        } catch (e: Exception) {
-            throw PackitException("couldNotStream", HttpStatus.INTERNAL_SERVER_ERROR)
+            log.error("Error response: {}", e.statusText)
+            throw PackitException("couldNotGetFile", HttpStatus.valueOf(e.statusCode.value()))
         }
     }
 
@@ -115,28 +118,6 @@ object GenericClient
         {
             return response.body!!.data
         }
-    }
-
-    fun getFile(url: String): Pair<ByteArray, HttpHeaders>
-    {
-        log.debug("Fetching {}", url)
-
-        val response = restTemplate.exchange(
-            url,
-            HttpMethod.GET,
-            HttpEntity.EMPTY,
-            ByteArray::class.java
-        )
-        return handleFileResponse(response)
-    }
-
-    private fun handleFileResponse(response: ResponseEntity<ByteArray>): Pair<ByteArray, HttpHeaders>
-    {
-        if (response.statusCode.isError)
-        {
-            throw PackitException("couldNotGetFile", HttpStatus.valueOf(response.statusCode.value()))
-        }
-        return response.body!! to response.headers
     }
 }
 

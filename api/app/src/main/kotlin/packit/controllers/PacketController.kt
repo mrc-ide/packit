@@ -1,16 +1,11 @@
 package packit.controllers
 
 import jakarta.servlet.http.HttpServletResponse
-import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.Page
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
+import org.springframework.http.*
+import org.springframework.http.MediaTypeFactory.getMediaType
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import packit.exceptions.PackitException
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
@@ -43,23 +38,25 @@ class PacketController(private val packetService: PacketService)
 
     @GetMapping("/{id}/file")
     @PreAuthorize("@authz.canReadPacket(#root, #id)")
-    fun findFile(
+    fun streamFile(
         @PathVariable id: String,
         @RequestParam hash: String,
         @RequestParam inline: Boolean = false,
         @RequestParam filename: String,
-    ): ResponseEntity<ByteArrayResource>
-    {
+        response: HttpServletResponse
+    ) {
         val packet = packetService.getMetadataBy(id)
         if (packet.files.none { it.hash == hash }) {
             throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
         }
 
-        val response = packetService.getFileByHash(hash, inline, filename)
-        return ResponseEntity
-            .ok()
-            .headers(response.second)
-            .body(response.first)
+        val disposition = if (inline) ContentDisposition.inline() else ContentDisposition.attachment()
+        response.contentType = getMediaType(filename).orElse(MediaType.APPLICATION_OCTET_STREAM).toString()
+        response.setHeader("Content-Disposition", disposition.filename(filename).build().toString())
+
+        packetService.getFileByHash(hash, response.outputStream) { outpackResponse ->
+            response.setContentLengthLong(outpackResponse.headers.contentLength)
+        }
     }
 
     @GetMapping("/{id}/zip")
@@ -70,7 +67,10 @@ class PacketController(private val packetService: PacketService)
         response: HttpServletResponse
     ) {
         response.contentType = "application/zip"
-        response.setHeader("Content-Disposition", "attachment; filename=$id.zip")
+        response.setHeader(
+            "Content-Disposition",
+            ContentDisposition.attachment().filename("$id.zip").build().toString()
+        )
 
         packetService.streamZip(paths, id, response.outputStream)
     }

@@ -3,18 +3,21 @@ package packit.unit.controllers
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.ArgumentMatchers.*
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
-import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.client.ClientHttpResponse
 import org.springframework.mock.web.MockHttpServletResponse
 import packit.controllers.PacketController
 import packit.exceptions.PackitException
 import packit.model.*
 import packit.service.PacketService
+import java.io.OutputStream
 import java.time.Instant
 import kotlin.test.assertEquals
 
@@ -32,7 +35,7 @@ class PacketControllerTest
                 FileMetadata(
                 "hello.txt",
                 size = 49,
-                hash = "sha256:87bfc90d2294c957bf1487506dacb2aeb6455d6caba94910e48434211a7c639b"
+                hash = "sha256:exampleHash"
             )
             ),
             GitMetadata("git", "sha", emptyList()),
@@ -76,15 +79,25 @@ class PacketControllerTest
         )
     )
 
-    private val htmlContentByteArray = "<html><body><h1>Test html file</h1></body></html>".toByteArray()
-
-    private val inputStream = ByteArrayResource(htmlContentByteArray) to HttpHeaders.EMPTY
-
     private val mockPageablePackets = PageImpl(packets)
+    private val mockClientHttpResponse = mock<ClientHttpResponse> {
+        on { headers } doReturn HttpHeaders().apply { contentLength = 100L }
+    }
 
     private val packetService = mock<PacketService> {
         on { getPackets(PageablePayload(0, 10), "", "") } doReturn mockPageablePackets
-        on { getFileByHash(anyString(), anyBoolean(), anyString()) } doReturn inputStream
+        on {
+            getFileByHash(
+            anyString(),
+            any<OutputStream>(),
+            any<(ClientHttpResponse) -> Unit>()
+        )
+        } doAnswer { invocationOnMock ->
+            val callback = invocationOnMock.getArgument<(ClientHttpResponse) -> Unit>(2)
+            callback(mockClientHttpResponse)
+            val outputStream = invocationOnMock.getArgument<OutputStream>(1)
+            outputStream.write("mocked output content".toByteArray())
+        }
         on { getPacketsByName(anyString()) } doReturn packets
 
         packetMetadata.forEach {
@@ -107,7 +120,6 @@ class PacketControllerTest
     @Test
     fun `get packet metadata by id`()
     {
-        val sut = PacketController(packetService)
         val result = sut.findPacketMetadata(packetId)
         val responseBody = result.body
         assertEquals(result.statusCode, HttpStatus.OK)
@@ -117,30 +129,55 @@ class PacketControllerTest
     @Test
     fun `get packet file by id`()
     {
-        val result = sut.findFile(
+        val response = MockHttpServletResponse()
+
+        sut.streamFile(
             id = packetId,
-            hash = "sha256:87bfc90d2294c957bf1487506dacb2aeb6455d6caba94910e48434211a7c639b",
+            hash = "sha256:exampleHash",
             false,
-            "test.html"
+            "test.html",
+            response = response
         )
-        val responseBody = result.body
+        assertEquals(response.contentAsString, "mocked output content")
 
-        val actualText = responseBody?.inputStream?.use { it.readBytes().toString(Charsets.UTF_8) }
+        assertEquals(response.status, HttpStatus.OK.value())
+        assertEquals(response.contentType, "text/html")
+        assertEquals(response.getHeader("Content-Disposition"), "attachment; filename=\"test.html\"")
+        assertEquals(response.getHeader("Content-Length"), "100")
+    }
 
-        assertEquals(result.statusCode, HttpStatus.OK)
-        assertEquals("<html><body><h1>Test html file</h1></body></html>", actualText)
-        assertEquals(result.headers, inputStream.second)
+    @Test
+    fun `get packet file by id, with inline disposition`()
+    {
+        val response = MockHttpServletResponse()
+
+        sut.streamFile(
+            id = packetId,
+            hash = "sha256:exampleHash",
+            true,
+            "test.html",
+            response = response
+        )
+        assertEquals(response.contentAsString, "mocked output content")
+
+        assertEquals(response.status, HttpStatus.OK.value())
+        assertEquals(response.contentType, "text/html")
+        assertEquals(response.getHeader("Content-Disposition"), "inline; filename=\"test.html\"")
+        assertEquals(response.getHeader("Content-Length"), "100")
     }
 
     @Test
     fun `cannot get file from different packet`()
     {
+        val response = MockHttpServletResponse()
+
         val error = assertThrows<PackitException> {
-            sut.findFile(
+            sut.streamFile(
                 id = "20170819-164847-7574883b",
-                hash = "sha256:87bfc90d2294c957bf1487506dacb2aeb6455d6caba94910e48434211a7c639b",
+                hash = "sha256:exampleHash",
                 false,
-                "test.html"
+                "test.html",
+                response = response
             )
         }
         assertEquals("doesNotExist", error.key)
@@ -149,15 +186,14 @@ class PacketControllerTest
     @Test
     fun `streamZip should set correct response headers and content type, and call PacketService`() {
         val response = MockHttpServletResponse()
-        val paths = listOf("file1.txt", "file2.txt")
 
-        val sut = PacketController(packetService)
+        val paths = listOf("file1.txt", "file2.txt")
         sut.streamZip(packetId, paths, response)
 
         verify(packetService).streamZip(listOf("file1.txt", "file2.txt"), packetId, response.outputStream)
 
         assertEquals("application/zip", response.contentType)
-        assertEquals("attachment; filename=$packetId.zip", response.getHeader("Content-Disposition"))
+        assertEquals("attachment; filename=\"$packetId.zip\"", response.getHeader("Content-Disposition"))
         assertEquals(HttpStatus.OK.value(), response.status)
     }
 }

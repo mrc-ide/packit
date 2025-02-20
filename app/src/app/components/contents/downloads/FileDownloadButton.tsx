@@ -1,23 +1,22 @@
-import { FileDown } from "lucide-react";
+import { FileDown, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { download, getFileUrl } from "../../../../lib/download";
 import { FileMetadata } from "../../../../types";
 import { Button } from "../../Base/Button";
 
-interface DownloadButtonProps {
+interface FileDownloadButtonProps {
   file: FileMetadata;
   packetId: string;
 }
 
-export const DownloadButton = ({ file, packetId }: DownloadButtonProps) => {
+export const FileDownloadButton = ({ file, packetId }: FileDownloadButtonProps) => {
   const [error, setError] = useState("");
   const [downloading, setDownloading] = useState(false);
 
   const downloadFile = (file: FileMetadata) => {
     setDownloading(true);
-    const url = getFileUrl(file, packetId);
-    download(url, file.path)
-      .then(() => setError(""))
+    setError("");
+    download(getFileUrl(file, packetId), file.path)
       .catch((e) => {
         setError(e.message);
       })
@@ -35,7 +34,8 @@ export const DownloadButton = ({ file, packetId }: DownloadButtonProps) => {
         disabled={downloading}
       >
         <span className="px-1">
-          <FileDown size={22} />
+          {downloading && <Loader2 size={18} className="animate-spin" />}
+          {!downloading && <FileDown size={18} />}
         </span>
         Download
       </Button>
