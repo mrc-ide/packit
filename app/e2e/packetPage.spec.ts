@@ -82,17 +82,17 @@ test.describe("Packet page", () => {
     });
 
     test("can see Git section", async ({ page }) => {
-        const content = await getContentLocator(page);
-        await selectPacketPageTab(content, "Metadata");
-        const gitDiv = await getPacketPageAccordionSection(content, "Git");
-        // get top level list items
-        const listItems = await gitDiv.locator("ul.space-y-1 > li").all();
-        await expect(await listItems.length).toBe(3);
-        await expect(listItems[0]).toHaveText(/^Branch/);
-        await expect(listItems[1]).toHaveText(/^Commit[\da-g]{40}$/);
-        await expect(await listItems[2].locator("span")).toHaveText("Remotes");
-        const remoteItems = await listItems[2].getByRole("listitem");
-        await expect(await remoteItems.count()).toBeGreaterThan(0);
+      const content = await getContentLocator(page);
+      await selectPacketPageTab(content, "Metadata");
+      const gitDiv = await getPacketPageAccordionSection(content, "Git");
+      // get top level list items
+      const listItems = await gitDiv.locator("ul.space-y-1 > li").all();
+      await expect(await listItems.length).toBe(3);
+      await expect(listItems[0]).toHaveText(/^Branch/);
+      await expect(listItems[1]).toHaveText(/^Commit[\da-g]{40}$/);
+      await expect(await listItems[2].locator("span")).toHaveText("Remotes");
+      const remoteItems = await listItems[2].getByRole("listitem");
+      await expect(await remoteItems.count()).toBeGreaterThan(0);
     });
   });
 
