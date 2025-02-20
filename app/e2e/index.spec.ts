@@ -1,7 +1,12 @@
 import {test, expect, Locator} from "@playwright/test";
-import {getContentLocator} from "./utils";
+import {
+  getBreadcrumbLocator,
+  getContentLocator,
+  navigateToFirstPacketGroup, navigateToFirstPacketGroupLatestPacket,
+  packetGroupNameFromListItem
+} from "./utils";
 
-test.describe(() => {
+test.describe("Index page", () => {
   let content: Locator;
 
   test.beforeEach(async ({page}) => {
@@ -17,34 +22,34 @@ test.describe(() => {
         expect(packetGroup.getByRole("link", { name: "Latest" })).toBeEnabled();
         expect(packetGroup.getByText(/^\d+ packets?$/)).toBeVisible(); // packet count
         expect(packetGroup.getByText(/^Updated \d+ (second|minute|hour|day)s? ago$/)).toBeVisible(); // updated label
-
     });
   });
 
   test("can filter packet groups", async ({ page }) => {
-    const packetGroups = await content.getByRole("listitem");
-    const packetGroupsCount = await packetGroups.count();
-
-    // get longest packet group name
-    const packetGroupsArr = await packetGroups.all();
-    let longestName = "";
-    for(const packetGroup of packetGroupsArr) {
-      const name = await packetGroup.getByRole("heading").innerText();
-      if (name.length > longestName.length) {
-        longestName = name;
-      }
-    }
-
-    // enter letters in filter input until number of packet groups is reduced
-    const filterTerm = "";
+    const firstPacketGroup = await content.getByRole("listitem").first();
+    const firstPacketGroupName = await packetGroupNameFromListItem(firstPacketGroup);
     const filterInput = await page.getByPlaceholder("Filter packet groups...");
-    await expect(filterInput).toBeEnabled();
-
-
-    // visible packet groups should only include the substring which was entered
+    await filterInput.fill(firstPacketGroupName);
+    // wait for reset-filter button to become visible
+    await expect(await content.getByLabel("reset filter")).toBeVisible();
+    const filteredGroups = await content.getByRole("listitem");
+    // expect to have at least one packet group remaining, and expect all to have filter term  as a substring
+    expect(await filteredGroups.count()).toBeGreaterThan(0);
+    for (const packetGroup of await filteredGroups.all()) {
+      expect(await packetGroupNameFromListItem(packetGroup)).toContain(firstPacketGroupName);
+    }
   });
 
+  test("can navigate from packet group name link to packet group page", async ({page}) => {
+    const firstPacketGroupName = await navigateToFirstPacketGroup(content);
+    // wait for packet group name to be visible in breadcrumb
+    await expect(await getBreadcrumbLocator(page)).toHaveText(`home${firstPacketGroupName}`);
+  });
 
-  // can navigate by titel link to correct packetgroup paget
-  // can navigate by latest link to correct packet page
+  test("can navigate from latest packet link to packet page", async ({page}) => {
+    const { packetGroupName, packetId } = await navigateToFirstPacketGroupLatestPacket(content);
+    // wait for packet group name and latest packet id to be visible in breadcrumb
+    const displayPacketId = packetId.replaceAll("-", " ");
+    await expect(await getBreadcrumbLocator(page)).toHaveText(`home${packetGroupName}${displayPacketId}`);
+  });
 });

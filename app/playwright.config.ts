@@ -4,11 +4,13 @@ import path from "path";
 
 const setupProject = { name: "setup", testMatch: /.*\.setup\.ts/ };
 
-// "/home/emmarussell/dev/packit/app/test-results/auth.setup.ts-authenticate-setup/auth.json"
 const outputDir = "test-results";
 const authStorageStateFile = path.join(__dirname, outputDir, `auth.setup.ts-authenticate-setup/auth.json`);
+const baseURL = process.env.PACKIT_E2E_BASE_URL || "http://localhost:3000";
+const testMatch = baseURL.startsWith("http://localhost") ? /.*\.(local|spec)\.ts/ : /.*\.spec\.ts/;
 export default defineConfig({
   testDir: "./e2e",
+  testMatch ,
   outputDir,
   fullyParallel: true,
   /* Maximum time one test can run for. */
@@ -33,7 +35,7 @@ export default defineConfig({
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
     actionTimeout: 0,
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: process.env.PACKIT_E2E_BASE_URL || "http://localhost:3000",
+    baseURL,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
