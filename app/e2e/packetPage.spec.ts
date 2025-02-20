@@ -89,7 +89,7 @@ test.describe("Packet page", () => {
       const listItems = await gitDiv.locator("ul.space-y-1 > li").all();
       await expect(await listItems.length).toBe(3);
       await expect(listItems[0]).toHaveText(/^Branch/);
-      await expect(listItems[1]).toHaveText(/^Commit[\da-g]{40}$/);
+      await expect(listItems[1]).toHaveText(/^Commit[\da-f]{40}$/);
       await expect(await listItems[2].locator("span")).toHaveText("Remotes");
       const remoteItems = await listItems[2].getByRole("listitem");
       await expect(await remoteItems.count()).toBeGreaterThan(0);
@@ -115,14 +115,8 @@ test.describe("Packet page", () => {
     // Might be empty but expect the list to exist!
     await expect(await packagesDiv.locator("ul.space-y-1")).toBeVisible();
   });
-
-  // downloads: Artefacts, other files
 });
 
-// packet group - each list item display
-// packet group - each list item link
-// packet group - parameter search
-// packet group - id search
 
 // Manage roles - view roles
 // manage roles - view users
