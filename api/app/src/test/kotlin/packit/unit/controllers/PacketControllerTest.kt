@@ -2,14 +2,15 @@ package packit.unit.controllers
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.mockito.ArgumentMatchers.anyBoolean
-import org.mockito.ArgumentMatchers.anyString
+import org.mockito.ArgumentMatchers.*
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.mock.web.MockHttpServletResponse
 import packit.controllers.PacketController
 import packit.exceptions.PackitException
 import packit.model.*
@@ -21,9 +22,10 @@ class PacketControllerTest
 {
     val now = Instant.now().epochSecond.toDouble()
 
+    private val packetId = "20180818-164847-7574883b"
     private val packetMetadata = listOf(
         PacketMetadata(
-            "20180818-164847-7574883b",
+            packetId,
             "test",
             mapOf("name" to "value"),
             listOf(
@@ -52,7 +54,7 @@ class PacketControllerTest
 
     private val packets = listOf(
         Packet(
-            "20180818-164847-7574883b",
+            packetId,
             "test1",
             "test name1",
             mapOf("name" to "value"),
@@ -105,7 +107,8 @@ class PacketControllerTest
     @Test
     fun `get packet metadata by id`()
     {
-        val result = sut.findPacketMetadata("20180818-164847-7574883b")
+        val sut = PacketController(packetService)
+        val result = sut.findPacketMetadata(packetId)
         val responseBody = result.body
         assertEquals(result.statusCode, HttpStatus.OK)
         assertEquals(responseBody, packetMetadata[0])
@@ -115,7 +118,7 @@ class PacketControllerTest
     fun `get packet file by id`()
     {
         val result = sut.findFile(
-            id = "20180818-164847-7574883b",
+            id = packetId,
             hash = "sha256:87bfc90d2294c957bf1487506dacb2aeb6455d6caba94910e48434211a7c639b",
             false,
             "test.html"
@@ -141,5 +144,20 @@ class PacketControllerTest
             )
         }
         assertEquals("doesNotExist", error.key)
+    }
+
+    @Test
+    fun `streamZip should set correct response headers and content type, and call PacketService`() {
+        val response = MockHttpServletResponse()
+        val paths = listOf("file1.txt", "file2.txt")
+
+        val sut = PacketController(packetService)
+        sut.streamZip(packetId, paths, response)
+
+        verify(packetService).streamZip(listOf("file1.txt", "file2.txt"), packetId, response.outputStream)
+
+        assertEquals("application/zip", response.contentType)
+        assertEquals("attachment; filename=$packetId.zip", response.getHeader("Content-Disposition"))
+        assertEquals(HttpStatus.OK.value(), response.status)
     }
 }

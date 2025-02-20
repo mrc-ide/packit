@@ -19,11 +19,10 @@ describe("DownloadButton", () => {
   const packetId = "fakePacketId";
 
   const renderComponent = () => {
-    render(<DownloadButton file={file} packetId={packetId} />);
+    return render(<DownloadButton file={file} packetId={packetId} />);
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
     mockDownload.mockImplementation(() => {
       if (errorOnDownload) {
         throw Error("test download error");
@@ -32,25 +31,34 @@ describe("DownloadButton", () => {
     errorOnDownload = false;
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("renders as expected", () => {
-    const { container } = render(<DownloadButton file={file} packetId={packetId} />);
+    const { container } = renderComponent();
     expect(screen.getByRole("button")).toHaveTextContent("Download");
     const icon = container.querySelector(".lucide") as HTMLImageElement;
     expect(icon.classList).toContain("lucide-file-down");
   });
 
-  it("downloads file", () => {
+  it("downloads file", async () => {
     renderComponent();
 
-    userEvent.click(screen.getByRole("button"));
+    const button = screen.getByRole("button");
+    userEvent.click(button);
+    expect(button).toBeDisabled();
     const url = `${appConfig.apiUrl()}/packets/${packetId}/file?hash=${file.hash}&filename=${file.path}&inline=false`;
     expect(mockDownload).toHaveBeenCalledWith(url, "test.txt");
+    await waitFor(() => {
+      expect(button).not.toBeDisabled();
+    });
   });
 
-  it("shows download error, and resets on success", async () => {
+  it("shows any download errors, and resets on success", async () => {
     renderComponent();
-    errorOnDownload = true;
 
+    errorOnDownload = true;
     userEvent.click(screen.getByRole("button"));
     await waitFor(() => {
       expect(screen.queryByText("test download error")).toBeInTheDocument();

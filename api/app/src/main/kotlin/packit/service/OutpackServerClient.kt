@@ -7,12 +7,14 @@ import org.springframework.stereotype.Service
 import packit.AppConfig
 import packit.model.PacketMetadata
 import packit.model.dto.OutpackMetadata
+import java.io.OutputStream
 
 interface OutpackServer
 {
     fun getMetadata(from: Double? = null): List<OutpackMetadata>
     fun getMetadataById(id: String): PacketMetadata?
     fun getFileByHash(hash: String): Pair<ByteArray, HttpHeaders>?
+    fun getFileByHash(hash: String, output: OutputStream)
     fun proxyRequest(
         urlFragment: String,
         request: HttpServletRequest,
@@ -45,6 +47,11 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
     override fun getFileByHash(hash: String): Pair<ByteArray, HttpHeaders>
     {
         return GenericClient.getFile(constructUrl("file/$hash"))
+    }
+
+    override fun getFileByHash(hash: String, output: OutputStream)
+    {
+        GenericClient.streamingGet(constructUrl("file/$hash"), output)
     }
 
     override fun getChecksum(): String

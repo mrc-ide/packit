@@ -17,8 +17,11 @@ import packit.model.PacketMetadata
 import packit.model.PageablePayload
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
+import java.io.OutputStream
 import java.security.MessageDigest
 import java.time.Instant
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 interface PacketService
 {
@@ -31,7 +34,7 @@ interface PacketService
     fun getPacketsByName(
         name: String
     ): List<Packet>
-
+    fun streamZip(paths: List<String>, id: String, output: OutputStream)
     fun getPacket(id: String): Packet
 }
 
@@ -115,6 +118,35 @@ class BasePacketService(
     private fun ByteArray.toHex(): String
     {
         return this.joinToString("") { "%02x".format(it) }
+    }
+
+    override fun streamZip(paths: List<String>, id: String, output: OutputStream) {
+        val metadataFiles = getMetadataBy(id).files
+        val hashesByPath = metadataFiles
+            .filter { it.path in paths }
+            .associateBy({ it.path }, { it.hash })
+        val notFoundPaths = paths.filter { path -> metadataFiles.none { it.path == path } }
+
+        if (notFoundPaths.isNotEmpty()) {
+            throw PackitException("notAllFilesFound", HttpStatus.NOT_FOUND)
+        }
+
+        if (paths.isEmpty()) {
+            throw PackitException("noFilesProvided", HttpStatus.BAD_REQUEST)
+        }
+
+        try {
+            ZipOutputStream(output).use { zipOutputStream ->
+                hashesByPath.forEach { (filename, hash) ->
+                    zipOutputStream.putNextEntry(ZipEntry(filename))
+                    outpackServerClient.getFileByHash(hash, zipOutputStream)
+                    zipOutputStream.closeEntry()
+                }
+            }
+        } catch (e: Exception) {
+            // Log error on the back end (does not affect front end, client just downloads an incomplete file)
+            throw PackitException("errorCreatingZip", HttpStatus.INTERNAL_SERVER_ERROR)
+        }
     }
 
     override fun getMetadataBy(id: String): PacketMetadata

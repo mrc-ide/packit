@@ -8,6 +8,13 @@ import { PacketMetadata } from "../../../../types";
 import { server } from "../../../../msw/server";
 import { rest } from "msw";
 import appConfig from "../../../../config/appConfig";
+import userEvent from "@testing-library/user-event";
+
+const mockDownload = jest.fn();
+jest.mock("../../../../lib/download", () => ({
+  ...jest.requireActual("../../../../lib/download"),
+  download: async (...args: any[]) => mockDownload(...args)
+}));
 
 describe("download component", () => {
   URL.createObjectURL = jest.fn(() => "fakeObjectUrl");
@@ -26,12 +33,28 @@ describe("download component", () => {
     );
   };
 
+  afterAll(() => {
+    jest.clearAllMocks();
+  });
+
   it("can render packet header", async () => {
     renderComponent();
 
     expect(await screen.findByText(mockPacket.id)).toBeVisible();
     expect(await screen.findByText(mockPacket.name)).toBeVisible();
     expect(await screen.findByText(mockPacket.custom?.orderly.description.display as string)).toBeVisible();
+  });
+
+  it("renders the 'Download all files' button, which downloads the correct files", async () => {
+    renderComponent();
+
+    const downloadAllButton = await screen.findByText(/Download all files \(\d+\.\d+ KB\)/);
+    expect(downloadAllButton).toBeVisible();
+    userEvent.click(downloadAllButton);
+    const url = `${appConfig.apiUrl()}/packets/${mockPacket.id}/zip?paths=${encodeURIComponent(
+      mockPacket.files.map((f) => f.path).join(",")
+    )}`;
+    expect(mockDownload).toHaveBeenCalledWith(url, `parameters_${mockPacket.id}.zip`);
   });
 
   it("renders the 'artefacts' and 'other files' sections for orderly packets", async () => {
