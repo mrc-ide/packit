@@ -79,5 +79,15 @@ test.describe("Local packet page", () => {
       await expect(remoteItems).toHaveCount(1);
       await expect(remoteItems.first()).toHaveText("https://github.com/mrc-ide/packit.git");
     });
+
+    test("can see platform", async () => {
+      const platformDiv = await getPacketPageAccordionSection(content, "Platform", true);
+      // get top level list items
+      const listItems = await platformDiv.locator("ul.space-y-1 > li").all();
+      await expect(listItems.length).toBe(3);
+      await expect(listItems[0]).toHaveText("OS" + "Ubuntu 22.04.4 LTS");
+      await expect(listItems[1]).toHaveText("Systemx" + "86_64, linux-gnu");
+      await expect(listItems[2]).toHaveText("Language" + "R version 4.4.1 (2024-06-14)");
+    });
   });
 });

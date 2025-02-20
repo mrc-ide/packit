@@ -32,9 +32,12 @@ export const navigateToFirstPacketGroupLatestPacket = async (content: Locator) =
   return { packetGroupName, packetId };
 };
 
-export const getPacketPageAccordionSection = async (content: Locator, title: string) => {
+export const getPacketPageAccordionSection = async (content: Locator, title: string, clickToExpand = false) => {
   const section = content.locator("div.border-b:has(h3[data-orientation='vertical'])").filter({ hasText: title });
   await expect(await section).toBeVisible();
+  if (clickToExpand) {
+    await section.locator("h3[data-orientation='vertical']").click();
+  }
   return section;
 };
 

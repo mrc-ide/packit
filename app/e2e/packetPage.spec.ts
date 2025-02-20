@@ -96,6 +96,18 @@ test.describe("Packet page", () => {
     });
   });
 
+  test("can see Platform section", async ({ page }) => {
+    const content = await getContentLocator(page);
+    await selectPacketPageTab(content, "Metadata");
+    const platformDiv = await getPacketPageAccordionSection(content, "Platform", true);
+    // get top level list items
+    const listItems = await platformDiv.locator("ul.space-y-1 > li").all();
+    await expect(listItems.length).toBe(3);
+    await expect(listItems[0]).toHaveText(/^OS/);
+    await expect(listItems[1]).toHaveText(/^System/);
+    await expect(listItems[2]).toHaveText(/^Language/);
+  });
+
   // metadata
   // Platform (expand)- OS, System, Language
   // Packages (expand) - list
