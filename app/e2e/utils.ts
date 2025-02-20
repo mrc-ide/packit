@@ -37,3 +37,8 @@ export const navigateToFirstPacketGroupLatestPacket = async (content: Locator) =
 export const getPacketPageAccordionSection = async (content: Locator, title: string) => {
     return content.locator("div.border-b:has(h3[data-orientation='vertical'])").filter({hasText: title});
 };
+
+export const selectPacketPageTab = async (content: Locator, tab: string) => {
+    const nav = await content.getByRole("navigation");
+    await nav.getByRole("link", { name: tab }).click();
+};
