@@ -89,5 +89,12 @@ test.describe("Local packet page", () => {
       await expect(listItems[1]).toHaveText("Systemx" + "86_64, linux-gnu");
       await expect(listItems[2]).toHaveText("Language" + "R version 4.4.1 (2024-06-14)");
     });
+
+    test("can see packages", async () => {
+      const packagesDiv = await getPacketPageAccordionSection(content, "Packages", true);
+      const listItems = await packagesDiv.locator("ul.space-y-1 > li").all();
+      await expect(listItems.length).toBe(21);
+      await expect(listItems[0]).toHaveText("askpass" + "1.2.0");
+    });
   });
 });

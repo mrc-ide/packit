@@ -108,9 +108,13 @@ test.describe("Packet page", () => {
     await expect(listItems[2]).toHaveText(/^Language/);
   });
 
-  // metadata
-  // Platform (expand)- OS, System, Language
-  // Packages (expand) - list
+  test("can see Packages section", async ( { page } ) => {
+    const content = await getContentLocator(page);
+    await selectPacketPageTab(content, "Metadata");
+    const packagesDiv = await getPacketPageAccordionSection(content, "Packages", true);
+    // Might be empty but expect the list to exist!
+    await expect(await packagesDiv.locator("ul.space-y-1")).toBeVisible();
+  });
 
   // downloads: Artefacts, other files
 });
