@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import { PacketGroupSummary } from "../../../../types";
-import { getTimeDifferenceToDisplay } from "../../../../lib/time";
+import { PacketGroupSummary } from "../../../../../types";
+import { getTimeDifferenceToDisplay } from "../../../../../lib/time";
 import { PinIcon } from "lucide-react";
-import { ZipDownloadButton } from "../downloads/ZipDownloadButton";
-import { useGetPacketById } from "../common/hooks/useGetPacketById";
+import { ZipDownloadButton } from "../../downloads/ZipDownloadButton";
+import { useGetPacketById } from "../../common/hooks/useGetPacketById";
 
 interface PinProps {
   packetGroup: PacketGroupSummary;
@@ -14,9 +14,8 @@ export const Pin = ({ packetGroup }: PinProps) => {
 
   const { packet } = useGetPacketById(packetGroup.latestId);
 
-  // min-w-[32%]
   return (
-    <li key={packetGroup.latestId} className="p-4 flex flex-col border rounded shadow">
+    <li key={packetGroup.latestId} className="p-4 flex flex-col border rounded shadow min-w-[32%]">
       <div className="flex gap-5">
         <Link to={`/${packetGroup.name}`} className="hover:underline decoration-blue-500 min-w-[50%] w-fit">
           <h3 className="scroll-m-20 text-lg font-semibold tracking-tight text-blue-500">

@@ -3,7 +3,7 @@ import { FilterInput } from "../common/FilterInput";
 import { PacketGroupSummaryList } from "./PacketGroupSummaryList";
 import { PAGE_SIZE } from "../../../../lib/constants";
 import { useGetPacketGroupSummaries } from "./hooks/useGetPacketGroupSummaries";
-import { Pin } from "./Pin";
+import { Pin } from "./pins/Pin";
 import { Separator } from "../../Base/Separator";
 
 export const Home = () => {
@@ -15,7 +15,11 @@ export const Home = () => {
   return (
     <div className="flex justify-center">
       <div className="h-full flex flex-1 flex-col space-y-6 p-8 max-w-5xl">
-        <h2 className="text-xl font-bold tracking-tight">Reports</h2>
+        {/* NO header - If we're using queries then all pins will refer to some packet, not a packet group, and so the heading 'Pinned reports' could be misleading */}
+        {/*<h2 className="text-lg font-bold tracking-tight">Pinned reports</h2>*/}
+        {/* if no pins, link saying "Add a pin" */}
+        {/* if some pins, link saying "Edit pins" */}
+        {/* if no permission to edit pins, no link */}
         <div className="flex gap-3 flex-wrap me-[-1rem]">
           {packetGroupSummaries?.content[0] && <Pin packetGroup={packetGroupSummaries?.content[0]} />}
           {packetGroupSummaries?.content[1] && <Pin packetGroup={packetGroupSummaries?.content[1]} />}
@@ -28,6 +32,7 @@ export const Home = () => {
           {packetGroupSummaries?.content[8] && <Pin packetGroup={packetGroupSummaries?.content[8]} />}
         </div>
         <Separator />
+        <h2 className="text-lg font-bold tracking-tight">Find a report</h2>
         <div className="space-y-4 flex flex-col">
           <FilterInput
             setFilter={setFilterByName}
