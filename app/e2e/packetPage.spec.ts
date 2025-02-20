@@ -108,7 +108,7 @@ test.describe("Packet page", () => {
     await expect(listItems[2]).toHaveText(/^Language/);
   });
 
-  test("can see Packages section", async ( { page } ) => {
+  test("can see Packages section", async ({ page }) => {
     const content = await getContentLocator(page);
     await selectPacketPageTab(content, "Metadata");
     const packagesDiv = await getPacketPageAccordionSection(content, "Packages", true);
