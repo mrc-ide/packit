@@ -1,27 +1,28 @@
-import {test, expect, Locator} from "@playwright/test";
+import { test, expect, Locator } from "@playwright/test";
 import {
   getBreadcrumbLocator,
   getContentLocator,
-  navigateToFirstPacketGroup, navigateToFirstPacketGroupLatestPacket,
+  navigateToFirstPacketGroup,
+  navigateToFirstPacketGroupLatestPacket,
   packetGroupNameFromListItem
 } from "./utils";
 
 test.describe("Index page", () => {
   let content: Locator;
 
-  test.beforeEach(async ({page}) => {
+  test.beforeEach(async ({ page }) => {
     await page.goto("./");
     content = await getContentLocator(page);
   });
 
-  test("can view packet group list", async ({ page }) => {
+  test("can view packet group list", async () => {
     const packetGroups = await content.getByRole("listitem");
     expect(await packetGroups.count()).toBeGreaterThan(0);
     (await packetGroups.all()).forEach((packetGroup) => {
-        expect(packetGroup.getByRole("heading")).toBeEnabled(); // packet group name
-        expect(packetGroup.getByRole("link", { name: "Latest" })).toBeEnabled();
-        expect(packetGroup.getByText(/^\d+ packets?$/)).toBeVisible(); // packet count
-        expect(packetGroup.getByText(/^Updated \d+ (second|minute|hour|day)s? ago$/)).toBeVisible(); // updated label
+      expect(packetGroup.getByRole("heading")).toBeEnabled(); // packet group name
+      expect(packetGroup.getByRole("link", { name: "Latest" })).toBeEnabled();
+      expect(packetGroup.getByText(/^\d+ packets?$/)).toBeVisible(); // packet count
+      expect(packetGroup.getByText(/^Updated \d+ (second|minute|hour|day)s? ago$/)).toBeVisible(); // updated label
     });
   });
 
@@ -40,13 +41,13 @@ test.describe("Index page", () => {
     }
   });
 
-  test("can navigate from packet group name link to packet group page", async ({page}) => {
+  test("can navigate from packet group name link to packet group page", async ({ page }) => {
     const firstPacketGroupName = await navigateToFirstPacketGroup(content);
     // wait for packet group name to be visible in breadcrumb
     await expect(await getBreadcrumbLocator(page)).toHaveText(`home${firstPacketGroupName}`);
   });
 
-  test("can navigate from latest packet link to packet page", async ({page}) => {
+  test("can navigate from latest packet link to packet page", async ({ page }) => {
     const { packetGroupName, packetId } = await navigateToFirstPacketGroupLatestPacket(content);
     // wait for packet group name and latest packet id to be visible in breadcrumb
     const displayPacketId = packetId.replaceAll("-", " ");

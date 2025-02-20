@@ -10,7 +10,7 @@ const baseURL = process.env.PACKIT_E2E_BASE_URL || "http://localhost:3000";
 const testMatch = baseURL.startsWith("http://localhost") ? /.*\.(local|spec)\.ts/ : /.*\.spec\.ts/;
 export default defineConfig({
   testDir: "./e2e",
-  testMatch ,
+  testMatch,
   outputDir,
   fullyParallel: true,
   /* Maximum time one test can run for. */
