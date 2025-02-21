@@ -48,6 +48,7 @@ dependencies {
 
     // This dependency is used by the application.
     implementation("com.google.guava:guava:31.1-jre")
+    implementation("com.kohlschutter.junixsocket:junixsocket-core:2.9.0")
 
     // Spring boot dependencies
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
