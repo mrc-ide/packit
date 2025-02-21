@@ -96,6 +96,7 @@ export const setupPacketColumns = (allParametersKeys: Set<string>) => {
             ) : (
               Object.entries(parameters)
                 .filter(([key]) => !visibleParamColumns.includes(key))
+                .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
                 .map(([key, val]) => <ParameterContainer key={key} paramKey={key} paramValue={val} />)
             )}
           </div>
