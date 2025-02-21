@@ -11,6 +11,14 @@ export const getZipUrl = (packetId: string, files: FileMetadata[]) => {
 export const getFileUrl = (file: FileMetadata, packetId: string, inline = false) =>
   `${appConfig.apiUrl()}/packets/${packetId}/file?hash=${file.hash}&filename=${file.path}&inline=${inline}`;
 
+export const getFileOttUrl = (file: FileMetadata, packetId: string) =>
+  `${appConfig.apiUrl()}/packets/${packetId}/file/ott?path=${file.path}`;
+
+export const getFilePublicUrl = (file: FileMetadata, packetId: string, token: string, inline = false) =>
+  `${appConfig.apiUrl()}/packets/${packetId}/public?hash=${file.hash}&filename=${
+    file.path
+  }&token=${token}&inline=${inline}`;
+
 export const getFileObjectUrl = async (url: string, filename: string) => {
   const headers = getAuthHeader();
   const res = await fetch(url, { method: "GET", headers });
@@ -28,12 +36,10 @@ export const getFileObjectUrl = async (url: string, filename: string) => {
 };
 
 export const download = async (url: string, filename: string) => {
-  const fileObjectUrl = await getFileObjectUrl(url, filename);
   const fileLink = document.createElement("a");
-  fileLink.href = fileObjectUrl;
+  fileLink.href = url;
   fileLink.setAttribute("download", filename);
   document.body.appendChild(fileLink);
   fileLink.click();
   document.body.removeChild(fileLink);
-  window.URL.revokeObjectURL(fileObjectUrl);
 };

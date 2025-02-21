@@ -7,15 +7,20 @@ import org.springframework.http.MediaTypeFactory.getMediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import packit.exceptions.PackitException
-import packit.model.PacketMetadata
-import packit.model.PageablePayload
+import packit.model.*
+import packit.model.dto.OneTimeTokenDto
 import packit.model.dto.PacketDto
-import packit.model.toDto
+import packit.service.OneTimeTokenService
 import packit.service.PacketService
+import java.time.Instant
+import java.util.*
 
 @RestController
 @RequestMapping("/packets")
-class PacketController(private val packetService: PacketService)
+class PacketController(
+    private val packetService: PacketService,
+    private val oneTimeTokenService: OneTimeTokenService,
+)
 {
     @GetMapping
     fun pageableIndex(
@@ -59,6 +64,24 @@ class PacketController(private val packetService: PacketService)
         }
     }
 
+    // Request a one-time token to download a file
+    @PostMapping("/{id}/file/ott")
+    @PreAuthorize("@authz.canReadPacket(#root, #id)")
+    fun generateTokenForFile(
+        @PathVariable id: String,
+        @RequestParam path: String,
+    ): ResponseEntity<OneTimeTokenDto> {
+        val packet = packetService.getMetadataBy(id)
+        if (packet.files.none { it.path == path }) {
+            throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
+        }
+
+        val oneTimeToken = oneTimeTokenService.createToken(packet.id, listOf(path))
+        return ResponseEntity.ok(oneTimeToken.toDto())
+    }
+
+    // TODO: ott for zip
+
     @GetMapping("/{id}/zip")
     @PreAuthorize("@authz.canReadPacket(#root, #id)")
     fun streamZip(
@@ -73,5 +96,37 @@ class PacketController(private val packetService: PacketService)
         )
 
         packetService.streamZip(paths, id, response.outputStream)
+    }
+
+    @GetMapping("/{id}/public")
+    fun public(
+        @PathVariable id: String,
+        @RequestParam hash: String,
+        @RequestParam filename: String,
+        @RequestParam token: UUID,
+        @RequestParam inline: Boolean = false,
+        response: HttpServletResponse
+    ) {
+        val packet = packetService.getMetadataBy(id)
+        if (packet.files.none { it.hash == hash }) {
+            throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
+        }
+        val filePath = packet.files.first { it.hash == hash }.path
+        oneTimeTokenService.validateToken(token, packet.id, listOf(filePath))
+
+        val disposition = if (inline) ContentDisposition.inline() else ContentDisposition.attachment()
+        response.contentType = getMediaType(filename).orElse(MediaType.APPLICATION_OCTET_STREAM).toString()
+        response.setHeader("Content-Disposition", disposition.filename(filename).build().toString())
+
+        packetService.getFileByHash(hash, response.outputStream) { outpackResponse ->
+            response.setContentLengthLong(outpackResponse.headers.contentLength)
+        }
+    }
+
+    @GetMapping("/{id}/notpublic")
+    fun notpublic(
+        @PathVariable id: String,
+    ): ResponseEntity<String> {
+        return ResponseEntity.ok("YOU SHOULD NOT BE ABLE TO READ THIS")
     }
 }

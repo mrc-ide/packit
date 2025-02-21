@@ -11,6 +11,7 @@ import packit.model.Packet
 import packit.model.PacketGroup
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
+import packit.repository.OneTimeTokenRepository
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
 import java.io.OutputStream
@@ -38,7 +39,7 @@ interface PacketService
 class BasePacketService(
     private val packetRepository: PacketRepository,
     private val packetGroupRepository: PacketGroupRepository,
-    private val outpackServerClient: OutpackServer
+    private val outpackServerClient: OutpackServer,
 ) : PacketService
 {
     override fun importPackets()
@@ -140,10 +141,14 @@ class BasePacketService(
                 }
             }
         } catch (e: Exception) {
+            // TODO: translation for this error
             // Log error on the back end (does not affect front end, client just downloads an incomplete file)
             throw PackitException("errorCreatingZip", HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+
+
+    // TODO: translation for the errorCreatingZip error
 
     override fun getMetadataBy(id: String): PacketMetadata
     {

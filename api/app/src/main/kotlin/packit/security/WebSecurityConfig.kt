@@ -58,6 +58,20 @@ class WebSecurityConfig(
 
     @Bean
     @Order(2)
+    fun publicEndpointSecurityFilterChain(httpSecurity: HttpSecurity): SecurityFilterChain {
+        httpSecurity
+            .securityMatcher("/packets/{id}/public")
+            .authorizeHttpRequests { authorizeRequests ->
+                authorizeRequests.anyRequest().permitAll()
+            }
+            .csrf { it.disable() }
+            .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
+
+        return httpSecurity.build()
+    }
+
+    @Bean
+    @Order(3)
     fun securityFilterChain(
         httpSecurity: HttpSecurity,
         tokenAuthenticationFilter: TokenAuthenticationFilter,
