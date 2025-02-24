@@ -28,7 +28,7 @@ class SystemdNotify {
       // '@' as the first byte means an abstract Unix socket - we need to
       // replace that with a null byte.
       val pathBytes = path.toByteArray()
-      if (pathBytes[0] == 0x40.toByte()) {
+      if (pathBytes[0] == '@'.code.toByte()) {
         pathBytes[0] = 0
       }
 
