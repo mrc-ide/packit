@@ -57,8 +57,6 @@ fi
 "$HERE"/../api/scripts/run
 
 if [ $ADD_SUPER_USER -eq 1 ]; then
-    echo "Waiting for api to initialise"
-    sleep 5
     "$HERE"/basic-create-super-user
 fi
 
