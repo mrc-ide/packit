@@ -5,12 +5,12 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import packit.exceptions.PackitException
-import packit.security.TokenAuthenticationFilter
+import packit.security.JWTAuthenticationFilter
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class TokenAuthenticationFilterTest
+class JWTAuthenticationFilterTest
 {
     @Test
     fun `can extract token from jwt`()
@@ -19,7 +19,7 @@ class TokenAuthenticationFilterTest
             on { getHeader("Authorization") } doReturn "Bearer faketoken"
         }
 
-        val sut = TokenAuthenticationFilter(mock(), mock())
+        val sut = JWTAuthenticationFilter(mock(), mock())
 
         val result = sut.extractToken(mockHttpRequest)
 
@@ -33,7 +33,7 @@ class TokenAuthenticationFilterTest
             on { getHeader("Authorization") } doReturn "faketoken"
         }
 
-        val sut = TokenAuthenticationFilter(mock(), mock())
+        val sut = JWTAuthenticationFilter(mock(), mock())
 
         val thrownError = assertThrows<PackitException> { sut.extractToken(mockHttpRequest) }
 
@@ -48,7 +48,7 @@ class TokenAuthenticationFilterTest
     {
         val mockHttpRequest = mock<HttpServletRequest>()
 
-        val sut = TokenAuthenticationFilter(mock(), mock())
+        val sut = JWTAuthenticationFilter(mock(), mock())
 
         val result = sut.extractToken(mockHttpRequest)
 
