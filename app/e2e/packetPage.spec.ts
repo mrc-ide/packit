@@ -65,7 +65,7 @@ test.describe("Packet page", () => {
         await expect(noneDiv).toHaveText("None");
       } else {
         const reportFrames = await reportsDiv.locator("iframe");
-        await expect(reportFrames.count()).toBeGreaterThan(0);
+        await expect(await reportFrames.count()).toBeGreaterThan(0);
       }
     });
   });
@@ -116,8 +116,3 @@ test.describe("Packet page", () => {
     await expect(await packagesDiv.locator("ul.space-y-1")).toBeVisible();
   });
 });
-
-// TODO: make tickets for:
-// Manage roles - view roles
-// manage roles - view users
-// and for tests which write - running report, adding users etc - only to be run locally on or dev!

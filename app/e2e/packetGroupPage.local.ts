@@ -18,7 +18,8 @@ test.describe("Local packet group page", () => {
     const link = await firstCell.getByRole("link");
     await expect(link).toHaveText(packetId);
     await expect(await link.getAttribute("href")).toBe(`/parameters/${packetId}`);
-    await expect(await firstCell.locator("div.text-muted-foreground")).toHaveText("7/29/2024, 4:46:52 PM");
+    const expectedDate = new Date(Date.UTC(2024, 6, 29, 15, 46, 52));
+    await expect(await firstCell.locator("div.text-muted-foreground")).toHaveText(expectedDate.toLocaleString());
     const secondCell = (await oldestRow.getByRole("cell").all())[1];
     const parameterPills = await secondCell.locator(".rounded-md").all();
     await expect(parameterPills.length).toBe(3);

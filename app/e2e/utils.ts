@@ -16,6 +16,8 @@ export const getFirstPacketGroupListItem = async (content: Locator) => {
   return content.getByRole("listitem").first();
 };
 
+export const getDisplayId = (id: string) => id.replaceAll("-", " ");
+
 export const navigateToFirstPacketGroup = async (content: Locator) => {
   const firstPacketGroup = await getFirstPacketGroupListItem(content);
   const firstPacketGroupName = await packetGroupNameFromListItem(firstPacketGroup);
