@@ -1,5 +1,5 @@
 import { expect, Locator, test } from "@playwright/test";
-import {getContentLocator, getPackitInstance, navigateToFirstPacketGroup} from "./utils";
+import { getContentLocator, getPackitInstance, navigateToFirstPacketGroup } from "./utils";
 
 test.describe("Packet group page", () => {
   let packetGroupName: string;

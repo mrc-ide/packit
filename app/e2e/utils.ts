@@ -51,4 +51,4 @@ export const selectPacketPageTab = async (content: Locator, tab: string) => {
 export const getPackitInstance = (baseURL: string) => {
   const origin = new URL(baseURL).origin;
   return baseURL.replaceAll(origin, "").replaceAll("/", "");
-}
+};
