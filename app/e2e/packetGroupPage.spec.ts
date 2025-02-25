@@ -1,5 +1,5 @@
 import { expect, Locator, test } from "@playwright/test";
-import { getContentLocator, navigateToFirstPacketGroup } from "./utils";
+import {getContentLocator, getPackitInstance, navigateToFirstPacketGroup} from "./utils";
 
 test.describe("Packet group page", () => {
   let packetGroupName: string;
@@ -13,14 +13,16 @@ test.describe("Packet group page", () => {
     rows = await table.getByRole("row");
   });
 
-  test("can see packet rows", async () => {
+  test("can see packet rows", async ({ baseURL }) => {
     await expect(await rows.count()).toBeGreaterThanOrEqual(1);
     const lastRow = await rows.last(); // any packet row would do, and first row has headers
     const firstCell = await lastRow.getByRole("cell").first();
     const link = await firstCell.getByRole("link");
     await expect(link).toHaveText(/^\d{8}-\d{6}-[\da-f]{8}$/);
     const packetId = await link.innerText();
-    await expect(await link.getAttribute("href")).toBe(`/${packetGroupName}/${packetId}`);
+    const instance = getPackitInstance(baseURL);
+    const instancePart = instance ? `/${instance}` : "";
+    await expect(await link.getAttribute("href")).toBe(`${instancePart}/${packetGroupName}/${packetId}`);
     await expect(await firstCell.locator("div.text-muted-foreground")).toBeVisible();
     const secondCell = (await lastRow.getByRole("cell").all())[1];
     // Expect secondCell to either have "None" text or at least one parameter

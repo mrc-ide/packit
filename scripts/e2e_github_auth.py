@@ -17,6 +17,3 @@ token = token_header["Authorization"].split(" ")[1]
 # write the token out to a file which the calling bash script will read
 with open(".token", "w") as f:
     f.write(token)
-
-
-

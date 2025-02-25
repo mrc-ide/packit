@@ -47,3 +47,8 @@ export const selectPacketPageTab = async (content: Locator, tab: string) => {
   const nav = await content.getByRole("navigation");
   await nav.getByRole("link", { name: tab }).click();
 };
+
+export const getPackitInstance = (baseURL: string) => {
+  const origin = new URL(baseURL).origin;
+  return baseURL.replaceAll(origin, "").replaceAll("/", "");
+}

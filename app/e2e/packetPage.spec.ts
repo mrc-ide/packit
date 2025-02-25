@@ -65,7 +65,7 @@ test.describe("Packet page", () => {
         await expect(noneDiv).toHaveText("None");
       } else {
         const reportFrames = await reportsDiv.locator("iframe");
-        await expect(await reportFrames.count()).toBeGreaterThan(0);
+        await expect(await reportFrames).toHaveCount(1);
       }
     });
   });
