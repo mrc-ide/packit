@@ -60,3 +60,46 @@ See [app/README.md](https://github.com/mrc-ide/packit/blob/main/app/README.md)
 ## Authentication in Packit
 
 See [docs/auth.md](docs/auth.md)
+
+## e2e Tests
+
+We want to have e2e tests which test all packit features, but also to have a suite of tests which we can run against any
+packit server to test that its deployment has succeeded. We therefore have two styles of e2e tests:
+1. Generic tests which make no (or very few) assumptions about the packet groups, packets etc which will be present, and which 
+can be run against any packet server. 
+2. Tests which specifically expect the demo packet dataset, and therefore can test that packets have expected parameters, 
+artefacts etc. These test are assumed to be running against localhost. 
+
+To support running the correct tests for the target server, the playwright config file (`./app/playwright.config.ts`)
+uses a different `testMatch` property depending on whether the base url for the Packit server starts with `http://localhost` - 
+if so, files suffixed `local.ts` (and which provide the demo dataset tests) and also those suffixed `spec.ts`
+(which provide generic test) will be matched and their tests run. If the base url is not for localhost, only the generic
+tests will be matched and run. 
+
+e2e test are currently all read-only. A feature to allow tests which change the state of the system for non-prod servers 
+only will be added in a future branch. 
+
+Playwright tests are in `./app/e2e`. By default, they will run against localhost, and expect basic auth super user to be
+available, so for local dev you should run:
+1.  `./scripts/dev-start --super-user` to start the dependencies, api and app
+2. `npm run test:e2e` from `./app` 
+
+Playwright tests can be run against any server by running `./scripts/run-e2e-tests-on-server` providing args for server url and auth method
+("basic" or "github"), e.g. ` ./scripts/run-e2e-tests-on-server https://packit-dev.dide.ic.ac.uk/reside-dev/ github`.
+The github auth part uses `pyorderly` and so if you want to use github auth, you will need to first be 
+running in a context where pyorderly is available, e.g. by running:
+```
+hatch shell 
+pip install pyorderly
+```
+
+NB If you're testing with a server url which is not a domain root, ensure that you append a "/". In this case it's also 
+important to use `./` as the base route in the Playwright tests, not `/`.
+
+The tests and test script use environment variables to set and determine test configuration values. These are:
+`PACKIT_E2E_BASE_URL`, 
+`PACKIT_E2E_AUTH_METHOD`,  
+`PACKIT_E2E_BASIC_USER`, 
+`PACKIT_E2E_BASIC_PASSWORD`, 
+`PACKIT_E2E_GITHUB_TOKEN`
+
