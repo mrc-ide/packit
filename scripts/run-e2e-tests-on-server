@@ -36,5 +36,3 @@ if [[ $AUTH_METHOD == "github"  ]]; then
 fi
 
 cd app && npm run test:e2e
-
-# TODO: readonly tests by default - opt in to be writable! And even then, check if localhost or packit-dev

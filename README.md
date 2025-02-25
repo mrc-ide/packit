@@ -80,7 +80,7 @@ e2e test are currently all read-only. A feature to allow tests which change the 
 only will be added in a future branch. 
 
 Playwright tests are in `./app/e2e`. By default, they will run against localhost, and expect basic auth super user to be
-available, so you should run:
+available, so for local dev you should run:
 1.  `./scripts/dev-start --super-user` to start the dependencies, api and app
 2. `npm run test:e2e` from `./app` 
 

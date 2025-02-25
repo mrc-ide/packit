@@ -2,7 +2,7 @@ import { test, expect, Locator } from "@playwright/test";
 import {
   getBreadcrumbLocator,
   getContentLocator,
-  getDisplayId,
+  getDisplayString,
   navigateToFirstPacketGroup,
   navigateToFirstPacketGroupLatestPacket,
   packetGroupNameFromListItem
@@ -44,7 +44,7 @@ test.describe("Index page", () => {
 
   test("can navigate from packet group name link to packet group page", async ({ page }) => {
     const firstPacketGroupName = await navigateToFirstPacketGroup(content);
-    const displayName = getDisplayId(firstPacketGroupName);
+    const displayName = getDisplayString(firstPacketGroupName);
     // wait for packet group name to be visible in breadcrumb
     await expect(await getBreadcrumbLocator(page)).toHaveText(`home${displayName}`);
   });
@@ -52,7 +52,8 @@ test.describe("Index page", () => {
   test("can navigate from latest packet link to packet page", async ({ page }) => {
     const { packetGroupName, packetId } = await navigateToFirstPacketGroupLatestPacket(content);
     // wait for packet group name and latest packet id to be visible in breadcrumb
-    const displayPacketId = getDisplayId(packetId);
-    await expect(await getBreadcrumbLocator(page)).toHaveText(`home${packetGroupName}${displayPacketId}`);
+    const displayPacketId = getDisplayString(packetId);
+    const displayPacketGroupName = getDisplayString(packetGroupName);
+    await expect(await getBreadcrumbLocator(page)).toHaveText(`home${displayPacketGroupName}${displayPacketId}`);
   });
 });
