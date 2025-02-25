@@ -1,5 +1,5 @@
-import { SetStateAction, useEffect, useRef, useState } from "react";
-import { getFileDownloadUrl, getFileObjectUrl } from "../../../../../lib/download";
+import { useEffect, useRef, useState } from "react";
+import { getFileObjectUrl } from "../../../../../lib/download";
 import { FileMetadata } from "../../../../../types";
 import { usePacketOutletContext } from "../../../main/PacketOutlet";
 
@@ -14,17 +14,11 @@ export const useFileObjectUrl = (file: FileMetadata | undefined) => {
 
   useEffect(() => {
     if (file && packet) {
-      getFileDownloadUrl(file, packet.id, file.path, true)
-        .then((url) => {
-          getFileObjectUrl(url, file.path)
-            .then((blobUrl) => {
-              setFileObjectUrl(blobUrl);
-              fileObjectUrlRef.current = blobUrl;
-              setError(null);
-            })
-            .catch((e) => {
-              setError(e);
-            });
+      getFileObjectUrl(file, packet.id, file.path)
+        .then((blobUrl) => {
+          setFileObjectUrl(blobUrl);
+          fileObjectUrlRef.current = blobUrl;
+          setError(null);
         })
         .catch((e) => {
           setError(e);

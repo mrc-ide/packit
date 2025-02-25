@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { zipDownload } from "../../../../lib/download";
+import { download } from "../../../../lib/download";
 import { Button, buttonVariants } from "../../Base/Button";
 import { FolderDown, Loader2 } from "lucide-react";
 import { usePacketOutletContext } from "../../main/PacketOutlet";
@@ -34,7 +34,7 @@ export const ZipDownloadButton = ({
     }
     setDownloading(true);
     setError("");
-    await zipDownload(files, packetId, zipName)
+    await download(files, packetId, zipName, false)
       .catch((e) => {
         setError(e.message);
       })

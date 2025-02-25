@@ -16,7 +16,7 @@ export const FileDownloadButton = ({ file, packetId }: FileDownloadButtonProps) 
   const downloadFile = async (file: FileMetadata) => {
     setDownloading(true);
     setError("");
-    await download(file, packetId)
+    await download([file], packetId, file.path)
       .catch((e) => {
         setError(e.message);
       })
