@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { download, getZipUrl } from "../../../../lib/download";
+import { zipDownload } from "../../../../lib/download";
 import { Button, buttonVariants } from "../../Base/Button";
 import { FolderDown, Loader2 } from "lucide-react";
 import { usePacketOutletContext } from "../../main/PacketOutlet";
@@ -8,7 +8,7 @@ import { useState } from "react";
 import { filesToSize } from "../../../../helpers";
 import type { VariantProps } from "class-variance-authority";
 
-interface FileGroupDownloadButtonProps {
+interface ZipDownloadButtonProps {
   files: FileMetadata[];
   zipName: string;
   buttonText?: string;
@@ -22,7 +22,7 @@ export const ZipDownloadButton = ({
   buttonText = "Download",
   variant = "default",
   className
-}: FileGroupDownloadButtonProps) => {
+}: ZipDownloadButtonProps) => {
   const { packetId } = useParams();
   const { packet } = usePacketOutletContext();
   const [error, setError] = useState("");
@@ -34,7 +34,7 @@ export const ZipDownloadButton = ({
     }
     setDownloading(true);
     setError("");
-    await download(getZipUrl(packetId, files), zipName)
+    await zipDownload(files, packetId, zipName)
       .catch((e) => {
         setError(e.message);
       })

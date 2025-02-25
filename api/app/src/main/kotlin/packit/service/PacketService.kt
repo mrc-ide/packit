@@ -7,11 +7,11 @@ import org.springframework.http.client.ClientHttpResponse
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
 import packit.helpers.PagingHelper
+import packit.model.FileMetadata
 import packit.model.Packet
 import packit.model.PacketGroup
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
-import packit.repository.OneTimeTokenRepository
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
 import java.io.OutputStream
@@ -27,12 +27,13 @@ interface PacketService
     fun getChecksum(): String
     fun importPackets()
     fun getMetadataBy(id: String): PacketMetadata
-    fun getFileByHash(hash: String, output: OutputStream, preStream: (ClientHttpResponse) -> Unit = {})
+    fun getFileByPath(packetId: String, path: String, output: OutputStream, preStream: (ClientHttpResponse) -> Unit = {})
     fun getPacketsByName(
         name: String
     ): List<Packet>
     fun streamZip(paths: List<String>, id: String, output: OutputStream)
     fun getPacket(id: String): Packet
+    fun validateFilesExistForPacket(id: String, paths: List<String>): List<FileMetadata>
 }
 
 @Service
@@ -103,6 +104,22 @@ class BasePacketService(
             .toSHA256()
     }
 
+    override fun validateFilesExistForPacket(id: String, paths: List<String>): List<FileMetadata>
+    {
+        val metadataFiles = getMetadataBy(id).files
+        val notFoundPaths = paths.filter { path -> metadataFiles.none { it.path == path } }
+
+        if (notFoundPaths.isNotEmpty()) {
+            throw PackitException("notAllFilesFound", HttpStatus.NOT_FOUND)
+        }
+
+        if (paths.isEmpty()) {
+            throw PackitException("noFilesProvided", HttpStatus.BAD_REQUEST)
+        }
+
+        return metadataFiles
+    }
+
     private fun String.toSHA256(): String
     {
         return "sha256:${
@@ -118,20 +135,10 @@ class BasePacketService(
     }
 
     override fun streamZip(paths: List<String>, id: String, output: OutputStream) {
-        val metadataFiles = getMetadataBy(id).files
-        val hashesByPath = metadataFiles
+        val files = validateFilesExistForPacket(id, paths)
+        val hashesByPath = files
             .filter { it.path in paths }
             .associateBy({ it.path }, { it.hash })
-        val notFoundPaths = paths.filter { path -> metadataFiles.none { it.path == path } }
-
-        if (notFoundPaths.isNotEmpty()) {
-            throw PackitException("notAllFilesFound", HttpStatus.NOT_FOUND)
-        }
-
-        if (paths.isEmpty()) {
-            throw PackitException("noFilesProvided", HttpStatus.BAD_REQUEST)
-        }
-
         try {
             ZipOutputStream(output).use { zipOutputStream ->
                 hashesByPath.forEach { (filename, hash) ->
@@ -147,7 +154,6 @@ class BasePacketService(
         }
     }
 
-
     // TODO: translation for the errorCreatingZip error
 
     override fun getMetadataBy(id: String): PacketMetadata
@@ -156,8 +162,11 @@ class BasePacketService(
             ?: throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
     }
 
-    override fun getFileByHash(hash: String, output: OutputStream, preStream: (ClientHttpResponse) -> Unit)
+    override fun getFileByPath(packetId: String, path: String, output: OutputStream, preStream: (ClientHttpResponse) -> Unit)
     {
+        val files = validateFilesExistForPacket(packetId, listOf(path))
+        val hash = files.first { it.path == path }.hash
+
         outpackServerClient.getFileByHash(hash, output, preStream)
     }
 }

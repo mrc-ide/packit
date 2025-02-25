@@ -15,7 +15,7 @@ import packit.security.provider.JwtDecoder
 import java.util.*
 
 @Component
-class TokenAuthenticationFilter(
+class JWTAuthenticationFilter(
     val jwtDecoder: JwtDecoder,
     val jwtToPrincipal: TokenToPrincipal,
 ) : OncePerRequestFilter()

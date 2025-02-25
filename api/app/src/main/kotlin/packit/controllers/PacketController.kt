@@ -12,7 +12,6 @@ import packit.model.dto.OneTimeTokenDto
 import packit.model.dto.PacketDto
 import packit.service.OneTimeTokenService
 import packit.service.PacketService
-import java.time.Instant
 import java.util.*
 
 @RestController
@@ -41,92 +40,41 @@ class PacketController(
         return ResponseEntity.ok(packetService.getMetadataBy(id))
     }
 
-    @GetMapping("/{id}/file")
+    @PostMapping("/{id}/files/token")
     @PreAuthorize("@authz.canReadPacket(#root, #id)")
-    fun streamFile(
+    fun generateTokenForDownloadingFile(
         @PathVariable id: String,
-        @RequestParam hash: String,
-        @RequestParam inline: Boolean = false,
-        @RequestParam filename: String,
-        response: HttpServletResponse
-    ) {
-        val packet = packetService.getMetadataBy(id)
-        if (packet.files.none { it.hash == hash }) {
-            throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
-        }
-
-        val disposition = if (inline) ContentDisposition.inline() else ContentDisposition.attachment()
-        response.contentType = getMediaType(filename).orElse(MediaType.APPLICATION_OCTET_STREAM).toString()
-        response.setHeader("Content-Disposition", disposition.filename(filename).build().toString())
-
-        packetService.getFileByHash(hash, response.outputStream) { outpackResponse ->
-            response.setContentLengthLong(outpackResponse.headers.contentLength)
-        }
-    }
-
-    // Request a one-time token to download a file
-    @PostMapping("/{id}/file/ott")
-    @PreAuthorize("@authz.canReadPacket(#root, #id)")
-    fun generateTokenForFile(
-        @PathVariable id: String,
-        @RequestParam path: String,
+        @RequestParam paths: List<String>,
     ): ResponseEntity<OneTimeTokenDto> {
-        val packet = packetService.getMetadataBy(id)
-        if (packet.files.none { it.path == path }) {
-            throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
-        }
-
-        val oneTimeToken = oneTimeTokenService.createToken(packet.id, listOf(path))
+        packetService.validateFilesExistForPacket(id, paths)
+        val oneTimeToken = oneTimeTokenService.createToken(id, paths)
         return ResponseEntity.ok(oneTimeToken.toDto())
     }
 
-    // TODO: ott for zip
-
-    @GetMapping("/{id}/zip")
-    @PreAuthorize("@authz.canReadPacket(#root, #id)")
-    fun streamZip(
+    @GetMapping("/{id}/files")
+    fun streamFiles(
         @PathVariable id: String,
-        @RequestParam paths: List<String>,
-        response: HttpServletResponse
-    ) {
-        response.contentType = "application/zip"
-        response.setHeader(
-            "Content-Disposition",
-            ContentDisposition.attachment().filename("$id.zip").build().toString()
-        )
-
-        packetService.streamZip(paths, id, response.outputStream)
-    }
-
-    @GetMapping("/{id}/public")
-    fun public(
-        @PathVariable id: String,
-        @RequestParam hash: String,
-        @RequestParam filename: String,
+        @RequestParam paths: List<String>, // To identify which files to download
         @RequestParam token: UUID,
+        @RequestParam filename: String, // The suggested name for the client to use when saving the file
         @RequestParam inline: Boolean = false,
         response: HttpServletResponse
     ) {
-        val packet = packetService.getMetadataBy(id)
-        if (packet.files.none { it.hash == hash }) {
-            throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
-        }
-        val filePath = packet.files.first { it.hash == hash }.path
-        oneTimeTokenService.validateToken(token, packet.id, listOf(filePath))
+        oneTimeTokenService.validateToken(token, id, paths)
 
         val disposition = if (inline) ContentDisposition.inline() else ContentDisposition.attachment()
-        response.contentType = getMediaType(filename).orElse(MediaType.APPLICATION_OCTET_STREAM).toString()
         response.setHeader("Content-Disposition", disposition.filename(filename).build().toString())
 
-        packetService.getFileByHash(hash, response.outputStream) { outpackResponse ->
-            response.setContentLengthLong(outpackResponse.headers.contentLength)
+        if (paths.size == 1) {
+            response.contentType = getMediaType(filename).orElse(MediaType.APPLICATION_OCTET_STREAM).toString()
+            packetService.getFileByPath(id, paths[0], response.outputStream) { outpackResponse ->
+                response.setContentLengthLong(outpackResponse.headers.contentLength)
+            }
+        } else if (!inline) {
+            response.contentType = "application/zip"
+            packetService.streamZip(paths, id, response.outputStream)
+        } else {
+            throw PackitException("inlineDownloadNotSupported", HttpStatus.BAD_REQUEST)
         }
-    }
-
-    @GetMapping("/{id}/notpublic")
-    fun notpublic(
-        @PathVariable id: String,
-    ): ResponseEntity<String> {
-        return ResponseEntity.ok("YOU SHOULD NOT BE ABLE TO READ THIS")
     }
 }

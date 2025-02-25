@@ -15,7 +15,8 @@ interface OneTimeTokenService
 {
     fun createToken(packetId: String, filePaths: List<String>): OneTimeToken
     fun getToken(id: UUID): OneTimeToken
-    fun validateToken(id: UUID, packetId: String, filePaths: List<String>): Boolean
+    fun validateToken(tokenId: UUID, packetId: String, filePaths: List<String>): Boolean
+    fun cleanUpExpiredTokens()
 }
 
 @Service
@@ -26,6 +27,9 @@ class BaseOneTimeTokenService(
     @Transactional
     override fun createToken(packetId: String, filePaths: List<String>): OneTimeToken {
         val packet = entityManager.getReference(Packet::class.java, packetId)
+        // NB the UUID.randomUUID function provides not only uniqueness but security, since it generates the UUID "using
+        // a cryptographically strong pseudo random number generator". We rely on that implementation detail in order to
+        // prevent the UUID being predictable.
         val oneTimeToken = OneTimeToken(
             id = UUID.randomUUID(),
             packet = packet,
@@ -40,10 +44,10 @@ class BaseOneTimeTokenService(
     }
 
     @Transactional
-    override fun validateToken(id: UUID, packetId: String, filePaths: List<String>): Boolean {
-        val token = getToken(id)
+    override fun validateToken(tokenId: UUID, packetId: String, filePaths: List<String>): Boolean {
+        val token = getToken(tokenId)
         if (token.expiresAt.isBefore(Instant.now())) {
-            deleteToken(id)
+            deleteToken(tokenId)
             throw PackitException("expiredToken", HttpStatus.FORBIDDEN)
         }
         if (token.packet.id != packetId) {
@@ -52,8 +56,12 @@ class BaseOneTimeTokenService(
         if (token.filePaths.size != filePaths.size || !token.filePaths.containsAll(filePaths)) {
             throw PackitException("invalidToken", HttpStatus.FORBIDDEN)
         }
-        deleteToken(id)
+        deleteToken(tokenId)
         return true
+    }
+
+    override fun cleanUpExpiredTokens() {
+        oneTimeTokenRepository.deleteByExpiresAtBefore(Instant.now())
     }
 
     private fun deleteToken(id: UUID) {
