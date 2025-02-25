@@ -76,6 +76,9 @@ jobs:
       - name: Install playwright
         working-directory: app
         run: npx playwright install
+      - name: Run app
+        working-directory: app
+        run: npm start &
       - name: E2E tests
         working-directory: app
-        run: export PACKIT_E2E_BASE_URL="http://localhost" && npm run test:e2e
+        run: npm run test:e2e
