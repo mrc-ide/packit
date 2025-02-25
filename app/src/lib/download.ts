@@ -45,11 +45,11 @@ export const getFileObjectUrl = async (file: FileMetadata, packetId: string, fil
 };
 
 // Download files using the browser’s native download manager, triggered by using an <a> tag with a 'download' attribute
-export const download = async (files: FileMetadata[], packetId: string, filename: string, inline = false) => {
+export const download = async (files: FileMetadata[], packetId: string, filename: string) => {
   const token = await getOneTimeToken(packetId, files, filename);
 
   const fileLink = document.createElement("a");
-  fileLink.href = filesUrl(packetId, files, token, filename, inline);
+  fileLink.href = filesUrl(packetId, files, token, filename, false);
   fileLink.setAttribute("download", filename);
   document.body.appendChild(fileLink);
   fileLink.click();
