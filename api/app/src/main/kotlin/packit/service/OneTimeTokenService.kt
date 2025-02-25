@@ -48,13 +48,13 @@ class BaseOneTimeTokenService(
         val token = getToken(tokenId)
         if (token.expiresAt.isBefore(Instant.now())) {
             deleteToken(tokenId)
-            throw PackitException("expiredToken", HttpStatus.FORBIDDEN)
+            throw PackitException("tokenExpired", HttpStatus.FORBIDDEN)
         }
         if (token.packet.id != packetId) {
-            throw PackitException("invalidToken", HttpStatus.FORBIDDEN)
+            throw PackitException("tokenInvalid", HttpStatus.FORBIDDEN)
         }
         if (token.filePaths.size != filePaths.size || !token.filePaths.containsAll(filePaths)) {
-            throw PackitException("invalidToken", HttpStatus.FORBIDDEN)
+            throw PackitException("tokenInvalid", HttpStatus.FORBIDDEN)
         }
         deleteToken(tokenId)
         return true

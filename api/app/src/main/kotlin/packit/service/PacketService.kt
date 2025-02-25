@@ -148,13 +148,10 @@ class BasePacketService(
                 }
             }
         } catch (e: Exception) {
-            // TODO: translation for this error
             // Log error on the back end (does not affect front end, client just downloads an incomplete file)
             throw PackitException("errorCreatingZip", HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
-
-    // TODO: translation for the errorCreatingZip error
 
     override fun getMetadataBy(id: String): PacketMetadata
     {
