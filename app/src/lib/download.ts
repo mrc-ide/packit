@@ -27,18 +27,6 @@ const getOneTimeToken = async (packetId: string, files: FileMetadata[], filename
   return tokenJson.id;
 };
 
-// Download files using the browser’s native download manager, triggered by using an <a> tag with a 'download' attribute
-export const download = async (files: FileMetadata[], packetId: string, filename: string, inline = false) => {
-  const token = await getOneTimeToken(packetId, files, filename);
-
-  const fileLink = document.createElement("a");
-  fileLink.href = filesUrl(packetId, files, token, filename, inline);
-  fileLink.setAttribute("download", filename);
-  document.body.appendChild(fileLink);
-  fileLink.click();
-  document.body.removeChild(fileLink);
-};
-
 // Fetch a file and pack it into a blob that is stored in the browser’s memory at a URL, until revoked.
 export const getFileObjectUrl = async (file: FileMetadata, packetId: string, filename: string, inline = true) => {
   const token = await getOneTimeToken(packetId, [file], filename);
@@ -54,4 +42,16 @@ export const getFileObjectUrl = async (file: FileMetadata, packetId: string, fil
     throw new Error("Error retrieving data from response");
   });
   return URL.createObjectURL(blob);
+};
+
+// Download files using the browser’s native download manager, triggered by using an <a> tag with a 'download' attribute
+export const download = async (files: FileMetadata[], packetId: string, filename: string, inline = false) => {
+  const token = await getOneTimeToken(packetId, files, filename);
+
+  const fileLink = document.createElement("a");
+  fileLink.href = filesUrl(packetId, files, token, filename, inline);
+  fileLink.setAttribute("download", filename);
+  document.body.appendChild(fileLink);
+  fileLink.click();
+  document.body.removeChild(fileLink);
 };
