@@ -46,15 +46,12 @@ class BaseOneTimeTokenService(
     @Transactional
     override fun validateToken(tokenId: UUID, packetId: String, filePaths: List<String>): Boolean {
         val token = getToken(tokenId)
+        val filePathsCorrect = token.filePaths.size == filePaths.size && token.filePaths.containsAll(filePaths)
+        if (token.packet.id != packetId || !filePathsCorrect) {
+            throw PackitException("tokenInvalid", HttpStatus.FORBIDDEN)
+        }
         if (token.expiresAt.isBefore(Instant.now())) {
-            deleteToken(tokenId)
             throw PackitException("tokenExpired", HttpStatus.FORBIDDEN)
-        }
-        if (token.packet.id != packetId) {
-            throw PackitException("tokenInvalid", HttpStatus.FORBIDDEN)
-        }
-        if (token.filePaths.size != filePaths.size || !token.filePaths.containsAll(filePaths)) {
-            throw PackitException("tokenInvalid", HttpStatus.FORBIDDEN)
         }
         deleteToken(tokenId)
         return true

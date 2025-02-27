@@ -58,7 +58,7 @@ class PacketController(
         @RequestParam token: UUID,
         @RequestParam filename: String, // The suggested name for the client to use when saving the file
         @RequestParam inline: Boolean = false,
-        response: HttpServletResponse
+        response: HttpServletResponse,
     ) {
         oneTimeTokenService.validateToken(token, id, paths)
 

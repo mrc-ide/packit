@@ -3,28 +3,25 @@ import appConfig from "../config/appConfig";
 import { FileMetadata } from "../types";
 
 const filesToPathsParam = (files: FileMetadata[]) =>
-  `paths=${encodeURIComponent(files.map((file) => file.path).join(","))}`;
+  files.map((file) => `paths=${encodeURIComponent(file.path)}`).join("&");
 
 const filesUrl = (packetId: string, files: FileMetadata[], token: string, filename: string, inline = false) =>
   `${appConfig.apiUrl()}/packets/${packetId}/files?` +
   `${filesToPathsParam(files)}&token=${token}&filename=${filename}&inline=${inline}`;
 
 const getOneTimeToken = async (packetId: string, files: FileMetadata[], filename: string) => {
-  const tokenResponse = await fetch(
-    `${appConfig.apiUrl()}/packets/${packetId}/files/token?${filesToPathsParam(files)}`,
-    {
-      method: "POST",
-      headers: getAuthHeader()
-    }
-  );
-  const tokenJson = await tokenResponse.json();
+  const res = await fetch(`${appConfig.apiUrl()}/packets/${packetId}/files/token?${filesToPathsParam(files)}`, {
+    method: "POST",
+    headers: getAuthHeader()
+  });
+  const json = await res.json();
 
-  if (!tokenResponse.ok) {
-    const msg = tokenJson.error?.detail ? `Error: ${tokenJson.error.detail}` : `Error retrieving token for ${filename}`;
+  if (!res.ok) {
+    const msg = json.error?.detail ? `Error: ${json.error.detail}` : `Error retrieving token for ${filename}`;
     throw new Error(msg);
   }
 
-  return tokenJson.id;
+  return json.id;
 };
 
 // Fetch a file and pack it into a blob that is stored in the browser’s memory at a URL, until revoked.

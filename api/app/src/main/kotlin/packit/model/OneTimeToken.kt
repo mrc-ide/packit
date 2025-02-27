@@ -9,8 +9,7 @@ import java.util.*
 @Entity
 @Table(name = "one_time_token")
 class OneTimeToken(
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @Id // Omit @GeneratedValue annotation so that we can control the function used to generate UUIDs
     var id: UUID,
 
     @ManyToOne(fetch = FetchType.LAZY)
