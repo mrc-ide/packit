@@ -263,12 +263,50 @@ class PacketServiceTest
     }
 
     @Test
-    fun `getFileByHash should forward all its arguments to outpack_server client`() {
+    fun `validateFilesExistsForPacket throws 404 when any path is not found on the packet metadata`() {
+        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+
+        val error = assertThrows<PackitException> {
+            sut.validateFilesExistForPacket(packetMetadata.id, listOf("file1.txt", "no-such-file.txt"))
+        }
+        assertEquals("PackitException with key notAllFilesFound", error.message)
+    }
+
+    @Test
+    fun `validateFilesExistsForPacket throws 400 when no paths are supplied`() {
+        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+
+        val error = assertThrows<PackitException> {
+            sut.validateFilesExistForPacket(packetMetadata.id, listOf())
+        }
+        assertEquals("PackitException with key noFilesProvided", error.message)
+    }
+
+    @Test
+    fun `validateFilesExistsForPacket returns the list of all files belonging to the packet`() {
+        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+
+        val result = sut.validateFilesExistForPacket(packetMetadata.id, listOf("file1.txt"))
+        assertEquals(packetMetadata.files, result)
+    }
+
+    @Test
+    fun `getFileByPath should forward the request to outpack_server client`() {
         val outputStream = ByteArrayOutputStream()
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
         val mockLambda = mock<(ClientHttpResponse) -> Unit>()
-        sut.getFileByHash("sha256:hash1", outputStream, mockLambda)
+        sut.getFileByPath(packetMetadata.id, "file1.txt", outputStream, mockLambda)
         verify(outpackServerClient).getFileByHash("sha256:hash1", outputStream, mockLambda)
+    }
+
+    @Test
+    fun `getFileByPath should throw PackitException if file not found`() {
+        val outputStream = ByteArrayOutputStream()
+        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+
+        assertThrows<PackitException> {
+            sut.getFileByPath(packetMetadata.id, "no-such-file.txt", outputStream) {}
+        }
     }
 
     @Test

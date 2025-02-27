@@ -1,10 +1,10 @@
 package packit.integration
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.test.web.client.exchange
 import org.springframework.core.env.Environment
 import org.springframework.http.*
 import org.springframework.http.client.SimpleClientHttpRequestFactory
@@ -39,7 +39,7 @@ abstract class IntegrationTest
 
     val jsonValidator = JSONValidator()
 
-    protected fun getTokenizedHttpEntity(
+    fun getTokenizedHttpEntity(
         contentType: MediaType = MediaType.APPLICATION_JSON,
         data: Any? = null,
     ): HttpEntity<Any>
@@ -55,6 +55,11 @@ abstract class IntegrationTest
         headers.setBearerAuth(tokens)
 
         return HttpEntity(data, headers)
+    }
+
+    fun getBareHttpEntity(): HttpEntity<Any>
+    {
+        return HttpEntity(null, HttpHeaders())
     }
 
     protected fun <T>assertSuccess(responseEntity: ResponseEntity<T>)
@@ -81,16 +86,5 @@ abstract class IntegrationTest
     protected fun <T>assertNotFound(responseEntity: ResponseEntity<T>)
     {
         assertEquals(responseEntity.statusCode, HttpStatus.NOT_FOUND)
-    }
-
-    protected fun assertHtmlFileSuccess(responseEntity: ResponseEntity<String>)
-    {
-        assertEquals(responseEntity.statusCode, HttpStatus.OK)
-        assertEquals(responseEntity.headers.contentType, MediaType.TEXT_HTML)
-        assertEquals(
-            responseEntity.headers.contentDisposition,
-            ContentDisposition.parse("attachment; filename=report.html")
-        )
-        assertThat(responseEntity.body).isEqualToIgnoringNewLines("<html><body><h1>TEST</h1></body></html>")
     }
 }
