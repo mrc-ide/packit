@@ -88,7 +88,8 @@ describe("download", () => {
 
     expect(mockFileLink.href).toBe(
       `${appConfig.apiUrl()}/packets/${mockPacket.id}/files?` +
-        `paths=${mockPacket.files[0].path}&paths=${mockPacket.files[1].path}&token=fakeTokenId&filename=fakeFilename&inline=false`
+        `paths=${mockPacket.files[0].path}&paths=${mockPacket.files[1].path}` +
+        `&token=fakeTokenId&filename=fakeFilename&inline=false`
     );
     expect(mockFileLink.setAttribute).toHaveBeenCalledWith("download", "fakeFilename");
     expect(mockAppendChild).toHaveBeenCalledWith(mockFileLink);

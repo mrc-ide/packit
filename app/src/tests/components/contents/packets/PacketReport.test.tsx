@@ -3,7 +3,6 @@ import { PacketReport } from "../../../../app/components/contents/packets/Packet
 import { FileMetadata, PacketMetadata } from "../../../../types";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
-import appConfig from "../../../../config/appConfig";
 
 const mockGetFileObjectUrl = jest.fn();
 jest.mock("../../../../lib/download", () => ({
