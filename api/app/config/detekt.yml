@@ -31,6 +31,8 @@ formatting:
     active: false
 
 style:
+  MagicNumber:
+    ignoreAnnotation: true
   MandatoryBracesIfStatements:
     active: true
   MandatoryBracesLoops:

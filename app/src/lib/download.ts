@@ -2,19 +2,33 @@ import { getAuthHeader } from "./auth/getAuthHeader";
 import appConfig from "../config/appConfig";
 import { FileMetadata } from "../types";
 
-export const getZipUrl = (packetId: string, files: FileMetadata[]) => {
-  const paths = files.map((file) => file.path);
+const filesToPathsParam = (files: FileMetadata[]) =>
+  files.map((file) => `paths=${encodeURIComponent(file.path)}`).join("&");
 
-  return `${appConfig.apiUrl()}/packets/${packetId}/zip?paths=${encodeURIComponent(paths.join(","))}`;
+const filesUrl = (packetId: string, files: FileMetadata[], token: string, filename: string, inline = false) =>
+  `${appConfig.apiUrl()}/packets/${packetId}/files?` +
+  `${filesToPathsParam(files)}&token=${token}&filename=${filename}&inline=${inline}`;
+
+const getOneTimeToken = async (packetId: string, files: FileMetadata[], filename: string) => {
+  const res = await fetch(`${appConfig.apiUrl()}/packets/${packetId}/files/token?${filesToPathsParam(files)}`, {
+    method: "POST",
+    headers: getAuthHeader()
+  });
+  const json = await res.json();
+
+  if (!res.ok) {
+    const msg = json.error?.detail ? `Error: ${json.error.detail}` : `Error retrieving token for ${filename}`;
+    throw new Error(msg);
+  }
+
+  return json.id;
 };
 
-export const getFileUrl = (file: FileMetadata, packetId: string, inline = false) =>
-  `${appConfig.apiUrl()}/packets/${packetId}/file?hash=${file.hash}&filename=${file.path}&inline=${inline}`;
+// Fetch a file and pack it into a blob that is stored in the browser’s memory at a URL, until revoked.
+export const getFileObjectUrl = async (file: FileMetadata, packetId: string, filename: string, inline = true) => {
+  const token = await getOneTimeToken(packetId, [file], filename);
 
-export const getFileObjectUrl = async (url: string, filename: string) => {
-  const headers = getAuthHeader();
-  const res = await fetch(url, { method: "GET", headers });
-
+  const res = await fetch(filesUrl(packetId, [file], token, filename, inline), { method: "GET" });
   if (!res.ok) {
     const json = await res.json();
     const msg = json.error?.detail ? `Error: ${json.error.detail}` : `Error downloading ${filename}`;
@@ -27,13 +41,14 @@ export const getFileObjectUrl = async (url: string, filename: string) => {
   return URL.createObjectURL(blob);
 };
 
-export const download = async (url: string, filename: string) => {
-  const fileObjectUrl = await getFileObjectUrl(url, filename);
+// Download files using the browser’s native download manager, triggered by using an <a> tag with a 'download' attribute
+export const download = async (files: FileMetadata[], packetId: string, filename: string) => {
+  const token = await getOneTimeToken(packetId, files, filename);
+
   const fileLink = document.createElement("a");
-  fileLink.href = fileObjectUrl;
+  fileLink.href = filesUrl(packetId, files, token, filename, false);
   fileLink.setAttribute("download", filename);
   document.body.appendChild(fileLink);
   fileLink.click();
   document.body.removeChild(fileLink);
-  window.URL.revokeObjectURL(fileObjectUrl);
 };
