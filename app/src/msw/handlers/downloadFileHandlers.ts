@@ -1,9 +1,9 @@
 import appConfig from "../../config/appConfig";
 import { rest } from "msw";
-import { mockFileBlob } from "../../tests/mocks";
+import { mockFileBlob, mockPacket } from "../../tests/mocks";
 
 export const downloadFileHandlers = [
-  rest.post(`${appConfig.apiUrl()}/packets/fakePacketId/files/token`, (req, res, ctx) => {
+  rest.post(`${appConfig.apiUrl()}/packets/${mockPacket.id}/files/token`, (req, res, ctx) => {
     // Return token only with expected auth header
     if (req.headers.get("Authorization") === "fakeAuthHeader") {
       return res(ctx.json({ id: "fakeTokenId" }));
@@ -12,7 +12,7 @@ export const downloadFileHandlers = [
     }
   }),
 
-  rest.get(`${appConfig.apiUrl()}/packets/fakePacketId/files`, (req, res, ctx) => {
+  rest.get(`${appConfig.apiUrl()}/packets/${mockPacket.id}/files`, (req, res, ctx) => {
     return res(ctx.body(mockFileBlob));
   })
 ];
