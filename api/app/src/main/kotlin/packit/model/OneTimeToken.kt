@@ -2,7 +2,6 @@ package packit.model
 
 import jakarta.persistence.*
 import packit.model.dto.OneTimeTokenDto
-import packit.model.dto.PacketDto
 import java.time.Instant
 import java.util.*
 

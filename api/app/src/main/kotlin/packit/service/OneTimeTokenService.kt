@@ -19,6 +19,8 @@ interface OneTimeTokenService
     fun cleanUpExpiredTokens()
 }
 
+private const val EXPIRY_BUFFER_SECONDS = 30L
+
 @Service
 class BaseOneTimeTokenService(
     private val oneTimeTokenRepository: OneTimeTokenRepository,
@@ -34,7 +36,7 @@ class BaseOneTimeTokenService(
             id = UUID.randomUUID(),
             packet = packet,
             filePaths = filePaths,
-            expiresAt = Instant.now().plusSeconds(10)
+            expiresAt = Instant.now().plusSeconds(EXPIRY_BUFFER_SECONDS)
         )
         return oneTimeTokenRepository.save(oneTimeToken)
     }

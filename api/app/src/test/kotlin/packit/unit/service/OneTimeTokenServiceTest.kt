@@ -41,10 +41,10 @@ class OneTimeTokenServiceTest {
 
         verify(oneTimeTokenRepository).save(
             argThat {
-                packet == packetReference
-                    && filePaths == paths
-                    && expiresAt.isAfter(now)
-                    && expiresAt.isBefore(now.plusSeconds(99))
+                packet == packetReference &&
+                    filePaths == paths &&
+                    expiresAt.isAfter(now) &&
+                    expiresAt.isBefore(now.plusSeconds(99))
             }
         )
     }

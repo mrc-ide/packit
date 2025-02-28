@@ -27,7 +27,12 @@ interface PacketService
     fun getChecksum(): String
     fun importPackets()
     fun getMetadataBy(id: String): PacketMetadata
-    fun getFileByPath(packetId: String, path: String, output: OutputStream, preStream: (ClientHttpResponse) -> Unit = {})
+    fun getFileByPath(
+        packetId: String,
+        path: String,
+        output: OutputStream,
+        preStream: (ClientHttpResponse) -> Unit = {}
+    )
     fun getPacketsByName(
         name: String
     ): List<Packet>
@@ -159,7 +164,12 @@ class BasePacketService(
             ?: throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
     }
 
-    override fun getFileByPath(packetId: String, path: String, output: OutputStream, preStream: (ClientHttpResponse) -> Unit)
+    override fun getFileByPath(
+        packetId: String,
+        path: String,
+        output: OutputStream,
+        preStream: (ClientHttpResponse) -> Unit
+    )
     {
         val files = validateFilesExistForPacket(packetId, listOf(path))
         val hash = files.first { it.path == path }.hash
