@@ -7,6 +7,7 @@ usage() {
     echo " --db-build-skip       Skip building the db"
     echo " --api-build-skip      Skip building the api"
     echo " --super-user          Add basic super user"
+    echo " --create-pins-skip    Skip creating packet pins"
 }
 
 DB_BUILD_SKIP=0
@@ -28,6 +29,9 @@ handle_options() {
         ;;
       --super-user)
         ADD_SUPER_USER=1
+        ;;
+      --create-pins-skip)
+        CREATE_PINS_SKIP=1
         ;;
       *)
         echo "Invalid option: $1" >&2
@@ -63,6 +67,12 @@ fi
 
 if [ $ADD_SUPER_USER -eq 1 ]; then
     "$HERE"/basic-create-super-user
+fi
+
+if [ "$CREATE_PINS_SKIP" -eq 0 ]; then
+    echo "Waiting for api to initialise"
+    sleep 11
+    "$HERE"/dev-create-pins
 fi
 
 npm start --prefix="$HERE/../app"

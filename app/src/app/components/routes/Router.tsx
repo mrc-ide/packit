@@ -10,7 +10,6 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import { ManageAccessLayout, ManageRoles, ManageUsers } from "../contents/manageAccess";
 import { PacketRun, PacketRunTaskLogs, PacketRunTasksLogs, PacketRunnerLayout } from "../contents/runner";
 import { PacketBlankLayout } from "../main/PacketBlankLayout";
-import { EditPins } from "../contents/home/pins/EditPins";
 
 export const Router = () => {
   return (
@@ -28,7 +27,6 @@ export const Router = () => {
         <Route element={<ProtectedRoute />}>
           <Route element={<Breadcrumb />}>
             <Route index element={<Home />} />
-            <Route path="pins" element={<EditPins />} />
             <Route element={<PacketRunnerLayout />}>
               <Route path="runner" element={<PacketRun />} />
               <Route path="runner/logs" element={<PacketRunTasksLogs />} />
