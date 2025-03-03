@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # This scripts implements the supervisor side of the sd_notify protocol. It
 # plays the role that is usually played by systemd.
@@ -25,6 +25,14 @@
 # implemented in the systemd-notify as a `--fork` flag, but won't be available
 # broadly for quite a while.
 # https://github.com/systemd/systemd/commit/4389e4c2aea36224e99dae616aff08c8560c94e8
+#
+#
+# This script can be used to start the Packit API, either as a native process
+# or as a Docker container, using either of the following commands:
+# ```sh
+# ./scripts/wait-notify -- java -jar api/app/build/libs/app.jar
+# ./scripts/wait-notify --docker-run -- mrcide/packit-api
+# ```
 
 import argparse
 import os
