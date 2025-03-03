@@ -10,7 +10,6 @@ export const useGetPacketById = (packetId: string | undefined) => {
   );
 
   const displayName = data?.custom?.orderly?.description?.display;
-
   const packet = displayName ? { ...data, displayName } : data;
 
   return {
