@@ -9,7 +9,7 @@ interface PinProps {
   packet: PacketMetadata;
 }
 
-export const Pin = ({ packet }: PinProps) => {
+export const PinnedPacket = ({ packet }: PinProps) => {
   const { unit, value } = getTimeDifferenceToDisplay(packet.time.start)[0];
   const allArtefactsFiles = allArtefactsFilesForPacket(packet);
 

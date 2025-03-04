@@ -41,7 +41,6 @@ export const FilterInput = ({
 
   return (
     <div className="flex space-x-2 items-center">
-      <Search className="opacity-50" />
       <Input
         placeholder={placeholder}
         onChange={debouncedSetFilterByName}
