@@ -48,7 +48,7 @@ export const ZipDownloadButton = ({
   };
 
   return (
-    <div className={`flex flex-col items-end gap-1 ${containerClassName}`}>
+    <div className={`flex flex-col items-end gap-1 ${containerClassName}`} data-testid="zip-download-button">
       <Button
         onClick={downloadFiles}
         variant={variant}

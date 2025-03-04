@@ -4,7 +4,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import packit.PinRepository
+import packit.repository.PinRepository
 import packit.model.PacketMetadata
 import packit.service.PacketService
 
@@ -16,7 +16,7 @@ class PinController(
 )
 {
     @GetMapping("/packets")
-    fun index(): ResponseEntity<List<PacketMetadata>>
+    fun getPinnedPackets(): ResponseEntity<List<PacketMetadata>>
     {
         val pins = pinRepository.findAll()
 

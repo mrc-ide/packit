@@ -13,7 +13,6 @@ usage() {
 DB_BUILD_SKIP=0
 API_BUILD_SKIP=0
 ADD_SUPER_USER=0
-CREATE_PINS_SKIP=0
 
 handle_options() {
   while [ $# -gt 0 ]; do
@@ -30,9 +29,6 @@ handle_options() {
         ;;
       --super-user)
         ADD_SUPER_USER=1
-        ;;
-      --create-pins-skip)
-        CREATE_PINS_SKIP=1
         ;;
       *)
         echo "Invalid option: $1" >&2
@@ -68,10 +64,6 @@ fi
 
 if [ $ADD_SUPER_USER -eq 1 ]; then
     "$HERE"/basic-create-super-user
-fi
-
-if [ "$CREATE_PINS_SKIP" -eq 0 ]; then
-    "$HERE"/dev-create-pins
 fi
 
 npm start --prefix="$HERE/../app"

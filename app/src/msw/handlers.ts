@@ -3,10 +3,10 @@ import { authConfigHandlers } from "./handlers/authConfigHandlers";
 import { downloadFileHandlers } from "./handlers/downloadFileHandlers";
 import { packetGroupHandlers } from "./handlers/packetGroupHandlers";
 import { packetGroupSummaryHandlers } from "./handlers/packetGroupSummaryHandlers";
-import { packetHandlers } from "./handlers/packetHandler";
+import { packetHandlers } from "./handlers/packetHandlers";
 import { loginHandlers } from "./handlers/loginHandlers";
 import { manageRolesHandlers } from "./handlers/manageRolesHandlers";
-import { tagHandlers } from "./handlers/tagHandler";
+import { tagHandlers } from "./handlers/tagHandlers";
 import { runnerHandlers } from "./handlers/runnerHandlers";
 
 // catch any missed requests in tests
