@@ -7,6 +7,7 @@ usage() {
     echo " --db-build-skip       Skip building the db"
     echo " --api-build-skip      Skip building the api"
     echo " --super-user          Add basic super user"
+    echo " --create-pins-skip    Skip creating packet pins"
 }
 
 DB_BUILD_SKIP=0
@@ -58,7 +59,7 @@ fi
 
 if [ $ADD_SUPER_USER -eq 1 ]; then
     echo "Waiting for api to initialise"
-    sleep 5
+    sleep 11
     "$HERE"/basic-create-super-user
 fi
 

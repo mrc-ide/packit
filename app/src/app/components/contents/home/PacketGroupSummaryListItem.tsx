@@ -1,4 +1,4 @@
-import { ExternalLink, Hourglass, Layers } from "lucide-react";
+import { ExternalLink, Layers, Timer } from "lucide-react";
 import { Link } from "react-router-dom";
 import { PacketGroupSummary } from "../../../../types";
 import { getTimeDifferenceToDisplay } from "../../../../lib/time";
@@ -31,12 +31,12 @@ export const PacketGroupSummaryListItem = ({ packetGroup }: PacketGroupSummaryLi
         </Link>
         <div className="text-muted-foreground text-xs flex items-center gap-[1px]">
           <Layers size={16} className="opacity-50" />
-          <span className="ps-0.5">
+          <span className="ps-1 w-[3.5rem]">
             {packetGroup.packetCount} {packetGroup.packetCount === 1 ? "packet" : "packets"}
           </span>
         </div>
         <div className="text-muted-foreground text-xs flex items-center gap-[1px]">
-          <Hourglass size={16} className="opacity-50" />
+          <Timer size={16} className="opacity-50" />
           <span className="ps-0.5">
             Updated {value} {unit} ago
           </span>

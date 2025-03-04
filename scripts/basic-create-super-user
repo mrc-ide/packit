@@ -3,7 +3,7 @@ set -e
 
 # This is a super user account, intended for local development / testing only.
 # The password is "password".
-# Ensure api has ran and tables and initial data have been created.
+# Ensure api has run and tables and initial data have been created.
 ADMIN_EMAIL='resideUser@resideAdmin.ic.ac.uk'
 ADMIN_PASSWORD_ENCODED='$2y$10$snpZ8bgdkh2hy8lDtyHF7ejD5.K1vsMqaFteCkmBhdBQj3JTlJRM6'
 ADMIN_UUID='2754daf8-fea0-4bf4-af60-810764f24d71'
