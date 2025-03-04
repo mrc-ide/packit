@@ -10,10 +10,10 @@ import org.springframework.boot.test.web.client.exchange
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import packit.repository.PinRepository
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
 import packit.model.Pin
+import packit.repository.PinRepository
 import packit.service.PacketService
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

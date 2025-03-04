@@ -4,8 +4,8 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import packit.repository.PinRepository
 import packit.model.PacketMetadata
+import packit.repository.PinRepository
 import packit.service.PacketService
 
 @RestController
