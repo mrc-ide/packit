@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { mockPacket } from "../../../mocks";
 import { PinnedPacket } from "../../../../app/components/contents/home/PinnedPacket";
 import { SWRConfig } from "swr";

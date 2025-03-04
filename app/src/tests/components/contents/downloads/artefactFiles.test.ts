@@ -1,7 +1,7 @@
 import {
   filesForArtefact,
   allArtefactsFilesForPacket
-} from "../../../../../../app/src/app/components/contents/downloads/utils/artefactFiles";
+} from "../../../../app/components/contents/downloads/utils/artefactFiles";
 import { PacketMetadata } from "../../../../types";
 
 const artefact = {
@@ -48,11 +48,13 @@ describe("allArtefactsFilesForPacket", () => {
     const result = allArtefactsFilesForPacket(packet);
 
     expect(result).toHaveLength(6);
-    expect(result![0].path).toBe("directory/file.png");
-    expect(result![1].path).toBe("file.csv");
-    expect(result![2].path).toBe("file.xlsx");
-    expect(result![3].path).toBe("file.pdf");
-    expect(result![4].path).toBe("file.txt");
-    expect(result![5].path).toBe("my.file");
+    expect(result?.map((file) => file.path)).toEqual([
+      "directory/file.png",
+      "file.csv",
+      "file.xlsx",
+      "file.pdf",
+      "file.txt",
+      "my.file"
+    ]);
   });
 });

@@ -2,7 +2,7 @@ import debounce from "lodash.debounce";
 import { Dispatch, SetStateAction, useCallback, useEffect, useRef } from "react";
 import { Input } from "../../Base/Input";
 import { Button } from "../../Base/Button";
-import { Search, X } from "lucide-react";
+import { X } from "lucide-react";
 import { cn } from "../../../../lib/cn";
 
 interface FilterByNameProps {
