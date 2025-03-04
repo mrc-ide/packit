@@ -57,7 +57,7 @@ export const ZipDownloadButton = ({
       >
         {downloading && <Loader2 size={18} className="animate-spin" />}
         {!downloading && <FolderDown size={18} />}
-        <span className="ps-2">{text}</span>
+        <span className="ps-1.5">{text}</span>
       </Button>
       <div className="text-red-500 text-right">{error}</div>
     </div>
