@@ -32,7 +32,7 @@ formatting:
 
 style:
   MagicNumber:
-    ignoreAnnotation: true
+    excludes: [ '**/*/WebSecurityConfig.kt', '**/*/src/test/**/*' ]
   MandatoryBracesIfStatements:
     active: true
   MandatoryBracesLoops:

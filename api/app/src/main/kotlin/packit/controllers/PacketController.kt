@@ -74,7 +74,7 @@ class PacketController(
             response.contentType = "application/zip"
             packetService.streamZip(paths, id, response.outputStream)
         } else {
-            throw PackitException("inlineDownloadNotSupported", HttpStatus.BAD_REQUEST)
+            throw PackitException("cannotFetchMultipleInlineFiles", HttpStatus.BAD_REQUEST)
         }
     }
 }

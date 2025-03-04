@@ -16,7 +16,6 @@ class OneTimeToken(
     var packet: Packet,
 
     @Column(name = "file_paths", columnDefinition = "TEXT[]")
-    @Convert(converter = StringListConverter::class)
     var filePaths: List<String>,
 
     var expiresAt: Instant

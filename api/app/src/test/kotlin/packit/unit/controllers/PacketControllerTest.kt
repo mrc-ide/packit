@@ -229,6 +229,6 @@ class PacketControllerTest
         val error = assertThrows<PackitException> {
             sut.streamFiles(packetId, listOf("file1.txt", "file2.txt"), tokenId, "my_archive.zip", true, response)
         }
-        assertEquals("inlineDownloadNotSupported", error.key)
+        assertEquals("cannotFetchMultipleInlineFiles", error.key)
     }
 }
