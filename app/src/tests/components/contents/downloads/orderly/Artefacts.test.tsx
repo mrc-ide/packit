@@ -5,7 +5,6 @@ import { Artefact, PacketMetadata } from "../../../../../types";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
 import userEvent from "@testing-library/user-event";
-import appConfig from "../../../../../config/appConfig";
 
 const mockDownload = jest.fn();
 jest.mock("../../../../../lib/download", () => ({
@@ -20,6 +19,10 @@ const fileNamesOfMultifileArtefact = [
   "internal_presentation.pdf",
   "other_extensions.txt"
 ];
+const multifileArtefactFiles = mockPacket.files.filter((file) => {
+  return fileNamesOfMultifileArtefact.includes(file.path);
+});
+const reportFile = mockPacket.files.filter((file) => file.path === "report.html");
 
 const renderComponent = (packet?: PacketMetadata) => {
   render(
@@ -62,10 +65,11 @@ describe("Artefacts component", () => {
     const downloadAllButton = await screen.findByText(/Download all artefacts \(\d+\.\d+ KB\)/);
     expect(downloadAllButton).toBeVisible();
     userEvent.click(downloadAllButton);
-    const url = `${appConfig.apiUrl()}/packets/${mockPacket.id}/zip?paths=${encodeURIComponent(
-      ["report.html"].concat(fileNamesOfMultifileArtefact).join(",")
-    )}`;
-    expect(mockDownload).toHaveBeenCalledWith(url, `parameters_artefacts_${mockPacket.id}.zip`);
+    expect(mockDownload).toHaveBeenCalledWith(
+      reportFile.concat(multifileArtefactFiles),
+      mockPacket.id,
+      `parameters_artefacts_${mockPacket.id}.zip`
+    );
   });
 
   it("renders a 'Download' button per artefact, except if the artefact contains only one file", async () => {
@@ -75,10 +79,11 @@ describe("Artefacts component", () => {
     expect(await screen.findAllByText(artefactGroupDownloadButtonMatcher)).toHaveLength(1);
     const button = await screen.findByText(artefactGroupDownloadButtonMatcher);
     userEvent.click(button);
-    const url = `${appConfig.apiUrl()}/packets/${mockPacket.id}/zip?paths=${encodeURIComponent(
-      fileNamesOfMultifileArtefact.join(",")
-    )}`;
-    expect(mockDownload).toHaveBeenCalledWith(url, `An artefact containi_${mockPacket.id}.zip`);
+    expect(mockDownload).toHaveBeenCalledWith(
+      multifileArtefactFiles,
+      mockPacket.id,
+      `An artefact containi_${mockPacket.id}.zip`
+    );
   });
 
   it("when packet is not found it returns null", async () => {

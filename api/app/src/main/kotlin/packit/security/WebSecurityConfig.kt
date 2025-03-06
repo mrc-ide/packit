@@ -58,11 +58,32 @@ class WebSecurityConfig(
 
     @Bean
     @Order(2)
+    fun ottSecurityFilterChain(
+        httpSecurity: HttpSecurity,
+        filterChainExceptionHandler: FilterChainExceptionHandler
+    ): SecurityFilterChain {
+        // Security configuration for endpoints that are protected by the use of one-time tokens, as opposed to JWTs.
+        httpSecurity
+            .securityMatcher("/packets/{id}/files")
+            .authorizeHttpRequests { authorizeRequests ->
+                authorizeRequests.anyRequest().permitAll()
+            }
+            .cors { it.configurationSource(getCorsConfigurationSource()) }
+            .csrf { it.disable() }
+            .addFilterBefore(filterChainExceptionHandler, LogoutFilter::class.java)
+            .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
+            .formLogin { it.disable() }
+            .headers().frameOptions().disable()
+
+        return httpSecurity.build()
+    }
+
+    @Bean
+    @Order(3)
     fun securityFilterChain(
         httpSecurity: HttpSecurity,
-        tokenAuthenticationFilter: TokenAuthenticationFilter,
+        tokenAuthenticationFilter: JWTAuthenticationFilter,
         filterChainExceptionHandler: FilterChainExceptionHandler
-
     ): SecurityFilterChain
     {
         httpSecurity
