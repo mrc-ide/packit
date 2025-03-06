@@ -1,4 +1,5 @@
-import { test, expect, Locator } from "@playwright/test";
+import { Locator } from "@playwright/test";
+import { test, expect } from "./tagCheckFixture";
 import {
   getContentLocator,
   getPacketPageAccordionSection,

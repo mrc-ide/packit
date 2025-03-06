@@ -2,19 +2,28 @@ import process from "node:process";
 import { defineConfig, devices } from "@playwright/test";
 import path from "path";
 
-const setupProject = { name: "setup", testMatch: /.*\.setup\.ts/ };
+const setupProject = {
+  name: "setup",
+  testMatch: "auth.setup.ts",
+  // if running on CI should always be with default credentials, but running locally could require user interaction
+  // for auth so allow up to 5 minutes for this
+  timeout: process.env.CI ? 30 * 1000 : 5 * 60 * 1000,
+};
 
 const outputDir = "test-results";
 const authStorageStateFile = path.join(__dirname, outputDir, `auth.setup.ts-authenticate-setup/auth.json`);
-const baseURL = process.env.PACKIT_E2E_BASE_URL || "http://localhost:3000";
-const testMatch = baseURL.startsWith("http://localhost") ? /.*\.(local|spec)\.ts/ : /.*\.spec\.ts/;
+let baseURL = process.env.PACKIT_E2E_BASE_URL || "http://localhost:3000";
+if (!baseURL.endsWith("/")) {
+  baseURL = `${baseURL}/`;
+}
+const testMatch = /.*\.spec\.ts/;
 export default defineConfig({
   testDir: "./e2e",
   testMatch,
   outputDir,
   fullyParallel: true,
-  /* Maximum time one test can run for. */
   timeout: process.env.CI ? 30 * 1000 : 15 * 1000,
+  /* Maximum time one test can run for. */
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
@@ -43,7 +52,6 @@ export default defineConfig({
     headless: true,
     screenshot: "only-on-failure"
   },
-
   /* Configure projects for major browsers */
   projects: process.env.CI
     ? [
@@ -53,7 +61,7 @@ export default defineConfig({
           use: {
             ...devices["Desktop Chrome"],
             // Use prepared auth state.
-            storageState: authStorageStateFile
+            storageState: authStorageStateFile,
           },
           dependencies: ["setup"]
         },

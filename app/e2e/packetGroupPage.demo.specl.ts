@@ -1,7 +1,8 @@
-import { test, expect, Locator } from "@playwright/test";
+import { Locator } from "@playwright/test";
+import {test, expect, TAG_DEMO_PACKETS} from "./tagCheckFixture";
 
-test.describe("Local packet group page", () => {
-  const packetId = "20240729-154652-95a6c08c";
+test.describe("Demo packet group page", {tag: TAG_DEMO_PACKETS},  () => {
+  const packetId = "20240729-154652-95a6c08c"
   let rows: Locator;
   test.beforeEach(async ({ page }) => {
     await page.goto("./parameters");

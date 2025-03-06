@@ -1,8 +1,9 @@
-import { test, expect, Locator } from "@playwright/test";
+import { Locator } from "@playwright/test";
+import {test, expect, TAG_DEMO_PACKETS} from "./tagCheckFixture";
 import { getContentLocator, getPacketPageAccordionSection, selectPacketPageTab } from "./utils";
 
 // Test which are only run against localhost, where we can assume we have the demo dataset packets
-test.describe("Local packet page", () => {
+test.describe("Demo packet page", {tag: TAG_DEMO_PACKETS}, () => {
   const parametersPacketId = "20240829-185440-781be0f3";
   const dependsPacketId = "20250120-073637-b8c1e707";
   const artefactTypesPacketId = "20240729-155513-1432bfa7";
