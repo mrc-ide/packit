@@ -1,5 +1,4 @@
 import {test as setup, expect, Page} from "@playwright/test";
-import * as prompt from "prompt";
 
 const authMethodIsBasic = async (apiURL: string) => {
   const response = await fetch(`${apiURL}/auth/config`);
@@ -7,10 +6,15 @@ const authMethodIsBasic = async (apiURL: string) => {
   return json.enableBasicLogin;
 };
 
-const getBasicCredentials = async () => {
-  console.log("Please provide user credentials for running e2e tests. User will need to have admin permissions in Packit.");
-  const {basicUser, password} = await prompt.get(["Username", "Password"]); // TODO: get password hidden?
-  return [basicUser, password];
+const getBasicCredentials = () => {
+  const user = process.env.PACKIT_E2E_BASiC_USER;
+  const password = process.env.PACKIT_E2E_BASIC_PASSWORD;
+
+  if (!user || !password) {
+    throw Error("This packit server uses Basic auth. Please set environment variables PACKIT_E2E_BASiC_USER and PACKIT_E2E_BASIC_PASSWORD");
+  }
+
+  return [user, password];
 }
 
 const doBasicLogin = async (user: string, password: string, page: Page) => {
@@ -20,22 +24,27 @@ const doBasicLogin = async (user: string, password: string, page: Page) => {
   await page.getByRole("button", { name: /Log in/i }).click();
 }
 
-const doGithubLogin = async (page: Page, apiURL: strubg) => {
-  const aod = await import("@octokit/auth-oauth-device"); // This package requires dynamic import with our ts config
-  const auth = aod.createOAuthDeviceAuth({
-    clientType: "oauth-app",
-    clientId:"Ov23liUrbkR0qUtAO1zu", // Packit Oauth App
-    scopes: ["read:org"],
-    onVerification(verification) {
-      console.log("Open %s", verification.verification_uri);
-      console.log("Enter code: %s", verification.user_code);
-    },
-  });
+const doGithubLogin = async (page: Page, apiURL: string) => {
+  // github PAT may be set in env, otherwise login to github interactively
+  let githubToken = process.env.GITHUB_ACCESS_TOKEN;
 
-  const tokenAuthentication = await auth({
-    type: "oauth",
-  });
-  const githubToken = tokenAuthentication.token;
+  if (!githubToken) {
+    const aod = await import("@octokit/auth-oauth-device"); // This package requires dynamic import with our ts config
+    const auth = aod.createOAuthDeviceAuth({
+      clientType: "oauth-app",
+      clientId: "Ov23liUrbkR0qUtAO1zu", // Packit Oauth App
+      scopes: ["read:org"],
+      onVerification(verification) {
+        console.log("Open %s", verification.verification_uri);
+        console.log("Enter code: %s", verification.user_code);
+      },
+    });
+
+    const tokenAuthentication = await auth({
+      type: "oauth",
+    });
+    githubToken = tokenAuthentication.token;
+  }
 
   const packitResponse = await fetch(`${apiURL}/auth/login/api`, {
     method: "POST",
@@ -56,15 +65,12 @@ const doGithubLogin = async (page: Page, apiURL: strubg) => {
 // Define "setup" as a dependency for any test project which requires prior authentication
 setup("authenticate", async ({ page, baseURL }, testInfo) => {
   console.log(`Authenticating with ${baseURL}`);
-  // If baseURL is default localhost (used by CI), assume we should be using default credentials, otherwise get creds
-  // interactively
-  const useDefaults = baseURL === "http://localhost:3000/";
-  // if we're using defaults, we assume that we're running locally with app on port 3000, and api on port 8080,
-  // otherwise that api is accessible from baseURL/api
-  const apiURL = useDefaults ? "http://localhost:8080" : `${baseURL}/packit/api`;
+  // If baseURL is default localhost (used by CI),  we assume that we're running locally with api on
+  // on port 8080 otherwise that api is accessible from baseURL/api
+  const apiURL = baseURL === "http://localhost:3000/" ? "http://localhost:8080" : `${baseURL}/packit/api`;
   const basicAuth =  await authMethodIsBasic(apiURL);
   if (basicAuth) {
-    const [ basicUser, basicPassword ] = useDefaults ? [ "resideUser@resideAdmin.ic.ac.uk", "password" ] : await getBasicCredentials();
+    const [ basicUser, basicPassword ] = getBasicCredentials();
     await doBasicLogin(basicUser, basicPassword, page); // get credentials interactively
   } else {
     await doGithubLogin(page, apiURL);
