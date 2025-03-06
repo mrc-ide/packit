@@ -70,7 +70,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "test:e2e": "export PACKIT_E2E_BASiC_USER='resideUser@resideAdmin.ic.ac.uk' && export PACKIT_E2E_BASIC_PASSWORD=password && playwright test",
+    "test:e2e": "export PACKIT_E2E_BASIC_USER='resideUser@resideAdmin.ic.ac.uk' && export PACKIT_E2E_BASIC_PASSWORD=password && playwright test",
     "test:e2e-dev": "export PACKIT_E2E_BASE_URL=https://packit-dev.dide.ic.ac.uk/reside-dev/ && playwright test --grep-invert '@demoPackets|@stateMutate'",
     "test:e2e-prod": "export PACKIT_E2E_BASE_URL=https://packit.dide.ic.ac.uk/reside/ && playwright test --grep-invert '@demoPackets|@stateMutate'",
     "lint": "npx eslint ./src ./e2e ",

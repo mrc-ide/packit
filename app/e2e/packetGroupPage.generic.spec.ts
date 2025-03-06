@@ -1,5 +1,5 @@
 import { Locator } from "@playwright/test";
-import { getContentLocator, getPackitInstance, navigateToFirstPacketGroup } from "./utils";
+import {getContentLocator, getInstanceRelativePath, getPackitInstance, navigateToFirstPacketGroup} from "./utils";
 import {test, expect, TAG_STATE_MUTATE} from "./tagCheckFixture";
 
 test.describe("Packet group page", () => {
@@ -21,9 +21,8 @@ test.describe("Packet group page", () => {
         const link = await firstCell.getByRole("link");
         await expect(link).toHaveText(/^\d{8}-\d{6}-[\da-f]{8}$/);
         const packetId = await link.innerText();
-        const instance = getPackitInstance(baseURL);
-        const instancePart = instance ? `/${instance}` : "";
-        await expect(await link.getAttribute("href")).toBe(`${instancePart}/${packetGroupName}/${packetId}`);
+        const expectedHref = getInstanceRelativePath(baseURL, `${packetGroupName}/${packetId}`);
+        await expect(await link.getAttribute("href")).toBe(expectedHref);
         await expect(await firstCell.locator("div.text-muted-foreground")).toBeVisible();
         const secondCell = (await lastRow.getByRole("cell").all())[1];
         // Expect secondCell to either have "None" text or at least one parameter

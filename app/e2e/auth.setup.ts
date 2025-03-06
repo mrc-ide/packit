@@ -10,11 +10,11 @@ const authMethodIsBasic = async (apiURL: string) => {
 };
 
 const getBasicCredentials = () => {
-  const user = process.env.PACKIT_E2E_BASiC_USER;
+  const user = process.env.PACKIT_E2E_BASIC_USER;
   const password = process.env.PACKIT_E2E_BASIC_PASSWORD;
 
   if (!user || !password) {
-    throw Error("This packit server uses Basic auth. Please set environment variables PACKIT_E2E_BASiC_USER and PACKIT_E2E_BASIC_PASSWORD");
+    throw Error("This packit server uses Basic auth. Please set environment variables PACKIT_E2E_BASIC_USER and PACKIT_E2E_BASIC_PASSWORD");
   }
 
   return [user, password];

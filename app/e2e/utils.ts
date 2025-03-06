@@ -48,7 +48,8 @@ export const selectPacketPageTab = async (content: Locator, tab: string) => {
   await nav.getByRole("link", { name: tab }).click();
 };
 
-export const getPackitInstance = (baseURL: string) => {
-  const origin = new URL(baseURL).origin;
-  return baseURL.replaceAll(origin, "").replaceAll("/", "");
-};
+// Get a relative path which includes the packit instance, if any
+export const getInstanceRelativePath = (baseURL: string, path: string) => {
+  const basePath = new URL(baseURL).pathname;
+  return `${basePath}/${path}`.replaceAll("//", "/");
+}
