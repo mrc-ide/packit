@@ -2,6 +2,9 @@ import {test as setup, expect, Page} from "@playwright/test";
 
 const authMethodIsBasic = async (apiURL: string) => {
   const response = await fetch(`${apiURL}/auth/config`);
+  if (!response.ok) {
+    throw Error(`Unable to get auth type from api. Status was ${response.status}`);
+  }
   const json = await response.json();
   return json.enableBasicLogin;
 };
@@ -54,7 +57,9 @@ const doGithubLogin = async (page: Page, apiURL: string) => {
     },
     body: JSON.stringify({ token: githubToken })
   });
-  // TODO: be more defensive with fetches
+  if (!packitResponse.ok) {
+    throw Error(`Unable to get token from api. Status was ${packitResponse.status}`);
+  }
   const json = await packitResponse.json();
   const packitToken = json.token;
 
@@ -66,7 +71,7 @@ const doGithubLogin = async (page: Page, apiURL: string) => {
 setup("authenticate", async ({ page, baseURL }, testInfo) => {
   console.log(`Authenticating with ${baseURL}`);
   // If baseURL is default localhost (used by CI),  we assume that we're running locally with api on
-  // on port 8080 otherwise that api is accessible from baseURL/api
+  // port 8080, otherwise that api is accessible from baseURL/api
   const apiURL = baseURL === "http://localhost:3000/" ? "http://localhost:8080" : `${baseURL}/packit/api`;
   const basicAuth =  await authMethodIsBasic(apiURL);
   if (basicAuth) {
