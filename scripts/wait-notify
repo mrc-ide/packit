@@ -1,0 +1,119 @@
+#!/usr/bin/env python3
+
+# This scripts implements the supervisor side of the sd_notify protocol. It
+# plays the role that is usually played by systemd.
+#
+# It sets up a datagram unix socket in a temporary location and then invokes
+# the specified command with NOTIFY_SOCKET set to the path of that socket.
+#
+# It waits until it either receives a `READY=1` message or until the child
+# process terminates. If a `READY=1` message is received, it exits without
+# waiting for the child. The child terminating without sending a READY message
+# is a sign of a failure to start correctly, regardless of its exit code.
+#
+# In order to wait for either event (a message received on the socket or the
+# child terminating early) we use the `select` system call. Traditionally,
+# `select` supports sockets but not processes. Modern Linux can create a pidfd,
+# which is a file-descriptor representation of a process, and can be passed to
+# `select`.
+#
+# An additional mode, `--docker-run`, can be used to start Docker containers.
+# The semantics are similar, but it takes care of bind mounting the socket into
+# the container.
+#
+# This script's functionality (except the Docker bits) has recently been
+# implemented in the systemd-notify as a `--fork` flag, but won't be available
+# broadly for quite a while.
+# https://github.com/systemd/systemd/commit/4389e4c2aea36224e99dae616aff08c8560c94e8
+#
+#
+# This script can be used to start the Packit API, either as a native process
+# or as a Docker container, using either of the following commands:
+# ```sh
+# ./scripts/wait-notify -- java -jar api/app/build/libs/app.jar
+# ./scripts/wait-notify --docker-run -- mrcide/packit-api
+# ```
+
+import argparse
+import os
+import select
+import socket
+import subprocess
+import sys
+from contextlib import ExitStack
+from tempfile import TemporaryDirectory
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--docker-run", action="store_true")
+parser.add_argument("cmdline", nargs="+")
+
+args = parser.parse_args()
+
+# Use an ExitStack to manage all our resources without an endless right drift.
+with ExitStack() as stack:
+    tmp = stack.enter_context(TemporaryDirectory())
+    path = os.path.join(tmp, "notify.sock")
+
+    sock = stack.enter_context(socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM))
+    sock.bind(path)
+
+    # Make the socket accessible even if the service changes user (quite common
+    # for Docker containers).
+    os.chmod(path, 0o777)
+
+    if args.docker_run:
+        cmdline = [
+            "docker",
+            "run",
+            f"--volume={path}:/run/notify.sock",
+            "--env=NOTIFY_SOCKET=/run/notify.sock",
+            *args.cmdline,
+        ]
+        child = subprocess.Popen(
+            cmdline,
+            stdin=subprocess.DEVNULL,
+            start_new_session=True,
+        )
+
+        # Terminate and wait for the child process when we exit. This only
+        # kills the docker client, not the actual container.
+        #
+        # We use `child.kill` to send a SIGKILL immediately: we don't want to
+        # send SIGTERM/SIGINT as these would get forwarded to the container and
+        # may terminate it.
+        #
+        # Docker supposedly has ways to detach by sending a Ctrl-P Ctrl-Q
+        # sequence to the standard input, but this only really works if a TTY
+        # is attached to the standard input. Sending SIGKILL is easier.
+        stack.enter_context(child)
+        stack.callback(child.kill)
+    else:
+        child = subprocess.Popen(
+            args.cmdline,
+            env={"NOTIFY_SOCKET": path, **os.environ},
+            stdin=subprocess.DEVNULL,
+            start_new_session=True,
+        )
+
+    pidfd = os.pidfd_open(child.pid)
+    stack.callback(os.close, pidfd)
+
+    while True:
+        try:
+            ready, _, _ = select.select([pidfd, sock], [], [])
+            if sock in ready:
+                messages = sock.recv(1024).split(b"\n")
+                if b"READY=1" in messages:
+                    if args.docker_run:
+                        print(f"Container is ready!")
+                    else:
+                        print(f"Program is ready and running as PID {child.pid}!")
+                    sys.exit(0)
+
+            if pidfd in ready:
+                status = child.wait()
+                print(f"Program terminated with status {status} before becoming ready.")
+                sys.exit(1)
+        except KeyboardInterrupt:
+            print("Received CTRL-C, terminating...")
+            child.terminate()
