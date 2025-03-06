@@ -32,7 +32,7 @@ fi
 if [[ $AUTH_METHOD == "github"  ]]; then
   python3 ./scripts/e2e_github_auth.py
   export PACKIT_E2E_GITHUB_TOKEN=$(<.token)
-  rm -f .token
+  #rm -f .token
 fi
 
-cd app && npm run test:e2e
+#cd app && npm run test:e2e

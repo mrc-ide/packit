@@ -20,11 +20,12 @@ const doBasicLogin = async (user: string, password: string, page: Page) => {
   await page.getByRole("button", { name: /Log in/i }).click();
 }
 
-const doGithubLogin = async (page: Page) => {
+const doGithubLogin = async (page: Page, apiURL: strubg) => {
   const aod = await import("@octokit/auth-oauth-device"); // This package requires dynamic import with our ts config
   const auth = aod.createOAuthDeviceAuth({
-    clientType: "github-app",
-    clientId:"Ov23liUrbkR0qUtAO1zu", // Packit Github App
+    clientType: "oauth-app",
+    clientId:"Ov23liUrbkR0qUtAO1zu", // Packit Oauth App
+    scopes: ["read:org"],
     onVerification(verification) {
       console.log("Open %s", verification.verification_uri);
       console.log("Enter code: %s", verification.user_code);
@@ -34,10 +35,22 @@ const doGithubLogin = async (page: Page) => {
   const tokenAuthentication = await auth({
     type: "oauth",
   });
-  const token = tokenAuthentication.token;
+  const githubToken = tokenAuthentication.token;
+
+  const packitResponse = await fetch(`${apiURL}/auth/login/api`, {
+    method: "POST",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ token: githubToken })
+  });
+  // TODO: be more defensive with fetches
+  const json = await packitResponse.json();
+  const packitToken = json.token;
 
   // Use redirect endpoint to login
-  await page.goto(`./redirect?token=${token}`);
+  await page.goto(`./redirect?token=${packitToken}`);
 }
 
 // Define "setup" as a dependency for any test project which requires prior authentication
@@ -48,13 +61,13 @@ setup("authenticate", async ({ page, baseURL }, testInfo) => {
   const useDefaults = baseURL === "http://localhost:3000/";
   // if we're using defaults, we assume that we're running locally with app on port 3000, and api on port 8080,
   // otherwise that api is accessible from baseURL/api
-  const apiURL = useDefaults ? "http://localhost:8080" : `${baseURL}/api`;
+  const apiURL = useDefaults ? "http://localhost:8080" : `${baseURL}/packit/api`;
   const basicAuth =  await authMethodIsBasic(apiURL);
   if (basicAuth) {
     const [ basicUser, basicPassword ] = useDefaults ? [ "resideUser@resideAdmin.ic.ac.uk", "password" ] : await getBasicCredentials();
     await doBasicLogin(basicUser, basicPassword, page); // get credentials interactively
   } else {
-    await doGithubLogin(page);
+    await doGithubLogin(page, apiURL);
   }
 
   // Check login has succeeded - admin user should have user access role
