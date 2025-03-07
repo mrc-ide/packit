@@ -1,5 +1,6 @@
 import { Locator } from "@playwright/test";
 import {test, expect, TAG_DEMO_PACKETS} from "./tagCheckFixture";
+import {getInstanceRelativePath} from "./utils";
 
 test.describe("Demo packet group page", {tag: TAG_DEMO_PACKETS},  () => {
   const packetId = "20240729-154652-95a6c08c"
@@ -12,13 +13,14 @@ test.describe("Demo packet group page", {tag: TAG_DEMO_PACKETS},  () => {
   });
 
   // we can't assume new packets won't have been created, but should at least have those from the demo set
-  test("can see packet rows", async () => {
+  test("can see packet rows", async ({baseURL}) => {
     await expect(await rows.count()).toBeGreaterThanOrEqual(3);
     const oldestRow = await rows.last();
     const firstCell = await oldestRow.getByRole("cell").first();
     const link = await firstCell.getByRole("link");
     await expect(link).toHaveText(packetId);
-    await expect(await link.getAttribute("href")).toBe(`/parameters/${packetId}`);
+    const expectedHref = getInstanceRelativePath(baseURL, `/parameters/${packetId}`);
+    await expect(await link.getAttribute("href")).toBe(expectedHref);
     const expectedDate = new Date(Date.UTC(2024, 6, 29, 15, 46, 52));
     await expect(await firstCell.locator("div.text-muted-foreground")).toHaveText(expectedDate.toLocaleString());
     const secondCell = (await oldestRow.getByRole("cell").all())[1];

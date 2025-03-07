@@ -1,6 +1,6 @@
 import { Locator } from "@playwright/test";
 import {test, expect, TAG_DEMO_PACKETS} from "./tagCheckFixture";
-import { getContentLocator, getPacketPageAccordionSection, selectPacketPageTab } from "./utils";
+import {getContentLocator, getInstanceRelativePath, getPacketPageAccordionSection, selectPacketPageTab} from "./utils";
 
 // Test which are only run against localhost, where we can assume we have the demo dataset packets
 test.describe("Demo packet page", {tag: TAG_DEMO_PACKETS}, () => {
@@ -25,7 +25,7 @@ test.describe("Demo packet page", {tag: TAG_DEMO_PACKETS}, () => {
       await expect(parametersDiv.getByText("c: false")).toBeVisible();
     });
 
-    test("can see dependencies", async ({ page }) => {
+    test("can see dependencies", async ({ page, baseURL }) => {
       await page.goto(`/depends/${dependsPacketId}`);
       const content = await getContentLocator(page);
       const dependsDiv = await getPacketPageAccordionSection(content, "Dependencies");
@@ -34,11 +34,13 @@ test.describe("Demo packet page", {tag: TAG_DEMO_PACKETS}, () => {
       const dep1Name = "explicit";
       const dep1Id = "20240729-154639-25b955eb";
       await expect(await depItems.first()).toHaveText(`${dep1Name}${dep1Id}`);
-      await expect(await depItems.first().getByRole("link")).toHaveAttribute("href", `/${dep1Name}/${dep1Id}`);
+      await expect(await depItems.first().getByRole("link")).toHaveAttribute("href",
+          getInstanceRelativePath(baseURL, `/${dep1Name}/${dep1Id}`));
       const dep2Name = "custom_metadata";
       const dep2Id = "20241122-111130-544ddd35";
       await expect(await depItems.last()).toHaveText(`${dep2Name}${dep2Id}`);
-      await expect(await depItems.last().getByRole("link")).toHaveAttribute("href", `/${dep2Name}/${dep2Id}`);
+      await expect(await depItems.last().getByRole("link")).toHaveAttribute("href",
+          getInstanceRelativePath(baseURL, `/${dep2Name}/${dep2Id}`));
     });
 
     test("can see reports", async ({ page }) => {
