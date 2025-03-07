@@ -1,4 +1,4 @@
-import {test, expect} from "./tagCheckFixture";
+import { test, expect } from "./tagCheckFixture";
 import { Locator } from "@playwright/test";
 import {
   getBreadcrumbLocator,

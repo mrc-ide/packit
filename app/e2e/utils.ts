@@ -52,4 +52,4 @@ export const selectPacketPageTab = async (content: Locator, tab: string) => {
 export const getInstanceRelativePath = (baseURL: string, path: string) => {
   const basePath = new URL(baseURL).pathname;
   return `${basePath}/${path}`.replaceAll("//", "/");
-}
+};

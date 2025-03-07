@@ -7,7 +7,7 @@ const setupProject = {
   testMatch: "auth.setup.ts",
   // if running on CI should always be with default credentials, but running locally could require user interaction
   // for auth so allow up to 5 minutes for this
-  timeout: process.env.CI ? 30 * 1000 : 5 * 60 * 1000,
+  timeout: process.env.CI ? 30 * 1000 : 5 * 60 * 1000
 };
 
 const outputDir = "test-results";
@@ -61,7 +61,7 @@ export default defineConfig({
           use: {
             ...devices["Desktop Chrome"],
             // Use prepared auth state.
-            storageState: authStorageStateFile,
+            storageState: authStorageStateFile
           },
           dependencies: ["setup"]
         },

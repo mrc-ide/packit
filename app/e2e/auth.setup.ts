@@ -1,4 +1,4 @@
-import {test as setup, expect, Page} from "@playwright/test";
+import { test as setup, expect, Page } from "@playwright/test";
 
 const authMethodIsBasic = async (apiURL: string) => {
   const response = await fetch(`${apiURL}/auth/config`);
@@ -14,18 +14,21 @@ const getBasicCredentials = () => {
   const password = process.env.PACKIT_E2E_BASIC_PASSWORD;
 
   if (!user || !password) {
-    throw Error("This packit server uses Basic auth. Please set environment variables PACKIT_E2E_BASIC_USER and PACKIT_E2E_BASIC_PASSWORD");
+    throw Error(
+      "This packitserver uses Basic auth. Please set environment variables " +
+        "PACKIT_E2E_BASIC_USER and PACKIT_E2E_BASIC_PASSWORD"
+    );
   }
 
   return [user, password];
-}
+};
 
 const doBasicLogin = async (user: string, password: string, page: Page) => {
   await page.goto("./");
   await page.getByLabel("Email").fill(user);
   await page.getByLabel("Password").fill(password);
   await page.getByRole("button", { name: /Log in/i }).click();
-}
+};
 
 const doGithubLogin = async (page: Page, apiURL: string) => {
   // github PAT may be set in env, otherwise login to github interactively
@@ -40,11 +43,11 @@ const doGithubLogin = async (page: Page, apiURL: string) => {
       onVerification(verification) {
         console.log("Open %s", verification.verification_uri);
         console.log("Enter code: %s", verification.user_code);
-      },
+      }
     });
 
     const tokenAuthentication = await auth({
-      type: "oauth",
+      type: "oauth"
     });
     githubToken = tokenAuthentication.token;
   }
@@ -52,7 +55,7 @@ const doGithubLogin = async (page: Page, apiURL: string) => {
   const packitResponse = await fetch(`${apiURL}/auth/login/api`, {
     method: "POST",
     headers: {
-      "Accept": "application/json",
+      Accept: "application/json",
       "Content-Type": "application/json"
     },
     body: JSON.stringify({ token: githubToken })
@@ -65,7 +68,7 @@ const doGithubLogin = async (page: Page, apiURL: string) => {
 
   // Use redirect endpoint to login
   await page.goto(`./redirect?token=${packitToken}`);
-}
+};
 
 // Define "setup" as a dependency for any test project which requires prior authentication
 setup("authenticate", async ({ page, baseURL }, testInfo) => {
@@ -73,9 +76,9 @@ setup("authenticate", async ({ page, baseURL }, testInfo) => {
   // If baseURL is default localhost (used by CI),  we assume that we're running locally with api on
   // port 8080, otherwise that api is accessible from baseURL/api
   const apiURL = baseURL === "http://localhost:3000/" ? "http://localhost:8080" : `${baseURL}/packit/api`;
-  const basicAuth =  await authMethodIsBasic(apiURL);
+  const basicAuth = await authMethodIsBasic(apiURL);
   if (basicAuth) {
-    const [ basicUser, basicPassword ] = getBasicCredentials();
+    const [basicUser, basicPassword] = getBasicCredentials();
     await doBasicLogin(basicUser, basicPassword, page); // get credentials interactively
   } else {
     await doGithubLogin(page, apiURL);

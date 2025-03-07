@@ -1,9 +1,9 @@
 import { Locator } from "@playwright/test";
-import {test, expect, TAG_DEMO_PACKETS} from "./tagCheckFixture";
-import {getInstanceRelativePath} from "./utils";
+import { test, expect, TAG_DEMO_PACKETS } from "./tagCheckFixture";
+import { getInstanceRelativePath } from "./utils";
 
-test.describe("Demo packet group page", {tag: TAG_DEMO_PACKETS},  () => {
-  const packetId = "20240729-154652-95a6c08c"
+test.describe("Demo packet group page", { tag: TAG_DEMO_PACKETS }, () => {
+  const packetId = "20240729-154652-95a6c08c";
   let rows: Locator;
   test.beforeEach(async ({ page }) => {
     await page.goto("./parameters");
@@ -13,7 +13,7 @@ test.describe("Demo packet group page", {tag: TAG_DEMO_PACKETS},  () => {
   });
 
   // we can't assume new packets won't have been created, but should at least have those from the demo set
-  test("can see packet rows", async ({baseURL}) => {
+  test("can see packet rows", async ({ baseURL }) => {
     await expect(await rows.count()).toBeGreaterThanOrEqual(3);
     const oldestRow = await rows.last();
     const firstCell = await oldestRow.getByRole("cell").first();
