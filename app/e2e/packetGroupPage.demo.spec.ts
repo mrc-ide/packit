@@ -14,7 +14,7 @@ test.describe("Demo packet group page", { tag: TAG_DEMO_PACKETS }, () => {
   });
 
   // we can't assume new packets won't have been created, but should at least have those from the demo set
-  test("can see packet rows", async ({ baseURL, page }) => {
+  test("can see packet rows", async ({ baseURL }) => {
     await expect(await rows.count()).toBeGreaterThanOrEqual(3);
     const oldestRow = await rows.last();
     const firstCell = await oldestRow.getByRole("cell").first();

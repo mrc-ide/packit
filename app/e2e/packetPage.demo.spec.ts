@@ -68,7 +68,7 @@ test.describe("Demo packet page", { tag: TAG_DEMO_PACKETS }, () => {
       await selectPacketPageTab(content, "Metadata");
     });
 
-    test("can see timings", async ({page}) => {
+    test("can see timings", async ({ page }) => {
       const timingsDiv = await getPacketPageAccordionSection(page, "Timings");
       const timingItems = await timingsDiv.getByRole("listitem");
       await expect(await timingItems).toHaveCount(2);
@@ -76,7 +76,7 @@ test.describe("Demo packet page", { tag: TAG_DEMO_PACKETS }, () => {
       await expect(await timingItems.last()).toHaveText("Elapsed192 milliseconds");
     });
 
-    test("can see git", async ({page}) => {
+    test("can see git", async ({ page }) => {
       const gitDiv = await getPacketPageAccordionSection(page, "Git");
       // get top level list items
       const listItems = await gitDiv.locator("ul.space-y-1 > li").all();
@@ -89,7 +89,7 @@ test.describe("Demo packet page", { tag: TAG_DEMO_PACKETS }, () => {
       await expect(remoteItems.first()).toHaveText("https://github.com/mrc-ide/packit.git");
     });
 
-    test("can see platform", async ({page}) => {
+    test("can see platform", async ({ page }) => {
       const platformDiv = await getPacketPageAccordionSection(page, "Platform", true);
       // get top level list items
       const listItems = await platformDiv.locator("ul.space-y-1 > li").all();
@@ -99,7 +99,7 @@ test.describe("Demo packet page", { tag: TAG_DEMO_PACKETS }, () => {
       await expect(listItems[2]).toHaveText("Language" + "R version 4.4.1 (2024-06-14)");
     });
 
-    test("can see packages", async ({page}) => {
+    test("can see packages", async ({ page }) => {
       const packagesDiv = await getPacketPageAccordionSection(page, "Packages", true);
       const listItems = await packagesDiv.locator("ul.space-y-1 > li").all();
       await expect(listItems.length).toBe(21);
