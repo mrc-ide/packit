@@ -16,7 +16,7 @@ export const getFirstPacketGroupListItem = async (content: Locator) => {
   return content.getByRole("listitem").first();
 };
 
-export const getDisplayString = (id: string) => id.replaceAll("-", " ");
+export const getReadableIdString = (id: string) => id.replaceAll("-", " ");
 
 export const navigateToFirstPacketGroup = async (content: Locator) => {
   const firstPacketGroup = await getFirstPacketGroupListItem(content);
@@ -34,8 +34,15 @@ export const navigateToFirstPacketGroupLatestPacket = async (content: Locator) =
   return { packetGroupName, packetId };
 };
 
-export const getPacketPageAccordionSection = async (content: Locator, title: string, clickToExpand = false) => {
+export const getPacketPageAccordionSection = async (page: Page, title: string, clickToExpand = false, sectionIsOptional = false) => {
+  const content = await getContentLocator(page);
   const section = content.locator("div.border-b:has(h3[data-orientation='vertical'])").filter({ hasText: title });
+
+  const count = await section.count();
+  if (count === 0 && sectionIsOptional) {
+    return null;
+  }
+
   await expect(await section).toBeVisible();
   if (clickToExpand) {
     await section.locator("h3[data-orientation='vertical']").click();

@@ -42,7 +42,7 @@ test.describe("Packet group page", () => {
     // Enter packet id in input
     const packetInput = await rows.first().getByRole("cell").first().getByPlaceholder("Search...");
     await packetInput.fill(packetId);
-    // should only have two rows left and last should have the id of the entered term
+    // should only have two rows left (of which the first is headers) and last should have the id of the entered term
     await expect(rows).toHaveCount(2);
     const secondRow = (await rows.all())[1];
     await expect(await secondRow.getByRole("cell").getByRole("link")).toHaveText(packetId);

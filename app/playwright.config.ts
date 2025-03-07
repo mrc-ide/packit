@@ -66,9 +66,9 @@ export default defineConfig({
           dependencies: ["setup"]
         },
         {
-          name: "firefox",
+          name: "webkit",
           use: {
-            ...devices["Desktop Firefox"],
+            ...devices["Desktop Safari"],
             // Use prepared auth state.
             storageState: authStorageStateFile
           },

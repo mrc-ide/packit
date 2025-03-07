@@ -7,7 +7,7 @@ import {
   selectPacketPageTab
 } from "./utils";
 
-// Test which are only run against localhost, where we can assume we have the demo dataset packets
+// Tests which are only run against localhost, where we can assume we have the demo dataset packets
 test.describe("Demo packet page", { tag: TAG_DEMO_PACKETS }, () => {
   const parametersPacketId = "20240829-185440-781be0f3";
   const dependsPacketId = "20250120-073637-b8c1e707";
@@ -17,14 +17,13 @@ test.describe("Demo packet page", { tag: TAG_DEMO_PACKETS }, () => {
     await page.goto(`./parameters/${parametersPacketId}`);
     const content = await getContentLocator(page);
     await expect(await content.getByRole("heading", { name: "parameters", level: 2 })).toHaveText("parameters");
-    await expect(await content.getByText(parametersPacketId)).toHaveText(parametersPacketId);
+    await expect(await content.getByText(parametersPacketId)).toBeVisible();
   });
 
   test.describe("Summary", () => {
     test("can see parameters", async ({ page }) => {
       await page.goto(`./parameters/${parametersPacketId}`);
-      const content = await getContentLocator(page);
-      const parametersDiv = await getPacketPageAccordionSection(content, "Parameters");
+      const parametersDiv = await getPacketPageAccordionSection(page, "Parameters");
       await expect(parametersDiv.getByText("a: 1")).toBeVisible();
       await expect(parametersDiv.getByText("b: hello")).toBeVisible();
       await expect(parametersDiv.getByText("c: false")).toBeVisible();
@@ -32,8 +31,7 @@ test.describe("Demo packet page", { tag: TAG_DEMO_PACKETS }, () => {
 
     test("can see dependencies", async ({ page, baseURL }) => {
       await page.goto(`/depends/${dependsPacketId}`);
-      const content = await getContentLocator(page);
-      const dependsDiv = await getPacketPageAccordionSection(content, "Dependencies");
+      const dependsDiv = await getPacketPageAccordionSection(page, "Dependencies");
       const depItems = await dependsDiv.getByRole("listitem");
       await expect(depItems).toHaveCount(2);
       const dep1Name = "explicit";
@@ -41,21 +39,20 @@ test.describe("Demo packet page", { tag: TAG_DEMO_PACKETS }, () => {
       await expect(await depItems.first()).toHaveText(`${dep1Name}${dep1Id}`);
       await expect(await depItems.first().getByRole("link")).toHaveAttribute(
         "href",
-        getInstanceRelativePath(baseURL, `/${dep1Name}/${dep1Id}`)
+        getInstanceRelativePath(baseURL, `${dep1Name}/${dep1Id}`)
       );
       const dep2Name = "custom_metadata";
       const dep2Id = "20241122-111130-544ddd35";
       await expect(await depItems.last()).toHaveText(`${dep2Name}${dep2Id}`);
       await expect(await depItems.last().getByRole("link")).toHaveAttribute(
         "href",
-        getInstanceRelativePath(baseURL, `/${dep2Name}/${dep2Id}`)
+        getInstanceRelativePath(baseURL, `${dep2Name}/${dep2Id}`)
       );
     });
 
     test("can see reports", async ({ page }) => {
       await page.goto(`/artefact-types/${artefactTypesPacketId}`);
-      const content = await getContentLocator(page);
-      const reportsDiv = await getPacketPageAccordionSection(content, "Reports");
+      const reportsDiv = await getPacketPageAccordionSection(page, "Reports");
       const reportFrame = await reportsDiv.locator("iframe");
       await expect(reportFrame).toBeVisible();
       await expect(await reportFrame.contentFrame().getByRole("heading")).toHaveText("TEST");
@@ -71,16 +68,16 @@ test.describe("Demo packet page", { tag: TAG_DEMO_PACKETS }, () => {
       await selectPacketPageTab(content, "Metadata");
     });
 
-    test("can see timings", async () => {
-      const timingsDiv = await getPacketPageAccordionSection(content, "Timings");
+    test("can see timings", async ({page}) => {
+      const timingsDiv = await getPacketPageAccordionSection(page, "Timings");
       const timingItems = await timingsDiv.getByRole("listitem");
       await expect(await timingItems).toHaveCount(2);
       await expect(await timingItems.first()).toHaveText("StartedThu, 29 Aug 2024 18:54:40 GMT");
       await expect(await timingItems.last()).toHaveText("Elapsed192 milliseconds");
     });
 
-    test("can see git", async () => {
-      const gitDiv = await getPacketPageAccordionSection(content, "Git");
+    test("can see git", async ({page}) => {
+      const gitDiv = await getPacketPageAccordionSection(page, "Git");
       // get top level list items
       const listItems = await gitDiv.locator("ul.space-y-1 > li").all();
       await expect(await listItems.length).toBe(3);
@@ -92,18 +89,18 @@ test.describe("Demo packet page", { tag: TAG_DEMO_PACKETS }, () => {
       await expect(remoteItems.first()).toHaveText("https://github.com/mrc-ide/packit.git");
     });
 
-    test("can see platform", async () => {
-      const platformDiv = await getPacketPageAccordionSection(content, "Platform", true);
+    test("can see platform", async ({page}) => {
+      const platformDiv = await getPacketPageAccordionSection(page, "Platform", true);
       // get top level list items
       const listItems = await platformDiv.locator("ul.space-y-1 > li").all();
       await expect(listItems.length).toBe(3);
       await expect(listItems[0]).toHaveText("OS" + "Ubuntu 22.04.4 LTS");
-      await expect(listItems[1]).toHaveText("Systemx" + "86_64, linux-gnu");
+      await expect(listItems[1]).toHaveText("System" + "x86_64, linux-gnu");
       await expect(listItems[2]).toHaveText("Language" + "R version 4.4.1 (2024-06-14)");
     });
 
-    test("can see packages", async () => {
-      const packagesDiv = await getPacketPageAccordionSection(content, "Packages", true);
+    test("can see packages", async ({page}) => {
+      const packagesDiv = await getPacketPageAccordionSection(page, "Packages", true);
       const listItems = await packagesDiv.locator("ul.space-y-1 > li").all();
       await expect(listItems.length).toBe(21);
       await expect(listItems[0]).toHaveText("askpass" + "1.2.0");

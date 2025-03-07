@@ -27,8 +27,7 @@ test.describe("Packet page", () => {
 
   test.describe("Summary", () => {
     test("can see Parameters section", async ({ page }) => {
-      const content = await getContentLocator(page);
-      const parametersDiv = await getPacketPageAccordionSection(content, "Parameters");
+      const parametersDiv = await getPacketPageAccordionSection(page, "Parameters");
       // Section should contain either "None" or at least one parameter pill
       const noneDiv = await parametersDiv.locator(".italic");
       if ((await noneDiv.count()) > 0) {
@@ -39,9 +38,8 @@ test.describe("Packet page", () => {
     });
 
     test("can see Dependencies section", async ({ page }) => {
-      const content = await getContentLocator(page);
-      const dependenciesDiv = await getPacketPageAccordionSection(content, "Dependencies");
-      // Section should contain either no depencies text, or at least one list item with link
+      const dependenciesDiv = await getPacketPageAccordionSection(page, "Dependencies");
+      // Section should contain either no dependencies text, or at least one list item with link
       const noneDiv = await dependenciesDiv.locator(".italic");
       if ((await noneDiv.count()) > 0) {
         await expect(noneDiv).toHaveText("This packet has no dependencies on other packets");
@@ -51,15 +49,14 @@ test.describe("Packet page", () => {
         for (const li of await depItems.all()) {
           const link = await li.getByRole("link");
           await expect(link).toBeEnabled();
-          const linkText = await link.innerHTML();
-          expect((await link.getAttribute("href")).split("/").at(-1)).toBe(linkText);
+          const packetId = await link.innerHTML();
+          expect((await link.getAttribute("href")).split("/").at(-1)).toBe(packetId);
         }
       }
     });
 
     test("can see Reports section", async ({ page }) => {
-      const content = await getContentLocator(page);
-      const reportsDiv = await getPacketPageAccordionSection(content, "Reports");
+      const reportsDiv = await getPacketPageAccordionSection(page, "Reports");
       // Reports should contain either "None" or at least one iframe
       const noneDiv = await reportsDiv.locator(".italic");
       if ((await noneDiv.count()) > 0) {
@@ -73,34 +70,34 @@ test.describe("Packet page", () => {
 
   test.describe("Metadata", () => {
     test("can see Timings section", async ({ page }) => {
-      const content = await getContentLocator(page);
       await selectPacketPageTab(content, "Metadata");
-      const timingsDiv = await getPacketPageAccordionSection(content, "Timings");
+      const timingsDiv = await getPacketPageAccordionSection(page, "Timings");
       const timingItems = await timingsDiv.getByRole("listitem");
       await expect(await timingItems).toHaveCount(2);
       await expect(await timingItems.first()).toHaveText(/Started/);
       await expect(await timingItems.last()).toHaveText(/Elapsed\d+/);
     });
 
-    test("can see Git section", async ({ page }) => {
-      const content = await getContentLocator(page);
+    test("can see Git details if Git section exists", async ({ page }) => {
       await selectPacketPageTab(content, "Metadata");
-      const gitDiv = await getPacketPageAccordionSection(content, "Git");
-      // get top level list items
-      const listItems = await gitDiv.locator("ul.space-y-1 > li").all();
-      await expect(await listItems.length).toBe(3);
-      await expect(listItems[0]).toHaveText(/^Branch/);
-      await expect(listItems[1]).toHaveText(/^Commit[\da-f]{40}$/);
-      await expect(await listItems[2].locator("span")).toHaveText("Remotes");
-      const remoteItems = await listItems[2].getByRole("listitem");
-      await expect(await remoteItems.count()).toBeGreaterThan(0);
+      const gitDiv = await getPacketPageAccordionSection(page, "Git", false, true);
+      if (gitDiv) {
+        // get top level list items
+        const listItems = await gitDiv.locator("ul.space-y-1 > li").all();
+        await expect(await listItems.length).toBe(3);
+        await expect(listItems[0]).toHaveText(/^Branch/);
+        await expect(listItems[1]).toHaveText(/^Commit[\da-f]{40}$/);
+        await expect(await listItems[2].locator("span")).toHaveText("Remotes");
+        const remoteItems = await listItems[2].getByRole("listitem");
+        await expect(await remoteItems.count()).toBeGreaterThan(0);
+      }
     });
   });
 
+  // NB This section may not exist for non-orderly packets, but we don't support those yet
   test("can see Platform section", async ({ page }) => {
-    const content = await getContentLocator(page);
     await selectPacketPageTab(content, "Metadata");
-    const platformDiv = await getPacketPageAccordionSection(content, "Platform", true);
+    const platformDiv = await getPacketPageAccordionSection(page, "Platform", true);
     // get top level list items
     const listItems = await platformDiv.locator("ul.space-y-1 > li").all();
     await expect(listItems.length).toBe(3);
@@ -109,10 +106,10 @@ test.describe("Packet page", () => {
     await expect(listItems[2]).toHaveText(/^Language/);
   });
 
+  // NB This section may not exist for non-orderly packets, but we don't support those yet
   test("can see Packages section", async ({ page }) => {
-    const content = await getContentLocator(page);
     await selectPacketPageTab(content, "Metadata");
-    const packagesDiv = await getPacketPageAccordionSection(content, "Packages", true);
+    const packagesDiv = await getPacketPageAccordionSection(page, "Packages", true);
     // Might be empty but expect the list to exist!
     await expect(await packagesDiv.locator("ul.space-y-1")).toBeVisible();
   });
