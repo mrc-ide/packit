@@ -68,7 +68,7 @@ packit server to test that its deployment has succeeded. We therefore have two s
 1. Generic tests which make no (or very few) assumptions about the packet groups, packets etc which will be present, and which 
 can be run against any packet server. 
 2. Tests which specifically expect the demo packet dataset, and therefore can test that packets have expected parameters, 
-artefacts etc. These test are assumed to be running against localhost. 
+artefacts etc. These tests are assumed to be running against localhost. 
 
 To support running the correct tests for the target server, the playwright config file (`./app/playwright.config.ts`)
 uses a different `testMatch` property depending on whether the base url for the Packit server starts with `http://localhost` - 
