@@ -27,7 +27,7 @@ const checkDemoPacketsTag = (tags: string[], baseURL: string) => {
       return;
     }
     console.warn(
-      `Running test expecting demo packets against non-local server ${baseURL}. `+
+      `Running test expecting demo packets against non-local server ${baseURL}. ` +
         `Consider running playwright with ${safeGrep}`
     );
   }
