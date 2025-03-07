@@ -75,7 +75,7 @@ jobs:
         run: ./scripts/basic-create-super-user
       - name: Install playwright
         working-directory: app
-        run: npx playwright install
+        run: npx playwright install --with-deps
       - name: Run app
         working-directory: app
         run: npm start &
