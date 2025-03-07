@@ -76,7 +76,7 @@ if so, files suffixed `local.ts` (and which provide the demo dataset tests) and 
 (which provide generic test) will be matched and their tests run. If the base url is not for localhost, only the generic
 tests will be matched and run. 
 
-e2e test are currently all read-only. A feature to allow tests which change the state of the system for non-prod servers 
+e2e tests are currently all read-only. A feature to allow tests which change the state of the system for non-prod servers 
 only will be added in a future branch. 
 
 Playwright tests are in `./app/e2e`. By default, they will run against localhost, and expect basic auth super user to be
