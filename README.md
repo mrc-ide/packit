@@ -63,43 +63,59 @@ See [docs/auth.md](docs/auth.md)
 
 ## e2e Tests
 
+Playwright tests are in `./app/e2e`. There are three npm scripts defined in `package.json`:
+- `test:e2e` - tests against `http://localhost:3000`. Can use either github or basic auth (assumes default superuser credentials).
+- `test:e2e-dev` - tests against `https://packit-dev.dide.ic.ac.uk/reside-dev/` excluding demo dataset and state mutating tests
+- `test:e2e-prod` - tests against `https://packit.dide.ic.ac.uk/reside/` excluding demo dataset and state mutating tests
+
+To run any other variant, you can run `npx playwright test`, providing any required environment variables as detailed
+below and `--grep` or `--grep-invert` arg to include or exclude tagged tests as required. 
+
+The packit base url to use should be provided in the `PACKIT_E2E_BASE_URL` env var. If this is not set, playwright
+will use `http://localhost:3000`. If you're testing with a base url which is not a domain root, ensure that you 
+append a "/". In this case it's also important to use `./` as the base route in the Playwright tests, not `/`.
+
+
+### Authentication
+Authentication in the e2e tests is done in the setup project `auth.setup.ts` which is a dependency of all other projects
+as defined in `playwright.config.ts`. We require the packit user who authenticates to have admin permissions. 
+
+The setup project first checks the packit api's `/auth/config` endpoint to determine if basic or github auth is required. 
+
+If basic auth, the env vars `PACKIT_E2E_BASIC_USER` and `PACKIT_E2E_BASIC_PASSOWRD` must be set. These will be used
+to authenticate via the login page.
+
+If github auth, the setup code checks for the optional `GITHUB_ACCESS_TOKEN`. If this is not set, it uses oauth device
+flow to obtain a github token (this is an interactive process so we won't be able to use this on CI). The github token
+is then posted to packit api's login endpoint to obtain a packit token, which is then passed to packit's redirect endpoint
+login in the browser. 
+
+For both auth methods, we then write out page context to a temporary location which is then picked up by dependent tests
+so they start off in an authenticated state. 
+
+### Tags
+
 We want to have e2e tests which test all packit features, but also to have a suite of tests which we can run against any
-packit server to test that its deployment has succeeded. We therefore have two styles of e2e tests:
-1. Generic tests which make no (or very few) assumptions about the packet groups, packets etc which will be present, and which 
-can be run against any packet server. 
-2. Tests which specifically expect the demo packet dataset, and therefore can test that packets have expected parameters, 
-artefacts etc. These tests are assumed to be running against localhost. 
+packit server to test that its deployment has succeeded. In order to support detailed tests of all features, we want to 
+have some tests which expect our standard demo dataset (available on localhost and perhaps on some dev instances), but
+to exclude those tests when running generic tests on servers where demo packets are not present. 
 
-To support running the correct tests for the target server, the playwright config file (`./app/playwright.config.ts`)
-uses a different `testMatch` property depending on whether the base url for the Packit server starts with `http://localhost` - 
-if so, files suffixed `local.ts` (and which provide the demo dataset tests) and also those suffixed `spec.ts`
-(which provide generic test) will be matched and their tests run. If the base url is not for localhost, only the generic
-tests will be matched and run. 
+We also want to have some tests which change the state of the server e.g. by running packets or changing user permissions. 
+These should never be run on production servers. (We do not have any real tests of this type yet, but we have one tagged placeholder.)
 
-e2e tests are currently all read-only. A feature to allow tests which change the state of the system for non-prod servers 
-only will be added in a future branch. 
+We indicate these types of tests using tags:
+- `@demoPackets` indicates that the test specifically expects the demo dataset.
+- `@stateMutate` indicates that the test will change the server state
 
-Playwright tests are in `./app/e2e`. By default, they will run against localhost, and expect basic auth super user to be
-available, so for local dev you should run:
-1.  `./scripts/dev-start --super-user` to start the dependencies, api and app
-2. `npm run test:e2e` from `./app` 
+When running playwright, you can use `--grep` or `--grep-invert` to include or exclude particular tags. The npm 
+scripts `test:e2e-dev` and `test:e2e-prod` use `--grep-invert '@demoPackets|@stateMutate'` to exclude these tags. 
 
-Playwright tests can be run against any server by running `./scripts/run-e2e-tests-on-server` providing args for server url and auth method
-("basic" or "github"), e.g. ` ./scripts/run-e2e-tests-on-server https://packit-dev.dide.ic.ac.uk/reside-dev/ github`.
-The github auth part uses `pyorderly` and so if you want to use github auth, you will need to first be 
-running in a context where pyorderly is available, e.g. by running:
-```
-hatch shell 
-pip install pyorderly
-```
+As an additional guardrail, we want to make sure that `@stateMutate` tests are never run against production servers. For this
+reason we have a custom test fixture `tagCheckFixture.ts` which all our e2e tests must use. It checks if any tests tagged
+with `@stateMutate` are running when base url is not on `localhost` or `packit-dev.dide.ic.ac.uk`, and will throw an error
+if that is the case. It will also warn if such tests are being run on dev, as this might be undesirable. It also warns
+if `@demoPackets` tests are being run on non-localhost as this may explain any test failures. 
 
-NB If you're testing with a server url which is not a domain root, ensure that you append a "/". In this case it's also 
-important to use `./` as the base route in the Playwright tests, not `/`.
-
-The tests and test script use environment variables to set and determine test configuration values. These are:
-`PACKIT_E2E_BASE_URL`, 
-`PACKIT_E2E_AUTH_METHOD`,  
-`PACKIT_E2E_BASIC_USER`, 
-`PACKIT_E2E_BASIC_PASSWORD`, 
-`PACKIT_E2E_GITHUB_TOKEN`
+By custom, we suffix generic tests with `.generic.spec.ts` and demo datasets tests with `.demo.spec.ts`, but this 
+naming convention is not interpreted by any test matchers or fixtures. 
 

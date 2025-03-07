@@ -35,7 +35,7 @@ const checkDemoPacketsTag = (tags: string[], baseURL: string) => {
 
 // This fixture attempts to put an additional guardrail against accidentally running mutating tests
 // against production servers. When tests are run in such a way, they should exclude tests tagged
-// @stateMutate and @demoDataset, but here we also check if running unexpeted combination of tag and server.
+// @stateMutate and @demoDataset, but here we also check if running unexpected combination of tag and server.
 // Also warn if running demo dataset tests against non-localhost.
 // All e2e tests should use this fixture.
 export const test = base.extend<{ tagCheck: void }>({

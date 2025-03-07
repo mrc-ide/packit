@@ -50,7 +50,7 @@ test.describe("Packet group page", () => {
 
   test("state mutate placeholder test", { tag: TAG_STATE_MUTATE }, async () => {
     // This does not actually do any server state mutating but is just a placeholder test to demonstrate
-    // tagCheckFixture behaviour
+    // tagCheckFixture behaviour. Can be removed when have some real state mutating tests
     await rows.last();
   });
 });
