@@ -11,15 +11,18 @@ import {
 
 test.describe("Index page", () => {
   let content: Locator;
+  let packetGroups: Locator;
 
   test.beforeEach(async ({ page }) => {
     await page.goto("./");
     content = await getContentLocator(page);
+    packetGroups = await content.getByRole("listitem");
+    expect(await packetGroups.count()).toBeGreaterThan(0);
+    // wait for list items to not be skeletal
+    await expect(await packetGroups.first().getByRole("heading")).toBeVisible();
   });
 
   test("can view packet group list", async () => {
-    const packetGroups = await content.getByRole("listitem");
-    expect(await packetGroups.count()).toBeGreaterThan(0);
     (await packetGroups.all()).forEach((packetGroup) => {
       expect(packetGroup.getByRole("heading")).toBeEnabled(); // packet group name
       expect(packetGroup.getByRole("link", { name: "Latest" })).toBeEnabled();
@@ -29,7 +32,7 @@ test.describe("Index page", () => {
   });
 
   test("can filter packet groups", async ({ page }) => {
-    const firstPacketGroup = await content.getByRole("listitem").first();
+    const firstPacketGroup = await packetGroups.first();
     const firstPacketGroupName = await packetGroupNameFromListItem(firstPacketGroup);
     const filterInput = await page.getByPlaceholder("Filter packet groups...");
     await filterInput.fill(firstPacketGroupName);

@@ -9,11 +9,21 @@ export const getBreadcrumbLocator = async (page: Page) => {
 };
 
 export const packetGroupNameFromListItem = async (listItem: Locator) => {
-  return await listItem.getByRole("heading").innerText();
+  // if there is a div with muted text in the list item, that will be the actual packet group name (heading will
+  // be display name - otherwise, use the heading
+  const mutedNameLocator = await listItem.locator("div.text-muted-foreground.text-sm");
+  const count = await mutedNameLocator.count();
+  if (count === 0) {
+    return await listItem.getByRole("heading").innerText();
+  } else {
+    return await mutedNameLocator.innerText();
+  }
 };
 
 export const getFirstPacketGroupListItem = async (content: Locator) => {
-  return content.getByRole("listitem").first();
+  const result = content.getByRole("listitem").first();
+  await expect(result.getByRole("heading")).toBeVisible(); // wait for text to load
+  return result;
 };
 
 export const getReadableIdString = (id: string) => id.replaceAll("-", " ");
