@@ -26,7 +26,7 @@ class Scheduler(
         }
     }
 
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "@daily")
     fun cleanUpExpiredTokens()
     {
         log.info("Cleaning up expired tokens")
