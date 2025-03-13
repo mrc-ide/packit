@@ -73,8 +73,6 @@ class PacketController(
         } else if (!inline) {
             response.contentType = "application/zip"
             packetService.streamZip(paths, id, response.outputStream)
-        } else {
-            throw PackitException("cannotFetchMultipleInlineFiles", HttpStatus.BAD_REQUEST)
         }
     }
 }

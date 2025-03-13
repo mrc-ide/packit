@@ -221,14 +221,4 @@ class PacketControllerTest
         assertEquals("attachment; filename=\"my_archive.zip\"", response.getHeader("Content-Disposition"))
         assertEquals(HttpStatus.OK.value(), response.status)
     }
-
-    @Test
-    fun `refuse to stream zip as inline`() {
-        val response = MockHttpServletResponse()
-
-        val error = assertThrows<PackitException> {
-            sut.streamFiles(packetId, listOf("file1.txt", "file2.txt"), tokenId, "my_archive.zip", true, response)
-        }
-        assertEquals("cannotFetchMultipleInlineFiles", error.key)
-    }
 }
