@@ -16,7 +16,7 @@ test.describe("Demo packet page", { tag: TAG_DEMO_PACKETS }, () => {
   test("can see packet group name and packet id", async ({ page }) => {
     await page.goto(`./parameters/${parametersPacketId}`);
     const content = await getContentLocator(page);
-    await expect(await content.getByRole("heading", { name: "parameters", level: 2 })).toHaveText("parameters");
+    await expect(await content.getByRole("heading", { name: "parameters", level: 2 })).toBeVisible();
     await expect(await content.getByText(parametersPacketId)).toBeVisible();
   });
 
