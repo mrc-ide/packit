@@ -14,6 +14,8 @@ The application can be used through the browser as a portal by researchers, to m
 
 Packit can also be used programmatically through its `/outpack` route, which forwards requests to [outpack server](https://github.com/mrc-ide/outpack_server). 
 
+Developing packit requires Node 22 or above.
+
 ## Quick start
 
 To run the whole app (default is github auth):
