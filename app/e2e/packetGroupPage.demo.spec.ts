@@ -73,7 +73,9 @@ test.describe("Demo packet group page", { tag: TAG_DEMO_PACKETS }, () => {
     const parameterCheckBox = page.getByRole("menuitemcheckbox", { name: "a" });
     await expect(parameterCheckBox).toBeEnabled();
     await expect(parameterCheckBox).not.toBeChecked();
-    //await parameterCheckBox.check();
+    // Using click on the checkbox here rather than check, which was flaky on CI. I think this was because check is
+    // sensitive to the checkbox disappearing from the DOM as it tests that the checkbox state changes, but doesn't
+    // always have time to do this before the menu closes.
     await parameterCheckBox.click();
     await expect(lastRowCells).toHaveCount(3); // should have a new column for parameter "a"
     await expect(rows.first().getByRole("cell").last()).toHaveText("a"); //header

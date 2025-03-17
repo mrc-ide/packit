@@ -22,7 +22,7 @@ export default defineConfig({
   outputDir,
   globalSetup: require.resolve("./e2e/globalSetup.ts"),
   fullyParallel: true,
-  timeout: process.env.CI ? 60 * 1000 : 15 * 1000,
+  timeout: process.env.CI ? 30 * 1000 : 15 * 1000,
   /* Maximum time one test can run for. */
   expect: {
     /**
