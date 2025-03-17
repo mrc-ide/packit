@@ -65,7 +65,7 @@ See [docs/auth.md](docs/auth.md)
 
 ## e2e Tests
 
-Playwright tests are in `./app/e2e`. There are three npm scripts defined in `package.json`:
+Playwright tests are in `./app/e2e`. There are three npm scripts defined in `app/package.json`:
 - `test:e2e` - tests against `http://localhost:3000`. Can use either github or basic auth (assumes default superuser credentials).
 - `test:e2e-dev` - tests against `https://packit-dev.dide.ic.ac.uk/reside-dev/` excluding demo dataset and state mutating tests
 - `test:e2e-prod` - tests against `https://packit.dide.ic.ac.uk/reside/` excluding demo dataset and state mutating tests
