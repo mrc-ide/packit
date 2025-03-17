@@ -16,10 +16,9 @@ let baseURL = process.env.PACKIT_E2E_BASE_URL || "http://localhost:3000";
 if (!baseURL.endsWith("/")) {
   baseURL = `${baseURL}/`;
 }
-const testMatch = /.*\.spec\.ts/;
 export default defineConfig({
   testDir: "./e2e",
-  testMatch,
+  testMatch: /.*\.spec\.ts/,
   outputDir,
   globalSetup: require.resolve("./e2e/globalSetup.ts"),
   fullyParallel: true,
