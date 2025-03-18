@@ -9,7 +9,7 @@ export const Breadcrumb = () => {
 
   return (
     <>
-      <div className="flex-col mb-2 border-b-2 shadow-sm">
+      <div className="flex-col mb-2 border-b-2 shadow-sm" data-testid="breadcrumb">
         <div className="flex h-9 items-center px-4 justify-start space-x-1 text-sm">
           {pathNames.map((path, index) => {
             const routeTo = `${pathNames.slice(0, index + 1).join("/")}`;

@@ -14,6 +14,8 @@ The application can be used through the browser as a portal by researchers, to m
 
 Packit can also be used programmatically through its `/outpack` route, which forwards requests to [outpack server](https://github.com/mrc-ide/outpack_server). 
 
+Developing packit requires Node 22 or above.
+
 ## Quick start
 
 To run the whole app (default is github auth):
@@ -60,3 +62,62 @@ See [app/README.md](https://github.com/mrc-ide/packit/blob/main/app/README.md)
 ## Authentication in Packit
 
 See [docs/auth.md](docs/auth.md)
+
+## e2e Tests
+
+Playwright tests are in `./app/e2e`. There are three npm scripts defined in `app/package.json`:
+- `test:e2e` - tests against `http://localhost:3000`. Can use either github or basic auth (assumes default superuser credentials).
+- `test:e2e-dev` - tests against `https://reside-dev.packit-dev.dide.ic.ac.uk/` excluding demo dataset and state mutating tests
+- `test:e2e-prod` - tests against `https://reside.packit.dide.ic.ac.uk/` excluding demo dataset and state mutating tests
+
+To run any other variant, you can run `npx playwright test`, providing any required environment variables as detailed
+below and `--grep` or `--grep-invert` arg to include or exclude tagged tests as required. 
+
+The packit base url to use should be provided in the `PACKIT_E2E_BASE_URL` env var. If this is not set, playwright
+will use `http://localhost:3000`. If you're testing with a base url which is not a domain root, ensure that you 
+append a "/". In this case it's also important to use `./` as the base route in the Playwright tests, not `/`.
+
+
+### Authentication
+Authentication in the e2e tests is done in the setup project `auth.setup.ts` which is a dependency of all other projects
+as defined in `playwright.config.ts`. We require the packit user who authenticates to have admin permissions. 
+
+The setup project first checks the packit api's `/auth/config` endpoint to determine if basic or github auth is required. 
+
+If basic auth, the env vars `PACKIT_E2E_BASIC_USER` and `PACKIT_E2E_BASIC_PASSOWRD` must be set. These will be used
+to authenticate via the login page.
+
+If github auth, the setup code checks for the optional `GITHUB_ACCESS_TOKEN`. If this is not set, it uses oauth device
+flow to obtain a github token (this is an interactive process so we won't be able to use this on CI). The github token
+is then posted to packit api's login endpoint to obtain a packit token, which is then passed to packit's redirect endpoint
+login in the browser. 
+
+For both auth methods, we then write out page context to a temporary location which is then picked up by dependent tests
+so they start off in an authenticated state. 
+
+### Tags
+
+We want to have e2e tests which test all packit features, but also to have a suite of tests which we can run against any
+packit server to test that its deployment has succeeded. In order to support detailed tests of all features, we want to 
+have some tests which expect our standard demo dataset (available on localhost and perhaps on some dev instances), but
+to exclude those tests when running generic tests on servers where demo packets are not present. 
+
+We also want to have some tests which change the state of the server e.g. by running packets or changing user permissions. 
+These should never be run on production servers. (We do not have any real tests of this type yet, but we have one tagged placeholder.)
+
+We indicate these types of tests using tags:
+- `@demoPackets` indicates that the test specifically expects the demo dataset.
+- `@stateMutate` indicates that the test will change the server state
+
+When running playwright, you can use `--grep` or `--grep-invert` to include or exclude particular tags. The npm 
+scripts `test:e2e-dev` and `test:e2e-prod` use `--grep-invert '@demoPackets|@stateMutate'` to exclude these tags. 
+
+As an additional guardrail, we want to make sure that `@stateMutate` tests are never run against production servers. For this
+reason we have a custom test fixture `tagCheckFixture.ts` which all our e2e tests must use. It checks if any tests tagged
+with `@stateMutate` are running when base url is not on `localhost` or `packit-dev.dide.ic.ac.uk`, and will throw an error
+if that is the case. It will also warn if such tests are being run on dev, as this might be undesirable. It also warns
+if `@demoPackets` tests are being run on non-localhost as this may explain any test failures. 
+
+By custom, we suffix generic tests with `.generic.spec.ts` and demo datasets tests with `.demo.spec.ts`, but this 
+naming convention is not interpreted by any test matchers or fixtures. 
+
