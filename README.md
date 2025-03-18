@@ -68,7 +68,7 @@ See [docs/auth.md](docs/auth.md)
 Playwright tests are in `./app/e2e`. There are three npm scripts defined in `app/package.json`:
 - `test:e2e` - tests against `http://localhost:3000`. Can use either github or basic auth (assumes default superuser credentials).
 - `test:e2e-dev` - tests against `https://reside-dev.packit-dev.dide.ic.ac.uk/` excluding demo dataset and state mutating tests
-- `test:e2e-prod` - tests against `https://packit.dide.ic.ac.uk/reside/` excluding demo dataset and state mutating tests
+- `test:e2e-prod` - tests against `https://reside.packit.dide.ic.ac.uk/` excluding demo dataset and state mutating tests
 
 To run any other variant, you can run `npx playwright test`, providing any required environment variables as detailed
 below and `--grep` or `--grep-invert` arg to include or exclude tagged tests as required. 
