@@ -3,11 +3,8 @@ package packit.unit.controllers
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.ArgumentMatchers.*
+import org.mockito.kotlin.*
 import org.mockito.kotlin.any
-import org.mockito.kotlin.doAnswer
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -16,9 +13,11 @@ import org.springframework.mock.web.MockHttpServletResponse
 import packit.controllers.PacketController
 import packit.exceptions.PackitException
 import packit.model.*
+import packit.service.OneTimeTokenService
 import packit.service.PacketService
 import java.io.OutputStream
 import java.time.Instant
+import java.util.UUID
 import kotlin.test.assertEquals
 
 class PacketControllerTest
@@ -87,25 +86,38 @@ class PacketControllerTest
     private val packetService = mock<PacketService> {
         on { getPackets(PageablePayload(0, 10), "", "") } doReturn mockPageablePackets
         on {
-            getFileByHash(
-            anyString(),
-            any<OutputStream>(),
-            any<(ClientHttpResponse) -> Unit>()
-        )
+            getFileByPath(
+                anyString(),
+                anyString(),
+                any<OutputStream>(),
+                any<(ClientHttpResponse) -> Unit>()
+            )
         } doAnswer { invocationOnMock ->
-            val callback = invocationOnMock.getArgument<(ClientHttpResponse) -> Unit>(2)
+            val callback = invocationOnMock.getArgument<(ClientHttpResponse) -> Unit>(3)
             callback(mockClientHttpResponse)
-            val outputStream = invocationOnMock.getArgument<OutputStream>(1)
+            val outputStream = invocationOnMock.getArgument<OutputStream>(2)
             outputStream.write("mocked output content".toByteArray())
         }
         on { getPacketsByName(anyString()) } doReturn packets
+        on { validateFilesExistForPacket(anyString(), anyList()) } doReturn packetMetadata[0].files
 
         packetMetadata.forEach {
             on { getMetadataBy(it.id) } doReturn it
         }
     }
 
-    private val sut = PacketController(packetService)
+    private val tokenId = UUID.randomUUID()
+    private val oneTimeTokenService = mock<OneTimeTokenService> {
+        on { createToken(anyString(), anyList()) } doReturn OneTimeToken(
+            tokenId,
+            packets.first(),
+            listOf("mocked_token_file.txt"),
+            Instant.now()
+        )
+        on { validateToken(any<UUID>(), anyString(), anyList()) } doReturn true
+    }
+
+    private val sut = PacketController(packetService, oneTimeTokenService)
 
     @Test
     fun `get pageable packets`()
@@ -127,73 +139,96 @@ class PacketControllerTest
     }
 
     @Test
-    fun `get packet file by id`()
+    fun `generate token for downloading file`()
+    {
+        val result = sut.generateTokenForDownloadingFile(packetId, listOf("any_file.txt", "another_file.txt"))
+        verify(packetService).validateFilesExistForPacket(packetId, listOf("any_file.txt", "another_file.txt"))
+        verify(oneTimeTokenService).createToken(packetId, listOf("any_file.txt", "another_file.txt"))
+        assertEquals(result.statusCode, HttpStatus.OK)
+        assertEquals(result.body?.id, tokenId)
+    }
+
+    @Test
+    fun `stream a single file after verifying validity of token`()
     {
         val response = MockHttpServletResponse()
 
-        sut.streamFile(
+        sut.streamFiles(
             id = packetId,
-            hash = "sha256:exampleHash",
-            false,
-            "test.html",
-            response = response
+            paths = listOf("path/test.html"),
+            token = tokenId,
+            filename = "test-filename.html",
+            inline = false,
+            response = response,
         )
+
+        verify(oneTimeTokenService).validateToken(tokenId, packetId, listOf("path/test.html"))
+
+        val packetArgumentCaptor = argumentCaptor<String>()
+        val pathArgumentCaptor = argumentCaptor<String>()
+        verify(packetService).getFileByPath(packetArgumentCaptor.capture(), pathArgumentCaptor.capture(), any(), any())
+        assertEquals(packetId, packetArgumentCaptor.firstValue)
+        assertEquals("path/test.html", pathArgumentCaptor.firstValue)
+
         assertEquals(response.contentAsString, "mocked output content")
 
         assertEquals(response.status, HttpStatus.OK.value())
         assertEquals(response.contentType, "text/html")
-        assertEquals(response.getHeader("Content-Disposition"), "attachment; filename=\"test.html\"")
+        assertEquals(response.getHeader("Content-Disposition"), "attachment; filename=\"test-filename.html\"")
         assertEquals(response.getHeader("Content-Length"), "100")
     }
 
     @Test
-    fun `get packet file by id, with inline disposition`()
+    fun `stream a single file, with inline disposition, after verifying validity of token`()
     {
         val response = MockHttpServletResponse()
 
-        sut.streamFile(
+        sut.streamFiles(
             id = packetId,
-            hash = "sha256:exampleHash",
-            true,
-            "test.html",
-            response = response
+            paths = listOf("path/test.html"),
+            token = tokenId,
+            filename = "test-filename.html",
+            inline = true,
+            response = response,
         )
+
+        verify(oneTimeTokenService).validateToken(tokenId, packetId, listOf("path/test.html"))
+
+        val packetArgumentCaptor = argumentCaptor<String>()
+        val pathArgumentCaptor = argumentCaptor<String>()
+        verify(packetService).getFileByPath(packetArgumentCaptor.capture(), pathArgumentCaptor.capture(), any(), any())
+        assertEquals(packetId, packetArgumentCaptor.firstValue)
+        assertEquals("path/test.html", pathArgumentCaptor.firstValue)
+
         assertEquals(response.contentAsString, "mocked output content")
 
         assertEquals(response.status, HttpStatus.OK.value())
         assertEquals(response.contentType, "text/html")
-        assertEquals(response.getHeader("Content-Disposition"), "inline; filename=\"test.html\"")
+        assertEquals(response.getHeader("Content-Disposition"), "inline; filename=\"test-filename.html\"")
         assertEquals(response.getHeader("Content-Length"), "100")
     }
 
     @Test
-    fun `cannot get file from different packet`()
-    {
+    fun `stream multiple files as a zip, with a valid token`() {
         val response = MockHttpServletResponse()
 
-        val error = assertThrows<PackitException> {
-            sut.streamFile(
-                id = "20170819-164847-7574883b",
-                hash = "sha256:exampleHash",
-                false,
-                "test.html",
-                response = response
-            )
-        }
-        assertEquals("doesNotExist", error.key)
-    }
+        sut.streamFiles(packetId, listOf("file1.txt", "file2.txt"), tokenId, "my_archive.zip", false, response)
 
-    @Test
-    fun `streamZip should set correct response headers and content type, and call PacketService`() {
-        val response = MockHttpServletResponse()
-
-        val paths = listOf("file1.txt", "file2.txt")
-        sut.streamZip(packetId, paths, response)
-
+        verify(oneTimeTokenService).validateToken(tokenId, packetId, listOf("file1.txt", "file2.txt"))
         verify(packetService).streamZip(listOf("file1.txt", "file2.txt"), packetId, response.outputStream)
 
         assertEquals("application/zip", response.contentType)
-        assertEquals("attachment; filename=\"$packetId.zip\"", response.getHeader("Content-Disposition"))
+        assertEquals("attachment; filename=\"my_archive.zip\"", response.getHeader("Content-Disposition"))
         assertEquals(HttpStatus.OK.value(), response.status)
+    }
+
+    @Test
+    fun `refuse to stream zip as inline`() {
+        val response = MockHttpServletResponse()
+
+        val error = assertThrows<PackitException> {
+            sut.streamFiles(packetId, listOf("file1.txt", "file2.txt"), tokenId, "my_archive.zip", true, response)
+        }
+        assertEquals("inlineDownloadNotSupported", error.key)
     }
 }
