@@ -3,7 +3,7 @@ Interface is built with [React library](https://reactjs.org)
 
 ## Requirements
 
-Node 18.
+Node 22.
 
 ## Available Scripts
 
