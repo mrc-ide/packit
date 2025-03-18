@@ -1,4 +1,5 @@
-import { test as setup, expect, Page } from "@playwright/test";
+import { test as setup, expect } from "./tagCheckFixture";
+import { Page } from "@playwright/test";
 
 const authMethodIsBasic = async (apiURL: string) => {
   const response = await fetch(`${apiURL}/auth/config`);
