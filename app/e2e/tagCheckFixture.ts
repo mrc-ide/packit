@@ -4,7 +4,7 @@ export const TAG_STATE_MUTATE = "@stateMutate";
 export const TAG_DEMO_PACKETS = "@demoPackets";
 
 const isLocal = (baseURL: string) => baseURL.startsWith("http://localhost");
-const isDev = (baseURL: string) => baseURL.startsWith("https://packit-dev.dide.ic.ac.uk");
+const isDev = (baseURL: string) => new URL(baseURL).hostname.endsWith("packit-dev.dide.ic.ac.uk");
 
 const safeGrep = `--grep-invert ${TAG_STATE_MUTATE}|${TAG_DEMO_PACKETS}`;
 
