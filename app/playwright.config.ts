@@ -50,7 +50,8 @@ export default defineConfig({
     trace: "on-first-retry",
 
     headless: true,
-    screenshot: "only-on-failure"
+    screenshot: "only-on-failure",
+    locale: "en-GB"
   },
   /* Configure projects for major browsers */
   projects: process.env.CI

@@ -22,15 +22,12 @@ test.describe("Demo packet group page", { tag: TAG_DEMO_PACKETS }, () => {
     await expect(link).toHaveText(packetId);
     const expectedHref = getInstanceRelativePath(baseURL, `parameters/${packetId}`);
     await expect(await link.getAttribute("href")).toBe(expectedHref);
-    // We expect servers we're testing on to have either GB or US locale.
-    // Using node current locale doesn't always match browser.
     const expectedDate = new Date(Date.UTC(2024, 6, 29, 15, 46, 52));
-    const usLocale = expectedDate.toLocaleString("en-US");
-    const gbLocale = expectedDate.toLocaleString("en-GB");
     const dateLocator = await firstCell.locator("div.text-muted-foreground");
     await expect(dateLocator).toBeVisible();
     const dateText = await dateLocator.innerHTML();
-    expect(dateText === usLocale || dateText === gbLocale).toBe(true);
+    // We set locale to en-GB in the playwright config
+    expect(dateText === expectedDate.toLocaleString("en-GB")).toBe(true);
     const secondCell = (await oldestRow.getByRole("cell").all())[1];
     const parameterPills = await secondCell.locator(".rounded-md").all();
     await expect(parameterPills.length).toBe(3);
