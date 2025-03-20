@@ -21,6 +21,7 @@ export const AccountHeaderDropdown = () => {
   const handleLogout = () => {
     removeUser();
     setLoggingOut(true);
+    // TODO: logout here using BASE_URL and window navigation
     navigate("/login");
   };
 
