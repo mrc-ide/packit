@@ -21,8 +21,9 @@ export const AccountHeaderDropdown = () => {
   const handleLogout = () => {
     removeUser();
     setLoggingOut(true);
-    // TODO: logout here using BASE_URL and window navigation
-    navigate("/login");
+    // Set loggingOut so that any external auth manager (Montagu) knows to log out too
+    const newLocation = new URL("/login?loggingOut=1", process.env.PUBLIC_URL);
+    window.location.href = newLocation.href;
   };
 
   return (
