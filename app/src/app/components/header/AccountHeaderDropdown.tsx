@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { getInitials } from "../../../lib/string";
 import { Avatar, AvatarFallback } from "../Base/Avatar";
 import { Button } from "../Base/Button";
@@ -14,7 +13,6 @@ import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 import { useUser } from "../providers/UserProvider";
 
 export const AccountHeaderDropdown = () => {
-  const navigate = useNavigate();
   const { removeUser, user } = useUser();
   const { setLoggingOut } = useRedirectOnLogin();
 
@@ -22,8 +20,7 @@ export const AccountHeaderDropdown = () => {
     removeUser();
     setLoggingOut(true);
     // Set loggingOut so that any external auth manager (Montagu) knows to log out too
-    const newLocation = new URL("/login?loggingOut=1", process.env.PUBLIC_URL);
-    window.location.href = newLocation.href;
+    window.location.href = `${process.env.PUBLIC_URL}/login?loggingOut=1`;
   };
 
   return (
