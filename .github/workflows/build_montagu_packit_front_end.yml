@@ -1,4 +1,4 @@
-name: build-docker-db
+name: build-montagu-packit-front-end
 
 on:
   push:
@@ -20,5 +20,5 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Build and push
+      - name: Build and push montagu
         run: app/scripts/build-and-push-montagu
