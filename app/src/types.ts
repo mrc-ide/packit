@@ -35,7 +35,6 @@ export interface Packet {
   id: string;
   name: string;
   displayName: string;
-  published: boolean;
   parameters: Record<string, string | number | boolean>;
   importTime: number;
   startTime: number;
@@ -50,7 +49,6 @@ export interface PacketMetadata {
   id: string;
   name: string;
   displayName?: string;
-  published?: boolean;
   parameters: Record<string, string> | null;
   time: TimeMetadata;
   files: FileMetadata[];

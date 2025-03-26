@@ -30,6 +30,7 @@ interface PacketService
     fun getPacketsByName(
         name: String
     ): List<Packet>
+
     fun streamZip(paths: List<String>, id: String, output: OutputStream)
     fun getPacket(id: String): Packet
 }
@@ -49,7 +50,7 @@ class BasePacketService(
             .map {
                 Packet(
                     it.id, it.name, it.name,
-                    it.parameters ?: mapOf(), false, now,
+                    it.parameters ?: mapOf(), now,
                     it.time.start, it.time.end
                 )
             }
@@ -116,22 +117,26 @@ class BasePacketService(
         return this.joinToString("") { "%02x".format(it) }
     }
 
-    override fun streamZip(paths: List<String>, id: String, output: OutputStream) {
+    override fun streamZip(paths: List<String>, id: String, output: OutputStream)
+    {
         val metadataFiles = getMetadataBy(id).files
         val hashesByPath = metadataFiles
             .filter { it.path in paths }
             .associateBy({ it.path }, { it.hash })
         val notFoundPaths = paths.filter { path -> metadataFiles.none { it.path == path } }
 
-        if (notFoundPaths.isNotEmpty()) {
+        if (notFoundPaths.isNotEmpty())
+        {
             throw PackitException("notAllFilesFound", HttpStatus.NOT_FOUND)
         }
 
-        if (paths.isEmpty()) {
+        if (paths.isEmpty())
+        {
             throw PackitException("noFilesProvided", HttpStatus.BAD_REQUEST)
         }
 
-        try {
+        try
+        {
             ZipOutputStream(output).use { zipOutputStream ->
                 hashesByPath.forEach { (filename, hash) ->
                     zipOutputStream.putNextEntry(ZipEntry(filename))
@@ -139,7 +144,8 @@ class BasePacketService(
                     zipOutputStream.closeEntry()
                 }
             }
-        } catch (e: Exception) {
+        } catch (e: Exception)
+        {
             // Log error on the back end (does not affect front end, client just downloads an incomplete file)
             throw PackitException("errorCreatingZip", HttpStatus.INTERNAL_SERVER_ERROR)
         }
