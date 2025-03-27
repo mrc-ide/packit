@@ -170,7 +170,7 @@ class BaseRoleService(
         val grantedAuthorities = mutableSetOf<GrantedAuthority>()
         roles.forEach { role ->
             role.rolePermissions.forEach {
-                grantedAuthorities.add(SimpleGrantedAuthority(getPermissionScoped(it)))
+                grantedAuthorities.add(SimpleGrantedAuthority(permissionService.getPermissionScoped(it)))
             }
         }
         return grantedAuthorities
@@ -181,16 +181,4 @@ class BaseRoleService(
         return roleRepository.findByIsUsernameAndNameIn(isUsername = false, appConfig.defaultRoles)
     }
 
-    internal fun getPermissionScoped(rolePermission: RolePermission): String
-    {
-        val scopeString = when
-        {
-            rolePermission.packet != null -> ":packet:${rolePermission.packet!!.name}:${rolePermission.packet!!.id}"
-            rolePermission.packetGroup != null -> ":packetGroup:${rolePermission.packetGroup!!.name}"
-            rolePermission.tag != null -> ":tag:${rolePermission.tag!!.name}"
-            else -> ""
-        }
-
-        return rolePermission.permission.name + scopeString
-    }
 }

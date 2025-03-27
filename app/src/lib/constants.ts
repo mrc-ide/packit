@@ -9,6 +9,6 @@ export const GLOBAL_PERMISSIONS = [
   "user.manage",
   "packet.manage"
 ] as const;
-export const SCOPED_PERMISSIONS = ["packet.read", "packet.manage"];
+export const SCOPED_PERMISSIONS: readonly string[] = ["packet.read", "packet.manage"];
 export const PERMISSION_SCOPES = ["global", "packet", "tag", "packetGroup"] as const;
 export type PermissionScope = (typeof PERMISSION_SCOPES)[number];

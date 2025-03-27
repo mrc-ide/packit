@@ -4,21 +4,23 @@ import org.springframework.security.access.expression.SecurityExpressionOperatio
 import org.springframework.stereotype.Component
 import packit.model.Packet
 import packit.service.PacketService
+import packit.service.PermissionService
 
 @Component("authz")
 class AuthorizationLogic(
-    private val packetService: PacketService
+    private val packetService: PacketService,
+    private val permissionService: PermissionService
 )
 {
     fun canReadPacket(operations: SecurityExpressionOperations, packet: Packet): Boolean =
         // TODO: update with tag when implemented
         operations.hasAnyAuthority(
             "packet.read",
-            buildScopedPermission("packet.read", packet.name, packet.id),
-            buildScopedPermission("packet.read", packet.name),
+            permissionService.getPermissionScoped("packet.read", packet.name, packet.id),
+            permissionService.getPermissionScoped("packet.read", packet.name),
             "packet.manage",
-            buildScopedPermission("packet.manage", packet.name, packet.id),
-            buildScopedPermission("packet.manage", packet.name)
+            permissionService.getPermissionScoped("packet.manage", packet.name, packet.id),
+            permissionService.getPermissionScoped("packet.manage", packet.name)
         )
 
 
@@ -32,9 +34,9 @@ class AuthorizationLogic(
     {
         return operations.hasAnyAuthority(
             "packet.read",
-            buildScopedPermission("packet.read", name),
+            permissionService.getPermissionScoped("packet.read", name),
             "packet.manage",
-            buildScopedPermission("packet.manage", name),
+            permissionService.getPermissionScoped("packet.manage", name),
         ) || canReadAnyPacketInGroup(operations, name)
     }
 
@@ -54,22 +56,6 @@ class AuthorizationLogic(
         return operations.authentication.authorities.any {
             it.authority.contains("packet.read:packet:$name") ||
                     it.authority.contains("packet.manage:packet:$name")
-        }
-    }
-
-    internal fun buildScopedPermission(
-        permission: String,
-        packetName: String? = null,
-        packetId: String? = null,
-        tag: String? = null
-    ): String
-    {
-        return when
-        {
-            packetId != null && packetName != null -> "$permission:packet:$packetName:$packetId"
-            packetName != null -> "$permission:packetGroup:$packetName"
-            tag != null -> "$permission:tag:$tag"
-            else -> permission
         }
     }
 }
