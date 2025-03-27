@@ -38,6 +38,7 @@ class AppConfig(private val environment: Environment)
     val authRedirectUri: String = requiredEnvValue("auth.oauth2.redirect.url")
     val authEnableGithubLogin: Boolean = requiredEnvValue("auth.method") == "github"
     val authEnableBasicLogin: Boolean = requiredEnvValue("auth.method") == "basic"
+    val authEnablePreAuthLogin: Boolean = requiredEnvValue("auth.method") == "preauth"
     val authExpiryDays: Long = requiredEnvValue("auth.expiryDays").toLong()
     val authEnabled: Boolean = requiredEnvValue("auth.enabled").toBoolean()
     val authGithubAPIOrg: String = requiredEnvValue("auth.githubAPIOrg")
