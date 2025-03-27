@@ -9,18 +9,18 @@ import packit.service.PermissionService
 @Component("authz")
 class AuthorizationLogic(
     private val packetService: PacketService,
-    private val permissionService: PermissionService
+    private val permissionService: PermissionService,
 )
 {
     fun canReadPacket(operations: SecurityExpressionOperations, packet: Packet): Boolean =
         // TODO: update with tag when implemented
         operations.hasAnyAuthority(
             "packet.read",
-            permissionService.getPermissionScoped("packet.read", packet.name, packet.id),
-            permissionService.getPermissionScoped("packet.read", packet.name),
+            permissionService.buildScopedPermission("packet.read", packet.name, packet.id),
+            permissionService.buildScopedPermission("packet.read", packet.name),
             "packet.manage",
-            permissionService.getPermissionScoped("packet.manage", packet.name, packet.id),
-            permissionService.getPermissionScoped("packet.manage", packet.name)
+            permissionService.buildScopedPermission("packet.manage", packet.name, packet.id),
+            permissionService.buildScopedPermission("packet.manage", packet.name)
         )
 
 
@@ -34,9 +34,9 @@ class AuthorizationLogic(
     {
         return operations.hasAnyAuthority(
             "packet.read",
-            permissionService.getPermissionScoped("packet.read", name),
+            permissionService.buildScopedPermission("packet.read", name),
             "packet.manage",
-            permissionService.getPermissionScoped("packet.manage", name),
+            permissionService.buildScopedPermission("packet.manage", name),
         ) || canReadAnyPacketInGroup(operations, name)
     }
 
@@ -50,7 +50,7 @@ class AuthorizationLogic(
 
     internal fun canReadAnyPacketInGroup(
         operations: SecurityExpressionOperations,
-        name: String
+        name: String,
     ): Boolean
     {
         return operations.authentication.authorities.any {

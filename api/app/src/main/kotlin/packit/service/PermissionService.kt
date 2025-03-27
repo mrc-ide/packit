@@ -10,18 +10,18 @@ import packit.repository.PermissionRepository
 interface PermissionService
 {
     fun checkMatchingPermissions(permissionsToCheck: List<String>): List<Permission>
-    fun getPermissionScoped(rolePermission: RolePermission): String
-    fun getPermissionScoped(
+    fun buildScopedPermission(rolePermission: RolePermission): String
+    fun buildScopedPermission(
         permission: String,
         packetGroupName: String? = null,
         packetId: String? = null,
-        tag: String? = null
+        tag: String? = null,
     ): String
 }
 
 @Service
 class BasePermissionService(
-    private val permissionRepository: PermissionRepository
+    private val permissionRepository: PermissionRepository,
 ) : PermissionService
 {
     override fun checkMatchingPermissions(permissionsToCheck: List<String>): List<Permission>
@@ -35,7 +35,7 @@ class BasePermissionService(
         return matchedPermissions
     }
 
-    override fun getPermissionScoped(rolePermission: RolePermission): String
+    override fun buildScopedPermission(rolePermission: RolePermission): String
     {
         val packetGroupName = when
         {
@@ -43,17 +43,17 @@ class BasePermissionService(
             rolePermission.packetGroup != null -> rolePermission.packetGroup!!.name
             else -> null
         }
-        return getPermissionScoped(
+        return buildScopedPermission(
             rolePermission.permission.name, packetGroupName,
             rolePermission.packet?.id, rolePermission.tag?.name
         )
     }
 
-    override fun getPermissionScoped(
+    override fun buildScopedPermission(
         permission: String,
         packetGroupName: String?,
         packetId: String?,
-        tag: String?
+        tag: String?,
     ): String
     {
         return when

@@ -170,7 +170,7 @@ class BaseRoleService(
         val grantedAuthorities = mutableSetOf<GrantedAuthority>()
         roles.forEach { role ->
             role.rolePermissions.forEach {
-                grantedAuthorities.add(SimpleGrantedAuthority(permissionService.getPermissionScoped(it)))
+                grantedAuthorities.add(SimpleGrantedAuthority(permissionService.buildScopedPermission(it)))
             }
         }
         return grantedAuthorities
