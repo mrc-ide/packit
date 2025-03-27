@@ -175,12 +175,10 @@ class AuthorizationLogicTest
         assertTrue(sut.canReadRoles(ops))
     }
 
-
     @Test
     fun `canReadRoles returns false if has no manage authority`()
     {
         val ops = createOps(listOf("packet.read"))
         assertFalse(sut.canReadRoles(ops))
     }
-
 }

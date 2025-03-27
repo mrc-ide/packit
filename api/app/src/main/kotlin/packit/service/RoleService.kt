@@ -180,5 +180,4 @@ class BaseRoleService(
     {
         return roleRepository.findByIsUsernameAndNameIn(isUsername = false, appConfig.defaultRoles)
     }
-
 }

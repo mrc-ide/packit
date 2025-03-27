@@ -23,7 +23,6 @@ class AuthorizationLogic(
             permissionService.buildScopedPermission("packet.manage", packet.name)
         )
 
-
     fun canReadPacket(operations: SecurityExpressionOperations, id: String): Boolean
     {
         val packet = packetService.getPacket(id)
