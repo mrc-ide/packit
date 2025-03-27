@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { GLOBAL_PERMISSIONS, PERMISSION_SCOPES } from "../../../../../lib/constants";
+import { GLOBAL_PERMISSIONS, PERMISSION_SCOPES, SCOPED_PERMISSIONS } from "../../../../../lib/constants";
 import { Button } from "../../../Base/Button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../../Base/Form";
 import { RadioGroup, RadioGroupItem } from "../../../Base/RadioGroup";
@@ -68,7 +68,7 @@ export const AddPermissionForUpdateForm = ({ addPermission, currentPermissions }
               <Select
                 onValueChange={(value) => {
                   field.onChange(value);
-                  if (value !== "packet.read") {
+                  if (!SCOPED_PERMISSIONS.includes(value)) {
                     form.setValue("scope", "global");
                   }
                 }}
@@ -101,7 +101,7 @@ export const AddPermissionForUpdateForm = ({ addPermission, currentPermissions }
                 <RadioGroup
                   onValueChange={field.onChange}
                   className="flex flex-row space-x-3"
-                  disabled={form.watch("permission") !== "packet.read"}
+                  disabled={!SCOPED_PERMISSIONS.includes(form.watch("permission"))}
                   value={field.value}
                 >
                   {PERMISSION_SCOPES.map((scope) => (
@@ -110,7 +110,10 @@ export const AddPermissionForUpdateForm = ({ addPermission, currentPermissions }
                         <RadioGroupItem value={scope} />
                       </FormControl>
                       <FormLabel
-                        className={cn("font-normal", form.watch("permission") !== "packet.read" && "opacity-70")}
+                        className={cn(
+                          "font-normal",
+                          !SCOPED_PERMISSIONS.includes(form.watch("permission")) && "opacity-70"
+                        )}
                       >
                         {scope === "packetGroup" ? "packet group" : scope}
                       </FormLabel>
