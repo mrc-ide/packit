@@ -151,6 +151,10 @@ class RoleServiceTest
             createRoleWithPermission("role1", "permission1")
         val role2 =
             createRoleWithPermission("role2", "permission2")
+        whenever(permissionService.buildScopedPermission(any<RolePermission>())).thenAnswer {
+            val rolePermission = it.getArgument(0) as RolePermission
+            rolePermission.permission.name
+        }
 
         val result = roleService.getGrantedAuthorities(listOf(role1, role2))
 
@@ -163,47 +167,9 @@ class RoleServiceTest
                 )
             )
         )
-    }
-
-    @Test
-    fun `getPermissionScoped returns permission name with packet name and id`()
-    {
-        val rolePermission = createRoleWithPermission("role", "permission", "123").rolePermissions[0]
-
-        val result = roleService.getPermissionScoped(rolePermission)
-
-        assertEquals("permission:packet:packetName:123", result)
-    }
-
-    @Test
-    fun `getPermissionScoped returns permission name with packetGroup id`()
-    {
-        val rolePermission =
-            createRoleWithPermission("role", "permission", packetGroupName = "packetGroupName").rolePermissions[0]
-
-        val result = roleService.getPermissionScoped(rolePermission)
-
-        assertEquals("permission:packetGroup:packetGroupName", result)
-    }
-
-    @Test
-    fun `getPermissionScoped returns permission name with tag id`()
-    {
-        val rolePermission = createRoleWithPermission("role", "permission", tagName = "tagName").rolePermissions[0]
-
-        val result = roleService.getPermissionScoped(rolePermission)
-
-        assertEquals("permission:tag:tagName", result)
-    }
-
-    @Test
-    fun `getPermissionScoped returns permission name when no scope`()
-    {
-        val rolePermission = createRoleWithPermission("role", "permission").rolePermissions[0]
-
-        val result = roleService.getPermissionScoped(rolePermission)
-
-        assertEquals("permission", result)
+        val argCapture = argumentCaptor<RolePermission>()
+        verify(permissionService, times(2)).buildScopedPermission(argCapture.capture())
+        assertEquals(argCapture.allValues, listOf(role1.rolePermissions[0], role2.rolePermissions[0]))
     }
 
     @Test

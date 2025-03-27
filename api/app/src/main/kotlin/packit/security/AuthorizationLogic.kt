@@ -54,8 +54,8 @@ class AuthorizationLogic(
     ): Boolean
     {
         return operations.authentication.authorities.any {
-            it.authority.contains("packet.read:packet:$name") ||
-                    it.authority.contains("packet.manage:packet:$name")
+            it.authority.startsWith("packet.read:packet:$name") ||
+                    it.authority.startsWith("packet.manage:packet:$name")
         }
     }
 }
