@@ -7,11 +7,13 @@ usage() {
     echo " --db-build-skip       Skip building the db"
     echo " --api-build-skip      Skip building the api"
     echo " --super-user          Add basic super user"
+    echo " --preauth             Runs in preauth mode"
 }
 
 DB_BUILD_SKIP=0
 API_BUILD_SKIP=0
 ADD_SUPER_USER=0
+PREAUTH=0
 
 handle_options() {
   while [ $# -gt 0 ]; do
@@ -29,6 +31,9 @@ handle_options() {
       --super-user)
         ADD_SUPER_USER=1
         ;;
+      --preauth)
+        PREAUTH=1
+        ;;
       *)
         echo "Invalid option: $1" >&2
         usage
@@ -38,6 +43,8 @@ handle_options() {
     shift
   done
 }
+
+# TODO: check incompatible options
 
 handle_options "$@"
 
@@ -54,12 +61,17 @@ if [ $API_BUILD_SKIP -eq 0 ]; then
     "$HERE"/../api/scripts/build
 fi
 
-BASIC_AUTH=""
+AUTH_METHOD=""
+
+if [ $PREAUTH -eq 1 ]; then
+  AUTH_METHOD="preauth"
+fi
+
 if [ $ADD_SUPER_USER -eq 1 ]; then
   # assume we want to run with basic auth if we're creating a basic super user
-  BASIC_AUTH="basicauth"
+  AUTH_METHOD="basic"
 fi
-"$HERE"/../api/scripts/run $BASIC_AUTH
+"$HERE"/../api/scripts/run $AUTH_METHOD
 
 if [ $ADD_SUPER_USER -eq 1 ]; then
     "$HERE"/basic-create-super-user
