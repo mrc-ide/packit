@@ -1,9 +1,12 @@
 package packit.unit.service
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.*
 import org.springframework.data.domain.Sort
+import org.springframework.http.HttpStatus
+import packit.exceptions.PackitException
 import packit.model.*
 import packit.model.dto.OutpackMetadata
 import packit.model.dto.PacketGroupSummary
@@ -14,6 +17,7 @@ import packit.service.OutpackServerClient
 import packit.service.PacketService
 import packit.unit.packetToOutpackMetadata
 import java.time.Instant
+import java.util.*
 import kotlin.test.assertEquals
 
 class PacketGroupServiceTest
@@ -327,5 +331,35 @@ class PacketGroupServiceTest
         assertEquals(result.content[0].latestDisplayName, "the display name")
         verify(packetGroupRepo).findLatestPacketIdForGroup("testing")
         verify(differentOutpackServerClient).getMetadata()
+    }
+
+    @Test
+    fun `getPacketGroup returns packet group when found in repository`()
+    {
+        val packetGroupId = 1
+        val expectedPacketGroup = PacketGroup("test")
+        whenever(packetGroupRepository.findById(packetGroupId)).thenReturn(Optional.of(expectedPacketGroup))
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
+
+        val result = sut.getPacketGroup(packetGroupId)
+
+        assertEquals(expectedPacketGroup, result)
+        verify(packetGroupRepository).findById(packetGroupId)
+    }
+
+    @Test
+    fun `getPacketGroup throws PackitException when packet group not found`()
+    {
+        val packetGroupId = 999
+        whenever(packetGroupRepository.findById(packetGroupId)).thenReturn(Optional.empty())
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
+
+        val exception = assertThrows<PackitException> {
+            sut.getPacketGroup(packetGroupId)
+        }.apply {
+            assertEquals("packetGroupNotFound", key)
+            assertEquals(HttpStatus.NOT_FOUND, httpStatus)
+        }
+        verify(packetGroupRepository).findById(packetGroupId)
     }
 }

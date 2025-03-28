@@ -52,7 +52,7 @@ class BaseRolePermissionService(
     ): List<RolePermission>
     {
         return updateRolePermissions.map { addRolePermission ->
-            val permission = permissionService.getPermissionByName(addRolePermission.permission)
+            val permission = permissionService.getByName(addRolePermission.permission)
 
             RolePermission(
                 role = role,
@@ -109,7 +109,7 @@ class BaseRolePermissionService(
         packetGroupId: Int?,
     )
     {
-        val permission = permissionService.getPermissionByName("packet.read")
+        val permission = permissionService.getByName("packet.read")
         val packet = packetId?.let {
             packetService.getPacket(it)
         }

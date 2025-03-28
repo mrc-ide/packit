@@ -18,7 +18,7 @@ interface PermissionService
         tag: String? = null,
     ): String
 
-    fun getPermissionByName(permissionName: String): Permission
+    fun getByName(permissionName: String): Permission
 }
 
 @Service
@@ -67,7 +67,7 @@ class BasePermissionService(
         }
     }
 
-    override fun getPermissionByName(permissionName: String): Permission
+    override fun getByName(permissionName: String): Permission
     {
         return permissionRepository.findByName(permissionName)
             ?: throw PackitException("permissionNotFound", HttpStatus.BAD_REQUEST)

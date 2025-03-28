@@ -2,6 +2,7 @@ package packit.integration.controllers
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpMethod
@@ -9,11 +10,9 @@ import org.springframework.http.HttpStatus
 import org.springframework.test.context.jdbc.Sql
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
-import packit.model.Role
-import packit.model.RolePermission
-import packit.model.User
+import packit.model.*
 import packit.model.dto.*
-import packit.model.toDto
+import packit.repository.PacketGroupRepository
 import packit.repository.PermissionRepository
 import packit.repository.RoleRepository
 import packit.repository.UserRepository
@@ -37,6 +36,19 @@ class RoleControllerTest : IntegrationTest()
 
     @Autowired
     private lateinit var roleService: RoleService
+
+    @Autowired
+    private lateinit var packetGroupRepository: PacketGroupRepository
+
+    private var packetGroup = PacketGroup(
+        name = "test-name",
+    )
+
+    @AfterEach
+    fun cleanupData()
+    {
+        packetGroupRepository.delete(packetGroup)
+    }
 
     private val testCreateRole = CreateRole(
         name = "testRole",
@@ -376,5 +388,86 @@ class RoleControllerTest : IntegrationTest()
             jacksonObjectMapper().readTree(result.body).get("users").first().get("username").asText()
         )
         assertEquals(1, roleRepository.findByName(testRole.name)!!.users.size)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.manage:packet:test:123"])
+    fun `user without permission cannot update read permission on roles`()
+    {
+        val updatePacketReadRoles = jacksonObjectMapper().writeValueAsString(
+            UpdatePacketReadRoles(
+                packetGroupId = 1,
+                roleNamesToAdd = setOf(),
+                roleNamesToRemove = setOf()
+            )
+        )
+        val result = restTemplate.exchange(
+            "/roles/test-name/read-permissions",
+            HttpMethod.PUT,
+            getTokenizedHttpEntity(data = updatePacketReadRoles),
+            String::class.java
+        )
+
+        assertEquals(result.statusCode, HttpStatus.UNAUTHORIZED)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.manage"])
+    fun `user with packet manage can update read permission on roles`()
+    {
+        packetGroup = packetGroupRepository.save(
+            packetGroup
+        )
+        val roleNamesToAdd = setOf("testRole1", "testRole2")
+        val roleNamesToRemove = setOf("testRole3", "testRole4")
+        roleRepository.saveAll(
+            roleNamesToAdd.map {
+            Role(name = it)
+        }
+        )
+        val rolesToRemove = roleRepository.saveAll(
+            roleNamesToRemove.map {
+            Role(name = it)
+        }
+        ).onEach {
+            it.rolePermissions = mutableListOf(
+                RolePermission(
+                    role = it,
+                    permission = permissionsRepository.findByName("packet.read")!!,
+                    packetGroup = packetGroup
+                )
+            )
+        }
+        roleRepository.saveAll(rolesToRemove)
+        val updatePacketReadRoles = jacksonObjectMapper().writeValueAsString(
+            UpdatePacketReadRoles(
+                packetGroupId = packetGroup.id,
+                roleNamesToAdd = roleNamesToAdd,
+                roleNamesToRemove = roleNamesToRemove
+            )
+        )
+
+        val result = restTemplate.exchange(
+            "/roles/${packetGroup.name}/read-permissions",
+            HttpMethod.PUT,
+            getTokenizedHttpEntity(data = updatePacketReadRoles),
+            String::class.java
+        )
+
+        assertEquals(result.statusCode, HttpStatus.NO_CONTENT)
+        val addedRoles = roleRepository.findByNameIn(roleNamesToAdd.toList())
+        val removedRoles = roleRepository.findByNameIn(roleNamesToRemove.toList())
+        removedRoles.forEach {
+            assertEquals(
+                it.rolePermissions.size,
+                0
+            )
+        }
+        addedRoles.forEach {
+            assertEquals(
+                it.rolePermissions.first().packetGroup?.id,
+                packetGroup.id
+            )
+        }
     }
 }
