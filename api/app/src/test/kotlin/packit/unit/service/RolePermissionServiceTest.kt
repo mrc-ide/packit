@@ -1,35 +1,49 @@
 package packit.unit.service
 
 import org.junit.jupiter.api.assertThrows
-import org.mockito.kotlin.any
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
+import org.mockito.kotlin.*
 import org.springframework.http.HttpStatus
 import packit.exceptions.PackitException
 import packit.model.*
 import packit.model.dto.UpdateRolePermission
-import packit.repository.*
-import packit.service.BaseRolePermissionService
-import java.util.*
+import packit.repository.RolePermissionRepository
+import packit.repository.RoleRepository
+import packit.service.*
+import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class RolePermissionServiceTest
 {
-
-    private val permissionRepository: PermissionRepository = mock()
-    private val packetRepository: PacketRepository = mock()
-    private val packetGroupRepository: PacketGroupRepository = mock()
-    private val tagRepository: TagRepository = mock()
+    private val now = Instant.now().epochSecond.toDouble()
+    private val packet = Packet(
+        "20240101-090000-4321gaga",
+        "test",
+        "",
+        mapOf("alpha" to 1),
+        now,
+        now,
+        now
+    )
+    private val packetGroup = PacketGroup(name = "name1", id = 1)
+    private val permissionService: PermissionService = mock()
+    private val packetService: PacketService = mock {
+        on { getPacket(any()) } doReturn packet
+    }
+    private val packetGroupService: PacketGroupService = mock() {
+        on { getPacketGroup(any()) } doReturn packetGroup
+    }
+    private val tagService: TagService = mock()
     private val rolePermissionRepository: RolePermissionRepository = mock()
+    private val roleRepository: RoleRepository = mock()
 
     private val service = BaseRolePermissionService(
-        permissionRepository,
-        packetRepository,
-        packetGroupRepository,
-        tagRepository,
-        rolePermissionRepository
+        permissionService,
+        packetService,
+        packetGroupService,
+        tagService,
+        rolePermissionRepository,
+        roleRepository
     )
 
     @Test
@@ -38,8 +52,8 @@ class RolePermissionServiceTest
         val role = Role("role1")
         val mockPacket = mock<Packet>()
         val updateRolePermission = UpdateRolePermission("permission1", "id-1")
-        whenever(permissionRepository.findByName(any())).thenReturn(mock())
-        whenever(packetRepository.findById(any())).thenReturn(Optional.of(mockPacket))
+        whenever(permissionService.getByName(any())).thenReturn(mock())
+        whenever(packetService.getPacket(any())).thenReturn(mockPacket)
 
         val result = service.getRolePermissionsToUpdate(role, listOf(updateRolePermission))
 
@@ -54,8 +68,8 @@ class RolePermissionServiceTest
         val role = Role("role1")
         val mockPacketGroup = mock<PacketGroup>()
         val updateRolePermission = UpdateRolePermission("permission1", packetGroupId = 1)
-        whenever(permissionRepository.findByName(any())).thenReturn(mock())
-        whenever(packetGroupRepository.findById(any())).thenReturn(Optional.of(mockPacketGroup))
+        whenever(permissionService.getByName(any())).thenReturn(mock())
+        whenever(packetGroupService.getPacketGroup(any())).thenReturn(mockPacketGroup)
 
         val result = service.getRolePermissionsToUpdate(role, listOf(updateRolePermission))
 
@@ -70,77 +84,14 @@ class RolePermissionServiceTest
         val role = Role("role1")
         val mockTag = mock<Tag>()
         val updateRolePermission = UpdateRolePermission("permission1", tagId = 1)
-        whenever(permissionRepository.findByName(any())).thenReturn(mock())
-        whenever(tagRepository.findById(any())).thenReturn(Optional.of(mockTag))
+        whenever(permissionService.getByName(any())).thenReturn(mock())
+        whenever(tagService.getTag(any())).thenReturn(mockTag)
 
         val result = service.getRolePermissionsToUpdate(role, listOf(updateRolePermission))
 
         assertEquals(1, result.size)
         assertEquals(role, result[0].role)
         assertEquals(mockTag, result[0].tag)
-    }
-
-    @Test
-    fun `getRolePermissionsToUpdate throws PackitException when permission is not found`()
-    {
-        val role = Role("role1")
-        val updateRolePermission = UpdateRolePermission("permission1")
-        whenever(permissionRepository.findByName(any())).thenReturn(null)
-
-        assertThrows<PackitException> {
-            service.getRolePermissionsToUpdate(role, listOf(updateRolePermission))
-        }.apply {
-            assertEquals("invalidPermissionsProvided", key)
-            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
-        }
-    }
-
-    @Test
-    fun `getRolePermissionsToUpdate throws PackitException when packet is not found`()
-    {
-        val role = Role("role1")
-        val updateRolePermission = UpdateRolePermission("permission1", "packet1")
-        whenever(permissionRepository.findByName(any())).thenReturn(mock())
-        whenever(packetRepository.findById(any())).thenReturn(Optional.empty())
-
-        assertThrows<PackitException> {
-            service.getRolePermissionsToUpdate(role, listOf(updateRolePermission))
-        }.apply {
-            assertEquals("packetNotFound", key)
-            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
-        }
-    }
-
-    @Test
-    fun `getRolePermissionsToUpdate throws PackitException when packetGroup is not found`()
-    {
-        val role = Role("role1")
-        val updateRolePermission = UpdateRolePermission("permission1", packetGroupId = 1)
-        whenever(permissionRepository.findByName(any())).thenReturn(mock())
-        whenever(packetGroupRepository.findById(any())).thenReturn(Optional.empty())
-
-        assertThrows<PackitException> {
-            service.getRolePermissionsToUpdate(role, listOf(updateRolePermission))
-        }.apply {
-            assertEquals("packetGroupNotFound", key)
-            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
-        }
-    }
-
-    @Test
-    fun `getRolePermissionsToUpdate throws PackitException when tag is not found`()
-    {
-        val role = Role("role1")
-        val updateRolePermission = UpdateRolePermission("permission1", tagId = 1)
-        whenever(permissionRepository.findByName(any())).thenReturn(mock())
-        whenever(tagRepository.findById(any())).thenReturn(Optional.empty())
-
-        assertThrows<PackitException> {
-            service.getRolePermissionsToUpdate(role, listOf(updateRolePermission))
-        }.apply {
-            assertEquals("tagNotFound", key)
-            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
-        }
     }
 
     @Test
@@ -153,7 +104,7 @@ class RolePermissionServiceTest
             RolePermission(role, permission1, id = 1),
             RolePermission(role, Permission("permission2", "d2"), id = 2)
         )
-        whenever(permissionRepository.findByName(any())).thenReturn(permission1)
+        whenever(permissionService.getByName(any())).thenReturn(permission1)
 
         val result = service.removeRolePermissionsFromRole(role, removeRolePermissions)
 
@@ -173,7 +124,7 @@ class RolePermissionServiceTest
         role.rolePermissions = mutableListOf(
             RolePermission(role, Permission("permission2", "d2"), id = 2)
         )
-        whenever(permissionRepository.findByName(any())).thenReturn(permission1)
+        whenever(permissionService.getByName(any())).thenReturn(permission1)
 
         assertThrows<PackitException> {
             service.removeRolePermissionsFromRole(role, updateRolePermissions)
@@ -189,7 +140,7 @@ class RolePermissionServiceTest
         val role = Role("role1")
         val permission1 = Permission("permission1", "d1")
         val addRolePermissions = listOf(UpdateRolePermission(permission1.name))
-        whenever(permissionRepository.findByName(any())).thenReturn(permission1)
+        whenever(permissionService.getByName(any())).thenReturn(permission1)
 
         val result = service.getRolePermissionsToAdd(role, addRolePermissions)
 
@@ -205,13 +156,162 @@ class RolePermissionServiceTest
         val permission1 = Permission("permission1", "d1")
         val addRolePermissions = listOf(UpdateRolePermission(permission1.name))
         role.rolePermissions = mutableListOf(RolePermission(role, permission1, id = 1))
-        whenever(permissionRepository.findByName(any())).thenReturn(permission1)
+        whenever(permissionService.getByName(any())).thenReturn(permission1)
 
         assertThrows<PackitException> {
             service.getRolePermissionsToAdd(role, addRolePermissions)
         }.apply {
             assertEquals("rolePermissionAlreadyExists", key)
             assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+        }
+    }
+
+    @Test
+    fun `updatePacketReadPermissionOnRoles calls correct methods with arguments`()
+    {
+        val serviceSpy = spy(service)
+        val rolesToAdd = listOf(Role("role1"), Role("role2"))
+        val rolesToRemove = listOf(Role("role3"), Role("role4"))
+        val permission = Permission("permission1", "d1")
+        whenever(permissionService.getByName(any())).thenReturn(permission)
+        doNothing().`when`(serviceSpy).removePermissionFromRoles(rolesToRemove, permission, packet, packetGroup)
+        doNothing().`when`(serviceSpy).addPermissionToRoles(rolesToAdd, permission, packet, packetGroup)
+
+        serviceSpy.updatePacketReadPermissionOnRoles(rolesToAdd, rolesToRemove, packet.id, packetGroup.id)
+
+        verify(packetService).getPacket(packet.id)
+        verify(packetGroupService).getPacketGroup(packetGroup.id!!)
+        verify(serviceSpy).removePermissionFromRoles(rolesToRemove, permission, packet, packetGroup)
+        verify(serviceSpy).addPermissionToRoles(rolesToAdd, permission, packet, packetGroup)
+    }
+
+    @Test
+    fun `removePermissionFromRoles throw error when 2 of packet, packetGroup, tag are not null`()
+    {
+
+        assertThrows<IllegalArgumentException> {
+            service.removePermissionFromRoles(
+                listOf(Role("role1")),
+                Permission("permission1", "d1"),
+                packet,
+                packetGroup,
+                null
+            )
+        }.apply {
+            assertEquals(
+                "Either all of packet, tag, packetGroup should be null or only one of them should be not null",
+                message
+            )
+        }
+    }
+
+    @Test
+    fun `removePermissionFromRoles throw error when rolePermission doesnt exist on a role`()
+    {
+        val roles = listOf(Role("role1"), Role("role2"))
+        val permission = Permission("permission1", "d1")
+        roles[0].apply {
+            rolePermissions = mutableListOf(
+                RolePermission(this, permission, packet = packet, id = 1)
+            )
+        }
+        // this role permission does not match as not packet but packet group
+        roles[1].apply {
+            rolePermissions = mutableListOf(
+                RolePermission(this, permission, packetGroup = packetGroup, id = 2)
+            )
+        }
+
+        assertThrows<PackitException> {
+            service.removePermissionFromRoles(
+                roles, permission, packet, null, null
+            )
+        }.apply {
+            assertEquals("rolePermissionDoesNotExist", key)
+            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+        }
+    }
+
+    @Test
+    fun `removePermissionFromRoles removes permissions from roles`()
+    {
+        val roles = listOf(Role("role1"), Role("role2"))
+        val permission = Permission("permission1", "d1")
+        roles.forEachIndexed { index, role ->
+            role.rolePermissions = mutableListOf(
+                RolePermission(role, permission, packet = packet, id = index)
+            )
+        }
+        service.removePermissionFromRoles(
+            roles, permission, packet, null, null
+        )
+
+        assertEquals(0, roles[0].rolePermissions.size)
+        assertEquals(0, roles[1].rolePermissions.size)
+
+        verify(rolePermissionRepository).deleteAllByIdIn(listOf(0, 1))
+    }
+
+    @Test
+    fun `addPermissionToRoles throw error when 2 of packet, packetGroup, tag are not null`()
+    {
+
+        assertThrows<IllegalArgumentException> {
+            service.addPermissionToRoles(
+                listOf(Role("role1")),
+                Permission("permission1", "d1"),
+                packet,
+                packetGroup,
+                null
+            )
+        }.apply {
+            assertEquals(
+                "Either all of packet, tag, packetGroup should be null or only one of them should be not null",
+                message
+            )
+        }
+    }
+
+    @Test
+    fun `addPermissionToRoles throw error when rolePermission already exists on a role`()
+    {
+        val roles = listOf(Role("role1"), Role("role2"))
+        val permission = Permission("permission1", "d1")
+        // already exists on role 1, thus will throw error
+        roles[0].apply {
+            rolePermissions = mutableListOf(
+                RolePermission(this, permission, packet = packet, id = 1)
+            )
+        }
+        roles[1].apply {
+            rolePermissions = mutableListOf(
+                RolePermission(this, permission, packetGroup = packetGroup, id = 2)
+            )
+        }
+
+        assertThrows<PackitException> {
+            service.addPermissionToRoles(
+                roles, permission, packet, null, null
+            )
+        }.apply {
+            assertEquals("rolePermissionAlreadyExists", key)
+            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+        }
+    }
+
+    @Test
+    fun `addPermissionToRoles adds permissions from roles`()
+    {
+        val roles = listOf(Role("role1"), Role("role2"))
+        val permission = Permission("permission1", "d1")
+        service.addPermissionToRoles(
+            roles, permission, packet, null, null
+        )
+
+        roles.forEach {
+            it.rolePermissions = mutableListOf(
+                RolePermission(it, permission, packet = packet)
+            )
         }
     }
 }

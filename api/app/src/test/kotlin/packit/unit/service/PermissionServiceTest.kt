@@ -6,6 +6,7 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import org.springframework.http.HttpStatus
 import packit.exceptions.PackitException
 import packit.model.Packet
 import packit.model.Permission
@@ -111,5 +112,32 @@ class PermissionServiceTest
         val result = basePermissionService.buildScopedPermission(rolePermission)
 
         Assertions.assertEquals("permission", result)
+    }
+
+    @Test
+    fun `getByName returns permission when found in repository`()
+    {
+        val permissionName = "permission.read"
+        val expectedPermission = Permission(permissionName, "Read permission")
+        whenever(permissionRepository.findByName(permissionName)).thenReturn(expectedPermission)
+
+        val result = basePermissionService.getByName(permissionName)
+
+        assertEquals(expectedPermission, result)
+    }
+
+    @Test
+    fun `getByName throws PackitException when permission not found`()
+    {
+        val permissionName = "permission.nonexistent"
+        whenever(permissionRepository.findByName(permissionName)).thenReturn(null)
+
+        assertThrows<PackitException> {
+            basePermissionService.getByName(permissionName)
+        }.apply {
+
+            assertEquals("permissionNotFound", key)
+            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+        }
     }
 }
