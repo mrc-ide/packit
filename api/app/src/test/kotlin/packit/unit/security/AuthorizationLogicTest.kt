@@ -2,7 +2,8 @@ package packit.unit.security
 
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.mockito.kotlin.*
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
 import org.springframework.security.access.expression.SecurityExpressionOperations
 import org.springframework.security.access.expression.SecurityExpressionRoot
 import org.springframework.security.authentication.TestingAuthenticationToken
@@ -21,7 +22,6 @@ class AuthorizationLogicTest
         "test",
         "test name",
         mapOf("name" to "value"),
-        false,
         now,
         now,
         now
@@ -33,9 +33,11 @@ class AuthorizationLogicTest
 
     private val sut = AuthorizationLogic(packetService)
 
-    private fun createOps(authorities: List<String>): SecurityExpressionOperations {
-        val token = TestingAuthenticationToken("", "", authorities.map{SimpleGrantedAuthority(it)})
-        return object : SecurityExpressionRoot(token) {}
+    private fun createOps(authorities: List<String>): SecurityExpressionOperations
+    {
+        val token = TestingAuthenticationToken("", "", authorities.map { SimpleGrantedAuthority(it) })
+        return object : SecurityExpressionRoot(token)
+        {}
     }
 
     @Test

@@ -2,12 +2,8 @@ package packit.unit.controllers
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.mockito.ArgumentMatchers.*
-import org.mockito.kotlin.any
-import org.mockito.kotlin.doAnswer
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
+import org.mockito.ArgumentMatchers.anyString
+import org.mockito.kotlin.*
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -33,10 +29,10 @@ class PacketControllerTest
             mapOf("name" to "value"),
             listOf(
                 FileMetadata(
-                "hello.txt",
-                size = 49,
-                hash = "sha256:exampleHash"
-            )
+                    "hello.txt",
+                    size = 49,
+                    hash = "sha256:exampleHash"
+                )
             ),
             GitMetadata("git", "sha", emptyList()),
             TimeMetadata(Instant.now().epochSecond.toDouble(), Instant.now().epochSecond.toDouble()),
@@ -61,7 +57,6 @@ class PacketControllerTest
             "test1",
             "test name1",
             mapOf("name" to "value"),
-            true,
             now,
             now,
             now,
@@ -71,7 +66,6 @@ class PacketControllerTest
             "test3",
             "test name3",
             mapOf("alpha" to true),
-            false,
             1690902034.0,
             1690902034.0,
             1690902034.0
@@ -88,10 +82,10 @@ class PacketControllerTest
         on { getPackets(PageablePayload(0, 10), "", "") } doReturn mockPageablePackets
         on {
             getFileByHash(
-            anyString(),
-            any<OutputStream>(),
-            any<(ClientHttpResponse) -> Unit>()
-        )
+                anyString(),
+                any<OutputStream>(),
+                any<(ClientHttpResponse) -> Unit>()
+            )
         } doAnswer { invocationOnMock ->
             val callback = invocationOnMock.getArgument<(ClientHttpResponse) -> Unit>(2)
             callback(mockClientHttpResponse)
@@ -184,7 +178,8 @@ class PacketControllerTest
     }
 
     @Test
-    fun `streamZip should set correct response headers and content type, and call PacketService`() {
+    fun `streamZip should set correct response headers and content type, and call PacketService`()
+    {
         val response = MockHttpServletResponse()
 
         val paths = listOf("file1.txt", "file2.txt")

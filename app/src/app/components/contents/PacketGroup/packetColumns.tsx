@@ -43,7 +43,6 @@ export const setupPacketColumns = (allParametersKeys: Set<string>) => {
       cell: ({ getValue, row }) => {
         const id = getValue();
         const startTime = new Date(row.original.startTime * 1000); // convert from seconds to milliseconds
-        const isPublished = row.original.published;
 
         return (
           <div className="flex flex-col">
@@ -55,11 +54,6 @@ export const setupPacketColumns = (allParametersKeys: Set<string>) => {
             </Link>
             <div className="flex space-x-2 items-center">
               <div className="text-xs text-muted-foreground">{startTime.toLocaleString()}</div>
-              {isPublished ? (
-                <div className="text-xs text-green-500">Published</div>
-              ) : (
-                <div className="text-xs text-orange-500">Internal</div>
-              )}
             </div>
           </div>
         );
