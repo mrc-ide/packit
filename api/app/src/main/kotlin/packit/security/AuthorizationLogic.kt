@@ -47,6 +47,29 @@ class AuthorizationLogic(
                 }
     }
 
+    fun canUpdatePacketReadRoles(
+        operations: SecurityExpressionOperations,
+        packetName: String,
+        packetId: String? = null,
+        packetGroupId: Int? = null
+    ): Boolean
+    {
+        return when
+        {
+            operations.hasAnyAuthority("packet.manage", "user.manage") -> true
+            packetGroupId != null -> operations.hasAnyAuthority(
+                permissionService.buildScopedPermission("packet.manage", packetName)
+            )
+
+            packetId != null -> operations.hasAnyAuthority(
+                permissionService.buildScopedPermission("packet.manage", packetName, packetId),
+                permissionService.buildScopedPermission("packet.manage", packetName)
+            )
+
+            else -> false
+        }
+    }
+
     internal fun canReadAnyPacketInGroup(
         operations: SecurityExpressionOperations,
         name: String,
