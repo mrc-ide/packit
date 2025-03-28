@@ -10,10 +10,7 @@ import packit.exceptions.PackitException
 import packit.model.Permission
 import packit.model.Role
 import packit.model.RolePermission
-import packit.model.dto.CreateRole
-import packit.model.dto.RoleDto
-import packit.model.dto.UpdateRolePermission
-import packit.model.dto.UpdateRolePermissions
+import packit.model.dto.*
 import packit.model.toDto
 import packit.repository.RoleRepository
 
@@ -32,6 +29,7 @@ interface RoleService
     fun getByRoleName(roleName: String): Role?
     fun getSortedRoleDtos(roles: List<Role>): List<RoleDto>
     fun getDefaultRoles(): List<Role>
+    fun updatePacketReadPermissionOnRoles(updatePacketReadRoles: UpdatePacketReadRoles)
 }
 
 @Service
@@ -179,5 +177,27 @@ class BaseRoleService(
     override fun getDefaultRoles(): List<Role>
     {
         return roleRepository.findByIsUsernameAndNameIn(isUsername = false, appConfig.defaultRoles)
+    }
+
+    override fun updatePacketReadPermissionOnRoles(updatePacketReadRoles: UpdatePacketReadRoles)
+    {
+        val roleNamesToAdd = updatePacketReadRoles.roleNamesToAdd - updatePacketReadRoles.roleNamesToRemove
+        val roleNamesToRemove = updatePacketReadRoles.roleNamesToRemove - updatePacketReadRoles.roleNamesToAdd
+        val roleNamesToUpdate = roleNamesToAdd + roleNamesToRemove
+        if (roleNamesToUpdate.isEmpty())
+        {
+            throw PackitException("noRolesToUpdateWithPermission", HttpStatus.BAD_REQUEST)
+        }
+
+        val rolesToUpdate =
+            getRolesByRoleNames(roleNamesToUpdate.toList())
+
+        val addedRoles = rolePermissionService.updatePacketReadPermissionOnRoles(
+            rolesToUpdate.filter { it.name in roleNamesToAdd },
+            rolesToUpdate.filter { it.name in roleNamesToRemove },
+            updatePacketReadRoles.packetId,
+            updatePacketReadRoles.packetGroupId
+        )
+        roleRepository.saveAll(addedRoles)
     }
 }

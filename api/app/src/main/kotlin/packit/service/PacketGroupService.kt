@@ -21,6 +21,7 @@ interface PacketGroupService
     fun getPacketGroups(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroup>
     fun getPacketGroupDisplay(name: String): PacketGroupDisplay
     fun getPacketGroupSummaries(pageablePayload: PageablePayload, filter: String): Page<PacketGroupSummary>
+    fun getPacketGroup(id: Int): PacketGroup
 }
 
 @Service
@@ -54,7 +55,8 @@ class BasePacketGroupService(
     override fun getPacketGroupSummaries(
         pageablePayload: PageablePayload,
         filter: String
-    ): Page<PacketGroupSummary> {
+    ): Page<PacketGroupSummary>
+    {
         val allPacketGroups = packetGroupRepository.findAll()
         val packetIds = findLatestPacketIdsForGroups(allPacketGroups.map { it.name })
         val allPacketsMetadata = outpackServerClient.getMetadata()
@@ -65,15 +67,23 @@ class BasePacketGroupService(
             .mapNotNull {
                 val display = getDisplayNameForPacket(it.custom, it.name)
 
-                if (it.name.contains(filter, ignoreCase = true) || display.contains(filter, ignoreCase = true)) {
+                if (it.name.contains(filter, ignoreCase = true) || display.contains(filter, ignoreCase = true))
+                {
                     val packetCount = allPacketsMetadata.count { p -> p.name == it.name }
                     it.toPacketGroupSummary(packetCount, display)
-                } else {
+                } else
+                {
                     null
                 }
             }.sortedByDescending { it.latestTime }
 
         return PagingHelper.convertListToPage(latestPackets, pageablePayload)
+    }
+
+    override fun getPacketGroup(id: Int): PacketGroup
+    {
+        return packetGroupRepository.findById(id)
+            .orElseThrow { PackitException("packetGroupNotFound", HttpStatus.NOT_FOUND) }
     }
 
     /**
@@ -85,9 +95,11 @@ class BasePacketGroupService(
     private fun findLatestPacketIdsForGroups(names: List<String>): List<String>
     {
         return names.mapNotNull {
-            try {
+            try
+            {
                 packetGroupRepository.findLatestPacketIdForGroup(it)?.id
-            } catch (e: AccessDeniedException) {
+            } catch (e: AccessDeniedException)
+            {
                 null
             }
         }
