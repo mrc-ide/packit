@@ -39,15 +39,15 @@ class BaseUserService(
 {
     override fun saveUserFromGithub(username: String, displayName: String?, email: String?): User
     {
-        saveUser(username, displayName, email, "github")
+        return saveUser(username, displayName, email, "github")
     }
 
-    override fun savePreauthenticatedUser(username: String, displayName: String?, email: String?): User
+    override fun savePreAuthenticatedUser(username: String, displayName: String?, email: String?): User
     {
-        saveUser(username, displayName, email, "preauth")
+        return saveUser(username, displayName, email, "preauth")
     }
 
-    private fun saveUser(username: String, displayName: String?, email: String?, userSource: String)
+    private fun saveUser(username: String, displayName: String?, email: String?, userSource: String): User
     {
         val user = userRepository.findByUsername(username)
         if (user != null)

@@ -4,15 +4,15 @@ set -e
 HERE=$(dirname $0)
 . $HERE/common
 
-if [ "$1" == "basicauth" ]; then
+if [[ -n "$1" ]]; then
+  echo auth method is $1
   $HERE/../../scripts/wait-notify \
     --docker-run -- \
     --rm \
     --network=host \
     --name packit-api \
-    -e PACKIT_AUTH_METHOD=basic \
+    -e PACKIT_AUTH_METHOD=$1 \
     "$TAG_BRANCH"
-
 else 
   $HERE/../../scripts/wait-notify \
     --docker-run -- \

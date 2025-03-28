@@ -42,15 +42,15 @@ class LoginController(
 
     // NB This endpoint MUST be protected in the proxy when preauth login is enabled,
     // as headers received by it will be treated as preauthenticated user details.
-    @PostMapping("/login/preauth")
+    @GetMapping("/login/preauth")
     @ResponseBody
-    fun loginWithTrustedHeaders
+    fun loginWithTrustedHeaders(
         @RequestHeader("X-Remote-User") username : String,
         @RequestHeader("X-Remote-Name") name: String,
         @RequestHeader("X-Remote-Email") email: String
     ): ResponseEntity<Map<String, String>>
     {
-        if (!config.authEnableHeadersLogin)
+        if (!config.authEnablePreAuthLogin)
         {
             throw PackitException("preauthLoginDisabled", HttpStatus.FORBIDDEN)
         }
