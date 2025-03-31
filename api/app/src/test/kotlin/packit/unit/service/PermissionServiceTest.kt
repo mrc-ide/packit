@@ -174,5 +174,4 @@ class PermissionServiceTest
             assertEquals("packetGroupName must be provided if packetId is given", message)
         }
     }
-
 }
