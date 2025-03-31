@@ -43,7 +43,7 @@ class AuthorizationLogic(
     {
         return operations.hasAuthority("user.manage") ||
                 operations.authentication.authorities.any {
-                    it.authority.contains("packet.manage")
+                    it.authority.startsWith("packet.manage")
                 }
     }
 
