@@ -138,7 +138,9 @@ class PermissionServiceTest
 
             assertEquals("permissionNotFound", key)
             assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+        }
     }
+
     fun `buildScopedPermission throws error when both packetGroup and tag are provided`()
     {
 
@@ -174,4 +176,5 @@ class PermissionServiceTest
             assertEquals("packetGroupName must be provided if packetId is given", message)
         }
     }
+
 }
