@@ -147,7 +147,6 @@ class PermissionServiceTest
         val packetGroupName = "packetGroupName"
         val tagName = "tagName"
 
-
         assertThrows<IllegalArgumentException> {
             basePermissionService.buildScopedPermission(
                 permission = "packet.read",
@@ -157,7 +156,6 @@ class PermissionServiceTest
         }.apply {
             assertEquals("Only one of packetGroupName or tag can be provided", message)
         }
-
     }
 
     @Test
