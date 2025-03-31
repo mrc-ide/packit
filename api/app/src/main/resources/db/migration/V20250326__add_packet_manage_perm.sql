@@ -1,4 +1,4 @@
--- add pakcet.manage permission
+-- add packet.manage permission
 INSERT into "permission" ("name", "description")
 VALUES ('packet.manage', 'Manage read permission on packets')
 ON CONFLICT ("name") DO NOTHING;

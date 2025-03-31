@@ -1,6 +1,6 @@
 export const PAGE_SIZE = 50;
 
-// TODO: get this from api and store in local storage
+// TODO: get this from api and store in AuthConfigProvider
 export const GLOBAL_PERMISSIONS = [
   "outpack.read",
   "outpack.write",

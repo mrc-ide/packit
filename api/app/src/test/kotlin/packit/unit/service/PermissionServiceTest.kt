@@ -112,4 +112,41 @@ class PermissionServiceTest
 
         Assertions.assertEquals("permission", result)
     }
+
+    @Test
+    fun `buildScopedPermission throws error when both packetGroup and tag are provided`()
+    {
+
+        val packetGroupName = "packetGroupName"
+        val tagName = "tagName"
+
+
+        assertThrows<IllegalArgumentException> {
+            basePermissionService.buildScopedPermission(
+                permission = "packet.read",
+                packetGroupName = packetGroupName,
+                tag = tagName
+            )
+        }.apply {
+            assertEquals("Only one of packetGroupName or tag can be provided", message)
+        }
+
+    }
+
+    @Test
+    fun `buildScopedPermission throws error when packetId is provided without packetGroupName`()
+    {
+        val packetId = "packetId"
+        val packetGroupName = null
+
+        assertThrows<IllegalArgumentException> {
+            basePermissionService.buildScopedPermission(
+                permission = "packet.read",
+                packetGroupName = packetGroupName,
+                packetId = packetId
+            )
+        }.apply {
+            assertEquals("packetGroupName must be provided if packetId is given", message)
+        }
+    }
 }

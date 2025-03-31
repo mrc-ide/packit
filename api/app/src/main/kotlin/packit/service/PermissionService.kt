@@ -56,9 +56,17 @@ class BasePermissionService(
         tag: String?,
     ): String
     {
+        require(listOf(packetGroupName, tag).count { it != null } <= 1) {
+            "Only one of packetGroupName or tag can be provided"
+        }
+
+        require(packetId == null || packetGroupName != null) {
+            "packetGroupName must be provided if packetId is given"
+        }
+
         return when
         {
-            packetId != null && packetGroupName != null -> "$permission:packet:$packetGroupName:$packetId"
+            packetId != null -> "$permission:packet:$packetGroupName:$packetId"
             packetGroupName != null -> "$permission:packetGroup:$packetGroupName"
             tag != null -> "$permission:tag:$tag"
             else -> permission
