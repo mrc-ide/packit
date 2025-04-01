@@ -45,7 +45,7 @@ class LoginController(
     @GetMapping("/login/preauth")
     @ResponseBody
     fun loginWithTrustedHeaders(
-        @RequestHeader("X-Remote-User") username : String,
+        @RequestHeader("X-Remote-User") username: String,
         @RequestHeader("X-Remote-Name") name: String,
         @RequestHeader("X-Remote-Email") email: String
     ): ResponseEntity<Map<String, String>>
