@@ -7,6 +7,7 @@ import packit.model.dto.RoleDto
 @Entity
 @Table(name = "`role`")
 class Role(
+    @Column(unique = true, nullable = false)
     var name: String,
     var isUsername: Boolean = false,
     @OneToMany(mappedBy = "role", fetch = FetchType.EAGER, cascade = [CascadeType.ALL])

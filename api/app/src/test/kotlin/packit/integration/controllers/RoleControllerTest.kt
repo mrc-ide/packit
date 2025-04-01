@@ -396,7 +396,6 @@ class RoleControllerTest : IntegrationTest()
     {
         val updatePacketReadRoles = jacksonObjectMapper().writeValueAsString(
             UpdatePacketReadRoles(
-                packetGroupId = 1,
                 roleNamesToAdd = setOf(),
                 roleNamesToRemove = setOf()
             )
@@ -422,13 +421,13 @@ class RoleControllerTest : IntegrationTest()
         val roleNamesToRemove = setOf("testRole3", "testRole4")
         roleRepository.saveAll(
             roleNamesToAdd.map {
-            Role(name = it)
-        }
+                Role(name = it)
+            }
         )
         val rolesToRemove = roleRepository.saveAll(
             roleNamesToRemove.map {
-            Role(name = it)
-        }
+                Role(name = it)
+            }
         ).onEach {
             it.rolePermissions = mutableListOf(
                 RolePermission(
@@ -441,7 +440,6 @@ class RoleControllerTest : IntegrationTest()
         roleRepository.saveAll(rolesToRemove)
         val updatePacketReadRoles = jacksonObjectMapper().writeValueAsString(
             UpdatePacketReadRoles(
-                packetGroupId = packetGroup.id,
                 roleNamesToAdd = roleNamesToAdd,
                 roleNamesToRemove = roleNamesToRemove
             )
