@@ -76,20 +76,19 @@ class RoleController(private val roleService: RoleService, private val userRoleS
         return ResponseEntity.ok(role.toDto())
     }
 
-    @PutMapping("/{packetName}/read-permissions")
+    @PutMapping("/{packetGroupName}/read-permissions")
     @PreAuthorize(
         "@authz.canUpdatePacketReadRoles(" +
                 "#root," +
-                "#packetName," +
-                "#updatePacketReadRoles.packetId, " +
-                "#updatePacketReadRoles.packetGroupId)"
+                "#packetGroupName," +
+                "#updatePacketReadRoles.packetId)"
     )
     fun updatePacketReadPermissionOnRoles(
         @RequestBody @Validated updatePacketReadRoles: UpdatePacketReadRoles,
-        @PathVariable packetName: String
+        @PathVariable packetGroupName: String
     ): ResponseEntity<Unit>
     {
-        roleService.updatePacketReadPermissionOnRoles(updatePacketReadRoles)
+        roleService.updatePacketReadPermissionOnRoles(updatePacketReadRoles, packetGroupName)
 
         return ResponseEntity.noContent().build()
     }

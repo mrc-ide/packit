@@ -15,8 +15,8 @@ interface RolePermissionService
     fun updatePacketReadPermissionOnRoles(
         rolesToAdd: List<Role>,
         rolesToRemove: List<Role>,
+        packetGroupName: String,
         packetId: String? = null,
-        packetGroupId: Int? = null,
     )
 
     fun addPermissionToRoles(
@@ -105,16 +105,18 @@ class BaseRolePermissionService(
     override fun updatePacketReadPermissionOnRoles(
         rolesToAdd: List<Role>,
         rolesToRemove: List<Role>,
+        packetGroupName: String,
         packetId: String?,
-        packetGroupId: Int?,
     )
     {
         val permission = permissionService.getByName("packet.read")
-        val packet = packetId?.let {
-            packetService.getPacket(it)
-        }
-        val packetGroup = packetGroupId?.let {
-            packetGroupService.getPacketGroup(it)
+        val packet = packetId?.let { packetService.getPacket(it) }
+        val packetGroup = if (packetId == null)
+        {
+            packetGroupService.getPacketGroupByName(packetGroupName)
+        } else
+        {
+            null
         }
 
         removePermissionFromRoles(

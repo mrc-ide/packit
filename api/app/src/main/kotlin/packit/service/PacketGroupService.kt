@@ -22,6 +22,7 @@ interface PacketGroupService
     fun getPacketGroupDisplay(name: String): PacketGroupDisplay
     fun getPacketGroupSummaries(pageablePayload: PageablePayload, filter: String): Page<PacketGroupSummary>
     fun getPacketGroup(id: Int): PacketGroup
+    fun getPacketGroupByName(name: String): PacketGroup
 }
 
 @Service
@@ -84,6 +85,12 @@ class BasePacketGroupService(
     {
         return packetGroupRepository.findById(id)
             .orElseThrow { PackitException("packetGroupNotFound", HttpStatus.NOT_FOUND) }
+    }
+
+    override fun getPacketGroupByName(name: String): PacketGroup
+    {
+        return packetGroupRepository.findByName(name)
+            ?: throw PackitException("packetGroupNotFound", HttpStatus.NOT_FOUND)
     }
 
     /**

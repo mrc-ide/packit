@@ -16,22 +16,22 @@ import kotlin.test.assertEquals
 class RolePermissionServiceTest
 {
     private val now = Instant.now().epochSecond.toDouble()
+    private val packetGroup = PacketGroup(name = "name1", id = 1)
     private val packet = Packet(
         "20240101-090000-4321gaga",
-        "test",
+        packetGroup.name,
         "",
         mapOf("alpha" to 1),
         now,
         now,
         now
     )
-    private val packetGroup = PacketGroup(name = "name1", id = 1)
     private val permissionService: PermissionService = mock()
     private val packetService: PacketService = mock {
         on { getPacket(any()) } doReturn packet
     }
     private val packetGroupService: PacketGroupService = mock() {
-        on { getPacketGroup(any()) } doReturn packetGroup
+        on { getPacketGroupByName(any()) } doReturn packetGroup
     }
     private val tagService: TagService = mock()
     private val rolePermissionRepository: RolePermissionRepository = mock()
@@ -167,22 +167,39 @@ class RolePermissionServiceTest
     }
 
     @Test
-    fun `updatePacketReadPermissionOnRoles calls correct methods with arguments`()
+    fun `updatePacketReadPermissionOnRoles calls correct methods with arguments when packetId passed`()
     {
         val serviceSpy = spy(service)
         val rolesToAdd = listOf(Role("role1"), Role("role2"))
         val rolesToRemove = listOf(Role("role3"), Role("role4"))
         val permission = Permission("permission1", "d1")
         whenever(permissionService.getByName(any())).thenReturn(permission)
-        doNothing().`when`(serviceSpy).removePermissionFromRoles(rolesToRemove, permission, packet, packetGroup)
-        doNothing().`when`(serviceSpy).addPermissionToRoles(rolesToAdd, permission, packet, packetGroup)
+        doNothing().`when`(serviceSpy).removePermissionFromRoles(rolesToRemove, permission, packet)
+        doNothing().`when`(serviceSpy).addPermissionToRoles(rolesToAdd, permission, packet)
 
-        serviceSpy.updatePacketReadPermissionOnRoles(rolesToAdd, rolesToRemove, packet.id, packetGroup.id)
+        serviceSpy.updatePacketReadPermissionOnRoles(rolesToAdd, rolesToRemove, packet.name, packet.id)
 
         verify(packetService).getPacket(packet.id)
-        verify(packetGroupService).getPacketGroup(packetGroup.id!!)
-        verify(serviceSpy).removePermissionFromRoles(rolesToRemove, permission, packet, packetGroup)
-        verify(serviceSpy).addPermissionToRoles(rolesToAdd, permission, packet, packetGroup)
+        verify(serviceSpy).removePermissionFromRoles(rolesToRemove, permission, packet)
+        verify(serviceSpy).addPermissionToRoles(rolesToAdd, permission, packet)
+    }
+
+    @Test
+    fun `updatePacketReadPermissionOnRoles calls correct methods with arguments when packetId not passed`()
+    {
+        val serviceSpy = spy(service)
+        val rolesToAdd = listOf(Role("role1"), Role("role2"))
+        val rolesToRemove = listOf(Role("role3"), Role("role4"))
+        val permission = Permission("permission1", "d1")
+        whenever(permissionService.getByName(any())).thenReturn(permission)
+        doNothing().`when`(serviceSpy).removePermissionFromRoles(rolesToRemove, permission, packetGroup = packetGroup)
+        doNothing().`when`(serviceSpy).addPermissionToRoles(rolesToAdd, permission, packetGroup = packetGroup)
+
+        serviceSpy.updatePacketReadPermissionOnRoles(rolesToAdd, rolesToRemove, packetGroup.name, null)
+
+        verify(packetGroupService).getPacketGroupByName(packetGroup.name)
+        verify(serviceSpy).removePermissionFromRoles(rolesToRemove, permission, packetGroup = packetGroup)
+        verify(serviceSpy).addPermissionToRoles(rolesToAdd, permission, packetGroup = packetGroup)
     }
 
     @Test

@@ -7,21 +7,11 @@ data class UpdateRolePermissions(
     val removePermissions: List<UpdateRolePermission> = listOf()
 )
 
-class UpdatePacketReadRoles(
+data class UpdatePacketReadRoles(
     val packetId: String? = null,
-    val packetGroupId: Int? = null,
     val roleNamesToAdd: Set<String> = setOf(),
     val roleNamesToRemove: Set<String> = setOf()
 )
-{
-    init
-    {
-        val nonNullFields = listOf(packetId, packetGroupId).count { it != null }
-        require(nonNullFields == 1) {
-            "Only one of packetId or packetGroupId should be not null"
-        }
-    }
-}
 
 class UpdateRolePermission(
     @field:NotNull

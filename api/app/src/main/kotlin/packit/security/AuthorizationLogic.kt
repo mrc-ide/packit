@@ -49,24 +49,22 @@ class AuthorizationLogic(
 
     fun canUpdatePacketReadRoles(
         operations: SecurityExpressionOperations,
-        packetName: String,
+        packetGroupName: String,
         packetId: String? = null,
-        packetGroupId: Int? = null
     ): Boolean
     {
         return when
         {
             operations.hasAnyAuthority("packet.manage", "user.manage") -> true
-            packetGroupId != null -> operations.hasAnyAuthority(
-                permissionService.buildScopedPermission("packet.manage", packetName)
+            // check if the user has permission to manage the packet group
+            packetId == null -> operations.hasAnyAuthority(
+                permissionService.buildScopedPermission("packet.manage", packetGroupName)
             )
-
-            packetId != null -> operations.hasAnyAuthority(
-                permissionService.buildScopedPermission("packet.manage", packetName, packetId),
-                permissionService.buildScopedPermission("packet.manage", packetName)
+            // check if the user has permission to manage the packet
+            else -> operations.hasAnyAuthority(
+                permissionService.buildScopedPermission("packet.manage", packetGroupName, packetId),
+                permissionService.buildScopedPermission("packet.manage", packetGroupName)
             )
-
-            else -> false
         }
     }
 

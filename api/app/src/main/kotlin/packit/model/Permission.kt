@@ -5,6 +5,7 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "permission")
 class Permission(
+    @Column(unique = true, nullable = false)
     var name: String,
     var description: String,
     @OneToMany(mappedBy = "permission", cascade = [CascadeType.ALL])

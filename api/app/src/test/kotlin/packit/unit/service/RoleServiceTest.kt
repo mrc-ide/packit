@@ -613,21 +613,22 @@ class RoleServiceTest
         val rolesToRemove = setOf("role3", "role4")
         val updateRoleNames = rolesToAdd + rolesToRemove
         val packetId = "packet123"
+        val packetGroupName = "packetGroup1"
 
-        val updatePacketReadRoles = UpdatePacketReadRoles(packetId, null, rolesToAdd.toSet(), rolesToRemove.toSet())
+        val updatePacketReadRoles = UpdatePacketReadRoles(packetId, rolesToAdd.toSet(), rolesToRemove.toSet())
         val allRoles = updateRoleNames.map { Role(name = it) }
 
         doReturn(updateRoleNames).`when`(spyRoleService)
             .getUniqueRoleNamesForUpdate(rolesToAdd, rolesToRemove)
         doReturn(allRoles).`when`(spyRoleService).getRolesByRoleNames(any())
 
-        spyRoleService.updatePacketReadPermissionOnRoles(updatePacketReadRoles)
+        spyRoleService.updatePacketReadPermissionOnRoles(updatePacketReadRoles, packetGroupName)
 
         verify(rolePermissionService).updatePacketReadPermissionOnRoles(
             allRoles.subList(0, 2),
             allRoles.subList(2, 4),
-            packetId,
-            null
+            packetGroupName,
+            packetId
         )
         verify(spyRoleService).getUniqueRoleNamesForUpdate(rolesToAdd, rolesToRemove)
         verify(spyRoleService).getRolesByRoleNames(updateRoleNames.toList())
