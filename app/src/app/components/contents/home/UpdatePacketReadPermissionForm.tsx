@@ -16,7 +16,7 @@ export const UpdatePacketReadPermissionForm = ({
   packetGroupName
 }: UpdatePacketReadPermissionFormProps) => {
   const [fetchError, setFetchError] = useState("");
-
+  // only have packetGroupName not packetId!!
   const formSchema = z.object({});
 
   return <div>UpdatePacketReadPermissionForm</div>;
