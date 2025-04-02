@@ -4,17 +4,15 @@ import { canManagePacketGroup } from "../../../../lib/auth/hasPermission";
 import { getTimeDifferenceToDisplay } from "../../../../lib/time";
 import { PacketGroupSummary } from "../../../../types";
 import { useUser } from "../../providers/UserProvider";
-import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
-import { UserWithRoles } from "../manageAccess/types/UserWithRoles";
+import { useGetRolesWithRelationships } from "../manageAccess/hooks/useGetRolesWithRelationships";
 import { UpdatePermissionDialog } from "./UpdatePermissionDialog";
 
 interface PacketGroupSummaryListItemProps {
   packetGroup: PacketGroupSummary;
-  roles?: RoleWithRelationships[];
-  users?: UserWithRoles[];
+  fetchedRoles?: ReturnType<typeof useGetRolesWithRelationships>;
 }
 
-export const PacketGroupSummaryListItem = ({ packetGroup, roles, users }: PacketGroupSummaryListItemProps) => {
+export const PacketGroupSummaryListItem = ({ packetGroup, fetchedRoles }: PacketGroupSummaryListItemProps) => {
   const { unit, value } = getTimeDifferenceToDisplay(packetGroup.latestTime)[0];
   const { user } = useUser();
 
@@ -52,8 +50,13 @@ export const PacketGroupSummaryListItem = ({ packetGroup, roles, users }: Packet
           </div>
         </div>
       </div>
-      {roles && users && canManagePacketGroup(user, packetGroup.name) && (
-        <UpdatePermissionDialog roles={roles} users={users} packetGroupName={packetGroup.name} />
+      {fetchedRoles && canManagePacketGroup(user?.authorities, packetGroup.name) && (
+        <UpdatePermissionDialog
+          roles={fetchedRoles.roles}
+          users={fetchedRoles.users}
+          packetGroupName={packetGroup.name}
+          mutate={fetchedRoles.mutate}
+        />
       )}
     </li>
   );

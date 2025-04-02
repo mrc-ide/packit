@@ -1,30 +1,32 @@
-import { UserState } from "../../app/components/providers/types/UserTypes";
 import { buildScopedPermission } from "../constructPermissionName";
 
 /** Global Permissions */
-export const hasUserManagePermission = (user: UserState | null) => !!user?.authorities.includes("user.manage");
-export const hasPacketRunPermission = (user: UserState | null) => !!user?.authorities.includes("packet.run");
-export const hasGlobalPacketManagePermission = (user: UserState | null) =>
-  !!user?.authorities.includes("packet.manage");
-export const hasGlobalReadPermission = (user: UserState | null) => !!user?.authorities.includes("packet.read");
+export const hasUserManagePermission = (authorities: string[] = []) => authorities.includes("user.manage");
+export const hasPacketRunPermission = (authorities: string[] = []) => authorities.includes("packet.run");
+export const hasGlobalPacketManagePermission = (authorities: string[] = []) => authorities.includes("packet.manage");
+export const hasGlobalReadPermission = (authorities: string[] = []) => authorities.includes("packet.read");
 
 /** Manage packets */
-export const hasAnyPacketManagePermission = (user: UserState | null) =>
-  !!user?.authorities.find((permission) => permission.startsWith("packet.manage"));
+export const hasAnyPacketManagePermission = (authorities: string[] = []) =>
+  authorities.find((permission) => permission.startsWith("packet.manage"));
 
-export const canManageAllPackets = (user: UserState | null) =>
-  hasUserManagePermission(user) || hasGlobalPacketManagePermission(user);
+export const canManageAllPackets = (authorities: string[] = []) =>
+  hasUserManagePermission(authorities) || hasGlobalPacketManagePermission(authorities);
 
-export const canManagePacketGroup = (user: UserState | null, packetGroupName: string) =>
-  canManageAllPackets(user) || !!user?.authorities.includes(buildScopedPermission("packet.manage", packetGroupName));
+export const canManagePacketGroup = (authorities: string[] = [], packetGroupName: string) =>
+  canManageAllPackets(authorities) || !!authorities.includes(buildScopedPermission("packet.manage", packetGroupName));
 
-export const canReadRoles = (user: UserState | null) =>
-  hasUserManagePermission(user) || hasAnyPacketManagePermission(user);
+export const canReadRoles = (authorities: string[] = []) =>
+  hasUserManagePermission(authorities) || hasAnyPacketManagePermission(authorities);
 
 /** Read packets */
-export const canReadAllPackets = (user: UserState | null) => canManageAllPackets(user) || hasGlobalReadPermission(user);
+export const canReadAllPackets = (authorities: string[] = []) =>
+  canManageAllPackets(authorities) || hasGlobalReadPermission(authorities);
 
-export const canReadPacketGroup = (user: UserState | null, packetGroupName: string) =>
-  canReadAllPackets(user) ||
-  canManagePacketGroup(user, packetGroupName) ||
-  !!user?.authorities.includes(buildScopedPermission("packet.read", packetGroupName));
+export const hasPacketReadPermissionForGroup = (authorities: string[] = [], packetGroupName: string) =>
+  authorities.includes(buildScopedPermission("packet.read", packetGroupName));
+
+export const canReadPacketGroup = (authorities: string[] = [], packetGroupName: string) =>
+  canReadAllPackets(authorities) ||
+  canManagePacketGroup(authorities, packetGroupName) ||
+  hasPacketReadPermissionForGroup(authorities, packetGroupName);

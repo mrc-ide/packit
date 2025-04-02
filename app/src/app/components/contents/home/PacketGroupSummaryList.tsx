@@ -23,7 +23,7 @@ export const PacketGroupSummaryList = ({
   setPageNumber
 }: PacketGroupSummaryListProps) => {
   const { user } = useUser();
-  const fetchedRoles = canReadRoles(user) ? useGetRolesWithRelationships() : null;
+  const fetchedRoles = canReadRoles(user?.authorities) ? useGetRolesWithRelationships() : undefined;
   const { packetGroupSummaries, isLoading, error } = useGetPacketGroupSummaries(pageNumber, pageSize, filterByName);
 
   if (error?.status === HttpStatus.Unauthorized) return <Unauthorized />;
@@ -56,8 +56,7 @@ export const PacketGroupSummaryList = ({
             <PacketGroupSummaryListItem
               key={packetGroup.latestId}
               packetGroup={packetGroup}
-              roles={fetchedRoles?.roles}
-              users={fetchedRoles?.users}
+              fetchedRoles={fetchedRoles}
             />
           ))}
         </ul>

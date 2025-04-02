@@ -30,7 +30,7 @@ export const Header = () => {
               {/* <NavigationLink to="/accessibility" className="mx-6 hidden md:flex">
                 Accessibility
               </NavigationLink> */}
-              {hasUserManagePermission(user) && (
+              {hasUserManagePermission(user?.authorities) && (
                 <NavLink to="/manage-roles" className={cn(buttonVariants({ variant: "ghost" }), "justify-start")}>
                   Manage Access
                 </NavLink>

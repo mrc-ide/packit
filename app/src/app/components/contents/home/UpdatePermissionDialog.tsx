@@ -5,13 +5,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
 import { UserWithRoles } from "../manageAccess/types/UserWithRoles";
 import { UpdatePacketReadPermissionForm } from "./UpdatePacketReadPermissionForm";
+import { KeyedMutator } from "swr";
 
 interface UpdatePermissionDialogProps {
   roles: RoleWithRelationships[];
   users: UserWithRoles[];
   packetGroupName: string;
+  mutate: KeyedMutator<RoleWithRelationships[]>;
 }
-export const UpdatePermissionDialog = ({ roles, users, packetGroupName }: UpdatePermissionDialogProps) => {
+export const UpdatePermissionDialog = ({ roles, users, packetGroupName, mutate }: UpdatePermissionDialogProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -29,6 +31,7 @@ export const UpdatePermissionDialog = ({ roles, users, packetGroupName }: Update
           users={users}
           setDialogOpen={setDialogOpen}
           packetGroupName={packetGroupName}
+          mutate={mutate}
         />
       </DialogContent>
     </Dialog>

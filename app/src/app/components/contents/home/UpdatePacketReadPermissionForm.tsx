@@ -1,47 +1,42 @@
-import { Dispatch, SetStateAction, useState } from "react";
-import { UserWithRoles } from "../manageAccess/types/UserWithRoles";
-import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormField, FormItem, FormLabel } from "../../Base/Form";
+import { Dispatch, SetStateAction, useState } from "react";
+import { useForm } from "react-hook-form";
+import { KeyedMutator } from "swr";
+import { z } from "zod";
+import appConfig from "../../../../config/appConfig";
+import { ApiError } from "../../../../lib/errors";
+import { fetcher } from "../../../../lib/fetch";
+import { Form, FormDescription, FormField, FormItem, FormLabel } from "../../Base/Form";
 import {
   MultiSelector,
   MultiSelectorContent,
   MultiSelectorInput,
+  MultiSelectorItem,
   MultiSelectorList,
   MultiSelectorTrigger
 } from "../../Base/MultiSelect";
 import { CustomDialogFooter } from "../common/CustomDialogFooter";
-import { canReadPacketGroup } from "../../../../lib/auth/hasPermission";
-import { useUser } from "../../providers/UserProvider";
-import { UserState } from "../../providers/types/UserTypes";
+import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
+import { UserWithRoles } from "../manageAccess/types/UserWithRoles";
+import { getRoleAndUsersWithoutReadGroup, getRoleUsersWithReadGroup } from "./utils/getRolesAndUsersForUpdate";
 
 interface UpdatePacketReadPermissionFormProps {
   roles: RoleWithRelationships[];
   users: UserWithRoles[];
   setDialogOpen: Dispatch<SetStateAction<boolean>>;
   packetGroupName: string;
+  mutate: KeyedMutator<RoleWithRelationships[]>;
 }
-const getRoleAndUsersWithoutRead = (
-  roles: RoleWithRelationships[],
-  users: UserWithRoles[],
-  packetGroupName: string
-) => {
-  const rolesWithoutRead = roles.filter((role) => role);
-
-  const usersWithoutRead = users.filter((user) => user);
-};
 export const UpdatePacketReadPermissionForm = ({
   roles,
   users,
   setDialogOpen,
-  packetGroupName
+  packetGroupName,
+  mutate
 }: UpdatePacketReadPermissionFormProps) => {
   const [fetchError, setFetchError] = useState("");
-  const { user } = useUser();
-  console.log(users);
-  console.log(roles);
+  const rolesAndUsersCantReadGroup = getRoleAndUsersWithoutReadGroup(roles, users, packetGroupName);
+  const rolesAndUsersWithReadGroup = getRoleUsersWithReadGroup(roles, users, packetGroupName);
 
   const formSchema = z.object({
     roleNamesToAdd: z.array(z.string()),
@@ -56,7 +51,23 @@ export const UpdatePacketReadPermissionForm = ({
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log("Form submitted with data:", values);
+    try {
+      await fetcher({
+        url: `${appConfig.apiUrl()}/roles/${packetGroupName}/read-permissions`,
+        body: values,
+        method: "PUT"
+      });
+
+      form.reset();
+      setDialogOpen(false);
+      mutate();
+    } catch (error) {
+      console.error(error);
+      if (error instanceof ApiError) {
+        return setFetchError(error.message);
+      }
+      setFetchError("An unexpected error occurred. Please try again.");
+    }
   };
 
   return (
@@ -67,6 +78,11 @@ export const UpdatePacketReadPermissionForm = ({
           name="roleNamesToAdd"
           render={({ field }) => (
             <FormItem>
+              <FormDescription className="text-xs mb-0.5">
+                Select roles or users to grant read access to the packet group. Roles or users with global read access
+                cannot be added here as they already have the required permissions. Similarly, roles or users with
+                global permissions cannot have their access removed.
+              </FormDescription>
               <FormLabel>Grant read access</FormLabel>
               <MultiSelector onValuesChange={field.onChange} values={field.value}>
                 <MultiSelectorTrigger>
@@ -74,11 +90,14 @@ export const UpdatePacketReadPermissionForm = ({
                 </MultiSelectorTrigger>
                 <MultiSelectorContent>
                   <MultiSelectorList>
-                    {/* {usersNotInRole.map((user) => (
-                      <MultiSelectorItem key={user.id} value={user.username}>
-                        {user.username}
+                    {rolesAndUsersCantReadGroup.map((userRole) => (
+                      <MultiSelectorItem
+                        key={userRole.id}
+                        value={"username" in userRole ? userRole.username : userRole.name}
+                      >
+                        {"username" in userRole ? userRole.username : userRole.name}
                       </MultiSelectorItem>
-                    ))} */}
+                    ))}
                   </MultiSelectorList>
                 </MultiSelectorContent>
               </MultiSelector>
@@ -93,15 +112,18 @@ export const UpdatePacketReadPermissionForm = ({
               <FormLabel>Remove read access</FormLabel>
               <MultiSelector onValuesChange={field.onChange} values={field.value}>
                 <MultiSelectorTrigger>
-                  <MultiSelectorInput className="text-sm" placeholder="Select Usernames to Remove" />
+                  <MultiSelectorInput className="text-sm" placeholder="Select roles or users..." />
                 </MultiSelectorTrigger>
                 <MultiSelectorContent>
                   <MultiSelectorList>
-                    {/* {role.users.map((user) => (
-                      <MultiSelectorItem key={user.id} value={user.username}>
-                        {user.username}
+                    {rolesAndUsersWithReadGroup.map((userRole) => (
+                      <MultiSelectorItem
+                        key={userRole.id}
+                        value={"username" in userRole ? userRole.username : userRole.name}
+                      >
+                        {"username" in userRole ? userRole.username : userRole.name}
                       </MultiSelectorItem>
-                    ))} */}
+                    ))}
                   </MultiSelectorList>
                 </MultiSelectorContent>
               </MultiSelector>

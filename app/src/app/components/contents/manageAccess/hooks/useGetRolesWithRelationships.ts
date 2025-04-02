@@ -12,6 +12,7 @@ export const useGetRolesWithRelationships = () => {
   const nonUsernameRoles = data ? data.filter((role) => !role.isUsername) : [];
   const usernameRoles = data ? data.filter((role) => role.isUsername) : [];
   const users = data ? getUsersWithRoles(nonUsernameRoles, usernameRoles) : [];
+  console.log(data);
 
   return {
     roles: nonUsernameRoles,
