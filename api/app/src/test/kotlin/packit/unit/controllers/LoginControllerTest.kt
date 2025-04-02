@@ -114,6 +114,7 @@ class LoginControllerTest
         val expectedConfig = mapOf(
             "enableGithubLogin" to false,
             "enableBasicLogin" to true,
+            "enablePreAuthLogin" to false,
             "enableAuth" to true,
         )
         assertEquals(result.body, expectedConfig)
