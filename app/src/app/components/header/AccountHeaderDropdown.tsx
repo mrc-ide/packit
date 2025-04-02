@@ -11,16 +11,25 @@ import {
 } from "../Base/DropdownMenu";
 import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 import { useUser } from "../providers/UserProvider";
+import {useAuthConfig} from "../providers/AuthConfigProvider";
+import {useNavigate} from "react-router-dom";
 
 export const AccountHeaderDropdown = () => {
   const { removeUser, user } = useUser();
   const { setLoggingOut } = useRedirectOnLogin();
+  const authConfig = useAuthConfig();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     removeUser();
     setLoggingOut(true);
-    // Set loggingOut so that any external auth manager (Montagu) knows to log out too
-    window.location.href = `${process.env.PUBLIC_URL}/login?loggingOut=1`;
+    if (authConfig?.enabledPreAuthLogin) {
+        // Go to external login via server, and set loggingOut so that the external auth manager (e.g. Montagu) knows
+        // to log out too
+        window.location.href = `${process.env.PUBLIC_URL}/login?loggingOut=1`;
+    } else {
+        navigate("/login");
+    }
   };
 
   return (

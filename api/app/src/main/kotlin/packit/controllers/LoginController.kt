@@ -112,6 +112,7 @@ class LoginController(
         val authConfig = mapOf(
             "enableGithubLogin" to config.authEnableGithubLogin,
             "enableBasicLogin" to config.authEnableBasicLogin,
+            "enablePreAuthLogin" to config.enablePreAuthLogin,
             "enableAuth" to config.authEnabled
         )
         return ResponseEntity.ok(authConfig)
