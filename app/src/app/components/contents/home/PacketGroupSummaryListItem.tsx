@@ -1,15 +1,12 @@
-import { ExternalLink, Hourglass, Layers, UserCog } from "lucide-react";
+import { ExternalLink, Hourglass, Layers } from "lucide-react";
 import { Link } from "react-router-dom";
+import { canManagePacketGroup } from "../../../../lib/auth/hasPermission";
 import { getTimeDifferenceToDisplay } from "../../../../lib/time";
 import { PacketGroupSummary } from "../../../../types";
+import { useUser } from "../../providers/UserProvider";
 import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
 import { UserWithRoles } from "../manageAccess/types/UserWithRoles";
-import { Button } from "../../Base/Button";
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../Base/Dialog";
-import { UpdatePacketReadPermissionForm } from "./UpdatePacketReadPermissionForm";
-import { canManagePacketGroup } from "../../../../lib/auth/hasPermission";
-import { useUser } from "../../providers/UserProvider";
+import { UpdatePermissionDialog } from "./UpdatePermissionDialog";
 
 interface PacketGroupSummaryListItemProps {
   packetGroup: PacketGroupSummary;
@@ -20,10 +17,9 @@ interface PacketGroupSummaryListItemProps {
 export const PacketGroupSummaryListItem = ({ packetGroup, roles, users }: PacketGroupSummaryListItemProps) => {
   const { unit, value } = getTimeDifferenceToDisplay(packetGroup.latestTime)[0];
   const { user } = useUser();
-  const [dialogOpen, setDialogOpen] = useState(false);
 
   return (
-    <li key={packetGroup.latestId} className="flex p-4 justify-between border-b">
+    <li key={packetGroup.latestId} className="flex p-4 justify-between items-center border-b">
       <div className="flex flex-col">
         <Link to={`/${packetGroup.name}`} className="hover:underline decoration-blue-500 min-w-[50%] w-fit">
           <h3 className="scroll-m-20 text-lg font-semibold tracking-tight text-blue-500">
@@ -56,30 +52,8 @@ export const PacketGroupSummaryListItem = ({ packetGroup, roles, users }: Packet
           </div>
         </div>
       </div>
-      {roles && users && (
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button
-              disabled={!canManagePacketGroup(user, packetGroup.name)}
-              aria-label={`manage-access-${packetGroup.name}`}
-              variant="outline"
-              size="icon"
-            >
-              <UserCog size={18} />
-            </Button>
-          </DialogTrigger>
-          <DialogContent onOpenAutoFocus={(e) => e.preventDefault()} onInteractOutside={(e) => e.preventDefault()}>
-            <DialogHeader>
-              <DialogTitle>Update read access on {packetGroup.name}</DialogTitle>
-            </DialogHeader>
-            <UpdatePacketReadPermissionForm
-              roles={roles}
-              users={users}
-              setDialogOpen={setDialogOpen}
-              packetGroupName={packetGroup.name}
-            />
-          </DialogContent>
-        </Dialog>
+      {roles && users && canManagePacketGroup(user, packetGroup.name) && (
+        <UpdatePermissionDialog roles={roles} users={users} packetGroupName={packetGroup.name} />
       )}
     </li>
   );

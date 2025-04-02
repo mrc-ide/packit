@@ -15,6 +15,7 @@ class AuthorizationLogic(
     fun canReadPacket(operations: SecurityExpressionOperations, packet: Packet): Boolean =
         // TODO: update with tag when implemented
         operations.hasAnyAuthority(
+            "user.manage",
             "packet.read",
             permissionService.buildScopedPermission("packet.read", packet.name, packet.id),
             permissionService.buildScopedPermission("packet.read", packet.name),
@@ -32,6 +33,7 @@ class AuthorizationLogic(
     fun canReadPacketGroup(operations: SecurityExpressionOperations, name: String): Boolean
     {
         return operations.hasAnyAuthority(
+            "user.manage",
             "packet.read",
             permissionService.buildScopedPermission("packet.read", name),
             "packet.manage",
