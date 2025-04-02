@@ -56,7 +56,7 @@ class LoginController(
             throw PackitException("preauthLoginDisabled", HttpStatus.FORBIDDEN)
         }
 
-        println("username is " + usename)
+        println("username is " + username)
         println("name is " + name)
         println("email is" + email)
 
