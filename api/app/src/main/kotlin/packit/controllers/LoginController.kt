@@ -56,6 +56,10 @@ class LoginController(
             throw PackitException("preauthLoginDisabled", HttpStatus.FORBIDDEN)
         }
 
+        println("username is " + usename)
+        println("name is " + name)
+        println("email is" + email)
+
         println("getting token")
         val token = preAuthenticatedLoginService.saveUserAndIssueToken(username, name, email)
         println("got token")
