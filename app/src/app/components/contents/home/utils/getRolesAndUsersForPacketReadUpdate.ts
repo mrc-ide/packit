@@ -5,13 +5,15 @@ import { constructPermissionName } from "../../../../../lib/constructPermissionN
 import { RoleWithRelationships } from "../../manageAccess/types/RoleWithRelationships";
 import { UserWithRoles } from "../../manageAccess/types/UserWithRoles";
 
-// no point adding if they have global read, manage etc...
-export const getRoleAndUsersWithoutReadGroup = (
+// roles and users that cant read the packet group (inc global read, manage etc..)
+// no point adding if they have global read, manage etc... because it wont do anything to add
+// Input to add roles/users multi selector
+export const getRolesAndUsersCantReadGroup = (
   roles: RoleWithRelationships[],
   users: UserWithRoles[],
   packetGroupName: string
 ): (RoleWithRelationships | UserWithRoles)[] => {
-  const rolesWithoutRead = roles.filter(
+  const rolesCantRead = roles.filter(
     (role) =>
       !canReadPacketGroup(
         role.rolePermissions.map((rp) => constructPermissionName(rp)),
@@ -19,20 +21,29 @@ export const getRoleAndUsersWithoutReadGroup = (
       )
   );
 
-  const usersWithoutRead = users.filter(
-    (user) =>
-      !canReadPacketGroup(
-        user.specificPermissions.map((sp) => constructPermissionName(sp)),
+  const usersCantRead = users.filter((user) => {
+    const hasDirectPermission = canReadPacketGroup(
+      user.specificPermissions.map((sp) => constructPermissionName(sp)),
+      packetGroupName
+    );
+    if (hasDirectPermission) return false;
+
+    const hasPermissionViaRole = user.roles?.some((role) =>
+      canReadPacketGroup(
+        roles.find((r) => r.name == role.name)?.rolePermissions.map((rp) => constructPermissionName(rp)),
         packetGroupName
       )
-  );
+    );
+    return !hasPermissionViaRole;
+  });
 
   // sorted by roles first
-  return [...rolesWithoutRead, ...usersWithoutRead];
+  return [...rolesCantRead, ...usersCantRead];
 };
 
 // remove roles/users multi selector. only remove specific packetGroup permission!!!
 // as this only removes specific packet.read:packetGroup:PacketGroupName
+// Input to remove roles/users multi selector
 export const getRoleUsersWithReadGroup = (
   roles: RoleWithRelationships[],
   users: UserWithRoles[],
