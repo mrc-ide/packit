@@ -9,10 +9,10 @@ import { UpdatePermissionDialog } from "./UpdatePermissionDialog";
 
 interface PacketGroupSummaryListItemProps {
   packetGroup: PacketGroupSummary;
-  fetchedRoles?: ReturnType<typeof useGetRolesWithRelationships>;
+  rolesResponse?: ReturnType<typeof useGetRolesWithRelationships>;
 }
 
-export const PacketGroupSummaryListItem = ({ packetGroup, fetchedRoles }: PacketGroupSummaryListItemProps) => {
+export const PacketGroupSummaryListItem = ({ packetGroup, rolesResponse }: PacketGroupSummaryListItemProps) => {
   const { unit, value } = getTimeDifferenceToDisplay(packetGroup.latestTime)[0];
   const { user } = useUser();
 
@@ -50,12 +50,12 @@ export const PacketGroupSummaryListItem = ({ packetGroup, fetchedRoles }: Packet
           </div>
         </div>
       </div>
-      {fetchedRoles && canManagePacketGroup(user?.authorities, packetGroup.name) && (
+      {rolesResponse && canManagePacketGroup(user?.authorities, packetGroup.name) && (
         <UpdatePermissionDialog
-          roles={fetchedRoles.roles}
-          users={fetchedRoles.users}
+          roles={rolesResponse.roles}
+          users={rolesResponse.users}
           packetGroupName={packetGroup.name}
-          mutate={fetchedRoles.mutate}
+          mutate={rolesResponse.mutate}
         />
       )}
     </li>

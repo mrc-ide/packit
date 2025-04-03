@@ -7,19 +7,13 @@ import appConfig from "../../../../config/appConfig";
 import { ApiError } from "../../../../lib/errors";
 import { fetcher } from "../../../../lib/fetch";
 import { Form, FormDescription, FormField, FormItem, FormLabel } from "../../Base/Form";
-import {
-  MultiSelector,
-  MultiSelectorContent,
-  MultiSelectorInput,
-  MultiSelectorItem,
-  MultiSelectorList,
-  MultiSelectorTrigger
-} from "../../Base/MultiSelect";
+import { MultiSelector, MultiSelectorContent, MultiSelectorInput, MultiSelectorTrigger } from "../../Base/MultiSelect";
 import { CustomDialogFooter } from "../common/CustomDialogFooter";
 import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
 import { UserWithRoles } from "../manageAccess/types/UserWithRoles";
-import { getRolesAndUsersCantReadGroup, getRoleUsersWithReadGroup } from "./utils/getRolesAndUsersForPacketReadUpdate";
-import { cn } from "../../../../lib/cn";
+import { UpdatePacketReadPermissionMultiSelectList } from "./UpdatePacketReadPermissionMultiSelectList";
+import { getRoleUsersWithReadGroupPermission } from "./utils/getRoleUsersWithReadGroupPermission";
+import { getRolesAndUsersCantReadGroup } from "./utils/getRolesAndUsersCantReadGroup";
 
 interface UpdatePacketReadPermissionFormProps {
   roles: RoleWithRelationships[];
@@ -37,7 +31,7 @@ export const UpdatePacketReadPermissionForm = ({
 }: UpdatePacketReadPermissionFormProps) => {
   const [fetchError, setFetchError] = useState("");
   const rolesAndUsersCantReadGroup = getRolesAndUsersCantReadGroup(roles, users, packetGroupName);
-  const rolesAndUsersWithReadGroup = getRoleUsersWithReadGroup(roles, users, packetGroupName);
+  const rolesAndUsersWithReadGroup = getRoleUsersWithReadGroupPermission(roles, users, packetGroupName);
 
   const formSchema = z.object({
     roleNamesToAdd: z.array(z.string()),
@@ -90,25 +84,7 @@ export const UpdatePacketReadPermissionForm = ({
                   <MultiSelectorInput className="text-sm" placeholder="Select roles or users..." />
                 </MultiSelectorTrigger>
                 <MultiSelectorContent>
-                  <MultiSelectorList>
-                    {rolesAndUsersCantReadGroup.map((userRole) => {
-                      const isUsername = "username" in userRole;
-                      return (
-                        <MultiSelectorItem
-                          className={cn(
-                            isUsername ? "text-[#2C5282] dark:text-[#90CDF4]" : "text-[#7B341E] dark:text-[#FBD38D]"
-                          )}
-                          key={userRole.id}
-                          value={isUsername ? userRole.username : userRole.name}
-                        >
-                          <div className="flex justify-between w-full">
-                            <span>{isUsername ? userRole.username : userRole.name}</span>
-                            <span className="text-muted-foreground ">{isUsername ? "User" : "Role"}</span>
-                          </div>
-                        </MultiSelectorItem>
-                      );
-                    })}
-                  </MultiSelectorList>
+                  <UpdatePacketReadPermissionMultiSelectList rolesAndUsers={rolesAndUsersCantReadGroup} />
                 </MultiSelectorContent>
               </MultiSelector>
             </FormItem>
@@ -125,26 +101,7 @@ export const UpdatePacketReadPermissionForm = ({
                   <MultiSelectorInput className="text-sm" placeholder="Select roles or users..." />
                 </MultiSelectorTrigger>
                 <MultiSelectorContent>
-                  {/* make into own component to reuse */}
-                  <MultiSelectorList>
-                    {rolesAndUsersWithReadGroup.map((userRole) => {
-                      const isUsername = "username" in userRole;
-                      return (
-                        <MultiSelectorItem
-                          className={cn(
-                            isUsername ? "text-[#2C5282] dark:text-[#90CDF4]" : "text-[#7B341E] dark:text-[#FBD38D]"
-                          )}
-                          key={userRole.id}
-                          value={isUsername ? userRole.username : userRole.name}
-                        >
-                          <div className="flex justify-between w-full">
-                            <span>{isUsername ? userRole.username : userRole.name}</span>
-                            <span className="text-muted-foreground ">{isUsername ? "User" : "Role"}</span>
-                          </div>
-                        </MultiSelectorItem>
-                      );
-                    })}
-                  </MultiSelectorList>
+                  <UpdatePacketReadPermissionMultiSelectList rolesAndUsers={rolesAndUsersWithReadGroup} />
                 </MultiSelectorContent>
               </MultiSelector>
             </FormItem>

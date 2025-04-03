@@ -23,14 +23,14 @@ export const PacketGroupSummaryList = ({
   setPageNumber
 }: PacketGroupSummaryListProps) => {
   const { user } = useUser();
-  const fetchedRoles = canReadRoles(user?.authorities) ? useGetRolesWithRelationships() : undefined;
+  const rolesResponse = canReadRoles(user?.authorities) ? useGetRolesWithRelationships() : undefined;
   const { packetGroupSummaries, isLoading, error } = useGetPacketGroupSummaries(pageNumber, pageSize, filterByName);
 
   if (error?.status === HttpStatus.Unauthorized) return <Unauthorized />;
   if (error) return <ErrorComponent message="Error fetching packet groups" error={error} />;
-  if (fetchedRoles?.error) return <ErrorComponent message="Error fetching roles" error={fetchedRoles.error} />;
+  if (rolesResponse?.error) return <ErrorComponent message="Error fetching roles" error={rolesResponse.error} />;
 
-  if (isLoading || fetchedRoles?.isLoading)
+  if (isLoading || rolesResponse?.isLoading)
     return (
       <ul className="flex flex-col border rounded-md">
         {[...Array(2)].map((_, index) => (
@@ -56,7 +56,7 @@ export const PacketGroupSummaryList = ({
             <PacketGroupSummaryListItem
               key={packetGroup.latestId}
               packetGroup={packetGroup}
-              fetchedRoles={fetchedRoles}
+              rolesResponse={rolesResponse}
             />
           ))}
         </ul>
