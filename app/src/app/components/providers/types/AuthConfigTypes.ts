@@ -1,6 +1,6 @@
 export interface AuthConfig {
   enableGithubLogin: boolean;
   enableBasicLogin: boolean;
-  enabledPreAuthLogin: boolean;
+  enablePreAuthLogin: boolean;
   enableAuth: boolean;
 }

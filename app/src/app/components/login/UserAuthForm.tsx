@@ -26,7 +26,7 @@ export const UserAuthForm = ({ className, ...props }: UserAuthFormProps) => {
     if (isAuthenticated(authConfig, user)) {
       navigate("/");
     } else {
-      if (authConfig?.enabledPreAuthLogin) {
+      if (authConfig?.enablePreAuthLogin) {
         // Redirect to external login
         window.location.href = loginRoute; // TODO: make a provider for both windows navs
       }
@@ -37,7 +37,7 @@ export const UserAuthForm = ({ className, ...props }: UserAuthFormProps) => {
     <div className={cn("grid gap-6", className)} {...props}>
       {authConfig?.enableBasicLogin && <BasicUserAuthForm />}
       {authConfig?.enableGithubLogin && <GithubAuthForm />}
-      {authConfig?.enabledPreAuthLogin && <p>
+      {authConfig?.enablePreAuthLogin && <p>
         Login with external provider. Click <a href={loginRoute}>here</a> if you are not redirected automatically.
       </p>}
     </div>

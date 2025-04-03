@@ -32,7 +32,7 @@ export const mockAuthConfig: AuthConfig = {
   enableAuth: true,
   enableGithubLogin: true,
   enableBasicLogin: true,
-  enabledPreAuthLogin: false
+  enablePreAuthLogin: false
 };
 
 export const mockUserState: () => UserState = () => {
