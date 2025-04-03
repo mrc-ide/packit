@@ -9,7 +9,7 @@ import { UserWithRoles } from "../../manageAccess/types/UserWithRoles";
  * This function retrieves roles and users that have read permissions for a specific packet group.
  * It does NOT include those with global read permissions, manage permissions, etc.
  */
-export const getRoleUsersWithReadGroupPermission = (
+export const getRolesUsersWithReadGroupPermission = (
   roles: RoleWithRelationships[],
   users: UserWithRoles[],
   packetGroupName: string

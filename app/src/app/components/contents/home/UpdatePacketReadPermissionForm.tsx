@@ -12,7 +12,7 @@ import { CustomDialogFooter } from "../common/CustomDialogFooter";
 import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
 import { UserWithRoles } from "../manageAccess/types/UserWithRoles";
 import { UpdatePacketReadPermissionMultiSelectList } from "./UpdatePacketReadPermissionMultiSelectList";
-import { getRoleUsersWithReadGroupPermission } from "./utils/getRoleUsersWithReadGroupPermission";
+import { getRolesUsersWithReadGroupPermission } from "./utils/getRolesUsersWithReadGroupPermission";
 import { getRolesAndUsersCantReadGroup } from "./utils/getRolesAndUsersCantReadGroup";
 
 interface UpdatePacketReadPermissionFormProps {
@@ -29,9 +29,9 @@ export const UpdatePacketReadPermissionForm = ({
   packetGroupName,
   mutate
 }: UpdatePacketReadPermissionFormProps) => {
-  const [fetchError, setFetchError] = useState("");
+  const [error, setError] = useState("");
   const rolesAndUsersCantReadGroup = getRolesAndUsersCantReadGroup(roles, users, packetGroupName);
-  const rolesAndUsersWithReadGroup = getRoleUsersWithReadGroupPermission(roles, users, packetGroupName);
+  const rolesAndUsersWithReadGroup = getRolesUsersWithReadGroupPermission(roles, users, packetGroupName);
 
   const formSchema = z.object({
     roleNamesToAdd: z.array(z.string()),
@@ -46,6 +46,10 @@ export const UpdatePacketReadPermissionForm = ({
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (values.roleNamesToAdd.length === 0 && values.roleNamesToRemove.length === 0) {
+      return setError("You must add or remove at least one role or user.");
+    }
+
     try {
       await fetcher({
         url: `${appConfig.apiUrl()}/roles/${packetGroupName}/read-permissions`,
@@ -59,9 +63,9 @@ export const UpdatePacketReadPermissionForm = ({
     } catch (error) {
       console.error(error);
       if (error instanceof ApiError) {
-        return setFetchError(error.message);
+        return setError(error.message);
       }
-      setFetchError("An unexpected error occurred. Please try again.");
+      setError("An unexpected error occurred. Please try again.");
     }
   };
 
@@ -107,7 +111,7 @@ export const UpdatePacketReadPermissionForm = ({
             </FormItem>
           )}
         />
-        <CustomDialogFooter error={fetchError} onCancel={form.reset} submitText="Save" />
+        <CustomDialogFooter error={error} onCancel={form.reset} submitText="Save" />
       </form>
     </Form>
   );

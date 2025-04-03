@@ -734,6 +734,23 @@ export const mockUsersWithRoles = [
     id: "b13c35b8-7070-47a8-9266-3a23ae6fd76e",
     roles: [],
     specificPermissions: []
+  },
+  {
+    username: "hgz@gmail.com",
+    id: "b13c35b8-7070-47a8-9266-3a23ae6fd76e",
+    roles: [],
+    specificPermissions: [
+      {
+        permission: "packet.read",
+        packet: null,
+        tag: null,
+        packetGroup: {
+          name: "explicit",
+          id: 3
+        },
+        id: 39
+      }
+    ]
   }
 ];
 
