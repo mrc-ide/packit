@@ -62,7 +62,7 @@ class RoleControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `users with manage authority can create roles`()
+    fun `users with user manage authority can create roles`()
     {
         val result =
             restTemplate.postForEntity(
@@ -185,7 +185,7 @@ class RoleControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `users can get all roles with relationships`()
+    fun `users with user manage can get all roles with relationships`()
     {
         val adminRole = roleRepository.findByName("ADMIN")!!
         val userRole = roleRepository.save(Role(name = "testRole", isUsername = true))
@@ -214,6 +214,21 @@ class RoleControllerTest : IntegrationTest()
                 )
             )
         )
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.manage"])
+    fun `users with packet manage can get all roles with relationships`()
+    {
+        val result =
+            restTemplate.exchange(
+                "/roles",
+                HttpMethod.GET,
+                getTokenizedHttpEntity(),
+                String::class.java
+            )
+
+        assertSuccess(result)
     }
 
     @Test
@@ -289,6 +304,21 @@ class RoleControllerTest : IntegrationTest()
         assertSuccess(result)
 
         assertEquals(roleDto, roleResult)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.manage"])
+    fun `users with packet manage can get specific with relationships`()
+    {
+        val result =
+            restTemplate.exchange(
+                "/roles/ADMIN",
+                HttpMethod.GET,
+                getTokenizedHttpEntity(),
+                String::class.java
+            )
+
+        assertSuccess(result)
     }
 
     @Test
