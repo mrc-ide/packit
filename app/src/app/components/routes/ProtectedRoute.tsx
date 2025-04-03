@@ -21,7 +21,7 @@ export const ProtectedRoute = () => {
       // 1. user is deliberately logging out - redirect to packit on login not required. Montagu logout is required.
       // 2. login has expired or is not authenticated. Redirect to packit on login is required. Montagu logout may also
       // be required.
-      const location = loggingOut ? "logout" : "logout?packitRedirect=1";
+      const location = loggingOut ? "logout" : "loginExpired";
 
       window.location.href = `${process.env.PUBLIC_URL}/${location}`;
     } else {
