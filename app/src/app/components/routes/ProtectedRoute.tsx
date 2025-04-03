@@ -13,6 +13,16 @@ export const ProtectedRoute = () => {
   const { pathname } = useLocation();
   const expiryMessage = "You have been signed out because your session expired. Please log in.";
 
+  const logoutNavigate = (qs: string = "") => {
+    // navigate to logout screen, either using react routing or external navigation, depending on whether we're
+    // using pre-auth
+    if (authConfig?.enablePreAuthLogin) {
+      window.location.href = `${process.env.PUBLIC_URL}/logout`;
+    } else {
+      navigate(`/login${qs}`);
+    }
+  }
+
   useEffect(() => {
     if (authConfig && !isAuthenticated(authConfig, user)) {
       // we will redirect to requested url on login, but avoid doing this if logging out after previous auth success
@@ -21,11 +31,11 @@ export const ProtectedRoute = () => {
       }
       if (user && authIsExpired(user)) {
         removeUser();
-        navigate(`/login?info=${expiryMessage}`);
+        //navigate(`/login?info=${expiryMessage}`);
+        logoutNavigate(`?info=${expiryMessage}`);
       } else {
-        //navigate("/login");
-        // TODO: sort this out! should go to backend on expiry too if preauth
-        if (authConfig?.enablePreAuthLogin) {
+        logoutNavigate();
+        /*if (authConfig?.enablePreAuthLogin) {
           // Require external auth logout route to be configured e.g. in Montagu proxy
           const logoutLocation = `${process.env.PUBLIC_URL}/logout`;
           console.log(logoutLocation);
@@ -33,7 +43,7 @@ export const ProtectedRoute = () => {
           window.location.href = logoutLocation;
         } else {
           navigate("/login");
-        }
+        }*/
       }
     }
   }, [navigate, authConfig, user]);
