@@ -23,7 +23,17 @@ export const ProtectedRoute = () => {
         removeUser();
         navigate(`/login?info=${expiryMessage}`);
       } else {
-        navigate("/login");
+        //navigate("/login");
+        // TODO: sort this out! should go to backend on expiry too if preauth
+        if (authConfig?.enablePreAuthLogin) {
+          // Require external auth logout route to be configured e.g. in Montagu proxy
+          const logoutLocation = `${process.env.PUBLIC_URL}/logout`;
+          console.log(logoutLocation);
+
+          window.location.href = logoutLocation;
+        } else {
+          navigate("/login");
+        }
       }
     }
   }, [navigate, authConfig, user]);

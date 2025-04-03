@@ -23,15 +23,15 @@ export const AccountHeaderDropdown = () => {
   const handleLogout = async () => {
     removeUser();
     setLoggingOut(true);
-    if (authConfig?.enablePreAuthLogin) {
+    /*if (authConfig?.enablePreAuthLogin) {
         // Require external auth logout route to be configured e.g. in Montagu proxy
         const logoutLocation = `${process.env.PUBLIC_URL}/logout`;
         console.log(logoutLocation);
-        await new Promise(resolve => setTimeout(resolve, 5000)); // TODO: remove
+
         window.location.href = logoutLocation;
     } else {
         navigate("/login");
-    }
+    }*/
   };
 
   return (
