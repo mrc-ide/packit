@@ -13,13 +13,14 @@ export const ProtectedRoute = () => {
   const { pathname } = useLocation();
   const expiryMessage = "You have been signed out because your session expired. Please log in.";
 
-  const unauthenticatedNavigate = (qs: string = "") => {
+  const unauthenticatedNavigate = (qs = "") => {
     // navigate to logout screen, either using react routing or external navigation, depending on whether we're
     // using pre-auth
     if (authConfig?.enablePreAuthLogin) {
       // Two possible scenarios:
       // 1. user is deliberately logging out - redirect to packit on login not required. Montagu logout is required.
-      // 2. login has expired or is not authenticated. Redirect to packit on login is required. Montagu logout may also be required.
+      // 2. login has expired or is not authenticated. Redirect to packit on login is required. Montagu logout may also
+      // be required.
       const location = loggingOut ? "logout" : "logout?packitRedirect=1";
 
       window.location.href = `${process.env.PUBLIC_URL}/${location}`;
