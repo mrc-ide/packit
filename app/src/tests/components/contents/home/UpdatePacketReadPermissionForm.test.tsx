@@ -8,6 +8,7 @@ import userEvent from "@testing-library/user-event";
 import appConfig from "../../../../config/appConfig";
 import { ApiError } from "../../../../lib/errors";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
+import { UserWithRoles } from "../../../../app/components/contents/manageAccess/types/UserWithRoles";
 
 describe("UpdatePacketReadPermissionForm", () => {
   const fetcherSpy = jest.spyOn(fetch, "fetcher");
@@ -45,7 +46,21 @@ describe("UpdatePacketReadPermissionForm", () => {
           mutate={mutate}
           packetGroupName={packetGroupName}
           roles={mockNonUsernameRolesWithRelationships}
-          users={mockUsersWithRoles}
+          users={[
+            ...mockUsersWithRoles,
+            {
+              username: "hgz@gmail.com",
+              roles: [],
+              specificPermissions: [
+                {
+                  permission: "packet.read",
+                  packetGroup: {
+                    name: "explicit"
+                  }
+                }
+              ]
+            } as unknown as UserWithRoles
+          ]}
           setDialogOpen={setDialogOpen}
         />
       </Dialog>
