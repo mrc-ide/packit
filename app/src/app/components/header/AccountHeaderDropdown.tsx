@@ -25,7 +25,8 @@ export const AccountHeaderDropdown = () => {
     setLoggingOut(true);
     if (authConfig?.enablePreAuthLogin) {
         // Require external auth logout route to be configured e.g. in Montagu proxy
-        window.location.href = `${process.env.PUBLIC_URL}/logout`;
+        const logoutLocation = `${process.env.PUBLIC_URL}/logout`;
+        window.location.href = logoutLocation;
     } else {
         navigate("/login");
     }
