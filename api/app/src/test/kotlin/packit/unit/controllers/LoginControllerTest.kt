@@ -31,7 +31,7 @@ class LoginControllerTest
             on { authEnableGithubLogin } doReturn true
         }
 
-        val sut = LoginController(mockLoginService, mock(), mock(), mockAppConfig, mock())
+        val sut = LoginController(mockLoginService, mock(), mock(), mock(), mockAppConfig, mock())
 
         val result = sut.loginWithGithub(request)
 
@@ -49,7 +49,7 @@ class LoginControllerTest
             on { authEnableGithubLogin } doReturn false
         }
 
-        val sut = LoginController(mock(), mock(), mock(), mockAppConfig, mock())
+        val sut = LoginController(mock(), mock(), mock(), mock(), mockAppConfig, mock())
 
         val ex = assertThrows<PackitException> {
             sut.loginWithGithub(request)
@@ -70,7 +70,7 @@ class LoginControllerTest
             on { authEnableBasicLogin } doReturn true
         }
 
-        val sut = LoginController(mock(), mockLoginService, mock(), mockAppConfig, mock())
+        val sut = LoginController(mock(), mock(), mockLoginService, mock(), mockAppConfig, mock())
 
         val result = sut.loginBasic(request)
 
@@ -87,7 +87,7 @@ class LoginControllerTest
             on { authEnableBasicLogin } doReturn false
         }
 
-        val sut = LoginController(mock(), mock(), mock(), mockAppConfig, mock())
+        val sut = LoginController(mock(), mock(), mock(), mock(), mockAppConfig, mock())
 
         val ex = assertThrows<PackitException> {
             sut.loginBasic(request)
@@ -105,7 +105,7 @@ class LoginControllerTest
             on { authEnableBasicLogin } doReturn true
         }
 
-        val sut = LoginController(mock(), mock(), mock(), mockAppConfig, mock())
+        val sut = LoginController(mock(), mock(), mock(), mock(), mockAppConfig, mock())
 
         val result = sut.authConfig()
 
@@ -114,6 +114,7 @@ class LoginControllerTest
         val expectedConfig = mapOf(
             "enableGithubLogin" to false,
             "enableBasicLogin" to true,
+            "enablePreAuthLogin" to false,
             "enableAuth" to true,
         )
         assertEquals(result.body, expectedConfig)
@@ -126,7 +127,7 @@ class LoginControllerTest
             on { authEnableBasicLogin } doReturn false
         }
 
-        val sut = LoginController(mock(), mock(), mock(), mockAppConfig, mock())
+        val sut = LoginController(mock(), mock(), mock(), mock(), mockAppConfig, mock())
 
         val ex = assertThrows<PackitException> {
             sut.updatePassword("user@email", UpdatePassword("current", "newpassword"))
@@ -143,7 +144,7 @@ class LoginControllerTest
         }
         val mockUserService = mock<UserService>()
         val updatePassword = UpdatePassword("current", "newpassword")
-        val sut = LoginController(mock(), mock(), mock(), mockAppConfig, mockUserService)
+        val sut = LoginController(mock(), mock(), mock(), mock(), mockAppConfig, mockUserService)
 
         sut.updatePassword("test@email.com", updatePassword)
 

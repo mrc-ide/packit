@@ -11,6 +11,7 @@ import packit.model.dto.LoginWithToken
 import packit.model.dto.UpdatePassword
 import packit.service.BasicLoginService
 import packit.service.GithubAPILoginService
+import packit.service.PreAuthenticatedLoginService
 import packit.service.ServiceLoginService
 import packit.service.UserService
 
@@ -18,6 +19,7 @@ import packit.service.UserService
 @RequestMapping("/auth")
 class LoginController(
     val gitApiLoginService: GithubAPILoginService,
+    val preAuthenticatedLoginService: PreAuthenticatedLoginService,
     val basicLoginService: BasicLoginService,
     val serviceLoginService: ServiceLoginService,
     val config: AppConfig,
@@ -35,6 +37,32 @@ class LoginController(
             throw PackitException("githubLoginDisabled", HttpStatus.FORBIDDEN)
         }
         val token = gitApiLoginService.authenticateAndIssueToken(user)
+        return ResponseEntity.ok(token)
+    }
+
+    // NB This endpoint MUST be protected in the proxy when preauth login is enabled,
+    // as headers received by it will be treated as preauthenticated user details.
+    @GetMapping("/login/preauth")
+    @ResponseBody
+    fun loginWithTrustedHeaders(
+        @RequestHeader("X-Remote-User") username: String,
+        @RequestHeader("X-Remote-Name") name: String,
+        @RequestHeader("X-Remote-Email") email: String
+    ): ResponseEntity<Map<String, String>>
+    {
+        println("doing preauth login")
+        if (!config.authEnablePreAuthLogin)
+        {
+            throw PackitException("preauthLoginDisabled", HttpStatus.FORBIDDEN)
+        }
+
+        println("username is " + username)
+        println("name is " + name)
+        println("email is" + email)
+
+        println("getting token")
+        val token = preAuthenticatedLoginService.saveUserAndIssueToken(username, name, email)
+        println("got token")
         return ResponseEntity.ok(token)
     }
 
@@ -84,6 +112,7 @@ class LoginController(
         val authConfig = mapOf(
             "enableGithubLogin" to config.authEnableGithubLogin,
             "enableBasicLogin" to config.authEnableBasicLogin,
+            "enablePreAuthLogin" to config.authEnablePreAuthLogin,
             "enableAuth" to config.authEnabled
         )
         return ResponseEntity.ok(authConfig)

@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { getInitials } from "../../../lib/string";
 import { Avatar, AvatarFallback } from "../Base/Avatar";
 import { Button } from "../Base/Button";
@@ -12,16 +11,27 @@ import {
 } from "../Base/DropdownMenu";
 import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 import { useUser } from "../providers/UserProvider";
+import {useAuthConfig} from "../providers/AuthConfigProvider";
+import {useNavigate} from "react-router-dom";
 
 export const AccountHeaderDropdown = () => {
-  const navigate = useNavigate();
   const { removeUser, user } = useUser();
   const { setLoggingOut } = useRedirectOnLogin();
+  const authConfig = useAuthConfig();
+  const navigate = useNavigate();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     removeUser();
     setLoggingOut(true);
-    navigate("/login");
+    /*if (authConfig?.enablePreAuthLogin) {
+        // Require external auth logout route to be configured e.g. in Montagu proxy
+        const logoutLocation = `${process.env.PUBLIC_URL}/logout`;
+        console.log(logoutLocation);
+
+        window.location.href = logoutLocation;
+    } else {
+        navigate("/login");
+    }*/
   };
 
   return (

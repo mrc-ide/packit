@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -e
+
+HERE=$(dirname $0)
+. "$HERE"/common
+
+MONTAGU_IMAGE_NAME=montagu-packit
+MONTAGU_TAG_SHA="${ORG}/${MONTAGU_IMAGE_NAME}:${GIT_ID}"
+MONTAGU_TAG_BRANCH="${ORG}/${MONTAGU_IMAGE_NAME}:${GIT_BRANCH}"
+
+PACKAGE_ROOT=$(realpath $HERE/..)
+
+docker build \
+       -t "$MONTAGU_TAG_SHA" \
+       -t "$MONTAGU_TAG_BRANCH" \
+       --build-arg PUBLIC_URL=/packit \
+       --build-arg REACT_APP_PACKIT_API_URL=/packit/api \
+       $PACKAGE_ROOT
+
+docker push $MONTAGU_TAG_SHA
+docker push $MONTAGU_TAG_BRANCH
