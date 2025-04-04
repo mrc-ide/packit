@@ -16,9 +16,10 @@ interface RolePermissionService
         removeRolePermissions: List<UpdateRolePermission>,
     ): Role
 
-    fun updatePacketReadPermissionOnRoles(
+    fun updatePermissionOnRoles(
         rolesToAdd: List<Role>,
         rolesToRemove: List<Role>,
+        permissionName: String,
         packetGroupName: String,
         packetId: String? = null,
     )
@@ -33,7 +34,6 @@ class BaseRolePermissionService(
     private val roleRepository: RoleRepository,
 ) : RolePermissionService
 {
-
     @Transactional(rollbackFor = [Exception::class])
     override fun updatePermissionsOnRole(
         role: Role,
@@ -48,14 +48,15 @@ class BaseRolePermissionService(
     }
 
     @Transactional(rollbackFor = [Exception::class])
-    override fun updatePacketReadPermissionOnRoles(
+    override fun updatePermissionOnRoles(
         rolesToAdd: List<Role>,
         rolesToRemove: List<Role>,
+        permissionName: String,
         packetGroupName: String,
         packetId: String?,
     )
     {
-        val permission = permissionService.getByName("packet.read")
+        val permission = permissionService.getByName(permissionName)
         val packet = packetId?.let { packetService.getPacket(it) }
         val packetGroup = if (packetId == null)
         {

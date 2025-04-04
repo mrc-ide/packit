@@ -182,9 +182,10 @@ class BaseRoleService(
         val rolesToUpdate =
             getRolesByRoleNames(roleNamesToUpdate.toList())
 
-        rolePermissionService.updatePacketReadPermissionOnRoles(
+        rolePermissionService.updatePermissionOnRoles(
             rolesToUpdate.filter { it.name in updatePacketReadRoles.roleNamesToAdd },
             rolesToUpdate.filter { it.name in updatePacketReadRoles.roleNamesToRemove },
+            "packet.read",
             updatePacketReadRoles.packetGroupName,
             updatePacketReadRoles.packetId,
         )

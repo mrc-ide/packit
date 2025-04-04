@@ -175,7 +175,7 @@ class RolePermissionServiceTest
         doNothing().`when`(serviceSpy).removePermissionFromRoles(rolesToRemove, permission, packet)
         doNothing().`when`(serviceSpy).addPermissionToRoles(rolesToAdd, permission, packet)
 
-        serviceSpy.updatePacketReadPermissionOnRoles(rolesToAdd, rolesToRemove, packet.name, packet.id)
+        serviceSpy.updatePermissionOnRoles(rolesToAdd, rolesToRemove, packet.name, packet.id)
 
         verify(packetService).getPacket(packet.id)
         verify(serviceSpy).removePermissionFromRoles(rolesToRemove, permission, packet)
@@ -193,7 +193,7 @@ class RolePermissionServiceTest
         doNothing().`when`(serviceSpy).removePermissionFromRoles(rolesToRemove, permission, packetGroup = packetGroup)
         doNothing().`when`(serviceSpy).addPermissionToRoles(rolesToAdd, permission, packetGroup = packetGroup)
 
-        serviceSpy.updatePacketReadPermissionOnRoles(rolesToAdd, rolesToRemove, packetGroup.name, null)
+        serviceSpy.updatePermissionOnRoles(rolesToAdd, rolesToRemove, packetGroup.name, null)
 
         verify(packetGroupService).getPacketGroupByName(packetGroup.name)
         verify(serviceSpy).removePermissionFromRoles(rolesToRemove, permission, packetGroup = packetGroup)

@@ -625,7 +625,7 @@ class RoleServiceTest
 
         spyRoleService.updatePacketReadPermissionOnRoles(updatePacketReadRoles)
 
-        verify(rolePermissionService).updatePacketReadPermissionOnRoles(
+        verify(rolePermissionService).updatePermissionOnRoles(
             allRoles.subList(0, 2),
             allRoles.subList(2, 4),
             packetGroupName,
