@@ -51,6 +51,14 @@ class AuthorizationLogicTest
     }
 
     @Test
+    fun `canReadPacket returns true if has user manage authority`()
+    {
+        val ops = createOps(listOf("user.manage"))
+        assertTrue(sut.canReadPacket(ops, packet))
+        assertTrue(sut.canReadPacket(ops, packet.id))
+    }
+
+    @Test
     fun `canReadPacket returns true if has packet manage authority`()
     {
         val ops = createOps(listOf("packet.manage:packet:${packet.name}:${packet.id}"))
@@ -102,6 +110,13 @@ class AuthorizationLogicTest
     fun `canReadPacketGroup returns true if has global read authority`()
     {
         val ops = createOps(listOf("packet.read"))
+        assertTrue(sut.canReadPacketGroup(ops, packet.name))
+    }
+
+    @Test
+    fun `canReadPacketGroup returns true if has user manage authority`()
+    {
+        val ops = createOps(listOf("user.manage"))
         assertTrue(sut.canReadPacketGroup(ops, packet.name))
     }
 

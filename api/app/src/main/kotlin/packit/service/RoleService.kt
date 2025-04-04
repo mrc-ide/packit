@@ -10,7 +10,10 @@ import packit.exceptions.PackitException
 import packit.model.Permission
 import packit.model.Role
 import packit.model.RolePermission
-import packit.model.dto.*
+import packit.model.dto.CreateRole
+import packit.model.dto.RoleDto
+import packit.model.dto.UpdatePacketReadRoles
+import packit.model.dto.UpdateRolePermissions
 import packit.model.toDto
 import packit.repository.RoleRepository
 
@@ -29,7 +32,7 @@ interface RoleService
     fun getByRoleName(roleName: String): Role?
     fun getSortedRoleDtos(roles: List<Role>): List<RoleDto>
     fun getDefaultRoles(): List<Role>
-    fun updatePacketReadPermissionOnRoles(updatePacketReadRoles: UpdatePacketReadRoles, packetGroupName: String)
+    fun updatePacketReadPermissionOnRoles(updatePacketReadRoles: UpdatePacketReadRoles)
 }
 
 @Service
@@ -92,10 +95,9 @@ class BaseRoleService(
         val role = roleRepository.findByName(roleName)
             ?: throw PackitException("roleNotFound", HttpStatus.BAD_REQUEST)
 
-        val roleAfterPermissionAdd = addRolePermissionsToRole(role, updateRolePermissions.addPermissions)
-
-        return rolePermissionService.removeRolePermissionsFromRole(
-            roleAfterPermissionAdd,
+        return rolePermissionService.updatePermissionsOnRole(
+            role,
+            updateRolePermissions.addPermissions,
             updateRolePermissions.removePermissions
         )
     }
@@ -116,14 +118,6 @@ class BaseRoleService(
             }
             role.toDto()
         }
-    }
-
-    internal fun addRolePermissionsToRole(role: Role, addRolePermissions: List<UpdateRolePermission>): Role
-    {
-        val rolePermissionsToAdd =
-            rolePermissionService.getRolePermissionsToAdd(role, addRolePermissions)
-        role.rolePermissions.addAll(rolePermissionsToAdd)
-        return roleRepository.save(role)
     }
 
     override fun getAllRoles(isUsernames: Boolean?): List<Role>
@@ -181,7 +175,6 @@ class BaseRoleService(
 
     override fun updatePacketReadPermissionOnRoles(
         updatePacketReadRoles: UpdatePacketReadRoles,
-        packetGroupName: String
     )
     {
         val roleNamesToUpdate =
@@ -189,10 +182,11 @@ class BaseRoleService(
         val rolesToUpdate =
             getRolesByRoleNames(roleNamesToUpdate.toList())
 
-        rolePermissionService.updatePacketReadPermissionOnRoles(
+        rolePermissionService.updatePermissionOnRoles(
             rolesToUpdate.filter { it.name in updatePacketReadRoles.roleNamesToAdd },
             rolesToUpdate.filter { it.name in updatePacketReadRoles.roleNamesToRemove },
-            packetGroupName,
+            "packet.read",
+            updatePacketReadRoles.packetGroupName,
             updatePacketReadRoles.packetId,
         )
     }
