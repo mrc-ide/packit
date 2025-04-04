@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus
 import packit.exceptions.PackitException
 import packit.model.*
 import packit.model.dto.UpdateRolePermission
-import packit.repository.RolePermissionRepository
 import packit.repository.RoleRepository
 import packit.service.*
 import java.time.Instant
@@ -42,7 +41,6 @@ class RolePermissionServiceTest
         packetService,
         packetGroupService,
         tagService,
-        rolePermissionRepository,
         roleRepository
     )
 
@@ -142,7 +140,7 @@ class RolePermissionServiceTest
         val addRolePermissions = listOf(UpdateRolePermission(permission1.name))
         whenever(permissionService.getByName(any())).thenReturn(permission1)
 
-        val result = service.getRolePermissionsToAdd(role, addRolePermissions)
+        val result = service.addPermissionsToRole(role, addRolePermissions)
 
         assertEquals(1, result.size)
         assertEquals(role, result[0].role)
@@ -159,7 +157,7 @@ class RolePermissionServiceTest
         whenever(permissionService.getByName(any())).thenReturn(permission1)
 
         assertThrows<PackitException> {
-            service.getRolePermissionsToAdd(role, addRolePermissions)
+            service.addPermissionsToRole(role, addRolePermissions)
         }.apply {
             assertEquals("rolePermissionAlreadyExists", key)
             assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
