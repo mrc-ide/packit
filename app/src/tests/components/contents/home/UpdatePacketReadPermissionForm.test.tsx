@@ -77,11 +77,12 @@ describe("UpdatePacketReadPermissionForm", () => {
 
     await waitFor(() => {
       expect(fetcherSpy).toHaveBeenCalledWith({
-        url: `${appConfig.apiUrl()}/roles/${packetGroupName}/read-permissions`,
+        url: `${appConfig.apiUrl()}/roles/read-permissions`,
         method: "PUT",
         body: {
           roleNamesToAdd: ["Viewer"],
-          roleNamesToRemove: ["hgz@gmail.com"]
+          roleNamesToRemove: ["hgz@gmail.com"],
+          packetGroupName
         }
       });
       expect(mutate).toHaveBeenCalled();
