@@ -33,7 +33,6 @@ class RolePermissionServiceTest
         on { getPacketGroupByName(any()) } doReturn packetGroup
     }
     private val tagService: TagService = mock()
-    private val rolePermissionRepository: RolePermissionRepository = mock()
     private val roleRepository: RoleRepository = mock()
 
     private val service = BaseRolePermissionService(
@@ -93,6 +92,28 @@ class RolePermissionServiceTest
     }
 
     @Test
+    fun `updatePermissionsOnRole calls correct methods with arguments returning role`()
+    {
+        val role = Role("role1")
+        val addRolePermissions = listOf(UpdateRolePermission("permission1"))
+        val removeRolePermissions = listOf(UpdateRolePermission("permission2"))
+        val serviceSpy = spy(service)
+        doNothing().`when`(serviceSpy).addPermissionsToRole(any(), any())
+        doNothing().`when`(serviceSpy).removeRolePermissionsFromRole(any(), any())
+        whenever(roleRepository.save(role)).thenReturn(role)
+
+        val result = serviceSpy.updatePermissionsOnRole(
+            role,
+            addRolePermissions,
+            removeRolePermissions
+        )
+
+        assertEquals(result, role)
+        verify(serviceSpy).addPermissionsToRole(role, addRolePermissions)
+        verify(serviceSpy).removeRolePermissionsFromRole(role, removeRolePermissions)
+    }
+
+    @Test
     fun `removeRolePermissionsFromRole removes role permissions when they exist`()
     {
         val role = Role("role1")
@@ -104,12 +125,10 @@ class RolePermissionServiceTest
         )
         whenever(permissionService.getByName(any())).thenReturn(permission1)
 
-        val result = service.removeRolePermissionsFromRole(role, removeRolePermissions)
+        service.removeRolePermissionsFromRole(role, removeRolePermissions)
 
-        verify(rolePermissionRepository).deleteAllByIdIn(listOf(1))
-        assertEquals(role, result)
-        assertEquals(1, result.rolePermissions.size)
-        assertEquals("permission2", result.rolePermissions[0].permission.name)
+        assertEquals(1, role.rolePermissions.size)
+        assertEquals("permission2", role.rolePermissions[0].permission.name)
     }
 
     @Test
@@ -133,22 +152,21 @@ class RolePermissionServiceTest
     }
 
     @Test
-    fun `getAddRolePermissionsFromRole returns role permissions to add when they do not exist in role`()
+    fun `addPermissionsToRole adds role permissions to role when they do not exist in role`()
     {
         val role = Role("role1")
         val permission1 = Permission("permission1", "d1")
         val addRolePermissions = listOf(UpdateRolePermission(permission1.name))
         whenever(permissionService.getByName(any())).thenReturn(permission1)
 
-        val result = service.addPermissionsToRole(role, addRolePermissions)
+        service.addPermissionsToRole(role, addRolePermissions)
 
-        assertEquals(1, result.size)
-        assertEquals(role, result[0].role)
-        assertEquals(permission1, result[0].permission)
+        assertEquals(1, role.rolePermissions.size)
+        assertEquals(permission1, role.rolePermissions.first().permission)
     }
 
     @Test
-    fun `getAddRolePermissionsFromRole throws exception when role permission already exists in role`()
+    fun `addPermissionsToRole throws exception when role permission already exists in role`()
     {
         val role = Role("role1")
         val permission1 = Permission("permission1", "d1")
@@ -165,7 +183,7 @@ class RolePermissionServiceTest
     }
 
     @Test
-    fun `updatePacketReadPermissionOnRoles calls correct methods with arguments when packetId passed`()
+    fun `updatePermissionOnRoles calls correct methods with arguments when packetId passed`()
     {
         val serviceSpy = spy(service)
         val rolesToAdd = listOf(Role("role1"), Role("role2"))
@@ -175,7 +193,7 @@ class RolePermissionServiceTest
         doNothing().`when`(serviceSpy).removePermissionFromRoles(rolesToRemove, permission, packet)
         doNothing().`when`(serviceSpy).addPermissionToRoles(rolesToAdd, permission, packet)
 
-        serviceSpy.updatePermissionOnRoles(rolesToAdd, rolesToRemove, packet.name, packet.id)
+        serviceSpy.updatePermissionOnRoles(rolesToAdd, rolesToRemove, "packet.read", packet.name, packet.id)
 
         verify(packetService).getPacket(packet.id)
         verify(serviceSpy).removePermissionFromRoles(rolesToRemove, permission, packet)
@@ -183,7 +201,7 @@ class RolePermissionServiceTest
     }
 
     @Test
-    fun `updatePacketReadPermissionOnRoles calls correct methods with arguments when packetId not passed`()
+    fun `updatePermissionOnRoles calls correct methods with arguments when packetId not passed`()
     {
         val serviceSpy = spy(service)
         val rolesToAdd = listOf(Role("role1"), Role("role2"))
@@ -193,7 +211,7 @@ class RolePermissionServiceTest
         doNothing().`when`(serviceSpy).removePermissionFromRoles(rolesToRemove, permission, packetGroup = packetGroup)
         doNothing().`when`(serviceSpy).addPermissionToRoles(rolesToAdd, permission, packetGroup = packetGroup)
 
-        serviceSpy.updatePermissionOnRoles(rolesToAdd, rolesToRemove, packetGroup.name, null)
+        serviceSpy.updatePermissionOnRoles(rolesToAdd, rolesToRemove, "packet.read", packetGroup.name, null)
 
         verify(packetGroupService).getPacketGroupByName(packetGroup.name)
         verify(serviceSpy).removePermissionFromRoles(rolesToRemove, permission, packetGroup = packetGroup)
@@ -263,8 +281,6 @@ class RolePermissionServiceTest
 
         assertEquals(0, roles[0].rolePermissions.size)
         assertEquals(0, roles[1].rolePermissions.size)
-
-        verify(rolePermissionRepository).deleteAllByIdIn(listOf(0, 1))
     }
 
     @Test

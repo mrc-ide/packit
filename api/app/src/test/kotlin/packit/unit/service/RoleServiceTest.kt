@@ -244,34 +244,23 @@ class RoleServiceTest
     }
 
     @Test
-    fun `updatePermissionsToRole calls correct methods and saves role & returns new role`()
+    fun `updatePermissionsToRole calls correct methods and returns output of updatePermissionsOnRole`()
     {
         val roleName = "roleName"
         val permissionName = "permission1"
         val role = createRoleWithPermission(roleName, permissionName)
         whenever(roleRepository.findByName(roleName)).thenReturn(role)
-        whenever(roleRepository.save(any<Role>())).thenAnswer { it.getArgument(0) }
-        whenever(rolePermissionService.getRolePermissionsToAdd(role, listOf())).thenReturn(
-            listOf(
-                createRoleWithPermission(roleName, "differentPermission").rolePermissions.first()
-            )
-        )
-        whenever(roleRepository.save(any<Role>())).thenAnswer { it.getArgument(0) }
-        whenever(rolePermissionService.removeRolePermissionsFromRole(role, listOf())).thenReturn(role)
+        whenever(rolePermissionService.updatePermissionsOnRole(any(), any(), any())).thenReturn(role)
 
-        val updatedRole = roleService.updatePermissionsToRole(roleName, UpdateRolePermissions())
+        val result = roleService.updatePermissionsToRole(roleName, UpdateRolePermissions())
 
-        verify(roleRepository).save(
-            argThat {
-                assertEquals(this, role)
-                assertEquals(this.rolePermissions.size, 2)
-                true
-            }
+        assertEquals(result, role)
+        verify(roleRepository).findByName(roleName)
+        verify(rolePermissionService).updatePermissionsOnRole(
+            role,
+            listOf(),
+            listOf()
         )
-        verify(rolePermissionService).removeRolePermissionsFromRole(role, listOf())
-        verify(rolePermissionService).getRolePermissionsToAdd(role, listOf())
-        assertEquals(role, updatedRole)
-        assertEquals(2, updatedRole.rolePermissions.size)
     }
 
     @Test
@@ -289,7 +278,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getRolesWithRelationships returns all roles when no isUsernamesflag set`()
+    fun `getAllRoles returns all roles when no isUsernamesflag set`()
     {
         val roles = listOf(Role(name = "role1"), Role(name = "role2"))
         whenever(roleRepository.findAll(Sort.by("name").ascending())).thenReturn(roles)
@@ -301,7 +290,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getRolesWithRelationships returns matching roles when all role names exist`()
+    fun `getAllRoles returns matching roles when all role names exist`()
     {
         val roleNames = listOf("role1", "role2")
         val roles = listOf(Role(name = "role1"), Role(name = "role2"))
@@ -628,6 +617,7 @@ class RoleServiceTest
         verify(rolePermissionService).updatePermissionOnRoles(
             allRoles.subList(0, 2),
             allRoles.subList(2, 4),
+            "packet.read",
             packetGroupName,
             packetId
         )
