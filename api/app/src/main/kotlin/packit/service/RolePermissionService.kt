@@ -2,6 +2,7 @@ package packit.service
 
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import packit.exceptions.PackitException
 import packit.model.*
 import packit.model.dto.UpdateRolePermission
@@ -19,21 +20,6 @@ interface RolePermissionService
         packetId: String? = null,
     )
 
-    fun addPermissionToRoles(
-        roles: List<Role>,
-        permission: Permission,
-        packet: Packet? = null,
-        packetGroup: PacketGroup? = null,
-        tag: Tag? = null,
-    )
-
-    fun removePermissionFromRoles(
-        roles: List<Role>,
-        permission: Permission,
-        packet: Packet? = null,
-        packetGroup: PacketGroup? = null,
-        tag: Tag? = null,
-    )
 }
 
 @Service
@@ -70,22 +56,19 @@ class BaseRolePermissionService(
         }
     }
 
+    @Transactional(rollbackFor = [Exception::class])
     override fun removeRolePermissionsFromRole(role: Role, removeRolePermissions: List<UpdateRolePermission>): Role
     {
         val rolePermissionsToRemove = getRolePermissionsToUpdate(role, removeRolePermissions)
-        val rolePermissionsToRemoveIds = mutableListOf<Int>()
 
         for (rolePermission in rolePermissionsToRemove)
         {
             val matchedRolePermission = role.rolePermissions.find { rolePermission == it }
                 ?: throw PackitException("rolePermissionDoesNotExist", HttpStatus.BAD_REQUEST)
 
-            rolePermissionsToRemoveIds.add(matchedRolePermission.id!!)
             role.rolePermissions.remove(matchedRolePermission)
         }
-
-        rolePermissionRepository.deleteAllByIdIn(rolePermissionsToRemoveIds)
-        return role
+        return roleRepository.save(role)
     }
 
     override fun getRolePermissionsToAdd(
@@ -102,6 +85,7 @@ class BaseRolePermissionService(
         return rolePermissionsToAdd
     }
 
+    @Transactional(rollbackFor = [Exception::class])
     override fun updatePacketReadPermissionOnRoles(
         rolesToAdd: List<Role>,
         rolesToRemove: List<Role>,
@@ -131,15 +115,16 @@ class BaseRolePermissionService(
             packet,
             packetGroup
         )
-        roleRepository.saveAll(rolesToAdd)
+
+        roleRepository.saveAll(rolesToAdd + rolesToRemove)
     }
 
-    override fun addPermissionToRoles(
+    internal fun addPermissionToRoles(
         roles: List<Role>,
         permission: Permission,
-        packet: Packet?,
-        packetGroup: PacketGroup?,
-        tag: Tag?,
+        packet: Packet? = null,
+        packetGroup: PacketGroup? = null,
+        tag: Tag? = null,
     )
     {
         for (role in roles)
@@ -151,7 +136,7 @@ class BaseRolePermissionService(
                 packetGroup = packetGroup,
                 tag = tag,
             )
-            if (role.rolePermissions.any { it == rolePermission })
+            if (role.rolePermissions.contains(rolePermission))
             {
                 throw PackitException("rolePermissionAlreadyExists", HttpStatus.BAD_REQUEST)
             }
@@ -159,16 +144,14 @@ class BaseRolePermissionService(
         }
     }
 
-    override fun removePermissionFromRoles(
+    internal fun removePermissionFromRoles(
         roles: List<Role>,
         permission: Permission,
-        packet: Packet?,
-        packetGroup: PacketGroup?,
-        tag: Tag?,
+        packet: Packet? = null,
+        packetGroup: PacketGroup? = null,
+        tag: Tag? = null,
     )
     {
-        val rolePermissionsToRemoveIds = mutableListOf<Int>()
-
         for (role in roles)
         {
             val rolePermission = RolePermission(
@@ -181,10 +164,7 @@ class BaseRolePermissionService(
             val matchedRolePermission = role.rolePermissions.find { it == rolePermission }
                 ?: throw PackitException("rolePermissionDoesNotExist", HttpStatus.BAD_REQUEST)
 
-            rolePermissionsToRemoveIds.add(matchedRolePermission.id!!)
             role.rolePermissions.remove(matchedRolePermission)
         }
-
-        rolePermissionRepository.deleteAllByIdIn(rolePermissionsToRemoveIds)
     }
 }

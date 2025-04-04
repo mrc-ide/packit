@@ -8,6 +8,7 @@ data class UpdateRolePermissions(
 )
 
 data class UpdatePacketReadRoles(
+    val packetGroupName: String,
     val packetId: String? = null,
     val roleNamesToAdd: Set<String> = setOf(),
     val roleNamesToRemove: Set<String> = setOf()

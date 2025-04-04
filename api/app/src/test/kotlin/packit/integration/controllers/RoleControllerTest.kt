@@ -396,12 +396,13 @@ class RoleControllerTest : IntegrationTest()
     {
         val updatePacketReadRoles = jacksonObjectMapper().writeValueAsString(
             UpdatePacketReadRoles(
+                packetGroupName = "test-name",
                 roleNamesToAdd = setOf(),
                 roleNamesToRemove = setOf()
             )
         )
         val result = restTemplate.exchange(
-            "/roles/test-name/read-permissions",
+            "/roles/read-permissions",
             HttpMethod.PUT,
             getTokenizedHttpEntity(data = updatePacketReadRoles),
             String::class.java
@@ -440,13 +441,14 @@ class RoleControllerTest : IntegrationTest()
         roleRepository.saveAll(rolesToRemove)
         val updatePacketReadRoles = jacksonObjectMapper().writeValueAsString(
             UpdatePacketReadRoles(
+                packetGroupName = packetGroup.name,
                 roleNamesToAdd = roleNamesToAdd,
                 roleNamesToRemove = roleNamesToRemove
             )
         )
 
         val result = restTemplate.exchange(
-            "/roles/${packetGroup.name}/read-permissions",
+            "/roles/read-permissions",
             HttpMethod.PUT,
             getTokenizedHttpEntity(data = updatePacketReadRoles),
             String::class.java

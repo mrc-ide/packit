@@ -29,7 +29,7 @@ interface RoleService
     fun getByRoleName(roleName: String): Role?
     fun getSortedRoleDtos(roles: List<Role>): List<RoleDto>
     fun getDefaultRoles(): List<Role>
-    fun updatePacketReadPermissionOnRoles(updatePacketReadRoles: UpdatePacketReadRoles, packetGroupName: String)
+    fun updatePacketReadPermissionOnRoles(updatePacketReadRoles: UpdatePacketReadRoles)
 }
 
 @Service
@@ -181,7 +181,6 @@ class BaseRoleService(
 
     override fun updatePacketReadPermissionOnRoles(
         updatePacketReadRoles: UpdatePacketReadRoles,
-        packetGroupName: String
     )
     {
         val roleNamesToUpdate =
@@ -192,7 +191,7 @@ class BaseRoleService(
         rolePermissionService.updatePacketReadPermissionOnRoles(
             rolesToUpdate.filter { it.name in updatePacketReadRoles.roleNamesToAdd },
             rolesToUpdate.filter { it.name in updatePacketReadRoles.roleNamesToRemove },
-            packetGroupName,
+            updatePacketReadRoles.packetGroupName,
             updatePacketReadRoles.packetId,
         )
     }
