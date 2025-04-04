@@ -58,7 +58,6 @@ class AuthorizationLogicTest
         assertTrue(sut.canReadPacket(ops, packet.id))
     }
 
-
     @Test
     fun `canReadPacket returns true if has packet manage authority`()
     {

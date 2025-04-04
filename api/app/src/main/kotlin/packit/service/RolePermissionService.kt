@@ -132,7 +132,6 @@ class BaseRolePermissionService(
         role.rolePermissions.addAll(rolePermissionsToAdd)
     }
 
-
     internal fun addPermissionToRoles(
         roles: List<Role>,
         permission: Permission,
