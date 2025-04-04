@@ -6,6 +6,7 @@ import packit.model.dto.TagDto
 @Entity
 @Table(name = "tag")
 class Tag(
+    @Column(unique = true, nullable = false)
     val name: String,
     @ManyToMany(mappedBy = "tags")
     var packets: MutableList<Packet> = mutableListOf(),

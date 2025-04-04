@@ -51,6 +51,14 @@ class AuthorizationLogicTest
     }
 
     @Test
+    fun `canReadPacket returns true if has user manage authority`()
+    {
+        val ops = createOps(listOf("user.manage"))
+        assertTrue(sut.canReadPacket(ops, packet))
+        assertTrue(sut.canReadPacket(ops, packet.id))
+    }
+
+    @Test
     fun `canReadPacket returns true if has packet manage authority`()
     {
         val ops = createOps(listOf("packet.manage:packet:${packet.name}:${packet.id}"))
@@ -102,6 +110,13 @@ class AuthorizationLogicTest
     fun `canReadPacketGroup returns true if has global read authority`()
     {
         val ops = createOps(listOf("packet.read"))
+        assertTrue(sut.canReadPacketGroup(ops, packet.name))
+    }
+
+    @Test
+    fun `canReadPacketGroup returns true if has user manage authority`()
+    {
+        val ops = createOps(listOf("user.manage"))
         assertTrue(sut.canReadPacketGroup(ops, packet.name))
     }
 
@@ -180,5 +195,54 @@ class AuthorizationLogicTest
     {
         val ops = createOps(listOf("packet.read"))
         assertFalse(sut.canReadRoles(ops))
+    }
+
+    @Test
+    fun `canUpdatePacketReadRoles returns true if has global packet manage authority`()
+    {
+        val ops = createOps(listOf("packet.manage"))
+        assertTrue(sut.canUpdatePacketReadRoles(ops, packet.name, packet.id))
+    }
+
+    @Test
+    fun `canUpdatePacketReadRoles returns true if has user manage authority`()
+    {
+        val ops = createOps(listOf("user.manage"))
+        assertTrue(sut.canUpdatePacketReadRoles(ops, packet.name, packet.id))
+    }
+
+    @Test
+    fun `canUpdatePacketReadRoles returns true with packetId when has specific packet manage authority`()
+    {
+        val ops = createOps(listOf("packet.manage:packet:${packet.name}:${packet.id}"))
+        assertTrue(sut.canUpdatePacketReadRoles(ops, packet.name, packet.id))
+    }
+
+    @Test
+    fun `canUpdatePacketReadRoles returns true with packetId when has packetGroup manage authority`()
+    {
+        val ops = createOps(listOf("packet.manage:packetGroup:${packet.name}"))
+        assertTrue(sut.canUpdatePacketReadRoles(ops, packet.name, packet.id))
+    }
+
+    @Test
+    fun `canUpdatePacketReadRoles returns true with when has packetGroup manage authority`()
+    {
+        val ops = createOps(listOf("packet.manage:packetGroup:${packet.name}"))
+        assertTrue(sut.canUpdatePacketReadRoles(ops, packet.name))
+    }
+
+    @Test
+    fun `canUpdatePacketReadRoles returns false with no packetId when lacks proper authority`()
+    {
+        val ops = createOps(listOf("packet.manage:packet:${packet.name}:${packet.id}"))
+        assertFalse(sut.canUpdatePacketReadRoles(ops, packet.name))
+    }
+
+    @Test
+    fun `canUpdatePacketReadRoles returns false with packetId when lacks proper authority`()
+    {
+        val ops = createOps(listOf("packet.manage:packet:${packet.name}:randomId"))
+        assertFalse(sut.canUpdatePacketReadRoles(ops, packet.name, packet.id))
     }
 }

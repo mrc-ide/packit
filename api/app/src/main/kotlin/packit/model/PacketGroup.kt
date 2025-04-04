@@ -6,6 +6,7 @@ import packit.model.dto.PacketGroupDto
 @Entity
 @Table(name = "packet_group")
 class PacketGroup(
+    @Column(unique = true, nullable = false)
     var name: String,
     @OneToMany(mappedBy = "packetGroup", cascade = [CascadeType.ALL])
     var rolePermissions: MutableList<RolePermission> = mutableListOf(),

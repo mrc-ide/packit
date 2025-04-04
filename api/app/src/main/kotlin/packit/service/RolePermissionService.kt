@@ -3,82 +3,179 @@ package packit.service
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
-import packit.model.Role
-import packit.model.RolePermission
+import packit.model.*
 import packit.model.dto.UpdateRolePermission
-import packit.repository.*
 
 interface RolePermissionService
 {
-    fun removeRolePermissionsFromRole(role: Role, removeRolePermissions: List<UpdateRolePermission>): Role
-    fun getRolePermissionsToAdd(role: Role, addRolePermissions: List<UpdateRolePermission>): List<RolePermission>
+    fun updatePermissionsOnRole(
+        role: Role,
+        addRolePermissions: List<UpdateRolePermission>,
+        removeRolePermissions: List<UpdateRolePermission>,
+    ): Role
+
+    fun applyPermissionToMultipleRoles(
+        rolesToAdd: List<Role>,
+        rolesToRemove: List<Role>,
+        permissionName: String,
+        packetGroupName: String,
+        packetId: String? = null,
+    ): List<Role>
 }
 
 @Service
 class BaseRolePermissionService(
-    private val permissionRepository: PermissionRepository,
-    private val packetRepository: PacketRepository,
-    private val packetGroupRepository: PacketGroupRepository,
-    private val tagRepository: TagRepository,
-    private val rolePermissionRepository: RolePermissionRepository
+    private val permissionService: PermissionService,
+    private val packetService: PacketService,
+    private val packetGroupService: PacketGroupService,
+    private val tagService: TagService,
 ) : RolePermissionService
 {
+    override fun updatePermissionsOnRole(
+        role: Role,
+        addRolePermissions: List<UpdateRolePermission>,
+        removeRolePermissions: List<UpdateRolePermission>
+    ): Role
+    {
+        addPermissionsToRole(role, addRolePermissions)
+        removeRolePermissionsFromRole(role, removeRolePermissions)
+
+        return role
+    }
+
+    override fun applyPermissionToMultipleRoles(
+        rolesToAdd: List<Role>,
+        rolesToRemove: List<Role>,
+        permissionName: String,
+        packetGroupName: String,
+        packetId: String?,
+    ): List<Role>
+    {
+        val permission = permissionService.getByName(permissionName)
+        val packet = packetId?.let { packetService.getPacket(it) }
+        val packetGroup = if (packetId == null)
+        {
+            packetGroupService.getPacketGroupByName(packetGroupName)
+        } else
+        {
+            require(packet?.name == packetGroupName) {
+                "Packet group name must be the same as packet name when packetId is provided"
+            }
+            null
+        }
+
+        removePermissionFromRoles(
+            rolesToRemove,
+            permission,
+            packet,
+            packetGroup
+        )
+        addPermissionToRoles(
+            rolesToAdd,
+            permission,
+            packet,
+            packetGroup
+        )
+
+        return rolesToAdd + rolesToRemove
+    }
+
     internal fun getRolePermissionsToUpdate(
         role: Role,
-        updateRolePermissions: List<UpdateRolePermission>
+        updateRolePermissions: List<UpdateRolePermission>,
     ): List<RolePermission>
     {
         return updateRolePermissions.map { addRolePermission ->
-            val permission = permissionRepository.findByName(addRolePermission.permission)
-                ?: throw PackitException("invalidPermissionsProvided", HttpStatus.BAD_REQUEST)
+            val permission = permissionService.getByName(addRolePermission.permission)
 
             RolePermission(
                 role = role,
                 permission = permission,
                 packet = addRolePermission.packetId?.let {
-                    packetRepository.findById(it)
-                        .orElseThrow { PackitException("packetNotFound", HttpStatus.BAD_REQUEST) }
+                    packetService.getPacket(it)
                 },
                 packetGroup = addRolePermission.packetGroupId?.let {
-                    packetGroupRepository.findById(it)
-                        .orElseThrow { PackitException("packetGroupNotFound", HttpStatus.BAD_REQUEST) }
+                    packetGroupService.getPacketGroup(it)
                 },
                 tag = addRolePermission.tagId?.let {
-                    tagRepository.findById(it).orElseThrow { PackitException("tagNotFound", HttpStatus.BAD_REQUEST) }
+                    tagService.getTag(it)
                 }
             )
         }
     }
 
-    override fun removeRolePermissionsFromRole(role: Role, removeRolePermissions: List<UpdateRolePermission>): Role
+    internal fun removeRolePermissionsFromRole(role: Role, removeRolePermissions: List<UpdateRolePermission>)
     {
         val rolePermissionsToRemove = getRolePermissionsToUpdate(role, removeRolePermissions)
-        var rolePermissionsToRemoveIds = mutableListOf<Int>()
 
         for (rolePermission in rolePermissionsToRemove)
         {
-            val matchedRolePermission = role.rolePermissions.find { rolePermission == it }
-                ?: throw PackitException("rolePermissionDoesNotExist", HttpStatus.BAD_REQUEST)
-
-            rolePermissionsToRemoveIds.add(matchedRolePermission.id!!)
-            role.rolePermissions.remove(matchedRolePermission)
+            if (!role.rolePermissions.remove(rolePermission))
+            {
+                throw PackitException("rolePermissionDoesNotExist", HttpStatus.BAD_REQUEST)
+            }
         }
-
-        rolePermissionRepository.deleteAllByIdIn(rolePermissionsToRemoveIds)
-        return role
     }
 
-    override fun getRolePermissionsToAdd(
+    internal fun addPermissionsToRole(
         role: Role,
-        addRolePermissions: List<UpdateRolePermission>
-    ): List<RolePermission>
+        addRolePermissions: List<UpdateRolePermission>,
+    )
     {
         val rolePermissionsToAdd = getRolePermissionsToUpdate(role, addRolePermissions)
         if (rolePermissionsToAdd.any { role.rolePermissions.contains(it) })
         {
             throw PackitException("rolePermissionAlreadyExists", HttpStatus.BAD_REQUEST)
         }
+        role.rolePermissions.addAll(rolePermissionsToAdd)
+    }
 
-        return rolePermissionsToAdd
+    internal fun addPermissionToRoles(
+        roles: List<Role>,
+        permission: Permission,
+        packet: Packet? = null,
+        packetGroup: PacketGroup? = null,
+        tag: Tag? = null,
+    )
+    {
+        for (role in roles)
+        {
+            val rolePermission = RolePermission(
+                role = role,
+                permission = permission,
+                packet = packet,
+                packetGroup = packetGroup,
+                tag = tag,
+            )
+            if (role.rolePermissions.contains(rolePermission))
+            {
+                throw PackitException("rolePermissionAlreadyExists", HttpStatus.BAD_REQUEST)
+            }
+            role.rolePermissions.add(rolePermission)
+        }
+    }
+
+    internal fun removePermissionFromRoles(
+        roles: List<Role>,
+        permission: Permission,
+        packet: Packet? = null,
+        packetGroup: PacketGroup? = null,
+        tag: Tag? = null,
+    )
+    {
+        for (role in roles)
+        {
+            val rolePermission = RolePermission(
+                role = role,
+                permission = permission,
+                packet = packet,
+                packetGroup = packetGroup,
+                tag = tag,
+            )
+            if (!role.rolePermissions.remove(rolePermission))
+            {
+                throw PackitException("rolePermissionDoesNotExist", HttpStatus.BAD_REQUEST)
+            }
+        }
     }
 }

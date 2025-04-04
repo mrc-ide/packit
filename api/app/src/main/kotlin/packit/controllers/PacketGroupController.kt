@@ -2,23 +2,22 @@ package packit.controllers
 
 import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.*
 import packit.model.PageablePayload
-import packit.model.dto.PacketDto
-import packit.model.dto.PacketGroupDisplay
-import packit.model.dto.PacketGroupDto
-import packit.model.dto.PacketGroupSummary
+import packit.model.dto.*
 import packit.model.toDto
 import packit.service.PacketGroupService
 import packit.service.PacketService
+import packit.service.RoleService
 
 @Controller
 class PacketGroupController(
     private val packetService: PacketService,
     private val packetGroupService: PacketGroupService,
+    private val roleService: RoleService,
 )
 {
     @GetMapping("/packetGroups")
@@ -35,7 +34,8 @@ class PacketGroupController(
     @GetMapping("/packetGroups/{name}/display")
     fun getDisplay(
         @PathVariable name: String
-    ): ResponseEntity<PacketGroupDisplay> {
+    ): ResponseEntity<PacketGroupDisplay>
+    {
         val result = packetGroupService.getPacketGroupDisplay(name)
 
         return ResponseEntity.ok(result)
@@ -60,5 +60,24 @@ class PacketGroupController(
     {
         val payload = PageablePayload(pageNumber, pageSize)
         return ResponseEntity.ok(packetGroupService.getPacketGroupSummaries(payload, filter))
+    }
+
+    @PreAuthorize(
+        """
+        @authz.canUpdatePacketReadRoles(
+            #root,
+            #name,
+            #updatePacketReadRoles.packetId)
+    """
+    )
+    @PutMapping("packetGroups/{name}/read-permissions")
+    fun updatePacketReadPermissionOnRoles(
+        @RequestBody @Validated updatePacketReadRoles: UpdatePacketReadRoles,
+        @PathVariable name: String
+    ): ResponseEntity<Unit>
+    {
+        roleService.updatePacketReadPermissionOnRoles(updatePacketReadRoles, name)
+
+        return ResponseEntity.noContent().build()
     }
 }
