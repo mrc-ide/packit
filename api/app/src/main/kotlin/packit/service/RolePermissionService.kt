@@ -2,11 +2,9 @@ package packit.service
 
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import packit.exceptions.PackitException
 import packit.model.*
 import packit.model.dto.UpdateRolePermission
-import packit.repository.RoleRepository
 
 interface RolePermissionService
 {
@@ -16,13 +14,13 @@ interface RolePermissionService
         removeRolePermissions: List<UpdateRolePermission>,
     ): Role
 
-    fun updatePermissionOnRoles(
+    fun applyPermissionToMultipleRoles(
         rolesToAdd: List<Role>,
         rolesToRemove: List<Role>,
         permissionName: String,
         packetGroupName: String,
         packetId: String? = null,
-    )
+    ): List<Role>
 }
 
 @Service
@@ -31,10 +29,8 @@ class BaseRolePermissionService(
     private val packetService: PacketService,
     private val packetGroupService: PacketGroupService,
     private val tagService: TagService,
-    private val roleRepository: RoleRepository,
 ) : RolePermissionService
 {
-    @Transactional(rollbackFor = [Exception::class])
     override fun updatePermissionsOnRole(
         role: Role,
         addRolePermissions: List<UpdateRolePermission>,
@@ -44,17 +40,16 @@ class BaseRolePermissionService(
         addPermissionsToRole(role, addRolePermissions)
         removeRolePermissionsFromRole(role, removeRolePermissions)
 
-        return roleRepository.save(role)
+        return role
     }
 
-    @Transactional(rollbackFor = [Exception::class])
-    override fun updatePermissionOnRoles(
+    override fun applyPermissionToMultipleRoles(
         rolesToAdd: List<Role>,
         rolesToRemove: List<Role>,
         permissionName: String,
         packetGroupName: String,
         packetId: String?,
-    )
+    ): List<Role>
     {
         val permission = permissionService.getByName(permissionName)
         val packet = packetId?.let { packetService.getPacket(it) }
@@ -63,6 +58,9 @@ class BaseRolePermissionService(
             packetGroupService.getPacketGroupByName(packetGroupName)
         } else
         {
+            require(packet?.name == packetGroupName) {
+                "Packet group name must be the same as packet name when packetId is provided"
+            }
             null
         }
 
@@ -79,7 +77,7 @@ class BaseRolePermissionService(
             packetGroup
         )
 
-        roleRepository.saveAll(rolesToAdd + rolesToRemove)
+        return rolesToAdd + rolesToRemove
     }
 
     internal fun getRolePermissionsToUpdate(
@@ -112,10 +110,10 @@ class BaseRolePermissionService(
 
         for (rolePermission in rolePermissionsToRemove)
         {
-            val matchedRolePermission = role.rolePermissions.find { rolePermission == it }
-                ?: throw PackitException("rolePermissionDoesNotExist", HttpStatus.BAD_REQUEST)
-
-            role.rolePermissions.remove(matchedRolePermission)
+            if (!role.rolePermissions.remove(rolePermission))
+            {
+                throw PackitException("rolePermissionDoesNotExist", HttpStatus.BAD_REQUEST)
+            }
         }
     }
 
@@ -174,10 +172,10 @@ class BaseRolePermissionService(
                 packetGroup = packetGroup,
                 tag = tag,
             )
-            val matchedRolePermission = role.rolePermissions.find { it == rolePermission }
-                ?: throw PackitException("rolePermissionDoesNotExist", HttpStatus.BAD_REQUEST)
-
-            role.rolePermissions.remove(matchedRolePermission)
+            if (!role.rolePermissions.remove(rolePermission))
+            {
+                throw PackitException("rolePermissionDoesNotExist", HttpStatus.BAD_REQUEST)
+            }
         }
     }
 }

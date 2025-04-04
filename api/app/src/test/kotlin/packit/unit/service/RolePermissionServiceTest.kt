@@ -183,7 +183,7 @@ class RolePermissionServiceTest
     }
 
     @Test
-    fun `updatePermissionOnRoles calls correct methods with arguments when packetId passed`()
+    fun `applyPermissionToMultipleRoles calls correct methods with arguments when packetId passed`()
     {
         val serviceSpy = spy(service)
         val rolesToAdd = listOf(Role("role1"), Role("role2"))
@@ -193,7 +193,7 @@ class RolePermissionServiceTest
         doNothing().`when`(serviceSpy).removePermissionFromRoles(rolesToRemove, permission, packet)
         doNothing().`when`(serviceSpy).addPermissionToRoles(rolesToAdd, permission, packet)
 
-        serviceSpy.updatePermissionOnRoles(rolesToAdd, rolesToRemove, "packet.read", packet.name, packet.id)
+        serviceSpy.applyPermissionToMultipleRoles(rolesToAdd, rolesToRemove, "packet.read", packet.name, packet.id)
 
         verify(packetService).getPacket(packet.id)
         verify(serviceSpy).removePermissionFromRoles(rolesToRemove, permission, packet)
@@ -201,7 +201,7 @@ class RolePermissionServiceTest
     }
 
     @Test
-    fun `updatePermissionOnRoles calls correct methods with arguments when packetId not passed`()
+    fun `applyPermissionToMultipleRoles calls correct methods with arguments when packetId not passed`()
     {
         val serviceSpy = spy(service)
         val rolesToAdd = listOf(Role("role1"), Role("role2"))
@@ -211,11 +211,32 @@ class RolePermissionServiceTest
         doNothing().`when`(serviceSpy).removePermissionFromRoles(rolesToRemove, permission, packetGroup = packetGroup)
         doNothing().`when`(serviceSpy).addPermissionToRoles(rolesToAdd, permission, packetGroup = packetGroup)
 
-        serviceSpy.updatePermissionOnRoles(rolesToAdd, rolesToRemove, "packet.read", packetGroup.name, null)
+        serviceSpy.applyPermissionToMultipleRoles(rolesToAdd, rolesToRemove, "packet.read", packetGroup.name, null)
 
         verify(packetGroupService).getPacketGroupByName(packetGroup.name)
         verify(serviceSpy).removePermissionFromRoles(rolesToRemove, permission, packetGroup = packetGroup)
         verify(serviceSpy).addPermissionToRoles(rolesToAdd, permission, packetGroup = packetGroup)
+    }
+
+    @Test
+    fun `applyPermissionToMultipleRoles throws exception when packet name does not match packetGroupName`()
+    {
+        whenever(permissionService.getByName(any())).thenReturn(any<Permission>())
+
+        assertThrows<IllegalArgumentException> {
+            service.applyPermissionToMultipleRoles(
+                listOf(),
+                listOf(),
+                "packet.read",
+                "mismatchedName",
+                packet.id
+            )
+        }.apply {
+            assertEquals(
+                "Packet group name must be the same as packet name when packetId is provided",
+                message
+            )
+        }
     }
 
     @Test
