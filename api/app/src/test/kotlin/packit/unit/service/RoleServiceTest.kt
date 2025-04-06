@@ -244,18 +244,20 @@ class RoleServiceTest
     }
 
     @Test
-    fun `updatePermissionsToRole calls correct methods and returns output of updatePermissionsOnRole`()
+    fun `updatePermissionsToRole calls correct methods and returns saved role`()
     {
         val roleName = "roleName"
         val permissionName = "permission1"
         val role = createRoleWithPermission(roleName, permissionName)
         whenever(roleRepository.findByName(roleName)).thenReturn(role)
-        whenever(rolePermissionService.updatePermissionsOnRole(any(), any(), any())).thenReturn(role)
+        whenever(roleRepository.save(role)).thenReturn(role)
+        whenever(rolePermissionService.updatePermissionsOnRole(role, listOf(), listOf())).thenReturn(role)
 
         val result = roleService.updatePermissionsToRole(roleName, UpdateRolePermissions())
 
         assertEquals(result, role)
         verify(roleRepository).findByName(roleName)
+        verify(roleRepository).save(role)
         verify(rolePermissionService).updatePermissionsOnRole(
             role,
             listOf(),
@@ -595,7 +597,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `updatePacketReadPermissionOnRoles calls correct methods with arguments`()
+    fun `updatePacketReadPermissionOnRoles calls correct methods with arguments & returns saved role`()
     {
         val spyRoleService = spy(roleService)
         val rolesToAdd = setOf("role1", "role2")
@@ -603,18 +605,20 @@ class RoleServiceTest
         val updateRoleNames = rolesToAdd + rolesToRemove
         val packetId = "packet123"
         val packetGroupName = "packetGroup1"
-
         val updatePacketReadRoles =
-            UpdatePacketReadRoles(packetGroupName, packetId, rolesToAdd.toSet(), rolesToRemove.toSet())
+            UpdatePacketReadRoles(packetId, rolesToAdd.toSet(), rolesToRemove.toSet())
         val allRoles = updateRoleNames.map { Role(name = it) }
 
         doReturn(updateRoleNames).`when`(spyRoleService)
             .getUniqueRoleNamesForUpdate(rolesToAdd, rolesToRemove)
         doReturn(allRoles).`when`(spyRoleService).getRolesByRoleNames(any())
+        whenever(rolePermissionService.applyPermissionToMultipleRoles(any(), any(), any(), any(), any())).thenReturn(
+            allRoles
+        )
 
-        spyRoleService.updatePacketReadPermissionOnRoles(updatePacketReadRoles)
+        spyRoleService.updatePacketReadPermissionOnRoles(updatePacketReadRoles, packetGroupName)
 
-        verify(rolePermissionService).updatePermissionOnRoles(
+        verify(rolePermissionService).applyPermissionToMultipleRoles(
             allRoles.subList(0, 2),
             allRoles.subList(2, 4),
             "packet.read",
@@ -623,5 +627,6 @@ class RoleServiceTest
         )
         verify(spyRoleService).getUniqueRoleNamesForUpdate(rolesToAdd, rolesToRemove)
         verify(spyRoleService).getRolesByRoleNames(updateRoleNames.toList())
+        verify(roleRepository).saveAll(allRoles)
     }
 }

@@ -5,7 +5,10 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import packit.model.dto.*
+import packit.model.dto.CreateRole
+import packit.model.dto.RoleDto
+import packit.model.dto.UpdateRolePermissions
+import packit.model.dto.UpdateRoleUsers
 import packit.model.toDto
 import packit.service.RoleService
 import packit.service.UserRoleService
@@ -74,23 +77,5 @@ class RoleController(private val roleService: RoleService, private val userRoleS
     {
         val role = roleService.getRole(roleName)
         return ResponseEntity.ok(role.toDto())
-    }
-
-    @PutMapping("/read-permissions")
-    @PreAuthorize(
-        """
-        @authz.canUpdatePacketReadRoles(
-            #root,
-            #updatePacketReadRoles.packetGroupName,
-            #updatePacketReadRoles.packetId)
-    """
-    )
-    fun updatePacketReadPermissionOnRoles(
-        @RequestBody @Validated updatePacketReadRoles: UpdatePacketReadRoles
-    ): ResponseEntity<Unit>
-    {
-        roleService.updatePacketReadPermissionOnRoles(updatePacketReadRoles)
-
-        return ResponseEntity.noContent().build()
     }
 }

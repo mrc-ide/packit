@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.model.Permission
@@ -32,7 +33,7 @@ interface RoleService
     fun getByRoleName(roleName: String): Role?
     fun getSortedRoleDtos(roles: List<Role>): List<RoleDto>
     fun getDefaultRoles(): List<Role>
-    fun updatePacketReadPermissionOnRoles(updatePacketReadRoles: UpdatePacketReadRoles)
+    fun updatePacketReadPermissionOnRoles(updatePacketReadRoles: UpdatePacketReadRoles, packetGroupName: String)
 }
 
 @Service
@@ -90,16 +91,18 @@ class BaseRoleService(
         roleRepository.deleteByName(username)
     }
 
+    @Transactional(rollbackFor = [Exception::class])
     override fun updatePermissionsToRole(roleName: String, updateRolePermissions: UpdateRolePermissions): Role
     {
         val role = roleRepository.findByName(roleName)
             ?: throw PackitException("roleNotFound", HttpStatus.BAD_REQUEST)
 
-        return rolePermissionService.updatePermissionsOnRole(
+        val updatedRole = rolePermissionService.updatePermissionsOnRole(
             role,
             updateRolePermissions.addPermissions,
             updateRolePermissions.removePermissions
         )
+        return roleRepository.save(updatedRole)
     }
 
     override fun getByRoleName(roleName: String): Role?
@@ -173,8 +176,10 @@ class BaseRoleService(
         return roleRepository.findByIsUsernameAndNameIn(isUsername = false, appConfig.defaultRoles)
     }
 
+    @Transactional(rollbackFor = [Exception::class])
     override fun updatePacketReadPermissionOnRoles(
         updatePacketReadRoles: UpdatePacketReadRoles,
+        packetGroupName: String
     )
     {
         val roleNamesToUpdate =
@@ -182,13 +187,15 @@ class BaseRoleService(
         val rolesToUpdate =
             getRolesByRoleNames(roleNamesToUpdate.toList())
 
-        rolePermissionService.updatePermissionOnRoles(
+        val updatedRoles = rolePermissionService.applyPermissionToMultipleRoles(
             rolesToUpdate.filter { it.name in updatePacketReadRoles.roleNamesToAdd },
             rolesToUpdate.filter { it.name in updatePacketReadRoles.roleNamesToRemove },
             "packet.read",
-            updatePacketReadRoles.packetGroupName,
+            packetGroupName,
             updatePacketReadRoles.packetId,
         )
+
+        roleRepository.saveAll(updatedRoles)
     }
 
     internal fun getUniqueRoleNamesForUpdate(roleNamesToAdd: Set<String>, roleNamesToRemove: Set<String>): Set<String>
