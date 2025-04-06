@@ -52,11 +52,10 @@ export const UpdatePacketReadPermissionForm = ({
 
     try {
       await fetcher({
-        url: `${appConfig.apiUrl()}/roles/read-permissions`,
+        url: `${appConfig.apiUrl()}/packetGroups/${packetGroupName}/read-permissions`,
         body: {
           roleNamesToAdd: values.roleNamesToAdd,
-          roleNamesToRemove: values.roleNamesToRemove,
-          packetGroupName
+          roleNamesToRemove: values.roleNamesToRemove
         },
         method: "PUT"
       });
