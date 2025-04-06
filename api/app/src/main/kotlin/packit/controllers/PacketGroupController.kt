@@ -70,7 +70,7 @@ class PacketGroupController(
             #updatePacketReadRoles.packetId)
     """
     )
-    @PutMapping("packetGroups/{name}/read-permissions")
+    @PutMapping("packetGroups/{name}/read-permission")
     fun updatePacketReadPermissionOnRoles(
         @RequestBody @Validated updatePacketReadRoles: UpdatePacketReadRoles,
         @PathVariable name: String

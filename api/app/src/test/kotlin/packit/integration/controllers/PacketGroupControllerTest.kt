@@ -278,7 +278,7 @@ class PacketGroupControllerTest(
             )
         )
         val result = restTemplate.exchange(
-            "/packetGroups/test1/read-permissions",
+            "/packetGroups/test1/read-permission",
             HttpMethod.PUT,
             getTokenizedHttpEntity(data = updatePacketReadRoles),
             String::class.java
@@ -321,7 +321,7 @@ class PacketGroupControllerTest(
         )
 
         val result = restTemplate.exchange(
-            "/packetGroups/${packetGroup.name}/read-permissions",
+            "/packetGroups/${packetGroup.name}/read-permission",
             HttpMethod.PUT,
             getTokenizedHttpEntity(data = updatePacketReadRoles),
             String::class.java
