@@ -40,7 +40,6 @@ class RolePermissionServiceTest
         packetService,
         packetGroupService,
         tagService,
-        roleRepository
     )
 
     @Test
@@ -183,7 +182,7 @@ class RolePermissionServiceTest
     }
 
     @Test
-    fun `applyPermissionToMultipleRoles calls correct methods with arguments when packetId passed`()
+    fun `applyPermissionToMultipleRoles calls correct methods with arguments when packetId passed & returns roles`()
     {
         val serviceSpy = spy(service)
         val rolesToAdd = listOf(Role("role1"), Role("role2"))
@@ -193,8 +192,10 @@ class RolePermissionServiceTest
         doNothing().`when`(serviceSpy).removePermissionFromRoles(rolesToRemove, permission, packet)
         doNothing().`when`(serviceSpy).addPermissionToRoles(rolesToAdd, permission, packet)
 
-        serviceSpy.applyPermissionToMultipleRoles(rolesToAdd, rolesToRemove, "packet.read", packet.name, packet.id)
+        val result =
+            serviceSpy.applyPermissionToMultipleRoles(rolesToAdd, rolesToRemove, "packet.read", packet.name, packet.id)
 
+        assertEquals(result, rolesToAdd + rolesToRemove)
         verify(packetService).getPacket(packet.id)
         verify(serviceSpy).removePermissionFromRoles(rolesToRemove, permission, packet)
         verify(serviceSpy).addPermissionToRoles(rolesToAdd, permission, packet)

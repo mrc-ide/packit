@@ -1,4 +1,5 @@
 package packit.integration.controllers
+
 import com.fasterxml.jackson.module.kotlin.convertValue
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -12,26 +13,32 @@ import org.springframework.boot.test.web.client.exchange
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.test.context.jdbc.Sql
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
-import packit.model.dto.PacketDto
-import packit.model.dto.PacketGroupDisplay
-import packit.model.dto.PacketGroupDto
-import packit.model.dto.PacketGroupSummary
+import packit.model.Role
+import packit.model.RolePermission
+import packit.model.dto.*
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
+import packit.repository.PermissionRepository
+import packit.repository.RoleRepository
 import packit.service.PacketService
 import kotlin.math.ceil
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Sql("/delete-test-users.sql")
 class PacketGroupControllerTest(
     @Autowired val packetService: PacketService,
     @Autowired val packetRepository: PacketRepository,
-    @Autowired val packetGroupRepository: PacketGroupRepository
+    @Autowired val packetGroupRepository: PacketGroupRepository,
+    @Autowired val roleRepository: RoleRepository,
+    @Autowired val permissionsRepository: PermissionRepository
 ) : IntegrationTest()
 {
-    companion object {
+    companion object
+    {
         const val idOfComputedResourcePacket = "20240729-154635-88c5c1eb"
     }
 
@@ -106,9 +113,9 @@ class PacketGroupControllerTest(
     @Test
     @WithAuthenticatedUser(
         authorities = [
-        "packet.read:packetGroup:artefact-types",
-        "packet.read:packet:computed-resource:$idOfComputedResourcePacket"
-    ]
+            "packet.read:packetGroup:artefact-types",
+            "packet.read:packet:computed-resource:$idOfComputedResourcePacket"
+        ]
     )
     fun `getPacketGroups returns of packet groups user can see`()
     {
@@ -258,5 +265,82 @@ class PacketGroupControllerTest(
         val contents: List<PacketGroupSummary> = jacksonObjectMapper().convertValue(body.get("content"))
 
         assertThat(contents).extracting("name").containsExactlyInAnyOrder("artefact-types", "depends")
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.manage:packet:test:123"])
+    fun `user without permission cannot update read permission on roles`()
+    {
+        val updatePacketReadRoles = jacksonObjectMapper().writeValueAsString(
+            UpdatePacketReadRoles(
+                roleNamesToAdd = setOf(),
+                roleNamesToRemove = setOf()
+            )
+        )
+        val result = restTemplate.exchange(
+            "/packetGroups/test1/read-permissions",
+            HttpMethod.PUT,
+            getTokenizedHttpEntity(data = updatePacketReadRoles),
+            String::class.java
+        )
+
+        assertEquals(result.statusCode, HttpStatus.UNAUTHORIZED)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.manage"])
+    fun `user with packet manage can update read permission on roles`()
+    {
+        val packetGroup = packetGroupRepository.findByName("test1")!!
+        val roleNamesToAdd = setOf("testRole1", "testRole2")
+        val roleNamesToRemove = setOf("testRole3", "testRole4")
+        roleRepository.saveAll(
+            roleNamesToAdd.map {
+                Role(name = it)
+            }
+        )
+        val rolesToRemove = roleRepository.saveAll(
+            roleNamesToRemove.map {
+                Role(name = it)
+            }
+        ).onEach {
+            it.rolePermissions = mutableListOf(
+                RolePermission(
+                    role = it,
+                    permission = permissionsRepository.findByName("packet.read")!!,
+                    packetGroup = packetGroup
+                )
+            )
+        }
+        roleRepository.saveAll(rolesToRemove)
+        val updatePacketReadRoles = jacksonObjectMapper().writeValueAsString(
+            UpdatePacketReadRoles(
+                roleNamesToAdd = roleNamesToAdd,
+                roleNamesToRemove = roleNamesToRemove
+            )
+        )
+
+        val result = restTemplate.exchange(
+            "/packetGroups/${packetGroup.name}/read-permissions",
+            HttpMethod.PUT,
+            getTokenizedHttpEntity(data = updatePacketReadRoles),
+            String::class.java
+        )
+
+        assertEquals(result.statusCode, HttpStatus.NO_CONTENT)
+        val addedRoles = roleRepository.findByNameIn(roleNamesToAdd.toList())
+        val removedRoles = roleRepository.findByNameIn(roleNamesToRemove.toList())
+        removedRoles.forEach {
+            assertEquals(
+                it.rolePermissions.size,
+                0
+            )
+        }
+        addedRoles.forEach {
+            assertEquals(
+                it.rolePermissions.first().packetGroup?.id,
+                packetGroup.id
+            )
+        }
     }
 }
