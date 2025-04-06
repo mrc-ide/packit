@@ -77,7 +77,7 @@ describe("UpdatePacketReadPermissionForm", () => {
 
     await waitFor(() => {
       expect(fetcherSpy).toHaveBeenCalledWith({
-        url: `${appConfig.apiUrl()}/packetGroups/${packetGroupName}/read-permissions`,
+        url: `${appConfig.apiUrl()}/packetGroups/${packetGroupName}/read-permission`,
         method: "PUT",
         body: {
           roleNamesToAdd: ["Viewer"],

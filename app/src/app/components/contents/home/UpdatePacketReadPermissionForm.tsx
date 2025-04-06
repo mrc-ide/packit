@@ -52,7 +52,7 @@ export const UpdatePacketReadPermissionForm = ({
 
     try {
       await fetcher({
-        url: `${appConfig.apiUrl()}/packetGroups/${packetGroupName}/read-permissions`,
+        url: `${appConfig.apiUrl()}/packetGroups/${packetGroupName}/read-permission`,
         body: {
           roleNamesToAdd: values.roleNamesToAdd,
           roleNamesToRemove: values.roleNamesToRemove
