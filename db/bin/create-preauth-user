@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -eu
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --username)
+            USERNAME="$2"
+            shift 2
+            ;;
+        --email)
+            EMAIL="$2"
+            shift 2
+            ;;
+        --displayname)
+            DISPLAY_NAME="$2"
+            shift 2
+            ;;
+        --role)
+            ROLE="$2"
+            shift 2
+            ;;
+        *)
+            echo "Invalid argument: $1"
+            exit 1
+            ;;
+    esac
+done
+
+psql -U packituser -d packit \
+    --single-transaction \
+    -v ON_ERROR_STOP=on \
+    -v "username=$USERNAME" \
+    -v "email=$ADMIN_EMAIL" \
+    -v "display_name=$DISPLAY_NAME" \
+    -v "role=$ROLE" <<EOF
+INSERT INTO "user" (username, display_name, email, disabled, user_source, last_logged_in)
+VALUES (:'username', :'display_name', :'email', FALSE, 'preauth', NULL);
+
+INSERT INTO "user_role" (user_id, role_id)
+SELECT user.id FROM user WHERE user.username = :'username', role.id FROM role WHERE role.name = :'role';
+EOF
