@@ -15,7 +15,7 @@ export const packetReadRolesColumns = [
     cell: ({ getValue }) => {
       const users = getValue();
       return (
-        <ScrollArea className="h-6" type="auto">
+        <ScrollArea className="h-7" type="auto">
           <div className="flex flex-wrap gap-1 italic text-xs pl-0.5">
             {users?.length === 0
               ? "None"

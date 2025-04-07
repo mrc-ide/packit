@@ -43,3 +43,12 @@ export const canReadPacketGroup = (authorities: string[] = [], packetGroupName: 
   canReadAllPackets(authorities) ||
   canManagePacketGroup(authorities, packetGroupName) ||
   hasPacketReadPermissionForGroup(authorities, packetGroupName);
+
+export const hasPacketReadPermissionForPacket = (
+  authorities: string[] = [],
+  packetGroupName: string,
+  packetId: string
+) => authorities.includes(buildScopedPermission("packet.read", packetGroupName, packetId));
+
+export const canReadPacket = (authorities: string[] = [], packetGroup: string, packetId: string) =>
+  canReadPacketGroup(authorities, packetGroup) || hasPacketReadPermissionForPacket(authorities, packetGroup, packetId);

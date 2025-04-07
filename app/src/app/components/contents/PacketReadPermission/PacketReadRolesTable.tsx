@@ -1,9 +1,10 @@
 import { useState } from "react";
+import { PacketMetadata } from "../../../../types";
 import { DataTable } from "../common/DataTable";
 import { FilterInput } from "../common/FilterInput";
 import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
-import { packetReadRolesColumns } from "./utils/packetReadRolesColumns";
 import { rolesGlobalFilterFn } from "../manageAccess/utils/rolesTableGlobalFilterFn";
+import { packetReadRolesColumns } from "./utils/packetReadRolesColumns";
 
 interface PacketReadRolesTableProps {
   roles: RoleWithRelationships[];
@@ -15,9 +16,9 @@ export const PacketReadRolesTable = ({ roles }: PacketReadRolesTableProps) => {
     <div className="space-y-2 flex flex-col">
       <h3 className="font-semibold tracking-tight">Roles with read access</h3>
       <div className="flex justify-between">
-        <FilterInput setFilter={setFilterValue} placeholder="Search for role or user..." />
+        <FilterInput setFilter={setFilterValue} placeholder="Search by role or user..." />
       </div>
-      <div className="h-80 overflow-auto">
+      <div className="max-h-96 overflow-auto">
         <DataTable
           columns={packetReadRolesColumns}
           clientFiltering
