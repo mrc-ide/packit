@@ -1,9 +1,11 @@
 import { useParams } from "react-router-dom";
-import { Sidebar } from "../contents/common/Sidebar";
-import { PacketOutlet } from "./PacketOutlet";
+import { canManagePacket } from "../../../lib/auth/hasPermission";
 import { SidebarItem } from "../../../lib/types/SidebarItem";
+import { Sidebar } from "../contents/common/Sidebar";
+import { useUser } from "../providers/UserProvider";
+import { PacketOutlet } from "./PacketOutlet";
 
-const getSideBarNavItems = (packetName = "", packetId = ""): SidebarItem[] => [
+const getSideBarNavItems = (packetName = "", packetId = "", authorities: string[] = []): SidebarItem[] => [
   {
     to: `/${packetName}/${packetId}`,
     title: "Summary"
@@ -15,7 +17,16 @@ const getSideBarNavItems = (packetName = "", packetId = ""): SidebarItem[] => [
   {
     to: `/${packetName}/${packetId}/downloads`,
     title: "Downloads"
-  }
+  },
+  ...(canManagePacket(authorities, packetName, packetId)
+    ? [
+        {
+          to: `/${packetName}/${packetId}/read-permissions`,
+          title: "Read permissions"
+        }
+      ]
+    : [])
+
   // {
   //   to: `/${packetName}/${packetId}/changelogs`,
   //   title: "Change logs"
@@ -24,7 +35,8 @@ const getSideBarNavItems = (packetName = "", packetId = ""): SidebarItem[] => [
 
 export const PacketLayout = () => {
   const { packetId, packetName } = useParams();
-  const sidebarItems = getSideBarNavItems(packetName, packetId);
+  const { user } = useUser();
+  const sidebarItems = getSideBarNavItems(packetName, packetId, user?.authorities);
 
   return (
     <Sidebar sidebarItems={sidebarItems}>

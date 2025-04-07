@@ -6,10 +6,11 @@ import { AddRoleButton } from "./AddRoleButton";
 import { FilterInput } from "../common/FilterInput";
 import { PAGE_SIZE } from "../../../../lib/constants";
 import { setupManageRolesColumns } from "./utils/manageRolesColumns";
+import { rolesGlobalFilterFn } from "./utils/rolesTableGlobalFilterFn";
 
 export const ManageRoles = () => {
   const { roles, users, mutate } = useManageAccessLayoutContext();
-  const [filteredName, setFilterByName] = useState("");
+  const [filterValue, setFilterValue] = useState("");
 
   return (
     <>
@@ -19,15 +20,20 @@ export const ManageRoles = () => {
       </div>
       <div className="space-y-4 flex flex-col">
         <div className="flex justify-between">
-          <FilterInput setFilter={setFilterByName} placeholder="Filter roles by name..." />
+          <FilterInput setFilter={setFilterValue} placeholder="Search by role or user..." />
           <AddRoleButton mutate={mutate} />
         </div>
         <DataTable
           columns={setupManageRolesColumns(mutate, users)}
-          data={
-            filteredName ? roles.filter((role) => role.name.toLowerCase().includes(filteredName.toLowerCase())) : roles
-          }
+          data={roles}
           pagination={{ pageSize: PAGE_SIZE }}
+          clientFiltering
+          globalFiltering={{
+            globalFilter: filterValue,
+            setGlobalFilter: setFilterValue,
+            globalFilterFn: rolesGlobalFilterFn,
+            globalFilterCols: ["name", "users"]
+          }}
         />
       </div>
     </>

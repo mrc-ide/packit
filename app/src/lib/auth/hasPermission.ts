@@ -22,6 +22,16 @@ export const canManagePacketGroup = (authorities: string[] = [], packetGroupName
 export const canReadRoles = (authorities: string[] = []) =>
   hasUserManagePermission(authorities) || hasAnyPacketManagePermission(authorities);
 
+export const hasPacketManagePermissionForPacket = (
+  authorities: string[] = [],
+  packetGroupName: string,
+  packetId: string
+) => authorities.includes(buildScopedPermission("packet.manage", packetGroupName, packetId));
+
+export const canManagePacket = (authorities: string[] = [], packetGroupName: string, packetId: string) =>
+  canManagePacketGroup(authorities, packetGroupName) ||
+  hasPacketManagePermissionForPacket(authorities, packetGroupName, packetId);
+
 /** Read packets */
 export const canReadAllPackets = (authorities: string[] = []) =>
   canManageAllPackets(authorities) || hasGlobalReadPermission(authorities);

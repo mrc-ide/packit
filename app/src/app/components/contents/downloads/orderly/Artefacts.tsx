@@ -47,7 +47,7 @@ export const Artefacts = ({ artefacts }: ArtefactsProps) => {
                       files={files}
                       zipName={`${artefact.description.substring(0, 20)}_${packet.id}.zip`}
                       variant="outline"
-                      className="py-1 bg-gray-100 hover:bg-gray-50"
+                      className="py-1"
                     />
                   )}
                 </CardHeader>
