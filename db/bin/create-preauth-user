@@ -37,5 +37,6 @@ INSERT INTO "user" (username, display_name, email, disabled, user_source, last_l
 VALUES (:'username', :'display_name', :'email', FALSE, 'preauth', NULL);
 
 INSERT INTO "user_role" (user_id, role_id)
-VALUES ((SELECT MAX(user.id) FROM user WHERE username=:'username'), (SELECT MAX(role.id) FROM role WHERE role.name = :'role'));
+VALUES ((SELECT "user".id FROM "user" WHERE "user".username=:'username'), (select role.id from role where role.name=:'role'));
 EOF
+
