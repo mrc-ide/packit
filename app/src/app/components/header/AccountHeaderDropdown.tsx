@@ -17,8 +17,8 @@ import {useNavigate} from "react-router-dom";
 export const AccountHeaderDropdown = () => {
   const { removeUser, user } = useUser();
   const { setLoggingOut } = useRedirectOnLogin();
-  const authConfig = useAuthConfig();
-  const navigate = useNavigate();
+  //const authConfig = useAuthConfig();
+  //const navigate = useNavigate();
 
   const handleLogout = async () => {
     removeUser();
