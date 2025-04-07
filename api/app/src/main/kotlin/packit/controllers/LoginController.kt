@@ -50,19 +50,12 @@ class LoginController(
         @RequestHeader("X-Remote-Email") email: String
     ): ResponseEntity<Map<String, String>>
     {
-        println("doing preauth login")
         if (!config.authEnablePreAuthLogin)
         {
             throw PackitException("preauthLoginDisabled", HttpStatus.FORBIDDEN)
         }
 
-        println("username is " + username)
-        println("name is " + name)
-        println("email is" + email)
-
-        println("getting token")
         val token = preAuthenticatedLoginService.saveUserAndIssueToken(username, name, email)
-        println("got token")
         return ResponseEntity.ok(token)
     }
 
