@@ -30,7 +30,7 @@ psql -U packituser -d packit \
     --single-transaction \
     -v ON_ERROR_STOP=on \
     -v "username=$USERNAME" \
-    -v "email=$ADMIN_EMAIL" \
+    -v "email=$EMAIL" \
     -v "display_name=$DISPLAY_NAME" \
     -v "role=$ROLE" <<EOF
 INSERT INTO "user" (username, display_name, email, disabled, user_source, last_logged_in)
