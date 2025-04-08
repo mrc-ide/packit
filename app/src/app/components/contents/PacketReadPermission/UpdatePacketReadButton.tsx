@@ -8,6 +8,7 @@ import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationshi
 import { UpdatePacketReadPermissionForm } from "../home/UpdatePacketReadPermissionForm";
 import { KeyedMutator } from "swr";
 import { getRolesUsersWithReadPacketPermission } from "./utils/getRolesUsersWithReadPacketPermission";
+import { getRolesAndUsersCantReadPacket } from "./utils/getRolesAndUsersCantReadPacket";
 
 interface UpdatePacketReadButtonProps {
   packet: PacketMetadata;
@@ -18,7 +19,7 @@ interface UpdatePacketReadButtonProps {
 
 export const UpdatePacketReadButton = ({ packet, users, roles, mutate }: UpdatePacketReadButtonProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const rolesAndUsersCantReadPacket = roles;
+  const rolesAndUsersCantReadPacket = getRolesAndUsersCantReadPacket(roles, users, packet.name, packet.id);
   const rolesAndUsersWithReadPacket = getRolesUsersWithReadPacketPermission(roles, users, packet.name, packet.id);
 
   return (
