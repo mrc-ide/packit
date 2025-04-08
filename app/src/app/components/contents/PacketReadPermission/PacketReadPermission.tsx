@@ -1,9 +1,8 @@
-import { Loader2, UserCog } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { canManagePacket, canReadPacket } from "../../../../lib/auth/hasPermission";
 import { mapPermissionsToNames } from "../../../../lib/constructPermissionName";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
-import { Button } from "../../Base/Button";
 import { usePacketOutletContext } from "../../main/PacketOutlet";
 import { useUser } from "../../providers/UserProvider";
 import { ErrorComponent } from "../common/ErrorComponent";
@@ -12,6 +11,7 @@ import { useGetRolesWithRelationships } from "../manageAccess/hooks/useGetRolesW
 import { PacketHeader } from "../packets";
 import { PacketReadRolesTable } from "./PacketReadRolesTable";
 import { PacketReadUsersList } from "./PacketReadUsersList";
+import { UpdatePacketReadButton } from "./UpdatePacketReadButton";
 
 export const PacketReadPermission = () => {
   const { packetId, packetName } = useParams();
@@ -31,28 +31,27 @@ export const PacketReadPermission = () => {
       </div>
     );
 
-  return packet && packetId && packetName ? (
+  return packet && packetId && packetName && rolesResponse ? (
     <>
       <div className="md:flex justify-between">
         <PacketHeader packetName={packetName} packetId={packetId} displayName={packet.displayName} />
-        <Button>
-          <UserCog className="mr-2 h-5 w-5" /> Update read access
-        </Button>
+        <UpdatePacketReadButton
+          packet={packet}
+          users={rolesResponse.users}
+          roles={rolesResponse.roles}
+          mutate={rolesResponse.mutate}
+        />
       </div>
-      {rolesResponse && (
-        <>
-          <PacketReadRolesTable
-            roles={rolesResponse.roles.filter((role) =>
-              canReadPacket(mapPermissionsToNames(role.rolePermissions), packet.name, packet.id)
-            )}
-          />
-          <PacketReadUsersList
-            users={rolesResponse.users.filter((user) =>
-              canReadPacket(mapPermissionsToNames(user.specificPermissions), packet.name, packet.id)
-            )}
-          />
-        </>
-      )}
+      <PacketReadRolesTable
+        roles={rolesResponse.roles.filter((role) =>
+          canReadPacket(mapPermissionsToNames(role.rolePermissions), packet.name, packet.id)
+        )}
+      />
+      <PacketReadUsersList
+        users={rolesResponse.users.filter((user) =>
+          canReadPacket(mapPermissionsToNames(user.specificPermissions), packet.name, packet.id)
+        )}
+      />
     </>
   ) : null;
 };

@@ -1,11 +1,13 @@
 import { UserCog } from "lucide-react";
 import { useState } from "react";
+import { KeyedMutator } from "swr";
 import { Button } from "../../Base/Button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../Base/Dialog";
 import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
 import { UserWithRoles } from "../manageAccess/types/UserWithRoles";
 import { UpdatePacketReadPermissionForm } from "./UpdatePacketReadPermissionForm";
-import { KeyedMutator } from "swr";
+import { getRolesAndUsersCantReadGroup } from "./utils/getRolesAndUsersCantReadGroup";
+import { getRolesUsersWithReadGroupPermission } from "./utils/getRolesUsersWithReadGroupPermission";
 
 interface UpdatePermissionDialogProps {
   roles: RoleWithRelationships[];
@@ -15,6 +17,9 @@ interface UpdatePermissionDialogProps {
 }
 export const UpdatePermissionDialog = ({ roles, users, packetGroupName, mutate }: UpdatePermissionDialogProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const rolesAndUsersCantReadGroup = getRolesAndUsersCantReadGroup(roles, users, packetGroupName);
+  const rolesAndUsersWithReadGroup = getRolesUsersWithReadGroupPermission(roles, users, packetGroupName);
+
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
@@ -27,8 +32,8 @@ export const UpdatePermissionDialog = ({ roles, users, packetGroupName, mutate }
           <DialogTitle>Update read access on {packetGroupName}</DialogTitle>
         </DialogHeader>
         <UpdatePacketReadPermissionForm
-          roles={roles}
-          users={users}
+          rolesAndUsersCantRead={rolesAndUsersCantReadGroup}
+          rolesAndUsersWithRead={rolesAndUsersWithReadGroup}
           setDialogOpen={setDialogOpen}
           packetGroupName={packetGroupName}
           mutate={mutate}

@@ -38,29 +38,30 @@ describe("UpdatePacketReadPermissionForm", () => {
     userEvent.click(screen.getByRole("button", { name: /save/i }));
   };
   const setDialogOpen = jest.fn();
-
+  // TODO: fix
   const renderComponent = () =>
     render(
       <Dialog>
         <UpdatePacketReadPermissionForm
           mutate={mutate}
           packetGroupName={packetGroupName}
-          roles={mockNonUsernameRolesWithRelationships}
-          users={[
-            ...mockUsersWithRoles,
-            {
-              username: "hgz@gmail.com",
-              roles: [],
-              specificPermissions: [
-                {
-                  permission: "packet.read",
-                  packetGroup: {
-                    name: "explicit"
-                  }
-                }
-              ]
-            } as unknown as UserWithRoles
-          ]}
+          rolesAndUsersWithRead={mockNonUsernameRolesWithRelationships}
+          rolesAndUsersCantRead={mockUsersWithRoles}
+          // users={[
+          //   ...mockUsersWithRoles,
+          //   {
+          //     username: "hgz@gmail.com",
+          //     roles: [],
+          //     specificPermissions: [
+          //       {
+          //         permission: "packet.read",
+          //         packetGroup: {
+          //           name: "explicit"
+          //         }
+          //       }
+          //     ]
+          //   } as unknown as UserWithRoles
+          // ]}
           setDialogOpen={setDialogOpen}
         />
       </Dialog>

@@ -13,12 +13,10 @@ export const PacketReadUsersList = ({ users }: PacketReadUsersListProps) => {
       </div>
       <div className="max-h-64 rounded-md border p-4 md:max-w-lg overflow-auto">
         {users.map((user) => (
-          <>
-            <div key={user.id} className="text-sm">
-              {user.username}
-            </div>
+          <div key={user.id} className="flex flex-col">
+            <div className="text-sm">{user.username}</div>
             <Separator className="my-3" />
-          </>
+          </div>
         ))}
       </div>
     </div>
