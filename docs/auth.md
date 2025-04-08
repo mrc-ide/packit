@@ -1,14 +1,17 @@
 ## Authentication in Packit
 
 Packit uses [Spring Security](https://spring.io/projects/spring-security) for authentication. For logging in through the front end web app, we currently 
-support GitHub authentication using OAuth2 and a partial demo Basic auth method (to demonstrate supporting multiple auth types). We
-will eventually replace the Basic auth support with Montagu auth. We also support authenticated API access, currently
-with GitHub auth only. 
+support:
+- GitHub authentication using OAuth2
+- Basic auth with users whose details are stored in packit-db
+- Pre-authentication with trusted headers (used for authentication from Montagu - see [Montagu proxy](https://github.com/vimc/montagu-proxy) for more details).
 
 We use JWT tokens rather than cookies for authenticated access, both from the browser and using the API. 
 
-Packit instances can be configured to run without requiring authentication, or to support GitHub or Basic auth, or both.
-If GitHub Auth is enabled, it is restricted to users who are members of configured authorized Organizations (or Teams - TODO!).
+Packit instances can be configured to run without requiring authentication, or to support one of the three authentication methods
+details above.
+If GitHub Auth is enabled, it is restricted to users who are members of a configured authorized Organization (and 
+optionally Team).
 
 Login through the web app uses standard Spring Security configuration to redirect user to provide credentials via
 GitHub.
@@ -21,16 +24,14 @@ Configuration relevant to auth can be found in both `application.properties` (cu
 (Spring Boot configuration). Development versions of both files can be found in `api/app/src/main/resources`.
 
 Relevant `application.properties` values:
-- `auth.basic.secret` Secret used to encode and decode JWT tokens
+- `auth.jwt.secret` Secret used to encode and decode JWT tokens
 - `auth.oauth2.redirect.url` The front end API Packit url to redirect to on successful user authentication - this should
 be of form `[FRONT END BASE URL}/redirect`
-- `auth.enableGithubLogin` true if GitHub auth should be enabled for this instance
-- `auth.enableFormLogin` true if Basic auth should be enabled for this instance
 - `auth.expiryDays` Number of days before a JWT token shoul expire
 - `auth.enabled` true if auth is enabled - if false, all data is visible to any user, and no login is required
-- `auth.githubAPIBaseUrl` Base URL for querying GitHub API to verify PAT and check user Org membership - this is unlikely to change!
-- `auth.githubAPIOrgs` Comma separated list of authorized GitHub Organizations - a GitHub user must be a member 
-of one of these in order to log in. 
+- `auth.method` - if auth is enabled, which method is supported - possible values are `github`, `basic` and `preauth`
+- `auth.githubAPIOrg` - authorized GitHub Organization - a GitHub user must be a member of this org in order to log in. 
+- `auth.githubAPITeam` - if this is set, a GitHub user must also be a member of this team in order to log in
 
 Relevant `application.properties` values:
 - `spring.security.oauth2.client.registration.github.client-id`
@@ -52,7 +53,7 @@ Update `api/app/src/main/resources/application.properties` by setting the values
 
 Be sure not to push these config changes!
 
-Make sure you also have `auth.enabled` and `auth.enableGithubLogin` set to `true` in `application.properties`.
+Make sure you also have `auth.enabled` and `auth.method` set to `true` in `application.properties`.
 
 
 ### WebSecurityConfig
