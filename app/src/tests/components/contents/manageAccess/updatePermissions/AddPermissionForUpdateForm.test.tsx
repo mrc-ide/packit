@@ -6,7 +6,7 @@ import { mockPacketGroupResponse, mockTags } from "../../../../mocks";
 import { Tag } from "../../../../../types";
 
 describe("AddPermissionForUpdateForm", () => {
-  it("it should disable scope radio group, submit button if permission is not set to packet.read", async () => {
+  it("it should disable scope radio group, submit button if permission is not set to a scoped permission", async () => {
     render(<AddPermissionForUpdateForm addPermission={jest.fn()} currentPermissions={[]} />);
     const radioButtons = screen.getAllByRole("radio");
     const select = screen.getAllByRole("combobox", { hidden: true })[1];
@@ -23,7 +23,7 @@ describe("AddPermissionForUpdateForm", () => {
     });
   });
 
-  it("should set scope to global if permission is not packet.read", async () => {
+  it("should set scope to global if permission is not a scoped permission", async () => {
     render(<AddPermissionForUpdateForm addPermission={jest.fn()} currentPermissions={[]} />);
     const select = screen.getAllByRole("combobox", { hidden: true })[1];
 
@@ -131,6 +131,27 @@ describe("AddPermissionForUpdateForm", () => {
 
     await waitFor(() => {
       expect(screen.getByText(/permission already exists/i)).toBeVisible();
+    });
+  });
+
+  it("should submit form with correct values for packet.manage permission and packet scope", async () => {
+    const testPacket = { id: mockPacketGroupResponse.content[0].id, name: mockPacketGroupResponse.content[0].name };
+    const addPermission = jest.fn();
+
+    render(<AddPermissionForUpdateForm addPermission={addPermission} currentPermissions={[]} />);
+
+    const allComboBox = screen.getAllByRole("combobox", { hidden: true });
+    userEvent.selectOptions(allComboBox[1], "packet.manage");
+    userEvent.click(screen.getByRole("radio", { name: "packet" }));
+
+    userEvent.click(allComboBox[2]);
+    await screen.findByText(`${testPacket.name}:${testPacket.id}`);
+    userEvent.click(screen.getByRole("option", { name: `${testPacket.name}:${testPacket.id}` }));
+
+    userEvent.click(screen.getByRole("button"));
+
+    await waitFor(() => {
+      expect(addPermission).toHaveBeenCalledWith({ permission: "packet.manage", packet: testPacket });
     });
   });
 });

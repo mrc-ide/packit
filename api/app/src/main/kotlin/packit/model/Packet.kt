@@ -15,7 +15,6 @@ class Packet(
     val displayName: String,
     @JdbcTypeCode(SqlTypes.JSON)
     val parameters: Map<String, Any>,
-    val published: Boolean,
     val importTime: Double,
     val startTime: Double,
     val endTime: Double,
@@ -31,7 +30,7 @@ class Packet(
 )
 
 fun Packet.toDto() = PacketDto(
-    id, name, displayName, parameters, published, importTime, startTime, endTime
+    id, name, displayName, parameters, importTime, startTime, endTime
 )
 
 fun Packet.toBasicDto() = BasicPacketDto(name, id)

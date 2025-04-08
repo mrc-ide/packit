@@ -54,11 +54,14 @@ if [ $API_BUILD_SKIP -eq 0 ]; then
     "$HERE"/../api/scripts/build
 fi
 
-"$HERE"/../api/scripts/run
+BASIC_AUTH=""
+if [ $ADD_SUPER_USER -eq 1 ]; then
+  # assume we want to run with basic auth if we're creating a basic super user
+  BASIC_AUTH="basicauth"
+fi
+"$HERE"/../api/scripts/run $BASIC_AUTH
 
 if [ $ADD_SUPER_USER -eq 1 ]; then
-    echo "Waiting for api to initialise"
-    sleep 5
     "$HERE"/basic-create-super-user
 fi
 

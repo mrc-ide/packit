@@ -30,7 +30,6 @@ class PacketGroupRepositoryTest : RepositoryTest()
             "incorrect_group",
             "",
             mapOf("a" to 1),
-            false,
             now,
             now,
             now
@@ -40,7 +39,6 @@ class PacketGroupRepositoryTest : RepositoryTest()
             "correct_group",
             "latest packet in correct group",
             mapOf("a" to 1),
-            false,
             now - 1,
             now - 1,
             now - 1
@@ -50,7 +48,6 @@ class PacketGroupRepositoryTest : RepositoryTest()
             "correct_group",
             "old packet",
             mapOf("a" to 1),
-            false,
             now - 2,
             now - 2,
             now - 2
@@ -69,7 +66,8 @@ class PacketGroupRepositoryTest : RepositoryTest()
     }
 
     @AfterAll
-    fun cleanup() {
+    fun cleanup()
+    {
         packetRepository.deleteAll()
         packetGroupRepository.deleteAll()
     }

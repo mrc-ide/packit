@@ -34,7 +34,6 @@ class PacketServiceTest
                 "test",
                 "",
                 mapOf("alpha" to 1),
-                false,
                 now,
                 now,
                 now
@@ -44,7 +43,6 @@ class PacketServiceTest
                 "test",
                 "test name (latest display name)",
                 mapOf("beta" to 1),
-                true,
                 now,
                 now + 100,
                 now
@@ -54,7 +52,6 @@ class PacketServiceTest
                 "test2",
                 "Test 2 Display Name",
                 mapOf(),
-                false,
                 now,
                 now,
                 now
@@ -68,7 +65,6 @@ class PacketServiceTest
                 "test",
                 "test name (old display name)",
                 mapOf("name" to "value"),
-                false,
                 now - 50,
                 (now - 100),
                 now,
@@ -78,7 +74,6 @@ class PacketServiceTest
                 "test2",
                 "",
                 mapOf("beta" to 1),
-                true,
                 now - 60,
                 (now - 200),
                 now,
@@ -130,10 +125,10 @@ class PacketServiceTest
             on { getMetadataById(packetMetadata.id) } doReturn packetMetadata
             on {
                 getFileByHash(
-                anyString(),
-                any<OutputStream>(),
-                any<(ClientHttpResponse) -> Unit>()
-            )
+                    anyString(),
+                    any<OutputStream>(),
+                    any<(ClientHttpResponse) -> Unit>()
+                )
             } doAnswer { invocationOnMock ->
                 val outputStream = invocationOnMock.getArgument<OutputStream>(1)
                 outputStream.write("mocked output content".toByteArray())
@@ -263,7 +258,8 @@ class PacketServiceTest
     }
 
     @Test
-    fun `validateFilesExistsForPacket throws 404 when any path is not found on the packet metadata`() {
+    fun `validateFilesExistsForPacket throws 404 when any path is not found on the packet metadata`()
+    {
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
 
         val error = assertThrows<PackitException> {
@@ -273,7 +269,8 @@ class PacketServiceTest
     }
 
     @Test
-    fun `validateFilesExistsForPacket throws 400 when no paths are supplied`() {
+    fun `validateFilesExistsForPacket throws 400 when no paths are supplied`()
+    {
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
 
         val error = assertThrows<PackitException> {
@@ -283,7 +280,8 @@ class PacketServiceTest
     }
 
     @Test
-    fun `validateFilesExistsForPacket returns the list of all files belonging to the packet`() {
+    fun `validateFilesExistsForPacket returns the list of all files belonging to the packet`()
+    {
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
 
         val result = sut.validateFilesExistForPacket(packetMetadata.id, listOf("file1.txt"))
@@ -300,7 +298,8 @@ class PacketServiceTest
     }
 
     @Test
-    fun `getFileByPath should throw PackitException if file not found`() {
+    fun `getFileByPath should throw PackitException if file not found`()
+    {
         val outputStream = ByteArrayOutputStream()
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
 
@@ -310,7 +309,8 @@ class PacketServiceTest
     }
 
     @Test
-    fun `streamZip should write files to zip output stream`() {
+    fun `streamZip should write files to zip output stream`()
+    {
         val outputStream = ByteArrayOutputStream()
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
         sut.streamZip(listOf("file1.txt", "file2.txt"), packetMetadata.id, outputStream)
@@ -320,7 +320,8 @@ class PacketServiceTest
         val entryNames = mutableListOf<String>()
         val entryContents = mutableListOf<String>()
         var entry = zipInputStream.nextEntry
-        while (entry != null) {
+        while (entry != null)
+        {
             entryNames.add(entry.name)
             entryContents.add(zipInputStream.readBytes().toString(Charsets.UTF_8))
             entry = zipInputStream.nextEntry
@@ -330,7 +331,8 @@ class PacketServiceTest
     }
 
     @Test
-    fun `streamZip should throw PackitException if not all files are found`() {
+    fun `streamZip should throw PackitException if not all files are found`()
+    {
         val outputStream = ByteArrayOutputStream()
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
 
@@ -340,7 +342,8 @@ class PacketServiceTest
     }
 
     @Test
-    fun `streamZip should throw PackitException if no paths supplied`() {
+    fun `streamZip should throw PackitException if no paths supplied`()
+    {
         val outputStream = ByteArrayOutputStream()
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
 
@@ -350,7 +353,8 @@ class PacketServiceTest
     }
 
     @Test
-    fun `streamZip should throw PackitException if there is an error creating the zip`() {
+    fun `streamZip should throw PackitException if there is an error creating the zip`()
+    {
         val outputStream = ByteArrayOutputStream()
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
         whenever(

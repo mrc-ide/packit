@@ -26,7 +26,6 @@ class PacketRepositoryTest : RepositoryTest()
             "test1",
             "test name1",
             mapOf("name" to "value"),
-            false,
             now,
             now,
             now
@@ -36,7 +35,6 @@ class PacketRepositoryTest : RepositoryTest()
             "test2",
             "test name2",
             mapOf("a" to 1),
-            false,
             now + 1,
             (now + 1),
             (now + 1)
@@ -46,7 +44,6 @@ class PacketRepositoryTest : RepositoryTest()
             "random",
             "random",
             mapOf("alpha" to true),
-            false,
             now + 3,
             (now + 3),
             (now + 3)
@@ -56,7 +53,6 @@ class PacketRepositoryTest : RepositoryTest()
             "test4",
             "test name4",
             mapOf(),
-            true,
             now + 4,
             (now + 4),
             (now + 4)
@@ -66,7 +62,6 @@ class PacketRepositoryTest : RepositoryTest()
             "test4",
             "test name4",
             mapOf(),
-            true,
             now + 2,
             (now + 2),
             (now + 2)
@@ -76,7 +71,6 @@ class PacketRepositoryTest : RepositoryTest()
             "test1",
             "test name1",
             mapOf(),
-            true,
             now + 5,
             (now + 5),
             (now + 5)
@@ -90,7 +84,8 @@ class PacketRepositoryTest : RepositoryTest()
     }
 
     @AfterAll
-    fun cleanup() {
+    fun cleanup()
+    {
         packetRepository.deleteAll()
     }
 
