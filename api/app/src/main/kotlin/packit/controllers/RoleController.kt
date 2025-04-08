@@ -24,7 +24,7 @@ class RoleController(private val roleService: RoleService, private val userRoleS
     {
         val role = roleService.createRole(createRole)
 
-        return ResponseEntity.created(URI.create("/roles/${role.name}")).body(role.toDto())
+        return ResponseEntity.created(URI.create("/roles/${role.id}")).body(role.toDto())
     }
 
     @DeleteMapping("/{roleName}")
