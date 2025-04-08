@@ -53,7 +53,7 @@ Update `api/app/src/main/resources/application.properties` by setting the values
 
 Be sure not to push these config changes!
 
-Make sure you also have `auth.enabled` and `auth.method` set to `true` in `application.properties`.
+Make sure you also have `auth.enabled` and `auth.method` set to `github` in `application.properties`.
 
 
 ### WebSecurityConfig
