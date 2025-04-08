@@ -13,6 +13,16 @@ export const ProtectedRoute = () => {
   const { pathname } = useLocation();
   const expiryMessage = "You have been signed out because your session expired. Please log in.";
 
+  const navigateToLogin = (qs = "") => {
+    // navigate to logged out screen, either using react routing or external navigation, depending on whether we're
+    // using pre-auth, which may require logout action from auth provider
+    if (authConfig?.enablePreAuthLogin) {
+      window.location.href = `${process.env.PUBLIC_URL}/logout`;
+    } else {
+      navigate(`/login${qs}`);
+    }
+  }
+
   useEffect(() => {
     if (authConfig && !isAuthenticated(authConfig, user)) {
       // we will redirect to requested url on login, but avoid doing this if logging out after previous auth success
@@ -21,9 +31,9 @@ export const ProtectedRoute = () => {
       }
       if (user && authIsExpired(user)) {
         removeUser();
-        navigate(`/login?info=${expiryMessage}`);
+        navigateToLogin(`?info=${expiryMessage}`);
       } else {
-        navigate("/login");
+        navigateToLogin();
       }
     }
   }, [navigate, authConfig, user]);
