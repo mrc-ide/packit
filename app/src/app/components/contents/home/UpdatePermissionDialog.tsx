@@ -1,12 +1,12 @@
 import { UserCog } from "lucide-react";
 import { useState } from "react";
+import { KeyedMutator } from "swr";
 import { Button } from "../../Base/Button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../Base/Dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../Base/Dialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../Base/Tooltip";
 import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
 import { UserWithRoles } from "../manageAccess/types/UserWithRoles";
 import { UpdatePacketReadPermissionForm } from "./UpdatePacketReadPermissionForm";
-import { KeyedMutator } from "swr";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../Base/Tooltip";
 
 interface UpdatePermissionDialogProps {
   roles: RoleWithRelationships[];
