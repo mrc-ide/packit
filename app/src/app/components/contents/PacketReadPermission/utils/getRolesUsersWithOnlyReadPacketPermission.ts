@@ -1,6 +1,5 @@
 import {
   canManagePacket,
-  canReadAllPackets,
   canReadPacketGroup,
   hasPacketReadPermissionForPacket
 } from "../../../../../lib/auth/hasPermission";
@@ -9,7 +8,7 @@ import { RolePermission, RoleWithRelationships } from "../../manageAccess/types/
 import { UserWithRoles } from "../../manageAccess/types/UserWithRoles";
 
 /**
- * This function retrieves roles and users that have read permissions for a specific packet.
+ * This function retrieves roles and users that have only have read permissions for a specific packet.
  * It does NOT include those with packet group/global read permissions, manage permissions, etc.
  */
 export const getRolesUsersWithOnlyReadPacketPermission = (
