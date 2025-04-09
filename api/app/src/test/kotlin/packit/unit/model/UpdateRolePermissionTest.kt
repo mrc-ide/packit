@@ -8,7 +8,7 @@ import kotlin.test.Test
 class UpdateRolePermissionTest
 {
     @Test
-    fun `constructor throws when more than one field is non-null`()
+    fun `UpdateRolePermission constructor throws when more than one field is non-null`()
     {
         assertThrows<IllegalArgumentException> {
             UpdateRolePermission("permission", "packetId", 1, 1)
@@ -16,7 +16,7 @@ class UpdateRolePermissionTest
     }
 
     @Test
-    fun `constructor does not throw when all fields are null`()
+    fun `UpdateRolePermission constructor does not throw when all fields are null`()
     {
         assertDoesNotThrow {
             UpdateRolePermission("permission", null, null, null)
@@ -24,7 +24,7 @@ class UpdateRolePermissionTest
     }
 
     @Test
-    fun `constructor does not throw when only packetId is non-null`()
+    fun `UpdateRolePermission constructor does not throw when only packetId is non-null`()
     {
         assertDoesNotThrow {
             UpdateRolePermission("permission", "packetId", null, null)
@@ -32,7 +32,7 @@ class UpdateRolePermissionTest
     }
 
     @Test
-    fun `constructor does not throw when only tagId is non-null`()
+    fun `UpdateRolePermission constructor does not throw when only tagId is non-null`()
     {
         assertDoesNotThrow {
             UpdateRolePermission("permission", null, 1, null)
@@ -40,7 +40,7 @@ class UpdateRolePermissionTest
     }
 
     @Test
-    fun `constructor does not throw when only packetGroupId is non-null`()
+    fun `UpdateRolePermission constructor does not throw when only packetGroupId is non-null`()
     {
         assertDoesNotThrow {
             UpdateRolePermission("permission", null, null, 1)

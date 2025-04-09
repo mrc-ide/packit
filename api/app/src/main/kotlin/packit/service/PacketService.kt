@@ -82,7 +82,7 @@ class BasePacketService(
     override fun getPacket(id: String): Packet
     {
         return packetRepository.findById(id)
-            .orElseThrow { PackitException("doesNotExist", HttpStatus.NOT_FOUND) }
+            .orElseThrow { PackitException("packetNotFound", HttpStatus.NOT_FOUND) }
     }
 
     override fun getPackets(pageablePayload: PageablePayload, filterName: String, filterId: String): Page<Packet>

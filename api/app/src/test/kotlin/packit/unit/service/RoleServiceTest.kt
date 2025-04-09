@@ -2,7 +2,6 @@ package packit.unit.service
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.*
@@ -13,6 +12,7 @@ import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.model.*
 import packit.model.dto.CreateRole
+import packit.model.dto.UpdatePacketReadRoles
 import packit.model.dto.UpdateRolePermissions
 import packit.repository.RoleRepository
 import packit.service.BaseRoleService
@@ -24,21 +24,11 @@ import kotlin.test.assertTrue
 
 class RoleServiceTest
 {
-    private lateinit var appConfig: AppConfig
-    private lateinit var roleRepository: RoleRepository
-    private lateinit var roleService: BaseRoleService
-    private lateinit var permissionService: PermissionService
-    private lateinit var rolePermissionService: RolePermissionService
-
-    @BeforeEach
-    fun setup()
-    {
-        appConfig = mock()
-        roleRepository = mock()
-        permissionService = mock()
-        rolePermissionService = mock()
-        roleService = BaseRoleService(appConfig, roleRepository, permissionService, rolePermissionService)
-    }
+    private val appConfig = mock<AppConfig>()
+    private val roleRepository = mock<RoleRepository>()
+    private val permissionService = mock<PermissionService>()
+    private val rolePermissionService = mock<RolePermissionService>()
+    private val roleService = BaseRoleService(appConfig, roleRepository, permissionService, rolePermissionService)
 
     @Test
     fun `createUsernameRole throws exception if role exists`()
@@ -254,34 +244,25 @@ class RoleServiceTest
     }
 
     @Test
-    fun `updatePermissionsToRole calls correct methods and saves role & returns new role`()
+    fun `updatePermissionsToRole calls correct methods and returns saved role`()
     {
         val roleName = "roleName"
         val permissionName = "permission1"
         val role = createRoleWithPermission(roleName, permissionName)
         whenever(roleRepository.findByName(roleName)).thenReturn(role)
-        whenever(roleRepository.save(any<Role>())).thenAnswer { it.getArgument(0) }
-        whenever(rolePermissionService.getRolePermissionsToAdd(role, listOf())).thenReturn(
-            listOf(
-                createRoleWithPermission(roleName, "differentPermission").rolePermissions.first()
-            )
-        )
-        whenever(roleRepository.save(any<Role>())).thenAnswer { it.getArgument(0) }
-        whenever(rolePermissionService.removeRolePermissionsFromRole(role, listOf())).thenReturn(role)
+        whenever(roleRepository.save(role)).thenReturn(role)
+        whenever(rolePermissionService.updatePermissionsOnRole(role, listOf(), listOf())).thenReturn(role)
 
-        val updatedRole = roleService.updatePermissionsToRole(roleName, UpdateRolePermissions())
+        val result = roleService.updatePermissionsToRole(roleName, UpdateRolePermissions())
 
-        verify(roleRepository).save(
-            argThat {
-                assertEquals(this, role)
-                assertEquals(this.rolePermissions.size, 2)
-                true
-            }
+        assertEquals(result, role)
+        verify(roleRepository).findByName(roleName)
+        verify(roleRepository).save(role)
+        verify(rolePermissionService).updatePermissionsOnRole(
+            role,
+            listOf(),
+            listOf()
         )
-        verify(rolePermissionService).removeRolePermissionsFromRole(role, listOf())
-        verify(rolePermissionService).getRolePermissionsToAdd(role, listOf())
-        assertEquals(role, updatedRole)
-        assertEquals(2, updatedRole.rolePermissions.size)
     }
 
     @Test
@@ -299,7 +280,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getRolesWithRelationships returns all roles when no isUsernamesflag set`()
+    fun `getAllRoles returns all roles when no isUsernamesflag set`()
     {
         val roles = listOf(Role(name = "role1"), Role(name = "role2"))
         whenever(roleRepository.findAll(Sort.by("name").ascending())).thenReturn(roles)
@@ -311,7 +292,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getRolesWithRelationships returns matching roles when all role names exist`()
+    fun `getAllRoles returns matching roles when all role names exist`()
     {
         val roleNames = listOf("role1", "role2")
         val roles = listOf(Role(name = "role1"), Role(name = "role2"))
@@ -570,5 +551,82 @@ class RoleServiceTest
 
         val result = roleService.getDefaultRoles()
         assertEquals(listOf(adminRole), result)
+    }
+
+    @Test
+    fun `getUniqueRoleNamesForUpdate returns symmetric difference of both sets`()
+    {
+        val roleService = BaseRoleService(mock(), mock(), mock(), mock())
+        val roleNamesToAdd = setOf("role1", "role2", "shared")
+        val roleNamesToRemove = setOf("role3", "role4", "shared")
+
+        val result = roleService.getUniqueRoleNamesForUpdate(roleNamesToAdd, roleNamesToRemove)
+
+        val expected = setOf("role1", "role2", "role3", "role4")
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `getUniqueRoleNamesForUpdate throws exception when both sets have same elements`()
+    {
+        val roleService = BaseRoleService(mock(), mock(), mock(), mock())
+        val roleNamesToAdd = setOf("role1", "role2")
+        val roleNamesToRemove = setOf("role1", "role2")
+
+        assertThrows<PackitException> {
+            roleService.getUniqueRoleNamesForUpdate(roleNamesToAdd, roleNamesToRemove)
+        }.apply {
+            assertEquals("noRolesToUpdateWithPermission", key)
+            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+        }
+    }
+
+    @Test
+    fun `getUniqueRoleNamesForUpdate throws exception when both sets are empty`()
+    {
+        val roleService = BaseRoleService(mock(), mock(), mock(), mock())
+        val roleNamesToAdd = emptySet<String>()
+        val roleNamesToRemove = emptySet<String>()
+
+        assertThrows<PackitException> {
+            roleService.getUniqueRoleNamesForUpdate(roleNamesToAdd, roleNamesToRemove)
+        }.apply {
+            assertEquals("noRolesToUpdateWithPermission", key)
+            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+        }
+    }
+
+    @Test
+    fun `updatePacketReadPermissionOnRoles calls correct methods with arguments & returns saved role`()
+    {
+        val spyRoleService = spy(roleService)
+        val rolesToAdd = setOf("role1", "role2")
+        val rolesToRemove = setOf("role3", "role4")
+        val updateRoleNames = rolesToAdd + rolesToRemove
+        val packetId = "packet123"
+        val packetGroupName = "packetGroup1"
+        val updatePacketReadRoles =
+            UpdatePacketReadRoles(packetId, rolesToAdd.toSet(), rolesToRemove.toSet())
+        val allRoles = updateRoleNames.map { Role(name = it) }
+
+        doReturn(updateRoleNames).`when`(spyRoleService)
+            .getUniqueRoleNamesForUpdate(rolesToAdd, rolesToRemove)
+        doReturn(allRoles).`when`(spyRoleService).getRolesByRoleNames(any())
+        whenever(rolePermissionService.applyPermissionToMultipleRoles(any(), any(), any(), any(), any())).thenReturn(
+            allRoles
+        )
+
+        spyRoleService.updatePacketReadPermissionOnRoles(updatePacketReadRoles, packetGroupName)
+
+        verify(rolePermissionService).applyPermissionToMultipleRoles(
+            allRoles.subList(0, 2),
+            allRoles.subList(2, 4),
+            "packet.read",
+            packetGroupName,
+            packetId
+        )
+        verify(spyRoleService).getUniqueRoleNamesForUpdate(rolesToAdd, rolesToRemove)
+        verify(spyRoleService).getRolesByRoleNames(updateRoleNames.toList())
+        verify(roleRepository).saveAll(allRoles)
     }
 }

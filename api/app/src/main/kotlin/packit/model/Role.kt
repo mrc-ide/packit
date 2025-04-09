@@ -7,9 +7,10 @@ import packit.model.dto.RoleDto
 @Entity
 @Table(name = "`role`")
 class Role(
+    @Column(unique = true, nullable = false)
     var name: String,
     var isUsername: Boolean = false,
-    @OneToMany(mappedBy = "role", fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
+    @OneToMany(mappedBy = "role", fetch = FetchType.EAGER, cascade = [CascadeType.ALL], orphanRemoval = true)
     var rolePermissions: MutableList<RolePermission> = mutableListOf(),
     @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
     var users: MutableList<User> = mutableListOf(),
