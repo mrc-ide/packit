@@ -11,8 +11,8 @@ const authMethodIsBasic = async (apiURL: string) => {
 };
 
 const getBasicCredentials = () => {
-  const user = process.env.PACKIT_E2E_BASIC_USER;
-  const password = process.env.PACKIT_E2E_BASIC_PASSWORD;
+  const user = "resideUser@resideAdmin.ic.ac.uk";
+  const password = "password";
 
   if (!user || !password) {
     throw Error(

@@ -6,6 +6,7 @@ import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationshi
 import { UserWithRoles } from "../manageAccess/types/UserWithRoles";
 import { UpdatePacketReadPermissionForm } from "./UpdatePacketReadPermissionForm";
 import { KeyedMutator } from "swr";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../Base/Tooltip";
 
 interface UpdatePermissionDialogProps {
   roles: RoleWithRelationships[];
@@ -17,11 +18,23 @@ export const UpdatePermissionDialog = ({ roles, users, packetGroupName, mutate }
   const [dialogOpen, setDialogOpen] = useState(false);
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      <DialogTrigger asChild>
-        <Button aria-label={`manage-access-${packetGroupName}`} variant="outline" size="icon">
-          <UserCog size={18} />
-        </Button>
-      </DialogTrigger>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              aria-label={`manage-access-${packetGroupName}`}
+              variant="outline"
+              size="icon"
+              onClick={() => setDialogOpen(true)}
+            >
+              <UserCog size={18} />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Update read access</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       <DialogContent onOpenAutoFocus={(e) => e.preventDefault()} onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Update read access on {packetGroupName}</DialogTitle>
