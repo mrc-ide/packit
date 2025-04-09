@@ -7,7 +7,7 @@ import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationshi
 import { UserWithRoles } from "../manageAccess/types/UserWithRoles";
 import { UpdatePacketReadPermissionForm } from "./UpdatePacketReadPermissionForm";
 import { getRolesAndUsersCantReadGroup } from "./utils/getRolesAndUsersCantReadGroup";
-import { getRolesUsersWithReadGroupPermission } from "./utils/getRolesUsersWithReadGroupPermission";
+import { getRolesAndUsersWithOnlyReadGroupPermission } from "./utils/getRolesAndUsersWithOnlyReadGroupPermission";
 
 interface UpdatePermissionDialogProps {
   roles: RoleWithRelationships[];
@@ -18,7 +18,7 @@ interface UpdatePermissionDialogProps {
 export const UpdatePermissionDialog = ({ roles, users, packetGroupName, mutate }: UpdatePermissionDialogProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const rolesAndUsersCantReadGroup = getRolesAndUsersCantReadGroup(roles, users, packetGroupName);
-  const rolesAndUsersWithReadGroup = getRolesUsersWithReadGroupPermission(roles, users, packetGroupName);
+  const rolesAndUsersWithReadGroup = getRolesAndUsersWithOnlyReadGroupPermission(roles, users, packetGroupName);
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
