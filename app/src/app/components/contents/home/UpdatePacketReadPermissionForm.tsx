@@ -80,9 +80,10 @@ export const UpdatePacketReadPermissionForm = ({
           render={({ field }) => (
             <FormItem>
               <FormDescription className="text-xs mb-0.5">
-                Select roles or specific users to grant read access to the packet{packetId ? "" : " group"}. Roles or
+                Select roles or specific users to grant read access to this packet{packetId ? "" : " group"}. Roles or
                 users with global read access cannot be added here as they already have the required permissions.
-                Similarly, roles or users with global permissions cannot have their access removed.
+                Similarly, roles or with global access cannot have their access removed here. You also cannot add or
+                remove access here for specific users who have access via a role.
               </FormDescription>
               <FormLabel>Grant read access</FormLabel>
               <MultiSelector onValuesChange={field.onChange} values={field.value}>
