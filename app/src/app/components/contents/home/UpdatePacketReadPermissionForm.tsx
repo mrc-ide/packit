@@ -12,7 +12,7 @@ import { CustomDialogFooter } from "../common/CustomDialogFooter";
 import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
 import { UserWithRoles } from "../manageAccess/types/UserWithRoles";
 import { UpdatePacketReadPermissionMultiSelectList } from "./UpdatePacketReadPermissionMultiSelectList";
-import { getRolesUsersWithReadGroupPermission } from "./utils/getRolesUsersWithReadGroupPermission";
+import { getRolesAndUsersWithOnlyReadGroupPermission } from "./utils/getRolesAndUsersWithOnlyReadGroupPermission";
 import { getRolesAndUsersCantReadGroup } from "./utils/getRolesAndUsersCantReadGroup";
 
 interface UpdatePacketReadPermissionFormProps {
@@ -31,7 +31,7 @@ export const UpdatePacketReadPermissionForm = ({
 }: UpdatePacketReadPermissionFormProps) => {
   const [error, setError] = useState("");
   const rolesAndUsersCantReadGroup = getRolesAndUsersCantReadGroup(roles, users, packetGroupName);
-  const rolesAndUsersWithReadGroup = getRolesUsersWithReadGroupPermission(roles, users, packetGroupName);
+  const rolesAndUsersWithReadGroup = getRolesAndUsersWithOnlyReadGroupPermission(roles, users, packetGroupName);
 
   const formSchema = z.object({
     roleNamesToAdd: z.array(z.string()),
@@ -81,9 +81,10 @@ export const UpdatePacketReadPermissionForm = ({
           render={({ field }) => (
             <FormItem>
               <FormDescription className="text-xs mb-0.5">
-                Select roles or specific users to grant read access to the packet group. Roles or users with global read
-                access cannot be added here as they already have the required permissions. Similarly, roles or users
-                with global permissions cannot have their access removed.
+                Select roles or specific users to grant read access to this packet group. Roles or users with global
+                read access cannot be added here as they already have the required permissions. Similarly, roles or with
+                global access cannot have their access removed here. You also cannot add or remove access here for
+                specific users who have access via a role.
               </FormDescription>
               <FormLabel>Grant read access</FormLabel>
               <MultiSelector onValuesChange={field.onChange} values={field.value}>

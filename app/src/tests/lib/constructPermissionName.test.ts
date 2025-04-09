@@ -65,7 +65,13 @@ describe("buildScopedPermission", () => {
 
   it("should throw an error when both packetGroupName and tag are provided", () => {
     expect(() => buildScopedPermission("read", "group1", undefined, "tag1")).toThrow(
-      "Only one of packetGroupName or tag can be provided"
+      "tag cannot be provided with packetGroupName or packetId"
+    );
+  });
+
+  it("should throw an error when both packetId and tag are provided", () => {
+    expect(() => buildScopedPermission("read", undefined, "123", "tag1")).toThrow(
+      "tag cannot be provided with packetGroupName or packetId"
     );
   });
 
