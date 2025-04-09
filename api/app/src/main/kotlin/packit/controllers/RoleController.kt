@@ -1,5 +1,6 @@
 package packit.controllers
 
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
@@ -12,7 +13,6 @@ import packit.model.dto.UpdateRoleUsers
 import packit.model.toDto
 import packit.service.RoleService
 import packit.service.UserRoleService
-import java.net.URI
 
 @Controller
 @RequestMapping("/roles")
@@ -24,7 +24,7 @@ class RoleController(private val roleService: RoleService, private val userRoleS
     {
         val role = roleService.createRole(createRole)
 
-        return ResponseEntity.created(URI.create("/roles/${role.id}")).body(role.toDto())
+        return ResponseEntity<RoleDto>(role.toDto(), HttpStatus.CREATED)
     }
 
     @DeleteMapping("/{roleName}")
