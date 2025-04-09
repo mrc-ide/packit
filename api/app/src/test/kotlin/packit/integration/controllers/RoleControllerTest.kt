@@ -9,11 +9,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.test.context.jdbc.Sql
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
-import packit.model.Role
-import packit.model.RolePermission
-import packit.model.User
+import packit.model.*
 import packit.model.dto.*
-import packit.model.toDto
 import packit.repository.PermissionRepository
 import packit.repository.RoleRepository
 import packit.repository.UserRepository

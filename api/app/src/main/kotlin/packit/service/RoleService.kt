@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.model.Permission
@@ -12,7 +13,7 @@ import packit.model.Role
 import packit.model.RolePermission
 import packit.model.dto.CreateRole
 import packit.model.dto.RoleDto
-import packit.model.dto.UpdateRolePermission
+import packit.model.dto.UpdatePacketReadRoles
 import packit.model.dto.UpdateRolePermissions
 import packit.model.toDto
 import packit.repository.RoleRepository
@@ -32,6 +33,7 @@ interface RoleService
     fun getByRoleName(roleName: String): Role?
     fun getSortedRoleDtos(roles: List<Role>): List<RoleDto>
     fun getDefaultRoles(): List<Role>
+    fun updatePacketReadPermissionOnRoles(updatePacketReadRoles: UpdatePacketReadRoles, packetGroupName: String)
 }
 
 @Service
@@ -89,17 +91,18 @@ class BaseRoleService(
         roleRepository.deleteByName(username)
     }
 
+    @Transactional(rollbackFor = [Exception::class])
     override fun updatePermissionsToRole(roleName: String, updateRolePermissions: UpdateRolePermissions): Role
     {
         val role = roleRepository.findByName(roleName)
             ?: throw PackitException("roleNotFound", HttpStatus.BAD_REQUEST)
 
-        val roleAfterPermissionAdd = addRolePermissionsToRole(role, updateRolePermissions.addPermissions)
-
-        return rolePermissionService.removeRolePermissionsFromRole(
-            roleAfterPermissionAdd,
+        val updatedRole = rolePermissionService.updatePermissionsOnRole(
+            role,
+            updateRolePermissions.addPermissions,
             updateRolePermissions.removePermissions
         )
+        return roleRepository.save(updatedRole)
     }
 
     override fun getByRoleName(roleName: String): Role?
@@ -118,14 +121,6 @@ class BaseRoleService(
             }
             role.toDto()
         }
-    }
-
-    internal fun addRolePermissionsToRole(role: Role, addRolePermissions: List<UpdateRolePermission>): Role
-    {
-        val rolePermissionsToAdd =
-            rolePermissionService.getRolePermissionsToAdd(role, addRolePermissions)
-        role.rolePermissions.addAll(rolePermissionsToAdd)
-        return roleRepository.save(role)
     }
 
     override fun getAllRoles(isUsernames: Boolean?): List<Role>
@@ -179,5 +174,40 @@ class BaseRoleService(
     override fun getDefaultRoles(): List<Role>
     {
         return roleRepository.findByIsUsernameAndNameIn(isUsername = false, appConfig.defaultRoles)
+    }
+
+    @Transactional(rollbackFor = [Exception::class])
+    override fun updatePacketReadPermissionOnRoles(
+        updatePacketReadRoles: UpdatePacketReadRoles,
+        packetGroupName: String
+    )
+    {
+        val roleNamesToUpdate =
+            getUniqueRoleNamesForUpdate(updatePacketReadRoles.roleNamesToAdd, updatePacketReadRoles.roleNamesToRemove)
+        val rolesToUpdate =
+            getRolesByRoleNames(roleNamesToUpdate.toList())
+
+        val updatedRoles = rolePermissionService.applyPermissionToMultipleRoles(
+            rolesToUpdate.filter { it.name in updatePacketReadRoles.roleNamesToAdd },
+            rolesToUpdate.filter { it.name in updatePacketReadRoles.roleNamesToRemove },
+            "packet.read",
+            packetGroupName,
+            updatePacketReadRoles.packetId,
+        )
+
+        roleRepository.saveAll(updatedRoles)
+    }
+
+    internal fun getUniqueRoleNamesForUpdate(roleNamesToAdd: Set<String>, roleNamesToRemove: Set<String>): Set<String>
+    {
+        // Calculate symmetric difference (roles that appear in only one of the sets)
+        val roleNamesToUpdate = (roleNamesToAdd - roleNamesToRemove) + (roleNamesToRemove - roleNamesToAdd)
+
+        if (roleNamesToUpdate.isEmpty())
+        {
+            throw PackitException("noRolesToUpdateWithPermission", HttpStatus.BAD_REQUEST)
+        }
+
+        return roleNamesToUpdate
     }
 }

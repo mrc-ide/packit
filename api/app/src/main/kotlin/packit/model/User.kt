@@ -9,6 +9,7 @@ import java.util.*
 @Entity
 @Table(name = "`user`")
 class User(
+    @Column(unique = true, nullable = false)
     val username: String,
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -28,7 +29,8 @@ class User(
     val id: UUID? = null,
     @OneToMany(mappedBy = "user")
     var runInfos: MutableList<RunInfo> = mutableListOf()
-){
+)
+{
     fun isServiceUser(): Boolean = userSource == "service"
 }
 

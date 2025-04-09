@@ -6,6 +6,7 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.*
 import org.springframework.data.domain.Sort
+import org.springframework.http.HttpStatus
 import org.springframework.http.client.ClientHttpResponse
 import packit.exceptions.PackitException
 import packit.model.*
@@ -254,6 +255,9 @@ class PacketServiceTest
 
         assertThrows<PackitException> {
             sut.getPacket(packetId)
+        }.apply {
+            assertEquals("packetNotFound", key)
+            assertEquals(HttpStatus.NOT_FOUND, httpStatus)
         }
     }
 

@@ -17,6 +17,8 @@ interface PermissionService
         packetId: String? = null,
         tag: String? = null,
     ): String
+
+    fun getByName(permissionName: String): Permission
 }
 
 @Service
@@ -71,5 +73,11 @@ class BasePermissionService(
             tag != null -> "$permission:tag:$tag"
             else -> permission
         }
+    }
+
+    override fun getByName(permissionName: String): Permission
+    {
+        return permissionRepository.findByName(permissionName)
+            ?: throw PackitException("permissionNotFound", HttpStatus.BAD_REQUEST)
     }
 }
