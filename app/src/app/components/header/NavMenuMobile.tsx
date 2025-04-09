@@ -20,7 +20,7 @@ export const NavMenuMobile = ({ user }: NavMenuMobileProps) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-48">
           {Object.entries(LeftNavItems).map(([to, title]) =>
-            to === "runner" && !hasPacketRunPermission(user) ? null : (
+            to === "runner" && !hasPacketRunPermission(user.authorities) ? null : (
               <DropdownMenuItem key={to} asChild>
                 <NavLink to={to}>{title}</NavLink>
               </DropdownMenuItem>

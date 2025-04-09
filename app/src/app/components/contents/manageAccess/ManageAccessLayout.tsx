@@ -19,7 +19,7 @@ const sidebarItems: SidebarItem[] = [
 export const ManageAccessLayout = () => {
   const { user } = useUser();
 
-  if (!hasUserManagePermission(user)) {
+  if (!hasUserManagePermission(user?.authorities)) {
     return <Unauthorized />;
   }
   return (
