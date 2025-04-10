@@ -28,7 +28,7 @@ class PacketControllerTestHelper(val integrationTest: IntegrationTest)
     ): ResponseEntity<T>
     {
         return integrationTest.restTemplate.exchange(
-            "/packets/{id}/file/{path}?filename={filename}&token={token}",
+            "/packets/{id}/file?path={path}&filename={filename}&token={token}",
             HttpMethod.GET,
             integrationTest.getBareHttpEntity(),
             mapOf(

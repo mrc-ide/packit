@@ -51,10 +51,10 @@ class PacketController(
         return ResponseEntity.ok(oneTimeToken.toDto())
     }
 
-    @GetMapping("/{id}/file/{path}")
+    @GetMapping("/{id}/file")
     fun streamFile(
         @PathVariable id: String,
-        @PathVariable path: String, // To identify which file to download
+        @RequestParam path: String, // To identify which file to download
         @RequestParam token: UUID,
         @RequestParam filename: String, // The suggested name for the client to use when saving the file
         @RequestParam inline: Boolean = false,
@@ -64,7 +64,6 @@ class PacketController(
 
         val disposition = if (inline) ContentDisposition.inline() else ContentDisposition.attachment()
         response.setHeader("Content-Disposition", disposition.filename(filename).build().toString())
-
         response.contentType = getMediaType(filename).orElse(MediaType.APPLICATION_OCTET_STREAM).toString()
         packetService.getFileByPath(id, path, response.outputStream) { outpackResponse ->
             response.setContentLengthLong(outpackResponse.headers.contentLength)
@@ -84,7 +83,6 @@ class PacketController(
 
         val disposition = if (inline) ContentDisposition.inline() else ContentDisposition.attachment()
         response.setHeader("Content-Disposition", disposition.filename(filename).build().toString())
-
         response.contentType = "application/zip"
         packetService.streamZip(paths, id, response.outputStream)
     }

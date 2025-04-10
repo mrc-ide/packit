@@ -10,9 +10,5 @@ export const downloadFileHandlers = [
     } else {
       return res(ctx.status(401));
     }
-  }),
-
-  rest.get(`${appConfig.apiUrl()}/packets/${mockPacket.id}/files`, (req, res, ctx) => {
-    return res(ctx.body(mockFileBlob));
   })
 ];
