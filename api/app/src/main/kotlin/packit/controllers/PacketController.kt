@@ -51,10 +51,10 @@ class PacketController(
         return ResponseEntity.ok(oneTimeToken.toDto())
     }
 
-    @GetMapping("/{id}/file")
+    @GetMapping("/{id}/file/{path}")
     fun streamFile(
         @PathVariable id: String,
-        @RequestParam path: String, // To identify which file to download
+        @PathVariable path: String, // To identify which file to download
         @RequestParam token: UUID,
         @RequestParam filename: String, // The suggested name for the client to use when saving the file
         @RequestParam inline: Boolean = false,
@@ -71,7 +71,7 @@ class PacketController(
         }
     }
 
-    @GetMapping("/{id}/zip")
+    @GetMapping("/{id}/files/zip")
     fun streamFilesZipped(
         @PathVariable id: String,
         @RequestParam paths: List<String>, // To identify which files to download

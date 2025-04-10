@@ -64,7 +64,7 @@ class WebSecurityConfig(
     ): SecurityFilterChain {
         // Security configuration for endpoints that are protected by the use of one-time tokens, as opposed to JWTs.
         httpSecurity
-            .securityMatcher(*arrayOf("/packets/{id}/file", "/packets/{id}/zip"))
+            .securityMatcher(*arrayOf("/packets/{id}/file/{path}", "/packets/{id}/files/zip"))
             .authorizeHttpRequests { authorizeRequests ->
                 authorizeRequests.anyRequest().permitAll()
             }

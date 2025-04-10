@@ -28,7 +28,7 @@ class PacketControllerTestHelper(val integrationTest: IntegrationTest)
     ): ResponseEntity<T>
     {
         return integrationTest.restTemplate.exchange(
-            "/packets/{id}/file?filename={filename}&token={token}&path={path}",
+            "/packets/{id}/file/{path}?filename={filename}&token={token}",
             HttpMethod.GET,
             integrationTest.getBareHttpEntity(),
             mapOf(
@@ -55,7 +55,7 @@ class PacketControllerTestHelper(val integrationTest: IntegrationTest)
         paths.forEachIndexed { index, path -> params["path$index"] = path }
         val pathsQueryParams = List(paths.size) { index -> "paths={path$index}" }.joinToString("&")
         return integrationTest.restTemplate.exchange(
-            "/packets/{id}/zip?filename={filename}&token={token}&$pathsQueryParams",
+            "/packets/{id}/files/zip?filename={filename}&token={token}&$pathsQueryParams",
             HttpMethod.GET,
             integrationTest.getBareHttpEntity(),
             params
