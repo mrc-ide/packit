@@ -240,10 +240,10 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `streamFiles 404s when passed a token id that does not exist`()
+    fun `streamFile 404s when passed a token id that does not exist`()
     {
-        val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFilesEndpoint(
-            paths = setOf("a_renamed_common_resource.csv"),
+        val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFileEndpoint(
+            path = "a_renamed_common_resource.csv",
             packetId = idOfDownloadTypesPacket3,
             tokenId = UUID.randomUUID(),
             filename = "filename-test.zip"
@@ -252,19 +252,19 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `streamFiles 403s when the token's filepaths do not match the requested files`()
+    fun `streamFile 403s when the token's filepaths do not match the requested files`()
     {
         val token = oneTimeTokenRepository.save(
             OneTimeToken(
                 id = UUID.randomUUID(),
                 packet = packetRepository.findById(idOfDownloadTypesPacket3).get(),
-                filePaths = listOf("a_renamed_common_resource.csv"),
+                filePaths = listOf("a_renamed_common_resource.csv", "artefact1/artefact_data.csv"),
                 expiresAt = Instant.now().plusSeconds(10)
             )
         )
 
-        val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFilesEndpoint(
-            paths = setOf("a_renamed_common_resource.csv", "artefact1/artefact_data.csv"),
+        val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFileEndpoint(
+            path = "a_renamed_common_resource.csv",
             packetId = idOfDownloadTypesPacket3,
             tokenId = token.id,
             filename = "filename-test.zip"
@@ -275,7 +275,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `streamFiles 403s when the token's packet does not match the requested packet`()
+    fun `streamFile 403s when the token's packet does not match the requested packet`()
     {
         val token = oneTimeTokenRepository.save(
             OneTimeToken(
@@ -286,8 +286,8 @@ class PacketControllerTest : IntegrationTest()
             )
         )
 
-        val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFilesEndpoint(
-            paths = setOf("a_renamed_common_resource.csv"),
+        val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFileEndpoint(
+            path = "a_renamed_common_resource.csv",
             packetId = idOfArtefactTypesPacket,
             tokenId = token.id,
             filename = "filename-test.zip"
@@ -298,19 +298,19 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `streamFiles 403s when the token has expired`()
+    fun `streamFile 403s when the token has expired`()
     {
         val token = oneTimeTokenRepository.save(
             OneTimeToken(
                 id = UUID.randomUUID(),
                 packet = packetRepository.findById(idOfDownloadTypesPacket3).get(),
-                filePaths = listOf("a_renamed_common_resource.csv", "artefact1/artefact_data.csv"),
+                filePaths = listOf("a_renamed_common_resource.csv"),
                 expiresAt = Instant.now().minusSeconds(10)
             )
         )
 
-        val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFilesEndpoint(
-            paths = setOf("a_renamed_common_resource.csv", "artefact1/artefact_data.csv"),
+        val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFileEndpoint(
+            path = "a_renamed_common_resource.csv",
             packetId = idOfDownloadTypesPacket3,
             tokenId = token.id,
             filename = "filename-test.zip"
@@ -321,7 +321,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `streamFiles can stream a single file, uncompressed, and deletes the one-time token`()
+    fun `streamFile can stream a single file, uncompressed, and deletes the one-time token`()
     {
         val token = oneTimeTokenRepository.save(
             OneTimeToken(
@@ -332,8 +332,8 @@ class PacketControllerTest : IntegrationTest()
             )
         )
 
-        val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFilesEndpoint(
-            paths = setOf("a_renamed_common_resource.csv"),
+        val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFileEndpoint(
+            path = "a_renamed_common_resource.csv",
             packetId = idOfDownloadTypesPacket3,
             tokenId = token.id,
             filename = "filename-test.csv"
@@ -349,7 +349,88 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `streamFiles streams a zip file, and deletes the one-time token`()
+    fun `streamFilesZipped 404s when passed a token id that does not exist`()
+    {
+        val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFilesZippedEndpoint(
+            paths = setOf("a_renamed_common_resource.csv"),
+            packetId = idOfDownloadTypesPacket3,
+            tokenId = UUID.randomUUID(),
+            filename = "filename-test.zip"
+        )
+        assertNotFound(result)
+    }
+
+    @Test
+    fun `streamFilesZipped 403s when the token's filepaths do not match the requested files`()
+    {
+        val token = oneTimeTokenRepository.save(
+            OneTimeToken(
+                id = UUID.randomUUID(),
+                packet = packetRepository.findById(idOfDownloadTypesPacket3).get(),
+                filePaths = listOf("a_renamed_common_resource.csv"),
+                expiresAt = Instant.now().plusSeconds(10)
+            )
+        )
+
+        val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFilesZippedEndpoint(
+            paths = setOf("a_renamed_common_resource.csv", "artefact1/artefact_data.csv"),
+            packetId = idOfDownloadTypesPacket3,
+            tokenId = token.id,
+            filename = "filename-test.zip"
+        )
+        val body = jacksonObjectMapper().readTree(result.body)
+        assertEquals(body.get("error").get("detail").asText(), "Invalid one-time token provided")
+        assertForbidden(result)
+    }
+
+    @Test
+    fun `streamFilesZipped 403s when the token's packet does not match the requested packet`()
+    {
+        val token = oneTimeTokenRepository.save(
+            OneTimeToken(
+                id = UUID.randomUUID(),
+                packet = packetRepository.findById(idOfDownloadTypesPacket3).get(),
+                filePaths = listOf("a_renamed_common_resource.csv"),
+                expiresAt = Instant.now().plusSeconds(10)
+            )
+        )
+
+        val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFilesZippedEndpoint(
+            paths = setOf("a_renamed_common_resource.csv"),
+            packetId = idOfArtefactTypesPacket,
+            tokenId = token.id,
+            filename = "filename-test.zip"
+        )
+        val body = jacksonObjectMapper().readTree(result.body)
+        assertEquals(body.get("error").get("detail").asText(), "Invalid one-time token provided")
+        assertForbidden(result)
+    }
+
+    @Test
+    fun `streamFilesZipped 403s when the token has expired`()
+    {
+        val token = oneTimeTokenRepository.save(
+            OneTimeToken(
+                id = UUID.randomUUID(),
+                packet = packetRepository.findById(idOfDownloadTypesPacket3).get(),
+                filePaths = listOf("a_renamed_common_resource.csv", "artefact1/artefact_data.csv"),
+                expiresAt = Instant.now().minusSeconds(10)
+            )
+        )
+
+        val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFilesZippedEndpoint(
+            paths = setOf("a_renamed_common_resource.csv", "artefact1/artefact_data.csv"),
+            packetId = idOfDownloadTypesPacket3,
+            tokenId = token.id,
+            filename = "filename-test.zip"
+        )
+        val body = jacksonObjectMapper().readTree(result.body)
+        assertEquals(body.get("error").get("detail").asText(), "Expired one-time token provided")
+        assertForbidden(result)
+    }
+
+    @Test
+    fun `streamFilesZipped streams a zip file, and deletes the one-time token`()
     {
         val paths = filePathsAndSizesForDownloadTypesPacket.keys
         val token = oneTimeTokenRepository.save(
@@ -361,7 +442,7 @@ class PacketControllerTest : IntegrationTest()
             )
         )
 
-        val result: ResponseEntity<ByteArray> = packetControllerTestHelper.callStreamFilesEndpoint(
+        val result: ResponseEntity<ByteArray> = packetControllerTestHelper.callStreamFilesZippedEndpoint(
             paths = paths,
             packetId = idOfDownloadTypesPacket3,
             tokenId = token.id,
@@ -396,7 +477,7 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:download-types"])
-    fun `streamFiles 400s when passed an empty list of paths`()
+    fun `streamFilesZipped 400s when passed an empty list of paths`()
     {
         val token = oneTimeTokenRepository.save(
             OneTimeToken(
@@ -407,7 +488,7 @@ class PacketControllerTest : IntegrationTest()
             )
         )
 
-        val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFilesEndpoint(
+        val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFilesZippedEndpoint(
             paths = setOf(),
             packetId = idOfDownloadTypesPacket3,
             tokenId = token.id,

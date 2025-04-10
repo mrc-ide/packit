@@ -51,8 +51,28 @@ class PacketController(
         return ResponseEntity.ok(oneTimeToken.toDto())
     }
 
-    @GetMapping("/{id}/files")
-    fun streamFiles(
+    @GetMapping("/{id}/file")
+    fun streamFile(
+        @PathVariable id: String,
+        @RequestParam path: String, // To identify which file to download
+        @RequestParam token: UUID,
+        @RequestParam filename: String, // The suggested name for the client to use when saving the file
+        @RequestParam inline: Boolean = false,
+        response: HttpServletResponse,
+    ) {
+        oneTimeTokenService.validateToken(token, id, listOf(path))
+
+        val disposition = if (inline) ContentDisposition.inline() else ContentDisposition.attachment()
+        response.setHeader("Content-Disposition", disposition.filename(filename).build().toString())
+
+        response.contentType = getMediaType(filename).orElse(MediaType.APPLICATION_OCTET_STREAM).toString()
+        packetService.getFileByPath(id, path, response.outputStream) { outpackResponse ->
+            response.setContentLengthLong(outpackResponse.headers.contentLength)
+        }
+    }
+
+    @GetMapping("/{id}/zip")
+    fun streamFilesZipped(
         @PathVariable id: String,
         @RequestParam paths: List<String>, // To identify which files to download
         @RequestParam token: UUID,
@@ -65,14 +85,7 @@ class PacketController(
         val disposition = if (inline) ContentDisposition.inline() else ContentDisposition.attachment()
         response.setHeader("Content-Disposition", disposition.filename(filename).build().toString())
 
-        if (paths.size == 1) {
-            response.contentType = getMediaType(filename).orElse(MediaType.APPLICATION_OCTET_STREAM).toString()
-            packetService.getFileByPath(id, paths[0], response.outputStream) { outpackResponse ->
-                response.setContentLengthLong(outpackResponse.headers.contentLength)
-            }
-        } else if (!inline) {
-            response.contentType = "application/zip"
-            packetService.streamZip(paths, id, response.outputStream)
-        }
+        response.contentType = "application/zip"
+        packetService.streamZip(paths, id, response.outputStream)
     }
 }

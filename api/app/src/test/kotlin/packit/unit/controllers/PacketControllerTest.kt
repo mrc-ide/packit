@@ -1,16 +1,20 @@
 package packit.unit.controllers
 
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
-import org.mockito.ArgumentMatchers.*
-import org.mockito.kotlin.*
+import org.mockito.ArgumentMatchers.anyString
+import org.mockito.ArgumentMatchers.anyList
+import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.client.ClientHttpResponse
 import org.springframework.mock.web.MockHttpServletResponse
 import packit.controllers.PacketController
-import packit.exceptions.PackitException
 import packit.model.*
 import packit.service.OneTimeTokenService
 import packit.service.PacketService
@@ -85,6 +89,7 @@ class PacketControllerTest
         on {
             getFileByPath(
                 anyString(),
+                anyString(),
                 any<OutputStream>(),
                 any<(ClientHttpResponse) -> Unit>()
             )
@@ -149,9 +154,9 @@ class PacketControllerTest
     {
         val response = MockHttpServletResponse()
 
-        sut.streamFiles(
+        sut.streamFile(
             id = packetId,
-            paths = listOf("path/test.html"),
+            path = "path/test.html",
             token = tokenId,
             filename = "test-filename.html",
             inline = false,
@@ -179,9 +184,9 @@ class PacketControllerTest
     {
         val response = MockHttpServletResponse()
 
-        sut.streamFiles(
+        sut.streamFile(
             id = packetId,
-            paths = listOf("path/test.html"),
+            path = "path/test.html",
             token = tokenId,
             filename = "test-filename.html",
             inline = true,
@@ -209,7 +214,7 @@ class PacketControllerTest
     {
         val response = MockHttpServletResponse()
 
-        sut.streamFiles(packetId, listOf("file1.txt", "file2.txt"), tokenId, "my_archive.zip", false, response)
+        sut.streamFilesZipped(packetId, listOf("file1.txt", "file2.txt"), tokenId, "my_archive.zip", false, response)
 
         verify(oneTimeTokenService).validateToken(tokenId, packetId, listOf("file1.txt", "file2.txt"))
         verify(packetService).streamZip(listOf("file1.txt", "file2.txt"), packetId, response.outputStream)

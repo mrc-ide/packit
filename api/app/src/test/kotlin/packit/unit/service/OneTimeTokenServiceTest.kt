@@ -21,7 +21,6 @@ class OneTimeTokenServiceTest {
         "packetId",
         "name",
         "", mapOf(),
-        false,
         now.epochSecond.toDouble(),
         now.epochSecond.toDouble(),
         now.epochSecond.toDouble()

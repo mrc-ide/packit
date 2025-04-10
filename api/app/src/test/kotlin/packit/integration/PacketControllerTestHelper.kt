@@ -20,7 +20,27 @@ class PacketControllerTestHelper(val integrationTest: IntegrationTest)
         )
     }
 
-    inline fun <reified T : Any> callStreamFilesEndpoint(
+    inline fun <reified T : Any> callStreamFileEndpoint(
+        path: String,
+        packetId: String,
+        tokenId: UUID,
+        filename: String
+    ): ResponseEntity<T>
+    {
+        return integrationTest.restTemplate.exchange(
+            "/packets/{id}/file?filename={filename}&token={token}&path={path}",
+            HttpMethod.GET,
+            integrationTest.getBareHttpEntity(),
+            mapOf(
+                "id" to packetId,
+                "filename" to filename,
+                "token" to tokenId,
+                "path" to path
+            )
+        )
+    }
+
+    inline fun <reified T : Any> callStreamFilesZippedEndpoint(
         paths: Set<String>,
         packetId: String,
         tokenId: UUID,
@@ -35,7 +55,7 @@ class PacketControllerTestHelper(val integrationTest: IntegrationTest)
         paths.forEachIndexed { index, path -> params["path$index"] = path }
         val pathsQueryParams = List(paths.size) { index -> "paths={path$index}" }.joinToString("&")
         return integrationTest.restTemplate.exchange(
-            "/packets/{id}/files?filename={filename}&token={token}&$pathsQueryParams",
+            "/packets/{id}/zip?filename={filename}&token={token}&$pathsQueryParams",
             HttpMethod.GET,
             integrationTest.getBareHttpEntity(),
             params
