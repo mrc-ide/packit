@@ -8,9 +8,13 @@ import {
   hasGlobalPacketManagePermission,
   hasGlobalReadPermission,
   hasPacketManagePermissionForGroup,
+  hasPacketManagePermissionForPacket,
   hasPacketReadPermissionForGroup,
   hasPacketRunPermission,
-  hasUserManagePermission
+  hasUserManagePermission,
+  canManagePacket,
+  canReadPacket,
+  hasPacketReadPermissionForPacket
 } from "../../../lib/auth/hasPermission";
 
 describe("hasPermission functions", () => {
@@ -153,6 +157,53 @@ describe("hasPermission functions", () => {
         expect(canReadRoles(["packet.read", "packet.run"])).toBe(false);
       });
     });
+    describe("hasPacketManagePermissionForPacket", () => {
+      it("returns true when has scoped manage permission for the packet", () => {
+        const authorities = ["packet.manage:packet:groupA:packet123"];
+        expect(hasPacketManagePermissionForPacket(authorities, "groupA", "packet123")).toBe(true);
+      });
+
+      it("returns false when has scoped manage permission for a different packet", () => {
+        const authorities = ["packet.manage:packet:groupA:packet456"];
+        expect(hasPacketManagePermissionForPacket(authorities, "groupA", "packet123")).toBe(false);
+      });
+
+      it("returns false when has only group-level manage permission", () => {
+        const authorities = ["packet.manage:packet:groupA"];
+        expect(hasPacketManagePermissionForPacket(authorities, "groupA", "packet123")).toBe(false);
+      });
+
+      it("returns false when has no relevant permissions", () => {
+        const authorities = ["packet.read:packet:groupA:packet123"];
+        expect(hasPacketManagePermissionForPacket(authorities, "groupA", "packet123")).toBe(false);
+      });
+    });
+    describe("canManagePacket", () => {
+      it("returns true when has global packet manage permission", () => {
+        const authorities = ["packet.manage"];
+        expect(canManagePacket(authorities, "groupA", "packet123")).toBe(true);
+      });
+
+      it("returns true when has group-level manage permission", () => {
+        const authorities = ["packet.manage:packetGroup:groupA"];
+        expect(canManagePacket(authorities, "groupA", "packet123")).toBe(true);
+      });
+
+      it("returns true when has scoped manage permission for the packet", () => {
+        const authorities = ["packet.manage:packet:groupA:packet123"];
+        expect(canManagePacket(authorities, "groupA", "packet123")).toBe(true);
+      });
+
+      it("returns false when has scoped manage permission for a different packet", () => {
+        const authorities = ["packet.manage:packet:groupA:packet456"];
+        expect(canManagePacket(authorities, "groupA", "packet123")).toBe(false);
+      });
+
+      it("returns false when has no relevant permissions", () => {
+        const authorities = ["packet.read"];
+        expect(canManagePacket(authorities, "groupA", "packet123")).toBe(false);
+      });
+    });
   });
 
   describe("Packet read permission functions", () => {
@@ -217,6 +268,65 @@ describe("hasPermission functions", () => {
 
       it("returns false when has no relevant permissions", () => {
         expect(canReadPacketGroup(["packet.run"], "groupA")).toBe(false);
+      });
+    });
+
+    describe("hasPacketReadPermissionForPacket", () => {
+      it("returns true when has scoped read permission for the packet", () => {
+        const authorities = ["packet.read:packet:groupA:packet123"];
+        expect(hasPacketReadPermissionForPacket(authorities, "groupA", "packet123")).toBe(true);
+      });
+
+      it("returns false when has scoped read permission for a different packet", () => {
+        const authorities = ["packet.read:packet:groupA:packet456"];
+        expect(hasPacketReadPermissionForPacket(authorities, "groupA", "packet123")).toBe(false);
+      });
+
+      it("returns false when has only group-level read permission", () => {
+        const authorities = ["packet.read:packetGroup:groupA"];
+        expect(hasPacketReadPermissionForPacket(authorities, "groupA", "packet123")).toBe(false);
+      });
+    });
+
+    describe("canReadPacket", () => {
+      it("returns true when has global read permission", () => {
+        const authorities = ["packet.read"];
+        expect(canReadPacket(authorities, "groupA", "packet123")).toBe(true);
+      });
+
+      it("returns true when has global manage permission", () => {
+        const authorities = ["packet.manage"];
+        expect(canReadPacket(authorities, "groupA", "packet123")).toBe(true);
+      });
+
+      it("returns true when has group-level read permission", () => {
+        const authorities = ["packet.read:packetGroup:groupA"];
+        expect(canReadPacket(authorities, "groupA", "packet123")).toBe(true);
+      });
+
+      it("returns true when has group-level manage permission", () => {
+        const authorities = ["packet.manage:packetGroup:groupA"];
+        expect(canReadPacket(authorities, "groupA", "packet123")).toBe(true);
+      });
+
+      it("returns true when has scoped read permission for the packet", () => {
+        const authorities = ["packet.read:packet:groupA:packet123"];
+        expect(canReadPacket(authorities, "groupA", "packet123")).toBe(true);
+      });
+
+      it("returns true when has scoped manage permission for the packet", () => {
+        const authorities = ["packet.manage:packet:groupA:packet123"];
+        expect(canReadPacket(authorities, "groupA", "packet123")).toBe(true);
+      });
+
+      it("returns false when has permissions for a different packet", () => {
+        const authorities = ["packet.read:packet:groupA:packet456"];
+        expect(canReadPacket(authorities, "groupA", "packet123")).toBe(false);
+      });
+
+      it("returns false when has no relevant permissions", () => {
+        const authorities = ["packet.run"];
+        expect(canReadPacket(authorities, "groupA", "packet123")).toBe(false);
       });
     });
   });

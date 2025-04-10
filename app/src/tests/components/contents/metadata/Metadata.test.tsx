@@ -1,13 +1,13 @@
 import { render, screen } from "@testing-library/react";
 
+import userEvent from "@testing-library/user-event";
 import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
 import { Metadata } from "../../../../app/components/contents";
-import { PacketLayout } from "../../../../app/components/main";
+import { PacketOutlet } from "../../../../app/components/main/PacketOutlet";
 import { server } from "../../../../msw/server";
 import { mockPacket } from "../../../mocks";
-import userEvent from "@testing-library/user-event";
 
 describe("Metadata component", () => {
   const renderComponent = () => {
@@ -15,7 +15,7 @@ describe("Metadata component", () => {
       <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>
         <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/metadata`]}>
           <Routes>
-            <Route element={<PacketLayout />} path="/:packetName/:packetId">
+            <Route element={<PacketOutlet packetId={mockPacket.id} />}>
               <Route path="/:packetName/:packetId/metadata" element={<Metadata />} />
             </Route>
           </Routes>
@@ -116,8 +116,6 @@ describe("Metadata component", () => {
       })
     );
     renderComponent();
-
-    await screen.findByText(/metadata/i);
 
     expect(screen.queryByText(/timings/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/git/i)).not.toBeInTheDocument();

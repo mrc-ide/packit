@@ -1,12 +1,12 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import appConfig from "../../../../config/appConfig";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { SWRConfig } from "swr";
 import { ZipDownloadButton } from "../../../../app/components/contents/downloads/ZipDownloadButton";
+import { PacketOutlet } from "../../../../app/components/main/PacketOutlet";
+import appConfig from "../../../../config/appConfig";
 import { FileMetadata } from "../../../../types";
 import { mockPacket } from "../../../mocks";
-import { SWRConfig } from "swr";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { PacketLayout } from "../../../../app/components/main";
 
 let errorOnDownload = false;
 const mockDownload = jest.fn();
@@ -36,7 +36,7 @@ describe("ZipDownloadButton", () => {
       <SWRConfig value={{ dedupingInterval: 0 }}>
         <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/downloads`]}>
           <Routes>
-            <Route element={<PacketLayout />} path="/:packetName/:packetId">
+            <Route element={<PacketOutlet packetId={mockPacket.id} />}>
               <Route
                 path="/:packetName/:packetId/downloads"
                 element={<ZipDownloadButton files={files} zipName={zipName} buttonText={buttonText} variant="ghost" />}
