@@ -31,6 +31,8 @@ formatting:
     active: false
 
 style:
+  MagicNumber:
+    excludes: [ '**/*/WebSecurityConfig.kt', '**/*/src/test/**/*' ]
   MandatoryBracesIfStatements:
     active: true
   MandatoryBracesLoops:
