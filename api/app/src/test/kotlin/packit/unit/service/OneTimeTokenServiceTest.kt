@@ -66,7 +66,7 @@ class OneTimeTokenServiceTest {
 
         assertThatThrownBy { sut.getToken(tokenId) }
             .isInstanceOf(PackitException::class.java)
-            .hasMessageContaining("PackitException with key oneTimeTokenDoesNotExist")
+            .hasMessageContaining("PackitException with key tokenDoesNotExist")
     }
 
     @Test
@@ -77,11 +77,11 @@ class OneTimeTokenServiceTest {
 
         assertThatThrownBy { sut.validateToken(tokenId, examplePacket.id, paths) }
             .isInstanceOf(PackitException::class.java)
-            .hasMessageContaining("PackitException with key doesNotExist")
+            .hasMessageContaining("PackitException with key tokenDoesNotExist")
     }
 
     @Test
-    fun `validateToken should throw exception if file paths include extra files`() {
+    fun `validateToken should throw exception and delete token if file paths include extra files`() {
         val tokenId = UUID.randomUUID()
         val packetId = examplePacket.id
         val paths = listOf("file1", "file2")
@@ -90,11 +90,12 @@ class OneTimeTokenServiceTest {
 
         assertThatThrownBy { sut.validateToken(tokenId, packetId, paths) }
             .isInstanceOf(PackitException::class.java)
-            .hasMessageContaining("PackitException with key tokenInvalid")
+            .hasMessageContaining("PackitException with key doesNotExist")
+        verify(oneTimeTokenRepository).deleteById(tokenId)
     }
 
     @Test
-    fun `validateToken should throw exception if token is expired`() {
+    fun `validateToken should throw exception and delete token if token is expired`() {
         val tokenId = UUID.randomUUID()
         val paths = listOf("file1", "file2")
         val token = OneTimeToken(tokenId, examplePacket, paths, Instant.now().minusSeconds(1))
@@ -103,10 +104,11 @@ class OneTimeTokenServiceTest {
         assertThatThrownBy { sut.validateToken(tokenId, examplePacket.id, paths) }
             .isInstanceOf(PackitException::class.java)
             .hasMessageContaining("PackitException with key tokenExpired")
+        verify(oneTimeTokenRepository).deleteById(tokenId)
     }
 
     @Test
-    fun `validateToken should throw exception if packetId does not match`() {
+    fun `validateToken should throw exception and delete token if packetId does not match`() {
         val tokenId = UUID.randomUUID()
         val paths = listOf("file1", "file2")
         val token = OneTimeToken(tokenId, examplePacket, paths, Instant.now())
@@ -114,7 +116,8 @@ class OneTimeTokenServiceTest {
 
         assertThatThrownBy { sut.validateToken(tokenId, "wrongPacketId", paths) }
             .isInstanceOf(PackitException::class.java)
-            .hasMessageContaining("PackitException with key tokenInvalid")
+            .hasMessageContaining("PackitException with key doesNotExist")
+        verify(oneTimeTokenRepository).deleteById(tokenId)
     }
 
     @Test

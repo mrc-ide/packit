@@ -50,6 +50,8 @@ class BaseOneTimeTokenService(
     @Transactional
     override fun validateToken(tokenId: UUID, packetId: String, filePaths: List<String>): Boolean {
         val token = getToken(tokenId)
+        deleteToken(tokenId)
+
         val filePathsCorrect = token.filePaths.size == filePaths.size && token.filePaths.containsAll(filePaths)
         if (token.packet.id != packetId || !filePathsCorrect) {
             throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
@@ -57,7 +59,6 @@ class BaseOneTimeTokenService(
         if (token.expiresAt.isBefore(Instant.now())) {
             throw PackitException("tokenExpired", HttpStatus.UNAUTHORIZED)
         }
-        deleteToken(tokenId)
         return true
     }
 
