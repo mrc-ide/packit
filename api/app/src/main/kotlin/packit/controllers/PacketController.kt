@@ -11,7 +11,7 @@ import packit.model.dto.OneTimeTokenDto
 import packit.model.dto.PacketDto
 import packit.service.OneTimeTokenService
 import packit.service.PacketService
-import java.util.*
+import java.util.UUID
 
 @RestController
 @RequestMapping("/packets")
