@@ -66,7 +66,7 @@ class OneTimeTokenServiceTest {
 
         assertThatThrownBy { sut.getToken(tokenId) }
             .isInstanceOf(PackitException::class.java)
-            .hasMessageContaining("PackitException with key doesNotExist")
+            .hasMessageContaining("PackitException with key oneTimeTokenDoesNotExist")
     }
 
     @Test

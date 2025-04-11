@@ -42,7 +42,9 @@ class BaseOneTimeTokenService(
     }
 
     override fun getToken(id: UUID): OneTimeToken {
-        return oneTimeTokenRepository.findById(id).orElseThrow { PackitException("doesNotExist", HttpStatus.NOT_FOUND) }
+        return oneTimeTokenRepository.findById(id).orElseThrow {
+            PackitException("tokenDoesNotExist", HttpStatus.UNAUTHORIZED)
+        }
     }
 
     @Transactional
@@ -50,10 +52,10 @@ class BaseOneTimeTokenService(
         val token = getToken(tokenId)
         val filePathsCorrect = token.filePaths.size == filePaths.size && token.filePaths.containsAll(filePaths)
         if (token.packet.id != packetId || !filePathsCorrect) {
-            throw PackitException("tokenInvalid", HttpStatus.FORBIDDEN)
+            throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
         }
         if (token.expiresAt.isBefore(Instant.now())) {
-            throw PackitException("tokenExpired", HttpStatus.FORBIDDEN)
+            throw PackitException("tokenExpired", HttpStatus.UNAUTHORIZED)
         }
         deleteToken(tokenId)
         return true
