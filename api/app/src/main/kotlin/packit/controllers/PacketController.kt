@@ -6,7 +6,6 @@ import org.springframework.http.*
 import org.springframework.http.MediaTypeFactory.getMediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
-import packit.exceptions.PackitException
 import packit.model.*
 import packit.model.dto.OneTimeTokenDto
 import packit.model.dto.PacketDto

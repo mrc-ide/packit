@@ -58,6 +58,7 @@ class WebSecurityConfig(
 
     @Bean
     @Order(2)
+    @Suppress("SpreadOperator")
     fun ottSecurityFilterChain(
         httpSecurity: HttpSecurity,
         filterChainExceptionHandler: FilterChainExceptionHandler

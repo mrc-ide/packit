@@ -60,7 +60,7 @@ describe("download", () => {
     expect(mockCreateObjectUrl).toHaveBeenCalledWith(mockFileBlob);
   });
 
-  it("download function can download a stream of a single file by clicking on an anchor tag with a 'download' attribute", async () => {
+  it("can download a stream of a single file by clicking on an anchor tag with a 'download' attribute", async () => {
     const mockFileLink = {
       href: "",
       setAttribute: jest.fn(),
@@ -94,7 +94,7 @@ describe("download", () => {
     expect(mockRemoveChild).toHaveBeenCalledWith(mockFileLink);
   });
 
-  it("download function can download a stream of multiple files as a zip by clicking on an anchor tag with a 'download' attribute", async () => {
+  it("can download a stream of multiple files as a zip by clicking on an anchor tag", async () => {
     const mockFileLink = {
       href: "",
       setAttribute: jest.fn(),

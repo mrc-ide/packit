@@ -1,6 +1,6 @@
 import appConfig from "../../config/appConfig";
 import { rest } from "msw";
-import { mockFileBlob, mockPacket } from "../../tests/mocks";
+import { mockPacket } from "../../tests/mocks";
 
 export const downloadFileHandlers = [
   rest.post(`${appConfig.apiUrl()}/packets/${mockPacket.id}/files/token`, (req, res, ctx) => {
