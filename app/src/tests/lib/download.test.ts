@@ -39,7 +39,7 @@ describe("download", () => {
     const mockCreateObjectUrl = jest.fn(() => "fakeObjectUrl");
     URL.createObjectURL = mockCreateObjectUrl;
 
-    await getFileObjectUrl(mockPacket.files[0], mockPacket.id, "fakeFilename");
+    await getFileObjectUrl(mockPacket.files[0], mockPacket.id, "directory/fakeFilename");
 
     expect(fetchSpy).toHaveBeenCalledWith(
       `${appConfig.apiUrl()}/packets/${mockPacket.id}/files/token?paths=${mockPacket.files[0].path}`,
@@ -51,7 +51,7 @@ describe("download", () => {
 
     expect(fetchSpy).toHaveBeenCalledWith(
       `${appConfig.apiUrl()}/packets/${mockPacket.id}/file` +
-        `?path=${mockPacket.files[0].path}&token=fakeTokenId&filename=fakeFilename&inline=true`,
+        `?path=${mockPacket.files[0].path}&token=fakeTokenId&filename=directory%2FfakeFilename&inline=true`,
       {
         method: "GET"
       }
@@ -84,7 +84,7 @@ describe("download", () => {
       }
     );
 
-    expect(mockFileLink.href).toBe(
+    expect(mockFileLink.href).toEqual(
       `${appConfig.apiUrl()}/packets/${mockPacket.id}/file?` +
         `path=${mockPacket.files[0].path}&token=fakeTokenId&filename=fakeFilename&inline=false`
     );

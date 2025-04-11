@@ -2,19 +2,29 @@ import { getAuthHeader } from "./auth/getAuthHeader";
 import appConfig from "../config/appConfig";
 import { FileMetadata } from "../types";
 
-const filesToPathsParam = (files: FileMetadata[]) =>
-  files.map((file) => `paths=${encodeURIComponent(file.path)}`).join("&");
+const streamFileUrl = (packetId: string, file: FileMetadata, token: string, filename: string, inline = false) => {
+  const url = new URL(`${appConfig.apiUrl()}/packets/${packetId}/file`);
+  url.searchParams.append("path", file.path);
+  url.searchParams.append("token", token);
+  url.searchParams.append("filename", filename);
+  url.searchParams.append("inline", inline.toString());
+  return url.toString();
+};
 
-const streamFileUrl = (packetId: string, file: FileMetadata, token: string, filename: string, inline = false) =>
-  `${appConfig.apiUrl()}/packets/${packetId}/file?` +
-  `path=${encodeURIComponent(file.path)}&token=${token}&filename=${encodeURIComponent(filename)}&inline=${inline}`;
-
-const streamZipUrl = (packetId: string, files: FileMetadata[], token: string, filename: string, inline = false) =>
-  `${appConfig.apiUrl()}/packets/${packetId}/files/zip?` +
-  `${filesToPathsParam(files)}&token=${token}&filename=${encodeURIComponent(filename)}&inline=${inline}`;
+const streamZipUrl = (packetId: string, files: FileMetadata[], token: string, filename: string, inline = false) => {
+  const url = new URL(`${appConfig.apiUrl()}/packets/${packetId}/files/zip`);
+  files.forEach((file) => url.searchParams.append("paths", file.path));
+  url.searchParams.append("token", token);
+  url.searchParams.append("filename", filename);
+  url.searchParams.append("inline", inline.toString());
+  return url.toString();
+};
 
 const getOneTimeToken = async (packetId: string, files: FileMetadata[], filename: string) => {
-  const res = await fetch(`${appConfig.apiUrl()}/packets/${packetId}/files/token?${filesToPathsParam(files)}`, {
+  const url = new URL(`${appConfig.apiUrl()}/packets/${packetId}/files/token`);
+  files.forEach((file) => url.searchParams.append("paths", file.path));
+
+  const res = await fetch(url.toString(), {
     method: "POST",
     headers: getAuthHeader()
   });
