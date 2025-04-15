@@ -15,7 +15,6 @@ interface OneTimeTokenService
 {
     fun createToken(packetId: String, filePaths: List<String>): OneTimeToken
     fun getToken(id: UUID): OneTimeToken
-    fun validateToken(tokenId: UUID, packetId: String, filePaths: List<String>): Boolean
     fun cleanUpExpiredTokens()
 }
 
@@ -47,26 +46,7 @@ class BaseOneTimeTokenService(
         }
     }
 
-    @Transactional
-    override fun validateToken(tokenId: UUID, packetId: String, filePaths: List<String>): Boolean {
-        val token = getToken(tokenId)
-        deleteToken(tokenId)
-
-        val filePathsCorrect = token.filePaths.size == filePaths.size && token.filePaths.containsAll(filePaths)
-        if (token.packet.id != packetId || !filePathsCorrect) {
-            throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
-        }
-        if (token.expiresAt.isBefore(Instant.now())) {
-            throw PackitException("tokenExpired", HttpStatus.UNAUTHORIZED)
-        }
-        return true
-    }
-
     override fun cleanUpExpiredTokens() {
         oneTimeTokenRepository.deleteByExpiresAtBefore(Instant.now())
-    }
-
-    private fun deleteToken(id: UUID) {
-        oneTimeTokenRepository.deleteById(id)
     }
 }

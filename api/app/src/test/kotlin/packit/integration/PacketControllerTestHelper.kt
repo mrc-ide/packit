@@ -23,7 +23,7 @@ class PacketControllerTestHelper(val integrationTest: IntegrationTest)
     inline fun <reified T : Any> callStreamFileEndpoint(
         path: String,
         packetId: String,
-        tokenId: UUID,
+        tokenId: String,
         filename: String
     ): ResponseEntity<T>
     {
@@ -43,7 +43,7 @@ class PacketControllerTestHelper(val integrationTest: IntegrationTest)
     inline fun <reified T : Any> callStreamFilesZippedEndpoint(
         paths: Set<String>,
         packetId: String,
-        tokenId: UUID,
+        tokenId: String,
         filename: String
     ): ResponseEntity<T>
     {

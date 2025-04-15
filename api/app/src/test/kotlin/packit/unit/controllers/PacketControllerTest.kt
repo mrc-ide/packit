@@ -115,7 +115,6 @@ class PacketControllerTest
             listOf("mocked_token_file.txt"),
             Instant.now()
         )
-        on { validateToken(any<UUID>(), anyString(), anyList()) } doReturn true
     }
 
     private val sut = PacketController(packetService, oneTimeTokenService)
@@ -150,20 +149,17 @@ class PacketControllerTest
     }
 
     @Test
-    fun `stream a single file after verifying validity of token`()
+    fun `stream a single file`()
     {
         val response = MockHttpServletResponse()
 
         sut.streamFile(
             id = packetId,
             path = "path/test.html",
-            token = tokenId,
             filename = "test-filename.html",
             inline = false,
             response = response,
         )
-
-        verify(oneTimeTokenService).validateToken(tokenId, packetId, listOf("path/test.html"))
 
         val packetArgumentCaptor = argumentCaptor<String>()
         val pathArgumentCaptor = argumentCaptor<String>()
@@ -180,20 +176,17 @@ class PacketControllerTest
     }
 
     @Test
-    fun `stream a single file, with inline disposition, after verifying validity of token`()
+    fun `stream a single file, with inline disposition`()
     {
         val response = MockHttpServletResponse()
 
         sut.streamFile(
             id = packetId,
             path = "path/test.html",
-            token = tokenId,
             filename = "test-filename.html",
             inline = true,
             response = response,
         )
-
-        verify(oneTimeTokenService).validateToken(tokenId, packetId, listOf("path/test.html"))
 
         val packetArgumentCaptor = argumentCaptor<String>()
         val pathArgumentCaptor = argumentCaptor<String>()
@@ -214,9 +207,8 @@ class PacketControllerTest
     {
         val response = MockHttpServletResponse()
 
-        sut.streamFilesZipped(packetId, listOf("file1.txt", "file2.txt"), tokenId, "my_archive.zip", false, response)
+        sut.streamFilesZipped(packetId, listOf("file1.txt", "file2.txt"), "my_archive.zip", false, response)
 
-        verify(oneTimeTokenService).validateToken(tokenId, packetId, listOf("file1.txt", "file2.txt"))
         verify(packetService).streamZip(listOf("file1.txt", "file2.txt"), packetId, response.outputStream)
 
         assertEquals("application/zip", response.contentType)

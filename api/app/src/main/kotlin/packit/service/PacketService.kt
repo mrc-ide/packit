@@ -116,7 +116,7 @@ class BasePacketService(
         val notFoundPaths = paths.filter { path -> metadataFiles.none { it.path == path } }
 
         if (notFoundPaths.isNotEmpty()) {
-            throw PackitException("notAllFilesFound", HttpStatus.NOT_FOUND)
+            throw PackitException("notAllFilesFound", HttpStatus.FORBIDDEN)
         }
 
         if (paths.isEmpty()) {

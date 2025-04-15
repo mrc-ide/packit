@@ -258,7 +258,7 @@ class PacketServiceTest
     }
 
     @Test
-    fun `validateFilesExistsForPacket throws 404 when any path is not found on the packet metadata`()
+    fun `validateFilesExistsForPacket throws when any path is not found on the packet metadata`()
     {
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
 
@@ -269,7 +269,7 @@ class PacketServiceTest
     }
 
     @Test
-    fun `validateFilesExistsForPacket throws 400 when no paths are supplied`()
+    fun `validateFilesExistsForPacket throws when no paths are supplied`()
     {
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
 

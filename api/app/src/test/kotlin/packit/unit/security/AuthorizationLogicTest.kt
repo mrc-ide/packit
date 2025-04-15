@@ -10,9 +10,11 @@ import org.springframework.security.authentication.TestingAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import packit.model.Packet
 import packit.security.AuthorizationLogic
+import packit.security.ott.OTTAuthenticationToken
 import packit.service.BasePermissionService
 import packit.service.PacketService
 import java.time.Instant
+import java.util.UUID
 import kotlin.test.Test
 
 class AuthorizationLogicTest
@@ -38,6 +40,18 @@ class AuthorizationLogicTest
     private fun createOps(authorities: List<String>): SecurityExpressionOperations
     {
         val token = TestingAuthenticationToken("", "", authorities.map { SimpleGrantedAuthority(it) })
+        return object : SecurityExpressionRoot(token)
+        {}
+    }
+
+    private fun createOttOps(
+        ottId: UUID,
+        packetId: String,
+        filePaths: List<String>,
+        expiresAt: Instant,
+    ): SecurityExpressionOperations
+    {
+        val token = OTTAuthenticationToken(ottId, packetId, filePaths, expiresAt)
         return object : SecurityExpressionRoot(token)
         {}
     }
@@ -180,5 +194,45 @@ class AuthorizationLogicTest
     {
         val ops = createOps(listOf("packet.read"))
         assertFalse(sut.canReadRoles(ops))
+    }
+
+    @Test
+    fun `oneTimeTokenValid returns true if token has correct permissions and is not expired`() {
+        val permittedPaths = listOf("file1", "file2")
+        val ops = createOttOps(UUID.randomUUID(), packet.id, permittedPaths, Instant.now().plusSeconds(10))
+
+        assertTrue(sut.oneTimeTokenValid(ops, packet.id, permittedPaths))
+    }
+
+    @Test
+    fun `oneTimeTokenValid returns false if token is expired`() {
+        val permittedPaths = listOf("file1", "file2")
+        val ops = createOttOps(UUID.randomUUID(), packet.id, permittedPaths, Instant.now().minusSeconds(10))
+
+        assertFalse(sut.oneTimeTokenValid(ops, packet.id, permittedPaths))
+    }
+
+    @Test
+    fun `oneTimeTokenValid returns false if requested file paths include extra files`() {
+        val permittedPaths = listOf("file1", "file2")
+        val ops = createOttOps(UUID.randomUUID(), packet.id, permittedPaths, Instant.now().plusSeconds(10))
+
+        assertFalse(sut.oneTimeTokenValid(ops, packet.id, listOf("file1", "file2", "file3")))
+    }
+
+    @Test
+    fun `oneTimeTokenValid returns false if requested file paths do not match permitted file paths`() {
+        val permittedPaths = listOf("file1", "file2")
+        val ops = createOttOps(UUID.randomUUID(), packet.id, permittedPaths, Instant.now().plusSeconds(10))
+
+        assertFalse(sut.oneTimeTokenValid(ops, packet.id, listOf("file1", "notMyFile")))
+    }
+
+    @Test
+    fun `oneTimeTokenValid returns false if requested packet id does not match permitted packet id`() {
+        val permittedPaths = listOf("file1", "file2")
+        val ops = createOttOps(UUID.randomUUID(), packet.id, permittedPaths, Instant.now().plusSeconds(10))
+
+        assertFalse(sut.oneTimeTokenValid(ops, "differentPacket", permittedPaths))
     }
 }

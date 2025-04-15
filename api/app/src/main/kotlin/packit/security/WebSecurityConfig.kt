@@ -14,7 +14,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.authentication.logout.LogoutFilter
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
@@ -24,6 +23,7 @@ import packit.exceptions.PackitExceptionHandler
 import packit.security.oauth2.OAuth2FailureHandler
 import packit.security.oauth2.OAuth2SuccessHandler
 import packit.security.oauth2.OAuth2UserService
+import packit.security.ott.OTTAuthenticationFilter
 import packit.security.provider.JwtIssuer
 import packit.service.BasicUserDetailsService
 
@@ -58,32 +58,10 @@ class WebSecurityConfig(
 
     @Bean
     @Order(2)
-    @Suppress("SpreadOperator")
-    fun ottSecurityFilterChain(
-        httpSecurity: HttpSecurity,
-        filterChainExceptionHandler: FilterChainExceptionHandler
-    ): SecurityFilterChain {
-        // Security configuration for endpoints that are protected by the use of one-time tokens, as opposed to JWTs.
-        httpSecurity
-            .securityMatcher(*arrayOf("/packets/{id}/file", "/packets/{id}/files/zip"))
-            .authorizeHttpRequests { authorizeRequests ->
-                authorizeRequests.anyRequest().permitAll()
-            }
-            .cors { it.configurationSource(getCorsConfigurationSource()) }
-            .csrf { it.disable() }
-            .addFilterBefore(filterChainExceptionHandler, LogoutFilter::class.java)
-            .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            .formLogin { it.disable() }
-            .headers().frameOptions().disable()
-
-        return httpSecurity.build()
-    }
-
-    @Bean
-    @Order(3)
     fun securityFilterChain(
         httpSecurity: HttpSecurity,
-        tokenAuthenticationFilter: JWTAuthenticationFilter,
+        jwtAuthenticationFilter: JWTAuthenticationFilter,
+        ottAuthenticationFilter: OTTAuthenticationFilter,
         filterChainExceptionHandler: FilterChainExceptionHandler
     ): SecurityFilterChain
     {
@@ -91,7 +69,8 @@ class WebSecurityConfig(
             .cors { it.configurationSource(getCorsConfigurationSource()) }
             .csrf { it.disable() }
             .addFilterBefore(filterChainExceptionHandler, LogoutFilter::class.java)
-            .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterAfter(ottAuthenticationFilter, LogoutFilter::class.java)
+            .addFilterAfter(jwtAuthenticationFilter, LogoutFilter::class.java)
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .formLogin { it.disable() }
             .handleSecurePaths()

@@ -11,7 +11,6 @@ import packit.model.dto.OneTimeTokenDto
 import packit.model.dto.PacketDto
 import packit.service.OneTimeTokenService
 import packit.service.PacketService
-import java.util.UUID
 
 @RestController
 @RequestMapping("/packets")
@@ -51,16 +50,14 @@ class PacketController(
     }
 
     @GetMapping("/{id}/file")
+    @PreAuthorize("@authz.oneTimeTokenValid(#root, #id, #path)")
     fun streamFile(
         @PathVariable id: String,
         @RequestParam path: String, // To identify which file to download
-        @RequestParam token: UUID,
         @RequestParam filename: String, // The suggested name for the client to use when saving the file
         @RequestParam inline: Boolean = false,
         response: HttpServletResponse,
     ) {
-        oneTimeTokenService.validateToken(token, id, listOf(path))
-
         val disposition = if (inline) ContentDisposition.inline() else ContentDisposition.attachment()
         response.setHeader("Content-Disposition", disposition.filename(filename).build().toString())
         response.contentType = getMediaType(filename).orElse(MediaType.APPLICATION_OCTET_STREAM).toString()
@@ -70,16 +67,14 @@ class PacketController(
     }
 
     @GetMapping("/{id}/files/zip")
+    @PreAuthorize("@authz.oneTimeTokenValid(#root, #id, #paths)")
     fun streamFilesZipped(
         @PathVariable id: String,
         @RequestParam paths: List<String>, // To identify which files to download
-        @RequestParam token: UUID,
         @RequestParam filename: String, // The suggested name for the client to use when saving the file
         @RequestParam inline: Boolean = false,
         response: HttpServletResponse,
     ) {
-        oneTimeTokenService.validateToken(token, id, paths)
-
         val disposition = if (inline) ContentDisposition.inline() else ContentDisposition.attachment()
         response.setHeader("Content-Disposition", disposition.filename(filename).build().toString())
         response.contentType = "application/zip"
