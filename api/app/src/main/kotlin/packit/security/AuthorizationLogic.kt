@@ -17,6 +17,7 @@ class AuthorizationLogic(
     fun canReadPacket(operations: SecurityExpressionOperations, packet: Packet): Boolean =
         // TODO: update with tag when implemented
         operations.hasAnyAuthority(
+            "user.manage",
             "packet.read",
             permissionService.buildScopedPermission("packet.read", packet.name, packet.id),
             permissionService.buildScopedPermission("packet.read", packet.name),
@@ -34,6 +35,7 @@ class AuthorizationLogic(
     fun canReadPacketGroup(operations: SecurityExpressionOperations, name: String): Boolean
     {
         return operations.hasAnyAuthority(
+            "user.manage",
             "packet.read",
             permissionService.buildScopedPermission("packet.read", name),
             "packet.manage",
@@ -47,6 +49,28 @@ class AuthorizationLogic(
                 operations.authentication.authorities.any {
                     it.authority.startsWith("packet.manage")
                 }
+    }
+
+
+    fun canUpdatePacketReadRoles(
+        operations: SecurityExpressionOperations,
+        packetGroupName: String,
+        packetId: String? = null,
+    ): Boolean
+    {
+        return when
+        {
+            operations.hasAnyAuthority("packet.manage", "user.manage") -> true
+            // check if the user has permission to manage the packet group
+            packetId == null -> operations.hasAnyAuthority(
+                permissionService.buildScopedPermission("packet.manage", packetGroupName)
+            )
+            // check if the user has permission to manage the packet
+            else -> operations.hasAnyAuthority(
+                permissionService.buildScopedPermission("packet.manage", packetGroupName, packetId),
+                permissionService.buildScopedPermission("packet.manage", packetGroupName)
+            )
+        }
     }
 
     fun oneTimeTokenValid(operations: SecurityExpressionOperations, packetId: String, path: String): Boolean {
