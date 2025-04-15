@@ -2,13 +2,11 @@ package packit.service
 
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
-import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.security.provider.JwtIssuer
 
 @Component
 class PreAuthenticatedLoginService(
-    val config: AppConfig,
     val jwtIssuer: JwtIssuer,
     val userService: UserService,
 )
