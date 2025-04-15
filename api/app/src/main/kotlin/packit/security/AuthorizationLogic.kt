@@ -51,7 +51,6 @@ class AuthorizationLogic(
                 }
     }
 
-
     fun canUpdatePacketReadRoles(
         operations: SecurityExpressionOperations,
         packetGroupName: String,
