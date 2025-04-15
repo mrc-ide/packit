@@ -14,6 +14,7 @@ import packit.model.dto.UpdatePassword
 import packit.service.BasicLoginService
 import packit.service.GithubAPILoginService
 import packit.service.UserService
+import packit.service.PreAuthenticatedLoginService
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -149,5 +150,38 @@ class LoginControllerTest
         sut.updatePassword("test@email.com", updatePassword)
 
         verify(mockUserService).updatePassword("test@email.com", updatePassword)
+    }
+
+    @Test
+    fun `loginWithTrustedHeaders gets token from preauth user service`()
+    {
+        val mockAppConfig = mock<AppConfig> {
+            on { authEnablePreAuthLogin } doReturn true
+        }
+
+        val token = "test-token"
+        val mockService = mock<PreAuthenticatedLoginService> {
+            on { saveUserAndIssueToken("test.user", "Test User", "test.user@example.com") } doReturn mapOf("token" to token)
+        }
+
+        val sut = LoginController(mock(), mockService, mock(), mock(), mockAppConfig, mock())
+        val result = sut.loginWithTrustedHeaders("test.user", "Test User", "test.user@example.com")
+        assertEquals(result.statusCode, HttpStatus.OK)
+        assertEquals(result.body, mapOf("token" to token))
+    }
+
+    @Test
+    fun `loginWithTrustedHeaders throws packit exception if preauth not enabled`()
+    {
+        val mockAppConfig = mock<AppConfig> {
+            on { authEnablePreAuthLogin } doReturn false
+        }
+
+        val sut = LoginController(mock(), mock(), mock(), mock(), mockAppConfig, mock())
+        val ex = assertThrows<PackitException> {
+            sut.loginWithTrustedHeaders("test.user", "Test User", "test.user@example.com")
+        }
+        assertEquals(ex.httpStatus, HttpStatus.FORBIDDEN)
+        assertEquals(ex.key, "preauthLoginDisabled")
     }
 }
