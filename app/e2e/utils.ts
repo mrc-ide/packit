@@ -19,7 +19,7 @@ export const getBreadcrumbLocator = async (page: Page) => {
 export const packetDisplayNameFromPinListItem = async (listItem: Locator) => {
   const heading = listItem.getByRole("heading");
   const headingText = await heading.innerText();
-  return headingText
+  return headingText;
 };
 
 const getFirstPin = async (container: Locator) => {

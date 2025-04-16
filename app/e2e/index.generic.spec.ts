@@ -78,7 +78,7 @@ test.describe("Index page", () => {
       const packetDisplayName = await packetDisplayNameFromPinListItem(pin);
       expect(pin.getByRole("link", { name: packetDisplayName })).toBeEnabled();
 
-      const button = pin.getByRole("button")
+      const button = pin.getByRole("button");
       const buttonName = await button.textContent();
 
       if (buttonName && /Download artefacts/.test(buttonName)) {
