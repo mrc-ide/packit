@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -eux
+
+# For the development environment.
+# Ensure api has run and tables and initial data have been created.
+CUSTOM_METADATA_PACKET_ID='20241122-111130-544ddd35'
+TEST1_PACKET_ID='20240729-154657-76529696'
+ARTEFACT_TYPE_PACKET_ID='20240729-154633-10abe7d1'
+
+packet_ids=(
+  "$CUSTOM_METADATA_PACKET_ID"
+  "$TEST1_PACKET_ID"
+  "$ARTEFACT_TYPE_PACKET_ID"
+)
+
+for packet_id in "${packet_ids[@]}"; do
+    docker exec packit-db create-packet-pin --packet-id "$packet_id"
+done

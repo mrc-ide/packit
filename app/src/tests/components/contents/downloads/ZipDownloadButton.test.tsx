@@ -4,9 +4,6 @@ import appConfig from "../../../../config/appConfig";
 import { ZipDownloadButton } from "../../../../app/components/contents/downloads/ZipDownloadButton";
 import { FileMetadata } from "../../../../types";
 import { mockPacket } from "../../../mocks";
-import { SWRConfig } from "swr";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { PacketLayout } from "../../../../app/components/main";
 
 let errorOnDownload = false;
 const mockDownload = jest.fn();
@@ -30,21 +27,20 @@ describe("ZipDownloadButton", () => {
   ] as FileMetadata[];
   const zipName = "myCompressedFiles.zip";
   const buttonText = "Custom text";
+  const testContainerClass = "testContainerClass";
+  let disabled: boolean;
 
   const renderComponent = (files = filesToDownload) => {
     return render(
-      <SWRConfig value={{ dedupingInterval: 0 }}>
-        <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/downloads`]}>
-          <Routes>
-            <Route element={<PacketLayout />} path="/:packetName/:packetId">
-              <Route
-                path="/:packetName/:packetId/downloads"
-                element={<ZipDownloadButton files={files} zipName={zipName} buttonText={buttonText} variant="ghost" />}
-              />
-            </Route>
-          </Routes>
-        </MemoryRouter>
-      </SWRConfig>
+      <ZipDownloadButton
+        packetId={mockPacket.id}
+        files={files}
+        zipName={zipName}
+        buttonText={buttonText}
+        containerClassName={testContainerClass}
+        variant="ghost"
+        disabled={disabled}
+      />
     );
   };
 
@@ -55,6 +51,7 @@ describe("ZipDownloadButton", () => {
       }
     });
     errorOnDownload = false;
+    disabled = false;
   });
 
   afterEach(() => {
@@ -66,6 +63,14 @@ describe("ZipDownloadButton", () => {
     expect(await screen.findByRole("button")).toHaveTextContent("Custom text (3 KB)");
     const icon = container.querySelector(".lucide") as HTMLImageElement;
     expect(icon.classList).toContain("lucide-folder-down");
+    expect(screen.getByTestId("zip-download-button").classList).toContain("testContainerClass");
+  });
+
+  it("can render as disabled", async () => {
+    disabled = true;
+    renderComponent();
+    expect(await screen.findByRole("button")).toBeDisabled();
+    expect(await screen.findByRole("button")).toHaveTextContent("Custom text");
   });
 
   it("downloads files", async () => {

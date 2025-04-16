@@ -1,5 +1,5 @@
 import { Locator } from "@playwright/test";
-import { getContentLocator, getInstanceRelativePath, navigateToFirstPacketGroup } from "./utils";
+import { getInstanceRelativePath, getPacketGroupIndexLocator, navigateToFirstPacketGroup } from "./utils";
 import { test, expect, TAG_STATE_MUTATE } from "./tagCheckFixture";
 
 test.describe("Packet group page", () => {
@@ -7,8 +7,8 @@ test.describe("Packet group page", () => {
   let rows: Locator;
   test.beforeEach(async ({ page }) => {
     await page.goto("./");
-    const content = await getContentLocator(page);
-    packetGroupName = await navigateToFirstPacketGroup(content);
+    const packetGroupContainer = await getPacketGroupIndexLocator(page);
+    packetGroupName = await navigateToFirstPacketGroup(packetGroupContainer);
     const table = await page.getByRole("table");
     await expect(table).toBeVisible();
     rows = await table.getByRole("row");

@@ -43,6 +43,7 @@ export const OrderlyDownloads = () => {
                   <span className="self-end absolute top-3 right-8">
                     <div className="flex flex-col items-end gap-1">
                       <ZipDownloadButton
+                        packetId={packet.id}
                         files={inputsFiles}
                         zipName={`${packetName}_other_resources_${packetId}.zip`}
                         variant="ghost"
