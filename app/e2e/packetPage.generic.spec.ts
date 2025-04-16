@@ -23,7 +23,7 @@ test.describe("Packet page", () => {
   });
 
   test("can see packet group name and packet id", async () => {
-    await expect(await content.getByRole("heading", { name: packetGroupName })).toBeVisible();
+    await expect(await content.getByRole("heading", { name: packetGroupName, level: 2 })).toBeVisible();
     await expect(await content.getByText(latestPacketId)).toBeVisible();
   });
 
