@@ -11,7 +11,7 @@ export const Home = () => {
   return (
     <div className="flex justify-center">
       <div className="h-full flex flex-1 flex-col space-y-6 p-8 max-w-5xl">
-        <h2 className="text-2xl font-bold tracking-tight">Find a report</h2>
+        <h2 className="text-2xl font-bold tracking-tight">Find a packet group</h2>
         <div className="space-y-4 flex flex-col">
           <div className="flex space-x-2 items-center">
             <Search className="opacity-50" />
