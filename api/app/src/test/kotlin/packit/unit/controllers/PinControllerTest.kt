@@ -54,7 +54,6 @@ class PinControllerTest {
 
     @Test
     fun `getPinnedPackets should return sorted packet metadata`() {
-        UUID.randomUUID()
         val response = sut.getPinnedPackets()
         val responseBody = response.body
 

@@ -32,7 +32,7 @@ describe("Pins component", () => {
       </SWRConfig>
     );
 
-  it("renders all pins", async () => {
+  it("renders all pinned packets (two in this case)", async () => {
     server.use(
       rest.get(`${appConfig.apiUrl()}/pins/packets`, (req, res, ctx) => {
         return res(ctx.json([mockPacket, packetWithNoDisplayName]));
