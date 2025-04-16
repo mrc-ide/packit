@@ -13,7 +13,7 @@ jest.mock("../../../../lib/download", () => ({
   download: async (...args: any[]) => mockDownload(...args)
 }));
 
-describe("Pins component", () => {
+describe("Pinned Packet component", () => {
   const renderComponent = (packet: PacketMetadata) =>
     render(
       <SWRConfig value={{ dedupingInterval: 0 }}>

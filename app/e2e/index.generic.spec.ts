@@ -89,7 +89,7 @@ test.describe("Index page", () => {
         throw new Error(`Unexpected button name: ${buttonName}`);
       }
 
-      expect(pin.getByText(/^Ran \d+ (second|minute|hour|day)s? ago$/)).toBeVisible(); // updated label
+      expect(pin.getByText(/^Ran \d+ (second|minute|hour|day)s? ago$/)).toBeVisible();
     });
   });
 
