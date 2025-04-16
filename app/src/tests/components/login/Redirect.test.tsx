@@ -56,7 +56,7 @@ describe("redirect", () => {
 
     await waitFor(() => {
       expect(screen.getByText("Parameters Packet Group")).toBeInTheDocument();
-      expect(screen.getByText(/manage packets/i)).toBeInTheDocument();
+      expect(screen.getByText("Find a report")).toBeInTheDocument();
       expect(mockSetUser).not.toHaveBeenCalled();
       expect(mockSetRequestedUrl).toHaveBeenCalledWith(null);
     });
@@ -68,7 +68,7 @@ describe("redirect", () => {
 
     await waitFor(() => {
       expect(screen.getByText("Parameters Packet Group")).toBeInTheDocument();
-      expect(screen.getByText(/manage packets/i)).toBeInTheDocument();
+      expect(screen.getByText("Find a report")).toBeInTheDocument();
       expect(mockSetUser).toHaveBeenCalledWith(userState.token);
       expect(mockSetRequestedUrl).toHaveBeenCalledWith(null);
     });
@@ -82,7 +82,7 @@ describe("redirect", () => {
 
     await waitFor(() => {
       expect(screen.getByText("Parameters Packet Group")).toBeInTheDocument();
-      expect(screen.getByText(/manage packets/i)).toBeInTheDocument();
+      expect(screen.getByText("Find a report")).toBeInTheDocument();
       expect(mockSetRequestedUrl).toHaveBeenCalledWith(null);
       expect(mockSetUser).toHaveBeenCalledWith(userState.token);
     });
