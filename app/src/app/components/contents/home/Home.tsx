@@ -4,7 +4,6 @@ import { FilterInput } from "../common/FilterInput";
 import { PacketGroupSummaryList } from "./PacketGroupSummaryList";
 import { PAGE_SIZE } from "../../../../lib/constants";
 import { Pins } from "./Pins";
-import { Search } from "lucide-react";
 
 export const Home = () => {
   const [filteredName, setFilterByName] = useState("");
