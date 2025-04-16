@@ -1,5 +1,5 @@
 import { Locator } from "@playwright/test";
-import { getContentLocator, getInstanceRelativePath, getPacketGroupIndexLocator, navigateToFirstPacketGroup } from "./utils";
+import { getInstanceRelativePath, getPacketGroupIndexLocator, navigateToFirstPacketGroup } from "./utils";
 import { test, expect, TAG_STATE_MUTATE } from "./tagCheckFixture";
 
 test.describe("Packet group page", () => {

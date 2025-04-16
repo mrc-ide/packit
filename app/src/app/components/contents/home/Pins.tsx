@@ -14,7 +14,7 @@ export const Pins = () => {
   if (!pinnedPackets || pinnedPackets.length == 0) return null;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3" data-testid="pins">
       <h2 className="text-lg font-bold tracking-tight mb-6">Pinned reports</h2>
       <div className="overflow-x-auto pb-3">
         <div className="flex gap-3">
