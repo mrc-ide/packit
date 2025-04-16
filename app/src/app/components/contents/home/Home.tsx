@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Search } from "lucide-react";
 import { FilterInput } from "../common/FilterInput";
 import { PacketGroupSummaryList } from "./PacketGroupSummaryList";
 import { PAGE_SIZE } from "../../../../lib/constants";
