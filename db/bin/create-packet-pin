@@ -33,5 +33,3 @@ then
     echo "Error: Failed to execute psql command for packet id: $PACKET_ID"
     exit 1
 fi
-
-# TODO: add instruction to PR reviewers to remind them to rebuild the db image before trying to use this script
