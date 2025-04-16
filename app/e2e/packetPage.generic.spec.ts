@@ -2,6 +2,7 @@ import { Locator } from "@playwright/test";
 import { test, expect } from "./tagCheckFixture";
 import {
   getContentLocator,
+  getPacketGroupIndexLocator,
   getPacketPageAccordionSection,
   navigateToFirstPacketGroupLatestPacket,
   selectPacketPageTab
@@ -15,7 +16,8 @@ test.describe("Packet page", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("./");
     content = await getContentLocator(page);
-    const { packetGroup, packetId } = await navigateToFirstPacketGroupLatestPacket(content);
+    const packetGroupContainer = await getPacketGroupIndexLocator(page);
+    const { packetGroup, packetId } = await navigateToFirstPacketGroupLatestPacket(packetGroupContainer);
     packetGroupName = packetGroup;
     latestPacketId = packetId;
   });

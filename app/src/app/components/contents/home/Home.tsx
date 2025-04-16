@@ -15,7 +15,7 @@ export const Home = () => {
       <div className="h-full flex flex-1 flex-col space-y-6 p-8 max-w-5xl">
         <Pins />
         <h2 className="text-2xl font-bold tracking-tight">Find a report</h2>
-        <div className="space-y-4 flex flex-col">
+        <div className="space-y-4 flex flex-col" data-testid="packet-group-index">
           <div className="flex space-x-2 items-center">
             <Search className="opacity-50" />
             <FilterInput

@@ -4,6 +4,10 @@ export const getContentLocator = async (page: Page) => {
   return page.getByTestId("content");
 };
 
+export const getPacketGroupIndexLocator = async (page: Page) => {
+  return page.getByTestId("packet-group-index");
+};
+
 export const getBreadcrumbLocator = async (page: Page) => {
   return page.getByTestId("breadcrumb");
 };
@@ -20,23 +24,23 @@ export const packetGroupNameFromListItem = async (listItem: Locator) => {
   }
 };
 
-export const getFirstPacketGroupListItem = async (content: Locator) => {
-  const result = content.getByRole("listitem").first();
+export const getFirstPacketGroupListItem = async (container: Locator) => {
+  const result = container.getByRole("listitem").first();
   await expect(result.getByRole("heading")).toBeVisible(); // wait for text to load
   return result;
 };
 
 export const getReadableIdString = (id: string) => id.replaceAll("-", " ");
 
-export const navigateToFirstPacketGroup = async (content: Locator) => {
-  const firstPacketGroup = await getFirstPacketGroupListItem(content);
+export const navigateToFirstPacketGroup = async (container: Locator) => {
+  const firstPacketGroup = await getFirstPacketGroupListItem(container);
   const firstPacketGroupName = await packetGroupNameFromListItem(firstPacketGroup);
   await firstPacketGroup.getByRole("heading").click();
   return firstPacketGroupName;
 };
 
-export const navigateToFirstPacketGroupLatestPacket = async (content: Locator) => {
-  const firstPacketGroup = await getFirstPacketGroupListItem(content);
+export const navigateToFirstPacketGroupLatestPacket = async (container: Locator) => {
+  const firstPacketGroup = await getFirstPacketGroupListItem(container);
   const packetGroupName = await packetGroupNameFromListItem(firstPacketGroup);
   const latestLink = firstPacketGroup.getByRole("link", { name: "Latest" });
   const packetId = (await latestLink.getAttribute("href")).split("/").at(-1) as string;
