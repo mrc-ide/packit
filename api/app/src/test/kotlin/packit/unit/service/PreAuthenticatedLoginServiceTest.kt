@@ -5,6 +5,8 @@ import kotlin.test.assertEquals
 import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.springframework.http.HttpStatus
+import packit.exceptions.PackitException
 import packit.model.User
 import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
@@ -30,5 +32,16 @@ class PreAuthenticatedLoginServiceTest
         val sut = PreAuthenticatedLoginService(mockjwtIssuer, mockUserService)
         val result = sut.saveUserAndIssueToken("test.user", "Test User", "test.user@example.com")
         assertEquals(result, mapOf("token" to token))
+    }
+
+    @Test
+    fun `saveUserAndIssueToken throws exception if username is empty`()
+    {
+        val sut = PreAuthenticatedLoginService(mock(), mock())
+        val ex = assertThrows<PackitException> {
+            sut.saveUserAndIssueToken("", "Test User", "test.user@example.com")
+        }
+        assertEquals(ex.httpStatus, HttpStatus.BAD_REQUEST)
+        assertEquals(ex.key, "emptyUsername")
     }
 }
