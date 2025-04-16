@@ -57,7 +57,7 @@ describe("Pins component", () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText("Error fetching pinned reports")).toBeVisible();
+      expect(screen.getByText("Error fetching pinned packets")).toBeVisible();
     });
   });
 
@@ -71,7 +71,7 @@ describe("Pins component", () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.queryByText("Pinned reports")).not.toBeInTheDocument();
+      expect(screen.queryByText("Pinned packets")).not.toBeInTheDocument();
     });
   });
 });
