@@ -6,16 +6,18 @@ import org.springframework.http.*
 import org.springframework.http.MediaTypeFactory.getMediaType
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
-import packit.exceptions.PackitException
-import packit.model.PacketMetadata
-import packit.model.PageablePayload
+import packit.model.*
+import packit.model.dto.OneTimeTokenDto
 import packit.model.dto.PacketDto
-import packit.model.toDto
+import packit.service.OneTimeTokenService
 import packit.service.PacketService
 
 @RestController
 @RequestMapping("/packets")
-class PacketController(private val packetService: PacketService)
+class PacketController(
+    private val packetService: PacketService,
+    private val oneTimeTokenService: OneTimeTokenService,
+)
 {
     @GetMapping
     fun pageableIndex(
@@ -36,42 +38,46 @@ class PacketController(private val packetService: PacketService)
         return ResponseEntity.ok(packetService.getMetadataBy(id))
     }
 
-    @GetMapping("/{id}/file")
+    @PostMapping("/{id}/files/token")
     @PreAuthorize("@authz.canReadPacket(#root, #id)")
+    fun generateTokenForDownloadingFile(
+        @PathVariable id: String,
+        @RequestParam paths: List<String>,
+    ): ResponseEntity<OneTimeTokenDto> {
+        packetService.validateFilesExistForPacket(id, paths)
+        val oneTimeToken = oneTimeTokenService.createToken(id, paths)
+        return ResponseEntity.ok(oneTimeToken.toDto())
+    }
+
+    @GetMapping("/{id}/file")
+    @PreAuthorize("@authz.oneTimeTokenValid(#root, #id, #path)")
     fun streamFile(
         @PathVariable id: String,
-        @RequestParam hash: String,
+        @RequestParam path: String, // To identify which file to download
+        @RequestParam filename: String, // The suggested name for the client to use when saving the file
         @RequestParam inline: Boolean = false,
-        @RequestParam filename: String,
-        response: HttpServletResponse
+        response: HttpServletResponse,
     ) {
-        val packet = packetService.getMetadataBy(id)
-        if (packet.files.none { it.hash == hash }) {
-            throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
-        }
-
         val disposition = if (inline) ContentDisposition.inline() else ContentDisposition.attachment()
-        response.contentType = getMediaType(filename).orElse(MediaType.APPLICATION_OCTET_STREAM).toString()
         response.setHeader("Content-Disposition", disposition.filename(filename).build().toString())
-
-        packetService.getFileByHash(hash, response.outputStream) { outpackResponse ->
+        response.contentType = getMediaType(filename).orElse(MediaType.APPLICATION_OCTET_STREAM).toString()
+        packetService.getFileByPath(id, path, response.outputStream) { outpackResponse ->
             response.setContentLengthLong(outpackResponse.headers.contentLength)
         }
     }
 
-    @GetMapping("/{id}/zip")
-    @PreAuthorize("@authz.canReadPacket(#root, #id)")
-    fun streamZip(
+    @GetMapping("/{id}/files/zip")
+    @PreAuthorize("@authz.oneTimeTokenValid(#root, #id, #paths)")
+    fun streamFilesZipped(
         @PathVariable id: String,
-        @RequestParam paths: List<String>,
-        response: HttpServletResponse
+        @RequestParam paths: List<String>, // To identify which files to download
+        @RequestParam filename: String, // The suggested name for the client to use when saving the file
+        @RequestParam inline: Boolean = false,
+        response: HttpServletResponse,
     ) {
+        val disposition = if (inline) ContentDisposition.inline() else ContentDisposition.attachment()
+        response.setHeader("Content-Disposition", disposition.filename(filename).build().toString())
         response.contentType = "application/zip"
-        response.setHeader(
-            "Content-Disposition",
-            ContentDisposition.attachment().filename("$id.zip").build().toString()
-        )
-
         packetService.streamZip(paths, id, response.outputStream)
     }
 }

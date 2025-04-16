@@ -51,10 +51,7 @@ describe("download component", () => {
     const downloadAllButton = await screen.findByText(/Download all files \(\d+\.\d+ KB\)/);
     expect(downloadAllButton).toBeVisible();
     userEvent.click(downloadAllButton);
-    const url = `${appConfig.apiUrl()}/packets/${mockPacket.id}/zip?paths=${encodeURIComponent(
-      mockPacket.files.map((f) => f.path).join(",")
-    )}`;
-    expect(mockDownload).toHaveBeenCalledWith(url, `parameters_${mockPacket.id}.zip`);
+    expect(mockDownload).toHaveBeenCalledWith(mockPacket.files, mockPacket.id, `parameters_${mockPacket.id}.zip`);
   });
 
   it("renders the 'artefacts' and 'other files' sections for orderly packets", async () => {

@@ -14,7 +14,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.authentication.logout.LogoutFilter
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
@@ -24,6 +23,7 @@ import packit.exceptions.PackitExceptionHandler
 import packit.security.oauth2.OAuth2FailureHandler
 import packit.security.oauth2.OAuth2SuccessHandler
 import packit.security.oauth2.OAuth2UserService
+import packit.security.ott.OTTAuthenticationFilter
 import packit.security.provider.JwtIssuer
 import packit.service.BasicUserDetailsService
 
@@ -60,16 +60,17 @@ class WebSecurityConfig(
     @Order(2)
     fun securityFilterChain(
         httpSecurity: HttpSecurity,
-        tokenAuthenticationFilter: TokenAuthenticationFilter,
+        jwtAuthenticationFilter: JWTAuthenticationFilter,
+        ottAuthenticationFilter: OTTAuthenticationFilter,
         filterChainExceptionHandler: FilterChainExceptionHandler
-
     ): SecurityFilterChain
     {
         httpSecurity
             .cors { it.configurationSource(getCorsConfigurationSource()) }
             .csrf { it.disable() }
             .addFilterBefore(filterChainExceptionHandler, LogoutFilter::class.java)
-            .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterAfter(ottAuthenticationFilter, LogoutFilter::class.java)
+            .addFilterAfter(jwtAuthenticationFilter, LogoutFilter::class.java)
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .formLogin { it.disable() }
             .handleSecurePaths()
