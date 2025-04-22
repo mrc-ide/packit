@@ -77,7 +77,7 @@ class LoginControllerTestGithub : IntegrationTest()
     }
 }
 
-@TestPropertySource(properties = ["auth.method=basic"])
+@TestPropertySource(properties = ["auth.method=preauth"])
 class LoginControllerTestPreAuth : IntegrationTest()
 {
     private val userEmail = "test.user@example.com"
