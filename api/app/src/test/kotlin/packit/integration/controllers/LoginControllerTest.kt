@@ -61,11 +61,82 @@ class LoginControllerTestGithub : IntegrationTest()
     }
 
     @Test
-    fun `returns forbidden when basic login is disabled`()
+    fun `basic login returns forbidden when basic login is disabled`()
     {
         val result =
             LoginTestHelper.getBasicLoginResponse(LoginWithPassword("email@email.com", "password"), restTemplate)
         assertForbidden(result)
+    }
+
+    @Test
+    fun `preauth login returns forbidden when basic login is disabled`()
+    {
+        val result =
+            LoginTestHelper.getPreauthLoginResponse("preauth.user", "Preauth User", "preauth.user@example.com", restTemplate)
+        assertForbidden(result)
+    }
+}
+
+@TestPropertySource(properties = ["auth.method=basic"])
+class LoginControllerTestPreAuth : IntegrationTest()
+{
+    private val userEmail = "test.user@example.com"
+    private val userName = "test.user"
+    private val userDisplayName = "Test User"
+
+    @Autowired
+    lateinit var userRepository: UserRepository
+
+    @AfterEach
+    fun cleanupData()
+    {
+        userRepository.deleteByEmail(userEmail)
+    }
+
+    @Test
+    fun `can login without existing user`()
+    {
+        val result =
+            packit.integration.controllers.LoginTestHelper.getPreauthLoginResponse(
+                userName, userDisplayName, userEmail, restTemplate)
+
+        assertSuccess(result)
+        val packitToken = jacksonObjectMapper().readTree(result.body).get("token").asText()
+        assertThat(packitToken.count()).isGreaterThan(0)
+        assertThat(userRepository.existsByUsername(userName)).isTrue()
+    }
+
+    @Test
+    fun `can login with existing user`()
+    {
+        val testUser = User(
+            username = userName,
+            displayName = userDisplayName,
+            disabled = false,
+            email = userEmail,
+            userSource = "preauth",
+            roles = mutableListOf(),
+            password = null,
+            lastLoggedIn = null
+        )
+        userRepository.save(testUser)
+
+        val result =
+            packit.integration.controllers.LoginTestHelper.getPreauthLoginResponse(
+                userName, userDisplayName, userEmail, restTemplate)
+
+        assertSuccess(result)
+        val packitToken = jacksonObjectMapper().readTree(result.body).get("token").asText()
+        assertThat(packitToken.count()).isGreaterThan(0)
+    }
+
+    @Test
+    fun `returns 400 when username header not provided`()
+    {
+        val result =
+            packit.integration.controllers.LoginTestHelper.getPreauthLoginResponse(
+                null, userDisplayName, userEmail, restTemplate)
+        assertEquals(result.statusCode, HttpStatus.BAD_REQUEST)
     }
 }
 
@@ -244,6 +315,27 @@ object LoginTestHelper
     {
         val jsonBody = jacksonObjectMapper().writeValueAsString(body)
         return getLoginResponse(jsonBody, restTemplate, "/auth/login/basic")
+    }
+
+    fun getPreauthLoginResponse(user: String?, displayName: String?, email: String?, restTemplate: TestRestTemplate): ResponseEntity<String>
+    {
+        val headers = HttpHeaders()
+        if (user != null)
+        {
+            headers.add("X-Remote-User", user)
+        }
+        if (displayName != null)
+        {
+            headers.add("X-Remote-Name", displayName)
+        }
+        if (email != null)
+        {
+            headers.add("X-Remote-Email", email)
+        }
+        val requestEntity = HttpEntity<String?>(headers)
+        return restTemplate.exchange(
+            "/auth/login/preauth", HttpMethod.GET, requestEntity, String::class.java, {}
+        )
     }
 
     fun getGithubLoginResponse(body: LoginWithToken, restTemplate: TestRestTemplate): ResponseEntity<String>
