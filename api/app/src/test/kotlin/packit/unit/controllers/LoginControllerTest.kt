@@ -160,15 +160,15 @@ class LoginControllerTest
         }
 
         val token = "test-token"
+        val tokenMap = mapOf("token" to token)
         val mockService = mock<PreAuthenticatedLoginService> {
-            on { saveUserAndIssueToken("test.user", "Test User", "test.user@example.com") }
-                doReturn mapOf("token" to token)
+            on { saveUserAndIssueToken("test.user", "Test User", "test.user@example.com") } doReturn tokenMap
         }
 
         val sut = LoginController(mock(), mockService, mock(), mock(), mockAppConfig, mock())
         val result = sut.loginWithTrustedHeaders("test.user", "Test User", "test.user@example.com")
         assertEquals(result.statusCode, HttpStatus.OK)
-        assertEquals(result.body, mapOf("token" to token))
+        assertEquals(result.body, tokenMap)
     }
 
     @Test
