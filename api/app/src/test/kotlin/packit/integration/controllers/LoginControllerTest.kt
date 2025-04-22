@@ -90,7 +90,9 @@ class LoginControllerTestPreAuth : IntegrationTest()
     @AfterEach
     fun cleanupData()
     {
-        userRepository.deleteByEmail(userEmail)
+        if (userRepository.existsByEmail(userEmail)) {
+            userRepository.deleteByEmail(userEmail)
+        }
     }
 
     @Test
