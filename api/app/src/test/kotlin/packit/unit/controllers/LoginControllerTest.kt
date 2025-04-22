@@ -13,8 +13,8 @@ import packit.model.dto.LoginWithToken
 import packit.model.dto.UpdatePassword
 import packit.service.BasicLoginService
 import packit.service.GithubAPILoginService
-import packit.service.UserService
 import packit.service.PreAuthenticatedLoginService
+import packit.service.UserService
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -161,7 +161,8 @@ class LoginControllerTest
 
         val token = "test-token"
         val mockService = mock<PreAuthenticatedLoginService> {
-            on { saveUserAndIssueToken("test.user", "Test User", "test.user@example.com") } doReturn mapOf("token" to token)
+            on { saveUserAndIssueToken("test.user", "Test User", "test.user@example.com") }
+                doReturn mapOf("token" to token)
         }
 
         val sut = LoginController(mock(), mockService, mock(), mock(), mockAppConfig, mock())

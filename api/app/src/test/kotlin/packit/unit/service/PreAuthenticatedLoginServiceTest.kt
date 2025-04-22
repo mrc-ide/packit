@@ -1,7 +1,5 @@
 package packit.unit.service
 
-import kotlin.test.Test
-import kotlin.test.assertEquals
 import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -10,8 +8,10 @@ import packit.exceptions.PackitException
 import packit.model.User
 import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
-import packit.service.UserService
 import packit.service.PreAuthenticatedLoginService
+import packit.service.UserService
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class PreAuthenticatedLoginServiceTest
 {

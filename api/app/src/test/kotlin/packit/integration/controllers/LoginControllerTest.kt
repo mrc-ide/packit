@@ -72,7 +72,10 @@ class LoginControllerTestGithub : IntegrationTest()
     fun `preauth login returns forbidden when basic login is disabled`()
     {
         val result =
-            LoginTestHelper.getPreauthLoginResponse("preauth.user", "Preauth User", "preauth.user@example.com", restTemplate)
+            LoginTestHelper.getPreauthLoginResponse(
+                "preauth.user", "Preauth User", "preauth.user@example.com",
+                restTemplate
+            )
         assertForbidden(result)
     }
 }
@@ -100,7 +103,8 @@ class LoginControllerTestPreAuth : IntegrationTest()
     {
         val result =
             packit.integration.controllers.LoginTestHelper.getPreauthLoginResponse(
-                userName, userDisplayName, userEmail, restTemplate)
+                userName, userDisplayName, userEmail, restTemplate
+            )
 
         assertSuccess(result)
         val packitToken = jacksonObjectMapper().readTree(result.body).get("token").asText()
@@ -125,7 +129,8 @@ class LoginControllerTestPreAuth : IntegrationTest()
 
         val result =
             packit.integration.controllers.LoginTestHelper.getPreauthLoginResponse(
-                userName, userDisplayName, userEmail, restTemplate)
+                userName, userDisplayName, userEmail, restTemplate
+            )
 
         assertSuccess(result)
         val packitToken = jacksonObjectMapper().readTree(result.body).get("token").asText()
@@ -137,7 +142,8 @@ class LoginControllerTestPreAuth : IntegrationTest()
     {
         val result =
             packit.integration.controllers.LoginTestHelper.getPreauthLoginResponse(
-                null, userDisplayName, userEmail, restTemplate)
+                null, userDisplayName, userEmail, restTemplate
+            )
         assertEquals(result.statusCode, HttpStatus.BAD_REQUEST)
     }
 }
@@ -319,7 +325,12 @@ object LoginTestHelper
         return getLoginResponse(jsonBody, restTemplate, "/auth/login/basic")
     }
 
-    fun getPreauthLoginResponse(user: String?, displayName: String?, email: String?, restTemplate: TestRestTemplate): ResponseEntity<String>
+    fun getPreauthLoginResponse(
+        user: String?,
+        displayName: String?,
+        email: String?,
+        restTemplate: TestRestTemplate
+    ): ResponseEntity<String>
     {
         val headers = HttpHeaders()
         if (user != null)

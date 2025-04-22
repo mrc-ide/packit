@@ -37,9 +37,11 @@ export const UserAuthForm = ({ className, ...props }: UserAuthFormProps) => {
     <div className={cn("grid gap-6", className)} {...props}>
       {authConfig?.enableBasicLogin && <BasicUserAuthForm />}
       {authConfig?.enableGithubLogin && <GithubAuthForm />}
-      {authConfig?.enablePreAuthLogin && <p>
-        Login with external provider. Click <a href={loginRoute}>here</a> if you are not redirected automatically.
-      </p>}
+      {authConfig?.enablePreAuthLogin && (
+        <p>
+          Login with external provider. Click <a href={loginRoute}>here</a> if you are not redirected automatically.
+        </p>
+      )}
     </div>
   );
 };

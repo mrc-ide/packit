@@ -21,7 +21,7 @@ export const ProtectedRoute = () => {
     } else {
       navigate(`/login${qs}`);
     }
-  }
+  };
 
   useEffect(() => {
     if (authConfig && !isAuthenticated(authConfig, user)) {
