@@ -27,13 +27,19 @@ jest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
   })
 }));
 
+const mockUseAuthConfig = jest.fn();
 jest.mock("../../../app/components/providers/AuthConfigProvider", () => ({
-  useAuthConfig: () => ({})
+  useAuthConfig: () => mockUseAuthConfig()
 }));
 
 const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
 jest.mock("../../../lib/localStorageManager", () => ({
   getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
+}));
+
+const mockWindowNavigate = jest.fn();
+jest.mock("../../../lib/navigate", () => ({
+  windowNavigate: (href) => mockWindowNavigate(href)
 }));
 
 describe("protected routes", () => {
@@ -51,9 +57,14 @@ describe("protected routes", () => {
     );
   };
 
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("renders protected content when authenticated", async () => {
     mockIsAuthenticated.mockReturnValue(true);
     mockAuthIsExpired.mockReturnValue(false);
+    mockUseAuthConfig.mockReturnValue({});
     renderElement();
 
     await waitFor(() => {
@@ -65,6 +76,7 @@ describe("protected routes", () => {
     mockLoggingOut = false;
     mockIsAuthenticated.mockReturnValue(false);
     mockAuthIsExpired.mockReturnValue(false);
+    mockUseAuthConfig.mockReturnValue({});
     renderElement();
 
     await waitFor(() => {
@@ -78,6 +90,7 @@ describe("protected routes", () => {
     mockIsAuthenticated.mockReturnValue(false);
     mockAuthIsExpired.mockReturnValue(true);
     mockGetUserFromLocalStorage.mockReturnValueOnce(mockExpiredUserState());
+    mockUseAuthConfig.mockReturnValue({});
     localStorage.setItem(LocalStorageKeys.USER, "mockUser");
     renderElement();
 
@@ -94,11 +107,28 @@ describe("protected routes", () => {
     mockLoggingOut = true;
     mockIsAuthenticated.mockReturnValue(false);
     mockAuthIsExpired.mockReturnValue(false);
+    mockUseAuthConfig.mockReturnValue({});
     renderElement();
 
     await waitFor(() => {
+      expect(mockWindowNavigate).not.toHaveBeenCalled();
       expect(mockedUsedNavigate).toHaveBeenCalledWith("/login");
       expect(mockSetRequestedUrl).not.toHaveBeenCalled();
+    });
+  });
+
+  it("navigates to external logout on expiry if preauth is enabled", async () => {
+    mockUseAuthConfig.mockReturnValue({enablePreAuthLogin: true});
+    mockLoggingOut = false;
+    mockIsAuthenticated.mockReturnValue(false);
+    mockAuthIsExpired.mockReturnValue(true);
+    mockGetUserFromLocalStorage.mockReturnValueOnce(mockExpiredUserState());
+    localStorage.setItem(LocalStorageKeys.USER, "mockUser");
+    renderElement();
+
+    await waitFor(() => {
+      expect(mockWindowNavigate).toHaveBeenCalledWith("/logout");
+      expect(mockedUsedNavigate).not.toHaveBeenCalled();
     });
   });
 });

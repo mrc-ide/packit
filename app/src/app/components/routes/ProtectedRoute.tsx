@@ -4,6 +4,7 @@ import { authIsExpired, isAuthenticated } from "../../../lib/isAuthenticated";
 import { useAuthConfig } from "../providers/AuthConfigProvider";
 import { useUser } from "../providers/UserProvider";
 import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
+import {windowNavigate} from "../../../lib/navigate";
 
 export const ProtectedRoute = () => {
   const navigate = useNavigate();
@@ -17,13 +18,17 @@ export const ProtectedRoute = () => {
     // navigate to logged out screen, either using react routing or external navigation, depending on whether we're
     // using pre-auth, which may require logout action from auth provider
     if (authConfig?.enablePreAuthLogin) {
-      window.location.href = `${process.env.PUBLIC_URL}/logout`;
+      const href = `${process.env.PUBLIC_URL}/logout`;
+      windowNavigate(href);
     } else {
       navigate(`/login${qs}`);
     }
   };
 
   useEffect(() => {
+    console.log("loading")
+    console.log("config is")
+    console.log(JSON.stringify(authConfig))
     if (authConfig && !isAuthenticated(authConfig, user)) {
       // we will redirect to requested url on login, but avoid doing this if logging out after previous auth success
       if (!loggingOut) {
