@@ -81,8 +81,11 @@ export const createEmptyTestRole = async (page: Page, testRoleName: string) => {
   await page.getByRole("button", { name: "Add Role" }).click();
   await page.getByRole("textbox", { name: "Name" }).fill(testRoleName);
   await page.getByRole("button", { name: "Add" }).click();
-  if (await page.locator("text=Role already exists").isVisible()) {
+  try {
+    await page.locator("text=Role already exists").waitFor({ timeout: 2000 });
     await page.getByRole("button", { name: "Close" }).click();
+  } catch {
+    // Role was created successfully
   }
   await page.getByRole("link", { name: "Packit" }).click();
 };

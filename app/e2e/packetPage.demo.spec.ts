@@ -1,6 +1,7 @@
 import { Locator } from "@playwright/test";
 import { test, expect, TAG_DEMO_PACKETS } from "./tagCheckFixture";
 import {
+  createEmptyTestRole,
   getContentLocator,
   getInstanceRelativePath,
   getPacketPageAccordionSection,
@@ -104,6 +105,47 @@ test.describe("Demo packet page", { tag: TAG_DEMO_PACKETS }, () => {
       const listItems = await packagesDiv.locator("ul.space-y-1 > li").all();
       await expect(listItems.length).toBe(21);
       await expect(listItems[0]).toHaveText("askpass" + "1.2.0");
+    });
+  });
+
+  test.describe("read-permissions", () => {
+    test("can update read permissions on packet", async ({ page }) => {
+      await page.goto("./");
+      const testRoleName = "testE2ERole";
+      await createEmptyTestRole(page, testRoleName);
+      await page.goto(`./parameters/${parametersPacketId}`);
+      await page.getByRole("link", { name: "Read permissions" }).click();
+
+      // check existing roles
+      await expect(page.getByRole("cell", { name: "ADMIN", exact: true })).toBeVisible();
+      await expect(page.getByText("resideUser@resideAdmin.ic.ac.")).toBeVisible();
+
+      // add test role
+      await page.getByRole("button", { name: "Update read access" }).click();
+      await page
+        .getByLabel("Update read access on")
+        .locator("div")
+        .filter({ hasText: "Select roles or specific" })
+        .getByPlaceholder("Select roles or users...")
+        .click();
+      await page.getByRole("option", { name: "testE2ERole Role" }).click();
+      await page.getByRole("dialog", { name: "Update read access on" }).click();
+      await page.getByRole("button", { name: "Save" }).click();
+
+      await expect(page.getByRole("cell", { name: testRoleName })).toBeVisible();
+
+      // remove test role
+      await page.getByRole("button", { name: "Update read access" }).click();
+      await page
+        .locator("div")
+        .filter({ hasText: /^Remove read access$/ })
+        .getByPlaceholder("Select roles or users...")
+        .click();
+      await page.getByRole("option", { name: "testE2ERole Role" }).click();
+      await page.getByRole("dialog", { name: "Update read access on" }).click();
+      await page.getByRole("button", { name: "Save" }).click();
+
+      await expect(page.getByRole("cell", { name: testRoleName })).not.toBeVisible();
     });
   });
 });
