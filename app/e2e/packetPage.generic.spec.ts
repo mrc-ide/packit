@@ -23,6 +23,10 @@ test.describe("Packet page", () => {
   });
 
   test("can see packet group name and packet id", async () => {
+    // Expectation of the heading is flaky.
+    // Just wondering if line after next doesn't wait long enough because packetGroupName is null and thus there
+    // is no filtering by name. If that works, try removing the redundant awaits.
+    await expect(packetGroupName).not.toEqual("");
     await expect(await content.getByRole("heading", { name: packetGroupName, level: 2 })).toBeVisible();
     await expect(await content.getByText(latestPacketId)).toBeVisible();
   });
