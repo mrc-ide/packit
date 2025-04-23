@@ -44,9 +44,13 @@ handle_options() {
   done
 }
 
-# TODO: check incompatible options
-
 handle_options "$@"
+
+# check incompatible options
+if [ $PREAUTH -eq 1 ] && [ $ADD_SUPER_USER -eq 1 ]; then
+    echo "basic superuser and preauth options are not compatible"
+    exit 1
+fi
 
 HERE=$(realpath "$(dirname $0)")
 . "$HERE"/common
