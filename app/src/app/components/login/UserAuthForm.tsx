@@ -9,6 +9,7 @@ import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 import { useUser } from "../providers/UserProvider";
 import { BasicUserAuthForm } from "./BasicUserAuthForm";
 import { GithubAuthForm } from "./GithubAuthForm";
+import {windowNavigate} from "../../../lib/navigate";
 
 type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -28,7 +29,7 @@ export const UserAuthForm = ({ className, ...props }: UserAuthFormProps) => {
     } else {
       if (authConfig?.enablePreAuthLogin) {
         // Redirect to external login
-        window.location.href = loginRoute; // TODO: make a provider for both windows navs
+        windowNavigate(loginRoute);
       }
     }
   }, [user?.token]);
