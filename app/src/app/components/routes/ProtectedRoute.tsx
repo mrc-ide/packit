@@ -26,9 +26,6 @@ export const ProtectedRoute = () => {
   };
 
   useEffect(() => {
-    console.log("loading")
-    console.log("config is")
-    console.log(JSON.stringify(authConfig))
     if (authConfig && !isAuthenticated(authConfig, user)) {
       // we will redirect to requested url on login, but avoid doing this if logging out after previous auth success
       if (!loggingOut) {
