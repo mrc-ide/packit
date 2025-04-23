@@ -28,8 +28,6 @@ jest.mock("../../../app/components/providers/AuthConfigProvider", () => ({
   useAuthConfig: () => mockUseAuthConfig()
 }));
 
-
-
 describe("UserAuthForm", () => {
   const renderElement = () => {
     return render(
@@ -63,7 +61,7 @@ describe("UserAuthForm", () => {
   });
 
   it("redirects to external login if preauth is enabled", () => {
-    mockUseAuthConfig.mockReturnValueOnce({...authConfig, enablePreAuthLogin: true});
+    mockUseAuthConfig.mockReturnValueOnce({ ...authConfig, enablePreAuthLogin: true });
     renderElement();
     expect(mockWindowNavigate).toHaveBeenCalledWith("/login");
   });

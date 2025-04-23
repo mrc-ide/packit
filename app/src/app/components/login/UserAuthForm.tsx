@@ -9,7 +9,7 @@ import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 import { useUser } from "../providers/UserProvider";
 import { BasicUserAuthForm } from "./BasicUserAuthForm";
 import { GithubAuthForm } from "./GithubAuthForm";
-import {windowNavigate} from "../../../lib/navigate";
+import { windowNavigate } from "../../../lib/navigate";
 
 type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>;
 

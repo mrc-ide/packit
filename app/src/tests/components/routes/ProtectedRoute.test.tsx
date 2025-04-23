@@ -118,7 +118,7 @@ describe("protected routes", () => {
   });
 
   it("navigates to external logout on expiry if preauth is enabled", async () => {
-    mockUseAuthConfig.mockReturnValue({enablePreAuthLogin: true});
+    mockUseAuthConfig.mockReturnValue({ enablePreAuthLogin: true });
     mockLoggingOut = false;
     mockIsAuthenticated.mockReturnValue(false);
     mockAuthIsExpired.mockReturnValue(true);

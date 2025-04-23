@@ -4,7 +4,7 @@ import { authIsExpired, isAuthenticated } from "../../../lib/isAuthenticated";
 import { useAuthConfig } from "../providers/AuthConfigProvider";
 import { useUser } from "../providers/UserProvider";
 import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
-import {windowNavigate} from "../../../lib/navigate";
+import { windowNavigate } from "../../../lib/navigate";
 
 export const ProtectedRoute = () => {
   const navigate = useNavigate();
