@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { PacketMetadata } from "../../../../types";
 import { DataTable } from "../common/DataTable";
 import { FilterInput } from "../common/FilterInput";
 import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
