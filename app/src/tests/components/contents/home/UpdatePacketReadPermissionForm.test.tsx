@@ -36,7 +36,6 @@ describe("UpdatePacketReadPermissionForm", () => {
     userEvent.click(screen.getByRole("button", { name: /save/i }));
   };
   const setDialogOpen = jest.fn();
-  // TODO: fix
   const renderComponent = (packetId?: string) =>
     render(
       <Dialog>

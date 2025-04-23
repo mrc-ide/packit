@@ -31,7 +31,7 @@ export const PacketReadPermission = () => {
       </div>
     );
 
-  return packet && packetId && packetName && rolesResponse ? (
+  return packet && packetId && packetName ? (
     <>
       <div className="md:flex justify-between">
         <PacketHeader packetName={packetName} packetId={packetId} displayName={packet.displayName} />
