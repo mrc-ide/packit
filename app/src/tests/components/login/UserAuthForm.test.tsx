@@ -14,7 +14,7 @@ jest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
 
 const mockWindowNavigate = jest.fn();
 jest.mock("../../../lib/navigate", () => ({
-  windowNavigate: (href) => mockWindowNavigate(href)
+  windowNavigate: (href: string) => mockWindowNavigate(href)
 }));
 
 const authConfig = {

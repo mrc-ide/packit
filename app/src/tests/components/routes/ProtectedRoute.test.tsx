@@ -39,7 +39,7 @@ jest.mock("../../../lib/localStorageManager", () => ({
 
 const mockWindowNavigate = jest.fn();
 jest.mock("../../../lib/navigate", () => ({
-  windowNavigate: (href) => mockWindowNavigate(href)
+  windowNavigate: (href: string) => mockWindowNavigate(href)
 }));
 
 describe("protected routes", () => {
