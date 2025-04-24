@@ -21,7 +21,7 @@ export const Header = () => {
             <NavLink to="/">
               <div className="text-xl font-extrabold flex gap-1 items-center">
                 <PackageOpen />
-                Packit
+                app name here
               </div>
             </NavLink>
             {user && <NavMenuMobile user={user} />}
