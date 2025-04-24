@@ -62,7 +62,7 @@ test.describe("Index page", () => {
     await expect(await getBreadcrumbLocator(page)).toHaveText(`home${displayPacketGroupName}${displayPacketId}`);
   });
 
-  test("can add update read permission on packet group", async ({ page }) => {
+  test("can add update read permission on packet group", { tag: "@stateMutate" }, async ({ page }) => {
     // create test role with no permissions if not exists
     const testRoleName = "testE2ERole";
     await createEmptyTestRole(page, testRoleName);
