@@ -31,7 +31,7 @@ export const buildScopedPermission = (
 
 const validateScopedPermissionArgs = (packetGroupName?: string, packetId?: string, tag?: string) => {
   if (tag && (packetGroupName || packetId)) {
-    throw new Error("tag cannot be provided with packetGroupName or packetId");
+    throw new Error("Tag cannot be provided with packetGroupName or packetId");
   }
   if (packetId && !packetGroupName) {
     throw new Error("packetGroupName must be provided if packetId is given");
