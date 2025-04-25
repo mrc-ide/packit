@@ -69,7 +69,7 @@ class LoginControllerTestGithub : IntegrationTest()
     }
 
     @Test
-    fun `preauth login returns forbidden when basic login is disabled`()
+    fun `preauth login returns forbidden when preauth login is disabled`()
     {
         val result =
             LoginTestHelper.getPreauthLoginResponse(
