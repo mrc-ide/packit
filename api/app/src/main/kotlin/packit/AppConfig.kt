@@ -44,4 +44,6 @@ class AppConfig(private val environment: Environment)
     val authGithubAPITeam: String = requiredEnvValue("auth.githubAPITeam")
     val allowedOrigins: List<String> = splitList(requiredEnvValue("cors.allowedOrigins"))
     val defaultRoles: List<String> = splitList(requiredEnvValue("packit.defaultRoles"))
+    val brandName: String = requiredEnvValue("packit.branding.name")
+    val brandLogoAltText: String = requiredEnvValue("packit.branding.logoAltText")
 }

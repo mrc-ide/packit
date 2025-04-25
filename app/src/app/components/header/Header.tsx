@@ -9,9 +9,11 @@ import { buttonVariants } from "../Base/Button";
 import { NavMenuMobile } from "./NavMenuMobile";
 import { LeftNav } from "./LeftNav";
 import { hasUserManagePermission } from "../../../lib/auth/hasPermission";
+import { useGetBranding } from "./hooks/useGetBranding";
 
 export const Header = () => {
   const { user } = useUser();
+  const { brandConfig } = useGetBranding();
 
   return (
     <header>
@@ -21,8 +23,9 @@ export const Header = () => {
             <NavLink to="/">
               <div className="text-xl font-extrabold flex gap-1 items-center">
                 <PackageOpen />
-                app name here
+                {brandConfig?.brandName}
               </div>
+              <p>Logo alt text: {brandConfig?.logoAltText}</p>
             </NavLink>
             {user && <NavMenuMobile user={user} />}
             {user && <LeftNav className="mx-6 hidden md:flex" user={user} />}
