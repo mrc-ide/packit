@@ -15,6 +15,7 @@ class ConfigurationController(private val appConfig: AppConfig)
         return ResponseEntity.ok(BrandingDto(
             brandName = appConfig.brandName,
             logoAltText = appConfig.brandLogoAltText,
+            logoName = appConfig.brandLogoName,
         ))
     }
 }

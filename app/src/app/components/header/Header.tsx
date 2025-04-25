@@ -20,12 +20,18 @@ export const Header = () => {
       <div data-testid="header" className="flex-col">
         <div className="border-b shadow-sm dark:shadow-accent">
           <div className="flex h-20 items-center px-4">
+            {brandConfig?.logoName && (
+              <img
+                src={`/img/${brandConfig?.logoName}`}
+                height="100%"
+                alt={brandConfig?.logoAltText}
+              />
+            )}
             <NavLink to="/">
               <div className="text-xl font-extrabold flex gap-1 items-center">
-                <PackageOpen />
+                {!brandConfig?.logoName && <PackageOpen />}
                 {brandConfig?.brandName}
               </div>
-              <p>Logo alt text: {brandConfig?.logoAltText}</p>
             </NavLink>
             {user && <NavMenuMobile user={user} />}
             {user && <LeftNav className="mx-6 hidden md:flex" user={user} />}

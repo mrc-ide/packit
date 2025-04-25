@@ -1,6 +1,7 @@
 package packit.model.dto
 
 data class BrandingDto(
-    var brandName: String,
-    var logoAltText: String,
+    val brandName: String,
+    val logoAltText: String,
+    val logoName: String,
 )

@@ -9,8 +9,6 @@ export const useGetBranding = () => {
     (url: string) => fetcher({ url, noAuth: true })
   );
 
-  console.log(data, isLoading, error);
-
   return {
     brandConfig: data,
     isLoading,

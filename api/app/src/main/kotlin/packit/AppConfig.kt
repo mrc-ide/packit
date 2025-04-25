@@ -46,4 +46,5 @@ class AppConfig(private val environment: Environment)
     val defaultRoles: List<String> = splitList(requiredEnvValue("packit.defaultRoles"))
     val brandName: String = requiredEnvValue("packit.branding.name")
     val brandLogoAltText: String = requiredEnvValue("packit.branding.logoAltText")
+    val brandLogoName: String = requiredEnvValue("packit.branding.logoName")
 }
