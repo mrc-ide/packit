@@ -1,5 +1,5 @@
 import { Locator } from "@playwright/test";
-import { test, expect, TAG_DEMO_PACKETS } from "./tagCheckFixture";
+import { test, expect, TAG_DEMO_PACKETS, TAG_STATE_MUTATE } from "./tagCheckFixture";
 import {
   createEmptyTestRole,
   getContentLocator,
@@ -108,7 +108,7 @@ test.describe("Demo packet page", { tag: TAG_DEMO_PACKETS }, () => {
     });
   });
 
-  test.describe("read-permissions", () => {
+  test.describe("read-permissions", { tag: TAG_STATE_MUTATE }, () => {
     test("can update read permissions on packet", async ({ page }) => {
       await page.goto("./");
       const testRoleName = "testE2ERole";
