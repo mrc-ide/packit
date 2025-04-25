@@ -7,6 +7,7 @@ export const hasGlobalPacketManagePermission = (authorities: string[] = []) => a
 export const hasGlobalReadPermission = (authorities: string[] = []) => authorities.includes("packet.read");
 
 /** Manage packets */
+// todo: dont need
 export const hasAnyPacketManagePermission = (authorities: string[] = []) =>
   authorities.some((permission) => permission.startsWith("packet.manage"));
 
@@ -19,6 +20,7 @@ export const hasPacketManagePermissionForGroup = (authorities: string[] = [], pa
 export const canManagePacketGroup = (authorities: string[] = [], packetGroupName: string) =>
   canManageAllPackets(authorities) || hasPacketManagePermissionForGroup(authorities, packetGroupName);
 
+// todo: dont need
 export const canReadRoles = (authorities: string[] = []) =>
   hasUserManagePermission(authorities) || hasAnyPacketManagePermission(authorities);
 

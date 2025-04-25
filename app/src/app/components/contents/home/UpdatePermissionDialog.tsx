@@ -18,6 +18,7 @@ interface UpdatePermissionDialogProps {
 }
 export const UpdatePermissionDialog = ({ roles, users, packetGroupName, mutate }: UpdatePermissionDialogProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
+  // todo: get these from endpoint!!
   const rolesAndUsersCantReadGroup = getRolesAndUsersCantReadGroup(roles, users, packetGroupName);
   const rolesAndUsersWithReadGroup = getRolesAndUsersWithOnlyReadGroupPermission(roles, users, packetGroupName);
 

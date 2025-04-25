@@ -23,6 +23,7 @@ export const PacketGroupSummaryList = ({
   setPageNumber
 }: PacketGroupSummaryListProps) => {
   const { user } = useUser();
+  // todo: wont hit this endpoint anymore!!
   const rolesResponse = canReadRoles(user?.authorities) ? useGetRolesWithRelationships() : undefined;
   const {
     packetGroupSummaries,

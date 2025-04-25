@@ -16,13 +16,13 @@ interface PacketIdProjection
 @Repository
 interface PacketGroupRepository : JpaRepository<PacketGroup, Int>
 {
-    @PostFilter("@authz.canReadPacketGroup(#root, filterObject.name)")
+    @PostFilter("@authz.canViewPacketGroup(#root, filterObject.name)")
     fun findByNameIn(names: List<String>): List<PacketGroup>
 
-    @PostFilter("@authz.canReadPacketGroup(#root, filterObject.name)")
+    @PostFilter("@authz.canViewPacketGroup(#root, filterObject.name)")
     fun findAllByNameContaining(name: String, sort: Sort): List<PacketGroup>
 
-    @PreAuthorize("@authz.canReadPacketGroup(#root, #name)")
+    @PreAuthorize("@authz.canViewPacketGroup(#root, #name)")
     @Query(
         value = """
             SELECT p.id AS id

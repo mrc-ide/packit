@@ -17,6 +17,7 @@ export const PacketReadPermission = () => {
   const { packetId, packetName } = useParams();
   const { packet } = usePacketOutletContext();
   const { user } = useUser();
+  // todo: wont hit this endpoint anymore!!
   const rolesResponse = canManagePacket(user?.authorities, packetName ?? "", packetId ?? "")
     ? useGetRolesWithRelationships()
     : null;
@@ -42,6 +43,7 @@ export const PacketReadPermission = () => {
           mutate={rolesResponse.mutate}
         />
       </div>
+      {/* todo: get these from endpoint as well!!*/}
       <PacketReadRolesTable
         roles={rolesResponse.roles.filter((role) =>
           canReadPacket(mapPermissionsToNames(role.rolePermissions), packet.name, packet.id)

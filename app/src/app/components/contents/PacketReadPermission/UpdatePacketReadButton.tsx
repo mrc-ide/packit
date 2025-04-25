@@ -19,6 +19,7 @@ interface UpdatePacketReadButtonProps {
 
 export const UpdatePacketReadButton = ({ packet, users, roles, mutate }: UpdatePacketReadButtonProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
+  // todo: get these from endpoint!!
   const rolesAndUsersCantReadPacket = getRolesAndUsersCantReadPacket(roles, users, packet.name, packet.id);
   const rolesAndUsersWithOnlyReadPacket = getRolesUsersWithOnlyReadPacketPermission(
     roles,

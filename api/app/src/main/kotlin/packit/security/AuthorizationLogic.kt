@@ -4,24 +4,19 @@ import org.springframework.security.access.expression.SecurityExpressionOperatio
 import org.springframework.stereotype.Component
 import packit.model.Packet
 import packit.service.PacketService
-import packit.service.PermissionService
 
 @Component("authz")
 class AuthorizationLogic(
     private val packetService: PacketService,
-    private val permissionService: PermissionService,
+    private val permissionChecker: PermissionChecker,
 )
 {
     fun canReadPacket(operations: SecurityExpressionOperations, packet: Packet): Boolean =
         // TODO: update with tag when implemented
-        operations.hasAnyAuthority(
-            "user.manage",
-            "packet.read",
-            permissionService.buildScopedPermission("packet.read", packet.name, packet.id),
-            permissionService.buildScopedPermission("packet.read", packet.name),
-            "packet.manage",
-            permissionService.buildScopedPermission("packet.manage", packet.name, packet.id),
-            permissionService.buildScopedPermission("packet.manage", packet.name)
+        permissionChecker.canReadPacket(
+            getAuthorities(operations),
+            packet.name,
+            packet.id
         )
 
     fun canReadPacket(operations: SecurityExpressionOperations, id: String): Boolean
@@ -30,17 +25,18 @@ class AuthorizationLogic(
         return canReadPacket(operations, packet)
     }
 
-    fun canReadPacketGroup(operations: SecurityExpressionOperations, name: String): Boolean
+    fun canViewPacketGroup(operations: SecurityExpressionOperations, name: String): Boolean
     {
-        return operations.hasAnyAuthority(
-            "user.manage",
-            "packet.read",
-            permissionService.buildScopedPermission("packet.read", name),
-            "packet.manage",
-            permissionService.buildScopedPermission("packet.manage", name),
-        ) || canReadAnyPacketInGroup(operations, name)
+        return permissionChecker.canReadPacketGroup(
+            getAuthorities(operations),
+            name
+        ) || permissionChecker.canReadAnyPacketInGroup(
+            getAuthorities(operations),
+            name
+        )
     }
 
+    // TODO: remove probably
     fun canReadRoles(operations: SecurityExpressionOperations): Boolean
     {
         return operations.hasAuthority("user.manage") ||
@@ -53,31 +49,15 @@ class AuthorizationLogic(
         operations: SecurityExpressionOperations,
         packetGroupName: String,
         packetId: String? = null,
-    ): Boolean
-    {
-        return when
+    ): Boolean =
+        if (packetId == null)
         {
-            operations.hasAnyAuthority("packet.manage", "user.manage") -> true
-            // check if the user has permission to manage the packet group
-            packetId == null -> operations.hasAnyAuthority(
-                permissionService.buildScopedPermission("packet.manage", packetGroupName)
-            )
-            // check if the user has permission to manage the packet
-            else -> operations.hasAnyAuthority(
-                permissionService.buildScopedPermission("packet.manage", packetGroupName, packetId),
-                permissionService.buildScopedPermission("packet.manage", packetGroupName)
-            )
+            permissionChecker.canManagePacketGroup(getAuthorities(operations), packetGroupName)
+        } else
+        {
+            permissionChecker.canManagePacket(getAuthorities(operations), packetGroupName, packetId)
         }
-    }
 
-    internal fun canReadAnyPacketInGroup(
-        operations: SecurityExpressionOperations,
-        name: String,
-    ): Boolean
-    {
-        return operations.authentication.authorities.any {
-            it.authority.startsWith("packet.read:packet:$name") ||
-                    it.authority.startsWith("packet.manage:packet:$name")
-        }
-    }
+    internal fun getAuthorities(operations: SecurityExpressionOperations) =
+        operations.authentication.authorities.map { it.authority }
 }
