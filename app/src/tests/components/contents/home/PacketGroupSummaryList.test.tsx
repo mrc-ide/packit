@@ -6,8 +6,11 @@ import { PacketGroupSummaryList } from "../../../../app/components/contents/home
 import { server } from "../../../../msw/server";
 import { mockPacketGroupSummaries } from "../../../mocks";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
+import appConfig from "../../../../config/appConfig";
 
-describe("PacketList test", () => {
+const endpoint = `${appConfig.apiUrl()}/packetGroupSummaries`;
+
+describe("PacketGroupSummaryList test", () => {
   const renderComponent = () =>
     render(
       <SWRConfig value={{ dedupingInterval: 0 }}>
@@ -39,9 +42,33 @@ describe("PacketList test", () => {
     expect(screen.getByText(/page 1 of 1/i)).toBeVisible();
   });
 
+  it("should render correctly when no packet groups", async () => {
+    server.use(
+      rest.get(endpoint, (_req, res, ctx) => {
+        return res(
+          ctx.json({
+            content: [],
+            totalPages: 1,
+            totalElements: 0,
+            last: true,
+            first: true,
+            size: 50,
+            number: 0,
+            numberOfElements: 0
+          })
+        );
+      })
+    );
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText(/no packet groups/i)).toBeVisible();
+    });
+  });
+
   it("should render error message when error occurs", async () => {
     server.use(
-      rest.get("*", (req, res, ctx) => {
+      rest.get(endpoint, (_req, res, ctx) => {
         return res(ctx.status(400));
       })
     );
@@ -54,7 +81,7 @@ describe("PacketList test", () => {
 
   it("should render unauthorized when 401 error fetching", async () => {
     server.use(
-      rest.get("*", (req, res, ctx) => {
+      rest.get(endpoint, (_req, res, ctx) => {
         return res(ctx.status(HttpStatus.Unauthorized));
       })
     );

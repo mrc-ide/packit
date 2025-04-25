@@ -41,10 +41,6 @@ export interface Packet {
   endTime: number;
 }
 
-export interface PacketTableProps {
-  data: Packet[];
-}
-
 export interface PacketMetadata {
   id: string;
   name: string;
@@ -62,10 +58,12 @@ export interface PacketDepends {
   query: string;
   files: PacketDependsFiles[];
 }
+
 export interface PacketDependsFiles {
   here: string;
   there: string;
 }
+
 export interface GitMetadata {
   branch: string;
   sha: string;
@@ -169,6 +167,7 @@ export interface BasicPacketGroup {
   name: string;
   id: number;
 }
+
 export interface Tag {
   name: string;
   id: number;
