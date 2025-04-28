@@ -1,6 +1,6 @@
 import { hasPacketRunPermission } from "../../../lib/auth/hasPermission";
 import { cn } from "../../../lib/cn";
-import { NavigationLink } from "../Base/NavigationLink";
+import { NavigationLink } from "../header/NavigationLink";
 import { UserState } from "../providers/types/UserTypes";
 
 export const LeftNavItems = {

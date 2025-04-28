@@ -14,22 +14,24 @@ import { useGetBranding } from "./hooks/useGetBranding";
 export const Header = () => {
   const { user } = useUser();
   const { brandConfig } = useGetBranding();
+  const logoLinkDestination = brandConfig?.logoLink || "/";
+  console.log(brandConfig)
 
   return (
     <header>
       <div data-testid="header" className="flex-col">
         <div className="border-b shadow-sm dark:shadow-accent">
           <div className="flex h-20 items-center px-4">
-            {brandConfig?.logoName && (
-              <img
-                src={`/img/${brandConfig?.logoName}`}
-                height="100%"
-                alt={brandConfig?.logoAltText}
-              />
-            )}
-            <NavLink to="/">
-              <div className="text-xl font-extrabold flex gap-1 items-center">
-                {!brandConfig?.logoName && <PackageOpen />}
+            <NavLink to={logoLinkDestination}>
+              <div className="text-xl font-extrabold flex gap-1 items-center ml-2">
+                {brandConfig?.logoName ? (
+                  <img
+                    src={`/img/${brandConfig?.logoName}`}
+                    className="h-full p-1 mr-2"
+                    alt={brandConfig?.logoAltText}
+                  />) : (
+                  <PackageOpen />
+                )}
                 {brandConfig?.brandName}
               </div>
             </NavLink>

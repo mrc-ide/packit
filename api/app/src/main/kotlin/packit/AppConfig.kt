@@ -47,4 +47,5 @@ class AppConfig(private val environment: Environment)
     val brandName: String = requiredEnvValue("packit.branding.name")
     val brandLogoAltText: String = requiredEnvValue("packit.branding.logoAltText")
     val brandLogoName: String = requiredEnvValue("packit.branding.logoName")
+    val brandLogoLink: String = requiredEnvValue("packit.branding.logoLink")
 }

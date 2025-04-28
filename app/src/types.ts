@@ -180,5 +180,6 @@ export interface Tag {
 export interface BrandingConfiguration {
   brandName: string;
   logoAltText: string;
+  logoLink: string;
   logoName: string;
 }
