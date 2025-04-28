@@ -24,9 +24,9 @@ export const Header = () => {
           <div className="flex h-20 items-center px-4">
             <NavLink to={logoLinkDestination}>
               <div className="text-xl font-extrabold flex gap-1 items-center ml-2">
-                {brandConfig?.logoName ? (
+                {brandConfig?.logoFilename ? (
                   <img
-                    src={`/img/${brandConfig?.logoName}`}
+                    src={`/img/${brandConfig?.logoFilename}`}
                     className="h-full p-1 mr-2"
                     alt={brandConfig?.logoAltText}
                   />) : (
