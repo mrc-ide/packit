@@ -18,6 +18,7 @@ interface PermissionService
         tag: String? = null,
     ): String
 
+    fun mapToScopedPermission(rolePermissions: List<RolePermission>): List<String>
     fun getByName(permissionName: String): Permission
 }
 
@@ -73,6 +74,11 @@ class BasePermissionService(
             tag != null -> "$permission:tag:$tag"
             else -> permission
         }
+    }
+
+    override fun mapToScopedPermission(rolePermissions: List<RolePermission>): List<String>
+    {
+        return rolePermissions.map { buildScopedPermission(it) }
     }
 
     override fun getByName(permissionName: String): Permission

@@ -1,21 +1,17 @@
 import useSWR from "swr";
-import { RoleWithRelationships } from "../types/RoleWithRelationships";
 import appConfig from "../../../../../config/appConfig";
 import { fetcher } from "../../../../../lib/fetch";
-import { getUsersWithRoles } from "../utils/getUsersWithRoles";
+import { RolesAndUsersWithPermissions } from "../types/RoleWithRelationships";
 
 export const useGetRolesWithRelationships = () => {
-  const { data, isLoading, error, mutate } = useSWR<RoleWithRelationships[]>(
-    `${appConfig.apiUrl()}/roles`,
+  const { data, isLoading, error, mutate } = useSWR<RolesAndUsersWithPermissions>(
+    `${appConfig.apiUrl()}/user-role`,
     (url: string) => fetcher({ url })
   );
-  const nonUsernameRoles = data ? data.filter((role) => !role.isUsername) : [];
-  const usernameRoles = data ? data.filter((role) => role.isUsername) : [];
-  const users = data ? getUsersWithRoles(nonUsernameRoles, usernameRoles) : [];
 
   return {
-    roles: nonUsernameRoles,
-    users,
+    roles: data ? data.roles : [],
+    users: data ? data.users : [],
     isLoading,
     error,
     mutate

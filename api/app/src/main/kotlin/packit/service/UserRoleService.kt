@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
 import packit.model.Role
 import packit.model.User
+import packit.model.dto.RolesAndUsersWithPermissions
 import packit.model.dto.UpdateRoleUsers
 import packit.model.dto.UpdateUserRoles
 
@@ -12,6 +13,7 @@ interface UserRoleService
 {
     fun updateRoleUsers(roleName: String, usersToUpdate: UpdateRoleUsers): Role
     fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles): User
+    fun getAllRolesAndUsersWithPermissions(): RolesAndUsersWithPermissions
 }
 
 @Service
@@ -25,7 +27,8 @@ class BaseUserRoleService(
         val user = userService.getByUsername(username)
             ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
 
-        if (user.isServiceUser()) {
+        if (user.isServiceUser())
+        {
             throw PackitException("cannotModifyServiceUser", HttpStatus.BAD_REQUEST)
         }
 
@@ -34,6 +37,17 @@ class BaseUserRoleService(
         removeRolesFromUser(user, rolesToUpdate.filter { it.name in updateUserRoles.roleNamesToRemove })
 
         return userService.saveUser(user)
+    }
+
+    override fun getAllRolesAndUsersWithPermissions(): RolesAndUsersWithPermissions
+    {
+        val roles = roleService.getAllRoles(isUsernames = false)
+        val users = userService.getAllNonServiceUsers()
+
+        return RolesAndUsersWithPermissions(
+            roleService.getSortedRoleDtos(roles),
+            userService.getSortedUsersWithPermissions(users)
+        )
     }
 
     override fun updateRoleUsers(roleName: String, usersToUpdate: UpdateRoleUsers): Role
@@ -48,7 +62,8 @@ class BaseUserRoleService(
         val updateUsers =
             userService.getUsersByUsernames(usersToUpdate.usernamesToAdd + usersToUpdate.usernamesToRemove)
 
-        if (updateUsers.any { it.isServiceUser() }) {
+        if (updateUsers.any { it.isServiceUser() })
+        {
             throw PackitException("cannotModifyServiceUser", HttpStatus.BAD_REQUEST)
         }
 

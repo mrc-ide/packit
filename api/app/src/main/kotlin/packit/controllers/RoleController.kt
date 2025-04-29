@@ -16,10 +16,10 @@ import java.net.URI
 
 @Controller
 @RequestMapping("/roles")
+@PreAuthorize("hasAuthority('user.manage')")
 class RoleController(private val roleService: RoleService, private val userRoleService: UserRoleService)
 {
     @PostMapping()
-    @PreAuthorize("hasAuthority('user.manage')")
     fun createRole(@RequestBody @Validated createRole: CreateRole): ResponseEntity<RoleDto>
     {
         val role = roleService.createRole(createRole)
@@ -28,7 +28,6 @@ class RoleController(private val roleService: RoleService, private val userRoleS
     }
 
     @DeleteMapping("/{roleName}")
-    @PreAuthorize("hasAuthority('user.manage')")
     fun deleteRole(
         @PathVariable roleName: String
     ): ResponseEntity<Unit>
@@ -39,7 +38,6 @@ class RoleController(private val roleService: RoleService, private val userRoleS
     }
 
     @PutMapping("/{roleName}/permissions")
-    @PreAuthorize("hasAuthority('user.manage')")
     fun updatePermissionsToRole(
         @RequestBody @Validated updateRolePermissions: UpdateRolePermissions,
         @PathVariable roleName: String
@@ -51,7 +49,6 @@ class RoleController(private val roleService: RoleService, private val userRoleS
     }
 
     @PutMapping("/{roleName}/users")
-    @PreAuthorize("hasAuthority('user.manage')")
     fun updateUsersToRole(
         @RequestBody @Validated usersToUpdate: UpdateRoleUsers,
         @PathVariable roleName: String
@@ -62,8 +59,8 @@ class RoleController(private val roleService: RoleService, private val userRoleS
         return ResponseEntity.ok(updatedRole.toDto())
     }
 
+    // TODO: change back to user.manage for whole class
     @GetMapping
-    @PreAuthorize("@authz.canReadRoles(#root)")
     fun getRoles(@RequestParam isUsername: Boolean?): ResponseEntity<List<RoleDto>>
     {
         val roles = roleService.getAllRoles(isUsername)
@@ -72,7 +69,6 @@ class RoleController(private val roleService: RoleService, private val userRoleS
     }
 
     @GetMapping("/{roleName}")
-    @PreAuthorize("@authz.canReadRoles(#root)")
     fun getRoleByName(@PathVariable roleName: String): ResponseEntity<RoleDto>
     {
         val role = roleService.getRole(roleName)

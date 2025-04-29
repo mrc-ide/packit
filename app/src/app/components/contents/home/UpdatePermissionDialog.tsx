@@ -4,7 +4,7 @@ import { KeyedMutator } from "swr";
 import { Button } from "../../Base/Button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../Base/Dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../Base/Tooltip";
-import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
+import { RolesAndUsersWithPermissions, RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
 import { UserWithRoles } from "../manageAccess/types/UserWithRoles";
 import { UpdatePacketReadPermissionForm } from "./UpdatePacketReadPermissionForm";
 import { getRolesAndUsersCantReadGroup } from "./utils/getRolesAndUsersCantReadGroup";
@@ -14,7 +14,7 @@ interface UpdatePermissionDialogProps {
   roles: RoleWithRelationships[];
   users: UserWithRoles[];
   packetGroupName: string;
-  mutate: KeyedMutator<RoleWithRelationships[]>;
+  mutate: KeyedMutator<RolesAndUsersWithPermissions>;
 }
 export const UpdatePermissionDialog = ({ roles, users, packetGroupName, mutate }: UpdatePermissionDialogProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);

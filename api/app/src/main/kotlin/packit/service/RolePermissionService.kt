@@ -21,6 +21,9 @@ interface RolePermissionService
         packetGroupName: String,
         packetId: String? = null,
     ): List<Role>
+
+    fun sortRolePermissions(rolePermissions: List<RolePermission>): List<RolePermission>
+
 }
 
 @Service
@@ -78,6 +81,12 @@ class BaseRolePermissionService(
         )
 
         return rolesToAdd + rolesToRemove
+    }
+
+    override fun sortRolePermissions(rolePermissions: List<RolePermission>): List<RolePermission>
+    {
+        return rolePermissions
+            .sortedByDescending { it.tag == null && it.packet == null && it.packetGroup == null }
     }
 
     internal fun getRolePermissionsToUpdate(

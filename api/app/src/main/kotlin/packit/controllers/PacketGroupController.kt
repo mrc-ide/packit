@@ -62,6 +62,18 @@ class PacketGroupController(
         return ResponseEntity.ok(packetGroupService.getPacketGroupSummaries(payload, filter))
     }
 
+    @PreAuthorize("@authz.canUpdatePacketReadRoles(#root,#name, null)")
+    @GetMapping("packetGroups/{name}/read-permission")
+    fun getRolesAndUsersForReadPermissionUpdate(
+        @PathVariable name: String,
+    ): ResponseEntity<RolesToUpdatePacketGroupRead>
+    {
+        val result = roleService.getRolesAndUsersForReadPermissionUpdate(name)
+
+        return ResponseEntity.ok(result)
+    }
+
+    // TODO split into packet and packetgroup
     @PreAuthorize(
         """
         @authz.canUpdatePacketReadRoles(

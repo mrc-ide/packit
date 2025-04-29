@@ -1,8 +1,8 @@
-import { RolePermission } from "./RoleWithRelationships";
+import { BasicRole, RolePermission } from "./RoleWithRelationships";
 
 export interface UserWithRoles {
   username: string;
-  id: string | number;
-  roles: { name: string; id: number }[];
+  id: string;
+  roles: BasicRole[];
   specificPermissions: RolePermission[];
 }

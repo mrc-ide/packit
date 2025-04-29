@@ -13,6 +13,11 @@ data class UpdatePacketReadRoles(
     val roleNamesToRemove: Set<String> = setOf()
 )
 
+data class RolesToUpdatePacketGroupRead(
+    val rolesCantReadGroup: RolesAndUsersWithPermissions,
+    val rolesWithReadGroup: RolesAndUsersWithPermissions
+)
+
 class UpdateRolePermission(
     @field:NotNull
     val permission: String,

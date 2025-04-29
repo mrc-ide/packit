@@ -1,4 +1,5 @@
 import { BasicPacket, BasicPacketGroup, Tag } from "../../../../../types";
+import { UserWithRoles } from "./UserWithRoles";
 
 export interface RolePermission extends BaseRolePermission {
   id: number;
@@ -16,10 +17,20 @@ interface BasicUser {
   id: string;
 }
 
+export interface BasicRole {
+  name: string;
+  id: number;
+}
+
 export interface RoleWithRelationships {
   name: string;
   rolePermissions: RolePermission[];
   users: BasicUser[];
   id: number;
   isUsername: boolean;
+}
+
+export interface RolesAndUsersWithPermissions {
+  roles: RoleWithRelationships[];
+  users: UserWithRoles[];
 }

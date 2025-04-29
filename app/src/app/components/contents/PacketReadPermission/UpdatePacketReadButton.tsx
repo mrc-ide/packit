@@ -4,7 +4,7 @@ import { Button } from "../../Base/Button";
 import { UserCog } from "lucide-react";
 import { PacketMetadata } from "../../../../types";
 import { UserWithRoles } from "../manageAccess/types/UserWithRoles";
-import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
+import { RolesAndUsersWithPermissions, RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
 import { UpdatePacketReadPermissionForm } from "../home/UpdatePacketReadPermissionForm";
 import { KeyedMutator } from "swr";
 import { getRolesUsersWithOnlyReadPacketPermission } from "./utils/getRolesUsersWithOnlyReadPacketPermission";
@@ -14,7 +14,7 @@ interface UpdatePacketReadButtonProps {
   packet: PacketMetadata;
   users: UserWithRoles[];
   roles: RoleWithRelationships[];
-  mutate: KeyedMutator<RoleWithRelationships[]>;
+  mutate: KeyedMutator<RolesAndUsersWithPermissions>;
 }
 
 export const UpdatePacketReadButton = ({ packet, users, roles, mutate }: UpdatePacketReadButtonProps) => {
