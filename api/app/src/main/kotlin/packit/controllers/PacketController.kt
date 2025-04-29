@@ -2,20 +2,26 @@ package packit.controllers
 
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.data.domain.Page
-import org.springframework.http.*
+import org.springframework.http.ContentDisposition
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.MediaTypeFactory.getMediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import packit.exceptions.PackitException
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
 import packit.model.dto.PacketDto
+import packit.model.dto.UpdatePacketReadRoles
 import packit.model.toDto
 import packit.service.PacketService
+import packit.service.RoleService
 
 @RestController
 @RequestMapping("/packets")
-class PacketController(private val packetService: PacketService)
+class PacketController(private val packetService: PacketService, private val roleService: RoleService)
 {
     @GetMapping
     fun pageableIndex(
@@ -44,9 +50,11 @@ class PacketController(private val packetService: PacketService)
         @RequestParam inline: Boolean = false,
         @RequestParam filename: String,
         response: HttpServletResponse
-    ) {
+    )
+    {
         val packet = packetService.getMetadataBy(id)
-        if (packet.files.none { it.hash == hash }) {
+        if (packet.files.none { it.hash == hash })
+        {
             throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
         }
 
@@ -65,7 +73,8 @@ class PacketController(private val packetService: PacketService)
         @PathVariable id: String,
         @RequestParam paths: List<String>,
         response: HttpServletResponse
-    ) {
+    )
+    {
         response.contentType = "application/zip"
         response.setHeader(
             "Content-Disposition",
@@ -73,5 +82,18 @@ class PacketController(private val packetService: PacketService)
         )
 
         packetService.streamZip(paths, id, response.outputStream)
+    }
+
+    @PreAuthorize(
+        "@authz.canUpdatePacketReadRoles(#root,#updatePacketReadRoles.packetGroupName, #id)"
+    )
+    @PutMapping("/{id}/read-permission")
+    fun updatePacketReadPermissionOnRoles(
+        @RequestBody @Validated updatePacketReadRoles: UpdatePacketReadRoles, @PathVariable id: String
+    ): ResponseEntity<Unit>
+    {
+        roleService.updatePacketReadPermissionOnRoles(updatePacketReadRoles, updatePacketReadRoles.packetGroupName, id)
+
+        return ResponseEntity.noContent().build()
     }
 }

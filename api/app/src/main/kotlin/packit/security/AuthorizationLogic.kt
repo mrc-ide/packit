@@ -48,15 +48,16 @@ class AuthorizationLogic(
     fun canUpdatePacketReadRoles(
         operations: SecurityExpressionOperations,
         packetGroupName: String,
-        packetId: String? = null,
+        packetId: String,
     ): Boolean =
-        if (packetId == null)
-        {
-            permissionChecker.canManagePacketGroup(getAuthorities(operations), packetGroupName)
-        } else
-        {
-            permissionChecker.canManagePacket(getAuthorities(operations), packetGroupName, packetId)
-        }
+        permissionChecker.canManagePacket(getAuthorities(operations), packetGroupName, packetId)
+
+
+    fun canUpdatePacketGroupReadRoles(
+        operations: SecurityExpressionOperations,
+        packetGroupName: String,
+    ): Boolean =
+        permissionChecker.canManagePacketGroup(getAuthorities(operations), packetGroupName)
 
     internal fun getAuthorities(operations: SecurityExpressionOperations) =
         operations.authentication.authorities.map { it.authority }

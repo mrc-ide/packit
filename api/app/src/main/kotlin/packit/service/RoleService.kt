@@ -11,12 +11,10 @@ import packit.exceptions.PackitException
 import packit.model.Permission
 import packit.model.Role
 import packit.model.RolePermission
-import packit.model.dto.CreateRole
-import packit.model.dto.RoleDto
-import packit.model.dto.UpdatePacketReadRoles
-import packit.model.dto.UpdateRolePermissions
+import packit.model.dto.*
 import packit.model.toDto
 import packit.repository.RoleRepository
+import packit.security.PermissionChecker
 
 interface RoleService
 {
@@ -33,7 +31,13 @@ interface RoleService
     fun getByRoleName(roleName: String): Role?
     fun getSortedRoleDtos(roles: List<Role>): List<RoleDto>
     fun getDefaultRoles(): List<Role>
-    fun updatePacketReadPermissionOnRoles(updatePacketReadRoles: UpdatePacketReadRoles, packetGroupName: String)
+    fun updatePacketReadPermissionOnRoles(
+        updatePacketReadRoles: UpdateReadRoles,
+        packetGroupName: String,
+        packetId: String? = null
+    )
+
+    fun getRolesAndUsersForReadPermissionUpdate(packetGroupName: String): RolesToUpdatePacketGroupRead
 }
 
 @Service
@@ -42,6 +46,7 @@ class BaseRoleService(
     private val roleRepository: RoleRepository,
     private val permissionService: PermissionService,
     private val rolePermissionService: RolePermissionService,
+    private val permissionChecker: PermissionChecker
 ) : RoleService
 {
     override fun getAdminRole(): Role
@@ -115,9 +120,7 @@ class BaseRoleService(
         return roles.map { role ->
             role.apply {
                 users = users.filterNot { it.isServiceUser() }.sortedBy { it.username }.toMutableList()
-                rolePermissions = role.rolePermissions.sortedByDescending {
-                    it.tag == null && it.packet == null && it.packetGroup == null
-                }.toMutableList()
+                rolePermissions = rolePermissionService.sortRolePermissions(role.rolePermissions).toMutableList()
             }
             role.toDto()
         }
@@ -178,8 +181,9 @@ class BaseRoleService(
 
     @Transactional(rollbackFor = [Exception::class])
     override fun updatePacketReadPermissionOnRoles(
-        updatePacketReadRoles: UpdatePacketReadRoles,
-        packetGroupName: String
+        updatePacketReadRoles: UpdateReadRoles,
+        packetGroupName: String,
+        packetId: String?
     )
     {
         val roleNamesToUpdate =
@@ -192,10 +196,37 @@ class BaseRoleService(
             rolesToUpdate.filter { it.name in updatePacketReadRoles.roleNamesToRemove },
             "packet.read",
             packetGroupName,
-            updatePacketReadRoles.packetId,
+            packetId,
         )
 
         roleRepository.saveAll(updatedRoles)
+    }
+
+    override fun getRolesAndUsersForReadPermissionUpdate(packetGroupName: String): RolesToUpdatePacketGroupRead
+    {
+        // just return as roles maybe? and let FE sort spliting?
+        val allRoles = roleRepository.findAll()
+        val (usernameRoles, roles) = allRoles.partition { it.isUsername }
+        val users = usernameRoles.map { it.users.first() } // user 1 to 1 with username role
+        val rolesCantRead = allRoles.filter {
+            !permissionChecker.canReadPacketGroup(
+                permissionService.mapToScopedPermission(it.rolePermissions),
+                packetGroupName
+            )
+        }.map { it.toDto() }
+        val rolesWithOnlyReadGroupPermission = allRoles.filter {
+            val permissionNames = permissionService.mapToScopedPermission(it.rolePermissions)
+
+            permissionChecker.hasPacketReadPermissionForGroup(permissionNames, packetGroupName) &&
+                    !permissionChecker.canManagePacketGroup(permissionNames, packetGroupName) &&
+                    !permissionChecker.canReadAllPackets(permissionNames)
+        }.map { it.toDto() }
+
+        TODO("implement return")
+//        return RolesToUpdatePacketGroupRead(
+//            rolesCantRead,
+//            rolesWithOnlyReadGroupPermission
+//        )
     }
 
     internal fun getUniqueRoleNamesForUpdate(roleNamesToAdd: Set<String>, roleNamesToRemove: Set<String>): Set<String>

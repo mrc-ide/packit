@@ -23,7 +23,6 @@ interface RolePermissionService
     ): List<Role>
 
     fun sortRolePermissions(rolePermissions: List<RolePermission>): List<RolePermission>
-
 }
 
 @Service

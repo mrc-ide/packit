@@ -47,14 +47,15 @@ export const UpdatePacketReadPermissionForm = ({
     if (values.roleNamesToAdd.length === 0 && values.roleNamesToRemove.length === 0) {
       return setError("You must add or remove at least one role or user.");
     }
-
     try {
       await fetcher({
-        url: `${appConfig.apiUrl()}/packetGroups/${packetGroupName}/read-permission`,
+        url: `${appConfig.apiUrl()}/${
+          packetId ? `packets/${packetId}/read-permission` : `packetGroups/${packetGroupName}/read-permission`
+        }`,
         body: {
           roleNamesToAdd: values.roleNamesToAdd,
           roleNamesToRemove: values.roleNamesToRemove,
-          packetId
+          ...(packetId && { packetGroupName: packetGroupName })
         },
         method: "PUT"
       });

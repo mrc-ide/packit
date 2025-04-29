@@ -73,18 +73,12 @@ class PacketGroupController(
         return ResponseEntity.ok(result)
     }
 
-    // TODO split into packet and packetgroup
     @PreAuthorize(
-        """
-        @authz.canUpdatePacketReadRoles(
-            #root,
-            #name,
-            #updatePacketReadRoles.packetId)
-    """
+        "@authz.canUpdatePacketGroupReadRoles(#root,#name)"
     )
     @PutMapping("packetGroups/{name}/read-permission")
     fun updatePacketReadPermissionOnRoles(
-        @RequestBody @Validated updatePacketReadRoles: UpdatePacketReadRoles,
+        @RequestBody @Validated updatePacketReadRoles: UpdateReadRoles,
         @PathVariable name: String
     ): ResponseEntity<Unit>
     {
