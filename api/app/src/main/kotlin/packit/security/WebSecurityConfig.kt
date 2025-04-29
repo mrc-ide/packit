@@ -23,7 +23,6 @@ import packit.exceptions.PackitExceptionHandler
 import packit.security.oauth2.OAuth2FailureHandler
 import packit.security.oauth2.OAuth2SuccessHandler
 import packit.security.oauth2.OAuth2UserService
-import packit.security.ott.OTTAuthenticationFilter
 import packit.security.provider.JwtIssuer
 import packit.service.BasicUserDetailsService
 
@@ -60,8 +59,7 @@ class WebSecurityConfig(
     @Order(2)
     fun securityFilterChain(
         httpSecurity: HttpSecurity,
-        jwtAuthenticationFilter: JWTAuthenticationFilter,
-        ottAuthenticationFilter: OTTAuthenticationFilter,
+        authStrategySwitch: AuthStrategySwitch,
         filterChainExceptionHandler: FilterChainExceptionHandler
     ): SecurityFilterChain
     {
@@ -69,8 +67,7 @@ class WebSecurityConfig(
             .cors { it.configurationSource(getCorsConfigurationSource()) }
             .csrf { it.disable() }
             .addFilterBefore(filterChainExceptionHandler, LogoutFilter::class.java)
-            .addFilterAfter(ottAuthenticationFilter, LogoutFilter::class.java)
-            .addFilterAfter(jwtAuthenticationFilter, LogoutFilter::class.java)
+            .addFilterAfter(authStrategySwitch, LogoutFilter::class.java)
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .formLogin { it.disable() }
             .handleSecurePaths()

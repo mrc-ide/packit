@@ -7,9 +7,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.util.StringUtils
-import org.springframework.web.filter.OncePerRequestFilter
 import packit.exceptions.PackitException
-import packit.security.ott.OTT_ENDPOINTS_REGEX
 import packit.security.profile.TokenToPrincipal
 import packit.security.profile.UserPrincipalAuthenticationToken
 import packit.security.provider.JwtDecoder
@@ -19,14 +17,14 @@ import java.util.*
 class JWTAuthenticationFilter(
     val jwtDecoder: JwtDecoder,
     val jwtToPrincipal: TokenToPrincipal,
-) : OncePerRequestFilter()
+)
 {
     companion object
     {
         private const val BearerTokenSubString = 7
     }
 
-    override fun doFilterInternal(
+    fun doFilter(
         request: HttpServletRequest,
         response: HttpServletResponse,
         filterChain: FilterChain,
@@ -58,6 +56,4 @@ class JWTAuthenticationFilter(
         }
         return Optional.empty()
     }
-
-    override fun shouldNotFilter(request: HttpServletRequest) = request.servletPath.matches(OTT_ENDPOINTS_REGEX)
 }

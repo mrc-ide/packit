@@ -10,7 +10,6 @@ import org.springframework.security.core.context.SecurityContextHolderStrategy
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository
 import org.springframework.security.web.context.SecurityContextRepository
 import org.springframework.stereotype.Component
-import org.springframework.web.filter.OncePerRequestFilter
 import packit.exceptions.PackitException
 import packit.model.OneTimeToken
 import packit.repository.OneTimeTokenRepository
@@ -21,14 +20,14 @@ import java.util.UUID
 class OTTAuthenticationFilter(
     private val oneTimeTokenRepository: OneTimeTokenRepository,
     private val oneTimeTokenService: OneTimeTokenService,
-) : OncePerRequestFilter()
+)
 {
     private val securityContextRepository: SecurityContextRepository = HttpSessionSecurityContextRepository()
     // To avoid race conditions. See https://docs.spring.io/spring-security/reference/servlet/authentication/session-management.html#use-securitycontextholderstrategy
     private val securityContextHolderStrategy: SecurityContextHolderStrategy =
         SecurityContextHolder.getContextHolderStrategy()
 
-    override fun doFilterInternal(
+    fun doFilter(
         request: HttpServletRequest,
         response: HttpServletResponse,
         filterChain: FilterChain
@@ -61,6 +60,4 @@ class OTTAuthenticationFilter(
         securityContextHolderStrategy.context = context
         securityContextRepository.saveContext(context, request, response)
     }
-
-    override fun shouldNotFilter(request: HttpServletRequest) = !request.servletPath.matches(OTT_ENDPOINTS_REGEX)
 }
