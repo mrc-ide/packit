@@ -9,13 +9,12 @@ import { buttonVariants } from "../Base/Button";
 import { NavMenuMobile } from "./NavMenuMobile";
 import { LeftNav } from "./LeftNav";
 import { hasUserManagePermission } from "../../../lib/auth/hasPermission";
-import { useGetBranding } from "./hooks/useGetBranding";
+import { useGetBranding } from "../contents/common/hooks/useGetBranding";
 
 export const Header = () => {
   const { user } = useUser();
   const { brandConfig } = useGetBranding();
   const logoLinkDestination = brandConfig?.logoLink || "/";
-  console.log(brandConfig)
 
   return (
     <header>
