@@ -40,7 +40,7 @@ export const Router = () => {
               <Route path="/:packetName/:packetId" element={<PacketDetails />} />
               <Route path="/:packetName/:packetId/metadata" element={<Metadata />} />
               <Route path="/:packetName/:packetId/downloads" element={<Downloads />} />
-              <Route path="/:packetName/:packetId/read-permissions" element={<PacketReadPermission />} />
+              <Route path="/:packetName/:packetId/read-access" element={<PacketReadPermission />} />
               {/* <Route path="/:packetName/:packetId/changelogs" element={<ChangeLogs />} /> */}
             </Route>
             <Route element={<ManageAccessLayout />}>

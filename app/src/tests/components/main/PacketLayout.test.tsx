@@ -37,7 +37,7 @@ describe("Packet Layout test", () => {
                 <Route path="/:packetName/:packetId" element={<PacketDetails />} />
                 <Route path="/:packetName/:packetId/metadata" element={<Metadata />} />
                 <Route path="/:packetName/:packetId/downloads" element={<Downloads />} />
-                <Route path="/:packetName/:packetId/read-permissions" element={<div> read permissions page</div>} />
+                <Route path="/:packetName/:packetId/read-access" element={<div> read access page</div>} />
                 {/* <Route path="/:packetName/:packetId/changelogs" element={<ChangeLogs />} /> */}
               </Route>
             </Routes>
@@ -91,20 +91,20 @@ describe("Packet Layout test", () => {
   it("should not render read permissions link if user has no permission to manage packet", () => {
     renderComponent();
 
-    expect(screen.queryByRole("link", { name: /read permissions/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /read permission/i })).not.toBeInTheDocument();
   });
 
-  it("should be able to go to read permissions page if user has manage permission", async () => {
+  it("should be able to go to read access page if user has manage access", async () => {
     mockGetUserFromLocalStorage.mockReturnValue({
       authorities: ["packet.manage"]
     } as any);
 
     renderComponent();
 
-    userEvent.click(screen.getByRole("link", { name: /read permissions/i }));
+    userEvent.click(screen.getByRole("link", { name: /read access/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/read permissions page/i)).toBeVisible();
+      expect(screen.getByText(/read access page/i)).toBeVisible();
     });
   });
 });
