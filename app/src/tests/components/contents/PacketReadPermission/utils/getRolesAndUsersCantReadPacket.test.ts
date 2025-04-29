@@ -1,5 +1,5 @@
 import { RoleWithRelationships } from "../../../../../app/components/contents/manageAccess/types/RoleWithRelationships";
-import { UserWithRoles } from "../../../../../app/components/contents/manageAccess/types/UserWithRoles";
+import { UserWithPermissions } from "../../../../../app/components/contents/manageAccess/types/UserWithPermissions";
 // eslint-disable-next-line max-len
 import { getRolesAndUsersCantReadPacket } from "../../../../../app/components/contents/PacketReadPermission/utils/getRolesAndUsersCantReadPacket";
 
@@ -44,7 +44,7 @@ describe("getRolesAndUsersCantReadPacket", () => {
         { permission: "read", packetGroup: { name: mockPacketGroupName }, packetId: { name: "wrongId" } }
       ]
     }
-  ] as unknown as UserWithRoles[];
+  ] as unknown as UserWithPermissions[];
 
   it("should return roles and users that cannot read the packet due direct permission", () => {
     mockCanReadPacket

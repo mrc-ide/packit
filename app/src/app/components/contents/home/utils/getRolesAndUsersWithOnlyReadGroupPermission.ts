@@ -7,7 +7,7 @@ import {
 } from "../../../../../lib/auth/hasPermission";
 import { mapPermissionsToNames } from "../../../../../lib/constructPermissionName";
 import { RolePermission, RoleWithRelationships } from "../../manageAccess/types/RoleWithRelationships";
-import { UserWithRoles } from "../../manageAccess/types/UserWithRoles";
+import { UserWithPermissions } from "../../manageAccess/types/UserWithPermissions";
 
 /**
  * This function retrieves roles and users that have only have read permissions for a specific packet group.
@@ -15,9 +15,9 @@ import { UserWithRoles } from "../../manageAccess/types/UserWithRoles";
  */
 export const getRolesAndUsersWithOnlyReadGroupPermission = (
   roles: RoleWithRelationships[],
-  users: UserWithRoles[],
+  users: UserWithPermissions[],
   packetGroupName: string
-): (RoleWithRelationships | UserWithRoles)[] => {
+): (RoleWithRelationships | UserWithPermissions)[] => {
   const rolesWithRead = roles.filter((role) => hasOnlyReadGroupPermission(role.rolePermissions, packetGroupName));
 
   const usersWithRead = users.filter((user) => hasOnlyReadGroupPermission(user.specificPermissions, packetGroupName));

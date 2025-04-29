@@ -1,7 +1,7 @@
 import { canReadPacket } from "../../../../../lib/auth/hasPermission";
 import { mapPermissionsToNames } from "../../../../../lib/constructPermissionName";
 import { RoleWithRelationships } from "../../manageAccess/types/RoleWithRelationships";
-import { UserWithRoles } from "../../manageAccess/types/UserWithRoles";
+import { UserWithPermissions } from "../../manageAccess/types/UserWithPermissions";
 
 /**
  * This function retrieves roles and users that cannot read a specific packet.
@@ -9,7 +9,7 @@ import { UserWithRoles } from "../../manageAccess/types/UserWithRoles";
  */
 export const getRolesAndUsersCantReadPacket = (
   roles: RoleWithRelationships[],
-  users: UserWithRoles[],
+  users: UserWithPermissions[],
   packetGroupName: string,
   packetId: string
 ) => {
@@ -29,14 +29,14 @@ export const getRolesAndUsersCantReadPacket = (
 /**
  * Checks if a user has direct read access to the given packet
  */
-const userHasDirectReadPermission = (user: UserWithRoles, packetGroupName: string, packetId: string): boolean =>
+const userHasDirectReadPermission = (user: UserWithPermissions, packetGroupName: string, packetId: string): boolean =>
   canReadPacket(mapPermissionsToNames(user.specificPermissions), packetGroupName, packetId);
 
 /**
  * Checks if a user has read access via their assigned roles
  */
 const userHasReadPermissionViaRole = (
-  user: UserWithRoles,
+  user: UserWithPermissions,
   roles: RoleWithRelationships[],
   packetGroupName: string,
   packetId: string

@@ -1,6 +1,6 @@
 import { BasicRole, RolePermission } from "./RoleWithRelationships";
 
-export interface UserWithRoles {
+export interface UserWithPermissions {
   username: string;
   id: string;
   roles: BasicRole[];

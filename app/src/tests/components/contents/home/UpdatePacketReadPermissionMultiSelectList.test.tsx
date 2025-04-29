@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 // eslint-disable-next-line max-len
 import { UpdatePacketReadPermissionMultiSelectList } from "../../../../app/components/contents/home/UpdatePacketReadPermissionMultiSelectList";
-import { UserWithRoles } from "../../../../app/components/contents/manageAccess/types/UserWithRoles";
+import { UserWithPermissions } from "../../../../app/components/contents/manageAccess/types/UserWithPermissions";
 import { RoleWithRelationships } from "../../../../app/components/contents/manageAccess/types/RoleWithRelationships";
 import {
   MultiSelector,
@@ -18,7 +18,7 @@ describe("UpdatePacketReadPermissionMultiSelectList", () => {
       { id: "3", name: "Guest" },
       { id: "2", username: "x@gmail.com" },
       { id: "4", username: "aa@gmail.com" }
-    ] as unknown as (RoleWithRelationships | UserWithRoles)[];
+    ] as unknown as (RoleWithRelationships | UserWithPermissions)[];
     render(
       <MultiSelector onValuesChange={jest.fn()} values={[]}>
         <MultiSelectorTrigger>

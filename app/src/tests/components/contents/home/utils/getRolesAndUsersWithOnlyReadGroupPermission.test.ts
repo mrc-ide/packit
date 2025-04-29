@@ -1,7 +1,7 @@
 // eslint-disable-next-line max-len
 import { getRolesAndUsersWithOnlyReadGroupPermission } from "../../../../../app/components/contents/home/utils/getRolesAndUsersWithOnlyReadGroupPermission";
 import { RoleWithRelationships } from "../../../../../app/components/contents/manageAccess/types/RoleWithRelationships";
-import { UserWithRoles } from "../../../../../app/components/contents/manageAccess/types/UserWithRoles";
+import { UserWithPermissions } from "../../../../../app/components/contents/manageAccess/types/UserWithPermissions";
 
 const mockHasPacketReadPermissionForGroup = jest.fn().mockReturnValue(false);
 const mockCanReadAllPackets = jest.fn().mockReturnValue(false);
@@ -38,7 +38,7 @@ describe("getRolesAndUsersWithOnlyReadGroupPermission", () => {
       id: "user2",
       specificPermissions: [{ permission: "read", packetGroup: { name: "otherGroup" } }]
     }
-  ] as unknown as UserWithRoles[];
+  ] as unknown as UserWithPermissions[];
 
   it("should return roles and users with read permissions for the specified packet group", () => {
     for (let i = 0; i < mockRoles.length + mockUsers.length; i++) {

@@ -10,12 +10,12 @@ import { Form, FormDescription, FormField, FormItem, FormLabel } from "../../Bas
 import { MultiSelector, MultiSelectorContent, MultiSelectorInput, MultiSelectorTrigger } from "../../Base/MultiSelect";
 import { CustomDialogFooter } from "../common/CustomDialogFooter";
 import { RolesAndUsersWithPermissions, RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
-import { UserWithRoles } from "../manageAccess/types/UserWithRoles";
+import { UserWithPermissions } from "../manageAccess/types/UserWithPermissions";
 import { UpdatePacketReadPermissionMultiSelectList } from "./UpdatePacketReadPermissionMultiSelectList";
 
 interface UpdatePacketReadPermissionFormProps {
-  rolesAndUsersCantRead: (RoleWithRelationships | UserWithRoles)[];
-  rolesAndUsersWithRead: (RoleWithRelationships | UserWithRoles)[];
+  rolesAndUsersCantRead: (RoleWithRelationships | UserWithPermissions)[];
+  rolesAndUsersWithRead: (RoleWithRelationships | UserWithPermissions)[];
   setDialogOpen: Dispatch<SetStateAction<boolean>>;
   packetGroupName: string;
   mutate: KeyedMutator<RolesAndUsersWithPermissions>;

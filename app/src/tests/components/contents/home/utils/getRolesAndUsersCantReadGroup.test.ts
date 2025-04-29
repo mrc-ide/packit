@@ -1,7 +1,7 @@
 // eslint-disable-next-line max-len
 import { getRolesAndUsersCantReadGroup } from "../../../../../app/components/contents/home/utils/getRolesAndUsersCantReadGroup";
 import { RoleWithRelationships } from "../../../../../app/components/contents/manageAccess/types/RoleWithRelationships";
-import { UserWithRoles } from "../../../../../app/components/contents/manageAccess/types/UserWithRoles";
+import { UserWithPermissions } from "../../../../../app/components/contents/manageAccess/types/UserWithPermissions";
 
 const mockCanReadPacketGroup = jest.fn();
 const mockMapPermissionsToNames = jest.fn().mockReturnValue([]);
@@ -36,7 +36,7 @@ describe("getRolesAndUsersCantReadGroup", () => {
       roles: [{ name: "role2" }],
       specificPermissions: [{ permission: "read", packetGroup: { name: "otherGroup" } }]
     }
-  ] as unknown as UserWithRoles[];
+  ] as unknown as UserWithPermissions[];
 
   it("should return roles and users that cannot read the group due direct permission", () => {
     mockCanReadPacketGroup

@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "../../Base/Button";
 import { UserCog } from "lucide-react";
 import { PacketMetadata } from "../../../../types";
-import { UserWithRoles } from "../manageAccess/types/UserWithRoles";
+import { UserWithPermissions } from "../manageAccess/types/UserWithPermissions";
 import { RolesAndUsersWithPermissions, RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
 import { UpdatePacketReadPermissionForm } from "../home/UpdatePacketReadPermissionForm";
 import { KeyedMutator } from "swr";
@@ -12,7 +12,7 @@ import { getRolesAndUsersCantReadPacket } from "./utils/getRolesAndUsersCantRead
 
 interface UpdatePacketReadButtonProps {
   packet: PacketMetadata;
-  users: UserWithRoles[];
+  users: UserWithPermissions[];
   roles: RoleWithRelationships[];
   mutate: KeyedMutator<RolesAndUsersWithPermissions>;
 }

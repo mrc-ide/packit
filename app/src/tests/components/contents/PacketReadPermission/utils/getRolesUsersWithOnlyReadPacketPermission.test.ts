@@ -1,5 +1,5 @@
 import { RoleWithRelationships } from "../../../../../app/components/contents/manageAccess/types/RoleWithRelationships";
-import { UserWithRoles } from "../../../../../app/components/contents/manageAccess/types/UserWithRoles";
+import { UserWithPermissions } from "../../../../../app/components/contents/manageAccess/types/UserWithPermissions";
 // eslint-disable-next-line max-len
 import { getRolesUsersWithOnlyReadPacketPermission } from "../../../../../app/components/contents/PacketReadPermission/utils/getRolesUsersWithOnlyReadPacketPermission";
 
@@ -47,7 +47,7 @@ describe("getRolesUsersWithOnlyReadPacketPermission", () => {
         { permission: "read", packetGroup: { name: mockPacketGroupName }, packetId: { name: "wrongId" } }
       ]
     }
-  ] as unknown as UserWithRoles[];
+  ] as unknown as UserWithPermissions[];
 
   it("should return roles and users with read permissions for the specified packet group", () => {
     for (let i = 0; i < mockRoles.length + mockUsers.length; i++) {

@@ -5,14 +5,14 @@ import { Button } from "../../Base/Button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../Base/Dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../Base/Tooltip";
 import { RolesAndUsersWithPermissions, RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
-import { UserWithRoles } from "../manageAccess/types/UserWithRoles";
+import { UserWithPermissions } from "../manageAccess/types/UserWithPermissions";
 import { UpdatePacketReadPermissionForm } from "./UpdatePacketReadPermissionForm";
 import { getRolesAndUsersCantReadGroup } from "./utils/getRolesAndUsersCantReadGroup";
 import { getRolesAndUsersWithOnlyReadGroupPermission } from "./utils/getRolesAndUsersWithOnlyReadGroupPermission";
 
 interface UpdatePermissionDialogProps {
   roles: RoleWithRelationships[];
-  users: UserWithRoles[];
+  users: UserWithPermissions[];
   packetGroupName: string;
   mutate: KeyedMutator<RolesAndUsersWithPermissions>;
 }

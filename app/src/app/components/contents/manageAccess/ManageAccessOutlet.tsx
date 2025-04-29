@@ -3,7 +3,7 @@ import { useGetRolesWithRelationships } from "./hooks/useGetRolesWithRelationshi
 import { ErrorComponent } from "../common/ErrorComponent";
 import { Skeleton } from "../../Base/Skeleton";
 import { RoleWithRelationships } from "./types/RoleWithRelationships";
-import { UserWithRoles } from "./types/UserWithRoles";
+import { UserWithPermissions } from "./types/UserWithPermissions";
 import { KeyedMutator } from "swr";
 
 export const ManageAccessOutlet = () => {
@@ -29,7 +29,7 @@ export const ManageAccessOutlet = () => {
 
 interface ManageAccessLayoutContext {
   roles: RoleWithRelationships[];
-  users: UserWithRoles[];
+  users: UserWithPermissions[];
   mutate: KeyedMutator<RoleWithRelationships[]>;
 }
 export const useManageAccessLayoutContext = () => useOutletContext<ManageAccessLayoutContext>();
