@@ -32,4 +32,4 @@ class AuthStrategySwitch(
             jwtAuthenticationFilter.doFilter(request, response, filterChain)
         }
     }
-} 
+}

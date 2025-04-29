@@ -187,7 +187,7 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:download-types"])
-    fun `generateTokenForDownloadingFile returns 400 'bad request' if any of the filepaths are not found on the packet`()
+    fun `generateTokenForDownloadingFile returns 400 if any of the filepaths are not found on the packet`()
     {
         val originalTokenCount = oneTimeTokenRepository.count()
 
