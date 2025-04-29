@@ -1,6 +1,5 @@
 package packit.unit.service
 
-import jakarta.persistence.EntityManager
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.*
@@ -9,12 +8,13 @@ import packit.model.OneTimeToken
 import packit.model.Packet
 import packit.repository.OneTimeTokenRepository
 import packit.service.BaseOneTimeTokenService
+import packit.service.BasePacketService
 import java.time.Instant
 import java.util.*
 
 class OneTimeTokenServiceTest {
     private val oneTimeTokenRepository = mock<OneTimeTokenRepository>()
-    private val entityManager = mock<EntityManager>()
+    private val packetService = mock<BasePacketService>()
     private val now = Instant.now()
     private val examplePacket = Packet(
         "packetId",
@@ -25,21 +25,20 @@ class OneTimeTokenServiceTest {
         now.epochSecond.toDouble()
     )
 
-    val sut = BaseOneTimeTokenService(oneTimeTokenRepository, entityManager)
+    val sut = BaseOneTimeTokenService(oneTimeTokenRepository, packetService)
 
     @Test
     fun `createToken should tell repository to create a new token`() {
         val paths = listOf("file1", "file2")
 
-        val packetReference = examplePacket
-        whenever(entityManager.getReference(Packet::class.java, examplePacket.id)).thenReturn(packetReference)
+        whenever(packetService.getPacket(examplePacket.id)).thenReturn(examplePacket)
         whenever(oneTimeTokenRepository.save(any<OneTimeToken>())).thenReturn(mock<OneTimeToken>())
 
         sut.createToken(examplePacket.id, paths)
 
         verify(oneTimeTokenRepository).save(
             argThat {
-                packet == packetReference &&
+                packet == examplePacket &&
                     filePaths == paths &&
                     expiresAt.isAfter(now) &&
                     expiresAt.isBefore(now.plusSeconds(99))

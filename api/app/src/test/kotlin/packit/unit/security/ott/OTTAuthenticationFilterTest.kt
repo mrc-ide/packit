@@ -1,6 +1,5 @@
 package packit.unit.security.ott
 
-import jakarta.persistence.EntityManager
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -15,6 +14,7 @@ import packit.security.ott.OTTAuthenticationFilter
 import packit.security.ott.OTTAuthenticationToken
 import packit.service.BaseOneTimeTokenService
 import packit.service.OneTimeTokenService
+import packit.service.PacketService
 import java.time.Instant
 import java.util.UUID
 
@@ -79,8 +79,8 @@ class OTTAuthenticationFilterTest {
             on { servletPath } doReturn "/packets/$packetId/file"
         }
         val oneTimeTokenRepository = mock<OneTimeTokenRepository>()
-        val entityManager = mock<EntityManager>()
-        val oneTimeTokenService = BaseOneTimeTokenService(oneTimeTokenRepository, entityManager)
+        val packetService = mock<PacketService>()
+        val oneTimeTokenService = BaseOneTimeTokenService(oneTimeTokenRepository, packetService)
         val response: HttpServletResponse = mock()
         val filterChain: FilterChain = mock()
         val filter = OTTAuthenticationFilter(oneTimeTokenService)

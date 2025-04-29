@@ -1,12 +1,10 @@
 package packit.service
 
-import jakarta.persistence.EntityManager
 import jakarta.transaction.Transactional
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
 import packit.model.OneTimeToken
-import packit.model.Packet
 import packit.repository.OneTimeTokenRepository
 import java.time.Instant
 import java.util.*
@@ -23,11 +21,11 @@ private const val EXPIRY_BUFFER_SECONDS = 30L
 @Service
 class BaseOneTimeTokenService(
     private val oneTimeTokenRepository: OneTimeTokenRepository,
-    private val entityManager: EntityManager
+    private val packetService: PacketService
 ) : OneTimeTokenService {
     @Transactional
     override fun createToken(packetId: String, filePaths: List<String>): OneTimeToken {
-        val packet = entityManager.getReference(Packet::class.java, packetId)
+        val packet = packetService.getPacket(packetId)
         // NB the UUID.randomUUID function provides not only uniqueness but security, since it generates the UUID "using
         // a cryptographically strong pseudo random number generator". We rely on that implementation detail in order to
         // prevent the UUID being predictable.
