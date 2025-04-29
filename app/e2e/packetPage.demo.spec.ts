@@ -108,13 +108,13 @@ test.describe("Demo packet page", { tag: TAG_DEMO_PACKETS }, () => {
     });
   });
 
-  test.describe("read-permissions", { tag: TAG_STATE_MUTATE }, () => {
+  test.describe("read-access", { tag: TAG_STATE_MUTATE }, () => {
     test("can update read permissions on packet", async ({ page }) => {
       await page.goto("./");
       const testRoleName = "testE2ERole";
       await createEmptyTestRole(page, testRoleName);
       await page.goto(`./parameters/${parametersPacketId}`);
-      await page.getByRole("link", { name: "Read permissions" }).click();
+      await page.getByRole("link", { name: "Read access" }).click();
 
       // check existing roles
       await expect(page.getByRole("cell", { name: "ADMIN", exact: true })).toBeVisible();

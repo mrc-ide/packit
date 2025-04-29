@@ -21,10 +21,10 @@ const renderComponent = () =>
   render(
     <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>
       <UserProvider>
-        <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/read-permissions`]}>
+        <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/read-access`]}>
           <Routes>
             <Route element={<PacketOutlet packetId={mockPacket.id} />}>
-              <Route path="/:packetName/:packetId/read-permissions" element={<PacketReadPermission />} />
+              <Route path="/:packetName/:packetId/read-access" element={<PacketReadPermission />} />
             </Route>
           </Routes>
         </MemoryRouter>

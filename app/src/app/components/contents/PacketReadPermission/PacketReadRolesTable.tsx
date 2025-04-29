@@ -2,8 +2,8 @@ import { useState } from "react";
 import { DataTable } from "../common/DataTable";
 import { FilterInput } from "../common/FilterInput";
 import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
+import { roleDefaultColumns } from "../manageAccess/utils/manageRolesColumns";
 import { rolesGlobalFilterFn } from "../manageAccess/utils/rolesTableGlobalFilterFn";
-import { packetReadRolesColumns } from "./utils/packetReadRolesColumns";
 
 interface PacketReadRolesTableProps {
   roles: RoleWithRelationships[];
@@ -19,7 +19,7 @@ export const PacketReadRolesTable = ({ roles }: PacketReadRolesTableProps) => {
       </div>
       <div className="max-h-96 overflow-auto">
         <DataTable
-          columns={packetReadRolesColumns}
+          columns={roleDefaultColumns("h-7")}
           clientFiltering
           data={roles}
           globalFiltering={{

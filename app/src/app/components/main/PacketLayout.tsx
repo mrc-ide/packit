@@ -21,8 +21,8 @@ const getSideBarNavItems = (packetName = "", packetId = "", authorities: string[
   ...(canManagePacket(authorities, packetName, packetId)
     ? [
         {
-          to: `/${packetName}/${packetId}/read-permissions`,
-          title: "Read permissions"
+          to: `/${packetName}/${packetId}/read-access`,
+          title: "Read access"
         }
       ]
     : [])
