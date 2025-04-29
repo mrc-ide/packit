@@ -48,7 +48,7 @@ class OneTimeTokenServiceTest {
     }
 
     @Test
-    fun `getToken should retrieve token from repository`() {
+    fun `getToken should retrieve token from repository and delete it`() {
         val tokenId = UUID.randomUUID()
         val token = OneTimeToken(tokenId, mock<Packet>(), listOf("path"), Instant.now())
         whenever(oneTimeTokenRepository.findById(tokenId)).thenReturn(Optional.of(token))
@@ -56,6 +56,7 @@ class OneTimeTokenServiceTest {
         sut.getToken(tokenId)
 
         verify(oneTimeTokenRepository).findById(tokenId)
+        verify(oneTimeTokenRepository).deleteById(tokenId)
     }
 
     @Test

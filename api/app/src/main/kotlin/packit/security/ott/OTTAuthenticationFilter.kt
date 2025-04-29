@@ -12,13 +12,11 @@ import org.springframework.security.web.context.SecurityContextRepository
 import org.springframework.stereotype.Component
 import packit.exceptions.PackitException
 import packit.model.OneTimeToken
-import packit.repository.OneTimeTokenRepository
 import packit.service.OneTimeTokenService
 import java.util.UUID
 
 @Component
 class OTTAuthenticationFilter(
-    private val oneTimeTokenRepository: OneTimeTokenRepository,
     private val oneTimeTokenService: OneTimeTokenService,
 )
 {
@@ -37,10 +35,8 @@ class OTTAuthenticationFilter(
             throw PackitException("tokenNotProvided", HttpStatus.UNAUTHORIZED)
         }
         val ott = oneTimeTokenService.getToken(UUID.fromString(ottId))
-
         updateSecurityContext(ott, request, response)
 
-        oneTimeTokenRepository.deleteById(ott.id)
         filterChain.doFilter(request, response)
     }
 

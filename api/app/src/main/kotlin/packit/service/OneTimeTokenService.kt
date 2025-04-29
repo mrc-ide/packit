@@ -41,9 +41,11 @@ class BaseOneTimeTokenService(
     }
 
     override fun getToken(id: UUID): OneTimeToken {
-        return oneTimeTokenRepository.findById(id).orElseThrow {
+        val oneTimeToken = oneTimeTokenRepository.findById(id).orElseThrow {
             PackitException("tokenDoesNotExist", HttpStatus.UNAUTHORIZED)
         }
+        oneTimeTokenRepository.deleteById(oneTimeToken.id)
+        return oneTimeToken
     }
 
     override fun cleanUpExpiredTokens() {
