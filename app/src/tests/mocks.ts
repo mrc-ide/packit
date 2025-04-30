@@ -22,7 +22,6 @@ export const mockPacketResponse = {
   },
   custom: {} as Custom,
   files: [{ hash: "sha:234:50873fVFDSVSF4", path: "data.rds", size: 97 }],
-  published: false,
   importTime: 1701694312,
   startTime: 1701694312,
   endTime: 1701694312
@@ -306,7 +305,7 @@ export const mockPacketGroupResponse: PageablePackets = {
         b: false,
         c: "hello"
       },
-      published: false,
+
       importTime: 1701761844,
       startTime: 1701761844,
       endTime: 1701761844
@@ -316,7 +315,7 @@ export const mockPacketGroupResponse: PageablePackets = {
       name: mockPacket.name,
       displayName: "parameters",
       parameters: {},
-      published: false,
+
       importTime: 1701761734,
       startTime: 1701761734,
       endTime: 1701761734
@@ -330,7 +329,6 @@ export const mockPacketGroupResponse: PageablePackets = {
         b: 2,
         a: 10
       },
-      published: true,
       importTime: 1701694312,
       startTime: 1701694312,
       endTime: 1701694312
@@ -344,7 +342,7 @@ export const mockPacketGroupResponse: PageablePackets = {
         c: 90,
         b: 22
       },
-      published: false,
+
       importTime: 1701694312,
       startTime: 1701694312,
       endTime: 1701694312
@@ -358,7 +356,7 @@ export const mockPacketGroupResponse: PageablePackets = {
         c: 11,
         a: 1
       },
-      published: false,
+
       importTime: 1701694312,
       startTime: 1701694312,
       endTime: 1701694312

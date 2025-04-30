@@ -17,10 +17,12 @@ import packit.model.dto.PacketGroupSummary
 import packit.model.toDto
 import packit.service.PacketGroupService
 import packit.service.PacketService
+import packit.service.RoleService
 import java.time.Instant
 import kotlin.test.assertEquals
 
-class PacketGroupControllerTest {
+class PacketGroupControllerTest
+{
     val now = Instant.now().epochSecond.toDouble()
 
     private val packets = listOf(
@@ -29,7 +31,6 @@ class PacketGroupControllerTest {
             "test1",
             "test name1",
             mapOf("name" to "value"),
-            true,
             now,
             now,
             now,
@@ -39,7 +40,6 @@ class PacketGroupControllerTest {
             "test3",
             "test name3",
             mapOf("alpha" to true),
-            false,
             1690902034.0,
             1690902034.0,
             1690902034.0
@@ -77,11 +77,13 @@ class PacketGroupControllerTest {
             "Display Name 1", "Accurate description"
         )
     }
+    private val roleService = mock<RoleService>()
 
-    private val sut = PacketGroupController(packetService, packetGroupService)
+    private val sut = PacketGroupController(packetService, packetGroupService, roleService)
 
     @Test
-    fun `get packet group display name and description`() {
+    fun `get packet group display name and description`()
+    {
         val result: ResponseEntity<PacketGroupDisplay> = sut.getDisplay("test-packetGroupName-1")
 
         assertEquals(HttpStatus.OK, result.statusCode)

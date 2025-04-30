@@ -1,6 +1,6 @@
 import { FileDown, Loader2 } from "lucide-react";
 import { useState } from "react";
-import { download, getFileUrl } from "../../../../lib/download";
+import { download } from "../../../../lib/download";
 import { FileMetadata } from "../../../../types";
 import { Button } from "../../Base/Button";
 
@@ -13,10 +13,10 @@ export const FileDownloadButton = ({ file, packetId }: FileDownloadButtonProps) 
   const [error, setError] = useState("");
   const [downloading, setDownloading] = useState(false);
 
-  const downloadFile = (file: FileMetadata) => {
+  const downloadFile = async (file: FileMetadata) => {
     setDownloading(true);
     setError("");
-    download(getFileUrl(file, packetId), file.path)
+    await download([file], packetId, file.path)
       .catch((e) => {
         setError(e.message);
       })

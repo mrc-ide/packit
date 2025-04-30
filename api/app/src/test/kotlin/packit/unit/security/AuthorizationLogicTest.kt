@@ -2,15 +2,19 @@ package packit.unit.security
 
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.mockito.kotlin.*
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
 import org.springframework.security.access.expression.SecurityExpressionOperations
 import org.springframework.security.access.expression.SecurityExpressionRoot
 import org.springframework.security.authentication.TestingAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import packit.model.Packet
 import packit.security.AuthorizationLogic
+import packit.security.ott.OTTAuthenticationToken
+import packit.service.BasePermissionService
 import packit.service.PacketService
 import java.time.Instant
+import java.util.UUID
 import kotlin.test.Test
 
 class AuthorizationLogicTest
@@ -21,7 +25,6 @@ class AuthorizationLogicTest
         "test",
         "test name",
         mapOf("name" to "value"),
-        false,
         now,
         now,
         now
@@ -30,16 +33,63 @@ class AuthorizationLogicTest
     private var packetService = mock<PacketService>() {
         on { getPacket(packet.id) } doReturn packet
     }
+    private var permissionService = BasePermissionService(mock())
 
-    private val sut = AuthorizationLogic(packetService)
+    private val sut = AuthorizationLogic(packetService, permissionService)
 
-    private fun createOps(authorities: List<String>): SecurityExpressionOperations {
-        val token = TestingAuthenticationToken("", "", authorities.map{SimpleGrantedAuthority(it)})
-        return object : SecurityExpressionRoot(token) {}
+    private fun createOps(authorities: List<String>): SecurityExpressionOperations
+    {
+        val token = TestingAuthenticationToken("", "", authorities.map { SimpleGrantedAuthority(it) })
+        return object : SecurityExpressionRoot(token)
+        {}
+    }
+
+    private fun createOttOps(
+        ottId: UUID,
+        packetId: String,
+        filePaths: List<String>,
+        expiresAt: Instant,
+    ): SecurityExpressionOperations
+    {
+        val token = OTTAuthenticationToken(ottId, packetId, filePaths, expiresAt)
+        return object : SecurityExpressionRoot(token)
+        {}
     }
 
     @Test
-    fun `canReadPacket returns true if has global authority`()
+    fun `canReadPacket returns true if has global manage authority`()
+    {
+        val ops = createOps(listOf("packet.manage"))
+        assertTrue(sut.canReadPacket(ops, packet))
+        assertTrue(sut.canReadPacket(ops, packet.id))
+    }
+
+    @Test
+    fun `canReadPacket returns true if has user manage authority`()
+    {
+        val ops = createOps(listOf("user.manage"))
+        assertTrue(sut.canReadPacket(ops, packet))
+        assertTrue(sut.canReadPacket(ops, packet.id))
+    }
+
+    @Test
+    fun `canReadPacket returns true if has packet manage authority`()
+    {
+        val ops = createOps(listOf("packet.manage:packet:${packet.name}:${packet.id}"))
+        assertTrue(sut.canReadPacket(ops, packet))
+        assertTrue(sut.canReadPacket(ops, packet.id))
+    }
+
+    @Test
+    fun `canReadPacket returns true if has packetGroup manage authority`()
+    {
+        val ops = createOps(listOf("packet.manage:packetGroup:${packet.name}"))
+        assertTrue(sut.canReadPacket(ops, packet))
+        assertTrue(sut.canReadPacket(ops, packet.id))
+    }
+
+    @Test
+    fun `canReadPacket returns true if has global read authority`()
     {
         val ops = createOps(listOf("packet.read"))
         assertTrue(sut.canReadPacket(ops, packet))
@@ -47,7 +97,7 @@ class AuthorizationLogicTest
     }
 
     @Test
-    fun `canReadPacket returns true if has packet authority`()
+    fun `canReadPacket returns true if has packet read authority`()
     {
         val ops = createOps(listOf("packet.read:packet:${packet.name}:${packet.id}"))
         assertTrue(sut.canReadPacket(ops, packet))
@@ -55,7 +105,7 @@ class AuthorizationLogicTest
     }
 
     @Test
-    fun `canReadPacket returns true if has packetGroup authority`()
+    fun `canReadPacket returns true if has packetGroup read authority`()
     {
         val ops = createOps(listOf("packet.read:packetGroup:${packet.name}"))
         assertTrue(sut.canReadPacket(ops, packet))
@@ -71,23 +121,51 @@ class AuthorizationLogicTest
     }
 
     @Test
-    fun `canReadPacketGroup returns true if has global authority`()
+    fun `canReadPacketGroup returns true if has global read authority`()
     {
         val ops = createOps(listOf("packet.read"))
         assertTrue(sut.canReadPacketGroup(ops, packet.name))
     }
 
     @Test
-    fun `canReadPacketGroup returns true if has packet authority`()
+    fun `canReadPacketGroup returns true if has user manage authority`()
+    {
+        val ops = createOps(listOf("user.manage"))
+        assertTrue(sut.canReadPacketGroup(ops, packet.name))
+    }
+
+    @Test
+    fun `canReadPacketGroup returns true if has packet read authority`()
     {
         val ops = createOps(listOf("packet.read:packet:${packet.name}:${packet.id}"))
         assertTrue(sut.canReadPacketGroup(ops, packet.name))
     }
 
     @Test
-    fun `canReadPacketGroup returns true if has packetGroup authority`()
+    fun `canReadPacketGroup returns true if has packetGroup read authority`()
     {
         val ops = createOps(listOf("packet.read:packetGroup:${packet.name}"))
+        assertTrue(sut.canReadPacketGroup(ops, packet.name))
+    }
+
+    @Test
+    fun `canReadPacketGroup returns true if has global manage authority`()
+    {
+        val ops = createOps(listOf("packet.manage"))
+        assertTrue(sut.canReadPacketGroup(ops, packet.name))
+    }
+
+    @Test
+    fun `canReadPacketGroup returns true if has packet manage authority`()
+    {
+        val ops = createOps(listOf("packet.manage:packet:${packet.name}:${packet.id}"))
+        assertTrue(sut.canReadPacketGroup(ops, packet.name))
+    }
+
+    @Test
+    fun `canReadPacketGroup returns true if has packetGroup manage authority`()
+    {
+        val ops = createOps(listOf("packet.manage:packetGroup:${packet.name}"))
         assertTrue(sut.canReadPacketGroup(ops, packet.name))
     }
 
@@ -103,5 +181,122 @@ class AuthorizationLogicTest
     {
         val ops = createOps(emptyList())
         assertFalse(sut.canReadPacketGroup(ops, "test2"))
+    }
+
+    @Test
+    fun `canReadRoles returns true if has user manage authority`()
+    {
+        val ops = createOps(listOf("user.manage"))
+        assertTrue(sut.canReadRoles(ops))
+    }
+
+    @Test
+    fun `canReadRoles returns true if has global packet manage authority`()
+    {
+        val ops = createOps(listOf("packet.manage"))
+        assertTrue(sut.canReadRoles(ops))
+    }
+
+    @Test
+    fun `canReadRoles returns true if has any scoped packet manage authority`()
+    {
+        val ops = createOps(listOf("packet.manage:packet:test:123"))
+        assertTrue(sut.canReadRoles(ops))
+    }
+
+    @Test
+    fun `canReadRoles returns false if has no manage authority`()
+    {
+        val ops = createOps(listOf("packet.read"))
+        assertFalse(sut.canReadRoles(ops))
+    }
+
+    @Test
+    fun `canUpdatePacketReadRoles returns true if has global packet manage authority`()
+    {
+        val ops = createOps(listOf("packet.manage"))
+        assertTrue(sut.canUpdatePacketReadRoles(ops, packet.name, packet.id))
+    }
+
+    @Test
+    fun `canUpdatePacketReadRoles returns true if has user manage authority`()
+    {
+        val ops = createOps(listOf("user.manage"))
+        assertTrue(sut.canUpdatePacketReadRoles(ops, packet.name, packet.id))
+    }
+
+    @Test
+    fun `canUpdatePacketReadRoles returns true with packetId when has specific packet manage authority`()
+    {
+        val ops = createOps(listOf("packet.manage:packet:${packet.name}:${packet.id}"))
+        assertTrue(sut.canUpdatePacketReadRoles(ops, packet.name, packet.id))
+    }
+
+    @Test
+    fun `canUpdatePacketReadRoles returns true with packetId when has packetGroup manage authority`()
+    {
+        val ops = createOps(listOf("packet.manage:packetGroup:${packet.name}"))
+        assertTrue(sut.canUpdatePacketReadRoles(ops, packet.name, packet.id))
+    }
+
+    @Test
+    fun `canUpdatePacketReadRoles returns true with when has packetGroup manage authority`()
+    {
+        val ops = createOps(listOf("packet.manage:packetGroup:${packet.name}"))
+        assertTrue(sut.canUpdatePacketReadRoles(ops, packet.name))
+    }
+
+    @Test
+    fun `canUpdatePacketReadRoles returns false with no packetId when lacks proper authority`()
+    {
+        val ops = createOps(listOf("packet.manage:packet:${packet.name}:${packet.id}"))
+        assertFalse(sut.canUpdatePacketReadRoles(ops, packet.name))
+    }
+
+    @Test
+    fun `canUpdatePacketReadRoles returns false with packetId when lacks proper authority`()
+    {
+        val ops = createOps(listOf("packet.manage:packet:${packet.name}:randomId"))
+        assertFalse(sut.canUpdatePacketReadRoles(ops, packet.name, packet.id))
+    }
+
+    @Test
+    fun `oneTimeTokenValid returns true if token has correct permissions and is not expired`() {
+        val permittedPaths = listOf("file1", "file2")
+        val ops = createOttOps(UUID.randomUUID(), packet.id, permittedPaths, Instant.now().plusSeconds(10))
+
+        assertTrue(sut.oneTimeTokenValid(ops, packet.id, permittedPaths))
+    }
+
+    @Test
+    fun `oneTimeTokenValid returns false if token is expired`() {
+        val permittedPaths = listOf("file1", "file2")
+        val ops = createOttOps(UUID.randomUUID(), packet.id, permittedPaths, Instant.now().minusSeconds(10))
+
+        assertFalse(sut.oneTimeTokenValid(ops, packet.id, permittedPaths))
+    }
+
+    @Test
+    fun `oneTimeTokenValid returns false if requested file paths include extra files`() {
+        val permittedPaths = listOf("file1", "file2")
+        val ops = createOttOps(UUID.randomUUID(), packet.id, permittedPaths, Instant.now().plusSeconds(10))
+
+        assertFalse(sut.oneTimeTokenValid(ops, packet.id, listOf("file1", "file2", "file3")))
+    }
+
+    @Test
+    fun `oneTimeTokenValid returns false if requested file paths do not match permitted file paths`() {
+        val permittedPaths = listOf("file1", "file2")
+        val ops = createOttOps(UUID.randomUUID(), packet.id, permittedPaths, Instant.now().plusSeconds(10))
+
+        assertFalse(sut.oneTimeTokenValid(ops, packet.id, listOf("file1", "notMyFile")))
+    }
+
+    @Test
+    fun `oneTimeTokenValid returns false if requested packet id does not match permitted packet id`() {
+        val permittedPaths = listOf("file1", "file2")
+        val ops = createOttOps(UUID.randomUUID(), packet.id, permittedPaths, Instant.now().plusSeconds(10))
+
+        assertFalse(sut.oneTimeTokenValid(ops, "differentPacket", permittedPaths))
     }
 }

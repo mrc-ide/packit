@@ -9,11 +9,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.test.context.jdbc.Sql
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
-import packit.model.Role
-import packit.model.RolePermission
-import packit.model.User
+import packit.model.*
 import packit.model.dto.*
-import packit.model.toDto
 import packit.repository.PermissionRepository
 import packit.repository.RoleRepository
 import packit.repository.UserRepository
@@ -62,7 +59,7 @@ class RoleControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `users with manage authority can create roles`()
+    fun `users with user manage authority can create roles`()
     {
         val result =
             restTemplate.postForEntity(
@@ -185,7 +182,7 @@ class RoleControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `users can get all roles with relationships`()
+    fun `users with user manage can get all roles with relationships`()
     {
         val adminRole = roleRepository.findByName("ADMIN")!!
         val userRole = roleRepository.save(Role(name = "testRole", isUsername = true))
@@ -214,6 +211,21 @@ class RoleControllerTest : IntegrationTest()
                 )
             )
         )
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.manage"])
+    fun `users with packet manage can get all roles with relationships`()
+    {
+        val result =
+            restTemplate.exchange(
+                "/roles",
+                HttpMethod.GET,
+                getTokenizedHttpEntity(),
+                String::class.java
+            )
+
+        assertSuccess(result)
     }
 
     @Test
@@ -289,6 +301,21 @@ class RoleControllerTest : IntegrationTest()
         assertSuccess(result)
 
         assertEquals(roleDto, roleResult)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.manage"])
+    fun `users with packet manage can get specific with relationships`()
+    {
+        val result =
+            restTemplate.exchange(
+                "/roles/ADMIN",
+                HttpMethod.GET,
+                getTokenizedHttpEntity(),
+                String::class.java
+            )
+
+        assertSuccess(result)
     }
 
     @Test

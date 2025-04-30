@@ -26,7 +26,7 @@ export const AddRoleForm = ({ mutate, setOpen }: AddRoleFormProps) => {
       .string()
       .min(1)
       .regex(
-        /^[a-zA-Z0-9]+(\s[a-zA-Z0-9]+)*$/,
+        /^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$/,
         "Name must only contain alphanumeric characters & no leading/trailing spaces."
       ),
     permissionNames: z.array(z.string())

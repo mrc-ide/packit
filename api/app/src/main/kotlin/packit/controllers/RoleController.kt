@@ -1,5 +1,6 @@
 package packit.controllers
 
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
@@ -12,22 +13,22 @@ import packit.model.dto.UpdateRoleUsers
 import packit.model.toDto
 import packit.service.RoleService
 import packit.service.UserRoleService
-import java.net.URI
 
 @Controller
-@PreAuthorize("hasAuthority('user.manage')")
 @RequestMapping("/roles")
 class RoleController(private val roleService: RoleService, private val userRoleService: UserRoleService)
 {
     @PostMapping()
+    @PreAuthorize("hasAuthority('user.manage')")
     fun createRole(@RequestBody @Validated createRole: CreateRole): ResponseEntity<RoleDto>
     {
         val role = roleService.createRole(createRole)
 
-        return ResponseEntity.created(URI.create("/roles/${role.name}")).body(role.toDto())
+        return ResponseEntity<RoleDto>(role.toDto(), HttpStatus.CREATED)
     }
 
     @DeleteMapping("/{roleName}")
+    @PreAuthorize("hasAuthority('user.manage')")
     fun deleteRole(
         @PathVariable roleName: String
     ): ResponseEntity<Unit>
@@ -38,6 +39,7 @@ class RoleController(private val roleService: RoleService, private val userRoleS
     }
 
     @PutMapping("/{roleName}/permissions")
+    @PreAuthorize("hasAuthority('user.manage')")
     fun updatePermissionsToRole(
         @RequestBody @Validated updateRolePermissions: UpdateRolePermissions,
         @PathVariable roleName: String
@@ -49,6 +51,7 @@ class RoleController(private val roleService: RoleService, private val userRoleS
     }
 
     @PutMapping("/{roleName}/users")
+    @PreAuthorize("hasAuthority('user.manage')")
     fun updateUsersToRole(
         @RequestBody @Validated usersToUpdate: UpdateRoleUsers,
         @PathVariable roleName: String
@@ -60,6 +63,7 @@ class RoleController(private val roleService: RoleService, private val userRoleS
     }
 
     @GetMapping
+    @PreAuthorize("@authz.canReadRoles(#root)")
     fun getRoles(@RequestParam isUsername: Boolean?): ResponseEntity<List<RoleDto>>
     {
         val roles = roleService.getAllRoles(isUsername)
@@ -68,6 +72,7 @@ class RoleController(private val roleService: RoleService, private val userRoleS
     }
 
     @GetMapping("/{roleName}")
+    @PreAuthorize("@authz.canReadRoles(#root)")
     fun getRoleByName(@PathVariable roleName: String): ResponseEntity<RoleDto>
     {
         val role = roleService.getRole(roleName)

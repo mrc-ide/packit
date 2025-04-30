@@ -6,6 +6,7 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.*
 import org.springframework.data.domain.Sort
+import org.springframework.http.HttpStatus
 import org.springframework.http.client.ClientHttpResponse
 import packit.exceptions.PackitException
 import packit.model.*
@@ -34,7 +35,6 @@ class PacketServiceTest
                 "test",
                 "",
                 mapOf("alpha" to 1),
-                false,
                 now,
                 now,
                 now
@@ -44,7 +44,6 @@ class PacketServiceTest
                 "test",
                 "test name (latest display name)",
                 mapOf("beta" to 1),
-                true,
                 now,
                 now + 100,
                 now
@@ -54,7 +53,6 @@ class PacketServiceTest
                 "test2",
                 "Test 2 Display Name",
                 mapOf(),
-                false,
                 now,
                 now,
                 now
@@ -68,7 +66,6 @@ class PacketServiceTest
                 "test",
                 "test name (old display name)",
                 mapOf("name" to "value"),
-                false,
                 now - 50,
                 (now - 100),
                 now,
@@ -78,7 +75,6 @@ class PacketServiceTest
                 "test2",
                 "",
                 mapOf("beta" to 1),
-                true,
                 now - 60,
                 (now - 200),
                 now,
@@ -130,10 +126,10 @@ class PacketServiceTest
             on { getMetadataById(packetMetadata.id) } doReturn packetMetadata
             on {
                 getFileByHash(
-                anyString(),
-                any<OutputStream>(),
-                any<(ClientHttpResponse) -> Unit>()
-            )
+                    anyString(),
+                    any<OutputStream>(),
+                    any<(ClientHttpResponse) -> Unit>()
+                )
             } doAnswer { invocationOnMock ->
                 val outputStream = invocationOnMock.getArgument<OutputStream>(1)
                 outputStream.write("mocked output content".toByteArray())
@@ -259,20 +255,66 @@ class PacketServiceTest
 
         assertThrows<PackitException> {
             sut.getPacket(packetId)
+        }.apply {
+            assertEquals("packetNotFound", key)
+            assertEquals(HttpStatus.NOT_FOUND, httpStatus)
         }
     }
 
     @Test
-    fun `getFileByHash should forward all its arguments to outpack_server client`() {
+    fun `validateFilesExistsForPacket throws when any path is not found on the packet metadata`()
+    {
+        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+
+        val error = assertThrows<PackitException> {
+            sut.validateFilesExistForPacket(packetMetadata.id, listOf("file1.txt", "no-such-file.txt"))
+        }
+        assertEquals("PackitException with key notAllFilesFound", error.message)
+    }
+
+    @Test
+    fun `validateFilesExistsForPacket throws when no paths are supplied`()
+    {
+        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+
+        val error = assertThrows<PackitException> {
+            sut.validateFilesExistForPacket(packetMetadata.id, listOf())
+        }
+        assertEquals("PackitException with key noFilesProvided", error.message)
+    }
+
+    @Test
+    fun `validateFilesExistsForPacket returns the list of all files belonging to the packet`()
+    {
+        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+
+        val result = sut.validateFilesExistForPacket(packetMetadata.id, listOf("file1.txt"))
+        assertEquals(packetMetadata.files, result)
+    }
+
+    @Test
+    fun `getFileByPath should forward the request to outpack_server client`() {
         val outputStream = ByteArrayOutputStream()
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
         val mockLambda = mock<(ClientHttpResponse) -> Unit>()
-        sut.getFileByHash("sha256:hash1", outputStream, mockLambda)
+        sut.getFileByPath(packetMetadata.id, "file1.txt", outputStream, mockLambda)
         verify(outpackServerClient).getFileByHash("sha256:hash1", outputStream, mockLambda)
     }
 
     @Test
-    fun `streamZip should write files to zip output stream`() {
+    fun `getFileByPath should throw PackitException if file not found`()
+    {
+        val outputStream = ByteArrayOutputStream()
+        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+
+        assertThrows<PackitException> {
+            sut.getFileByPath(packetMetadata.id, "no-such-file.txt", outputStream) {}
+        }
+    }
+
+    @Test
+    fun `streamZip should write files to zip output stream`()
+    {
         val outputStream = ByteArrayOutputStream()
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
         sut.streamZip(listOf("file1.txt", "file2.txt"), packetMetadata.id, outputStream)
@@ -282,7 +324,8 @@ class PacketServiceTest
         val entryNames = mutableListOf<String>()
         val entryContents = mutableListOf<String>()
         var entry = zipInputStream.nextEntry
-        while (entry != null) {
+        while (entry != null)
+        {
             entryNames.add(entry.name)
             entryContents.add(zipInputStream.readBytes().toString(Charsets.UTF_8))
             entry = zipInputStream.nextEntry
@@ -292,7 +335,8 @@ class PacketServiceTest
     }
 
     @Test
-    fun `streamZip should throw PackitException if not all files are found`() {
+    fun `streamZip should throw PackitException if not all files are found`()
+    {
         val outputStream = ByteArrayOutputStream()
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
 
@@ -302,7 +346,8 @@ class PacketServiceTest
     }
 
     @Test
-    fun `streamZip should throw PackitException if no paths supplied`() {
+    fun `streamZip should throw PackitException if no paths supplied`()
+    {
         val outputStream = ByteArrayOutputStream()
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
 
@@ -312,7 +357,8 @@ class PacketServiceTest
     }
 
     @Test
-    fun `streamZip should throw PackitException if there is an error creating the zip`() {
+    fun `streamZip should throw PackitException if there is an error creating the zip`()
+    {
         val outputStream = ByteArrayOutputStream()
         val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
         whenever(

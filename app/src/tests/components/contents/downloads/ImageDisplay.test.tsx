@@ -9,15 +9,15 @@ jest.mock("../../../../lib/download", () => ({
   ...jest.requireActual("../../../../lib/download"),
   getFileObjectUrl: async (...args: any[]) => mockGetFileObjectUrl(...args)
 }));
-const mockHash = "sha256:12345";
 const revokeObjectURL = jest.fn();
 URL.revokeObjectURL = revokeObjectURL;
 
 describe("image display component", () => {
+  const file = { path: "test.png", hash: "sha256:12345", size: 12345 };
   const packet = {
-    files: [{ path: "test.png", hash: mockHash }],
+    files: [file],
     id: "20231130-082812-cd744153"
-  } as unknown as PacketMetadata;
+  } as PacketMetadata;
 
   const renderComponent = () => {
     return render(
@@ -25,7 +25,7 @@ describe("image display component", () => {
         <MemoryRouter initialEntries={["/"]}>
           <Routes>
             <Route element={<Outlet context={{ packet }} />}>
-              <Route path="/" element={<ImageDisplay file={packet.files[0]} />} />
+              <Route path="/" element={<ImageDisplay file={file} />} />
             </Route>
           </Routes>
         </MemoryRouter>
@@ -50,10 +50,7 @@ describe("image display component", () => {
       expect(image).toHaveAttribute("alt", "test.png");
     });
 
-    expect(mockGetFileObjectUrl).toHaveBeenCalledWith(
-      `http://localhost:8080/packets/${packet.id}/file?hash=${mockHash}&filename=test.png&inline=false`,
-      "test.png"
-    );
+    expect(mockGetFileObjectUrl).toHaveBeenCalledWith(file, packet.id, file.path);
   });
 
   it("renders error component if error fetching file data", async () => {

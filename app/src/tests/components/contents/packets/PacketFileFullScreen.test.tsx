@@ -4,6 +4,10 @@ import { mockPacket } from "../../../mocks";
 import { PacketFileFullScreen } from "../../../../app/components/contents/packets";
 import { SWRConfig } from "swr";
 
+jest.mock("../../../../lib/auth/getAuthHeader", () => ({
+  getAuthHeader: () => ({ Authorization: "fakeAuthHeader" })
+}));
+
 const imageFile = mockPacket.files.filter((file) => file.path === "directory/graph.png")[0];
 
 describe("PacketFileFullScreen", () => {
@@ -21,12 +25,20 @@ describe("PacketFileFullScreen", () => {
     );
   };
 
-  it("renders PacketReport when the file is an HTML file", async () => {
+  it("renders PacketReport when the file is an HTML file, and correctly revokes blob URL", async () => {
     URL.createObjectURL = jest.fn(() => "testFileObjectUrl");
-    URL.revokeObjectURL = jest.fn();
+    const revokeObjectURL = jest.fn();
+    URL.revokeObjectURL = revokeObjectURL;
 
     renderComponent("report.html");
+
+    const { unmount } = renderComponent("report.html");
+
     expect((await screen.findByTestId("report-iframe")).getAttribute("src")).toBe("testFileObjectUrl");
+
+    unmount();
+
+    expect(revokeObjectURL).toHaveBeenCalledWith("testFileObjectUrl");
   });
 
   it("renders image when the file is an image file, and correctly revokes blob URL", async () => {
