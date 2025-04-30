@@ -16,7 +16,8 @@ export const ProtectedRoute = () => {
 
   const navigateToLogin = (qs = "") => {
     // navigate to logged out screen, either using react routing or external navigation, depending on whether we're
-    // using pre-auth, which may require logout action from auth provider
+    // using pre-auth, which may require logout action from auth provider. (See /packit/logout route in montagu nginx
+    // conf for how this works with Montagu: https://github.com/vimc/montagu-proxy/blob/master/nginx.montagu.conf)
     if (authConfig?.enablePreAuthLogin) {
       const href = `${process.env.PUBLIC_URL}/logout`;
       windowNavigate(href);
