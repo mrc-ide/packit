@@ -95,7 +95,7 @@ class LoginControllerTestPreAuth : IntegrationTest()
     {
         if (userRepository.existsByUsername(userName)) {
             userRepository.deleteByUsername(userName)
-        }
+       }
     }
 
     @Test

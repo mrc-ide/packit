@@ -59,37 +59,37 @@ abstract class IntegrationTest
 
     protected fun <T>assertSuccess(responseEntity: ResponseEntity<T>)
     {
-        assertEquals(responseEntity.statusCode, HttpStatus.OK)
-        assertEquals(responseEntity.headers.contentType, MediaType.APPLICATION_JSON)
+        assertEquals(HttpStatus.OK, responseEntity.statusCode, )
+        assertEquals(MediaType.APPLICATION_JSON, responseEntity.headers.contentType)
     }
 
     protected fun <T>assertUnauthorized(responseEntity: ResponseEntity<T>)
     {
-        assertEquals(responseEntity.statusCode, HttpStatus.UNAUTHORIZED)
+        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.statusCode)
     }
 
     protected fun <T>assertForbidden(responseEntity: ResponseEntity<T>)
     {
-        assertEquals(responseEntity.statusCode, HttpStatus.FORBIDDEN)
+        assertEquals(HttpStatus.FORBIDDEN, responseEntity.statusCode)
     }
 
     protected fun <T>assertBadRequest(responseEntity: ResponseEntity<T>)
     {
-        assertEquals(responseEntity.statusCode, HttpStatus.BAD_REQUEST)
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.statusCode)
     }
 
     protected fun <T>assertNotFound(responseEntity: ResponseEntity<T>)
     {
-        assertEquals(responseEntity.statusCode, HttpStatus.NOT_FOUND)
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.statusCode)
     }
 
     protected fun assertHtmlFileSuccess(responseEntity: ResponseEntity<String>)
     {
-        assertEquals(responseEntity.statusCode, HttpStatus.OK)
-        assertEquals(responseEntity.headers.contentType, MediaType.TEXT_HTML)
+        assertEquals(HttpStatus.OK,responseEntity.statusCode)
+        assertEquals(MediaType.TEXT_HTML, responseEntity.headers.contentType)
         assertEquals(
-            responseEntity.headers.contentDisposition,
-            ContentDisposition.parse("attachment; filename=report.html")
+            ContentDisposition.parse("attachment; filename=report.html"),
+            responseEntity.headers.contentDisposition
         )
         assertThat(responseEntity.body).isEqualToIgnoringNewLines("<html><body><h1>TEST</h1></body></html>")
     }
