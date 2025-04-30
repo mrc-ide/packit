@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.AccessDeniedException
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
 import packit.helpers.PagingHelper
@@ -13,6 +14,7 @@ import packit.model.dto.PacketGroupDisplay
 import packit.model.dto.PacketGroupSummary
 import packit.model.dto.toPacketGroupSummary
 import packit.repository.PacketGroupRepository
+import packit.security.PermissionChecker
 import packit.service.utils.getDescriptionForPacket
 import packit.service.utils.getDisplayNameForPacket
 
@@ -23,13 +25,15 @@ interface PacketGroupService
     fun getPacketGroupSummaries(pageablePayload: PageablePayload, filter: String): Page<PacketGroupSummary>
     fun getPacketGroup(id: Int): PacketGroup
     fun getPacketGroupByName(name: String): PacketGroup
+    fun getAllPacketGroupsCanManage(): List<PacketGroup>
 }
 
 @Service
 class BasePacketGroupService(
     private val packetGroupRepository: PacketGroupRepository,
     private val packetService: PacketService,
-    private val outpackServerClient: OutpackServer
+    private val outpackServerClient: OutpackServer,
+    private val permissionChecker: PermissionChecker
 ) : PacketGroupService
 {
     override fun getPacketGroups(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroup>
@@ -91,6 +95,22 @@ class BasePacketGroupService(
     {
         return packetGroupRepository.findByName(name)
             ?: throw PackitException("packetGroupNotFound", HttpStatus.NOT_FOUND)
+    }
+
+    override fun getAllPacketGroupsCanManage(): List<PacketGroup>
+    {
+        val allPacketGroups = packetGroupRepository.findAll()
+        val authorities = SecurityContextHolder.getContext().authentication.authorities.map { it.authority }
+
+        return if (permissionChecker.canManageAllPackets(authorities))
+        {
+            allPacketGroups
+        } else
+        {
+            allPacketGroups.filter {
+                permissionChecker.hasPacketManagePermissionForGroup(authorities, it.name)
+            }
+        }
     }
 
     /**

@@ -36,15 +36,6 @@ class AuthorizationLogic(
         )
     }
 
-    // TODO: remove probably
-    fun canReadRoles(operations: SecurityExpressionOperations): Boolean
-    {
-        return operations.hasAuthority("user.manage") ||
-                operations.authentication.authorities.any {
-                    it.authority.startsWith("packet.manage")
-                }
-    }
-
     fun canUpdatePacketReadRoles(
         operations: SecurityExpressionOperations,
         packetGroupName: String,
@@ -52,12 +43,14 @@ class AuthorizationLogic(
     ): Boolean =
         permissionChecker.canManagePacket(getAuthorities(operations), packetGroupName, packetId)
 
-
     fun canUpdatePacketGroupReadRoles(
         operations: SecurityExpressionOperations,
         packetGroupName: String,
     ): Boolean =
         permissionChecker.canManagePacketGroup(getAuthorities(operations), packetGroupName)
+
+    fun canManageAnyPacket(operations: SecurityExpressionOperations): Boolean =
+        permissionChecker.hasAnyPacketManagePermission(getAuthorities(operations))
 
     internal fun getAuthorities(operations: SecurityExpressionOperations) =
         operations.authentication.authorities.map { it.authority }

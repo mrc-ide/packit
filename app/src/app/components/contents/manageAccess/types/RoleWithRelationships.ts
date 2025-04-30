@@ -34,3 +34,8 @@ export interface RolesAndUsersWithPermissions {
   roles: RoleWithRelationships[];
   users: UserWithPermissions[];
 }
+
+export interface RolesAndUsersToUpdateRead {
+  cantRead: RolesAndUsersWithPermissions;
+  withRead: RolesAndUsersWithPermissions;
+}

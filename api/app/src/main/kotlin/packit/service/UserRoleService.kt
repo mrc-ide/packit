@@ -14,7 +14,7 @@ interface UserRoleService
     fun updateRoleUsers(roleName: String, usersToUpdate: UpdateRoleUsers): Role
     fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles): User
     fun getAllRolesAndUsersWithPermissions(): RolesAndUsersWithPermissionsDto
-    fun getRolesAndUsersForReadPermissionUpdate(packetGroupName: String): RolesToUpdatePacketGroupRead
+    fun getRolesAndUsersForReadPermissionUpdate(packetGroupNames: List<String>): Map<String, RolesAndUsersToUpdateRead>
 }
 
 @Service
@@ -47,26 +47,19 @@ class BaseUserRoleService(
         return createSortedRolesAndUsersWithPermissionsDto(getNonUsernameRolesAndNonServiceUsers())
     }
 
-    override fun getRolesAndUsersForReadPermissionUpdate(packetGroupName: String): RolesToUpdatePacketGroupRead
+    override fun getRolesAndUsersForReadPermissionUpdate(packetGroupNames: List<String>): Map<String, RolesAndUsersToUpdateRead>
     {
         val (roles, users) = getNonUsernameRolesAndNonServiceUsers()
-
-        return RolesToUpdatePacketGroupRead(
-            cantReadGroup = createSortedRolesAndUsersWithPermissionsDto(
-                getRolesAndUsersCantReadGroup(
-                    roles,
-                    users,
-                    packetGroupName
-                )
-            ),
-            withReadGroup = createSortedRolesAndUsersWithPermissionsDto(
-                getRolesAndUsersWithOnlyReadGroup(
-                    roles,
-                    users,
-                    packetGroupName
+        return packetGroupNames.associateWith {
+            RolesAndUsersToUpdateRead(
+                cantRead = createSortedRolesAndUsersWithPermissionsDto(
+                    getRolesAndUsersCantReadGroup(roles, users, it)
+                ),
+                withRead = createSortedRolesAndUsersWithPermissionsDto(
+                    getRolesAndUsersWithOnlyReadGroup(roles, users, it)
                 )
             )
-        )
+        }
     }
 
     override fun updateRoleUsers(roleName: String, usersToUpdate: UpdateRoleUsers): Role

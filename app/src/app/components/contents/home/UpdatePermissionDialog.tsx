@@ -1,26 +1,23 @@
 import { UserCog } from "lucide-react";
 import { useState } from "react";
-import { KeyedMutator } from "swr";
 import { Button } from "../../Base/Button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../Base/Dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../Base/Tooltip";
-import { RolesAndUsersWithPermissions, RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
-import { UserWithPermissions } from "../manageAccess/types/UserWithPermissions";
+import { RolesAndUsersToUpdateRead } from "../manageAccess/types/RoleWithRelationships";
 import { UpdatePacketReadPermissionForm } from "./UpdatePacketReadPermissionForm";
-import { getRolesAndUsersCantReadGroup } from "./utils/getRolesAndUsersCantReadGroup";
-import { getRolesAndUsersWithOnlyReadGroupPermission } from "./utils/getRolesAndUsersWithOnlyReadGroupPermission";
+import { KeyedMutator } from "swr";
 
 interface UpdatePermissionDialogProps {
-  roles: RoleWithRelationships[];
-  users: UserWithPermissions[];
   packetGroupName: string;
-  mutate: KeyedMutator<RolesAndUsersWithPermissions>;
+  rolesAndUsersToUpdateRead: RolesAndUsersToUpdateRead;
+  mutate: KeyedMutator<Record<string, RolesAndUsersToUpdateRead>>;
 }
-export const UpdatePermissionDialog = ({ roles, users, packetGroupName, mutate }: UpdatePermissionDialogProps) => {
+export const UpdatePermissionDialog = ({
+  packetGroupName,
+  rolesAndUsersToUpdateRead,
+  mutate
+}: UpdatePermissionDialogProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
-  // todo: get these from endpoint!!
-  const rolesAndUsersCantReadGroup = getRolesAndUsersCantReadGroup(roles, users, packetGroupName);
-  const rolesAndUsersWithReadGroup = getRolesAndUsersWithOnlyReadGroupPermission(roles, users, packetGroupName);
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -45,9 +42,17 @@ export const UpdatePermissionDialog = ({ roles, users, packetGroupName, mutate }
         <DialogHeader>
           <DialogTitle>Update read access on {packetGroupName}</DialogTitle>
         </DialogHeader>
+
         <UpdatePacketReadPermissionForm
-          rolesAndUsersCantRead={rolesAndUsersCantReadGroup}
-          rolesAndUsersWithRead={rolesAndUsersWithReadGroup}
+          // TODO: do array later on!! in showing of list. maybe just return strings also?
+          rolesAndUsersCantRead={[
+            ...rolesAndUsersToUpdateRead.cantRead.roles,
+            ...rolesAndUsersToUpdateRead.cantRead.users
+          ]}
+          rolesAndUsersWithRead={[
+            ...rolesAndUsersToUpdateRead.withRead.roles,
+            ...rolesAndUsersToUpdateRead.withRead.users
+          ]}
           setDialogOpen={setDialogOpen}
           packetGroupName={packetGroupName}
           mutate={mutate}

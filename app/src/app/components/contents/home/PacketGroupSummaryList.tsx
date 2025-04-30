@@ -1,14 +1,14 @@
 import { Dispatch, SetStateAction } from "react";
+import { hasAnyPacketManagePermission } from "../../../../lib/auth/hasPermission";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
 import { Skeleton } from "../../Base/Skeleton";
+import { useUser } from "../../providers/UserProvider";
 import { ErrorComponent } from "../common/ErrorComponent";
 import { Pagination } from "../common/Pagination";
 import { Unauthorized } from "../common/Unauthorized";
 import { PacketGroupSummaryListItem } from "./PacketGroupSummaryListItem";
 import { useGetPacketGroupSummaries } from "./hooks/useGetPacketGroupSummaries";
-import { useUser } from "../../providers/UserProvider";
-import { useGetRolesWithRelationships } from "../manageAccess/hooks/useGetRolesWithRelationships";
-import { canReadRoles } from "../../../../lib/auth/hasPermission";
+import { useGetRolesAndUsersToUpdateRead } from "./hooks/useGetRolesAndUsersToUpdateRead";
 
 interface PacketGroupSummaryListProps {
   filterByName: string;
@@ -23,20 +23,25 @@ export const PacketGroupSummaryList = ({
   setPageNumber
 }: PacketGroupSummaryListProps) => {
   const { user } = useUser();
-  // todo: wont hit this endpoint anymore!!
-  const rolesResponse = canReadRoles(user?.authorities) ? useGetRolesWithRelationships() : undefined;
+  const rolesAndUsersToUpdateReadRes = hasAnyPacketManagePermission(user?.authorities)
+    ? useGetRolesAndUsersToUpdateRead()
+    : null;
   const {
     packetGroupSummaries,
     isLoading,
     error: packetFetchError
   } = useGetPacketGroupSummaries(pageNumber, pageSize, filterByName);
 
-  if (packetFetchError?.status === HttpStatus.Unauthorized || rolesResponse?.error?.status === HttpStatus.Unauthorized)
+  if (
+    packetFetchError?.status === HttpStatus.Unauthorized ||
+    rolesAndUsersToUpdateReadRes?.error?.status === HttpStatus.Unauthorized
+  )
     return <Unauthorized />;
+  if (rolesAndUsersToUpdateReadRes?.error)
+    return <ErrorComponent message="Error fetching roles and users" error={rolesAndUsersToUpdateReadRes.error} />;
   if (packetFetchError) return <ErrorComponent message="Error fetching packet groups" error={packetFetchError} />;
-  if (rolesResponse?.error) return <ErrorComponent message="Error fetching roles" error={rolesResponse.error} />;
 
-  if (isLoading || rolesResponse?.isLoading)
+  if (isLoading)
     return (
       <ul className="flex flex-col border rounded-md">
         {[...Array(2)].map((_, index) => (
@@ -62,7 +67,7 @@ export const PacketGroupSummaryList = ({
             <PacketGroupSummaryListItem
               key={packetGroup.latestId}
               packetGroup={packetGroup}
-              rolesResponse={rolesResponse}
+              rolesAndUsersToUpdateReadRes={rolesAndUsersToUpdateReadRes}
             />
           ))}
         </ul>

@@ -68,6 +68,11 @@ class PermissionChecker(private val permissionService: PermissionService)
                     canManageAnyPacketInGroup(authorities, packetGroupName)
         }
 
+    fun hasAnyPacketManagePermission(authorities: List<String> = emptyList()): Boolean =
+        authorities.any {
+            it.startsWith("packet.manage")
+        }
+
     fun hasPacketReadPermissionForPacket(
         authorities: List<String> = emptyList(),
         packetGroupName: String,

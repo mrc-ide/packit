@@ -19,9 +19,9 @@ data class UpdatePacketReadRoles(
 ) : UpdateReadRoles(roleNamesToAdd, roleNamesToRemove)
 
 
-data class RolesToUpdatePacketGroupRead(
-    val cantReadGroup: RolesAndUsersWithPermissionsDto,
-    val withReadGroup: RolesAndUsersWithPermissionsDto
+data class RolesAndUsersToUpdateRead(
+    val cantRead: RolesAndUsersWithPermissionsDto,
+    val withRead: RolesAndUsersWithPermissionsDto
 )
 
 class UpdateRolePermission(

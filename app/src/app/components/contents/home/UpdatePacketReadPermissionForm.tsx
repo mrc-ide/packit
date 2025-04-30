@@ -9,7 +9,7 @@ import { fetcher } from "../../../../lib/fetch";
 import { Form, FormDescription, FormField, FormItem, FormLabel } from "../../Base/Form";
 import { MultiSelector, MultiSelectorContent, MultiSelectorInput, MultiSelectorTrigger } from "../../Base/MultiSelect";
 import { CustomDialogFooter } from "../common/CustomDialogFooter";
-import { RolesAndUsersWithPermissions, RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
+import { RolesAndUsersToUpdateRead, RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
 import { UserWithPermissions } from "../manageAccess/types/UserWithPermissions";
 import { UpdatePacketReadPermissionMultiSelectList } from "./UpdatePacketReadPermissionMultiSelectList";
 
@@ -18,7 +18,8 @@ interface UpdatePacketReadPermissionFormProps {
   rolesAndUsersWithRead: (RoleWithRelationships | UserWithPermissions)[];
   setDialogOpen: Dispatch<SetStateAction<boolean>>;
   packetGroupName: string;
-  mutate: KeyedMutator<RolesAndUsersWithPermissions>;
+  // todo: change to RolesAndUsersToUpdateRead
+  mutate: KeyedMutator<any>;
   packetId?: string;
 }
 export const UpdatePacketReadPermissionForm = ({

@@ -4,8 +4,16 @@ import userEvent from "@testing-library/user-event";
 
 describe("UpdatePermissionDialog", () => {
   const packetGroupName = "test-packet-group";
+  // TODO: fix tests
+  const anything = {} as any;
   it("should render dialog on button click correctly", async () => {
-    render(<UpdatePermissionDialog roles={[]} users={[]} packetGroupName="test-packet-group" mutate={jest.fn()} />);
+    render(
+      <UpdatePermissionDialog
+        packetGroupName="test-packet-group"
+        mutate={jest.fn()}
+        rolesAndUsersToUpdateRead={anything}
+      />
+    );
 
     userEvent.click(screen.getByRole("button", { name: `manage-access-${packetGroupName}` }));
 
@@ -15,7 +23,13 @@ describe("UpdatePermissionDialog", () => {
   });
 
   it("should be able to open and close dialog", async () => {
-    render(<UpdatePermissionDialog roles={[]} users={[]} packetGroupName="test-packet-group" mutate={jest.fn()} />);
+    render(
+      <UpdatePermissionDialog
+        packetGroupName="test-packet-group"
+        mutate={jest.fn()}
+        rolesAndUsersToUpdateRead={anything}
+      />
+    );
 
     userEvent.click(screen.getByRole("button", { name: `manage-access-${packetGroupName}` }));
 
