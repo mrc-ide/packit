@@ -111,8 +111,7 @@ test.describe("Demo packet page", { tag: TAG_DEMO_PACKETS }, () => {
   test.describe("read-access", { tag: TAG_STATE_MUTATE }, () => {
     test("can update read permissions on packet", async ({ page }) => {
       await page.goto("./");
-      const testRoleName = "testE2ERole";
-      await createEmptyTestRole(page, testRoleName);
+      const testRoleName = await createEmptyTestRole(page);
       await page.goto(`./parameters/${parametersPacketId}`);
       await page.getByRole("link", { name: "Read access" }).click();
 
@@ -128,8 +127,8 @@ test.describe("Demo packet page", { tag: TAG_DEMO_PACKETS }, () => {
         .filter({ hasText: "Select roles or specific" })
         .getByPlaceholder("Select roles or users...")
         .click();
-      await page.getByRole("option", { name: "testE2ERole Role" }).click();
-      await page.getByRole("dialog", { name: "Update read access on" }).click();
+      await page.getByRole("option", { name: `${testRoleName} Role` }).click();
+      await page.getByText("Select roles or specific").click();
       await page.getByRole("button", { name: "Save" }).click();
 
       await expect(page.getByRole("cell", { name: testRoleName })).toBeVisible();
@@ -141,8 +140,8 @@ test.describe("Demo packet page", { tag: TAG_DEMO_PACKETS }, () => {
         .filter({ hasText: /^Remove read access$/ })
         .getByPlaceholder("Select roles or users...")
         .click();
-      await page.getByRole("option", { name: "testE2ERole Role" }).click();
-      await page.getByRole("dialog", { name: "Update read access on" }).click();
+      await page.getByRole("option", { name: `${testRoleName} Role` }).click();
+      await page.getByText("Select roles or specific").click();
       await page.getByRole("button", { name: "Save" }).click();
 
       await expect(page.getByRole("cell", { name: testRoleName })).not.toBeVisible();

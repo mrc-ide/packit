@@ -17,4 +17,12 @@ describe("PacketReadUsersList", () => {
       expect(screen.getByText(user.username)).toBeVisible();
     });
   });
+
+  it("should render none when no users in list", async () => {
+    const users: UserWithRoles[] = [];
+
+    render(<PacketReadUsersList users={users} />);
+
+    expect(screen.getByText(/none/i)).toBeVisible();
+  });
 });
