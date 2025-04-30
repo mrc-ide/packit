@@ -12,12 +12,14 @@ import packit.model.toDto
 import packit.service.PacketGroupService
 import packit.service.PacketService
 import packit.service.RoleService
+import packit.service.UserRoleService
 
 @Controller
 class PacketGroupController(
     private val packetService: PacketService,
     private val packetGroupService: PacketGroupService,
     private val roleService: RoleService,
+    private val userRoleService: UserRoleService
 )
 {
     @GetMapping("/packetGroups")
@@ -62,13 +64,13 @@ class PacketGroupController(
         return ResponseEntity.ok(packetGroupService.getPacketGroupSummaries(payload, filter))
     }
 
-    @PreAuthorize("@authz.canUpdatePacketReadRoles(#root,#name, null)")
+    @PreAuthorize("@authz.canUpdatePacketGroupReadRoles(#root,#name)")
     @GetMapping("packetGroups/{name}/read-permission")
     fun getRolesAndUsersForReadPermissionUpdate(
         @PathVariable name: String,
     ): ResponseEntity<RolesToUpdatePacketGroupRead>
     {
-        val result = roleService.getRolesAndUsersForReadPermissionUpdate(name)
+        val result = userRoleService.getRolesAndUsersForReadPermissionUpdate(name)
 
         return ResponseEntity.ok(result)
     }

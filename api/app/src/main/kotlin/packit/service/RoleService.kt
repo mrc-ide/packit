@@ -11,7 +11,10 @@ import packit.exceptions.PackitException
 import packit.model.Permission
 import packit.model.Role
 import packit.model.RolePermission
-import packit.model.dto.*
+import packit.model.dto.CreateRole
+import packit.model.dto.RoleDto
+import packit.model.dto.UpdateReadRoles
+import packit.model.dto.UpdateRolePermissions
 import packit.model.toDto
 import packit.repository.RoleRepository
 import packit.security.PermissionChecker
@@ -37,7 +40,6 @@ interface RoleService
         packetId: String? = null
     )
 
-    fun getRolesAndUsersForReadPermissionUpdate(packetGroupName: String): RolesToUpdatePacketGroupRead
 }
 
 @Service
@@ -118,10 +120,8 @@ class BaseRoleService(
     override fun getSortedRoleDtos(roles: List<Role>): List<RoleDto>
     {
         return roles.map { role ->
-            role.apply {
-                users = users.filterNot { it.isServiceUser() }.sortedBy { it.username }.toMutableList()
-                rolePermissions = rolePermissionService.sortRolePermissions(role.rolePermissions).toMutableList()
-            }
+            rolePermissionService.sortRolePermissions(role.rolePermissions)
+            role.users = role.users.filterNot { it.isServiceUser() }.sortedBy { it.username }.toMutableList()
             role.toDto()
         }
     }
@@ -200,33 +200,6 @@ class BaseRoleService(
         )
 
         roleRepository.saveAll(updatedRoles)
-    }
-
-    override fun getRolesAndUsersForReadPermissionUpdate(packetGroupName: String): RolesToUpdatePacketGroupRead
-    {
-        // just return as roles maybe? and let FE sort spliting?
-        val allRoles = roleRepository.findAll()
-        val (usernameRoles, roles) = allRoles.partition { it.isUsername }
-        val users = usernameRoles.map { it.users.first() } // user 1 to 1 with username role
-        val rolesCantRead = allRoles.filter {
-            !permissionChecker.canReadPacketGroup(
-                permissionService.mapToScopedPermission(it.rolePermissions),
-                packetGroupName
-            )
-        }.map { it.toDto() }
-        val rolesWithOnlyReadGroupPermission = allRoles.filter {
-            val permissionNames = permissionService.mapToScopedPermission(it.rolePermissions)
-
-            permissionChecker.hasPacketReadPermissionForGroup(permissionNames, packetGroupName) &&
-                    !permissionChecker.canManagePacketGroup(permissionNames, packetGroupName) &&
-                    !permissionChecker.canReadAllPackets(permissionNames)
-        }.map { it.toDto() }
-
-        TODO("implement return")
-//        return RolesToUpdatePacketGroupRead(
-//            rolesCantRead,
-//            rolesWithOnlyReadGroupPermission
-//        )
     }
 
     internal fun getUniqueRoleNamesForUpdate(roleNamesToAdd: Set<String>, roleNamesToRemove: Set<String>): Set<String>

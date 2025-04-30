@@ -9,8 +9,7 @@ import packit.model.User
 import packit.model.dto.CreateBasicUser
 import packit.model.dto.UpdatePassword
 import packit.model.dto.UserWithPermissions
-import packit.model.toBasicDto
-import packit.model.toDto
+import packit.model.toUserWithPermissions
 import packit.repository.UserRepository
 import packit.security.profile.UserPrincipal
 import java.time.Instant
@@ -189,27 +188,15 @@ class BaseUserService(
 
     override fun getAllNonServiceUsers(): List<User>
     {
-        return userRepository.findByUserSourceNot("service")
+        return userRepository.findByUserSourceNotOrderByUsername("service")
     }
 
     override fun getSortedUsersWithPermissions(users: List<User>): List<UserWithPermissions>
     {
         return users.map { user ->
-            val usernameRole = user.roles.find { it.isUsername && it.name == user.username }
-                ?: throw PackitException("userRoleNotFound", HttpStatus.INTERNAL_SERVER_ERROR)
-
-            val nonUsernameRoles = user.roles
-                .filter { it != usernameRole }
-                .sortedBy { it.name }
-                .map { it.toBasicDto() }
-
-            UserWithPermissions(
-                username = user.username,
-                roles = nonUsernameRoles,
-                specificPermissions = rolePermissionService.sortRolePermissions(usernameRole.rolePermissions)
-                    .map { it.toDto() },
-                id = user.id!!
-            )
-        }.sortedBy { it.username }
+            rolePermissionService.sortRolePermissions(user.getSpecificPermissions())
+            user.roles.sortBy { it.name }
+            user.toUserWithPermissions()
+        }
     }
 }

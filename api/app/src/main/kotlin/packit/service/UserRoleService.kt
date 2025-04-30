@@ -4,22 +4,25 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
 import packit.model.Role
+import packit.model.RolePermission
 import packit.model.User
-import packit.model.dto.RolesAndUsersWithPermissions
-import packit.model.dto.UpdateRoleUsers
-import packit.model.dto.UpdateUserRoles
+import packit.model.dto.*
+import packit.security.PermissionChecker
 
 interface UserRoleService
 {
     fun updateRoleUsers(roleName: String, usersToUpdate: UpdateRoleUsers): Role
     fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles): User
-    fun getAllRolesAndUsersWithPermissions(): RolesAndUsersWithPermissions
+    fun getAllRolesAndUsersWithPermissions(): RolesAndUsersWithPermissionsDto
+    fun getRolesAndUsersForReadPermissionUpdate(packetGroupName: String): RolesToUpdatePacketGroupRead
 }
 
 @Service
 class BaseUserRoleService(
     private val roleService: RoleService,
-    private val userService: UserService
+    private val userService: UserService,
+    private val permissionService: PermissionService,
+    private val permissionChecker: PermissionChecker,
 ) : UserRoleService
 {
     override fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles): User
@@ -39,14 +42,30 @@ class BaseUserRoleService(
         return userService.saveUser(user)
     }
 
-    override fun getAllRolesAndUsersWithPermissions(): RolesAndUsersWithPermissions
+    override fun getAllRolesAndUsersWithPermissions(): RolesAndUsersWithPermissionsDto
     {
-        val roles = roleService.getAllRoles(isUsernames = false)
-        val users = userService.getAllNonServiceUsers()
+        return createSortedRolesAndUsersWithPermissionsDto(getNonUsernameRolesAndNonServiceUsers())
+    }
 
-        return RolesAndUsersWithPermissions(
-            roleService.getSortedRoleDtos(roles),
-            userService.getSortedUsersWithPermissions(users)
+    override fun getRolesAndUsersForReadPermissionUpdate(packetGroupName: String): RolesToUpdatePacketGroupRead
+    {
+        val (roles, users) = getNonUsernameRolesAndNonServiceUsers()
+
+        return RolesToUpdatePacketGroupRead(
+            cantReadGroup = createSortedRolesAndUsersWithPermissionsDto(
+                getRolesAndUsersCantReadGroup(
+                    roles,
+                    users,
+                    packetGroupName
+                )
+            ),
+            withReadGroup = createSortedRolesAndUsersWithPermissionsDto(
+                getRolesAndUsersWithOnlyReadGroup(
+                    roles,
+                    users,
+                    packetGroupName
+                )
+            )
         )
     }
 
@@ -73,6 +92,21 @@ class BaseUserRoleService(
         // have to update users to save change as it is owner of many-to-many relationship
         userService.saveUsers(updateUsers)
         return role
+    }
+
+    internal fun createSortedRolesAndUsersWithPermissionsDto(rolesAndUsers: RolesAndUsers): RolesAndUsersWithPermissionsDto
+    {
+        return RolesAndUsersWithPermissionsDto(
+            roleService.getSortedRoleDtos(rolesAndUsers.roles),
+            userService.getSortedUsersWithPermissions(rolesAndUsers.users)
+        )
+    }
+
+    internal fun getNonUsernameRolesAndNonServiceUsers(): RolesAndUsers
+    {
+        val roles = roleService.getAllRoles(isUsernames = false)
+        val users = userService.getAllNonServiceUsers()
+        return RolesAndUsers(roles, users)
     }
 
     internal fun addUsersToRole(role: Role, usersToAdd: List<User>)
@@ -129,4 +163,74 @@ class BaseUserRoleService(
         }
         user.roles.removeAll(matchedRolesToRemove)
     }
+
+    internal fun getRolesAndUsersWithOnlyReadGroup(
+        roles: List<Role>,
+        users: List<User>,
+        packetGroupName: String
+    ): RolesAndUsers
+    {
+        val rolesWithRead =
+            roles.filter { hasOnlyReadGroupPermission(it.rolePermissions, packetGroupName) }
+        val usersWithRead =
+            users.filter { user ->
+                hasOnlyReadGroupPermission(user.getSpecificPermissions(), packetGroupName)
+            }
+
+        return RolesAndUsers(
+            rolesWithRead,
+            usersWithRead,
+        )
+    }
+
+    internal fun hasOnlyReadGroupPermission(permissions: List<RolePermission>, packetGroupName: String): Boolean
+    {
+        val permissionNames = permissionService.mapToScopedPermission(permissions)
+        return permissionChecker.hasPacketReadPermissionForGroup(permissionNames, packetGroupName)
+                && !permissionChecker.canReadAllPackets(permissionNames)
+                && !permissionChecker.canManagePacketGroup(permissionNames, packetGroupName)
+    }
+
+    internal fun getRolesAndUsersCantReadGroup(
+        roles: List<Role>,
+        users: List<User>,
+        packetGroupName: String
+    ): RolesAndUsers
+    {
+        val rolesCantRead = roles.filterNot {
+            permissionChecker.canReadPacketGroup(
+                permissionService.mapToScopedPermission(it.rolePermissions),
+                packetGroupName
+            )
+        }
+
+        val usersCantRead = users.filter { user ->
+            !userHasDirectReadPermission(user, packetGroupName) &&
+                    !userHasReadPermissionViaRole(user, roles, packetGroupName)
+        }
+
+        return RolesAndUsers(
+            rolesCantRead,
+            usersCantRead
+        )
+    }
+
+    internal fun userHasDirectReadPermission(user: User, packetGroupName: String): Boolean =
+        permissionChecker.canReadPacketGroup(
+            permissionService.mapToScopedPermission(user.getSpecificPermissions()),
+            packetGroupName
+        )
+
+    internal fun userHasReadPermissionViaRole(
+        user: User,
+        roles: List<Role>,
+        packetGroupName: String
+    ): Boolean =
+        user.roles.filterNot { it.isUsername }.any {
+            permissionChecker.canReadPacketGroup(
+                permissionService.mapToScopedPermission(it.rolePermissions),
+                packetGroupName
+            )
+        }
+
 }

@@ -5,7 +5,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
-import packit.model.dto.RolesAndUsersWithPermissions
+import packit.model.dto.RolesAndUsersWithPermissionsDto
 import packit.service.UserRoleService
 
 @Controller
@@ -14,7 +14,7 @@ import packit.service.UserRoleService
 class UserRoleController(private val userRoleService: UserRoleService)
 {
     @GetMapping
-    fun getRolesAndUsers(): ResponseEntity<RolesAndUsersWithPermissions>
+    fun getRolesAndUsers(): ResponseEntity<RolesAndUsersWithPermissionsDto>
     {
         val rolesAndUsers = userRoleService.getAllRolesAndUsersWithPermissions()
         return ResponseEntity.ok(rolesAndUsers)
