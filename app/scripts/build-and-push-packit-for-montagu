@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
+# Unfortunately we need to build a Montagu-specific front end image which bakes in the front end and back end routes
+# we expect to use for packit under the top level Montagu domain. This is because Montagu is not on nix so we use
+# the constellation-based packit deployer which uses pre-built docker images rather than building the app at the point
+# of deployment, as is done by the nix deployer for the other packit instances.
+
 HERE=$(dirname $0)
 . "$HERE"/common
 
