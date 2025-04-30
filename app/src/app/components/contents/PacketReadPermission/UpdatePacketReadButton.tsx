@@ -36,7 +36,7 @@ export const UpdatePacketReadButton = ({ packet, users, roles, mutate }: UpdateP
       </DialogTrigger>
       <DialogContent onOpenAutoFocus={(e) => e.preventDefault()} onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader>
-          <DialogTitle>Update read access on {packet.name}</DialogTitle>
+          <DialogTitle>Update read access on {packet.id}</DialogTitle>
         </DialogHeader>
         <UpdatePacketReadPermissionForm
           rolesAndUsersCantRead={rolesAndUsersCantReadPacket}
