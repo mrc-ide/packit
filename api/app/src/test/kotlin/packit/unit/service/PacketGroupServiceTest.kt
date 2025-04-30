@@ -354,7 +354,7 @@ class PacketGroupServiceTest
         whenever(packetGroupRepository.findById(packetGroupId)).thenReturn(Optional.empty())
         val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
 
-        val exception = assertThrows<PackitException> {
+        assertThrows<PackitException> {
             sut.getPacketGroup(packetGroupId)
         }.apply {
             assertEquals("packetGroupNotFound", key)

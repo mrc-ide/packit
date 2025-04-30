@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { PacketReport } from "../../../../app/components/contents/packets/PacketReport";
-import { PacketMetadata } from "../../../../types";
+import { FileMetadata, PacketMetadata } from "../../../../types";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
 
@@ -13,12 +13,13 @@ const mockHash = "sha256:12345";
 const revokeObjectURL = jest.fn();
 URL.revokeObjectURL = revokeObjectURL;
 
-describe("PacketReport component", () => {
-  const packet = {
-    files: [{ path: "test.html", hash: mockHash }],
-    id: "20231130-082812-cd744153"
-  } as unknown as PacketMetadata;
+const file: FileMetadata = { path: "test.html", hash: mockHash, size: 100 };
+const packet = {
+  files: [file],
+  id: "20231130-082812-cd744153"
+} as PacketMetadata;
 
+describe("PacketReport component", () => {
   const renderComponent = (fileHash = mockHash) => {
     return render(
       <SWRConfig value={{ dedupingInterval: 0 }}>
@@ -47,10 +48,7 @@ describe("PacketReport component", () => {
     const iframe = await screen.findByTestId("report-iframe");
     expect(iframe).toBeVisible();
     expect(iframe.getAttribute("src")).toBe("fakeObjectUrl");
-    expect(mockGetFileObjectUrl).toHaveBeenCalledWith(
-      `http://localhost:8080/packets/${packet.id}/file?hash=${mockHash}&filename=test.html&inline=true`,
-      "test.html"
-    );
+    expect(mockGetFileObjectUrl).toHaveBeenCalledWith(file, packet.id, "test.html");
   });
 
   it("renders error component if error fetching report data", async () => {
