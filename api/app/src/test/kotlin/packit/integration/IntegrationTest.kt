@@ -59,7 +59,7 @@ abstract class IntegrationTest
 
     protected fun <T>assertSuccess(responseEntity: ResponseEntity<T>)
     {
-        assertEquals(HttpStatus.OK, responseEntity.statusCode, )
+        assertEquals(HttpStatus.OK, responseEntity.statusCode)
         assertEquals(MediaType.APPLICATION_JSON, responseEntity.headers.contentType)
     }
 
@@ -85,7 +85,7 @@ abstract class IntegrationTest
 
     protected fun assertHtmlFileSuccess(responseEntity: ResponseEntity<String>)
     {
-        assertEquals(HttpStatus.OK,responseEntity.statusCode)
+        assertEquals(HttpStatus.OK, responseEntity.statusCode)
         assertEquals(MediaType.TEXT_HTML, responseEntity.headers.contentType)
         assertEquals(
             ContentDisposition.parse("attachment; filename=report.html"),
