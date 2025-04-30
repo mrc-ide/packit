@@ -23,6 +23,7 @@ import packit.model.User
 import packit.model.dto.LoginWithPassword
 import packit.model.dto.LoginWithToken
 import packit.model.dto.UpdatePassword
+import packit.repository.RoleRepository
 import packit.repository.UserRepository
 import packit.security.provider.TokenDecoder
 import packit.testing.TestJwtIssuer
@@ -90,12 +91,19 @@ class LoginControllerTestPreAuth : IntegrationTest()
     @Autowired
     lateinit var userRepository: UserRepository
 
+    @Autowired
+    lateinit var roleRepository: RoleRepository
+
     @AfterEach
     fun cleanupData()
     {
         if (userRepository.existsByUsername(userName)) {
             userRepository.deleteByUsername(userName)
        }
+
+        if (roleRepository.existsByName(userName)) {
+            roleRepository.deleteByName(userName)
+        }
     }
 
     @Test
