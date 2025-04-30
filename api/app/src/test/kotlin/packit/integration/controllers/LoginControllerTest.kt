@@ -134,6 +134,7 @@ class LoginControllerTestPreAuth : IntegrationTest()
             lastLoggedIn = null
         )
         userRepository.save(testUser)
+        val now = Instant.now()
 
         val result =
             packit.integration.controllers.LoginTestHelper.getPreauthLoginResponse(
@@ -143,6 +144,9 @@ class LoginControllerTestPreAuth : IntegrationTest()
         assertSuccess(result)
         val packitToken = jacksonObjectMapper().readTree(result.body).get("token").asText()
         assertThat(packitToken.count()).isGreaterThan(0)
+
+        val updatedUser = userRepository.findByUsernameAndUserSource(userName, "preauth")
+        assertThat(updatedUser!!.lastLoggedIn).isAfterOrEqualTo(now)
     }
 
     @Test
@@ -153,6 +157,8 @@ class LoginControllerTestPreAuth : IntegrationTest()
                 null, userDisplayName, userEmail, restTemplate
             )
         assertEquals(result.statusCode, HttpStatus.BAD_REQUEST)
+        val packitToken = jacksonObjectMapper().readTree(result.body).get("token")
+        assertThat(packitToken).isNull()
     }
 
     @Test
