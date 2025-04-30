@@ -93,8 +93,8 @@ class LoginControllerTestPreAuth : IntegrationTest()
     @AfterEach
     fun cleanupData()
     {
-        if (userRepository.existsByEmail(userEmail)) {
-            userRepository.deleteByEmail(userEmail)
+        if (userRepository.existsByUsername(userName)) {
+            userRepository.deleteByUsername(userName)
         }
     }
 
@@ -145,6 +145,20 @@ class LoginControllerTestPreAuth : IntegrationTest()
                 null, userDisplayName, userEmail, restTemplate
             )
         assertEquals(result.statusCode, HttpStatus.BAD_REQUEST)
+    }
+
+    @Test
+    fun `email and display name headers are optional`()
+    {
+        val result =
+            packit.integration.controllers.LoginTestHelper.getPreauthLoginResponse(
+                userName, null, null, restTemplate
+            )
+
+        assertSuccess(result)
+        val packitToken = jacksonObjectMapper().readTree(result.body).get("token").asText()
+        assertThat(packitToken.count()).isGreaterThan(0)
+        assertThat(userRepository.existsByUsername(userName)).isTrue()
     }
 }
 

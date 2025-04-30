@@ -11,14 +11,14 @@ class PreAuthenticatedLoginService(
     val userService: UserService,
 )
 {
-    fun saveUserAndIssueToken(username: String, name: String, email: String): Map<String, String>
+    fun saveUserAndIssueToken(username: String, name: String?, email: String?): Map<String, String>
     {
         if (username.isEmpty())
         {
             throw PackitException("emptyUsername", HttpStatus.BAD_REQUEST)
         }
 
-        var user = userService.savePreAuthenticatedUser(username, name, email)
+        val user = userService.savePreAuthenticatedUser(username, name, email)
         val token = jwtIssuer.issue(userService.getUserPrincipal(user))
 
         return mapOf("token" to token)

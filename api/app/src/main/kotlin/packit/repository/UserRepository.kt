@@ -13,6 +13,7 @@ interface UserRepository : JpaRepository<User, UUID>
 
     @Transactional
     fun deleteByEmail(email: String)
+    fun deleteByUsername(username: String)
     fun findByEmail(email: String): User?
     fun findByUsernameAndUserSource(username: String, userSource: String): User?
     fun existsByUsername(username: String): Boolean

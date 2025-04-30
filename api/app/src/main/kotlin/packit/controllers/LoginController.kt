@@ -46,8 +46,8 @@ class LoginController(
     @ResponseBody
     fun loginWithTrustedHeaders(
         @RequestHeader("X-Remote-User") username: String,
-        @RequestHeader("X-Remote-Name") name: String,
-        @RequestHeader("X-Remote-Email") email: String
+        @RequestHeader("X-Remote-Name", required = false) name: String?,
+        @RequestHeader("X-Remote-Email", required = false) email: String?
     ): ResponseEntity<Map<String, String>>
     {
         if (!config.authEnablePreAuthLogin)
