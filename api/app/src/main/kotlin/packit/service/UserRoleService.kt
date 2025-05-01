@@ -5,10 +5,8 @@ import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
 import packit.model.Packet
 import packit.model.Role
-import packit.model.RolePermission
 import packit.model.User
 import packit.model.dto.*
-import packit.security.PermissionChecker
 
 interface UserRoleService
 {
@@ -23,8 +21,7 @@ interface UserRoleService
 class BaseUserRoleService(
     private val roleService: RoleService,
     private val userService: UserService,
-    private val permissionService: PermissionService,
-    private val permissionChecker: PermissionChecker,
+    private val userRoleFilterService: UserRoleFilterService
 ) : UserRoleService
 {
     override fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles): User
@@ -49,16 +46,17 @@ class BaseUserRoleService(
         return createSortedRolesAndUsersWithPermissionsDto(getNonUsernameRolesAndNonServiceUsers())
     }
 
+
     override fun getRolesAndUsersForPacketGroupReadUpdate(packetGroupNames: List<String>): Map<String, RolesAndUsersToUpdateRead>
     {
         val (roles, users) = getNonUsernameRolesAndNonServiceUsers()
         return packetGroupNames.associateWith {
             RolesAndUsersToUpdateRead(
                 cantRead = createSortedRolesAndUsersWithPermissionsDto(
-                    getRolesAndUsersCantPacketReadGroup(roles, users, it)
+                    userRoleFilterService.getRolesAndUsersCantPacketReadGroup(roles, users, it)
                 ),
                 withRead = createSortedRolesAndUsersWithPermissionsDto(
-                    getRolesAndUsersWithSpecificReadPacketGroupPermission(roles, users, it)
+                    userRoleFilterService.getRolesAndUsersWithSpecificReadPacketGroupPermission(roles, users, it)
                 )
             )
         }
@@ -67,30 +65,16 @@ class BaseUserRoleService(
     override fun getRolesAndUsersForPacketReadUpdate(packet: Packet): RolesAndUsersForPacketReadUpdate
     {
         val (roles, users) = getNonUsernameRolesAndNonServiceUsers()
-        val rolesCanRead = roles.filter {
-            permissionChecker.canReadPacket(
-                permissionService.mapToScopedPermission(it.rolePermissions),
-                packet.name,
-                packet.id
-            )
-        }
-        val specificUsersCanRead = users.filter {
-            permissionChecker.canReadPacket(
-                permissionService.mapToScopedPermission(it.getSpecificPermissions()),
-                packet.name,
-                packet.id
-            )
-        }
 
         return RolesAndUsersForPacketReadUpdate(
             canRead = createSortedRolesAndUsersWithPermissionsDto(
-                RolesAndUsers(rolesCanRead, specificUsersCanRead)
+                userRoleFilterService.getRolesAndSpecificUsersCanReadPacket(roles, users, packet)
             ),
             cantRead = createSortedRolesAndUsersWithPermissionsDto(
-                getRolesAndUsersCantReadPacket(roles, users, packet)
+                userRoleFilterService.getRolesAndUsersCantReadPacket(roles, users, packet)
             ),
             withRead = createSortedRolesAndUsersWithPermissionsDto(
-                getRolesUsersWithSpecificReadPacketPermission(roles, users, packet),
+                userRoleFilterService.getRolesUsersWithSpecificReadPacketPermission(roles, users, packet),
             )
         )
     }
@@ -189,143 +173,4 @@ class BaseUserRoleService(
         }
         user.roles.removeAll(matchedRolesToRemove)
     }
-
-    internal fun getRolesAndUsersWithSpecificReadPacketGroupPermission(
-        roles: List<Role>,
-        users: List<User>,
-        packetGroupName: String
-    ): RolesAndUsers
-    {
-        val rolesWithRead =
-            roles.filter { hasOnlySpecificReadGroupPermission(it.rolePermissions, packetGroupName) }
-        val usersWithRead =
-            users.filter { user ->
-                hasOnlySpecificReadGroupPermission(user.getSpecificPermissions(), packetGroupName)
-            }
-
-        return RolesAndUsers(
-            rolesWithRead,
-            usersWithRead,
-        )
-    }
-
-    internal fun getRolesUsersWithSpecificReadPacketPermission(
-        roles: List<Role>,
-        users: List<User>,
-        packet: Packet
-    ): RolesAndUsers
-    {
-        val rolesWithRead = roles.filter {
-            hasOnlySpecificReadPacketPermission(it.rolePermissions, packet)
-        }
-        val usersWithRead = users.filter { user ->
-            hasOnlySpecificReadPacketPermission(user.getSpecificPermissions(), packet)
-        }
-        return RolesAndUsers(
-            rolesWithRead,
-            usersWithRead,
-        )
-    }
-
-    internal fun hasOnlySpecificReadPacketPermission(permissions: List<RolePermission>, packet: Packet): Boolean
-    {
-        val permissionNames = permissionService.mapToScopedPermission(permissions)
-        return permissionChecker.hasPacketReadPermissionForPacket(permissionNames, packet.name, packet.id)
-                && !permissionChecker.canManagePacket(permissionNames, packet.name, packet.id)
-                && !permissionChecker.canReadAllPackets(permissionNames)
-    }
-
-    internal fun hasOnlySpecificReadGroupPermission(permissions: List<RolePermission>, packetGroupName: String): Boolean
-    {
-        val permissionNames = permissionService.mapToScopedPermission(permissions)
-        return permissionChecker.hasPacketReadPermissionForGroup(permissionNames, packetGroupName)
-                && !permissionChecker.canManagePacketGroup(permissionNames, packetGroupName)
-                && !permissionChecker.canReadAllPackets(permissionNames)
-    }
-
-    internal fun getRolesAndUsersCantPacketReadGroup(
-        roles: List<Role>,
-        users: List<User>,
-        packetGroupName: String
-    ): RolesAndUsers
-    {
-        val rolesCantRead = roles.filterNot {
-            permissionChecker.canReadPacketGroup(
-                permissionService.mapToScopedPermission(it.rolePermissions),
-                packetGroupName
-            )
-        }
-
-        val usersCantRead = users.filter { user ->
-            !userHasDirectReadPacketGroupReadPermission(user, packetGroupName) &&
-                    !userHasPacketGroupReadPermissionViaRole(user, roles, packetGroupName)
-        }
-
-        return RolesAndUsers(
-            rolesCantRead,
-            usersCantRead
-        )
-    }
-
-    internal fun getRolesAndUsersCantReadPacket(
-        roles: List<Role>,
-        users: List<User>,
-        packet: Packet
-    ): RolesAndUsers
-    {
-        val rolesCantRead = roles.filterNot {
-            permissionChecker.canReadPacket(
-                permissionService.mapToScopedPermission(it.rolePermissions),
-                packet.name,
-                packet.id
-            )
-        }
-        val usersCantRead = users.filter { user ->
-            !userHasDirectPacketReadReadPermission(user, packet) &&
-                    !userHasPacketReadPermissionViaRole(user, roles, packet)
-        }
-
-        return RolesAndUsers(
-            rolesCantRead,
-            usersCantRead
-        )
-    }
-
-    internal fun userHasDirectReadPacketGroupReadPermission(user: User, packetGroupName: String): Boolean =
-        permissionChecker.canReadPacketGroup(
-            permissionService.mapToScopedPermission(user.getSpecificPermissions()),
-            packetGroupName
-        )
-
-    internal fun userHasDirectPacketReadReadPermission(user: User, packet: Packet): Boolean =
-        permissionChecker.canReadPacket(
-            permissionService.mapToScopedPermission(user.getSpecificPermissions()),
-            packet.name,
-            packet.id
-        )
-
-    internal fun userHasPacketGroupReadPermissionViaRole(
-        user: User,
-        roles: List<Role>,
-        packetGroupName: String
-    ): Boolean =
-        user.roles.filterNot { it.isUsername }.any {
-            permissionChecker.canReadPacketGroup(
-                permissionService.mapToScopedPermission(it.rolePermissions),
-                packetGroupName
-            )
-        }
-
-    internal fun userHasPacketReadPermissionViaRole(
-        user: User,
-        roles: List<Role>,
-        packet: Packet
-    ): Boolean =
-        user.roles.filterNot { it.isUsername }.any {
-            permissionChecker.canReadPacket(
-                permissionService.mapToScopedPermission(it.rolePermissions),
-                packet.name,
-                packet.id
-            )
-        }
 }

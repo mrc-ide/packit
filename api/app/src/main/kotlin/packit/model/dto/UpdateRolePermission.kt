@@ -12,7 +12,6 @@ data class UpdateReadRoles(
     val roleNamesToRemove: Set<String> = setOf()
 )
 
-// TODO: only need name and id really!!! not full dtos (basic dtos should suffice)
 data class RolesAndUsersToUpdateRead(
     val cantRead: RolesAndUsersWithPermissionsDto,
     val withRead: RolesAndUsersWithPermissionsDto
