@@ -13,7 +13,7 @@ import { useGetBranding } from "../contents/common/hooks/useGetBranding";
 
 export const Header = () => {
   const { user } = useUser();
-  const { brandConfig } = useGetBranding();
+  const { brandConfig, isLoading: brandConfigIsLoading } = useGetBranding();
   const logoLinkDestination = brandConfig?.logoLink || "/";
 
   return (
@@ -31,8 +31,8 @@ export const Header = () => {
               </NavLink>
             )}
             <NavLink to="/">
-              <div className="text-xl font-extrabold flex gap-1 items-center ml-2">
-                {!brandConfig?.logoFilename && (<PackageOpen />)}
+              <div className="text-xl font-extrabold flex gap-1 items-center ml-2 custom-header">
+                {!brandConfig?.logoFilename && !brandConfigIsLoading && (<PackageOpen />)}
                 {brandConfig?.brandName}
               </div>
             </NavLink>
