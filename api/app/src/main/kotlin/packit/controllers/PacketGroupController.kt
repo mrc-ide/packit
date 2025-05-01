@@ -69,7 +69,7 @@ class PacketGroupController(
     fun getRolesAndUsersForReadPermissionUpdate(): ResponseEntity<Map<String, RolesAndUsersToUpdateRead>>
     {
         val packetGroupNames = packetGroupService.getAllPacketGroupsCanManage().map { it.name }
-        val result = userRoleService.getRolesAndUsersForReadPermissionUpdate(packetGroupNames)
+        val result = userRoleService.getRolesAndUsersForPacketGroupReadUpdate(packetGroupNames)
 
         return ResponseEntity.ok(result)
     }

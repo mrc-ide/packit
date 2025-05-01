@@ -14,14 +14,20 @@ import packit.exceptions.PackitException
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
 import packit.model.dto.PacketDto
-import packit.model.dto.UpdatePacketReadRoles
+import packit.model.dto.RolesAndUsersForPacketReadUpdate
+import packit.model.dto.UpdateReadRoles
 import packit.model.toDto
 import packit.service.PacketService
 import packit.service.RoleService
+import packit.service.UserRoleService
 
 @RestController
 @RequestMapping("/packets")
-class PacketController(private val packetService: PacketService, private val roleService: RoleService)
+class PacketController(
+    private val packetService: PacketService,
+    private val roleService: RoleService,
+    private val userRoleService: UserRoleService
+)
 {
     @GetMapping
     fun pageableIndex(
@@ -85,14 +91,30 @@ class PacketController(private val packetService: PacketService, private val rol
     }
 
     @PreAuthorize(
-        "@authz.canUpdatePacketReadRoles(#root,#updatePacketReadRoles.packetGroupName, #id)"
+        "@authz.canUpdatePacketReadRoles(#root, #id)"
+    )
+    @GetMapping("{id}/read-permission")
+    fun getRolesAndUsersForReadPermissionUpdate(
+        @PathVariable id: String,
+    ): ResponseEntity<RolesAndUsersForPacketReadUpdate>
+    {
+        val packet = packetService.getPacket(id)
+        val result = userRoleService.getRolesAndUsersForPacketReadUpdate(packet)
+
+        return ResponseEntity.ok(result)
+    }
+
+    @PreAuthorize(
+        "@authz.canUpdatePacketReadRoles(#root, #id)"
     )
     @PutMapping("/{id}/read-permission")
     fun updatePacketReadPermissionOnRoles(
-        @RequestBody @Validated updatePacketReadRoles: UpdatePacketReadRoles, @PathVariable id: String
+        @RequestBody @Validated updatePacketReadRoles: UpdateReadRoles, @PathVariable id: String
     ): ResponseEntity<Unit>
     {
-        roleService.updatePacketReadPermissionOnRoles(updatePacketReadRoles, updatePacketReadRoles.packetGroupName, id)
+        val packet = packetService.getPacket(id)
+
+        roleService.updatePacketReadPermissionOnRoles(updatePacketReadRoles, packet.name, packet.id)
 
         return ResponseEntity.noContent().build()
     }

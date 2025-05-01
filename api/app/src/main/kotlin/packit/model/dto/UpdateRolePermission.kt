@@ -7,21 +7,23 @@ data class UpdateRolePermissions(
     val removePermissions: List<UpdateRolePermission> = listOf()
 )
 
-open class UpdateReadRoles(
-    open val roleNamesToAdd: Set<String> = setOf(),
-    open val roleNamesToRemove: Set<String> = setOf()
+data class UpdateReadRoles(
+    val roleNamesToAdd: Set<String> = setOf(),
+    val roleNamesToRemove: Set<String> = setOf()
 )
 
-data class UpdatePacketReadRoles(
-    val packetGroupName: String,
-    override val roleNamesToAdd: Set<String> = setOf(),
-    override val roleNamesToRemove: Set<String> = setOf()
-) : UpdateReadRoles(roleNamesToAdd, roleNamesToRemove)
-
-
+// TODO: only need name and id really!!! not full dtos (basic dtos should suffice)
 data class RolesAndUsersToUpdateRead(
     val cantRead: RolesAndUsersWithPermissionsDto,
     val withRead: RolesAndUsersWithPermissionsDto
+)
+
+// can combine both usersandroles can read
+data class RolesAndUsersForPacketReadUpdate(
+    val cantRead: RolesAndUsersWithPermissionsDto,
+    val withRead: RolesAndUsersWithPermissionsDto,
+    val rolesCanRead: List<RoleDto>,
+    val specificUsersCanRead: List<UserWithPermissions>
 )
 
 class UpdateRolePermission(

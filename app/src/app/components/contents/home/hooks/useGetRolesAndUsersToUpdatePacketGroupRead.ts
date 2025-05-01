@@ -5,7 +5,7 @@ import appConfig from "../../../../../config/appConfig";
 
 // <packetGroupName string, rolesAndUsersToUpdateRead>
 
-export const useGetRolesAndUsersToUpdateRead = () => {
+export const useGetRolesAndUsersToUpdatePacketGroupRead = () => {
   const { data, isLoading, error, mutate } = useSWR<Record<string, RolesAndUsersToUpdateRead>>(
     `${appConfig.apiUrl()}/packetGroups/read-permission`,
     (url: string) => fetcher({ url })

@@ -4,12 +4,12 @@ import { canManagePacketGroup } from "../../../../lib/auth/hasPermission";
 import { getTimeDifferenceToDisplay } from "../../../../lib/time";
 import { PacketGroupSummary } from "../../../../types";
 import { useUser } from "../../providers/UserProvider";
-import { useGetRolesAndUsersToUpdateRead } from "./hooks/useGetRolesAndUsersToUpdateRead";
+import { useGetRolesAndUsersToUpdatePacketGroupRead } from "./hooks/useGetRolesAndUsersToUpdatePacketGroupRead";
 import { UpdatePermissionDialog } from "./UpdatePermissionDialog";
 
 interface PacketGroupSummaryListItemProps {
   packetGroup: PacketGroupSummary;
-  rolesAndUsersToUpdateReadRes: ReturnType<typeof useGetRolesAndUsersToUpdateRead> | null;
+  rolesAndUsersToUpdateReadRes: ReturnType<typeof useGetRolesAndUsersToUpdatePacketGroupRead> | null;
 }
 
 export const PacketGroupSummaryListItem = ({

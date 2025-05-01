@@ -8,7 +8,7 @@ import { Pagination } from "../common/Pagination";
 import { Unauthorized } from "../common/Unauthorized";
 import { PacketGroupSummaryListItem } from "./PacketGroupSummaryListItem";
 import { useGetPacketGroupSummaries } from "./hooks/useGetPacketGroupSummaries";
-import { useGetRolesAndUsersToUpdateRead } from "./hooks/useGetRolesAndUsersToUpdateRead";
+import { useGetRolesAndUsersToUpdatePacketGroupRead } from "./hooks/useGetRolesAndUsersToUpdatePacketGroupRead";
 
 interface PacketGroupSummaryListProps {
   filterByName: string;
@@ -24,7 +24,7 @@ export const PacketGroupSummaryList = ({
 }: PacketGroupSummaryListProps) => {
   const { user } = useUser();
   const rolesAndUsersToUpdateReadRes = hasAnyPacketManagePermission(user?.authorities)
-    ? useGetRolesAndUsersToUpdateRead()
+    ? useGetRolesAndUsersToUpdatePacketGroupRead()
     : null;
   const {
     packetGroupSummaries,

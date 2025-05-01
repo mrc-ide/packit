@@ -38,10 +38,12 @@ class AuthorizationLogic(
 
     fun canUpdatePacketReadRoles(
         operations: SecurityExpressionOperations,
-        packetGroupName: String,
         packetId: String,
-    ): Boolean =
-        permissionChecker.canManagePacket(getAuthorities(operations), packetGroupName, packetId)
+    ): Boolean
+    {
+        val packet = packetService.getPacket(packetId)
+        return permissionChecker.canManagePacket(getAuthorities(operations), packet.name, packet.id)
+    }
 
     fun canUpdatePacketGroupReadRoles(
         operations: SecurityExpressionOperations,

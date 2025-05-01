@@ -9,7 +9,7 @@ import { fetcher } from "../../../../lib/fetch";
 import { Form, FormDescription, FormField, FormItem, FormLabel } from "../../Base/Form";
 import { MultiSelector, MultiSelectorContent, MultiSelectorInput, MultiSelectorTrigger } from "../../Base/MultiSelect";
 import { CustomDialogFooter } from "../common/CustomDialogFooter";
-import { RolesAndUsersToUpdateRead, RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
+import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
 import { UserWithPermissions } from "../manageAccess/types/UserWithPermissions";
 import { UpdatePacketReadPermissionMultiSelectList } from "./UpdatePacketReadPermissionMultiSelectList";
 
@@ -55,8 +55,7 @@ export const UpdatePacketReadPermissionForm = ({
         }`,
         body: {
           roleNamesToAdd: values.roleNamesToAdd,
-          roleNamesToRemove: values.roleNamesToRemove,
-          ...(packetId && { packetGroupName: packetGroupName })
+          roleNamesToRemove: values.roleNamesToRemove
         },
         method: "PUT"
       });
