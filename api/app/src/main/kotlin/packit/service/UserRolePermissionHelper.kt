@@ -27,8 +27,8 @@ class BaseUserRolePermissionHelper(
     {
         val permissionNames = permissionService.mapToScopedPermission(permissions)
         return permissionChecker.hasPacketReadPermissionForPacket(permissionNames, packet.name, packet.id) &&
-                !permissionChecker.canManagePacket(permissionNames, packet.name, packet.id) &&
-                !permissionChecker.canReadAllPackets(permissionNames)
+                !permissionChecker.canReadPacketGroup(permissionNames, packet.name) &&
+                !permissionChecker.canManagePacket(permissionNames, packet.name, packet.id)
     }
 
     override fun hasOnlySpecificReadPacketGroupPermission(
@@ -38,8 +38,8 @@ class BaseUserRolePermissionHelper(
     {
         val permissionNames = permissionService.mapToScopedPermission(permissions)
         return permissionChecker.hasPacketReadPermissionForGroup(permissionNames, packetGroupName) &&
-                !permissionChecker.canManagePacketGroup(permissionNames, packetGroupName) &&
-                !permissionChecker.canReadAllPackets(permissionNames)
+                !permissionChecker.canReadAllPackets(permissionNames) &&
+                !permissionChecker.canManagePacketGroup(permissionNames, packetGroupName)
     }
 
     override fun userHasDirectReadPacketGroupReadPermission(user: User, packetGroupName: String): Boolean =
