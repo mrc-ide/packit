@@ -4,15 +4,26 @@ import { MemoryRouter } from "react-router";
 import { SWRConfig } from "swr";
 import { PacketGroupSummaryList } from "../../../../app/components/contents/home/PacketGroupSummaryList";
 import { server } from "../../../../msw/server";
-import { mockPacketGroupSummaries } from "../../../mocks";
+import { mockPacketGroupSummaries, mockUserState } from "../../../mocks";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
+import { UserProvider } from "../../../../app/components/providers/UserProvider";
+import { manageRolesIndexUri } from "../../../../msw/handlers/manageRolesHandlers";
+import { UserState } from "../../../../app/components/providers/types/UserTypes";
+
+const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
+jest.mock("../../../../lib/localStorageManager", () => ({
+  ...jest.requireActual("../../../../lib/localStorageManager"),
+  getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
+}));
 
 describe("PacketList test", () => {
   const renderComponent = () =>
     render(
       <SWRConfig value={{ dedupingInterval: 0 }}>
         <MemoryRouter>
-          <PacketGroupSummaryList filterByName="" pageNumber={0} pageSize={10} setPageNumber={jest.fn()} />
+          <UserProvider>
+            <PacketGroupSummaryList filterByName="" pageNumber={0} pageSize={10} setPageNumber={jest.fn()} />
+          </UserProvider>
         </MemoryRouter>
       </SWRConfig>
     );
@@ -39,7 +50,7 @@ describe("PacketList test", () => {
     expect(screen.getByText(/page 1 of 1/i)).toBeVisible();
   });
 
-  it("should render error message when error occurs", async () => {
+  it("should render error message when error occurs fetching packet groups", async () => {
     server.use(
       rest.get("*", (req, res, ctx) => {
         return res(ctx.status(400));
@@ -48,13 +59,41 @@ describe("PacketList test", () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText(/error fetching/i)).toBeVisible();
+      expect(screen.getByText(/error fetching packet groups/i)).toBeVisible();
     });
   });
 
-  it("should render unauthorized when 401 error fetching", async () => {
+  it("should render error message when error occurs fetching roles", async () => {
+    mockGetUserFromLocalStorage.mockReturnValueOnce(mockUserState());
+    server.use(
+      rest.get(manageRolesIndexUri, (req, res, ctx) => {
+        return res(ctx.status(400));
+      })
+    );
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText(/error fetching roles/i)).toBeVisible();
+    });
+  });
+
+  it("should render unauthorized when 401 error fetching packet groups", async () => {
     server.use(
       rest.get("*", (req, res, ctx) => {
+        return res(ctx.status(HttpStatus.Unauthorized));
+      })
+    );
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText(/unauthorized/i)).toBeVisible();
+    });
+  });
+
+  it("should render unauthorized when 401 error fetching roles", async () => {
+    mockGetUserFromLocalStorage.mockReturnValueOnce(mockUserState());
+    server.use(
+      rest.get(manageRolesIndexUri, (req, res, ctx) => {
         return res(ctx.status(HttpStatus.Unauthorized));
       })
     );

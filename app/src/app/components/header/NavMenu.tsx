@@ -24,9 +24,9 @@ interface NavMenuProps extends React.HTMLAttributes<HTMLElement> {
 }
 export const NavMenu = ({ className, user, ...props }: NavMenuProps) => {
   const displayableItems = Object.keys(NavItems).filter((to) => {
-    if (to === "runner" && !hasPacketRunPermission(user)) {
+    if (to === "runner" && !hasPacketRunPermission(user.authorities)) {
       return false;
-    } else if (to === "manage-roles" && !hasUserManagePermission(user)) {
+    } else if (to === "manage-roles" && !hasUserManagePermission(user.authorities)) {
       return false;
     } else {
       return true;

@@ -18,7 +18,7 @@ export const FileRow = ({ file, sharedResource }: FileRowProps) => {
   if (!file || !packet) return null;
   return (
     <div className="p-2 flex justify-between">
-      <div className="flex items-center truncate">
+      <div className="flex items-center max-w-3xl truncate">
         <span className="min-w-fit">
           <ExtensionIcon path={file.path} />
         </span>

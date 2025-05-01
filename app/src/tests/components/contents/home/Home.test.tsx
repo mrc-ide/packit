@@ -4,6 +4,7 @@ import { MemoryRouter } from "react-router";
 import { SWRConfig } from "swr";
 import { Home } from "../../../../app/components/contents/home";
 import * as fetch from "../../../../lib/fetch";
+import { UserProvider } from "../../../../app/components/providers/UserProvider";
 
 describe("Home component", () => {
   const fetcherSpy = jest.spyOn(fetch, "fetcher");
@@ -11,7 +12,9 @@ describe("Home component", () => {
     render(
       <SWRConfig value={{ dedupingInterval: 0 }}>
         <MemoryRouter>
-          <Home />
+          <UserProvider>
+            <Home />
+          </UserProvider>
         </MemoryRouter>
       </SWRConfig>
     );

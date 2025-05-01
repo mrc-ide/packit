@@ -1,14 +1,14 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
 import { Downloads } from "../../../../app/components/contents";
-import { PacketLayout } from "../../../../app/components/main";
-import { mockPacket } from "../../../mocks";
-import { PacketMetadata } from "../../../../types";
-import { server } from "../../../../msw/server";
-import { rest } from "msw";
+import { PacketOutlet } from "../../../../app/components/main/PacketOutlet";
 import appConfig from "../../../../config/appConfig";
-import userEvent from "@testing-library/user-event";
+import { server } from "../../../../msw/server";
+import { PacketMetadata } from "../../../../types";
+import { mockPacket } from "../../../mocks";
 
 const mockDownload = jest.fn();
 jest.mock("../../../../lib/download", () => ({
@@ -24,7 +24,7 @@ describe("download component", () => {
       <SWRConfig value={{ dedupingInterval: 0 }}>
         <MemoryRouter initialEntries={[`/${packet.name}/${packet.id}/downloads`]}>
           <Routes>
-            <Route element={<PacketLayout />} path="/:packetName/:packetId">
+            <Route element={<PacketOutlet packetId={packet.id} />}>
               <Route path="/:packetName/:packetId/downloads" element={<Downloads />} />
             </Route>
           </Routes>
@@ -51,10 +51,7 @@ describe("download component", () => {
     const downloadAllButton = await screen.findByText(/Download all files \(\d+\.\d+ KB\)/);
     expect(downloadAllButton).toBeVisible();
     userEvent.click(downloadAllButton);
-    const url = `${appConfig.apiUrl()}/packets/${mockPacket.id}/zip?paths=${encodeURIComponent(
-      mockPacket.files.map((f) => f.path).join(",")
-    )}`;
-    expect(mockDownload).toHaveBeenCalledWith(url, `parameters_${mockPacket.id}.zip`);
+    expect(mockDownload).toHaveBeenCalledWith(mockPacket.files, mockPacket.id, `parameters_${mockPacket.id}.zip`);
   });
 
   it("renders the 'artefacts' and 'other files' sections for orderly packets", async () => {

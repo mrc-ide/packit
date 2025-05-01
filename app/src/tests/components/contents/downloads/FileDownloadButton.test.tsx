@@ -1,7 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { FileDownloadButton } from "../../../../app/components/contents/downloads/FileDownloadButton";
-import appConfig from "../../../../config/appConfig";
 
 let errorOnDownload = false;
 const mockDownload = jest.fn();
@@ -48,8 +47,7 @@ describe("FileDownloadButton", () => {
     const button = screen.getByRole("button");
     userEvent.click(button);
     expect(button).toBeDisabled();
-    const url = `${appConfig.apiUrl()}/packets/${packetId}/file?hash=${file.hash}&filename=${file.path}&inline=false`;
-    expect(mockDownload).toHaveBeenCalledWith(url, "test.txt");
+    expect(mockDownload).toHaveBeenCalledWith([file], "fakePacketId", "test.txt");
     await waitFor(() => {
       expect(button).not.toBeDisabled();
     });

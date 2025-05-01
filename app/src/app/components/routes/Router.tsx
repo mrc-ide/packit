@@ -10,6 +10,7 @@ import { ManageAccessLayout, ManageRoles, ManageUsers } from "../contents/manage
 import { PacketRun, PacketRunTaskLogs, PacketRunTasksLogs, PacketRunnerLayout } from "../contents/runner";
 import { PacketBlankLayout } from "../main/PacketBlankLayout";
 import { BreadcrumbRoute } from "../main/BreadcrumbRoute";
+import { PacketReadPermission } from "../contents/PacketReadPermission";
 
 export const Router = () => {
   return (
@@ -39,6 +40,7 @@ export const Router = () => {
               <Route path="/:packetName/:packetId" element={<PacketDetails />} />
               <Route path="/:packetName/:packetId/metadata" element={<Metadata />} />
               <Route path="/:packetName/:packetId/downloads" element={<Downloads />} />
+              <Route path="/:packetName/:packetId/read-access" element={<PacketReadPermission />} />
               {/* <Route path="/:packetName/:packetId/changelogs" element={<ChangeLogs />} /> */}
             </Route>
             <Route element={<ManageAccessLayout />}>

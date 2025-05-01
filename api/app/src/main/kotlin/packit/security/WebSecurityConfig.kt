@@ -14,7 +14,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.authentication.logout.LogoutFilter
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
@@ -60,16 +59,15 @@ class WebSecurityConfig(
     @Order(2)
     fun securityFilterChain(
         httpSecurity: HttpSecurity,
-        tokenAuthenticationFilter: TokenAuthenticationFilter,
+        authStrategySwitch: AuthStrategySwitch,
         filterChainExceptionHandler: FilterChainExceptionHandler
-
     ): SecurityFilterChain
     {
         httpSecurity
             .cors { it.configurationSource(getCorsConfigurationSource()) }
             .csrf { it.disable() }
             .addFilterBefore(filterChainExceptionHandler, LogoutFilter::class.java)
-            .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterAfter(authStrategySwitch, LogoutFilter::class.java)
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .formLogin { it.disable() }
             .handleSecurePaths()
