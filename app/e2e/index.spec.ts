@@ -1,6 +1,7 @@
 import { test, expect } from "./tagCheckFixture";
 import { Locator } from "@playwright/test";
 import {
+  createEmptyTestRole,
   getBreadcrumbLocator,
   getContentLocator,
   getReadableIdString,
@@ -59,5 +60,46 @@ test.describe("Index page", () => {
     const displayPacketId = getReadableIdString(packetId);
     const displayPacketGroupName = getReadableIdString(packetGroupName);
     await expect(await getBreadcrumbLocator(page)).toHaveText(`home${displayPacketGroupName}${displayPacketId}`);
+  });
+
+  test("can add update read permission on packet group", { tag: "@stateMutate" }, async ({ page }) => {
+    // create test role with no permissions if not exists
+    const testRoleName = "testE2ERole";
+    await createEmptyTestRole(page, testRoleName);
+
+    const firstPacketGroup = packetGroups.first();
+    const firstPacketGroupName = await packetGroupNameFromListItem(firstPacketGroup);
+    // add permission
+    await page.getByRole("button", { name: `manage-access-${firstPacketGroupName}` }).click();
+    await expect(page.getByRole("heading", { name: "Update read access on" })).toBeVisible();
+    await page
+      .getByLabel("Update read access on")
+      .locator("div")
+      .filter({ hasText: "Select roles or specific" })
+      .getByPlaceholder("Select roles or users...")
+      .click();
+    await page.getByRole("option", { name: testRoleName }).click();
+    await page.getByRole("heading", { name: "Update read access on" }).click();
+    await page.getByRole("button", { name: "Save" }).click();
+    // remove permission
+    await page.getByRole("button", { name: `manage-access-${firstPacketGroupName}` }).click();
+    await page
+      .locator("div")
+      .filter({ hasText: /^Remove read access$/ })
+      .getByPlaceholder("Select roles or users...")
+      .click();
+    await page.getByRole("option", { name: testRoleName }).click();
+    await page.getByRole("heading", { name: "Update read access on" }).click();
+    await page.getByRole("button", { name: "Save" }).click();
+    // check to ensure removed and is visible on grant list
+    await page.getByRole("button", { name: `manage-access-${firstPacketGroupName}` }).click();
+    await page
+      .getByLabel("Update read access on")
+      .locator("div")
+      .filter({ hasText: "Select roles or specific" })
+      .getByPlaceholder("Select roles or users...")
+      .click();
+
+    await expect(page.getByText("testE2ERoleRole")).toBeVisible();
   });
 });
