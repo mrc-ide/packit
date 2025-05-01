@@ -3,7 +3,10 @@ package packit.service
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
-import packit.model.*
+import packit.model.Packet
+import packit.model.Role
+import packit.model.RolePermission
+import packit.model.User
 import packit.model.dto.*
 import packit.security.PermissionChecker
 
@@ -80,8 +83,9 @@ class BaseUserRoleService(
         }
 
         return RolesAndUsersForPacketReadUpdate(
-            rolesCanRead = rolesCanRead.map { it.toDto() },
-            specificUsersCanRead = specificUsersCanRead.map { it.toUserWithPermissions() },
+            canRead = createSortedRolesAndUsersWithPermissionsDto(
+                RolesAndUsers(rolesCanRead, specificUsersCanRead)
+            ),
             cantRead = createSortedRolesAndUsersWithPermissionsDto(
                 getRolesAndUsersCantReadPacket(roles, users, packet)
             ),

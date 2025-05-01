@@ -9,9 +9,16 @@ describe("UpdatePacketReadButton", () => {
     name: "test-packet",
     id: "test-packet-id"
   } as PacketMetadata;
-
+  // TODO: fix tets
   it("should render dialog on button click correctly", async () => {
-    render(<UpdatePacketReadButton roles={[]} users={[]} packet={packet} mutate={jest.fn()} />);
+    render(
+      <UpdatePacketReadButton
+        rolesAndUsersCantRead={{} as any}
+        rolesAndUsersWithRead={{} as any}
+        packet={packet}
+        mutate={jest.fn()}
+      />
+    );
 
     userEvent.click(screen.getByRole("button", { name: "Update read access" }));
 
@@ -21,7 +28,14 @@ describe("UpdatePacketReadButton", () => {
   });
 
   it("should be able to open and close dialog", async () => {
-    render(<UpdatePacketReadButton roles={[]} users={[]} packet={packet} mutate={jest.fn()} />);
+    render(
+      <UpdatePacketReadButton
+        rolesAndUsersCantRead={{} as any}
+        rolesAndUsersWithRead={{} as any}
+        packet={packet}
+        mutate={jest.fn()}
+      />
+    );
 
     userEvent.click(screen.getByRole("button", { name: "Update read access" }));
 

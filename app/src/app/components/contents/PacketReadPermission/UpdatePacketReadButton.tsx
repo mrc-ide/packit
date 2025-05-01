@@ -1,32 +1,29 @@
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../Base/Dialog";
-import { Button } from "../../Base/Button";
 import { UserCog } from "lucide-react";
-import { PacketMetadata } from "../../../../types";
-import { UserWithPermissions } from "../manageAccess/types/UserWithPermissions";
-import { RolesAndUsersWithPermissions, RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
-import { UpdatePacketReadPermissionForm } from "../home/UpdatePacketReadPermissionForm";
+import { useState } from "react";
 import { KeyedMutator } from "swr";
-import { getRolesUsersWithOnlyReadPacketPermission } from "./utils/getRolesUsersWithOnlyReadPacketPermission";
-import { getRolesAndUsersCantReadPacket } from "./utils/getRolesAndUsersCantReadPacket";
+import { PacketMetadata } from "../../../../types";
+import { Button } from "../../Base/Button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../Base/Dialog";
+import { UpdatePacketReadPermissionForm } from "../home/UpdatePacketReadPermissionForm";
+import {
+  RolesAndUsersToUpdatePacketRead,
+  RolesAndUsersWithPermissions
+} from "../manageAccess/types/RoleWithRelationships";
 
 interface UpdatePacketReadButtonProps {
   packet: PacketMetadata;
-  users: UserWithPermissions[];
-  roles: RoleWithRelationships[];
-  mutate: KeyedMutator<RolesAndUsersWithPermissions>;
+  rolesAndUsersCantRead: RolesAndUsersWithPermissions;
+  rolesAndUsersWithRead: RolesAndUsersWithPermissions;
+  mutate: KeyedMutator<RolesAndUsersToUpdatePacketRead>;
 }
 
-export const UpdatePacketReadButton = ({ packet, users, roles, mutate }: UpdatePacketReadButtonProps) => {
+export const UpdatePacketReadButton = ({
+  packet,
+  rolesAndUsersCantRead,
+  rolesAndUsersWithRead,
+  mutate
+}: UpdatePacketReadButtonProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
-  // todo: get these from endpoint!!
-  const rolesAndUsersCantReadPacket = getRolesAndUsersCantReadPacket(roles, users, packet.name, packet.id);
-  const rolesAndUsersWithOnlyReadPacket = getRolesUsersWithOnlyReadPacketPermission(
-    roles,
-    users,
-    packet.name,
-    packet.id
-  );
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -40,8 +37,8 @@ export const UpdatePacketReadButton = ({ packet, users, roles, mutate }: UpdateP
           <DialogTitle>Update read access on {packet.id}</DialogTitle>
         </DialogHeader>
         <UpdatePacketReadPermissionForm
-          rolesAndUsersCantRead={rolesAndUsersCantReadPacket}
-          rolesAndUsersWithRead={rolesAndUsersWithOnlyReadPacket}
+          rolesAndUsersCantRead={rolesAndUsersCantRead}
+          rolesAndUsersWithRead={rolesAndUsersWithRead}
           setDialogOpen={setDialogOpen}
           packetGroupName={packet.name}
           mutate={mutate}

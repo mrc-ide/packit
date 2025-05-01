@@ -22,8 +22,7 @@ data class RolesAndUsersToUpdateRead(
 data class RolesAndUsersForPacketReadUpdate(
     val cantRead: RolesAndUsersWithPermissionsDto,
     val withRead: RolesAndUsersWithPermissionsDto,
-    val rolesCanRead: List<RoleDto>,
-    val specificUsersCanRead: List<UserWithPermissions>
+    val canRead: RolesAndUsersWithPermissionsDto,
 )
 
 class UpdateRolePermission(

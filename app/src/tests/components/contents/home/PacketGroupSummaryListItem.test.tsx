@@ -17,7 +17,11 @@ describe("PacketGroupSummaryListItem", () => {
     render(
       <UserProvider>
         <MemoryRouter>
-          <PacketGroupSummaryListItem packetGroup={mockPacketGroup} rolesAndUsersToUpdateReadRes={{} as any} />
+          <PacketGroupSummaryListItem
+            packetGroup={mockPacketGroup}
+            rolesAndUsersToUpdateRead={{} as any}
+            mutate={jest.fn()}
+          />
         </MemoryRouter>
       </UserProvider>
     );

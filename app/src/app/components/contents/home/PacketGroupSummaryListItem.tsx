@@ -1,24 +1,26 @@
 import { ExternalLink, Hourglass, Layers } from "lucide-react";
 import { Link } from "react-router-dom";
+import { KeyedMutator } from "swr";
 import { canManagePacketGroup } from "../../../../lib/auth/hasPermission";
 import { getTimeDifferenceToDisplay } from "../../../../lib/time";
 import { PacketGroupSummary } from "../../../../types";
 import { useUser } from "../../providers/UserProvider";
-import { useGetRolesAndUsersToUpdatePacketGroupRead } from "./hooks/useGetRolesAndUsersToUpdatePacketGroupRead";
+import { RolesAndUsersToUpdateRead } from "../manageAccess/types/RoleWithRelationships";
 import { UpdatePermissionDialog } from "./UpdatePermissionDialog";
 
 interface PacketGroupSummaryListItemProps {
   packetGroup: PacketGroupSummary;
-  rolesAndUsersToUpdateReadRes: ReturnType<typeof useGetRolesAndUsersToUpdatePacketGroupRead> | null;
+  rolesAndUsersToUpdateRead?: RolesAndUsersToUpdateRead;
+  mutate: KeyedMutator<Record<string, RolesAndUsersToUpdateRead>>;
 }
 
 export const PacketGroupSummaryListItem = ({
   packetGroup,
-  rolesAndUsersToUpdateReadRes
+  rolesAndUsersToUpdateRead,
+  mutate
 }: PacketGroupSummaryListItemProps) => {
   const { unit, value } = getTimeDifferenceToDisplay(packetGroup.latestTime)[0];
   const { user } = useUser();
-  const rolesAndUsersToUpdateRead = rolesAndUsersToUpdateReadRes?.rolesAndUsers?.[packetGroup.name];
 
   return (
     <li key={packetGroup.latestId} className="flex p-4 justify-between items-center border-b">
@@ -58,7 +60,7 @@ export const PacketGroupSummaryListItem = ({
         <UpdatePermissionDialog
           packetGroupName={packetGroup.name}
           rolesAndUsersToUpdateRead={rolesAndUsersToUpdateRead}
-          mutate={rolesAndUsersToUpdateReadRes.mutate}
+          mutate={mutate}
         />
       )}
     </li>

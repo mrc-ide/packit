@@ -39,3 +39,7 @@ export interface RolesAndUsersToUpdateRead {
   cantRead: RolesAndUsersWithPermissions;
   withRead: RolesAndUsersWithPermissions;
 }
+
+export interface RolesAndUsersToUpdatePacketRead extends RolesAndUsersToUpdateRead {
+  canRead: RolesAndUsersWithPermissions;
+}
