@@ -11,7 +11,7 @@ describe("PacketReadUsersList", () => {
 
     render(<PacketReadUsersList users={users} />);
 
-    expect(screen.getByText(/UserWithRolesspecific users with read access/i)).toBeVisible();
+    expect(screen.getByText(/Specific users with read access/i)).toBeVisible();
     expect(screen.getByText(/users granted access on an individual basis/i)).toBeVisible();
     users.forEach((user) => {
       expect(screen.getByText(user.username)).toBeVisible();

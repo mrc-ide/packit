@@ -1,6 +1,13 @@
 import { rest } from "msw";
 import appConfig from "../../config/appConfig";
-import { mockPacket, mockPacketGroupResponse, mockPacketGroupDtos } from "../../tests/mocks";
+import {
+  mockPacket,
+  mockPacketGroupResponse,
+  mockPacketGroupDtos,
+  mockRolesAndUsersWithPermissions,
+  mockRolesAndUsersToUpdateRead
+} from "../../tests/mocks";
+import { RolesAndUsersToUpdateRead } from "../../app/components/contents/manageAccess/types/RoleWithRelationships";
 
 const packetGroupIndexUri = `${appConfig.apiUrl()}/packetGroups`;
 
@@ -18,5 +25,8 @@ export const packetGroupHandlers = [
   }),
   rest.get(`${packetGroupIndexUri}/${mockPacketGroupResponse.content[0].name}/packets`, (req, res, ctx) => {
     return res(ctx.json(mockPacketGroupResponse.content));
+  }),
+  rest.get(`${packetGroupIndexUri}/read-permission`, (req, res, ctx) => {
+    return res(ctx.json(mockRolesAndUsersToUpdateRead));
   })
 ];
