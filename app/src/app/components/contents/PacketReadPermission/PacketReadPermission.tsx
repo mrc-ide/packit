@@ -1,7 +1,5 @@
 import { Loader2 } from "lucide-react";
 import { useParams } from "react-router-dom";
-import { canReadPacket } from "../../../../lib/auth/hasPermission";
-import { mapPermissionsToNames } from "../../../../lib/constructPermissionName";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
 import { usePacketOutletContext } from "../../main/PacketOutlet";
 import { ErrorComponent } from "../common/ErrorComponent";
@@ -38,17 +36,8 @@ export const PacketReadPermission = () => {
           mutate={mutate}
         />
       </div>
-      {/* todo: get these from endpoint as well!!*/}
-      <PacketReadRolesTable
-        roles={rolesAndUsers.canRead.roles.filter((role) =>
-          canReadPacket(mapPermissionsToNames(role.rolePermissions), packet.name, packet.id)
-        )}
-      />
-      <PacketReadUsersList
-        users={rolesAndUsers.canRead.users.filter((user) =>
-          canReadPacket(mapPermissionsToNames(user.specificPermissions), packet.name, packet.id)
-        )}
-      />
+      <PacketReadRolesTable roles={rolesAndUsers.canRead.roles} />
+      <PacketReadUsersList users={rolesAndUsers.canRead.users} />
     </>
   ) : null;
 };
