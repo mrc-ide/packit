@@ -4,7 +4,6 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
 import { ZipDownloadButton } from "../../../../app/components/contents/downloads/ZipDownloadButton";
 import { PacketOutlet } from "../../../../app/components/main/PacketOutlet";
-import appConfig from "../../../../config/appConfig";
 import { FileMetadata } from "../../../../types";
 import { mockPacket } from "../../../mocks";
 
@@ -74,10 +73,7 @@ describe("ZipDownloadButton", () => {
     const button = await screen.findByRole("button");
     userEvent.click(button);
     expect(button).toBeDisabled();
-    const url = `${appConfig.apiUrl()}/packets/${mockPacket.id}/zip?paths=${encodeURIComponent(
-      ["test.txt", "test2.pdf"].join(",")
-    )}`;
-    expect(mockDownload).toHaveBeenCalledWith(url, zipName);
+    expect(mockDownload).toHaveBeenCalledWith(filesToDownload, mockPacket.id, zipName);
     await waitFor(() => {
       expect(button).not.toBeDisabled();
     });
