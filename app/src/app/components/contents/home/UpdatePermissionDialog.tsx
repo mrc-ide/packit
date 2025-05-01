@@ -43,7 +43,6 @@ export const UpdatePermissionDialog = ({
           <DialogTitle>Update read access on {packetGroupName}</DialogTitle>
         </DialogHeader>
         <UpdatePacketReadPermissionForm
-          // TODO: do array later on!! in showing of list. maybe just return strings also?
           rolesAndUsersCantRead={rolesAndUsersToUpdateRead.cantRead}
           rolesAndUsersWithRead={rolesAndUsersToUpdateRead.withRead}
           setDialogOpen={setDialogOpen}

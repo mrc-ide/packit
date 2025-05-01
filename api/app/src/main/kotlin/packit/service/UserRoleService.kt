@@ -46,8 +46,9 @@ class BaseUserRoleService(
         return createSortedRolesAndUsersWithPermissionsDto(getNonUsernameRolesAndNonServiceUsers())
     }
 
-
-    override fun getRolesAndUsersForPacketGroupReadUpdate(packetGroupNames: List<String>): Map<String, RolesAndUsersToUpdateRead>
+    override fun getRolesAndUsersForPacketGroupReadUpdate(
+        packetGroupNames: List<String>
+    ): Map<String, RolesAndUsersToUpdateRead>
     {
         val (roles, users) = getNonUsernameRolesAndNonServiceUsers()
         return packetGroupNames.associateWith {
@@ -104,7 +105,9 @@ class BaseUserRoleService(
         return role
     }
 
-    internal fun createSortedRolesAndUsersWithPermissionsDto(rolesAndUsers: RolesAndUsers): RolesAndUsersWithPermissionsDto
+    internal fun createSortedRolesAndUsersWithPermissionsDto(
+        rolesAndUsers: RolesAndUsers
+    ): RolesAndUsersWithPermissionsDto
     {
         return RolesAndUsersWithPermissionsDto(
             roleService.getSortedRoleDtos(rolesAndUsers.roles),

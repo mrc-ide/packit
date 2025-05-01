@@ -1,5 +1,5 @@
 import { Outlet, useOutletContext } from "react-router-dom";
-import { useGetRolesWithRelationships } from "./hooks/useGetRolesWithRelationships";
+import { useGetRolesAndUsersWithPermissions } from "./hooks/useGetRolesAndUsersWithPermissions";
 import { ErrorComponent } from "../common/ErrorComponent";
 import { Skeleton } from "../../Base/Skeleton";
 import { RoleWithRelationships } from "./types/RoleWithRelationships";
@@ -7,7 +7,7 @@ import { UserWithPermissions } from "./types/UserWithPermissions";
 import { KeyedMutator } from "swr";
 
 export const ManageAccessOutlet = () => {
-  const { roles, users, isLoading, error, mutate } = useGetRolesWithRelationships();
+  const { roles, users, isLoading, error, mutate } = useGetRolesAndUsersWithPermissions();
 
   if (error) return <ErrorComponent message="Error fetching data" error={error} />;
 

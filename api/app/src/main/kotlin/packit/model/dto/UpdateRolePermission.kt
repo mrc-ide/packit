@@ -17,7 +17,6 @@ data class RolesAndUsersToUpdateRead(
     val withRead: RolesAndUsersWithPermissionsDto
 )
 
-// can combine both usersandroles can read
 data class RolesAndUsersForPacketReadUpdate(
     val cantRead: RolesAndUsersWithPermissionsDto,
     val withRead: RolesAndUsersWithPermissionsDto,

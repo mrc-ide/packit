@@ -59,7 +59,6 @@ class RoleController(private val roleService: RoleService, private val userRoleS
         return ResponseEntity.ok(updatedRole.toDto())
     }
 
-    // TODO: change back to user.manage for whole class
     @GetMapping
     fun getRoles(@RequestParam isUsername: Boolean?): ResponseEntity<List<RoleDto>>
     {

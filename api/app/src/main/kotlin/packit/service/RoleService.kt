@@ -39,7 +39,6 @@ interface RoleService
         packetGroupName: String,
         packetId: String? = null
     )
-
 }
 
 @Service

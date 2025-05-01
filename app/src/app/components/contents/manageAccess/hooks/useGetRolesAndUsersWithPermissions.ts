@@ -3,7 +3,7 @@ import appConfig from "../../../../../config/appConfig";
 import { fetcher } from "../../../../../lib/fetch";
 import { RolesAndUsersWithPermissions } from "../types/RoleWithRelationships";
 
-export const useGetRolesWithRelationships = () => {
+export const useGetRolesAndUsersWithPermissions = () => {
   const { data, isLoading, error, mutate } = useSWR<RolesAndUsersWithPermissions>(
     `${appConfig.apiUrl()}/user-role`,
     (url: string) => fetcher({ url })

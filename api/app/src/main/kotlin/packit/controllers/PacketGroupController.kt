@@ -78,7 +78,7 @@ class PacketGroupController(
         "@authz.canUpdatePacketGroupReadRoles(#root,#name)"
     )
     @PutMapping("packetGroups/{name}/read-permission")
-    fun updatePacketReadPermissionOnRoles(
+    fun updatePacketGroupReadPermissionOnRoles(
         @RequestBody @Validated updatePacketReadRoles: UpdateReadRoles,
         @PathVariable name: String
     ): ResponseEntity<Unit>
