@@ -12,26 +12,24 @@ import { CustomDialogFooter } from "../common/CustomDialogFooter";
 import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
 import { UserWithRoles } from "../manageAccess/types/UserWithRoles";
 import { UpdatePacketReadPermissionMultiSelectList } from "./UpdatePacketReadPermissionMultiSelectList";
-import { getRolesAndUsersWithOnlyReadGroupPermission } from "./utils/getRolesAndUsersWithOnlyReadGroupPermission";
-import { getRolesAndUsersCantReadGroup } from "./utils/getRolesAndUsersCantReadGroup";
 
 interface UpdatePacketReadPermissionFormProps {
-  roles: RoleWithRelationships[];
-  users: UserWithRoles[];
+  rolesAndUsersCantRead: (RoleWithRelationships | UserWithRoles)[];
+  rolesAndUsersWithRead: (RoleWithRelationships | UserWithRoles)[];
   setDialogOpen: Dispatch<SetStateAction<boolean>>;
   packetGroupName: string;
   mutate: KeyedMutator<RoleWithRelationships[]>;
+  packetId?: string;
 }
 export const UpdatePacketReadPermissionForm = ({
-  roles,
-  users,
+  rolesAndUsersCantRead,
+  rolesAndUsersWithRead,
   setDialogOpen,
   packetGroupName,
-  mutate
+  mutate,
+  packetId
 }: UpdatePacketReadPermissionFormProps) => {
   const [error, setError] = useState("");
-  const rolesAndUsersCantReadGroup = getRolesAndUsersCantReadGroup(roles, users, packetGroupName);
-  const rolesAndUsersWithReadGroup = getRolesAndUsersWithOnlyReadGroupPermission(roles, users, packetGroupName);
 
   const formSchema = z.object({
     roleNamesToAdd: z.array(z.string()),
@@ -55,7 +53,8 @@ export const UpdatePacketReadPermissionForm = ({
         url: `${appConfig.apiUrl()}/packetGroups/${packetGroupName}/read-permission`,
         body: {
           roleNamesToAdd: values.roleNamesToAdd,
-          roleNamesToRemove: values.roleNamesToRemove
+          roleNamesToRemove: values.roleNamesToRemove,
+          packetId
         },
         method: "PUT"
       });
@@ -81,10 +80,10 @@ export const UpdatePacketReadPermissionForm = ({
           render={({ field }) => (
             <FormItem>
               <FormDescription className="text-xs mb-0.5">
-                Select roles or specific users to grant read access to this packet group. Roles or users with global
-                read access cannot be added here as they already have the required permissions. Similarly, roles or with
-                global access cannot have their access removed here. You also cannot add or remove access here for
-                specific users who have access via a role.
+                Select roles or specific users to grant read access to this packet{packetId ? "" : " group"}. Roles or
+                users with global read access cannot be added here as they already have the required permissions.
+                Similarly, roles or users with global access cannot have their access removed here. You also cannot add
+                or remove access here for specific users who have access via a role.
               </FormDescription>
               <FormLabel>Grant read access</FormLabel>
               <MultiSelector onValuesChange={field.onChange} values={field.value}>
@@ -92,7 +91,7 @@ export const UpdatePacketReadPermissionForm = ({
                   <MultiSelectorInput className="text-sm" placeholder="Select roles or users..." />
                 </MultiSelectorTrigger>
                 <MultiSelectorContent>
-                  <UpdatePacketReadPermissionMultiSelectList rolesAndUsers={rolesAndUsersCantReadGroup} />
+                  <UpdatePacketReadPermissionMultiSelectList rolesAndUsers={rolesAndUsersCantRead} />
                 </MultiSelectorContent>
               </MultiSelector>
             </FormItem>
@@ -109,7 +108,7 @@ export const UpdatePacketReadPermissionForm = ({
                   <MultiSelectorInput className="text-sm" placeholder="Select roles or users..." />
                 </MultiSelectorTrigger>
                 <MultiSelectorContent>
-                  <UpdatePacketReadPermissionMultiSelectList rolesAndUsers={rolesAndUsersWithReadGroup} />
+                  <UpdatePacketReadPermissionMultiSelectList rolesAndUsers={rolesAndUsersWithRead} />
                 </MultiSelectorContent>
               </MultiSelector>
             </FormItem>

@@ -1,4 +1,5 @@
 import { Locator, Page, expect } from "@playwright/test";
+import { randomUUID } from "crypto";
 
 export const getContentLocator = async (page: Page) => {
   return page.getByTestId("content");
@@ -76,13 +77,13 @@ export const getInstanceRelativePath = (baseURL: string, path: string) => {
   return `${basePath}/${path}`.replaceAll("//", "/");
 };
 
-export const createEmptyTestRole = async (page: Page, testRoleName: string) => {
+export const createEmptyTestRole = async (page: Page) => {
+  const testRoleName = `e2eTest${randomUUID().replaceAll("-", "")}`;
   await page.getByRole("link", { name: "Manage Access" }).click();
   await page.getByRole("button", { name: "Add Role" }).click();
   await page.getByRole("textbox", { name: "Name" }).fill(testRoleName);
   await page.getByRole("button", { name: "Add" }).click();
-  if (await page.locator("text=Role already exists").isVisible()) {
-    await page.getByRole("button", { name: "Close" }).click();
-  }
   await page.getByRole("link", { name: "Packit" }).click();
+
+  return testRoleName;
 };

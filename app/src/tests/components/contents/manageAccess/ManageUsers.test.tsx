@@ -74,7 +74,7 @@ describe("ManageUsers", () => {
     mockAuthConfig.mockReturnValue({ enableBasicLogin: false });
     renderComponent();
 
-    const filterInput = await screen.findByPlaceholderText(/filter users by username/i);
+    const filterInput = await screen.findByPlaceholderText(/Search by user or role/i);
     userEvent.type(filterInput, "x@gmail");
 
     await waitFor(() => {
@@ -90,7 +90,7 @@ describe("ManageUsers", () => {
     mockAuthConfig.mockReturnValue({ enableBasicLogin: false });
     renderComponent();
 
-    const filterInput = await screen.findByPlaceholderText(/filter users by username/i);
+    const filterInput = await screen.findByPlaceholderText(/Search by user or role/i);
     userEvent.type(filterInput, "x@gmail");
 
     await waitFor(() => {

@@ -22,6 +22,16 @@ export const canManagePacketGroup = (authorities: string[] = [], packetGroupName
 export const canReadRoles = (authorities: string[] = []) =>
   hasUserManagePermission(authorities) || hasAnyPacketManagePermission(authorities);
 
+export const hasPacketManagePermissionForPacket = (
+  authorities: string[] = [],
+  packetGroupName: string,
+  packetId: string
+) => authorities.includes(buildScopedPermission("packet.manage", packetGroupName, packetId));
+
+export const canManagePacket = (authorities: string[] = [], packetGroupName: string, packetId: string) =>
+  canManagePacketGroup(authorities, packetGroupName) ||
+  hasPacketManagePermissionForPacket(authorities, packetGroupName, packetId);
+
 /** Read packets */
 export const canReadAllPackets = (authorities: string[] = []) =>
   canManageAllPackets(authorities) || hasGlobalReadPermission(authorities);
@@ -33,3 +43,14 @@ export const canReadPacketGroup = (authorities: string[] = [], packetGroupName: 
   canReadAllPackets(authorities) ||
   canManagePacketGroup(authorities, packetGroupName) ||
   hasPacketReadPermissionForGroup(authorities, packetGroupName);
+
+export const hasPacketReadPermissionForPacket = (
+  authorities: string[] = [],
+  packetGroupName: string,
+  packetId: string
+) => authorities.includes(buildScopedPermission("packet.read", packetGroupName, packetId));
+
+export const canReadPacket = (authorities: string[] = [], packetGroup: string, packetId: string) =>
+  canReadPacketGroup(authorities, packetGroup) ||
+  canManagePacket(authorities, packetGroup, packetId) ||
+  hasPacketReadPermissionForPacket(authorities, packetGroup, packetId);

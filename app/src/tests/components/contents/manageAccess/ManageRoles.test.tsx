@@ -49,10 +49,10 @@ describe("ManageRoles", () => {
     expect(screen.getAllByRole("button", { name: "edit-role" })[0]).toBeDisabled();
   });
 
-  it("should filter roles by name", async () => {
+  it("should search by role or user", async () => {
     renderComponent();
 
-    const filterInput = await screen.findByPlaceholderText(/filter roles by name/i);
+    const filterInput = await screen.findByPlaceholderText(/search by role or user/i);
     userEvent.type(filterInput, "adm");
 
     await waitFor(() => {
@@ -66,7 +66,7 @@ describe("ManageRoles", () => {
   it("should reset filter when reset button is clicked", async () => {
     renderComponent();
 
-    const filterInput = await screen.findByPlaceholderText(/filter roles by name/i);
+    const filterInput = await screen.findByPlaceholderText(/search by role or user/i);
     userEvent.type(filterInput, "adm");
 
     await waitFor(() => {

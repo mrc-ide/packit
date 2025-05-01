@@ -1,4 +1,4 @@
-import { test, expect } from "./tagCheckFixture";
+import { test, expect, TAG_STATE_MUTATE } from "./tagCheckFixture";
 import { Locator } from "@playwright/test";
 import {
   createEmptyTestRole,
@@ -62,10 +62,9 @@ test.describe("Index page", () => {
     await expect(await getBreadcrumbLocator(page)).toHaveText(`home${displayPacketGroupName}${displayPacketId}`);
   });
 
-  test("can add update read permission on packet group", { tag: "@stateMutate" }, async ({ page }) => {
+  test("can add update read permission on packet group", { tag: TAG_STATE_MUTATE }, async ({ page }) => {
     // create test role with no permissions if not exists
-    const testRoleName = "testE2ERole";
-    await createEmptyTestRole(page, testRoleName);
+    const testRoleName = await createEmptyTestRole(page);
 
     const firstPacketGroup = packetGroups.first();
     const firstPacketGroupName = await packetGroupNameFromListItem(firstPacketGroup);
@@ -100,6 +99,6 @@ test.describe("Index page", () => {
       .getByPlaceholder("Select roles or users...")
       .click();
 
-    await expect(page.getByText("testE2ERoleRole")).toBeVisible();
+    await expect(page.getByText(`${testRoleName}Role`)).toBeVisible();
   });
 });

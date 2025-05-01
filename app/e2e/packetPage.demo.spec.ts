@@ -1,6 +1,7 @@
 import { Locator } from "@playwright/test";
-import { test, expect, TAG_DEMO_PACKETS } from "./tagCheckFixture";
+import { test, expect, TAG_DEMO_PACKETS, TAG_STATE_MUTATE } from "./tagCheckFixture";
 import {
+  createEmptyTestRole,
   getContentLocator,
   getInstanceRelativePath,
   getPacketPageAccordionSection,
@@ -104,6 +105,46 @@ test.describe("Demo packet page", { tag: TAG_DEMO_PACKETS }, () => {
       const listItems = await packagesDiv.locator("ul.space-y-1 > li").all();
       await expect(listItems.length).toBe(21);
       await expect(listItems[0]).toHaveText("askpass" + "1.2.0");
+    });
+  });
+
+  test.describe("read-access", { tag: TAG_STATE_MUTATE }, () => {
+    test("can update read permissions on packet", async ({ page }) => {
+      await page.goto("./");
+      const testRoleName = await createEmptyTestRole(page);
+      await page.goto(`./parameters/${parametersPacketId}`);
+      await page.getByRole("link", { name: "Read access" }).click();
+
+      // check existing roles
+      await expect(page.getByRole("cell", { name: "ADMIN", exact: true })).toBeVisible();
+      await expect(page.getByText("resideUser@resideAdmin.ic.ac.")).toBeVisible();
+
+      // add test role
+      await page.getByRole("button", { name: "Update read access" }).click();
+      await page
+        .getByLabel("Update read access on")
+        .locator("div")
+        .filter({ hasText: "Select roles or specific" })
+        .getByPlaceholder("Select roles or users...")
+        .click();
+      await page.getByRole("option", { name: `${testRoleName} Role` }).click();
+      await page.getByText("Select roles or specific").click();
+      await page.getByRole("button", { name: "Save" }).click();
+
+      await expect(page.getByRole("cell", { name: testRoleName })).toBeVisible();
+
+      // remove test role
+      await page.getByRole("button", { name: "Update read access" }).click();
+      await page
+        .locator("div")
+        .filter({ hasText: /^Remove read access$/ })
+        .getByPlaceholder("Select roles or users...")
+        .click();
+      await page.getByRole("option", { name: `${testRoleName} Role` }).click();
+      await page.getByText("Select roles or specific").click();
+      await page.getByRole("button", { name: "Save" }).click();
+
+      await expect(page.getByRole("cell", { name: testRoleName })).not.toBeVisible();
     });
   });
 });

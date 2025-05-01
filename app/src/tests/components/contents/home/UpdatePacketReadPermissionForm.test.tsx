@@ -1,14 +1,13 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import * as fetch from "../../../../lib/fetch";
+import userEvent from "@testing-library/user-event";
+import { Dialog } from "../../../../app/components/Base/Dialog";
 // eslint-disable-next-line max-len
 import { UpdatePacketReadPermissionForm } from "../../../../app/components/contents/home/UpdatePacketReadPermissionForm";
-import { mockNonUsernameRolesWithRelationships, mockUsersWithRoles } from "../../../mocks";
-import { Dialog } from "../../../../app/components/Base/Dialog";
-import userEvent from "@testing-library/user-event";
 import appConfig from "../../../../config/appConfig";
 import { ApiError } from "../../../../lib/errors";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
-import { UserWithRoles } from "../../../../app/components/contents/manageAccess/types/UserWithRoles";
+import { mockNonUsernameRolesWithRelationships } from "../../../mocks";
 
 describe("UpdatePacketReadPermissionForm", () => {
   const fetcherSpy = jest.spyOn(fetch, "fetcher");
@@ -21,14 +20,13 @@ describe("UpdatePacketReadPermissionForm", () => {
     userEvent.click(multiSelects[0]);
     const addOptions = await screen.findAllByRole("option");
     expect(addOptions).toHaveLength(2);
-    expect(addOptions[0]).toHaveTextContent("Viewer");
-    expect(addOptions[1]).toHaveTextContent("x@gmail.com");
+    expect(addOptions[0]).toHaveTextContent("Modeller");
     userEvent.click(addOptions[0]);
 
     userEvent.click(multiSelects[1]);
     const removeOptions = await screen.findAllByRole("option");
     expect(removeOptions).toHaveLength(1);
-    expect(removeOptions[0]).toHaveTextContent("hgz@gmail.com");
+    expect(removeOptions[0]).toHaveTextContent("ADMIN");
     userEvent.click(removeOptions[0]);
 
     await waitFor(() => {
@@ -38,30 +36,16 @@ describe("UpdatePacketReadPermissionForm", () => {
     userEvent.click(screen.getByRole("button", { name: /save/i }));
   };
   const setDialogOpen = jest.fn();
-
-  const renderComponent = () =>
+  const renderComponent = (packetId?: string) =>
     render(
       <Dialog>
         <UpdatePacketReadPermissionForm
           mutate={mutate}
           packetGroupName={packetGroupName}
-          roles={mockNonUsernameRolesWithRelationships}
-          users={[
-            ...mockUsersWithRoles,
-            {
-              username: "hgz@gmail.com",
-              roles: [],
-              specificPermissions: [
-                {
-                  permission: "packet.read",
-                  packetGroup: {
-                    name: "explicit"
-                  }
-                }
-              ]
-            } as unknown as UserWithRoles
-          ]}
+          rolesAndUsersWithRead={mockNonUsernameRolesWithRelationships.slice(0, 1)}
+          rolesAndUsersCantRead={mockNonUsernameRolesWithRelationships.slice(1)}
           setDialogOpen={setDialogOpen}
+          packetId={packetId}
         />
       </Dialog>
     );
@@ -70,7 +54,7 @@ describe("UpdatePacketReadPermissionForm", () => {
     jest.clearAllMocks();
   });
 
-  it("should call correct functions when form is submitted successfully", async () => {
+  it("should call correct functions when form is submitted successfully with no packetId", async () => {
     renderComponent();
 
     await submitValidForm();
@@ -80,8 +64,29 @@ describe("UpdatePacketReadPermissionForm", () => {
         url: `${appConfig.apiUrl()}/packetGroups/${packetGroupName}/read-permission`,
         method: "PUT",
         body: {
-          roleNamesToAdd: ["Viewer"],
-          roleNamesToRemove: ["hgz@gmail.com"]
+          roleNamesToAdd: ["Modeller"],
+          roleNamesToRemove: ["ADMIN"]
+        }
+      });
+      expect(mutate).toHaveBeenCalled();
+      expect(setDialogOpen).toHaveBeenCalledWith(false);
+    });
+  });
+
+  it("should call correct functions when form is submitted successfully with  packetId", async () => {
+    const packetId = "1234";
+    renderComponent(packetId);
+
+    await submitValidForm();
+
+    await waitFor(() => {
+      expect(fetcherSpy).toHaveBeenCalledWith({
+        url: `${appConfig.apiUrl()}/packetGroups/${packetGroupName}/read-permission`,
+        method: "PUT",
+        body: {
+          roleNamesToAdd: ["Modeller"],
+          roleNamesToRemove: ["ADMIN"],
+          packetId
         }
       });
       expect(mutate).toHaveBeenCalled();

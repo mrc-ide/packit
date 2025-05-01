@@ -7,6 +7,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../
 import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
 import { UserWithRoles } from "../manageAccess/types/UserWithRoles";
 import { UpdatePacketReadPermissionForm } from "./UpdatePacketReadPermissionForm";
+import { getRolesAndUsersCantReadGroup } from "./utils/getRolesAndUsersCantReadGroup";
+import { getRolesAndUsersWithOnlyReadGroupPermission } from "./utils/getRolesAndUsersWithOnlyReadGroupPermission";
 
 interface UpdatePermissionDialogProps {
   roles: RoleWithRelationships[];
@@ -16,6 +18,9 @@ interface UpdatePermissionDialogProps {
 }
 export const UpdatePermissionDialog = ({ roles, users, packetGroupName, mutate }: UpdatePermissionDialogProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const rolesAndUsersCantReadGroup = getRolesAndUsersCantReadGroup(roles, users, packetGroupName);
+  const rolesAndUsersWithReadGroup = getRolesAndUsersWithOnlyReadGroupPermission(roles, users, packetGroupName);
+
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <TooltipProvider>
@@ -40,8 +45,8 @@ export const UpdatePermissionDialog = ({ roles, users, packetGroupName, mutate }
           <DialogTitle>Update read access on {packetGroupName}</DialogTitle>
         </DialogHeader>
         <UpdatePacketReadPermissionForm
-          roles={roles}
-          users={users}
+          rolesAndUsersCantRead={rolesAndUsersCantReadGroup}
+          rolesAndUsersWithRead={rolesAndUsersWithReadGroup}
           setDialogOpen={setDialogOpen}
           packetGroupName={packetGroupName}
           mutate={mutate}
