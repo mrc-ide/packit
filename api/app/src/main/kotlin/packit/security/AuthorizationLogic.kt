@@ -3,7 +3,10 @@ package packit.security
 import org.springframework.security.access.expression.SecurityExpressionOperations
 import org.springframework.stereotype.Component
 import packit.model.Packet
+import packit.security.ott.OTTAuthenticationToken
 import packit.service.PacketService
+import packit.service.PermissionService
+import java.time.Instant
 
 @Component("authz")
 class AuthorizationLogic(
@@ -43,6 +46,28 @@ class AuthorizationLogic(
     {
         val packet = packetService.getPacket(packetId)
         return permissionChecker.canManagePacket(getAuthorities(operations), packet.name, packet.id)
+    }
+
+    fun oneTimeTokenValid(operations: SecurityExpressionOperations, packetId: String, path: String): Boolean {
+        return validateOneTimeToken(operations, packetId, listOf(path))
+    }
+
+    fun oneTimeTokenValid(operations: SecurityExpressionOperations, packetId: String, paths: List<String>): Boolean {
+        return validateOneTimeToken(operations, packetId, paths)
+    }
+
+    private fun validateOneTimeToken(
+        operations: SecurityExpressionOperations,
+        requestedPacketId: String,
+        requestedPaths: List<String>,
+    ): Boolean {
+        val auth = operations.authentication as OTTAuthenticationToken
+        val permittedPaths = auth.getPermittedFilePaths()
+
+        return auth.getExpiresAt().isAfter(Instant.now()) &&
+                auth.getPermittedPacketId() == requestedPacketId &&
+                permittedPaths.containsAll(requestedPaths) &&
+                permittedPaths.size == requestedPaths.size
     }
 
     fun canUpdatePacketGroupReadRoles(
