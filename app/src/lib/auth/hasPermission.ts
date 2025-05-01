@@ -7,9 +7,6 @@ export const hasGlobalPacketManagePermission = (authorities: string[] = []) => a
 export const hasGlobalReadPermission = (authorities: string[] = []) => authorities.includes("packet.read");
 
 /** Manage packets */
-export const hasAnyPacketManagePermission = (authorities: string[] = []) =>
-  authorities.some((permission) => permission.startsWith("packet.manage"));
-
 export const canManageAllPackets = (authorities: string[] = []) =>
   hasUserManagePermission(authorities) || hasGlobalPacketManagePermission(authorities);
 

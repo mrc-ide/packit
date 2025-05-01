@@ -1,13 +1,15 @@
 import useSWR from "swr";
-import { RolesAndUsersToUpdateRead } from "../../manageAccess/types/RoleWithRelationships";
-import { fetcher } from "../../../../../lib/fetch";
 import appConfig from "../../../../../config/appConfig";
-import { hasAnyPacketManagePermission } from "../../../../../lib/auth/hasPermission";
+import { fetcher } from "../../../../../lib/fetch";
+import { RolesAndUsersToUpdateRead } from "../../manageAccess/types/RoleWithRelationships";
 
-// Format of return data is: Record<packetGroupName string, rolesAndUsersToUpdateRead>
-export const useGetRolesAndUsersToUpdatePacketGroupRead = (authorities: string[] = []) => {
+/**
+ * Key of return type is packet group name
+ * Only returns packet group names that user has permissions to manage
+ */
+export const useGetRolesAndUsersToUpdatePacketGroupRead = () => {
   const { data, isLoading, error, mutate } = useSWR<Record<string, RolesAndUsersToUpdateRead>>(
-    hasAnyPacketManagePermission(authorities) ? `${appConfig.apiUrl()}/packetGroups/read-permission` : null,
+    `${appConfig.apiUrl()}/packetGroups/read-permission`,
     (url: string) => fetcher({ url })
   );
 

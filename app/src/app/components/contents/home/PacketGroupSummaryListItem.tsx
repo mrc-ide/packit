@@ -1,10 +1,8 @@
 import { ExternalLink, Hourglass, Layers } from "lucide-react";
 import { Link } from "react-router-dom";
 import { KeyedMutator } from "swr";
-import { canManagePacketGroup } from "../../../../lib/auth/hasPermission";
 import { getTimeDifferenceToDisplay } from "../../../../lib/time";
 import { PacketGroupSummary } from "../../../../types";
-import { useUser } from "../../providers/UserProvider";
 import { RolesAndUsersToUpdateRead } from "../manageAccess/types/RoleWithRelationships";
 import { UpdatePermissionDialog } from "./UpdatePermissionDialog";
 
@@ -20,7 +18,6 @@ export const PacketGroupSummaryListItem = ({
   mutate
 }: PacketGroupSummaryListItemProps) => {
   const { unit, value } = getTimeDifferenceToDisplay(packetGroup.latestTime)[0];
-  const { user } = useUser();
 
   return (
     <li key={packetGroup.latestId} className="flex p-4 justify-between items-center border-b">
@@ -56,7 +53,7 @@ export const PacketGroupSummaryListItem = ({
           </div>
         </div>
       </div>
-      {rolesAndUsersToUpdateRead && canManagePacketGroup(user?.authorities, packetGroup.name) && (
+      {rolesAndUsersToUpdateRead && (
         <UpdatePermissionDialog
           packetGroupName={packetGroup.name}
           rolesAndUsersToUpdateRead={rolesAndUsersToUpdateRead}

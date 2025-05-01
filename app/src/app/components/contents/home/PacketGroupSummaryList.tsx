@@ -1,7 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
 import { Skeleton } from "../../Base/Skeleton";
-import { useUser } from "../../providers/UserProvider";
 import { ErrorComponent } from "../common/ErrorComponent";
 import { Pagination } from "../common/Pagination";
 import { Unauthorized } from "../common/Unauthorized";
@@ -21,18 +20,14 @@ export const PacketGroupSummaryList = ({
   pageSize,
   setPageNumber
 }: PacketGroupSummaryListProps) => {
-  const { user } = useUser();
-  const { rolesAndUsers, error, mutate } = useGetRolesAndUsersToUpdatePacketGroupRead(user?.authorities);
-
+  const { rolesAndUsers, mutate } = useGetRolesAndUsersToUpdatePacketGroupRead();
   const {
     packetGroupSummaries,
     isLoading,
     error: packetFetchError
   } = useGetPacketGroupSummaries(pageNumber, pageSize, filterByName);
 
-  if (packetFetchError?.status === HttpStatus.Unauthorized || error?.status === HttpStatus.Unauthorized)
-    return <Unauthorized />;
-  if (error) return <ErrorComponent message="Error fetching roles and users" error={error} />;
+  if (packetFetchError?.status === HttpStatus.Unauthorized) return <Unauthorized />;
   if (packetFetchError) return <ErrorComponent message="Error fetching packet groups" error={packetFetchError} />;
 
   if (isLoading)
