@@ -4,52 +4,47 @@ import { AccountHeaderDropdown } from "./AccountHeaderDropdown";
 
 import { useUser } from "../providers/UserProvider";
 import { ThemeToggleButton } from "./ThemeToggleButton";
-import { cn } from "../../../lib/cn";
-import { buttonVariants } from "../Base/Button";
-import { NavMenuMobile } from "./NavMenuMobile";
-import { LeftNav } from "./LeftNav";
-import { hasUserManagePermission } from "../../../lib/auth/hasPermission";
+import { NavMenu } from "./NavMenu";
 import { useGetBranding } from "../contents/common/hooks/useGetBranding";
+import { Breadcrumb } from "../main/Breadcrumb";
+import { useBreadcrumbContext } from "../providers/BreadcrumbProvider";
 
 export const Header = () => {
   const { user } = useUser();
+  const { showBreadcrumbs } = useBreadcrumbContext()
   const { brandConfig, isLoading: brandConfigIsLoading } = useGetBranding();
   const logoLinkDestination = brandConfig?.logoLink || "/";
 
   return (
     <header>
-      <div data-testid="header" className="flex-col">
-        <div className="border-b shadow-sm dark:shadow-accent">
-          <div className="flex h-20 items-center px-4">
-            {brandConfig?.logoFilename && (
-              <NavLink to={logoLinkDestination} className="h-full p-1 mr-2">
-                <img
-                  src={`/img/${brandConfig?.logoFilename}`}
-                  className="h-full"
-                  alt={brandConfig?.logoAltText}
-                />
-              </NavLink>
-            )}
-            <NavLink to="/">
-              <div className="text-xl font-extrabold flex gap-1 items-center ml-2 custom-header">
-                {!brandConfig?.logoFilename && !brandConfigIsLoading && (<PackageOpen />)}
-                {brandConfig?.brandName}
-              </div>
+      <div data-testid="header">
+        <div className="flex items-center h-28 border-b shadow-sm dark:shadow-accent mb-2">
+          {brandConfig?.logoFilename && (
+            <NavLink to={logoLinkDestination} className="h-full p-2 hidden md:block flex-shrink-0">
+              <img
+                src={`/img/${brandConfig?.logoFilename}`}
+                className="h-full mx-2"
+                alt={brandConfig?.logoAltText}
+              />
             </NavLink>
-            {user && <NavMenuMobile user={user} />}
-            {user && <LeftNav className="mx-6 hidden md:flex" user={user} />}
-            <div className="ml-auto flex items-center space-x-4">
-              {/* <NavigationLink to="/accessibility" className="mx-6 hidden md:flex">
-                Accessibility
-              </NavigationLink> */}
-              {hasUserManagePermission(user) && (
-                <NavLink to="/manage-roles" className={cn(buttonVariants({ variant: "ghost" }), "justify-start")}>
-                  Manage Access
-                </NavLink>
-              )}
-              <ThemeToggleButton />
-              {user && <AccountHeaderDropdown />}
+          )}
+          <div className="h-full flex-1 flex flex-col">
+            <div className="flex-1 flex items-center">
+              <NavLink to="/" className="mx-4">
+                <div className="text-xl font-extrabold flex gap-1 items-center tracking-tight">
+                  {!brandConfig?.logoFilename && !brandConfigIsLoading && (<PackageOpen className="mr-1" />)}
+                  {brandConfig?.brandName}
+                </div>
+              </NavLink>
+              <div className="flex flex-1 h-20 items-center px-4">
+                {user && <NavMenu className="hidden md:flex" user={user} />}
+                <div className="flex items-center space-x-4 ml-auto">
+                  <ThemeToggleButton />
+                  {user && <AccountHeaderDropdown />}
+                </div>
+              </div>
             </div>
+            {showBreadcrumbs && <Breadcrumb />}
           </div>
         </div>
       </div>

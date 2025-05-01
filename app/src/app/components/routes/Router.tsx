@@ -4,12 +4,12 @@ import { NotFound } from "../NotFound";
 import { Downloads, Home, Metadata, PacketGroup } from "../contents";
 import { PacketDetails, PacketFileFullScreen } from "../contents/packets";
 import { Login, Redirect, UpdatePassword, AuthLayoutForm } from "../login";
-import { Breadcrumb } from "../main/Breadcrumb";
 import { PacketLayout } from "../main";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { ManageAccessLayout, ManageRoles, ManageUsers } from "../contents/manageAccess";
 import { PacketRun, PacketRunTaskLogs, PacketRunTasksLogs, PacketRunnerLayout } from "../contents/runner";
 import { PacketBlankLayout } from "../main/PacketBlankLayout";
+import { BreadcrumbRoute } from "../main/BreadcrumbRoute";
 
 export const Router = () => {
   return (
@@ -25,7 +25,7 @@ export const Router = () => {
           <Route path="*" element={<NotFound />} />
         </Route>
         <Route element={<ProtectedRoute />}>
-          <Route element={<Breadcrumb />}>
+          <Route element={<BreadcrumbRoute />}>
             <Route index element={<Home />} />
             <Route element={<PacketRunnerLayout />}>
               <Route path="runner" element={<PacketRun />} />

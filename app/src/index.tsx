@@ -8,20 +8,23 @@ import { RedirectOnLoginProvider } from "./app/components/providers/RedirectOnLo
 import reportWebVitals from "./reportWebVitals";
 import "./styles/globals.css";
 import { Router } from "./app/components/routes/Router";
+import { BreadcrumbProvider } from "./app/components/providers/BreadcrumbProvider";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <ThemeProvider>
-      <AuthConfigProvider>
-        <UserProvider>
-          <RedirectOnLoginProvider>
-            <BrowserRouter basename={process.env.PUBLIC_URL}>
-              <Router />
-            </BrowserRouter>
-          </RedirectOnLoginProvider>
-        </UserProvider>
-      </AuthConfigProvider>
-    </ThemeProvider>
+    <BreadcrumbProvider>
+      <ThemeProvider>
+        <AuthConfigProvider>
+          <UserProvider>
+            <RedirectOnLoginProvider>
+              <BrowserRouter basename={process.env.PUBLIC_URL}>
+                <Router />
+              </BrowserRouter>
+            </RedirectOnLoginProvider>
+          </UserProvider>
+        </AuthConfigProvider>
+      </ThemeProvider>
+    </BreadcrumbProvider>
   </React.StrictMode>
 );
 

@@ -1,5 +1,5 @@
 import { ChevronRight } from "lucide-react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { kebabToSentenceCase } from "../../../lib/string";
 
 export const Breadcrumb = () => {
@@ -8,30 +8,30 @@ export const Breadcrumb = () => {
   const pathNames = ["", ...pathname.split("/").filter((x) => x)];
 
   return (
-    <>
-      <div className="flex-col mb-2 border-b-2 shadow-sm" data-testid="breadcrumb">
-        <div className="flex h-9 items-center px-4 justify-start space-x-1 text-sm">
-          {pathNames.map((path, index) => {
-            const routeTo = `${pathNames.slice(0, index + 1).join("/")}`;
-            const displayName = routeTo === "" ? "home" : kebabToSentenceCase(path);
+    <div
+      data-testid="breadcrumb"
+      className="flex flex-1 bg-accent rounded-tl-lg items-center pl-2 pr-4 justify-start space-x-1 text-sm"
+      aria-label="Breadcrumb"
+    >
+      <ChevronRight />
+      {pathNames.map((path, index) => {
+        const routeTo = `${pathNames.slice(0, index + 1).join("/")}`;
+        const displayName = routeTo === "" ? "home" : kebabToSentenceCase(path);
 
-            return index === pathNames.length - 1 ? (
-              <div key={index}>{displayName}</div>
-            ) : (
-              <div className="flex space-x-1 justify-between items-center truncate" key={index}>
-                <NavLink
-                  to={routeTo}
-                  className="transition-colors hover:text-primary text-muted-foreground truncate whitespace-nowrap"
-                >
-                  {displayName}
-                </NavLink>
-                <ChevronRight />
-              </div>
-            );
-          })}
-        </div>
-      </div>
-      <Outlet />
-    </>
+        return index === pathNames.length - 1 ? (
+          <div key={index} aria-current="page">{displayName}</div>
+        ) : (
+          <div className="flex space-x-1 justify-between items-center truncate" key={index}>
+            <NavLink
+              to={routeTo}
+              className="transition-colors hover:text-primary text-muted-foreground truncate whitespace-nowrap"
+            >
+              {displayName}
+            </NavLink>
+            <ChevronRight />
+          </div>
+        );
+      })}
+    </div>
   );
 };
