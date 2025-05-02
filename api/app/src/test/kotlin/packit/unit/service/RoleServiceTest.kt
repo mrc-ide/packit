@@ -28,7 +28,8 @@ class RoleServiceTest
     private val roleRepository = mock<RoleRepository>()
     private val permissionService = mock<PermissionService>()
     private val rolePermissionService = mock<RolePermissionService>()
-    private val roleService = BaseRoleService(appConfig, roleRepository, permissionService, rolePermissionService)
+    private val roleService =
+        BaseRoleService(appConfig, roleRepository, permissionService, rolePermissionService)
 
     @Test
     fun `createUsernameRole throws exception if role exists`()
@@ -606,7 +607,7 @@ class RoleServiceTest
         val packetId = "packet123"
         val packetGroupName = "packetGroup1"
         val updatePacketReadRoles =
-            UpdateReadRoles(packetId, rolesToAdd.toSet(), rolesToRemove.toSet())
+            UpdateReadRoles(rolesToAdd.toSet(), rolesToRemove.toSet())
         val allRoles = updateRoleNames.map { Role(name = it) }
 
         doReturn(updateRoleNames).`when`(spyRoleService)

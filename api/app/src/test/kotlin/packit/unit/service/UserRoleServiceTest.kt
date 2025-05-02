@@ -12,6 +12,7 @@ import packit.model.dto.UpdateRoleUsers
 import packit.model.dto.UpdateUserRoles
 import packit.service.BaseUserRoleService
 import packit.service.RoleService
+import packit.service.UserRoleFilterService
 import packit.service.UserService
 import java.time.Instant
 import java.util.*
@@ -47,6 +48,7 @@ class UserRoleServiceTest
     )
     private val mockRole = Role("role1", users = mutableListOf(mockUser))
     private val mockRoleService = mock<RoleService>()
+    private val userRoleFilterService = mock<UserRoleFilterService>()
 
     @Test
     fun `updateUserRoles adds and remove roles from user`()
@@ -57,7 +59,7 @@ class UserRoleServiceTest
         `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(listOf(roleToAdd, roleToRemove))
         `when`(mockUserService.getByUsername(mockUser.username)).doReturn(mockUser)
         `when`(mockUserService.saveUser(any<User>())).thenAnswer { it.getArgument(0) }
-        val service = BaseUserRoleService(mockRoleService, mockUserService)
+        val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
 
         val result = service.updateUserRoles(mockUser.username, updateUserRoles)
 
@@ -76,7 +78,7 @@ class UserRoleServiceTest
     {
         `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(mockUser.roles)
         `when`(mockUserService.getByUsername(mockUser.username)).doReturn(mockUser)
-        val service = BaseUserRoleService(mockRoleService, mockUserService)
+        val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
 
         val ex =
             assertThrows<PackitException> {
@@ -94,7 +96,7 @@ class UserRoleServiceTest
     fun `updateUserRoles throws exception when user not found`()
     {
         `when`(mockUserService.getByUsername(mockUser.username)).doReturn(null)
-        val service = BaseUserRoleService(mockRoleService, mockUserService)
+        val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
 
         val ex = assertThrows<PackitException> { service.updateUserRoles("nonexistent", UpdateUserRoles()) }
 
@@ -108,7 +110,7 @@ class UserRoleServiceTest
         val usernameRole = Role(mockUser.username, isUsername = true)
         `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(listOf(usernameRole))
         `when`(mockUserService.getByUsername(mockUser.username)).doReturn(mockUser)
-        val service = BaseUserRoleService(mockRoleService, mockUserService)
+        val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
 
         val ex = assertThrows<PackitException> {
             service.updateUserRoles(
@@ -127,7 +129,7 @@ class UserRoleServiceTest
         val nonExistentRole = Role("NON_EXISTENT_ROLE")
         `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(listOf(nonExistentRole))
         `when`(mockUserService.getByUsername(mockUser.username)).doReturn(mockUser)
-        val service = BaseUserRoleService(mockRoleService, mockUserService)
+        val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
 
         val ex =
             assertThrows<PackitException> {
@@ -158,7 +160,7 @@ class UserRoleServiceTest
         `when`(mockRoleService.getByRoleName(mockRole.name)).doReturn(mockRole)
         `when`(mockUserService.getUsersByUsernames(anyList())).doReturn(listOf(userToAdd, userToDelete))
         `when`(mockUserService.saveUsers(anyList())).thenAnswer { it.getArgument(0) }
-        val service = BaseUserRoleService(mockRoleService, mockUserService)
+        val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
 
         val result = service.updateRoleUsers(mockRole.name, updateRoleUsers)
 
@@ -180,7 +182,7 @@ class UserRoleServiceTest
     fun `updateRoleUsers throws exception when role not found`()
     {
         `when`(mockRoleService.getByRoleName(mockRole.name)).doReturn(null)
-        val service = BaseUserRoleService(mockRoleService, mockUserService)
+        val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
 
         val ex = assertThrows<PackitException> { service.updateRoleUsers(mockRole.name, UpdateRoleUsers()) }
 
@@ -193,7 +195,7 @@ class UserRoleServiceTest
     {
         val usernameRole = Role(mockUser.username, isUsername = true)
         `when`(mockRoleService.getByRoleName(usernameRole.name)).doReturn(usernameRole)
-        val service = BaseUserRoleService(mockRoleService, mockUserService)
+        val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
 
         val ex = assertThrows<PackitException> {
             service.updateRoleUsers(usernameRole.name, UpdateRoleUsers())
@@ -212,7 +214,7 @@ class UserRoleServiceTest
         val updateRoleUsers = UpdateRoleUsers(usersToAdd.map { it.username }, usersToDelete.map { it.username })
         `when`(mockRoleService.getByRoleName(mockRole.name)).doReturn(mockRole)
         `when`(mockUserService.getUsersByUsernames(anyList())).doReturn(usersToAdd + usersToDelete)
-        val service = BaseUserRoleService(mockRoleService, mockUserService)
+        val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
 
         val ex = assertThrows<PackitException> { service.updateRoleUsers(mockRole.name, updateRoleUsers) }
 
@@ -227,7 +229,7 @@ class UserRoleServiceTest
         val updateRoleUsers = UpdateRoleUsers(usernamesToRemove = usersToDelete.map { it.username })
         `when`(mockRoleService.getByRoleName(mockRole.name)).doReturn(mockRole)
         `when`(mockUserService.getUsersByUsernames(anyList())).doReturn(usersToDelete)
-        val service = BaseUserRoleService(mockRoleService, mockUserService)
+        val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
 
         val ex = assertThrows<PackitException> { service.updateRoleUsers(mockRole.name, updateRoleUsers) }
 
@@ -242,7 +244,7 @@ class UserRoleServiceTest
         whenever(mockUserService.getUsersByUsernames(listOf(mockServiceUser.username)))
             .doReturn(listOf(mockServiceUser))
 
-        val service = BaseUserRoleService(mockRoleService, mockUserService)
+        val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
         val ex = assertThrows<PackitException> {
             service.updateRoleUsers(mockRole.name, UpdateRoleUsers(usernamesToAdd = listOf(mockServiceUser.username)))
         }
@@ -257,7 +259,7 @@ class UserRoleServiceTest
         whenever(mockUserService.getByUsername(mockServiceUser.username)).doReturn(mockServiceUser)
         whenever(mockRoleService.getRolesByRoleNames(listOf(mockRole.name))).doReturn(listOf(mockRole))
 
-        val service = BaseUserRoleService(mockRoleService, mockUserService)
+        val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
         val ex = assertThrows<PackitException> {
             service.updateUserRoles(
                 mockServiceUser.username,

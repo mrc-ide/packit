@@ -3,12 +3,7 @@ package packit.unit.controllers
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyList
 import org.mockito.ArgumentMatchers.anyString
-import org.mockito.kotlin.any
-import org.mockito.kotlin.argumentCaptor
-import org.mockito.kotlin.doAnswer
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
+import org.mockito.kotlin.*
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -18,9 +13,11 @@ import packit.controllers.PacketController
 import packit.model.*
 import packit.service.OneTimeTokenService
 import packit.service.PacketService
+import packit.service.RoleService
+import packit.service.UserRoleService
 import java.io.OutputStream
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 import kotlin.test.assertEquals
 
 class PacketControllerTest
@@ -117,7 +114,9 @@ class PacketControllerTest
         )
     }
 
-    private val sut = PacketController(packetService, oneTimeTokenService)
+    private val roleService = mock<RoleService> {}
+    private val userRoleService = mock<UserRoleService> {}
+    private val sut = PacketController(packetService, roleService, userRoleService, oneTimeTokenService)
 
     @Test
     fun `get pageable packets`()

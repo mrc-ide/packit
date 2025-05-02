@@ -12,6 +12,7 @@ import packit.model.dto.OutpackMetadata
 import packit.model.dto.PacketGroupSummary
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketIdProjection
+import packit.security.PermissionChecker
 import packit.service.BasePacketGroupService
 import packit.service.OutpackServerClient
 import packit.service.PacketService
@@ -106,6 +107,7 @@ class PacketGroupServiceTest
         on { findAll() } doReturn packetGroups
     }
     private val packetService = mock<PacketService>()
+    private val permissionChecker = mock<PermissionChecker>()
     private val packetGroupSummaries =
         listOf(
             PacketGroupSummary(
@@ -127,7 +129,7 @@ class PacketGroupServiceTest
     @Test
     fun `getPacketGroups calls repository with correct params and returns its result`()
     {
-        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient, permissionChecker)
         val pageablePayload = PageablePayload(0, 10)
         val filterName = "test"
         val packetGroups = listOf(PacketGroup("test1"), PacketGroup("test2"))
@@ -155,7 +157,7 @@ class PacketGroupServiceTest
         whenever(packetGroupRepository.findLatestPacketIdForGroup("test")).thenReturn(packetIdProjection)
         whenever(packetService.getMetadataBy(packetMetadata.id)).thenReturn(packetMetadata)
 
-        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient, permissionChecker)
 
         val result = sut.getPacketGroupDisplay("test")
 
@@ -184,7 +186,7 @@ class PacketGroupServiceTest
         whenever(packetGroupRepository.findLatestPacketIdForGroup("test")).thenReturn(packetIdProjection)
         whenever(packetService.getMetadataBy(packetMetadataWithNullDesc.id)).thenReturn(packetMetadataWithNullDesc)
 
-        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient, permissionChecker)
 
         val result = sut.getPacketGroupDisplay("test")
 
@@ -206,7 +208,7 @@ class PacketGroupServiceTest
         whenever(packetGroupRepository.findLatestPacketIdForGroup("test")).thenReturn(packetIdProjection)
         whenever(packetService.getMetadataBy(packetWithoutCustomMetadata.id)).thenReturn(packetWithoutCustomMetadata)
 
-        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient, permissionChecker)
 
         val result = sut.getPacketGroupDisplay("test")
 
@@ -229,7 +231,7 @@ class PacketGroupServiceTest
             {
                 override val id: String = test2PacketLatestId
             })
-        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient, permissionChecker)
 
         val result = sut.getPacketGroupSummaries(PageablePayload(0, 10), "")
 
@@ -260,7 +262,7 @@ class PacketGroupServiceTest
             {
                 override val id: String = test2PacketLatestId
             })
-        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient, permissionChecker)
 
         val result = sut.getPacketGroupSummaries(PageablePayload(0, 10), "test2")
 
@@ -283,7 +285,7 @@ class PacketGroupServiceTest
             {
                 override val id: String = test2PacketLatestId
             })
-        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient, permissionChecker)
 
         val result = sut.getPacketGroupSummaries(PageablePayload(0, 10), "2 Display")
 
@@ -322,7 +324,8 @@ class PacketGroupServiceTest
                 override val id: String = testPacketLatestId
             })
 
-        val sut = BasePacketGroupService(packetGroupRepo, packetService, differentOutpackServerClient)
+        val sut =
+            BasePacketGroupService(packetGroupRepo, packetService, differentOutpackServerClient, permissionChecker)
 
         val result = sut.getPacketGroupSummaries(PageablePayload(0, 10), "")
 
@@ -339,7 +342,7 @@ class PacketGroupServiceTest
         val packetGroupId = 1
         val expectedPacketGroup = PacketGroup("test")
         whenever(packetGroupRepository.findById(packetGroupId)).thenReturn(Optional.of(expectedPacketGroup))
-        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient, permissionChecker)
 
         val result = sut.getPacketGroup(packetGroupId)
 
@@ -352,7 +355,7 @@ class PacketGroupServiceTest
     {
         val packetGroupId = 999
         whenever(packetGroupRepository.findById(packetGroupId)).thenReturn(Optional.empty())
-        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient, permissionChecker)
 
         assertThrows<PackitException> {
             sut.getPacketGroup(packetGroupId)
