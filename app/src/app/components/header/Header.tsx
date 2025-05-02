@@ -11,7 +11,7 @@ import { useBreadcrumbContext } from "../providers/BreadcrumbProvider";
 
 export const Header = () => {
   const { user } = useUser();
-  const { showBreadcrumbs } = useBreadcrumbContext()
+  const { showBreadcrumbs } = useBreadcrumbContext();
   const { brandConfig, isLoading: brandConfigIsLoading } = useGetBranding();
   const logoLinkDestination = brandConfig?.logoLink || "/";
 
@@ -21,18 +21,14 @@ export const Header = () => {
         <div className="flex items-center h-28 border-b shadow-sm dark:shadow-accent mb-2">
           {brandConfig?.logoFilename && (
             <NavLink to={logoLinkDestination} className="h-full p-2 hidden md:block flex-shrink-0">
-              <img
-                src={`/img/${brandConfig?.logoFilename}`}
-                className="h-full mx-2"
-                alt={brandConfig?.logoAltText}
-              />
+              <img src={`/img/${brandConfig?.logoFilename}`} className="h-full mx-2" alt={brandConfig?.logoAltText} />
             </NavLink>
           )}
           <div className="h-full flex-1 flex flex-col">
             <div className="flex-1 flex items-center">
               <NavLink to="/" className="mx-4">
                 <div className="text-xl font-extrabold flex gap-1 items-center tracking-tight">
-                  {!brandConfig?.logoFilename && !brandConfigIsLoading && (<PackageOpen className="mr-1" />)}
+                  {!brandConfig?.logoFilename && !brandConfigIsLoading && <PackageOpen className="mr-1" />}
                   {brandConfig?.brandName}
                 </div>
               </NavLink>

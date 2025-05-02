@@ -19,7 +19,9 @@ export const Breadcrumb = () => {
         const displayName = routeTo === "" ? "home" : kebabToSentenceCase(path);
 
         return index === pathNames.length - 1 ? (
-          <div key={index} aria-current="page">{displayName}</div>
+          <div key={index} aria-current="page">
+            {displayName}
+          </div>
         ) : (
           <div className="flex space-x-1 justify-between items-center truncate" key={index}>
             <NavLink

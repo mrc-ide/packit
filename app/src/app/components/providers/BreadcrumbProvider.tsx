@@ -11,9 +11,7 @@ export const BreadcrumbProvider = ({ children }: { children: ReactNode }) => {
   const [showBreadcrumbs, setShowBreadcrumbs] = useState(false);
 
   return (
-    <BreadcrumbContext.Provider value={{ showBreadcrumbs, setShowBreadcrumbs }}>
-      {children}
-    </BreadcrumbContext.Provider>
+    <BreadcrumbContext.Provider value={{ showBreadcrumbs, setShowBreadcrumbs }}>{children}</BreadcrumbContext.Provider>
   );
 };
 

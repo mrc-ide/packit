@@ -1,19 +1,14 @@
 import { hasPacketRunPermission, hasUserManagePermission } from "../../../lib/auth/hasPermission";
 import { cn } from "../../../lib/cn";
 import { UserState } from "../providers/types/UserTypes";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "../Base/DropdownMenu";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "../Base/DropdownMenu";
 import { Menu } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { Button, buttonVariants } from "../Base/Button";
 
 export const NavItems: { [key: string]: string } = {
   runner: "Runner",
-  "manage-roles": "Manage Access",
+  "manage-roles": "Manage Access"
   // "run-workflow": "Workflow Runner",
   // documentation: "Documentation",
   // accessibility: "Accessibility",
@@ -31,34 +26,36 @@ export const NavMenu = ({ className, user, ...props }: NavMenuProps) => {
     } else {
       return true;
     }
-  })
+  });
 
   return (
     <div className="flex-1">
       <nav
         className={cn(
           "flex items-center space-x-4 lg:space-x-6 pr-4 lg:pr-6",
-          (displayableItems.length > 1 ? "justify-center" : "justify-end"),
+          displayableItems.length > 1 ? "justify-center" : "justify-end",
           className
         )}
         {...props}
       >
-        {displayableItems.map((to) => (<NavLink
-          to={to}
-          key={to}
-          className={({ isActive }) =>
-            cn(
-              "transition-colors hover:text-primary",
-              {
-                "text-muted-foreground": !isActive
-              },
-              buttonVariants({ variant: "ghost" }),
-              className
-            )
-          }
-        >
-          {NavItems[to]}
-        </NavLink>))}
+        {displayableItems.map((to) => (
+          <NavLink
+            to={to}
+            key={to}
+            className={({ isActive }) =>
+              cn(
+                "transition-colors hover:text-primary",
+                {
+                  "text-muted-foreground": !isActive
+                },
+                buttonVariants({ variant: "ghost" }),
+                className
+              )
+            }
+          >
+            {NavItems[to]}
+          </NavLink>
+        ))}
       </nav>
       <div className="mx-3 flex items-center md:hidden">
         <DropdownMenu>

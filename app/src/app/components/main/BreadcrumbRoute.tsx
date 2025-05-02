@@ -3,8 +3,8 @@ import { useBreadcrumbContext } from "../providers/BreadcrumbProvider";
 import { useEffect } from "react";
 
 export const BreadcrumbRoute = () => {
-  const { setShowBreadcrumbs } = useBreadcrumbContext()
-  
+  const { setShowBreadcrumbs } = useBreadcrumbContext();
+
   useEffect(() => {
     // Set showBreadcrumbs to true when the component mounts
     setShowBreadcrumbs(true);
@@ -15,5 +15,5 @@ export const BreadcrumbRoute = () => {
     };
   }, [setShowBreadcrumbs]);
 
-  return (<Outlet />);
+  return <Outlet />;
 };
