@@ -12,11 +12,13 @@ class ConfigurationController(private val appConfig: AppConfig)
     @GetMapping("/branding")
     fun getBranding(): ResponseEntity<BrandingDto>
     {
-        return ResponseEntity.ok(BrandingDto(
+        return ResponseEntity.ok(
+            BrandingDto(
             brandName = appConfig.brandName,
             logoAltText = appConfig.brandLogoAltText,
             logoFilename = appConfig.brandLogoFilename,
             logoLink = appConfig.brandLogoLink,
-        ))
+        )
+        )
     }
 }
