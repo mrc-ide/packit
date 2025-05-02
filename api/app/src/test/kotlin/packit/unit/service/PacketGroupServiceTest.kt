@@ -6,6 +6,10 @@ import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.*
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.context.SecurityContext
+import org.springframework.security.core.context.SecurityContextHolder
 import packit.exceptions.PackitException
 import packit.model.*
 import packit.model.dto.OutpackMetadata
@@ -20,6 +24,7 @@ import packit.unit.packetToOutpackMetadata
 import java.time.Instant
 import java.util.*
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class PacketGroupServiceTest
 {
@@ -365,4 +370,94 @@ class PacketGroupServiceTest
         }
         verify(packetGroupRepository).findById(packetGroupId)
     }
+
+    @Test
+    fun `getAllPacketGroupsCanManage filters packet groups when user cannot manage all packets`()
+    {
+        // Setup
+        val allPacketGroups = listOf(
+            PacketGroup("group1"),
+            PacketGroup("group2"),
+            PacketGroup("group3")
+        )
+        whenever(packetGroupRepository.findAll()).thenReturn(allPacketGroups)
+        val authorities = listOf("MANAGE_GROUP1", "MANAGE_GROUP2")
+        setupSecurityContext(authorities)
+        whenever(permissionChecker.canManageAllPackets(authorities)).thenReturn(false)
+        whenever(permissionChecker.hasPacketManagePermissionForGroup(authorities, "group1")).thenReturn(true)
+        whenever(permissionChecker.hasPacketManagePermissionForGroup(authorities, "group2")).thenReturn(true)
+        whenever(permissionChecker.hasPacketManagePermissionForGroup(authorities, "group3")).thenReturn(false)
+
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient, permissionChecker)
+
+        // Execute
+        val result = sut.getAllPacketGroupsCanManage()
+
+        // Verify
+        assertEquals(2, result.size)
+        assertEquals("group1", result[0].name)
+        assertEquals("group2", result[1].name)
+        verify(permissionChecker).canManageAllPackets(authorities)
+        verify(permissionChecker, times(3)).hasPacketManagePermissionForGroup(any(), any())
+    }
+
+    @Test
+    fun `getAllPacketGroupsCanManage returns empty list when user has no permissions`()
+    {
+        // Setup
+        val allPacketGroups = listOf(
+            PacketGroup("group1"),
+            PacketGroup("group2"),
+            PacketGroup("group3")
+        )
+        whenever(packetGroupRepository.findAll()).thenReturn(allPacketGroups)
+        val authorities = listOf("NO_PERMISSIONS")
+        setupSecurityContext(authorities)
+        whenever(permissionChecker.canManageAllPackets(authorities)).thenReturn(false)
+        whenever(permissionChecker.hasPacketManagePermissionForGroup(eq(authorities), any())).thenReturn(false)
+
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient, permissionChecker)
+
+        // Execute
+        val result = sut.getAllPacketGroupsCanManage()
+
+        // Verify
+        assertTrue { result.isEmpty() }
+        verify(permissionChecker).canManageAllPackets(authorities)
+        verify(permissionChecker, times(3)).hasPacketManagePermissionForGroup(any(), any())
+    }
+
+    @Test
+    fun `getAllPacketGroupsCanManage handles empty repository result`()
+    {
+        // Setup
+        whenever(packetGroupRepository.findAll()).thenReturn(emptyList())
+        val authorities = listOf("MANAGE_ALL")
+        setupSecurityContext(authorities)
+        whenever(permissionChecker.canManageAllPackets(authorities)).thenReturn(true)
+
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient, permissionChecker)
+
+        // Execute
+        val result = sut.getAllPacketGroupsCanManage()
+
+        // Verify
+        assertTrue(result.isEmpty())
+        verify(permissionChecker).canManageAllPackets(authorities)
+        verify(permissionChecker, never()).hasPacketManagePermissionForGroup(any(), any())
+    }
+
+    // Helper function to set up security context with specific authorities
+    private fun setupSecurityContext(authorities: List<String>)
+    {
+        val authentication = mock<Authentication> {
+            on { getAuthorities() } doReturn authorities.map { SimpleGrantedAuthority(it) }
+        }
+        val securityContext = mock<SecurityContext> {
+            on { getAuthentication() } doReturn authentication
+        }
+
+        SecurityContextHolder.setContext(securityContext)
+    }
+
 }

@@ -412,8 +412,8 @@ class RoleServiceTest
 
         assertEquals(2, result.size)
         assertEquals("permission1", result[0].rolePermissions[0].permission)
-        assertEquals("permission3", result[0].rolePermissions[1].permission)
-        assertEquals("permission4", result[1].rolePermissions[0].permission)
+        assertEquals("permission2", result[0].rolePermissions[1].permission)
+        assertEquals("permission5", result[1].rolePermissions[0].permission)
     }
 
     @Test
@@ -617,7 +617,7 @@ class RoleServiceTest
             allRoles
         )
 
-        spyRoleService.updatePacketReadPermissionOnRoles(updatePacketReadRoles, packetGroupName)
+        spyRoleService.updatePacketReadPermissionOnRoles(updatePacketReadRoles, packetGroupName, packetId)
 
         verify(rolePermissionService).applyPermissionToMultipleRoles(
             allRoles.subList(0, 2),

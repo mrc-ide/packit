@@ -10,14 +10,17 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import packit.exceptions.PackitAuthenticationException
 import packit.exceptions.PackitException
 import packit.model.Role
+import packit.model.RolePermission
 import packit.model.User
 import packit.model.dto.CreateBasicUser
 import packit.model.dto.UpdatePassword
+import packit.model.toDto
 import packit.repository.UserRepository
 import packit.service.BaseUserService
 import packit.service.RolePermissionService
 import packit.service.RoleService
 import java.time.Instant
+import java.util.*
 import javax.naming.AuthenticationException
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -29,7 +32,7 @@ class UserServiceTest
     private val userRole = Role("USER")
     private val adminRole = Role("ADMIN")
     private val testRoles = listOf(userRole, adminRole)
-    private val mockUserRepository = mock<UserRepository>() {
+    private val mockUserRepository = mock<UserRepository> {
         on { save(any<User>()) } doAnswer { it.getArgument(0) }
     }
 
@@ -526,5 +529,58 @@ class UserServiceTest
 
         val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder, rolePermissionService)
         assertEquals(service.getServiceUser(), mockServiceUser)
+    }
+
+    @Test
+    fun `getSortedUsersWithPermissions correctly sorts and returns UserWithPermissions`()
+    {
+        val roles = mutableListOf(Role(name = "role2", id = 2), Role(name = "role1", id = 1))
+        val specificPermissions = mutableListOf<RolePermission>()
+        val user2Role = Role(name = "user2", isUsername = true, rolePermissions = specificPermissions)
+        val users = listOf(
+            User(
+                username = "user1",
+                displayName = "displayName1",
+                disabled = false,
+                userSource = "github",
+                roles = roles,
+                id = UUID.randomUUID()
+            ),
+            User(
+                username = "user2",
+                displayName = "displayName2",
+                disabled = false,
+                userSource = "basic",
+                roles = (roles + mutableListOf(user2Role)).toMutableList(),
+                id = UUID.randomUUID()
+            )
+        )
+
+        val service =
+            BaseUserService(mockUserRepository, mockRoleService, passwordEncoder, rolePermissionService)
+
+        val result = service.getSortedUsersWithPermissions(users)
+
+        // Verify result is correct type and size
+        assertEquals(2, result.size)
+
+        // Verify first user properties
+        with(result[0]) {
+            assertEquals("user1", username)
+            assertEquals(2, roles.size)
+            assertEquals(this.specificPermissions, emptyList())
+            assertEquals(listOf("role1", "role2"), roles.map { it.name })
+        }
+
+        // Verify second user properties
+        with(result[1]) {
+            assertEquals("user2", username)
+            assertEquals(2, roles.size)
+            assertEquals(listOf("role1", "role2"), roles.map { it.name })
+            assertEquals(this.specificPermissions, specificPermissions.map { it.toDto() })
+        }
+
+        // Verify rolePermissionService was called for each user
+        verify(rolePermissionService, times(2)).sortRolePermissions(any())
     }
 }

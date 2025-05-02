@@ -6,10 +6,8 @@ import org.mockito.Mockito.`when`
 import org.mockito.kotlin.*
 import org.springframework.http.HttpStatus
 import packit.exceptions.PackitException
-import packit.model.Role
-import packit.model.User
-import packit.model.dto.UpdateRoleUsers
-import packit.model.dto.UpdateUserRoles
+import packit.model.*
+import packit.model.dto.*
 import packit.service.BaseUserRoleService
 import packit.service.RoleService
 import packit.service.UserRoleFilterService
@@ -23,8 +21,8 @@ import kotlin.test.assertTrue
 
 class UserRoleServiceTest
 {
-    private val adminRole = Role("ADMIN")
-    private val testRoles = listOf(Role("USER"), adminRole)
+    private val adminRole = Role("ADMIN", id = 10)
+    private val testRoles = listOf(Role("USER", id = 11), adminRole)
     private val mockUserService = mock<UserService>()
     private val mockUser = User(
         username = "username",
@@ -46,9 +44,10 @@ class UserRoleServiceTest
         roles = testRoles.toMutableList(),
         id = UUID.randomUUID()
     )
-    private val mockRole = Role("role1", users = mutableListOf(mockUser))
+    private val mockRole = Role("role1", users = mutableListOf(mockUser), id = 1)
     private val mockRoleService = mock<RoleService>()
     private val userRoleFilterService = mock<UserRoleFilterService>()
+    private val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
 
     @Test
     fun `updateUserRoles adds and remove roles from user`()
@@ -59,7 +58,6 @@ class UserRoleServiceTest
         `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(listOf(roleToAdd, roleToRemove))
         `when`(mockUserService.getByUsername(mockUser.username)).doReturn(mockUser)
         `when`(mockUserService.saveUser(any<User>())).thenAnswer { it.getArgument(0) }
-        val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
 
         val result = service.updateUserRoles(mockUser.username, updateUserRoles)
 
@@ -78,7 +76,6 @@ class UserRoleServiceTest
     {
         `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(mockUser.roles)
         `when`(mockUserService.getByUsername(mockUser.username)).doReturn(mockUser)
-        val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
 
         val ex =
             assertThrows<PackitException> {
@@ -96,7 +93,6 @@ class UserRoleServiceTest
     fun `updateUserRoles throws exception when user not found`()
     {
         `when`(mockUserService.getByUsername(mockUser.username)).doReturn(null)
-        val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
 
         val ex = assertThrows<PackitException> { service.updateUserRoles("nonexistent", UpdateUserRoles()) }
 
@@ -110,7 +106,6 @@ class UserRoleServiceTest
         val usernameRole = Role(mockUser.username, isUsername = true)
         `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(listOf(usernameRole))
         `when`(mockUserService.getByUsername(mockUser.username)).doReturn(mockUser)
-        val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
 
         val ex = assertThrows<PackitException> {
             service.updateUserRoles(
@@ -129,7 +124,6 @@ class UserRoleServiceTest
         val nonExistentRole = Role("NON_EXISTENT_ROLE")
         `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(listOf(nonExistentRole))
         `when`(mockUserService.getByUsername(mockUser.username)).doReturn(mockUser)
-        val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
 
         val ex =
             assertThrows<PackitException> {
@@ -160,7 +154,6 @@ class UserRoleServiceTest
         `when`(mockRoleService.getByRoleName(mockRole.name)).doReturn(mockRole)
         `when`(mockUserService.getUsersByUsernames(anyList())).doReturn(listOf(userToAdd, userToDelete))
         `when`(mockUserService.saveUsers(anyList())).thenAnswer { it.getArgument(0) }
-        val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
 
         val result = service.updateRoleUsers(mockRole.name, updateRoleUsers)
 
@@ -182,7 +175,6 @@ class UserRoleServiceTest
     fun `updateRoleUsers throws exception when role not found`()
     {
         `when`(mockRoleService.getByRoleName(mockRole.name)).doReturn(null)
-        val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
 
         val ex = assertThrows<PackitException> { service.updateRoleUsers(mockRole.name, UpdateRoleUsers()) }
 
@@ -195,7 +187,6 @@ class UserRoleServiceTest
     {
         val usernameRole = Role(mockUser.username, isUsername = true)
         `when`(mockRoleService.getByRoleName(usernameRole.name)).doReturn(usernameRole)
-        val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
 
         val ex = assertThrows<PackitException> {
             service.updateRoleUsers(usernameRole.name, UpdateRoleUsers())
@@ -214,7 +205,6 @@ class UserRoleServiceTest
         val updateRoleUsers = UpdateRoleUsers(usersToAdd.map { it.username }, usersToDelete.map { it.username })
         `when`(mockRoleService.getByRoleName(mockRole.name)).doReturn(mockRole)
         `when`(mockUserService.getUsersByUsernames(anyList())).doReturn(usersToAdd + usersToDelete)
-        val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
 
         val ex = assertThrows<PackitException> { service.updateRoleUsers(mockRole.name, updateRoleUsers) }
 
@@ -229,7 +219,6 @@ class UserRoleServiceTest
         val updateRoleUsers = UpdateRoleUsers(usernamesToRemove = usersToDelete.map { it.username })
         `when`(mockRoleService.getByRoleName(mockRole.name)).doReturn(mockRole)
         `when`(mockUserService.getUsersByUsernames(anyList())).doReturn(usersToDelete)
-        val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
 
         val ex = assertThrows<PackitException> { service.updateRoleUsers(mockRole.name, updateRoleUsers) }
 
@@ -244,7 +233,6 @@ class UserRoleServiceTest
         whenever(mockUserService.getUsersByUsernames(listOf(mockServiceUser.username)))
             .doReturn(listOf(mockServiceUser))
 
-        val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
         val ex = assertThrows<PackitException> {
             service.updateRoleUsers(mockRole.name, UpdateRoleUsers(usernamesToAdd = listOf(mockServiceUser.username)))
         }
@@ -259,7 +247,6 @@ class UserRoleServiceTest
         whenever(mockUserService.getByUsername(mockServiceUser.username)).doReturn(mockServiceUser)
         whenever(mockRoleService.getRolesByRoleNames(listOf(mockRole.name))).doReturn(listOf(mockRole))
 
-        val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
         val ex = assertThrows<PackitException> {
             service.updateUserRoles(
                 mockServiceUser.username,
@@ -269,5 +256,157 @@ class UserRoleServiceTest
 
         assertEquals(ex.key, "cannotModifyServiceUser")
         assertEquals(ex.httpStatus, HttpStatus.BAD_REQUEST)
+    }
+
+    @Test
+    fun `getNonUsernameRolesAndNonServiceUsers returns correct roles and users`()
+    {
+        `when`(mockRoleService.getAllRoles(false)).thenReturn(testRoles)
+        `when`(mockUserService.getAllNonServiceUsers()).thenReturn(listOf(mockUser))
+
+        val result = service.getNonUsernameRolesAndNonServiceUsers()
+
+        assertEquals(testRoles, result.roles)
+        assertEquals(listOf(mockUser), result.users)
+        verify(mockRoleService).getAllRoles(false)
+        verify(mockUserService).getAllNonServiceUsers()
+    }
+
+    @Test
+    fun `createSortedRolesAndUsersWithPermissionsDto returns correct dto`()
+    {
+        val rolesAndUsers = RolesAndUsers(
+            roles = listOf(mockRole),
+            users = listOf(mockUser)
+        )
+        val expectedDto = RolesAndUsersWithPermissionsDto(
+            rolesAndUsers.roles.map { it.toDto() },
+            rolesAndUsers.users.map { it.toUserWithPermissions() }
+        )
+        `when`(mockRoleService.getSortedRoleDtos(rolesAndUsers.roles)).thenReturn(expectedDto.roles)
+        `when`(mockUserService.getSortedUsersWithPermissions(rolesAndUsers.users)).thenReturn(expectedDto.users)
+
+        val result = service.createSortedRolesAndUsersWithPermissionsDto(rolesAndUsers)
+
+        assertEquals(expectedDto, result)
+        verify(mockRoleService).getSortedRoleDtos(rolesAndUsers.roles)
+        verify(mockUserService).getSortedUsersWithPermissions(rolesAndUsers.users)
+    }
+
+    @Test
+    fun `getAllRolesAndUsersWithPermissions returns calls of internal functions`()
+    {
+        val expected = RolesAndUsersWithPermissionsDto(
+            roles = listOf(mockRole.toDto()),
+            users = listOf(mockUser.toUserWithPermissions())
+        )
+        val serviceSpy = spy(service)
+        doReturn(expected).`when`(serviceSpy).getAllRolesAndUsersWithPermissions()
+        doReturn(expected).`when`(serviceSpy).createSortedRolesAndUsersWithPermissionsDto(any())
+
+        val result = serviceSpy.getAllRolesAndUsersWithPermissions()
+
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `getAllRolesAndUsersWithPermissions returns correct dto`()
+    {
+        val rolesAndUsers = RolesAndUsers(
+            roles = listOf(mockRole),
+            users = listOf(mockUser)
+        )
+        val rolesAndUsersDtos = RolesAndUsersWithPermissionsDto(
+            roles = listOf(mockRole.toDto()),
+            users = listOf(mockUser.toUserWithPermissions())
+        )
+        val packetGroupNames = listOf("packetGroup1", "packetGroup2")
+        val serviceSpy = spy(service)
+        `when`(userRoleFilterService.getRolesAndUsersCantReadPacketReadGroup(any(), any(), any())).thenReturn(
+            rolesAndUsers
+        )
+        `when`(
+            userRoleFilterService.getRolesAndUsersWithSpecificReadPacketGroupPermission(
+                any(),
+                any(),
+                any()
+            )
+        ).thenReturn(rolesAndUsers)
+        doReturn(rolesAndUsers).`when`(serviceSpy).getNonUsernameRolesAndNonServiceUsers()
+        doReturn(rolesAndUsersDtos).`when`(serviceSpy).createSortedRolesAndUsersWithPermissionsDto(any())
+
+        val result = serviceSpy.getRolesAndUsersForPacketGroupReadUpdate(packetGroupNames)
+
+        assertEquals(packetGroupNames, result.keys.toList())
+        packetGroupNames.forEach {
+            assert(result[it] is RolesAndUsersToUpdateRead)
+            verify(userRoleFilterService).getRolesAndUsersCantReadPacketReadGroup(
+                rolesAndUsers.roles,
+                rolesAndUsers.users,
+                it
+            )
+            verify(userRoleFilterService).getRolesAndUsersWithSpecificReadPacketGroupPermission(
+                rolesAndUsers.roles,
+                rolesAndUsers.users,
+                it
+            )
+        }
+    }
+
+    @Test
+    fun `RolesAndUsersToUpdateRead returns correct DTO`()
+    {
+        val rolesAndUsers = RolesAndUsers(
+            roles = listOf(mockRole),
+            users = listOf(mockUser)
+        )
+        val rolesAndUsersDtos = RolesAndUsersWithPermissionsDto(
+            roles = listOf(mockRole.toDto()),
+            users = listOf(mockUser.toUserWithPermissions())
+        )
+        val packet = mock<Packet>()
+        val serviceSpy = spy(service)
+        `when`(userRoleFilterService.getRolesAndSpecificUsersCanReadPacket(any(), any(), any())).thenReturn(
+            rolesAndUsers
+        )
+        `when`(
+            userRoleFilterService.getRolesAndUsersCantReadPacket(
+                any(),
+                any(),
+                any()
+            )
+        ).thenReturn(rolesAndUsers)
+        `when`(
+            userRoleFilterService.getRolesUsersWithSpecificReadPacketPermission(
+                any(),
+                any(),
+                any()
+            )
+        ).thenReturn(rolesAndUsers)
+        doReturn(rolesAndUsers).`when`(serviceSpy).getNonUsernameRolesAndNonServiceUsers()
+        doReturn(rolesAndUsersDtos).`when`(serviceSpy).createSortedRolesAndUsersWithPermissionsDto(any())
+
+        val result = serviceSpy.getRolesAndUsersForPacketReadUpdate(packet)
+
+        assert(result is RolesAndUsersForPacketReadUpdate)
+        assertEquals(rolesAndUsersDtos, result.canRead)
+        assertEquals(rolesAndUsersDtos, result.withRead)
+        assertEquals(rolesAndUsersDtos, result.cantRead)
+        verify(userRoleFilterService).getRolesAndSpecificUsersCanReadPacket(
+            rolesAndUsers.roles,
+            rolesAndUsers.users,
+            packet
+        )
+        verify(userRoleFilterService).getRolesAndUsersCantReadPacket(
+            rolesAndUsers.roles,
+            rolesAndUsers.users,
+            packet
+        )
+        verify(userRoleFilterService).getRolesUsersWithSpecificReadPacketPermission(
+            rolesAndUsers.roles,
+            rolesAndUsers.users,
+            packet
+        )
+
     }
 }
