@@ -9,14 +9,25 @@ jest.mock("../../lib/auth/getAuthHeader", () => ({
 }));
 
 let fetchSpy: jest.SpyInstance;
+let windowSpy: jest.SpyInstance;
+
 const testBaseUrl = "http://localhost";
+const testWindowLocation = `${testBaseUrl}/path/subpath`;
+const apiUrl = `${testBaseUrl}${appConfig.apiUrl()}`;
 
 beforeEach(async () => {
   fetchSpy = jest.spyOn(global, "fetch");
+  windowSpy = jest.spyOn(globalThis, "window", "get");
+  windowSpy.mockImplementation(() => ({
+    location: {
+      href: testWindowLocation
+    }
+  }));
 });
 
 afterEach(() => {
   fetchSpy.mockRestore();
+  windowSpy.mockRestore();
 });
 
 const setUpUnsuccessfulTokenResponse = () => {
@@ -43,7 +54,7 @@ describe("download", () => {
     await getFileObjectUrl(mockPacket.files[0], mockPacket.id, "directory/fakeFilename");
 
     expect(fetchSpy).toHaveBeenCalledWith(
-      `${testBaseUrl}${appConfig.apiUrl()}/packets/${mockPacket.id}/files/token?paths=${mockPacket.files[0].path}`,
+      `${apiUrl}/packets/${mockPacket.id}/files/token?paths=${mockPacket.files[0].path}`,
       {
         method: "POST",
         headers: { Authorization: "fakeAuthHeader" }
@@ -51,7 +62,7 @@ describe("download", () => {
     );
 
     expect(fetchSpy).toHaveBeenCalledWith(
-      `${testBaseUrl}${appConfig.apiUrl()}/packets/${mockPacket.id}/file` +
+      `${apiUrl}/packets/${mockPacket.id}/file` +
         `?path=${mockPacket.files[0].path}&token=fakeTokenId&filename=directory%2FfakeFilename&inline=true`,
       {
         method: "GET"
@@ -78,7 +89,7 @@ describe("download", () => {
     await download([mockPacket.files[0]], mockPacket.id, "fakeFilename");
 
     expect(fetchSpy).toHaveBeenCalledWith(
-      `${testBaseUrl}${appConfig.apiUrl()}/packets/${mockPacket.id}/files/token?paths=${mockPacket.files[0].path}`,
+      `${apiUrl}/packets/${mockPacket.id}/files/token?paths=${mockPacket.files[0].path}`,
       {
         method: "POST",
         headers: { Authorization: "fakeAuthHeader" }
@@ -86,7 +97,7 @@ describe("download", () => {
     );
 
     expect(mockFileLink.href).toEqual(
-      `${testBaseUrl}${appConfig.apiUrl()}/packets/${mockPacket.id}/file?` +
+      `${apiUrl}/packets/${mockPacket.id}/file?` +
         `path=${mockPacket.files[0].path}&token=fakeTokenId&filename=fakeFilename&inline=false`
     );
     expect(mockFileLink.setAttribute).toHaveBeenCalledWith("download", "fakeFilename");
@@ -112,7 +123,7 @@ describe("download", () => {
     await download([mockPacket.files[0], mockPacket.files[1]], mockPacket.id, "fakeFilename");
 
     expect(fetchSpy).toHaveBeenCalledWith(
-      `${testBaseUrl}${appConfig.apiUrl()}/packets/${mockPacket.id}/files/token?` +
+      `${apiUrl}/packets/${mockPacket.id}/files/token?` +
         `paths=${mockPacket.files[0].path}&paths=${mockPacket.files[1].path}`,
       {
         method: "POST",
@@ -121,7 +132,7 @@ describe("download", () => {
     );
 
     expect(mockFileLink.href).toBe(
-      `${testBaseUrl}${appConfig.apiUrl()}/packets/${mockPacket.id}/files/zip?` +
+      `${apiUrl}/packets/${mockPacket.id}/files/zip?` +
         `paths=${mockPacket.files[0].path}&paths=${mockPacket.files[1].path}` +
         `&token=fakeTokenId&filename=fakeFilename&inline=false`
     );
