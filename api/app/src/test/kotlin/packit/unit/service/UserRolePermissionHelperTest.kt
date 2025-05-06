@@ -14,7 +14,7 @@ import packit.service.BaseUserRolePermissionHelper
 import packit.service.PermissionService
 import java.time.Instant
 
-class BaseUserRolePermissionHelperTest
+class UserRolePermissionHelperTest
 {
     private val now = Instant.now().epochSecond.toDouble()
     private val packet = Packet(

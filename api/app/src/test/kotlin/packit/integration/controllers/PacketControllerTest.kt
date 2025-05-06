@@ -51,7 +51,6 @@ class PacketControllerTest : IntegrationTest()
 
     private lateinit var packetControllerTestHelper: PacketControllerTestHelper
 
-
     @BeforeAll
     fun setupData()
     {
@@ -613,5 +612,4 @@ class PacketControllerTest : IntegrationTest()
         assert(body.withRead is RolesAndUsersWithPermissionsDto)
         assert(body.cantRead is RolesAndUsersWithPermissionsDto)
     }
-
 }

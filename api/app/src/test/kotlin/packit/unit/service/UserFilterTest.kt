@@ -13,7 +13,7 @@ import packit.service.PermissionService
 import packit.service.UserRolePermissionHelper
 import kotlin.test.assertEquals
 
-class BaseUserRoleFilterServiceTest
+class UserFilterTest
 {
 
     private val rolePermissions = mutableListOf(mock<RolePermission>())
@@ -61,7 +61,6 @@ class BaseUserRoleFilterServiceTest
         assertEquals(result, rolesAndUsers)
         verify(permissionHelper).hasOnlySpecificReadPacketGroupPermission(rolePermissions, packetGroupName)
         verify(permissionHelper).hasOnlySpecificReadPacketGroupPermission(userRolePermissions, packetGroupName)
-
     }
 
     @Test

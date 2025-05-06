@@ -407,6 +407,5 @@ class UserRoleServiceTest
             rolesAndUsers.users,
             packet
         )
-
     }
 }

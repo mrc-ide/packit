@@ -118,7 +118,6 @@ class AuthorizationLogicTest
         verify(packetService).getPacket(packet.id)
     }
 
-
     @Test
     fun `oneTimeTokenValid returns true if token has correct permissions and is not expired`()
     {
@@ -127,7 +126,6 @@ class AuthorizationLogicTest
 
         assertTrue(sut.oneTimeTokenValid(ops, packet.id, permittedPaths))
     }
-
 
     @Test
     fun `oneTimeTokenValid returns false if token is expired`()

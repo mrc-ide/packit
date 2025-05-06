@@ -197,9 +197,8 @@ class BaseUserService(
         return users.map { user ->
             rolePermissionService.sortRolePermissions(user.getSpecificPermissions())
             user.roles.sortBy { it.name }
-            
+
             user.toUserWithPermissions()
         }
     }
-
 }
