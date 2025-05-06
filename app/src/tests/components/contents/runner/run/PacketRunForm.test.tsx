@@ -7,8 +7,7 @@ import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { getTimeDifferenceToDisplay } from "../../../../../lib/time";
 import appConfig from "../../../../../config/appConfig";
-
-const testBaseUrl = "http://localhost";
+import { absoluteApiUrl } from "../../../../../helpers";
 
 const renderComponent = () => {
   const mutate = jest.fn();
@@ -65,7 +64,7 @@ describe("PacketRunForm component", () => {
   it("should call api with correct url and mutate when git fetch button clicked", async () => {
     server.use(
       rest.post("*", (req, res, ctx) => {
-        expect(req.url.href).toBe(`${testBaseUrl}${appConfig.apiUrl()}/runner/git/fetch`);
+        expect(req.url.href).toBe(`${absoluteApiUrl()}/runner/git/fetch`);
 
         return res(ctx.status(201));
       })
@@ -135,7 +134,7 @@ describe("PacketRunForm component", () => {
   it("should submit run when form submitted correctly & navigate to task run logs", async () => {
     server.use(
       rest.post("*", async (req, res, ctx) => {
-        expect(req.url.href).toBe(`${testBaseUrl}${appConfig.apiUrl()}/runner/run`);
+        expect(req.url.href).toBe(`${absoluteApiUrl()}/runner/run`);
         const body = await req.json();
 
         expect(body).toEqual({
