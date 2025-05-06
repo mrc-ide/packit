@@ -1,17 +1,25 @@
 package packit.integration.controllers
+
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.exchange
-import org.springframework.http.*
+import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.test.context.jdbc.Sql
 import packit.integration.IntegrationTest
 import packit.integration.PacketControllerTestHelper
 import packit.integration.WithAuthenticatedUser
 import packit.model.OneTimeToken
-import packit.repository.OneTimeTokenRepository
-import packit.repository.PacketGroupRepository
-import packit.repository.PacketRepository
+import packit.model.Role
+import packit.model.RolePermission
+import packit.model.dto.RolesAndUsersForPacketReadUpdate
+import packit.model.dto.RolesAndUsersWithPermissionsDto
+import packit.model.dto.UpdateReadRoles
+import packit.repository.*
 import packit.service.PacketService
 import java.time.Instant
 import java.util.*
@@ -20,6 +28,7 @@ import java.util.zip.ZipInputStream
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Sql("/delete-test-users.sql")
 class PacketControllerTest : IntegrationTest()
 {
     @Autowired
@@ -34,7 +43,14 @@ class PacketControllerTest : IntegrationTest()
     @Autowired
     private lateinit var oneTimeTokenRepository: OneTimeTokenRepository
 
+    @Autowired
+    private lateinit var roleRepository: RoleRepository
+
+    @Autowired
+    private lateinit var permissionsRepository: PermissionRepository
+
     private lateinit var packetControllerTestHelper: PacketControllerTestHelper
+
 
     @BeforeAll
     fun setupData()
@@ -43,7 +59,8 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @BeforeEach
-    fun setUpHelper() {
+    fun setUpHelper()
+    {
         packetControllerTestHelper = PacketControllerTestHelper(this)
     }
 
@@ -54,7 +71,8 @@ class PacketControllerTest : IntegrationTest()
         packetGroupRepository.deleteAll()
     }
 
-    companion object {
+    companion object
+    {
         const val idOfArtefactTypesPacket = "20240729-154633-10abe7d1"
         const val idOfDownloadTypesPacket3 = "20250122-142620-c741b061"
         val filePathsAndSizesForDownloadTypesPacket = mapOf(
@@ -474,7 +492,8 @@ class PacketControllerTest : IntegrationTest()
         val entries = mutableListOf<String>()
         val uncompressedSizes = mutableListOf<Long>()
         var entry: ZipEntry? = zipInputStream.nextEntry!!
-        while (entry != null) {
+        while (entry != null)
+        {
             entries.add(entry.name)
             val nextEntry = zipInputStream.nextEntry
             // entry.size is not available until nextEntry has been called: see
@@ -512,4 +531,87 @@ class PacketControllerTest : IntegrationTest()
         )
         assertBadRequest(result)
     }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.manage"])
+    fun `user with packet manage can update read permission on roles`()
+    {
+        val packet = packetRepository.findAll().first()
+        val roleNamesToAdd = setOf("testRole1", "testRole2")
+        val roleNamesToRemove = setOf("testRole3", "testRole4")
+        roleRepository.saveAll(
+            roleNamesToAdd.map {
+                Role(name = it)
+            }
+        )
+        val rolesToRemove = roleRepository.saveAll(
+            roleNamesToRemove.map {
+                Role(name = it)
+            }
+        ).onEach {
+            it.rolePermissions = mutableListOf(
+                RolePermission(
+                    role = it,
+                    permission = permissionsRepository.findByName("packet.read")!!,
+                    packet = packet
+                )
+            )
+        }
+        roleRepository.saveAll(rolesToRemove)
+        val updatePacketReadRoles = jacksonObjectMapper().writeValueAsString(
+            UpdateReadRoles(
+                roleNamesToAdd = roleNamesToAdd,
+                roleNamesToRemove = roleNamesToRemove
+            )
+        )
+
+        val result = restTemplate.exchange(
+            "/packets/${packet.id}/read-permission",
+            HttpMethod.PUT,
+            getTokenizedHttpEntity(data = updatePacketReadRoles),
+            String::class.java
+        )
+
+        assertEquals(result.statusCode, HttpStatus.NO_CONTENT)
+        val addedRoles = roleRepository.findByNameIn(roleNamesToAdd.toList())
+        val removedRoles = roleRepository.findByNameIn(roleNamesToRemove.toList())
+        removedRoles.forEach {
+            assertEquals(
+                it.rolePermissions.size,
+                0
+            )
+        }
+        addedRoles.forEach {
+            assertEquals(
+                it.rolePermissions.first().packet?.id,
+                packet.id
+            )
+        }
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.manage"])
+    fun `can get roles and users for update for packet`()
+    {
+        val packet = packetRepository.findAll().first()
+        val result = restTemplate.exchange(
+            "/packets/${packet.id}/read-permission",
+            HttpMethod.GET,
+            getTokenizedHttpEntity(),
+            String::class.java
+        )
+
+        assertSuccess(result)
+
+        val body = jacksonObjectMapper().readValue(
+            result.body,
+            object : TypeReference<RolesAndUsersForPacketReadUpdate>()
+            {}
+        )
+
+        assert(body.canRead is RolesAndUsersWithPermissionsDto)
+        assert(body.withRead is RolesAndUsersWithPermissionsDto)
+        assert(body.cantRead is RolesAndUsersWithPermissionsDto)
+    }
+
 }

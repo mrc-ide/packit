@@ -310,7 +310,7 @@ class UserRoleServiceTest
     }
 
     @Test
-    fun `getAllRolesAndUsersWithPermissions returns correct dto`()
+    fun `getRolesAndUsersForPacketGroupReadUpdate returns correct dto`()
     {
         val rolesAndUsers = RolesAndUsers(
             roles = listOf(mockRole),
@@ -354,7 +354,7 @@ class UserRoleServiceTest
     }
 
     @Test
-    fun `RolesAndUsersToUpdateRead returns correct DTO`()
+    fun `getRolesAndUsersForPacketReadUpdate returns correct DTO`()
     {
         val rolesAndUsers = RolesAndUsers(
             roles = listOf(mockRole),
