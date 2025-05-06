@@ -20,7 +20,7 @@ export const PacketGroupSummaryList = ({
   pageSize,
   setPageNumber
 }: PacketGroupSummaryListProps) => {
-  const { rolesAndUsers, mutate } = useGetRolesAndUsersToUpdatePacketGroupRead();
+  const { rolesAndUsers, mutate, isLoading: isRolesLoading } = useGetRolesAndUsersToUpdatePacketGroupRead();
   const {
     packetGroupSummaries,
     isLoading,
@@ -30,7 +30,7 @@ export const PacketGroupSummaryList = ({
   if (packetFetchError?.status === HttpStatus.Unauthorized) return <Unauthorized />;
   if (packetFetchError) return <ErrorComponent message="Error fetching packet groups" error={packetFetchError} />;
 
-  if (isLoading)
+  if (isLoading || isRolesLoading)
     return (
       <ul className="flex flex-col border rounded-md">
         {[...Array(2)].map((_, index) => (
