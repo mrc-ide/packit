@@ -35,6 +35,10 @@ Dependencies must be running:
 1. ./scripts/run-dependencies
 2. ./api/scripts/run
 
+### e2e tests
+
+See overall project README.
+
 ### `npm run lint` or `npm run lint:fix`
 
 Launches eslint, see [eslint](https://eslint.org/) for more information.
