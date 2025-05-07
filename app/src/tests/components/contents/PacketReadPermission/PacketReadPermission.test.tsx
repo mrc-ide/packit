@@ -23,7 +23,7 @@ const renderComponent = () =>
       <UserProvider>
         <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/read-access`]}>
           <Routes>
-            <Route element={<PacketOutlet packetId={mockPacket.id} />}>
+            <Route element={<PacketOutlet />}>
               <Route path="/:packetName/:packetId/read-access" element={<PacketReadPermission />} />
             </Route>
           </Routes>
