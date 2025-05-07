@@ -130,6 +130,10 @@ test.describe("Demo packet page", { tag: TAG_DEMO_PACKETS }, () => {
       await selectPacketPageTab(content, "Downloads");
     });
 
+    // Webkit downloads don't work in playwright, but they have been manually tested in Safari 17.5
+    // on a Mac on Sonoma 14.5.
+    test.skip(({ browserName }) => browserName === "webkit", "Skipping Downloads tests for webkit");
+
     test("can download an individual file", async ({ page }) => {
       await content.getByRole("button", { name: "Other files" }).click();
 
