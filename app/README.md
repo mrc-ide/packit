@@ -43,6 +43,10 @@ See overall project README.
 
 Launches eslint, see [eslint](https://eslint.org/) for more information.
 
+### `npm run format:check` or `npm run format:write`
+
+Checks code formatting or formats code.
+
 ### `npm run build`
 
 Builds the app for production to the `build` folder.\
