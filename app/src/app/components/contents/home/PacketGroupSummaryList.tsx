@@ -30,7 +30,7 @@ export const PacketGroupSummaryList = ({
   if (packetFetchError?.status === HttpStatus.Unauthorized) return <Unauthorized />;
   if (packetFetchError) return <ErrorComponent message="Error fetching packet groups" error={packetFetchError} />;
 
-  if (isLoading || isRolesLoading)
+  if (isLoading || (isRolesLoading && !packetGroupSummaries))
     return (
       <ul className="flex flex-col border rounded-md">
         {[...Array(2)].map((_, index) => (
