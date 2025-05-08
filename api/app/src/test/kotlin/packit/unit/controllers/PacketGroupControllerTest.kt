@@ -18,6 +18,7 @@ import packit.model.toDto
 import packit.service.PacketGroupService
 import packit.service.PacketService
 import packit.service.RoleService
+import packit.service.UserRoleService
 import java.time.Instant
 import kotlin.test.assertEquals
 
@@ -78,8 +79,9 @@ class PacketGroupControllerTest
         )
     }
     private val roleService = mock<RoleService>()
+    private val userRoleService = mock<UserRoleService>()
 
-    private val sut = PacketGroupController(packetService, packetGroupService, roleService)
+    private val sut = PacketGroupController(packetService, packetGroupService, roleService, userRoleService)
 
     @Test
     fun `get packet group display name and description`()

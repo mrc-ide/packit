@@ -1,17 +1,17 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { UpdatePermissionDialog } from "../../../../app/components/contents/home/UpdatePermissionDialog";
 import userEvent from "@testing-library/user-event";
+import { mockPacketGroupDtos, mockRolesAndUsersToUpdateRead } from "../../../mocks";
 
 describe("UpdatePermissionDialog", () => {
-  const packetGroupName = "test-packet-group";
-  // TODO: fix tests
-  const anything = {} as any;
+  const packetGroupName = mockPacketGroupDtos.content[0].name;
+  const rolesAndUsersToUpdateRead = mockRolesAndUsersToUpdateRead[packetGroupName];
   it("should render dialog on button click correctly", async () => {
     render(
       <UpdatePermissionDialog
-        packetGroupName="test-packet-group"
+        packetGroupName={packetGroupName}
         mutate={jest.fn()}
-        rolesAndUsersToUpdateRead={anything}
+        rolesAndUsersToUpdateRead={rolesAndUsersToUpdateRead}
       />
     );
 
@@ -25,9 +25,9 @@ describe("UpdatePermissionDialog", () => {
   it("should be able to open and close dialog", async () => {
     render(
       <UpdatePermissionDialog
-        packetGroupName="test-packet-group"
+        packetGroupName={packetGroupName}
         mutate={jest.fn()}
-        rolesAndUsersToUpdateRead={anything}
+        rolesAndUsersToUpdateRead={rolesAndUsersToUpdateRead}
       />
     );
 

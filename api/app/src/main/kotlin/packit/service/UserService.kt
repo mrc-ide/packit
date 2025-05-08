@@ -41,6 +41,7 @@ class BaseUserService(
     private val rolePermissionService: RolePermissionService
 ) : UserService
 {
+
     override fun saveUserFromGithub(username: String, displayName: String?, email: String?): User
     {
         val user = userRepository.findByUsername(username)
@@ -196,6 +197,7 @@ class BaseUserService(
         return users.map { user ->
             rolePermissionService.sortRolePermissions(user.getSpecificPermissions())
             user.roles.sortBy { it.name }
+
             user.toUserWithPermissions()
         }
     }

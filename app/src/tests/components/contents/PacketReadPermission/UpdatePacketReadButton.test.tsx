@@ -9,7 +9,6 @@ describe("UpdatePacketReadButton", () => {
     name: "test-packet",
     id: "test-packet-id"
   } as PacketMetadata;
-  // TODO: fix tets
   it("should render dialog on button click correctly", async () => {
     render(
       <UpdatePacketReadButton

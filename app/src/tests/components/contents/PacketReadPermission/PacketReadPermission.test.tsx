@@ -4,47 +4,26 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
 import { PacketReadPermission } from "../../../../app/components/contents/PacketReadPermission/PacketReadPermission";
 import { PacketOutlet } from "../../../../app/components/main/PacketOutlet";
-import { UserState } from "../../../../app/components/providers/types/UserTypes";
-import { UserProvider } from "../../../../app/components/providers/UserProvider";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
-import { manageRolesIndexUri } from "../../../../msw/handlers/manageRolesHandlers";
 import { server } from "../../../../msw/server";
-import { mockNonUsernameRolesWithRelationships, mockPacket, mockUserState } from "../../../mocks";
-
-const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
-jest.mock("../../../../lib/localStorageManager", () => ({
-  ...jest.requireActual("../../../../lib/localStorageManager"),
-  getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
-}));
+import { mockNonUsernameRolesWithRelationships, mockPacket } from "../../../mocks";
+import { packetIndexUri } from "../../../../msw/handlers/packetHandler";
 
 const renderComponent = () =>
   render(
     <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>
-      <UserProvider>
-        <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/read-access`]}>
-          <Routes>
-            <Route element={<PacketOutlet packetId={mockPacket.id} />}>
-              <Route path="/:packetName/:packetId/read-access" element={<PacketReadPermission />} />
-            </Route>
-          </Routes>
-        </MemoryRouter>
-      </UserProvider>
+      <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/read-access`]}>
+        <Routes>
+          <Route element={<PacketOutlet packetId={mockPacket.id} />}>
+            <Route path="/:packetName/:packetId/read-access" element={<PacketReadPermission />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
     </SWRConfig>
   );
 
 describe("PacketReadPermission", () => {
-  it("should render unauthorized when user cannot manage packet", async () => {
-    mockGetUserFromLocalStorage.mockReturnValue({
-      authorities: ["packet.read"]
-    } as UserState);
-
-    renderComponent();
-
-    expect(await screen.findByText(/Unauthorized/)).toBeVisible();
-  });
-
-  it("should render unauthorized if roles response returns unauthorized", async () => {
-    mockGetUserFromLocalStorage.mockReturnValue(mockUserState());
+  it("should render unauthorized if roles and user response returns unauthorized", async () => {
     server.use(
       rest.get("*", (req, res, ctx) => {
         return res(ctx.status(HttpStatus.Unauthorized));
@@ -57,10 +36,9 @@ describe("PacketReadPermission", () => {
     });
   });
 
-  it("should render error message when error occurs fetching roles", async () => {
-    mockGetUserFromLocalStorage.mockReturnValueOnce(mockUserState());
+  it("should render error message when error occurs fetching roles & users", async () => {
     server.use(
-      rest.get(manageRolesIndexUri, (req, res, ctx) => {
+      rest.get(`${packetIndexUri}/:id/read-permission`, (req, res, ctx) => {
         return res(ctx.status(400));
       })
     );
@@ -72,7 +50,6 @@ describe("PacketReadPermission", () => {
   });
 
   it("should render roles table and user table correctly", async () => {
-    mockGetUserFromLocalStorage.mockReturnValue(mockUserState());
     const { container } = renderComponent();
 
     await waitFor(() => {

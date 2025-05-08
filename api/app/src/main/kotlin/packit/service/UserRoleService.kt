@@ -54,7 +54,7 @@ class BaseUserRoleService(
         return packetGroupNames.associateWith {
             RolesAndUsersToUpdateRead(
                 cantRead = createSortedRolesAndUsersWithPermissionsDto(
-                    userRoleFilterService.getRolesAndUsersCantPacketReadGroup(roles, users, it)
+                    userRoleFilterService.getRolesAndUsersCantReadPacketReadGroup(roles, users, it)
                 ),
                 withRead = createSortedRolesAndUsersWithPermissionsDto(
                     userRoleFilterService.getRolesAndUsersWithSpecificReadPacketGroupPermission(roles, users, it)

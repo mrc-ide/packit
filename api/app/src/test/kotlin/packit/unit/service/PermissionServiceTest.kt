@@ -141,6 +141,7 @@ class PermissionServiceTest
         }
     }
 
+    @Test
     fun `buildScopedPermission throws error when both packetGroup and tag are provided`()
     {
 
@@ -173,5 +174,26 @@ class PermissionServiceTest
         }.apply {
             assertEquals("packetGroupName must be provided if packetId is given", message)
         }
+    }
+
+    @Test
+    fun `mapToScopedPermission returns list of scoped permissions`()
+    {
+        val rolePermissions = listOf(
+            createRolePermission(packetId = "123"),
+            createRolePermission(packetGroupName = "group"),
+            createRolePermission(tagName = "tag")
+        )
+
+        val result = basePermissionService.mapToScopedPermission(rolePermissions)
+
+        assertEquals(
+            listOf(
+                "permission:packet:packetName:123",
+                "permission:packetGroup:group",
+                "permission:tag:tag"
+            ),
+            result
+        )
     }
 }

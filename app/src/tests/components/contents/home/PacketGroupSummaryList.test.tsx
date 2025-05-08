@@ -63,37 +63,9 @@ describe("PacketList test", () => {
     });
   });
 
-  it("should render error message when error occurs fetching roles", async () => {
-    mockGetUserFromLocalStorage.mockReturnValueOnce(mockUserState());
-    server.use(
-      rest.get(manageRolesIndexUri, (req, res, ctx) => {
-        return res(ctx.status(400));
-      })
-    );
-    renderComponent();
-
-    await waitFor(() => {
-      expect(screen.getByText(/error fetching roles/i)).toBeVisible();
-    });
-  });
-
   it("should render unauthorized when 401 error fetching packet groups", async () => {
     server.use(
       rest.get("*", (req, res, ctx) => {
-        return res(ctx.status(HttpStatus.Unauthorized));
-      })
-    );
-    renderComponent();
-
-    await waitFor(() => {
-      expect(screen.getByText(/unauthorized/i)).toBeVisible();
-    });
-  });
-
-  it("should render unauthorized when 401 error fetching roles", async () => {
-    mockGetUserFromLocalStorage.mockReturnValueOnce(mockUserState());
-    server.use(
-      rest.get(manageRolesIndexUri, (req, res, ctx) => {
         return res(ctx.status(HttpStatus.Unauthorized));
       })
     );

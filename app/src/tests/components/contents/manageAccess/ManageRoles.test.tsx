@@ -8,6 +8,7 @@ import { ManageAccessOutlet } from "../../../../app/components/contents/manageAc
 import { manageRolesIndexUri } from "../../../../msw/handlers/manageRolesHandlers";
 import { server } from "../../../../msw/server";
 import { mockNonUsernameRolesWithRelationships } from "../../../mocks";
+import { usersRolesIndexUri } from "../../../../msw/handlers/usersRolesHandler";
 
 const renderComponent = () => {
   render(
@@ -85,7 +86,7 @@ describe("ManageRoles", () => {
 
   it("should show error component if error fetching roles", async () => {
     server.use(
-      rest.get(manageRolesIndexUri, (req, res, ctx) => {
+      rest.get(usersRolesIndexUri, (req, res, ctx) => {
         return res(ctx.status(400));
       })
     );

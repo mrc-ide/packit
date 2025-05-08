@@ -6,7 +6,7 @@ import { ManageUsers } from "../../../../app/components/contents/manageAccess";
 import { ManageAccessOutlet } from "../../../../app/components/contents/manageAccess/ManageAccessOutlet";
 import { AuthConfigProvider } from "../../../../app/components/providers/AuthConfigProvider";
 import { UserProvider } from "../../../../app/components/providers/UserProvider";
-import { mockUsersWithRoles } from "../../../mocks";
+import { mockUsersWithPermissions } from "../../../mocks";
 
 const mockAuthConfig = jest.fn();
 const mockUser = jest.fn();
@@ -35,12 +35,12 @@ const renderComponent = () => {
 describe("ManageUsers", () => {
   it("it should render users data correctly", async () => {
     mockAuthConfig.mockReturnValue({ enableBasicLogin: false });
-    mockUser.mockReturnValue({ userName: mockUsersWithRoles[0].username });
+    mockUser.mockReturnValue({ userName: mockUsersWithPermissions[0].username });
     renderComponent();
 
     // only username roles are rendered
     await waitFor(() => {
-      mockUsersWithRoles.forEach((user) => {
+      mockUsersWithPermissions.forEach((user) => {
         expect(screen.getAllByText(user.username, { exact: false })[0]).toBeVisible();
         user.specificPermissions.forEach((permission) => {
           expect(screen.getAllByText(permission.permission, { exact: false })[0]).toBeVisible();
@@ -52,8 +52,8 @@ describe("ManageUsers", () => {
     // cant delete own user
     expect(screen.getAllByRole("button", { name: "delete-user" })[0]).toBeDisabled();
     // actions to delete and edit roles for all rows
-    expect(screen.getAllByRole("button", { name: "delete-user" })).toHaveLength(mockUsersWithRoles.length);
-    expect(screen.getAllByRole("button", { name: "edit-user" })).toHaveLength(mockUsersWithRoles.length);
+    expect(screen.getAllByRole("button", { name: "delete-user" })).toHaveLength(mockUsersWithPermissions.length);
+    expect(screen.getAllByRole("button", { name: "edit-user" })).toHaveLength(mockUsersWithPermissions.length);
   });
 
   it("should render add user button if basic login is enabled", async () => {
@@ -78,12 +78,12 @@ describe("ManageUsers", () => {
     userEvent.type(filterInput, "x@gmail");
 
     await waitFor(() => {
-      mockUsersWithRoles.slice(0, 4).forEach((user) => {
+      mockUsersWithPermissions.slice(0, 4).forEach((user) => {
         expect(screen.queryByText(user.username)).not.toBeInTheDocument();
       });
     });
 
-    expect(screen.getByText(mockUsersWithRoles[5].username)).toBeVisible();
+    expect(screen.getByText(mockUsersWithPermissions[5].username)).toBeVisible();
   });
 
   it("should reset filter when reset button is clicked", async () => {
@@ -102,14 +102,14 @@ describe("ManageUsers", () => {
     await waitFor(() => {
       expect(filterInput).toHaveValue("");
     });
-    mockUsersWithRoles.forEach((user) => {
+    mockUsersWithPermissions.forEach((user) => {
       expect(screen.getByText(user.username)).toBeVisible();
     });
   });
 
   it("should disable delete and edit buttons for own user", async () => {
     mockAuthConfig.mockReturnValue({ enableBasicLogin: false });
-    mockUser.mockReturnValue({ userName: mockUsersWithRoles[0].username });
+    mockUser.mockReturnValue({ userName: mockUsersWithPermissions[0].username });
     renderComponent();
 
     expect(screen.getAllByRole("button", { name: "delete-user" })[0]).toBeDisabled();

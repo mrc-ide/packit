@@ -1,5 +1,6 @@
 package packit.integration.controllers
 
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.convertValue
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -342,5 +343,44 @@ class PacketGroupControllerTest(
                 packetGroup.id
             )
         }
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.manage:packetGroup:test1", "packet.manage:packetGroup:test2"])
+    fun `can get roles and users for packet groups the user has manage permission for`()
+    {
+        val packetGroupNames = listOf("test1", "test2")
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packetGroups/read-permission",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        assertSuccess(result)
+
+        val body = jacksonObjectMapper().readValue(
+            result.body,
+            object : TypeReference<Map<String, RolesAndUsersToUpdateRead>>()
+            {}
+        )
+
+        assertThat(body.keys).containsExactlyInAnyOrderElementsOf(packetGroupNames)
+        body.forEach {
+            val rolesAndUsers = it.value
+            assert(rolesAndUsers.cantRead is RolesAndUsersWithPermissionsDto)
+            assert(rolesAndUsers.withRead is RolesAndUsersWithPermissionsDto)
+        }
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
+    fun `getting roles and users for update returns 401 if no packet manage`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packetGroups/read-permission",
+            HttpMethod.GET
+        )
+
+        assertUnauthorized(result)
     }
 }
