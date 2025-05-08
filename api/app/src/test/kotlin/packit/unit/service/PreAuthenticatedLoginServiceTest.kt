@@ -19,14 +19,14 @@ class PreAuthenticatedLoginServiceTest
     fun `can save user and issue token`()
     {
         val mockUser = mock<User>()
-        val mockUserPrincipal = mock<UserPrincipal>()
+        val userPrincipal = UserPrincipal("test.user", "Test User", mutableListOf(), mutableMapOf())
         val mockUserService = mock<UserService> {
             on { savePreAuthenticatedUser("test.user", "Test User", "test.user@example.com") } doReturn mockUser
-            on { getUserPrincipal(mockUser) } doReturn mockUserPrincipal
+            on { getUserPrincipal(mockUser) } doReturn userPrincipal
         }
         val token = "test-token"
         val mockjwtIssuer = mock<JwtIssuer> {
-            on { issue(mockUserPrincipal) } doReturn token
+            on { issue(userPrincipal) } doReturn token
         }
 
         val sut = PreAuthenticatedLoginService(mockjwtIssuer, mockUserService)
