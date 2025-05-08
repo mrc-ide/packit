@@ -20,7 +20,7 @@ Before running the app you need to configure it according to the auth method you
    and
    PACKIT_GITHUB_CLIENT_SECRET with the details of an OAuth app which you can use to log in. You can use the details held in
    the
-   mrc vault at `VAULT:secret/auth/githubclient/id:value` and `VAULT:secret/auth/githubclient/secret:value`. 
+   mrc vault at `VAULT:secret/packit/oauth/test/clientId:value` and `VAULT:secret/packit/oauth/test/clientSecret:value`. 
 - **basic**: In basic auth, Packit manages user passwords. This is enabled by setting `auth.method=basic` in `application.properties`.
 - **preauth**: Also known as 'trusted headers', with this method, Packit trusts that user details provided in headers are correct.
              Must be used with an appropriate auth provider and proxy configuration - this is currently expected to be Montagu. 
