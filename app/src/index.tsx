@@ -7,7 +7,6 @@ import { UserProvider } from "./app/components/providers/UserProvider";
 import { RedirectOnLoginProvider } from "./app/components/providers/RedirectOnLoginProvider";
 import reportWebVitals from "./reportWebVitals";
 import "./styles/globals.css";
-import "./styles/custom.css";
 import { Router } from "./app/components/routes/Router";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
