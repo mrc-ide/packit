@@ -6,7 +6,6 @@ import { server } from "../../../../../msw/server";
 import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { getTimeDifferenceToDisplay } from "../../../../../lib/time";
-import appConfig from "../../../../../config/appConfig";
 import { absoluteApiUrl } from "../../../../../helpers";
 
 const renderComponent = () => {
