@@ -22,8 +22,8 @@ Before running the app you need to configure it according to the auth method you
    the
    mrc vault at `VAULT:secret/auth/githubclient/id:value` and `VAULT:secret/auth/githubclient/secret:value`. 
 - **basic**: In basic auth, Packit manages user passwords. This is enabled by setting `auth.method=basic` in `application.properties`.
-- **preauth**: Also known as trusted headers, with this method, packit trusts that user details provided in headers are correct.
-             Must be used with an appropriate auth provider and proxy configuration - this is currently expected be Montagu. 
+- **preauth**: Also known as 'trusted headers', with this method, Packit trusts that user details provided in headers are correct.
+             Must be used with an appropriate auth provider and proxy configuration - this is currently expected to be Montagu. 
              Enable by setting `auth.method=preauth` in `application.properties`.
 - **No auth**: In this mode, users do not need to log in to see all packet details. This is enabled by setting `auth.enabled=false` in `application.properties`. 
 
