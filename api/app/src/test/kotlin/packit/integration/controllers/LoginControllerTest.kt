@@ -89,10 +89,13 @@ class LoginControllerTestPreAuth : IntegrationTest()
     private val userDisplayName = "Test User"
 
     @Autowired
-    lateinit var userRepository: UserRepository
+    private lateinit var userRepository: UserRepository
 
     @Autowired
-    lateinit var roleRepository: RoleRepository
+    private lateinit var roleRepository: RoleRepository
+
+    @Autowired
+    private lateinit var tokenDecoder: TokenDecoder
 
     @AfterEach
     fun cleanupData()
@@ -116,20 +119,26 @@ class LoginControllerTestPreAuth : IntegrationTest()
 
         assertSuccess(result)
         val packitToken = jacksonObjectMapper().readTree(result.body).get("token").asText()
-        assertThat(packitToken.count()).isGreaterThan(0)
+        val decodedToken = tokenDecoder.decode(packitToken)
+        assertEquals(decodedToken.getClaim("userName").asString(), userName)
+        // Expect newly created user to have empty permissions list
+        assertEquals(decodedToken.getClaim("au").asList(String::class.java), listOf())
+
         assertThat(userRepository.existsByUsername(userName)).isTrue()
     }
 
     @Test
     fun `can login with existing user`()
     {
+        val adminRole = roleRepository.findByName("ADMIN")!!
+        val adminPerms = adminRole.rolePermissions.map{ it.permission.name }
         val testUser = User(
             username = userName,
             displayName = userDisplayName,
             disabled = false,
             email = userEmail,
             userSource = "preauth",
-            roles = mutableListOf(),
+            roles = mutableListOf(adminRole),
             password = null,
             lastLoggedIn = null
         )
@@ -143,7 +152,9 @@ class LoginControllerTestPreAuth : IntegrationTest()
 
         assertSuccess(result)
         val packitToken = jacksonObjectMapper().readTree(result.body).get("token").asText()
-        assertThat(packitToken.count()).isGreaterThan(0)
+        val decodedToken = tokenDecoder.decode(packitToken)
+        assertEquals(decodedToken.getClaim("userName").asString(), userName)
+        assertEquals(decodedToken.getClaim("au").asList(String::class.java), adminPerms)
 
         val updatedUser = userRepository.findByUsernameAndUserSource(userName, "preauth")
         assertThat(updatedUser!!.lastLoggedIn).isAfterOrEqualTo(now)
