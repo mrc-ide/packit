@@ -32,8 +32,7 @@ export const NavMenu = ({ className, user, ...props }: NavMenuProps) => {
     <div className="flex-1">
       <nav
         className={cn(
-          "flex items-center space-x-4 lg:space-x-6 pr-4 lg:pr-6",
-          displayableItems.length > 1 ? "justify-center" : "justify-end",
+          "flex items-center space-x-4 lg:space-x-6 pr-4 lg:pr-6 justify-end",
           className
         )}
         {...props}

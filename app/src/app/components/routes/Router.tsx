@@ -4,13 +4,12 @@ import { NotFound } from "../NotFound";
 import { Downloads, Home, Metadata, PacketGroup } from "../contents";
 import { PacketDetails, PacketFileFullScreen } from "../contents/packets";
 import { Login, Redirect, UpdatePassword, AuthLayoutForm } from "../login";
+import { Breadcrumb } from "../main/Breadcrumb";
 import { PacketLayout } from "../main";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { ManageAccessLayout, ManageRoles, ManageUsers } from "../contents/manageAccess";
 import { PacketRun, PacketRunTaskLogs, PacketRunTasksLogs, PacketRunnerLayout } from "../contents/runner";
 import { PacketBlankLayout } from "../main/PacketBlankLayout";
-import { BreadcrumbRoute } from "../main/BreadcrumbRoute";
-import { PacketReadPermission } from "../contents/PacketReadPermission";
 
 export const Router = () => {
   return (
@@ -26,7 +25,7 @@ export const Router = () => {
           <Route path="*" element={<NotFound />} />
         </Route>
         <Route element={<ProtectedRoute />}>
-          <Route element={<BreadcrumbRoute />}>
+          <Route element={<Breadcrumb />}>
             <Route index element={<Home />} />
             <Route element={<PacketRunnerLayout />}>
               <Route path="runner" element={<PacketRun />} />
@@ -40,7 +39,6 @@ export const Router = () => {
               <Route path="/:packetName/:packetId" element={<PacketDetails />} />
               <Route path="/:packetName/:packetId/metadata" element={<Metadata />} />
               <Route path="/:packetName/:packetId/downloads" element={<Downloads />} />
-              <Route path="/:packetName/:packetId/read-access" element={<PacketReadPermission />} />
               {/* <Route path="/:packetName/:packetId/changelogs" element={<ChangeLogs />} /> */}
             </Route>
             <Route element={<ManageAccessLayout />}>
