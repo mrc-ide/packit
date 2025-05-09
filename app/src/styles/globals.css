@@ -44,8 +44,8 @@
 
     --info: rgb(59 130 246); /* tailwind blue-500 */
 
-    --accent: hsl(241, 48%, 51%);
-    --accent-foreground: hsl(51, 72%, 53%);
+    --accent: hsl(222.2, 47.4%, 11.2%);
+    --accent-foreground: hsl(210, 40%, 96.1%);
 
     --destructive: hsl(0 84.2% 60.2%);
     --destructive-foreground: hsl(210 40% 98%);

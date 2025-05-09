@@ -19,8 +19,7 @@ export const Sidebar = ({ sidebarItems, children }: SidebarProps) => {
               key={index}
               to={item.to}
               className={cn(
-                buttonVariants({ variant: "ghost" }),
-                pathname === item.to ? "bg-muted hover:bg-muted" : "hover:bg-transparent hover:underline",
+                buttonVariants({ variant: (pathname === item.to ? "secondary" : "link") }),
                 "justify-start"
               )}
             >

@@ -15,7 +15,7 @@ export const Header = () => {
   return (
     <header>
       <div data-testid="header">
-        <div className="flex items-center h-20 border-b shadow-sm dark:shadow-accent">
+        <div className="flex items-center h-20 border-b shadow-sm border-accent">
           {brandConfig?.logoFilename && (
             <NavLink to={logoLinkDestination} className="h-full p-2 hidden md:block flex-shrink-0 ml-2 mr-6">
               <img src={`/img/${brandConfig?.logoFilename}`} className="h-full" alt={brandConfig?.logoAltText} />

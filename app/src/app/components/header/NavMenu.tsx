@@ -32,7 +32,7 @@ export const NavMenu = ({ className, user, ...props }: NavMenuProps) => {
     <div className="flex-1">
       <nav
         className={cn(
-          "flex items-center space-x-4 lg:space-x-6 pr-4 lg:pr-6 justify-end",
+          "flex items-center space-x-2 pr-4 lg:pr-6 justify-end",
           className
         )}
         {...props}
@@ -47,7 +47,7 @@ export const NavMenu = ({ className, user, ...props }: NavMenuProps) => {
                 {
                   "text-muted-foreground": !isActive
                 },
-                buttonVariants({ variant: "ghost" }),
+                buttonVariants({ variant: "link" }),
                 className
               )
             }
@@ -59,7 +59,7 @@ export const NavMenu = ({ className, user, ...props }: NavMenuProps) => {
       <div className="mx-3 flex items-center md:hidden">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
+            <Button variant="link" size="icon">
               <Menu />
             </Button>
           </DropdownMenuTrigger>

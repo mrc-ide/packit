@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { getInitials } from "../../../lib/string";
-import { Avatar, AvatarFallback } from "../Base/Avatar";
 import { Button } from "../Base/Button";
 import {
   DropdownMenu,
@@ -12,6 +11,7 @@ import {
 } from "../Base/DropdownMenu";
 import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 import { useUser } from "../providers/UserProvider";
+import { CircleUser } from "lucide-react";
 
 export const AccountHeaderDropdown = () => {
   const navigate = useNavigate();
@@ -27,10 +27,13 @@ export const AccountHeaderDropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 w-10 rounded full">
-          <Avatar className="h-8 w-8">
-            <AvatarFallback>{getInitials(user?.displayName)}</AvatarFallback>
-          </Avatar>
+        <Button
+          aria-label="Account"
+          variant="ghost"
+          size="icon"
+          className="rounded-full data-[state=open]:bg-accent data-[state=open]:text-accent-foreground"
+        >
+          <CircleUser />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" forceMount>

@@ -28,11 +28,11 @@ export const UpdatePermissionDialog = ({ roles, users, packetGroupName, mutate }
           <TooltipTrigger asChild>
             <Button
               aria-label={`manage-access-${packetGroupName}`}
-              variant="outline"
+              variant="ghost"
               size="icon"
               onClick={() => setDialogOpen(true)}
             >
-              <UserCog size={18} />
+              <UserCog size={20} />
             </Button>
           </TooltipTrigger>
           <TooltipContent>
