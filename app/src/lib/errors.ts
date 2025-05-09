@@ -9,3 +9,10 @@ export class ApiError extends Error {
     this.status = status; // Set the status
   }
 }
+
+export class PacketNameError extends Error {
+  constructor() {
+    super("Provided packet name was incorrect");
+    this.name = "PacketNameError";
+  }
+}

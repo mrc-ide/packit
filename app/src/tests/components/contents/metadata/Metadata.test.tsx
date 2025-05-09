@@ -15,7 +15,7 @@ describe("Metadata component", () => {
       <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>
         <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/metadata`]}>
           <Routes>
-            <Route element={<PacketOutlet packetId={mockPacket.id} />}>
+            <Route element={<PacketOutlet />}>
               <Route path="/:packetName/:packetId/metadata" element={<Metadata />} />
             </Route>
           </Routes>

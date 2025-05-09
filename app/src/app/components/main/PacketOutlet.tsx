@@ -1,16 +1,29 @@
 import { Loader2 } from "lucide-react";
-import { Outlet, useOutletContext } from "react-router-dom";
+import { Outlet, useOutletContext, useParams } from "react-router-dom";
 import { PacketMetadata } from "../../../types";
 import { ErrorComponent } from "../contents/common/ErrorComponent";
 import { useGetPacketById } from "../contents/common/hooks/useGetPacketById";
 import { HttpStatus } from "../../../lib/types/HttpStatus";
 import { Unauthorized } from "../contents/common/Unauthorized";
+import { PacketNameError } from "../../../lib/errors";
 
-interface PacketOutletProps {
-  packetId: string | undefined;
-}
-export const PacketOutlet = ({ packetId }: PacketOutletProps) => {
-  const { packet, isLoading, error } = useGetPacketById(packetId);
+export const PacketOutlet = () => {
+  const { packetName, packetId } = useParams();
+
+  let packet: PacketMetadata | undefined;
+  let isLoading = true;
+  let error: any = null;
+
+  try {
+    const result = useGetPacketById(packetId, packetName);
+    packet = result.packet;
+    isLoading = result.isLoading;
+    error = result.error;
+  } catch (e) {
+    if (e instanceof PacketNameError) {
+      return <ErrorComponent error={e} message="Error fetching packet details" />;
+    }
+  }
 
   if (error?.status === HttpStatus.Unauthorized) return <Unauthorized />;
   if (error) return <ErrorComponent error={error} message="Error fetching packet details" />;

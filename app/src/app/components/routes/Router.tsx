@@ -9,7 +9,7 @@ import { PacketLayout } from "../main";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { ManageAccessLayout, ManageRoles, ManageUsers } from "../contents/manageAccess";
 import { PacketRun, PacketRunTaskLogs, PacketRunTasksLogs, PacketRunnerLayout } from "../contents/runner";
-import { PacketBlankLayout } from "../main/PacketBlankLayout";
+import { PacketOutlet } from "../main/PacketOutlet";
 import { PacketReadPermission } from "../contents/PacketReadPermission";
 
 export const Router = () => {
@@ -51,7 +51,7 @@ export const Router = () => {
         </Route>
       </Route>
       <Route element={<ProtectedRoute />}>
-        <Route element={<PacketBlankLayout />}>
+        <Route element={<PacketOutlet />}>
           <Route path="/:packetName/:packetId/file/*" element={<PacketFileFullScreen />} />
         </Route>
       </Route>
