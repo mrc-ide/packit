@@ -1,0 +1,10 @@
+/*
+This file should be rewritten by the deploy tool with any custom css
+particular to the deployment instance.
+E.g. to define a custom brand color, inject the variables:
+ --custom-accent
+ --custom-accent-foreground
+within the :root selector.
+
+Do not add any other custom css here, as it will be overwritten on deploy.
+*/

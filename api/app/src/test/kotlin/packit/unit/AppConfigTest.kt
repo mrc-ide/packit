@@ -28,7 +28,8 @@ class AppConfigTest
         "auth.githubAPIOrg" to "githubAPIOrg",
         "auth.githubAPITeam" to "githubAPITeam",
         "cors.allowedOrigins" to "http://localhost, https://production",
-        "packit.defaultRoles" to "ADMIN,USER"
+        "packit.defaultRoles" to "ADMIN,USER",
+        "packit.branding.name" to "Optional Name for App",
     )
     private val mockEnv = MockEnvironment()
 
@@ -67,6 +68,10 @@ class AppConfigTest
         assertEquals(sut.authGithubAPITeam, "githubAPITeam")
         assertEquals(sut.allowedOrigins, listOf("http://localhost", "https://production"))
         assertEquals(sut.defaultRoles, listOf("ADMIN", "USER"))
+        assertEquals(sut.brandName, "Optional Name for App")
+        assertEquals(sut.brandLogoAltText, null)
+        assertEquals(sut.brandLogoFilename, null)
+        assertEquals(sut.brandLogoLink, null)
     }
 
     @Test

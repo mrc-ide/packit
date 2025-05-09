@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { LeftNav, LeftNavItems } from "../../../app/components/header/LeftNav";
+import { NavMenu, NavItems } from "../../../app/components/header/NavMenu";
 import { UserState } from "../../../app/components/providers/types/UserTypes";
 import { MemoryRouter } from "react-router-dom";
 
