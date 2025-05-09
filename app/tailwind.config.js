@@ -22,31 +22,31 @@ export const theme = {
       info: "var(--info)",
       primary: {
         DEFAULT: "var(--primary)",
-        foreground: "var(--primary-foreground))"
+        foreground: "var(--primary-foreground)"
       },
       secondary: {
-        DEFAULT: "var(--secondary))",
-        foreground: "var(--secondary-foreground))"
+        DEFAULT: "var(--secondary)",
+        foreground: "var(--secondary-foreground)"
       },
       destructive: {
-        DEFAULT: "var(--destructive))",
-        foreground: "var(--destructive-foreground))"
+        DEFAULT: "var(--destructive)",
+        foreground: "var(--destructive-foreground)"
       },
       muted: {
-        DEFAULT: "var(--muted))",
-        foreground: "var(--muted-foreground))"
+        DEFAULT: "var(--muted)",
+        foreground: "var(--muted-foreground)"
       },
       accent: {
         DEFAULT: "var(--custom-accent, var(--accent))",
         foreground: "var(--custom-accent-foreground, var(--accent-foreground))"
       },
       popover: {
-        DEFAULT: "var(--popover))",
-        foreground: "var(--popover-foreground))"
+        DEFAULT: "var(--popover)",
+        foreground: "var(--popover-foreground)"
       },
       card: {
         DEFAULT: "var(--card))",
-        foreground: "var(--card-foreground))"
+        foreground: "var(--card-foreground)"
       }
     },
     borderRadius: {
