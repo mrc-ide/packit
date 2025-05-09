@@ -31,6 +31,10 @@ psql -U packituser -d packit \
 INSERT INTO "user" (id, username, display_name, password, email, disabled, user_source, last_logged_in)
 VALUES (:'uuid', :'email', 'Super Admin', :'password', :'email', FALSE, 'basic', NOW());
 
+INSERT INTO "role" (name, is_username)
+VALUES (:'email', TRUE);
+
 INSERT INTO "user_role" (user_id, role_id)
-SELECT :'uuid', role.id FROM role WHERE role.name = 'ADMIN';
+SELECT :'uuid', role.id FROM role WHERE role.name IN ('ADMIN', :'email');
+
 EOF

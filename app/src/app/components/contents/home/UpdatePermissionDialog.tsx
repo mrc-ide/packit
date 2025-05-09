@@ -1,25 +1,23 @@
 import { UserCog } from "lucide-react";
 import { useState } from "react";
-import { KeyedMutator } from "swr";
 import { Button } from "../../Base/Button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../Base/Dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../Base/Tooltip";
-import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
-import { UserWithRoles } from "../manageAccess/types/UserWithRoles";
+import { RolesAndUsersToUpdateRead } from "../manageAccess/types/RoleWithRelationships";
 import { UpdatePacketReadPermissionForm } from "./UpdatePacketReadPermissionForm";
-import { getRolesAndUsersCantReadGroup } from "./utils/getRolesAndUsersCantReadGroup";
-import { getRolesAndUsersWithOnlyReadGroupPermission } from "./utils/getRolesAndUsersWithOnlyReadGroupPermission";
+import { KeyedMutator } from "swr";
 
 interface UpdatePermissionDialogProps {
-  roles: RoleWithRelationships[];
-  users: UserWithRoles[];
   packetGroupName: string;
-  mutate: KeyedMutator<RoleWithRelationships[]>;
+  rolesAndUsersToUpdateRead: RolesAndUsersToUpdateRead;
+  mutate: KeyedMutator<Record<string, RolesAndUsersToUpdateRead>>;
 }
-export const UpdatePermissionDialog = ({ roles, users, packetGroupName, mutate }: UpdatePermissionDialogProps) => {
+export const UpdatePermissionDialog = ({
+  packetGroupName,
+  rolesAndUsersToUpdateRead,
+  mutate
+}: UpdatePermissionDialogProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const rolesAndUsersCantReadGroup = getRolesAndUsersCantReadGroup(roles, users, packetGroupName);
-  const rolesAndUsersWithReadGroup = getRolesAndUsersWithOnlyReadGroupPermission(roles, users, packetGroupName);
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -45,8 +43,8 @@ export const UpdatePermissionDialog = ({ roles, users, packetGroupName, mutate }
           <DialogTitle>Update read access on {packetGroupName}</DialogTitle>
         </DialogHeader>
         <UpdatePacketReadPermissionForm
-          rolesAndUsersCantRead={rolesAndUsersCantReadGroup}
-          rolesAndUsersWithRead={rolesAndUsersWithReadGroup}
+          rolesAndUsersCantRead={rolesAndUsersToUpdateRead.cantRead}
+          rolesAndUsersWithRead={rolesAndUsersToUpdateRead.withRead}
           setDialogOpen={setDialogOpen}
           packetGroupName={packetGroupName}
           mutate={mutate}

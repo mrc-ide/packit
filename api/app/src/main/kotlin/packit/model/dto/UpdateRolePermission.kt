@@ -7,10 +7,20 @@ data class UpdateRolePermissions(
     val removePermissions: List<UpdateRolePermission> = listOf()
 )
 
-data class UpdatePacketReadRoles(
-    val packetId: String? = null,
+data class UpdateReadRoles(
     val roleNamesToAdd: Set<String> = setOf(),
     val roleNamesToRemove: Set<String> = setOf()
+)
+
+data class RolesAndUsersToUpdateRead(
+    val cantRead: RolesAndUsersWithPermissionsDto,
+    val withRead: RolesAndUsersWithPermissionsDto
+)
+
+data class RolesAndUsersForPacketReadUpdate(
+    val cantRead: RolesAndUsersWithPermissionsDto,
+    val withRead: RolesAndUsersWithPermissionsDto,
+    val canRead: RolesAndUsersWithPermissionsDto,
 )
 
 class UpdateRolePermission(

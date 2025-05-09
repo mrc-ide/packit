@@ -3,21 +3,25 @@ package packit.service
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
+import packit.model.Packet
 import packit.model.Role
 import packit.model.User
-import packit.model.dto.UpdateRoleUsers
-import packit.model.dto.UpdateUserRoles
+import packit.model.dto.*
 
 interface UserRoleService
 {
     fun updateRoleUsers(roleName: String, usersToUpdate: UpdateRoleUsers): Role
     fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles): User
+    fun getAllRolesAndUsersWithPermissions(): RolesAndUsersWithPermissionsDto
+    fun getRolesAndUsersForPacketGroupReadUpdate(packetGroupNames: List<String>): Map<String, RolesAndUsersToUpdateRead>
+    fun getRolesAndUsersForPacketReadUpdate(packet: Packet): RolesAndUsersForPacketReadUpdate
 }
 
 @Service
 class BaseUserRoleService(
     private val roleService: RoleService,
-    private val userService: UserService
+    private val userService: UserService,
+    private val userRoleFilterService: UserRoleFilterService
 ) : UserRoleService
 {
     override fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles): User
@@ -25,7 +29,8 @@ class BaseUserRoleService(
         val user = userService.getByUsername(username)
             ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
 
-        if (user.isServiceUser()) {
+        if (user.isServiceUser())
+        {
             throw PackitException("cannotModifyServiceUser", HttpStatus.BAD_REQUEST)
         }
 
@@ -34,6 +39,45 @@ class BaseUserRoleService(
         removeRolesFromUser(user, rolesToUpdate.filter { it.name in updateUserRoles.roleNamesToRemove })
 
         return userService.saveUser(user)
+    }
+
+    override fun getAllRolesAndUsersWithPermissions(): RolesAndUsersWithPermissionsDto
+    {
+        return createSortedRolesAndUsersWithPermissionsDto(getNonUsernameRolesAndNonServiceUsers())
+    }
+
+    override fun getRolesAndUsersForPacketGroupReadUpdate(
+        packetGroupNames: List<String>
+    ): Map<String, RolesAndUsersToUpdateRead>
+    {
+        val (roles, users) = getNonUsernameRolesAndNonServiceUsers()
+        return packetGroupNames.associateWith {
+            RolesAndUsersToUpdateRead(
+                cantRead = createSortedRolesAndUsersWithPermissionsDto(
+                    userRoleFilterService.getRolesAndUsersCantPacketReadGroup(roles, users, it)
+                ),
+                withRead = createSortedRolesAndUsersWithPermissionsDto(
+                    userRoleFilterService.getRolesAndUsersWithSpecificReadPacketGroupPermission(roles, users, it)
+                )
+            )
+        }
+    }
+
+    override fun getRolesAndUsersForPacketReadUpdate(packet: Packet): RolesAndUsersForPacketReadUpdate
+    {
+        val (roles, users) = getNonUsernameRolesAndNonServiceUsers()
+
+        return RolesAndUsersForPacketReadUpdate(
+            canRead = createSortedRolesAndUsersWithPermissionsDto(
+                userRoleFilterService.getRolesAndSpecificUsersCanReadPacket(roles, users, packet)
+            ),
+            cantRead = createSortedRolesAndUsersWithPermissionsDto(
+                userRoleFilterService.getRolesAndUsersCantReadPacket(roles, users, packet)
+            ),
+            withRead = createSortedRolesAndUsersWithPermissionsDto(
+                userRoleFilterService.getRolesUsersWithSpecificReadPacketPermission(roles, users, packet),
+            )
+        )
     }
 
     override fun updateRoleUsers(roleName: String, usersToUpdate: UpdateRoleUsers): Role
@@ -48,7 +92,8 @@ class BaseUserRoleService(
         val updateUsers =
             userService.getUsersByUsernames(usersToUpdate.usernamesToAdd + usersToUpdate.usernamesToRemove)
 
-        if (updateUsers.any { it.isServiceUser() }) {
+        if (updateUsers.any { it.isServiceUser() })
+        {
             throw PackitException("cannotModifyServiceUser", HttpStatus.BAD_REQUEST)
         }
 
@@ -58,6 +103,23 @@ class BaseUserRoleService(
         // have to update users to save change as it is owner of many-to-many relationship
         userService.saveUsers(updateUsers)
         return role
+    }
+
+    internal fun createSortedRolesAndUsersWithPermissionsDto(
+        rolesAndUsers: RolesAndUsers
+    ): RolesAndUsersWithPermissionsDto
+    {
+        return RolesAndUsersWithPermissionsDto(
+            roleService.getSortedRoleDtos(rolesAndUsers.roles),
+            userService.getSortedUsersWithPermissions(rolesAndUsers.users)
+        )
+    }
+
+    internal fun getNonUsernameRolesAndNonServiceUsers(): RolesAndUsers
+    {
+        val roles = roleService.getAllRoles(isUsernames = false)
+        val users = userService.getAllNonServiceUsers()
+        return RolesAndUsers(roles, users)
     }
 
     internal fun addUsersToRole(role: Role, usersToAdd: List<User>)

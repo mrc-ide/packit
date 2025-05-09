@@ -8,6 +8,8 @@ import packit.exceptions.PackitException
 import packit.model.User
 import packit.model.dto.CreateBasicUser
 import packit.model.dto.UpdatePassword
+import packit.model.dto.UserWithPermissions
+import packit.model.toUserWithPermissions
 import packit.repository.UserRepository
 import packit.security.profile.UserPrincipal
 import java.time.Instant
@@ -27,13 +29,16 @@ interface UserService
     fun checkAndUpdateLastLoggedIn(username: String)
     fun getServiceUser(): User
     fun getUserPrincipal(user: User): UserPrincipal
+    fun getAllNonServiceUsers(): List<User>
+    fun getSortedUsersWithPermissions(users: List<User>): List<UserWithPermissions>
 }
 
 @Service
 class BaseUserService(
     private val userRepository: UserRepository,
     private val roleService: RoleService,
-    private val passwordEncoder: PasswordEncoder
+    private val passwordEncoder: PasswordEncoder,
+    private val rolePermissionService: RolePermissionService
 ) : UserService
 {
     override fun saveUserFromGithub(username: String, displayName: String?, email: String?): User
@@ -41,7 +46,8 @@ class BaseUserService(
         val user = userRepository.findByUsername(username)
         if (user != null)
         {
-            if (user.userSource != "github") {
+            if (user.userSource != "github")
+            {
                 throw PackitException("userAlreadyExists", HttpStatus.BAD_REQUEST)
             }
             return updateUserLastLoggedIn(user, Instant.now())
@@ -155,7 +161,8 @@ class BaseUserService(
         val user = userRepository.findByUsername(username)
             ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
 
-        if (user.userSource == "service") {
+        if (user.userSource == "service")
+        {
             throw PackitException("cannotUpdateServiceUser", HttpStatus.BAD_REQUEST)
         }
 
@@ -169,12 +176,27 @@ class BaseUserService(
             ?: throw PackitException("serviceUserNotFound", HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
-    override fun getUserPrincipal(user: User): UserPrincipal {
+    override fun getUserPrincipal(user: User): UserPrincipal
+    {
         return UserPrincipal(
             user.username,
             user.displayName,
             roleService.getGrantedAuthorities(user.roles),
             mutableMapOf()
         )
+    }
+
+    override fun getAllNonServiceUsers(): List<User>
+    {
+        return userRepository.findByUserSourceNotOrderByUsername("service")
+    }
+
+    override fun getSortedUsersWithPermissions(users: List<User>): List<UserWithPermissions>
+    {
+        return users.map { user ->
+            rolePermissionService.sortRolePermissions(user.getSpecificPermissions())
+            user.roles.sortBy { it.name }
+            user.toUserWithPermissions()
+        }
     }
 }

@@ -4,12 +4,12 @@ import { Dialog } from "../../../Base/Dialog";
 import { UpdateDialogContent } from "../UpdateDialogContent";
 import { UpdateDropdown, UpdateOptions } from "../UpdateDropdown";
 import { RoleWithRelationships } from "../types/RoleWithRelationships";
-import { UserWithRoles } from "../types/UserWithRoles";
+import { UserWithPermissions } from "../types/UserWithPermissions";
 import { UpdatePermissionsForm } from "../updatePermission/UpdatePermissionsForm";
 import { UpdateUserRoleForm } from "./UpdateUserRoleForm";
 
 interface UpdateUserDropdownMenuProps {
-  user: UserWithRoles;
+  user: UserWithPermissions;
   roles: RoleWithRelationships[];
   mutate: KeyedMutator<RoleWithRelationships[]>;
 }

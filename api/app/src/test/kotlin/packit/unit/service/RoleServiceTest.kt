@@ -12,7 +12,7 @@ import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.model.*
 import packit.model.dto.CreateRole
-import packit.model.dto.UpdatePacketReadRoles
+import packit.model.dto.UpdateReadRoles
 import packit.model.dto.UpdateRolePermissions
 import packit.repository.RoleRepository
 import packit.service.BaseRoleService
@@ -606,7 +606,7 @@ class RoleServiceTest
         val packetId = "packet123"
         val packetGroupName = "packetGroup1"
         val updatePacketReadRoles =
-            UpdatePacketReadRoles(packetId, rolesToAdd.toSet(), rolesToRemove.toSet())
+            UpdateReadRoles(packetId, rolesToAdd.toSet(), rolesToRemove.toSet())
         val allRoles = updateRoleNames.map { Role(name = it) }
 
         doReturn(updateRoleNames).`when`(spyRoleService)

@@ -37,13 +37,14 @@ describe("UpdatePacketReadPermissionForm", () => {
   };
   const setDialogOpen = jest.fn();
   const renderComponent = (packetId?: string) =>
+    // todo fix tests
     render(
       <Dialog>
         <UpdatePacketReadPermissionForm
           mutate={mutate}
           packetGroupName={packetGroupName}
-          rolesAndUsersWithRead={mockNonUsernameRolesWithRelationships.slice(0, 1)}
-          rolesAndUsersCantRead={mockNonUsernameRolesWithRelationships.slice(1)}
+          rolesAndUsersWithRead={mockNonUsernameRolesWithRelationships.slice(0, 1) as any}
+          rolesAndUsersCantRead={mockNonUsernameRolesWithRelationships.slice(1) as any}
           setDialogOpen={setDialogOpen}
           packetId={packetId}
         />

@@ -272,7 +272,7 @@ class PacketGroupControllerTest(
     fun `user without permission cannot update read permission on roles`()
     {
         val updatePacketReadRoles = jacksonObjectMapper().writeValueAsString(
-            UpdatePacketReadRoles(
+            UpdateReadRoles(
                 roleNamesToAdd = setOf(),
                 roleNamesToRemove = setOf()
             )
@@ -314,7 +314,7 @@ class PacketGroupControllerTest(
         }
         roleRepository.saveAll(rolesToRemove)
         val updatePacketReadRoles = jacksonObjectMapper().writeValueAsString(
-            UpdatePacketReadRoles(
+            UpdateReadRoles(
                 roleNamesToAdd = roleNamesToAdd,
                 roleNamesToRemove = roleNamesToRemove
             )

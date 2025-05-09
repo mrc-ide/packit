@@ -12,16 +12,16 @@ jest.mock("../../../../lib/localStorageManager", () => ({
 
 describe("PacketGroupSummaryListItem", () => {
   const mockPacketGroup = mockPacketGroupSummaries.content[0];
-  const mockRolesResponse = {
-    roles: [],
-    users: [],
-    mutate: jest.fn()
-  } as any;
+  // TODO: fix tests
   const renderComponent = () =>
     render(
       <UserProvider>
         <MemoryRouter>
-          <PacketGroupSummaryListItem packetGroup={mockPacketGroup} rolesResponse={mockRolesResponse} />
+          <PacketGroupSummaryListItem
+            packetGroup={mockPacketGroup}
+            rolesAndUsersToUpdateRead={{} as any}
+            mutate={jest.fn()}
+          />
         </MemoryRouter>
       </UserProvider>
     );
