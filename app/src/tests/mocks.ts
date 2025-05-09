@@ -36,7 +36,7 @@ export const mockAuthConfig: AuthConfig = {
 export const mockUserState: () => UserState = () => {
   return {
     displayName: "LeBron James",
-    userName: "goat",
+    userName: "goat@example.com",
     token:
       // eslint-disable-next-line max-len
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwYWNraXQiLCJpc3MiOiJwYWNraXQtYXBpIiwidXNlck5hbWUiOiJhYnN0ZXJuYXRvciIsImRpc3BsYXlOYW1lIjoiQW5tb2wgVGhhcGFyIiwiZGF0ZXRpbWUiOjE3MDI5NzgyMjgsImF1IjpbIltVU0VSXSJdLCJleHAiOjE3MDMwNjQ2Mjh9.o3b4PzZX76nP2tUxndGvusx-rytOkApodZ-geVPH9Pg",
@@ -48,7 +48,7 @@ export const mockUserState: () => UserState = () => {
 export const mockExpiredUserState: () => UserState = () => {
   return {
     displayName: "LeBron James",
-    userName: "goat",
+    userName: "goat@example.com",
     token:
       // eslint-disable-next-line max-len
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwYWNraXQiLCJpc3MiOiJwYWNraXQtYXBpIiwidXNlck5hbWUiOiJhYnN0ZXJuYXRvciIsImRpc3BsYXlOYW1lIjoiQW5tb2wgVGhhcGFyIiwiZGF0ZXRpbWUiOjE3MDI5NzgyMjgsImF1IjpbIltVU0VSXSJdLCJleHAiOjE3MDMwNjQ2Mjh9.o3b4PzZX76nP2tUxndGvusx-rytOkApodZ-geVPH9Pg",

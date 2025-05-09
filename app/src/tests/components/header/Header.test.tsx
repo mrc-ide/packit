@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { RedirectOnLoginProvider } from "../../../app/components/providers/RedirectOnLoginProvider";
@@ -27,11 +27,15 @@ describe("header component", () => {
       </MemoryRouter>
     );
   };
-  it("can render header user related items when authenticated", () => {
+
+  it("can render header user related items when authenticated", async () => {
+    const DOWN_ARROW = { keyCode: 40 };
     mockGetUserFromLocalStorage.mockReturnValue(mockUserState());
     renderElement();
+    fireEvent.keyDown(await screen.findByLabelText("Account"), DOWN_ARROW);
 
-    expect(screen.getByText("LJ")).toBeInTheDocument();
+    expect(screen.getByTestId("user-display-name")).toHaveTextContent("LeBron James");
+    expect(screen.getByTestId("username")).toHaveTextContent("goat@example.com");
   });
 
   it("should change theme when theme button is clicked", async () => {
