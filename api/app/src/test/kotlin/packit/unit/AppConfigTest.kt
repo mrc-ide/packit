@@ -60,6 +60,7 @@ class AppConfigTest
         assertEquals(sut.authJWTSecret, "secret")
         assertEquals(sut.authRedirectUri, "redirectUrl")
         assertFalse(sut.authEnableGithubLogin)
+        assertFalse(sut.authEnablePreAuthLogin)
         assertTrue(sut.authEnableBasicLogin)
         assertEquals(sut.authExpiryDays, 1L)
         assertTrue(sut.authEnabled)

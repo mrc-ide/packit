@@ -4,6 +4,7 @@ import { authIsExpired, isAuthenticated } from "../../../lib/isAuthenticated";
 import { useAuthConfig } from "../providers/AuthConfigProvider";
 import { useUser } from "../providers/UserProvider";
 import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
+import { windowNavigate } from "../../../lib/navigate";
 
 export const ProtectedRoute = () => {
   const navigate = useNavigate();
@@ -13,6 +14,18 @@ export const ProtectedRoute = () => {
   const { pathname } = useLocation();
   const expiryMessage = "You have been signed out because your session expired. Please log in.";
 
+  const navigateToLogin = (qs = "") => {
+    // navigate to logged out screen, either using react routing or external navigation, depending on whether we're
+    // using pre-auth, which may require logout action from auth provider. (See /packit/logout route in montagu nginx
+    // conf for how this works with Montagu: https://github.com/vimc/montagu-proxy/blob/master/nginx.montagu.conf)
+    if (authConfig?.enablePreAuthLogin) {
+      const href = `${process.env.PUBLIC_URL}/logout`;
+      windowNavigate(href);
+    } else {
+      navigate(`/login${qs}`);
+    }
+  };
+
   useEffect(() => {
     if (authConfig && !isAuthenticated(authConfig, user)) {
       // we will redirect to requested url on login, but avoid doing this if logging out after previous auth success
@@ -21,9 +34,9 @@ export const ProtectedRoute = () => {
       }
       if (user && authIsExpired(user)) {
         removeUser();
-        navigate(`/login?info=${expiryMessage}`);
+        navigateToLogin(`?info=${expiryMessage}`);
       } else {
-        navigate("/login");
+        navigateToLogin();
       }
     }
   }, [navigate, authConfig, user]);
