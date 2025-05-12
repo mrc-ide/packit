@@ -206,7 +206,7 @@ class RoleControllerTest : IntegrationTest()
 
         assert(
             roles.containsAll(
-                roleService.getSortedRoleDtos(
+                roleService.getSortedRoles(
                     listOf(
                         adminRole,
                         userRole
@@ -228,7 +228,7 @@ class RoleControllerTest : IntegrationTest()
                 getTokenizedHttpEntity(),
                 String::class.java
             )
-        val usernameRoleDtos = roleService.getSortedRoleDtos(
+        val usernameRoleDtos = roleService.getSortedRoles(
             roleRepository.findAllByIsUsernameOrderByName(true)
         )
 

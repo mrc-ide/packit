@@ -12,10 +12,8 @@ import packit.model.Permission
 import packit.model.Role
 import packit.model.RolePermission
 import packit.model.dto.CreateRole
-import packit.model.dto.RoleDto
 import packit.model.dto.UpdateReadRoles
 import packit.model.dto.UpdateRolePermissions
-import packit.model.toDto
 import packit.repository.RoleRepository
 
 interface RoleService
@@ -31,7 +29,7 @@ interface RoleService
     fun getRole(roleName: String): Role
     fun updatePermissionsToRole(roleName: String, updateRolePermissions: UpdateRolePermissions): Role
     fun getByRoleName(roleName: String): Role?
-    fun getSortedRoleDtos(roles: List<Role>): List<RoleDto>
+    fun getSortedRoles(roles: List<Role>): List<Role>
     fun getDefaultRoles(): List<Role>
     fun updatePacketReadPermissionOnRoles(
         updatePacketReadRoles: UpdateReadRoles,
@@ -114,12 +112,11 @@ class BaseRoleService(
         return roleRepository.findByName(roleName)
     }
 
-    override fun getSortedRoleDtos(roles: List<Role>): List<RoleDto>
+    override fun getSortedRoles(roles: List<Role>): List<Role>
     {
-        return roles.map { role ->
+        return roles.onEach { role ->
             rolePermissionService.sortRolePermissions(role.rolePermissions)
             role.users = role.users.filterNot { it.isServiceUser() }.sortedBy { it.username }.toMutableList()
-            role.toDto()
         }
     }
 

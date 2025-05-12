@@ -3,9 +3,7 @@ package packit.service
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitException
-import packit.model.Packet
-import packit.model.Role
-import packit.model.User
+import packit.model.*
 import packit.model.dto.*
 
 interface UserRoleService
@@ -13,8 +11,8 @@ interface UserRoleService
     fun updateRoleUsers(roleName: String, usersToUpdate: UpdateRoleUsers): Role
     fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles): User
     fun getAllRolesAndUsersWithPermissions(): RolesAndUsersWithPermissionsDto
-    fun getRolesAndUsersForPacketGroupReadUpdate(packetGroupNames: List<String>): Map<String, RolesAndUsersToUpdateRead>
-    fun getRolesAndUsersForPacketReadUpdate(packet: Packet): RolesAndUsersForPacketReadUpdate
+    fun getRolesAndUsersForPacketGroupReadUpdate(packetGroupNames: List<String>): Map<String, RolesAndUsersForReadUpdate>
+    fun getRolesAndUsersForPacketReadUpdate(packet: Packet): RolesAndUsersForReadUpdate
 }
 
 @Service
@@ -48,34 +46,37 @@ class BaseUserRoleService(
 
     override fun getRolesAndUsersForPacketGroupReadUpdate(
         packetGroupNames: List<String>
-    ): Map<String, RolesAndUsersToUpdateRead>
+    ): Map<String, RolesAndUsersForReadUpdate>
     {
         val (roles, users) = getNonUsernameRolesAndNonServiceUsers()
         return packetGroupNames.associateWith {
-            RolesAndUsersToUpdateRead(
-                cantRead = createSortedRolesAndUsersWithPermissionsDto(
+            RolesAndUsersForReadUpdate(
+                canRead = createSortedBasicRolesAndUsers(
+                    userRoleFilterService.getRolesAndSpecificUsersCanReadPacketGroup(roles, users, it)
+                ),
+                cantRead = createSortedBasicRolesAndUsers(
                     userRoleFilterService.getRolesAndUsersCantReadPacketReadGroup(roles, users, it)
                 ),
-                withRead = createSortedRolesAndUsersWithPermissionsDto(
+                withRead = createSortedBasicRolesAndUsers(
                     userRoleFilterService.getRolesAndUsersWithSpecificReadPacketGroupPermission(roles, users, it)
                 )
             )
         }
     }
 
-    override fun getRolesAndUsersForPacketReadUpdate(packet: Packet): RolesAndUsersForPacketReadUpdate
+    override fun getRolesAndUsersForPacketReadUpdate(packet: Packet): RolesAndUsersForReadUpdate
     {
         val (roles, users) = getNonUsernameRolesAndNonServiceUsers()
 
-        return RolesAndUsersForPacketReadUpdate(
-            canRead = createSortedRolesAndUsersWithPermissionsDto(
+        return RolesAndUsersForReadUpdate(
+            canRead = createSortedBasicRolesAndUsers(
                 userRoleFilterService.getRolesAndSpecificUsersCanReadPacket(roles, users, packet)
             ),
-            cantRead = createSortedRolesAndUsersWithPermissionsDto(
+            cantRead = createSortedBasicRolesAndUsers(
                 userRoleFilterService.getRolesAndUsersCantReadPacket(roles, users, packet)
             ),
-            withRead = createSortedRolesAndUsersWithPermissionsDto(
-                userRoleFilterService.getRolesUsersWithSpecificReadPacketPermission(roles, users, packet),
+            withRead = createSortedBasicRolesAndUsers(
+                userRoleFilterService.getRolesAndUsersWithSpecificReadPacketPermission(roles, users, packet),
             )
         )
     }
@@ -110,8 +111,18 @@ class BaseUserRoleService(
     ): RolesAndUsersWithPermissionsDto
     {
         return RolesAndUsersWithPermissionsDto(
-            roleService.getSortedRoleDtos(rolesAndUsers.roles),
-            userService.getSortedUsersWithPermissions(rolesAndUsers.users)
+            roleService.getSortedRoles(rolesAndUsers.roles).map { it.toDto() },
+            userService.getSortedUsers(rolesAndUsers.users).map { it.toUserWithPermissions() }
+        )
+    }
+
+    internal fun createSortedBasicRolesAndUsers(
+        rolesAndUsers: RolesAndUsers
+    ): BasicRolesAndUsersDto
+    {
+        return BasicRolesAndUsersDto(
+            roleService.getSortedRoles(rolesAndUsers.roles).map { it.toBasicRoleWithUsersDto() },
+            userService.getSortedUsers(rolesAndUsers.users).map { it.toBasicDto() }
         )
     }
 

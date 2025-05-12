@@ -7,3 +7,9 @@ data class RoleDto(
     var id: Int,
     val isUsername: Boolean
 )
+
+data class BasicRoleWithUsersDto(
+    val name: String,
+    val id: Int,
+    val users: List<BasicUserDto> = listOf(),
+)

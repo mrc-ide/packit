@@ -13,7 +13,7 @@ import packit.model.PacketMetadata
 import packit.model.PageablePayload
 import packit.model.dto.OneTimeTokenDto
 import packit.model.dto.PacketDto
-import packit.model.dto.RolesAndUsersForPacketReadUpdate
+import packit.model.dto.RolesAndUsersForReadUpdate
 import packit.model.dto.UpdateReadRoles
 import packit.model.toDto
 import packit.service.OneTimeTokenService
@@ -98,10 +98,10 @@ class PacketController(
     @PreAuthorize(
         "@authz.canUpdatePacketReadRoles(#root, #id)"
     )
-    @GetMapping("{id}/read-permission")
+    @GetMapping("/{id}/read-permission")
     fun getRolesAndUsersForReadPermissionUpdate(
         @PathVariable id: String,
-    ): ResponseEntity<RolesAndUsersForPacketReadUpdate>
+    ): ResponseEntity<RolesAndUsersForReadUpdate>
     {
         val packet = packetService.getPacket(id)
         val result = userRoleService.getRolesAndUsersForPacketReadUpdate(packet)

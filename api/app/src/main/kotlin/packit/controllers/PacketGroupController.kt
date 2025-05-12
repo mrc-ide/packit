@@ -65,8 +65,8 @@ class PacketGroupController(
     }
 
     @PreAuthorize("@authz.canManageAnyPacket(#root)")
-    @GetMapping("packetGroups/read-permission")
-    fun getRolesAndUsersForReadPermissionUpdate(): ResponseEntity<Map<String, RolesAndUsersToUpdateRead>>
+    @GetMapping("packetGroups/user-role/read-permission")
+    fun getRolesAndUsersForReadPermissionUpdate(): ResponseEntity<Map<String, RolesAndUsersForReadUpdate>>
     {
         val packetGroupNames = packetGroupService.getAllPacketGroupsCanManage().map { it.name }
         val result = userRoleService.getRolesAndUsersForPacketGroupReadUpdate(packetGroupNames)

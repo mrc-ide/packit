@@ -8,8 +8,6 @@ import packit.exceptions.PackitException
 import packit.model.User
 import packit.model.dto.CreateBasicUser
 import packit.model.dto.UpdatePassword
-import packit.model.dto.UserWithPermissions
-import packit.model.toUserWithPermissions
 import packit.repository.UserRepository
 import packit.security.profile.UserPrincipal
 import java.time.Instant
@@ -30,7 +28,7 @@ interface UserService
     fun getServiceUser(): User
     fun getUserPrincipal(user: User): UserPrincipal
     fun getAllNonServiceUsers(): List<User>
-    fun getSortedUsersWithPermissions(users: List<User>): List<UserWithPermissions>
+    fun getSortedUsers(users: List<User>): List<User>
 }
 
 @Service
@@ -192,13 +190,11 @@ class BaseUserService(
         return userRepository.findByUserSourceNotOrderByUsername("service")
     }
 
-    override fun getSortedUsersWithPermissions(users: List<User>): List<UserWithPermissions>
+    override fun getSortedUsers(users: List<User>): List<User>
     {
-        return users.map { user ->
+        return users.onEach { user ->
             rolePermissionService.sortRolePermissions(user.getSpecificPermissions())
             user.roles.sortBy { it.name }
-
-            user.toUserWithPermissions()
         }
     }
 }
