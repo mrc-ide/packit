@@ -11,7 +11,10 @@ interface UserRoleService
     fun updateRoleUsers(roleName: String, usersToUpdate: UpdateRoleUsers): Role
     fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles): User
     fun getAllRolesAndUsersWithPermissions(): RolesAndUsersWithPermissionsDto
-    fun getRolesAndUsersForPacketGroupReadUpdate(packetGroupNames: List<String>): Map<String, RolesAndUsersForReadUpdate>
+    fun getRolesAndUsersForPacketGroupReadUpdate(
+        packetGroupNames: List<String>
+    ): Map<String, RolesAndUsersForReadUpdate>
+
     fun getRolesAndUsersForPacketReadUpdate(packet: Packet): RolesAndUsersForReadUpdate
 }
 
