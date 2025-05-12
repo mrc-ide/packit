@@ -177,9 +177,8 @@ export interface Tag {
   id: number;
 }
 
-export interface BrandingConfiguration {
-  brandName?: string;
-  logoAltText?: string;
-  logoFilename?: string;
-  logoLink?: string;
+export interface LogoConfiguration {
+  altText?: string;
+  filename?: string;
+  linkDestination?: string;
 }

@@ -3,22 +3,21 @@ package packit.controllers
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import packit.AppConfig
-import packit.model.dto.BrandingDto
+import packit.model.dto.LogoDto
 
 @RestController
 @RequestMapping("/configuration")
 class ConfigurationController(private val appConfig: AppConfig)
 {
-    @GetMapping("/branding")
-    fun getBranding(): ResponseEntity<BrandingDto>
+    @GetMapping("/logo")
+    fun getLogo(): ResponseEntity<LogoDto>
     {
         return ResponseEntity.ok(
-            BrandingDto(
-            brandName = appConfig.brandName,
-            logoAltText = appConfig.brandLogoAltText,
-            logoFilename = appConfig.brandLogoFilename,
-            logoLink = appConfig.brandLogoLink,
-        )
+            LogoDto(
+                altText = appConfig.brandLogoAltText,
+                filename = appConfig.brandLogoFilename,
+                linkDestination = appConfig.brandLogoLink,
+            )
         )
     }
 }
