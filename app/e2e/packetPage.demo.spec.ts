@@ -2,9 +2,11 @@ import { Locator } from "@playwright/test";
 import { test, expect, TAG_DEMO_PACKETS, TAG_STATE_MUTATE } from "./tagCheckFixture";
 import {
   createEmptyTestRole,
+  doDownload,
   getContentLocator,
   getInstanceRelativePath,
   getPacketPageAccordionSection,
+  readDownloadedFile,
   selectPacketPageTab
 } from "./utils";
 
@@ -13,12 +15,23 @@ test.describe("Demo packet page", { tag: TAG_DEMO_PACKETS }, () => {
   const parametersPacketId = "20240829-185440-781be0f3";
   const dependsPacketId = "20250120-073637-b8c1e707";
   const artefactTypesPacketId = "20240729-155513-1432bfa7";
+  const customMetadataPacketId = "20241122-111130-544ddd35";
+  const downloadTypesPacketId = "20250122-142620-c741b061";
 
   test("can see packet group name and packet id", async ({ page }) => {
     await page.goto(`./parameters/${parametersPacketId}`);
     const content = await getContentLocator(page);
     await expect(await content.getByRole("heading", { name: "parameters", level: 2 })).toBeVisible();
     await expect(await content.getByText(parametersPacketId)).toBeVisible();
+  });
+
+  test("can see packet group display name and description", async ({ page }) => {
+    await page.goto(`./custom_metadata/${customMetadataPacketId}`);
+    const content = await getContentLocator(page);
+    await expect(await content.getByRole("heading", { name: "Packet with description", level: 2 })).toBeVisible();
+    await expect(await content.getByText(customMetadataPacketId)).toBeVisible();
+    await expect(await content.locator("span").filter({ hasText: "custom_metadata" })).toBeVisible();
+    await expect(await content.getByText("A longer description")).toBeVisible();
   });
 
   test.describe("Summary", () => {
@@ -105,6 +118,52 @@ test.describe("Demo packet page", { tag: TAG_DEMO_PACKETS }, () => {
       const listItems = await packagesDiv.locator("ul.space-y-1 > li").all();
       await expect(listItems.length).toBe(21);
       await expect(listItems[0]).toHaveText("askpass" + "1.2.0");
+    });
+  });
+
+  test.describe("Downloads", () => {
+    let content: Locator;
+
+    test.beforeEach(async ({ page }) => {
+      await page.goto(`./download-types/${downloadTypesPacketId}`);
+      content = await getContentLocator(page);
+      await selectPacketPageTab(content, "Downloads");
+    });
+
+    // Webkit downloads don't work in playwright, but they have been manually tested in Safari 17.5
+    // on a Mac on Sonoma 14.5.
+    test.skip(({ browserName }) => browserName === "webkit", "Skipping Downloads tests for webkit");
+
+    test("can download an individual file", async ({ page }) => {
+      await content.getByRole("button", { name: "Other files" }).click();
+
+      const button = content
+        .getByRole("listitem")
+        .filter({ hasText: /^data\.csv51 bytesDownload$/ })
+        .getByRole("button");
+      const download = await doDownload(page, button);
+      expect(download.suggestedFilename()).toBe("data.csv");
+
+      const fileContents = await readDownloadedFile(download);
+      expect(fileContents).toBe("x,y\n1,2\n2,4\n3,6\n4,8\n5,10\n6,12\n7,14\n8,16\n9,18\n10,20\n");
+    });
+
+    test("can download all files in an artefact as a zip", async ({ page }) => {
+      const button = content.getByRole("button", { name: "Download (25.61 KB)" });
+      const download = await doDownload(page, button);
+      expect(download.suggestedFilename()).toBe(`An artefact containi_${downloadTypesPacketId}.zip`);
+    });
+
+    test("can download all artefacts as a zip", async ({ page }) => {
+      const button = content.getByRole("button", { name: "Download all artefacts (25.65 KB)" });
+      const download = await doDownload(page, button);
+      expect(download.suggestedFilename()).toBe(`download-types_artefacts_${downloadTypesPacketId}.zip`);
+    });
+
+    test("can download all files as a zip", async ({ page }) => {
+      const button = content.getByRole("button", { name: "Download all files (33.74 KB)" });
+      const download = await doDownload(page, button);
+      expect(download.suggestedFilename()).toBe(`download-types_${downloadTypesPacketId}.zip`);
     });
   });
 

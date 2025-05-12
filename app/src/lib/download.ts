@@ -3,7 +3,7 @@ import appConfig from "../config/appConfig";
 import { FileMetadata } from "../types";
 
 const streamFileUrl = (packetId: string, file: FileMetadata, token: string, filename: string, inline = false) => {
-  const url = new URL(`${appConfig.apiUrl()}/packets/${packetId}/file`);
+  const url = new URL(`${appConfig.apiUrl()}/packets/${packetId}/file`, window.location.href);
   url.searchParams.append("path", file.path);
   url.searchParams.append("token", token);
   url.searchParams.append("filename", filename);
@@ -12,7 +12,7 @@ const streamFileUrl = (packetId: string, file: FileMetadata, token: string, file
 };
 
 const streamZipUrl = (packetId: string, files: FileMetadata[], token: string, filename: string, inline = false) => {
-  const url = new URL(`${appConfig.apiUrl()}/packets/${packetId}/files/zip`);
+  const url = new URL(`${appConfig.apiUrl()}/packets/${packetId}/files/zip`, window.location.href);
   files.forEach((file) => url.searchParams.append("paths", file.path));
   url.searchParams.append("token", token);
   url.searchParams.append("filename", filename);
@@ -21,7 +21,7 @@ const streamZipUrl = (packetId: string, files: FileMetadata[], token: string, fi
 };
 
 const getOneTimeToken = async (packetId: string, files: FileMetadata[], filename: string) => {
-  const url = new URL(`${appConfig.apiUrl()}/packets/${packetId}/files/token`);
+  const url = new URL(`${appConfig.apiUrl()}/packets/${packetId}/files/token`, window.location.href);
   files.forEach((file) => url.searchParams.append("paths", file.path));
 
   const res = await fetch(url.toString(), {
