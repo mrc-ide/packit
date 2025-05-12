@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { Button } from "../Base/Button";
 import {
   DropdownMenu,
@@ -13,14 +12,12 @@ import { useUser } from "../providers/UserProvider";
 import { CircleUser } from "lucide-react";
 
 export const AccountHeaderDropdown = () => {
-  const navigate = useNavigate();
   const { removeUser, user } = useUser();
   const { setLoggingOut } = useRedirectOnLogin();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     removeUser();
     setLoggingOut(true);
-    navigate("/login");
   };
 
   return (
