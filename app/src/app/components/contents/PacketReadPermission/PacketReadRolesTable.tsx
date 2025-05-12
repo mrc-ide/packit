@@ -4,7 +4,7 @@ import { FilterInput } from "../common/FilterInput";
 import { BasicRoleWithUsers } from "../manageAccess/types/RoleWithRelationships";
 import { roleDefaultColumns } from "../manageAccess/utils/manageRolesColumns";
 import { rolesGlobalFilterFn } from "../manageAccess/utils/rolesTableGlobalFilterFn";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, FilterFn } from "@tanstack/react-table";
 
 interface PacketReadRolesTableProps {
   roles: BasicRoleWithUsers[];
@@ -26,7 +26,7 @@ export const PacketReadRolesTable = ({ roles }: PacketReadRolesTableProps) => {
           globalFiltering={{
             globalFilter: filterValue,
             setGlobalFilter: setFilterValue,
-            globalFilterFn: rolesGlobalFilterFn,
+            globalFilterFn: rolesGlobalFilterFn as FilterFn<BasicRoleWithUsers>,
             globalFilterCols: ["name", "users"]
           }}
         />
