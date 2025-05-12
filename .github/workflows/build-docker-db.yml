@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - "main"
-      - "mrc-5140-trusted-headers"
   pull_request:
     branches:
       - "main"
