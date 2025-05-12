@@ -12,15 +12,15 @@ data class UpdateReadRoles(
     val roleNamesToRemove: Set<String> = setOf()
 )
 
-data class RolesAndUsersToUpdateRead(
-    val cantRead: RolesAndUsersWithPermissionsDto,
-    val withRead: RolesAndUsersWithPermissionsDto
-)
-
-data class RolesAndUsersForPacketReadUpdate(
-    val cantRead: RolesAndUsersWithPermissionsDto,
-    val withRead: RolesAndUsersWithPermissionsDto,
-    val canRead: RolesAndUsersWithPermissionsDto,
+/**
+ * @param cantRead Roles and users that are explicitly restricted from reading the resource.
+ * @param withRead Roles and users that have specific read permissions for the resource, which can be revoked.
+ * @param canRead Roles and users that are allowed to read the resource, either through specific or broad permissions.
+ */
+data class RolesAndUsersForReadUpdate(
+    val cantRead: BasicRolesAndUsersDto,
+    val withRead: BasicRolesAndUsersDto,
+    val canRead: BasicRolesAndUsersDto,
 )
 
 class UpdateRolePermission(

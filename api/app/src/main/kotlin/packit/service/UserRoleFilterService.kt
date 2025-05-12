@@ -15,7 +15,7 @@ interface UserRoleFilterService
         packetGroupName: String
     ): RolesAndUsers
 
-    fun getRolesUsersWithSpecificReadPacketPermission(
+    fun getRolesAndUsersWithSpecificReadPacketPermission(
         roles: List<Role>,
         users: List<User>,
         packet: Packet
@@ -37,6 +37,12 @@ interface UserRoleFilterService
         roles: List<Role>,
         users: List<User>,
         packet: Packet
+    ): RolesAndUsers
+
+    fun getRolesAndSpecificUsersCanReadPacketGroup(
+        roles: List<Role>,
+        users: List<User>,
+        packetGroupName: String
     ): RolesAndUsers
 }
 
@@ -71,7 +77,7 @@ class BaseUserRoleFilterService(
         return RolesAndUsers(rolesWithRead, usersWithRead)
     }
 
-    override fun getRolesUsersWithSpecificReadPacketPermission(
+    override fun getRolesAndUsersWithSpecificReadPacketPermission(
         roles: List<Role>,
         users: List<User>,
         packet: Packet
@@ -148,6 +154,28 @@ class BaseUserRoleFilterService(
                 packet.id
             )
         }
+        return RolesAndUsers(rolesCanRead, specificUsersCanRead)
+    }
+
+    override fun getRolesAndSpecificUsersCanReadPacketGroup(
+        roles: List<Role>,
+        users: List<User>,
+        packetGroupName: String
+    ): RolesAndUsers
+    {
+        val rolesCanRead = roles.filter {
+            permissionChecker.canReadPacketGroup(
+                permissionService.mapToScopedPermission(it.rolePermissions),
+                packetGroupName
+            )
+        }
+        val specificUsersCanRead = users.filter {
+            permissionChecker.canReadPacketGroup(
+                permissionService.mapToScopedPermission(it.getSpecificPermissions()),
+                packetGroupName
+            )
+        }
+
         return RolesAndUsers(rolesCanRead, specificUsersCanRead)
     }
 }

@@ -9,19 +9,15 @@ import { fetcher } from "../../../../lib/fetch";
 import { Form, FormDescription, FormField, FormItem, FormLabel } from "../../Base/Form";
 import { MultiSelector, MultiSelectorContent, MultiSelectorInput, MultiSelectorTrigger } from "../../Base/MultiSelect";
 import { CustomDialogFooter } from "../common/CustomDialogFooter";
-import {
-  RolesAndUsersToUpdatePacketRead,
-  RolesAndUsersToUpdateRead,
-  RolesAndUsersWithPermissions
-} from "../manageAccess/types/RoleWithRelationships";
+import { BasicRolesAndUsers, RolesAndUsersToUpdateRead } from "../manageAccess/types/RoleWithRelationships";
 import { UpdatePacketReadPermissionMultiSelectList } from "./UpdatePacketReadPermissionMultiSelectList";
 
 interface UpdatePacketReadPermissionFormProps {
-  rolesAndUsersCantRead: RolesAndUsersWithPermissions;
-  rolesAndUsersWithRead: RolesAndUsersWithPermissions;
+  rolesAndUsersCantRead: BasicRolesAndUsers;
+  rolesAndUsersWithRead: BasicRolesAndUsers;
   setDialogOpen: Dispatch<SetStateAction<boolean>>;
   packetGroupName: string;
-  mutate: KeyedMutator<Record<string, RolesAndUsersToUpdateRead>> | KeyedMutator<RolesAndUsersToUpdatePacketRead>;
+  mutate: KeyedMutator<Record<string, RolesAndUsersToUpdateRead>> | KeyedMutator<RolesAndUsersToUpdateRead>;
   packetId?: string;
 }
 export const UpdatePacketReadPermissionForm = ({

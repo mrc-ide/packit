@@ -1,9 +1,9 @@
 import { cn } from "../../../../lib/cn";
 import { MultiSelectorItem, MultiSelectorList } from "../../Base/MultiSelect";
-import { RolesAndUsersWithPermissions } from "../manageAccess/types/RoleWithRelationships";
+import { BasicRolesAndUsers } from "../manageAccess/types/RoleWithRelationships";
 
 interface UpdatePacketReadPermissionMultiSelectListProps {
-  rolesAndUsers: RolesAndUsersWithPermissions;
+  rolesAndUsers: BasicRolesAndUsers;
 }
 export const UpdatePacketReadPermissionMultiSelectList = ({
   rolesAndUsers

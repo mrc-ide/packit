@@ -12,3 +12,8 @@ data class RolesAndUsersWithPermissionsDto(
     val roles: List<RoleDto> = listOf(),
     val users: List<UserWithPermissions> = listOf()
 )
+
+data class BasicRolesAndUsersDto(
+    val roles: List<BasicRoleWithUsersDto> = listOf(),
+    val users: List<BasicUserDto> = listOf()
+)

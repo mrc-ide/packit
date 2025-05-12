@@ -407,7 +407,7 @@ class RoleServiceTest
         }
         val roles = listOf(role1, role2)
 
-        val result = roleService.getSortedRoleDtos(roles)
+        val result = roleService.getSortedRoles(roles)
 
         assertEquals(2, result.size)
         assertEquals("permission1", result[0].rolePermissions[0].permission)
@@ -446,7 +446,7 @@ class RoleServiceTest
 
         val roles = listOf(role1)
 
-        val result = roleService.getSortedRoleDtos(roles)
+        val result = roleService.getSortedRoles(roles)
 
         assertEquals(1, result.size)
         assertEquals("a user", result[0].users[0].username)
@@ -478,7 +478,7 @@ class RoleServiceTest
 
         val roles = listOf(role1)
 
-        val result = roleService.getSortedRoleDtos(roles)
+        val result = roleService.getSortedRoles(roles)
 
         assertEquals(1, result[0].users.size)
         assert(result[0].users.none { it.username == "service user" })

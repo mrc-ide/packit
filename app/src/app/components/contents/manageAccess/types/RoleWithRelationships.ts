@@ -12,21 +12,20 @@ export interface BaseRolePermission {
   packetGroup?: BasicPacketGroup | null;
 }
 
-interface BasicUser {
+export interface BasicUser {
   username: string;
   id: string;
 }
-
 export interface BasicRole {
   name: string;
   id: number;
 }
-
-export interface RoleWithRelationships {
-  name: string;
-  rolePermissions: RolePermission[];
+export interface BasicRoleWithUsers extends BasicRole {
   users: BasicUser[];
-  id: number;
+}
+
+export interface RoleWithRelationships extends BasicRoleWithUsers {
+  rolePermissions: RolePermission[];
   isUsername: boolean;
 }
 
@@ -35,11 +34,12 @@ export interface RolesAndUsersWithPermissions {
   users: UserWithPermissions[];
 }
 
-export interface RolesAndUsersToUpdateRead {
-  cantRead: RolesAndUsersWithPermissions;
-  withRead: RolesAndUsersWithPermissions;
+export interface BasicRolesAndUsers {
+  roles: BasicRoleWithUsers[];
+  users: BasicUser[];
 }
-
-export interface RolesAndUsersToUpdatePacketRead extends RolesAndUsersToUpdateRead {
-  canRead: RolesAndUsersWithPermissions;
+export interface RolesAndUsersToUpdateRead {
+  cantRead: BasicRolesAndUsers;
+  withRead: BasicRolesAndUsers;
+  canRead: BasicRolesAndUsers;
 }

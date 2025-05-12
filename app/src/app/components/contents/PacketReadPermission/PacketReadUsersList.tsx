@@ -1,8 +1,8 @@
 import { Separator } from "../../Base/Separator";
-import { UserWithPermissions } from "../manageAccess/types/UserWithPermissions";
+import { BasicUser } from "../manageAccess/types/RoleWithRelationships";
 
 interface PacketReadUsersListProps {
-  users: UserWithPermissions[];
+  users: BasicUser[];
 }
 export const PacketReadUsersList = ({ users }: PacketReadUsersListProps) => {
   return (

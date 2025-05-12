@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { DataTable } from "../common/DataTable";
 import { FilterInput } from "../common/FilterInput";
-import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
+import { BasicRoleWithUsers } from "../manageAccess/types/RoleWithRelationships";
 import { roleDefaultColumns } from "../manageAccess/utils/manageRolesColumns";
 import { rolesGlobalFilterFn } from "../manageAccess/utils/rolesTableGlobalFilterFn";
+import { ColumnDef } from "@tanstack/react-table";
 
 interface PacketReadRolesTableProps {
-  roles: RoleWithRelationships[];
+  roles: BasicRoleWithUsers[];
 }
 export const PacketReadRolesTable = ({ roles }: PacketReadRolesTableProps) => {
   const [filterValue, setFilterValue] = useState("");
@@ -18,8 +19,8 @@ export const PacketReadRolesTable = ({ roles }: PacketReadRolesTableProps) => {
         <FilterInput setFilter={setFilterValue} placeholder="Search by role or user..." />
       </div>
       <div className="max-h-96 overflow-auto">
-        <DataTable
-          columns={roleDefaultColumns("h-7")}
+        <DataTable<BasicRoleWithUsers>
+          columns={roleDefaultColumns("h-7") as ColumnDef<BasicRoleWithUsers, any>[]}
           clientFiltering
           data={roles}
           globalFiltering={{

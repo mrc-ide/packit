@@ -1,10 +1,10 @@
 import useSWR from "swr";
 import appConfig from "../../../../../config/appConfig";
 import { fetcher } from "../../../../../lib/fetch";
-import { RolesAndUsersToUpdatePacketRead } from "../../manageAccess/types/RoleWithRelationships";
+import { RolesAndUsersToUpdateRead } from "../../manageAccess/types/RoleWithRelationships";
 
 export const useGetRolesAndUsersToUpdatePacketRead = (packetId = "") => {
-  const { data, isLoading, error, mutate } = useSWR<RolesAndUsersToUpdatePacketRead>(
+  const { data, isLoading, error, mutate } = useSWR<RolesAndUsersToUpdateRead>(
     `${appConfig.apiUrl()}/packets/${packetId}/read-permission`,
     (url: string) => fetcher({ url })
   );

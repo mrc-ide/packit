@@ -5,16 +5,13 @@ import { PacketMetadata } from "../../../../types";
 import { Button } from "../../Base/Button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../Base/Dialog";
 import { UpdatePacketReadPermissionForm } from "../home/UpdatePacketReadPermissionForm";
-import {
-  RolesAndUsersToUpdatePacketRead,
-  RolesAndUsersWithPermissions
-} from "../manageAccess/types/RoleWithRelationships";
+import { RolesAndUsersToUpdateRead, BasicRolesAndUsers } from "../manageAccess/types/RoleWithRelationships";
 
 interface UpdatePacketReadButtonProps {
   packet: PacketMetadata;
-  rolesAndUsersCantRead: RolesAndUsersWithPermissions;
-  rolesAndUsersWithRead: RolesAndUsersWithPermissions;
-  mutate: KeyedMutator<RolesAndUsersToUpdatePacketRead>;
+  rolesAndUsersCantRead: BasicRolesAndUsers;
+  rolesAndUsersWithRead: BasicRolesAndUsers;
+  mutate: KeyedMutator<RolesAndUsersToUpdateRead>;
 }
 
 export const UpdatePacketReadButton = ({
