@@ -283,14 +283,14 @@ class UserRoleServiceTest
             rolesAndUsers.roles.map { it.toDto() },
             rolesAndUsers.users.map { it.toUserWithPermissions() }
         )
-        `when`(mockRoleService.getSortedRoleDtos(rolesAndUsers.roles)).thenReturn(expectedDto.roles)
-        `when`(mockUserService.getSortedUsersWithPermissions(rolesAndUsers.users)).thenReturn(expectedDto.users)
+        `when`(mockRoleService.getSortedRoles(rolesAndUsers.roles)).thenReturn(rolesAndUsers.roles)
+        `when`(mockUserService.getSortedUsers(rolesAndUsers.users)).thenReturn(rolesAndUsers.users)
 
         val result = service.createSortedRolesAndUsersWithPermissionsDto(rolesAndUsers)
 
         assertEquals(expectedDto, result)
-        verify(mockRoleService).getSortedRoleDtos(rolesAndUsers.roles)
-        verify(mockUserService).getSortedUsersWithPermissions(rolesAndUsers.users)
+        verify(mockRoleService).getSortedRoles(rolesAndUsers.roles)
+        verify(mockUserService).getSortedUsers(rolesAndUsers.users)
     }
 
     @Test
@@ -316,12 +316,15 @@ class UserRoleServiceTest
             roles = listOf(mockRole),
             users = listOf(mockUser)
         )
-        val rolesAndUsersDtos = RolesAndUsersWithPermissionsDto(
-            roles = listOf(mockRole.toDto()),
-            users = listOf(mockUser.toUserWithPermissions())
+        val rolesAndUsersDtos = BasicRolesAndUsersDto(
+            roles = listOf(mockRole.toBasicRoleWithUsersDto()),
+            users = listOf(mockUser.toBasicDto())
         )
         val packetGroupNames = listOf("packetGroup1", "packetGroup2")
         val serviceSpy = spy(service)
+        `when`(userRoleFilterService.getRolesAndSpecificUsersCanReadPacketGroup(any(), any(), any())).thenReturn(
+            rolesAndUsers
+        )
         `when`(userRoleFilterService.getRolesAndUsersCantReadPacketReadGroup(any(), any(), any())).thenReturn(
             rolesAndUsers
         )
@@ -333,13 +336,13 @@ class UserRoleServiceTest
             )
         ).thenReturn(rolesAndUsers)
         doReturn(rolesAndUsers).`when`(serviceSpy).getNonUsernameRolesAndNonServiceUsers()
-        doReturn(rolesAndUsersDtos).`when`(serviceSpy).createSortedRolesAndUsersWithPermissionsDto(any())
+        doReturn(rolesAndUsersDtos).`when`(serviceSpy).createSortedBasicRolesAndUsers(any())
 
         val result = serviceSpy.getRolesAndUsersForPacketGroupReadUpdate(packetGroupNames)
 
         assertEquals(packetGroupNames, result.keys.toList())
         packetGroupNames.forEach {
-            assert(result[it] is RolesAndUsersToUpdateRead)
+            assert(result[it] is RolesAndUsersForReadUpdate)
             verify(userRoleFilterService).getRolesAndUsersCantReadPacketReadGroup(
                 rolesAndUsers.roles,
                 rolesAndUsers.users,
@@ -360,9 +363,9 @@ class UserRoleServiceTest
             roles = listOf(mockRole),
             users = listOf(mockUser)
         )
-        val rolesAndUsersDtos = RolesAndUsersWithPermissionsDto(
-            roles = listOf(mockRole.toDto()),
-            users = listOf(mockUser.toUserWithPermissions())
+        val rolesAndUsersDtos = BasicRolesAndUsersDto(
+            roles = listOf(mockRole.toBasicRoleWithUsersDto()),
+            users = listOf(mockUser.toBasicDto())
         )
         val packet = mock<Packet>()
         val serviceSpy = spy(service)
@@ -377,18 +380,18 @@ class UserRoleServiceTest
             )
         ).thenReturn(rolesAndUsers)
         `when`(
-            userRoleFilterService.getRolesUsersWithSpecificReadPacketPermission(
+            userRoleFilterService.getRolesAndUsersWithSpecificReadPacketPermission(
                 any(),
                 any(),
                 any()
             )
         ).thenReturn(rolesAndUsers)
         doReturn(rolesAndUsers).`when`(serviceSpy).getNonUsernameRolesAndNonServiceUsers()
-        doReturn(rolesAndUsersDtos).`when`(serviceSpy).createSortedRolesAndUsersWithPermissionsDto(any())
+        doReturn(rolesAndUsersDtos).`when`(serviceSpy).createSortedBasicRolesAndUsers(any())
 
         val result = serviceSpy.getRolesAndUsersForPacketReadUpdate(packet)
 
-        assert(result is RolesAndUsersForPacketReadUpdate)
+        assert(result is RolesAndUsersForReadUpdate)
         assertEquals(rolesAndUsersDtos, result.canRead)
         assertEquals(rolesAndUsersDtos, result.withRead)
         assertEquals(rolesAndUsersDtos, result.cantRead)
@@ -402,10 +405,31 @@ class UserRoleServiceTest
             rolesAndUsers.users,
             packet
         )
-        verify(userRoleFilterService).getRolesUsersWithSpecificReadPacketPermission(
+        verify(userRoleFilterService).getRolesAndUsersWithSpecificReadPacketPermission(
             rolesAndUsers.roles,
             rolesAndUsers.users,
             packet
         )
+    }
+
+    @Test
+    fun `createSortedBasicRolesAndUsers correctly returns sorted dto`()
+    {
+        val rolesAndUsers = RolesAndUsers(
+            roles = listOf(mockRole),
+            users = listOf(mockUser)
+        )
+        val expectedDto = BasicRolesAndUsersDto(
+            roles = rolesAndUsers.roles.map { it.toBasicRoleWithUsersDto() },
+            users = rolesAndUsers.users.map { it.toBasicDto() }
+        )
+        `when`(mockRoleService.getSortedRoles(rolesAndUsers.roles)).thenReturn(rolesAndUsers.roles)
+        `when`(mockUserService.getSortedUsers(rolesAndUsers.users)).thenReturn(rolesAndUsers.users)
+
+        val result = service.createSortedBasicRolesAndUsers(rolesAndUsers)
+
+        assertEquals(expectedDto, result)
+        verify(mockRoleService).getSortedRoles(rolesAndUsers.roles)
+        verify(mockUserService).getSortedUsers(rolesAndUsers.users)
     }
 }

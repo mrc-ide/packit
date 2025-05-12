@@ -13,7 +13,7 @@ import packit.service.PermissionService
 import packit.service.UserRolePermissionHelper
 import kotlin.test.assertEquals
 
-class UserFilterTest
+class UserRoleFilterServiceTest
 {
 
     private val rolePermissions = mutableListOf(mock<RolePermission>())
@@ -64,12 +64,12 @@ class UserFilterTest
     }
 
     @Test
-    fun `getRolesUsersWithSpecificReadPacketPermission returns correct filtered list`()
+    fun `getRolesAndUsersWithSpecificReadPacketPermission returns correct filtered list`()
     {
         whenever(permissionHelper.hasOnlySpecificReadPacketPermission(any(), any())).thenReturn(true)
         val packet = mock<Packet>()
         val result =
-            userRoleFilterService.getRolesUsersWithSpecificReadPacketPermission(
+            userRoleFilterService.getRolesAndUsersWithSpecificReadPacketPermission(
                 rolesAndUsers.roles,
                 rolesAndUsers.users,
                 packet
@@ -212,5 +212,25 @@ class UserFilterTest
         verify(permissionService).mapToScopedPermission(rolePermissions)
         verify(permissionService).mapToScopedPermission(userRolePermissions)
         verify(permissionChecker, times(2)).canReadPacket(authorities, packet.name, packet.id)
+    }
+
+    @Test
+    fun `getRolesAndSpecificUsersCanReadPacketGroup correctly filters list`()
+    {
+        whenever(permissionChecker.canReadPacketGroup(authorities, packetGroupName)).thenReturn(true)
+        whenever(permissionHelper.userHasDirectReadPacketGroupReadPermission(any(), any())).thenReturn(true)
+        whenever(permissionHelper.userHasPacketGroupReadPermissionViaRole(any(), any(), any())).thenReturn(false)
+
+        val result =
+            userRoleFilterService.getRolesAndSpecificUsersCanReadPacketGroup(
+                rolesAndUsers.roles,
+                rolesAndUsers.users,
+                packetGroupName
+            )
+
+        assertEquals(result, RolesAndUsers(rolesAndUsers.roles, listOf(mockUser)))
+        verify(permissionService).mapToScopedPermission(rolePermissions)
+        verify(permissionService).mapToScopedPermission(userRolePermissions)
+        verify(permissionChecker, times(2)).canReadPacketGroup(authorities, packetGroupName)
     }
 }

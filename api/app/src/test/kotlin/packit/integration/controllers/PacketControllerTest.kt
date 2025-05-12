@@ -16,8 +16,8 @@ import packit.integration.WithAuthenticatedUser
 import packit.model.OneTimeToken
 import packit.model.Role
 import packit.model.RolePermission
-import packit.model.dto.RolesAndUsersForPacketReadUpdate
-import packit.model.dto.RolesAndUsersWithPermissionsDto
+import packit.model.dto.BasicRolesAndUsersDto
+import packit.model.dto.RolesAndUsersForReadUpdate
 import packit.model.dto.UpdateReadRoles
 import packit.repository.*
 import packit.service.PacketService
@@ -604,12 +604,12 @@ class PacketControllerTest : IntegrationTest()
 
         val body = jacksonObjectMapper().readValue(
             result.body,
-            object : TypeReference<RolesAndUsersForPacketReadUpdate>()
+            object : TypeReference<RolesAndUsersForReadUpdate>()
             {}
         )
 
-        assert(body.canRead is RolesAndUsersWithPermissionsDto)
-        assert(body.withRead is RolesAndUsersWithPermissionsDto)
-        assert(body.cantRead is RolesAndUsersWithPermissionsDto)
+        assert(body.canRead is BasicRolesAndUsersDto)
+        assert(body.withRead is BasicRolesAndUsersDto)
+        assert(body.cantRead is BasicRolesAndUsersDto)
     }
 }

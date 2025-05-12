@@ -14,7 +14,6 @@ import packit.model.RolePermission
 import packit.model.User
 import packit.model.dto.CreateBasicUser
 import packit.model.dto.UpdatePassword
-import packit.model.toDto
 import packit.repository.UserRepository
 import packit.service.BaseUserService
 import packit.service.RolePermissionService
@@ -104,7 +103,7 @@ class UserServiceTest
     fun `savePreAuthenticatedUser returns user from repository if found & does not call createUserNameRole`()
     {
         `when`(mockUserRepository.findByUsername(mockPreauthUser.username)).doReturn(mockPreauthUser)
-        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder, rolePermissionService)
 
         val user = service.savePreAuthenticatedUser(
             mockPreauthUser.username,
@@ -139,7 +138,7 @@ class UserServiceTest
     fun `savePreAuthenticatedUser creates new user & returns if not found in repository`()
     {
         `when`(mockUserRepository.findByUsername(mockPreauthUser.username)).doReturn(null)
-        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder, rolePermissionService)
 
         val user = service.savePreAuthenticatedUser(
             mockPreauthUser.username,
@@ -184,7 +183,7 @@ class UserServiceTest
         whenever(mockRoleService.getDefaultRoles()).doReturn(listOf(userRole))
         whenever(mockUserRepository.findByUsername(mockGitHubUser.username)).doReturn(null)
 
-        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder, rolePermissionService)
         service.savePreAuthenticatedUser(
             mockPreauthUser.username,
             mockPreauthUser.displayName,
@@ -238,7 +237,7 @@ class UserServiceTest
     fun `savePreAuthenticatedUser throws exception if user exists but is not preauth`()
     {
         whenever(mockUserRepository.findByUsername(mockBasicUser.username)).doReturn(mockBasicUser)
-        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder, rolePermissionService)
 
         val ex = assertThrows<PackitException> {
             service.savePreAuthenticatedUser(
@@ -617,7 +616,7 @@ class UserServiceTest
     }
 
     @Test
-    fun `getSortedUsersWithPermissions correctly sorts and returns UserWithPermissions`()
+    fun `getSortedUsers correctly sorts and returns users`()
     {
         val roles = mutableListOf(Role(name = "role2", id = 2), Role(name = "role1", id = 1))
         val specificPermissions = mutableListOf<RolePermission>()
@@ -644,7 +643,7 @@ class UserServiceTest
         val service =
             BaseUserService(mockUserRepository, mockRoleService, passwordEncoder, rolePermissionService)
 
-        val result = service.getSortedUsersWithPermissions(users)
+        val result = service.getSortedUsers(users)
 
         // Verify result is correct type and size
         assertEquals(2, result.size)
@@ -653,7 +652,6 @@ class UserServiceTest
         with(result[0]) {
             assertEquals("user1", username)
             assertEquals(2, roles.size)
-            assertEquals(this.specificPermissions, emptyList())
             assertEquals(listOf("role1", "role2"), roles.map { it.name })
         }
 
@@ -662,7 +660,6 @@ class UserServiceTest
             assertEquals("user2", username)
             assertEquals(2, roles.size)
             assertEquals(listOf("role1", "role2"), roles.map { it.name })
-            assertEquals(this.specificPermissions, specificPermissions.map { it.toDto() })
         }
 
         // Verify rolePermissionService was called for each user

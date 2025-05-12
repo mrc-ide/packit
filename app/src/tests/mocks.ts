@@ -766,7 +766,8 @@ export const mockRolesAndUsersToUpdateRead = mockPacketGroupDtos.content.reduce(
   (acc, packetGroup) => {
     acc[packetGroup.name] = {
       withRead: mockRolesAndUsersWithPermissions,
-      cantRead: mockRolesAndUsersWithPermissions
+      cantRead: mockRolesAndUsersWithPermissions,
+      canRead: mockRolesAndUsersWithPermissions
     };
     return acc;
   },

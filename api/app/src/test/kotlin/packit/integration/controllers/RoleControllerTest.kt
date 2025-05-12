@@ -211,7 +211,7 @@ class RoleControllerTest : IntegrationTest()
                         adminRole,
                         userRole
                     )
-                )
+                ).map { it.toDto() }
             )
         )
     }

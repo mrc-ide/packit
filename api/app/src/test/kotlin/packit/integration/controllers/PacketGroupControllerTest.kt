@@ -351,7 +351,7 @@ class PacketGroupControllerTest(
     {
         val packetGroupNames = listOf("test1", "test2")
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packetGroups/read-permission",
+            "/packetGroups/user-role/read-permission",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
@@ -360,15 +360,15 @@ class PacketGroupControllerTest(
 
         val body = jacksonObjectMapper().readValue(
             result.body,
-            object : TypeReference<Map<String, RolesAndUsersToUpdateRead>>()
+            object : TypeReference<Map<String, RolesAndUsersForReadUpdate>>()
             {}
         )
 
         assertThat(body.keys).containsExactlyInAnyOrderElementsOf(packetGroupNames)
         body.forEach {
             val rolesAndUsers = it.value
-            assert(rolesAndUsers.cantRead is RolesAndUsersWithPermissionsDto)
-            assert(rolesAndUsers.withRead is RolesAndUsersWithPermissionsDto)
+            assert(rolesAndUsers.cantRead is BasicRolesAndUsersDto)
+            assert(rolesAndUsers.withRead is BasicRolesAndUsersDto)
         }
     }
 

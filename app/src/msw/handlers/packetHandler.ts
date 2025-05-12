@@ -2,7 +2,7 @@ import { rest } from "msw";
 import appConfig from "../../config/appConfig";
 import { mockPacket, mockPacketGroupResponse, mockRolesAndUsersWithPermissions } from "../../tests/mocks";
 // eslint-disable-next-line max-len
-import { RolesAndUsersToUpdatePacketRead } from "../../app/components/contents/manageAccess/types/RoleWithRelationships";
+import { RolesAndUsersToUpdateRead } from "../../app/components/contents/manageAccess/types/RoleWithRelationships";
 
 export const packetIndexUri = `${appConfig.apiUrl()}/packets`;
 
@@ -14,7 +14,7 @@ export const packetHandlers = [
     return res(ctx.json(mockPacket));
   }),
   rest.get(`${packetIndexUri}/${mockPacket.id}/read-permission`, (req, res, ctx) => {
-    const rolesAndUsers: RolesAndUsersToUpdatePacketRead = {
+    const rolesAndUsers: RolesAndUsersToUpdateRead = {
       withRead: mockRolesAndUsersWithPermissions,
       canRead: mockRolesAndUsersWithPermissions,
       cantRead: mockRolesAndUsersWithPermissions
