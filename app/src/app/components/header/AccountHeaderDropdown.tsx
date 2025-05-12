@@ -35,8 +35,12 @@ export const AccountHeaderDropdown = () => {
       <DropdownMenuContent align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p data-testid="user-display-name" className="text-base font-medium leading-none">{user?.displayName}</p>
-            <p data-testid="username" className="text-sm leading-none text-muted-foreground">{user?.userName}</p>
+            <p data-testid="user-display-name" className="text-base font-medium leading-none">
+              {user?.displayName}
+            </p>
+            <p data-testid="username" className="text-sm leading-none text-muted-foreground">
+              {user?.userName}
+            </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

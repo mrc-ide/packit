@@ -30,13 +30,7 @@ export const NavMenu = ({ className, user, ...props }: NavMenuProps) => {
 
   return (
     <div className="flex-1">
-      <nav
-        className={cn(
-          "flex items-center space-x-2 pr-4 lg:pr-6 justify-end",
-          className
-        )}
-        {...props}
-      >
+      <nav className={cn("flex items-center space-x-2 pr-4 lg:pr-6 justify-end", className)} {...props}>
         {displayableItems.map((to) => (
           <NavLink
             to={to}

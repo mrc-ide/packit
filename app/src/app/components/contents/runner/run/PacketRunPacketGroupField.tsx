@@ -31,10 +31,10 @@ export const PacketRunPacketGroupField = ({ form, packetGroups }: PacketRunPacke
                   variant="outline"
                   role="combobox"
                   aria-expanded={open}
-                  className={
-                    cn("hover:bg-background hover:text-inherit w-[350px] sm:w-[450px] justify-between",
-                      !field.value && "text-muted-foreground")
-                  }
+                  className={cn(
+                    "hover:bg-background hover:text-inherit w-[350px] sm:w-[450px] justify-between",
+                    !field.value && "text-muted-foreground"
+                  )}
                 >
                   {field.value || "Select packet group..."}
                   <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />

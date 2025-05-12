@@ -22,7 +22,7 @@ export const BrandingProvider = ({ children }: { children: ReactNode }) => {
   if (error) return <ErrorComponent message={error.message} error={error} />;
 
   const brandName = useGetBrandName();
-  
+
   return (
     <BrandingContext.Provider value={{ logoConfig, logoConfigIsLoaded, brandName }}>
       {children}

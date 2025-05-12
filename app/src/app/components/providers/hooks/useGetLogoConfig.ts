@@ -9,16 +9,6 @@ export const useGetLogoConfig = () => {
     (url: string) => fetcher({ url, noAuth: true })
   );
 
-  if (data) {
-    data.filename = "exampleVIMCLogo.png"
-    console.log('added filename');
-  } else {
-    console.log('no file name');
-  }
-
-  console.log(data?.filename);
-
-
   return {
     logoConfig: data,
     isLoading,

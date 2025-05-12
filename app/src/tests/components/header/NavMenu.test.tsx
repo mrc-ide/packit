@@ -80,7 +80,7 @@ const navItemIsDisplayedOnLargeScreens = (to: string, title: string) => {
 
 const navItemIsNotDisplayedOnLargeScreens = (to: string, title: string) => {
   expect(screen.queryByRole("link", { name: title })).not.toBeInTheDocument();
-}
+};
 
 const navItemIsDisplayedOnSmallScreens = async (to: string, title: string) => {
   await pressDownKey();
@@ -88,13 +88,13 @@ const navItemIsDisplayedOnSmallScreens = async (to: string, title: string) => {
   const link = screen.getByRole("menuitem", { name: title });
   expect(link).toBeVisible();
   expect(link).toHaveAttribute("href", `/${to}`);
-}
+};
 
 const navItemIsNotDisplayedOnSmallScreens = async (to: string, title: string) => {
   await pressDownKey();
 
   expect(screen.queryByRole("menuitem", { name: title })).not.toBeInTheDocument();
-}
+};
 
 const pressDownKey = async () => {
   fireEvent.keyDown(await screen.findByRole("button"), { keyCode: 40 });

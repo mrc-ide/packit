@@ -9,7 +9,7 @@ import { useBrandingContext } from "../providers/BrandingProvider";
 
 export const Header = () => {
   const { user } = useUser();
-  const { logoConfig, logoConfigIsLoaded, brandName } = useBrandingContext()
+  const { logoConfig, logoConfigIsLoaded, brandName } = useBrandingContext();
   const logoLinkDestination = logoConfig?.linkDestination || "/";
 
   return (
