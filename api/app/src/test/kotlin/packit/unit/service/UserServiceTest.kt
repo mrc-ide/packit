@@ -52,6 +52,15 @@ class UserServiceTest
         lastLoggedIn = Instant.parse("2018-12-12T00:00:00Z"),
         roles = mutableListOf(userRole),
     )
+    private val mockPreauthUser = User(
+        username = "preauthuser",
+        displayName = "displayName",
+        disabled = false,
+        email = "email",
+        userSource = "preauth",
+        lastLoggedIn = Instant.parse("2018-12-12T00:00:00Z"),
+        roles = mutableListOf(userRole),
+    )
     private val mockBasicUser = User(
         username = "basicuser",
         displayName = "displayName",
@@ -74,7 +83,7 @@ class UserServiceTest
     private val rolePermissionService = mock<RolePermissionService> {}
 
     @Test
-    fun `saveUserFromGithub returns user from repository if found & does not call saveUserFromGithub`()
+    fun `saveUserFromGithub returns user from repository if found & does not call createUserNameRole`()
     {
         `when`(mockUserRepository.findByUsername(mockGitHubUser.username)).doReturn(mockGitHubUser)
         val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder, rolePermissionService)
@@ -88,6 +97,24 @@ class UserServiceTest
         assertEquals(user, mockGitHubUser)
         verify(mockUserRepository).findByUsername(mockGitHubUser.username)
         verify(mockUserRepository).save(argThat { this == mockGitHubUser })
+        verify(mockRoleService, never()).createUsernameRole(any<String>())
+    }
+
+    @Test
+    fun `savePreAuthenticatedUser returns user from repository if found & does not call createUserNameRole`()
+    {
+        `when`(mockUserRepository.findByUsername(mockPreauthUser.username)).doReturn(mockPreauthUser)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        val user = service.savePreAuthenticatedUser(
+            mockPreauthUser.username,
+            mockPreauthUser.displayName,
+            mockPreauthUser.email
+        )
+
+        assertEquals(user, mockPreauthUser)
+        verify(mockUserRepository).findByUsername(mockPreauthUser.username)
+        verify(mockUserRepository).save(argThat { this == mockPreauthUser })
         verify(mockRoleService, never()).createUsernameRole(any<String>())
     }
 
@@ -109,6 +136,33 @@ class UserServiceTest
     }
 
     @Test
+    fun `savePreAuthenticatedUser creates new user & returns if not found in repository`()
+    {
+        `when`(mockUserRepository.findByUsername(mockPreauthUser.username)).doReturn(null)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        val user = service.savePreAuthenticatedUser(
+            mockPreauthUser.username,
+            mockPreauthUser.displayName,
+            mockPreauthUser.email
+        )
+
+        assertEquals(user.displayName, mockPreauthUser.displayName)
+        verify(mockRoleService).createUsernameRole(mockPreauthUser.username)
+        verify(mockUserRepository).save(argThat { this.username == mockPreauthUser.username })
+    }
+
+    fun verifyDefaultRolesSavedForUser(username: String)
+    {
+        verify(mockUserRepository).save(
+            argThat {
+                assertEquals(this.roles.map { it.name }, listOf("USER", username))
+                true
+            }
+        )
+    }
+
+    @Test
     fun `saveUserFromGithub adds default roles when creating a user`()
     {
         whenever(mockRoleService.getDefaultRoles()).doReturn(listOf(userRole))
@@ -121,12 +175,23 @@ class UserServiceTest
             mockGitHubUser.email
         )
 
-        verify(mockUserRepository).save(
-            argThat {
-                assertEquals(this.roles.map { it.name }, listOf("USER", mockGitHubUser.username))
-                true
-            }
+        verifyDefaultRolesSavedForUser(mockGitHubUser.username)
+    }
+
+    @Test
+    fun `savePreAuthenticatedUser adds default roles when creating a user`()
+    {
+        whenever(mockRoleService.getDefaultRoles()).doReturn(listOf(userRole))
+        whenever(mockUserRepository.findByUsername(mockGitHubUser.username)).doReturn(null)
+
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+        service.savePreAuthenticatedUser(
+            mockPreauthUser.username,
+            mockPreauthUser.displayName,
+            mockPreauthUser.email
         )
+
+        verifyDefaultRolesSavedForUser(mockPreauthUser.username)
     }
 
     @Test
@@ -157,6 +222,26 @@ class UserServiceTest
 
         val ex = assertThrows<PackitException> {
             service.saveUserFromGithub(
+                mockBasicUser.username,
+                mockBasicUser.displayName,
+                mockBasicUser.email
+            )
+        }
+        assertEquals(ex.key, "userAlreadyExists")
+        assertEquals(ex.httpStatus, HttpStatus.BAD_REQUEST)
+
+        verify(mockUserRepository, never()).save(any<User>())
+        verify(mockRoleService, never()).createUsernameRole(any<String>())
+    }
+
+    @Test
+    fun `savePreAuthenticatedUser throws exception if user exists but is not preauth`()
+    {
+        whenever(mockUserRepository.findByUsername(mockBasicUser.username)).doReturn(mockBasicUser)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        val ex = assertThrows<PackitException> {
+            service.savePreAuthenticatedUser(
                 mockBasicUser.username,
                 mockBasicUser.displayName,
                 mockBasicUser.email

@@ -16,6 +16,7 @@ import javax.naming.AuthenticationException
 interface UserService
 {
     fun saveUserFromGithub(username: String, displayName: String?, email: String?): User
+    fun savePreAuthenticatedUser(username: String, displayName: String?, email: String?): User
     fun createBasicUser(createBasicUser: CreateBasicUser): User
     fun getUserForBasicLogin(username: String): User
     fun deleteUser(username: String)
@@ -42,11 +43,20 @@ class BaseUserService(
 
     override fun saveUserFromGithub(username: String, displayName: String?, email: String?): User
     {
+        return saveUser(username, displayName, email, "github")
+    }
+
+    override fun savePreAuthenticatedUser(username: String, displayName: String?, email: String?): User
+    {
+        return saveUser(username, displayName, email, "preauth")
+    }
+
+    private fun saveUser(username: String, displayName: String?, email: String?, userSource: String): User
+    {
         val user = userRepository.findByUsername(username)
         if (user != null)
         {
-            if (user.userSource != "github")
-            {
+            if (user.userSource != userSource) {
                 throw PackitException("userAlreadyExists", HttpStatus.BAD_REQUEST)
             }
             return updateUserLastLoggedIn(user, Instant.now())
@@ -60,7 +70,7 @@ class BaseUserService(
             displayName = displayName,
             disabled = false,
             email = email,
-            userSource = "github",
+            userSource = userSource,
             lastLoggedIn = Instant.now(),
             roles = roles,
         )

@@ -12,6 +12,22 @@ jest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
   })
 }));
 
+const mockWindowNavigate = jest.fn();
+jest.mock("../../../lib/navigate", () => ({
+  windowNavigate: (href: string) => mockWindowNavigate(href)
+}));
+
+const authConfig = {
+  authEnabled: true,
+  enableBasicLogin: true,
+  enableGithubLogin: true,
+  enablePreAuthLogin: false
+};
+const mockUseAuthConfig = jest.fn().mockReturnValue(authConfig);
+jest.mock("../../../app/components/providers/AuthConfigProvider", () => ({
+  useAuthConfig: () => mockUseAuthConfig()
+}));
+
 describe("UserAuthForm", () => {
   const renderElement = () => {
     return render(
@@ -37,5 +53,16 @@ describe("UserAuthForm", () => {
     mockLoggingOut = false;
     renderElement();
     expect(mockSetLoggingOut).not.toHaveBeenCalled();
+  });
+
+  it("does not redirect to external login if preauth is not enabled", () => {
+    renderElement();
+    expect(mockWindowNavigate).not.toHaveBeenCalled();
+  });
+
+  it("redirects to external login if preauth is enabled", () => {
+    mockUseAuthConfig.mockReturnValueOnce({ ...authConfig, enablePreAuthLogin: true });
+    renderElement();
+    expect(mockWindowNavigate).toHaveBeenCalledWith("/login");
   });
 });

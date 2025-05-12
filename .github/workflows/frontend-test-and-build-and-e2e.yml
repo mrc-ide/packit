@@ -58,7 +58,7 @@ jobs:
       - name: Run unit tests
         run: npm test --prefix=app -- --coverage
       - name: Run dependencies and API
-        run: ./scripts/run-dependencies && ./api/scripts/run basicauth && ./api/scripts/smoke-test
+        run: ./scripts/run-dependencies && ./api/scripts/run basic && ./api/scripts/smoke-test
       - name: Upload coverage to codecov
         uses: codecov/codecov-action@v3
         with:

@@ -40,7 +40,12 @@ export const PreviewableFile = ({ file, fileName }: PreviewableFileProps) => {
           <ExternalLinkIcon size={15} className="min-w-fit ms-1" />
         </Link>
       </HoverCardTrigger>
-      <HoverCardContent className="w-80 bg-card border p-2 shadow" align="start">
+      <HoverCardContent
+        className="w-80 bg-card border p-2 shadow relative left-14"
+        align="start"
+        sideOffset={10}
+        style={{ zIndex: 1 }}
+      >
         <img src={fileObjectUrl} alt={`Preview of the image download ${fileName}`} />
       </HoverCardContent>
     </HoverCard>
