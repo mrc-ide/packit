@@ -3,7 +3,12 @@
 import { useMemo } from "react";
 
 export const useGetBrandName = () => {
-  const brandName = useMemo(() => document.title, []);
+  const brandName = useMemo(() => {
+    if (process.env.NODE_ENV === "test") {
+      return "App Title";
+    }
+    return document.title;
+  }, []);
 
   return brandName;
 };

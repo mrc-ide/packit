@@ -10,7 +10,8 @@ import {
   PageableBasicDto,
   PageablePacketGroupSummaries,
   PageablePackets,
-  InputFileType
+  InputFileType,
+  LogoConfiguration
 } from "../types";
 
 export const mockPacketResponse = {
@@ -32,6 +33,12 @@ export const mockAuthConfig: AuthConfig = {
   enableGithubLogin: true,
   enableBasicLogin: true,
   enablePreAuthLogin: false
+};
+
+export const mockLogoConfig: LogoConfiguration = {
+  altText: "This logo has alt text",
+  filename: "logo-for-website.png",
+  linkDestination: "https://example.com"
 };
 
 export const mockUserState: () => UserState = () => {

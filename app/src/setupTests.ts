@@ -27,6 +27,7 @@ Object.defineProperty(window, "matchMedia", {
     dispatchEvent: jest.fn()
   }))
 });
+
 // Checkbox component needs ResizeObserver
 window.ResizeObserver = ResizeObserverPolyFill;
 

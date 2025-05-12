@@ -7,6 +7,7 @@ import { UserProvider } from "../../../app/components/providers/UserProvider";
 import { UserState } from "../../../app/components/providers/types/UserTypes";
 import { mockUserState } from "../../mocks";
 import { Header } from "../../../app/components/header";
+import { BrandingProvider } from "../../../app/components/providers/BrandingProvider";
 
 const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
 jest.mock("../../../lib/localStorageManager", () => ({
@@ -19,9 +20,11 @@ describe("header component", () => {
       <MemoryRouter>
         <ThemeProvider>
           <UserProvider>
-            <RedirectOnLoginProvider>
-              <Header />
-            </RedirectOnLoginProvider>
+            <BrandingProvider>
+              <RedirectOnLoginProvider>
+                <Header />
+              </RedirectOnLoginProvider>
+            </BrandingProvider>
           </UserProvider>
         </ThemeProvider>
       </MemoryRouter>
@@ -57,6 +60,7 @@ describe("header component", () => {
 
     expect(screen.getByRole("link", { name: "Manage Access" })).toBeInTheDocument();
   });
+
   it("should not render link to manage access when user does not have user.manage authority", () => {
     mockGetUserFromLocalStorage.mockReturnValue({ ...mockUserState(), authorities: [] });
     renderElement();
@@ -64,10 +68,30 @@ describe("header component", () => {
     expect(screen.queryByRole("link", { name: "Manage Access" })).not.toBeInTheDocument();
   });
 
-  it("should render left nav is user is present", async () => {
+  it("should render nav menu if user is present", async () => {
     mockGetUserFromLocalStorage.mockReturnValue(mockUserState());
     renderElement();
 
     expect(screen.getByRole("link", { name: /runner/i })).toBeInTheDocument();
+  });
+
+  it("should render the app title", async () => {
+    mockGetUserFromLocalStorage.mockReturnValue(mockUserState());
+    renderElement();
+
+    await waitFor(() => {
+      expect(screen.getByText(/app title/i)).toBeInTheDocument();
+    });
+  });
+
+  it("should render the logo, with alt text, correct image filename, and correct link destination", async () => {
+    mockGetUserFromLocalStorage.mockReturnValue(mockUserState());
+    renderElement();
+
+    await waitFor(() => {
+      const logo = screen.getByAltText("This logo has alt text");
+      expect(logo).toHaveAttribute("src", "/img/logo-for-website.png");
+      expect(logo.parentElement).toHaveAttribute("href", "https://example.com");
+    });
   });
 });
