@@ -26,7 +26,7 @@ export const PacketReadRolesTable = ({ roles }: PacketReadRolesTableProps) => {
           globalFiltering={{
             globalFilter: filterValue,
             setGlobalFilter: setFilterValue,
-            globalFilterFn: rolesGlobalFilterFn as FilterFn<BasicRoleWithUsers>,
+            globalFilterFn: rolesGlobalFilterFn as unknown as FilterFn<BasicRoleWithUsers>,
             globalFilterCols: ["name", "users"]
           }}
         />
