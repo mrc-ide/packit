@@ -7,7 +7,7 @@ PACKAGE_ROOT=$(realpath $HERE/..)
 
 docker build \
        --build-arg PUBLIC_URL= \
-       --build-arg REACT_APP_PACKIT_API_URL=/packit/api \
+       --build-arg REACT_APP_PACKIT_API_URL=/api \
        -t "$TAG_SHA" \
        -t "$TAG_BRANCH" \
        $PACKAGE_ROOT
