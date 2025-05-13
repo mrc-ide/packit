@@ -54,7 +54,7 @@ describe("header component", () => {
     expect(screen.getByRole("link", { name: "Manage Access" })).toBeInTheDocument();
   });
   it("should not render link to manage access when user does not have user.manage authority", () => {
-    mockGetUserFromLocalStorage.mockReturnValue({ ...mockUserState(), authorities: [] });
+    mockGetUserFromLocalStorage.mockReturnValue({ ...mockUserState() });
     renderElement();
 
     expect(screen.queryByRole("link", { name: "Manage Access" })).not.toBeInTheDocument();

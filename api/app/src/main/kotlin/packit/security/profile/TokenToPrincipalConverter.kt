@@ -1,38 +1,58 @@
 package packit.security.profile
 
+import com.auth0.jwt.interfaces.Claim
 import com.auth0.jwt.interfaces.DecodedJWT
+import org.springframework.http.HttpStatus
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Component
+import packit.exceptions.PackitException
+import packit.service.RoleService
+import packit.service.UserService
 
 interface TokenToPrincipal
 {
     fun convert(jwt: DecodedJWT): UserPrincipal
-    fun extractAuthorities(jwt: DecodedJWT): MutableCollection<out GrantedAuthority>
 }
 
 @Component
-class TokenToPrincipalConverter : TokenToPrincipal
+class TokenToPrincipalConverter(
+    private val userService: UserService,
+    private val roleService: RoleService,
+) : TokenToPrincipal
 {
     override fun convert(jwt: DecodedJWT): UserPrincipal
     {
+        val username = jwt.getClaim("userName").asString()
+            ?: throw PackitException("userNameClaimNotInJwt", HttpStatus.UNAUTHORIZED)
+
         return UserPrincipal(
-            jwt.getClaim("userName").asString(),
-            jwt.getClaim("displayName").let{ if (it.isNull) null else it.asString() },
-            extractAuthorities(jwt),
+            username,
+            jwt.getClaim("displayName").let { if (it.isNull) null else it.asString() },
+            getAuthorities(jwt.getClaim("au"), username),
             mutableMapOf()
         )
     }
 
-    override fun extractAuthorities(jwt: DecodedJWT): MutableCollection<out GrantedAuthority>
+    /**
+     * Get the authorities from the JWT or from the database if not present in the JWT.
+     * Authorities in the JWT should only be present for a SERVICE user.
+     */
+    internal fun getAuthorities(jwtAuthorities: Claim, username: String): MutableCollection<out GrantedAuthority>
     {
-        val claims = jwt.getClaim("au")
-
-        if (claims.isNull || claims.isMissing)
+        if (!jwtAuthorities.isMissing)
         {
-            return mutableListOf()
+            return extractAuthorities(jwtAuthorities)
         }
+        val user = userService.getByUsername(username) ?: throw PackitException(
+            "userNotFound",
+            HttpStatus.UNAUTHORIZED
+        )
+        return roleService.getGrantedAuthorities(user.roles)
+    }
 
-        return claims.asList(SimpleGrantedAuthority::class.java)
+    internal fun extractAuthorities(jwtAuthorities: Claim): MutableCollection<out GrantedAuthority>
+    {
+        return if (jwtAuthorities.isNull) mutableListOf() else jwtAuthorities.asList(SimpleGrantedAuthority::class.java)
     }
 }

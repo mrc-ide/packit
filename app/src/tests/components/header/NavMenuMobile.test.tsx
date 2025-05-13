@@ -9,7 +9,7 @@ describe("Nav Menu Mobile component", () => {
   it("should render mobile nav menu with all links if packet.run permission is present", async () => {
     render(
       <MemoryRouter>
-        <NavMenuMobile user={{ authorities: ["packet.run"] } as UserState} />
+        <NavMenuMobile authorities={["packet.run"]} />
       </MemoryRouter>
     );
 
@@ -26,7 +26,7 @@ describe("Nav Menu Mobile component", () => {
   it("should render all menu items except runner when packet.run permission is not present", async () => {
     render(
       <MemoryRouter>
-        <NavMenuMobile user={{ authorities: [""] } as UserState} />
+        <NavMenuMobile authorities={[""]} />
       </MemoryRouter>
     );
 

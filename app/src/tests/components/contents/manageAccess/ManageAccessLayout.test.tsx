@@ -38,7 +38,7 @@ describe("ManageAccessLayout", () => {
   });
 
   it("should show unauthorized when user does not have user.manage authority", () => {
-    mockGetUserFromLocalStorage.mockReturnValue({ ...mockUserState(), authorities: [] });
+    mockGetUserFromLocalStorage.mockReturnValue({ ...mockUserState() });
     render(
       <UserProvider>
         <MemoryRouter initialEntries={["/manage-roles"]}>

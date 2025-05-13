@@ -56,7 +56,8 @@ class BaseUserService(
         val user = userRepository.findByUsername(username)
         if (user != null)
         {
-            if (user.userSource != userSource) {
+            if (user.userSource != userSource)
+            {
                 throw PackitException("userAlreadyExists", HttpStatus.BAD_REQUEST)
             }
             return updateUserLastLoggedIn(user, Instant.now())
@@ -190,7 +191,7 @@ class BaseUserService(
         return UserPrincipal(
             user.username,
             user.displayName,
-            roleService.getGrantedAuthorities(user.roles),
+            mutableListOf(),
             mutableMapOf()
         )
     }

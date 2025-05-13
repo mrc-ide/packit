@@ -27,7 +27,7 @@ describe("packet runner component", () => {
   };
 
   it("should allow navigation between run and logs in from sidebar given packet.run permission", async () => {
-    mockGetUserFromLocalStorage.mockReturnValue({ authorities: ["packet.run"] } as UserState);
+    // mockGetUserFromLocalStorage.mockReturnValue({ authorities: ["packet.run"] } as UserState);
     renderElement();
 
     // ensure correct url route is loaded
@@ -43,7 +43,7 @@ describe("packet runner component", () => {
   });
 
   it("should show unauthorized when user does not have packet.run authority", () => {
-    mockGetUserFromLocalStorage.mockReturnValue({ authorities: [""] } as UserState);
+    // mockGetUserFromLocalStorage.mockReturnValue({ authorities: [""] } as UserState);
     renderElement();
 
     expect(screen.getByText(/Unauthorized/)).toBeVisible();
