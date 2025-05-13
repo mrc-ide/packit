@@ -24,10 +24,10 @@ export interface BasicRoleWithUsers extends BasicRole {
   users: BasicUser[];
 }
 
-export interface RoleWithRelationships extends BasicRoleWithUsers {
+export type RoleWithRelationships = BasicRoleWithUsers & {
   rolePermissions: RolePermission[];
   isUsername: boolean;
-}
+};
 
 export interface RolesAndUsersWithPermissions {
   roles: RoleWithRelationships[];
