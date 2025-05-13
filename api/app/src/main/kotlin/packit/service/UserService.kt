@@ -28,6 +28,7 @@ interface UserService
     fun checkAndUpdateLastLoggedIn(username: String)
     fun getServiceUser(): User
     fun getUserPrincipal(user: User): UserPrincipal
+    fun getAllUsers(): List<User>
 }
 
 @Service
@@ -187,5 +188,10 @@ class BaseUserService(
             roleService.getGrantedAuthorities(user.roles),
             mutableMapOf()
         )
+    }
+
+    override fun getAllUsers(): List<User>
+    {
+        return userRepository.findAll()
     }
 }
