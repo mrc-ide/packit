@@ -2,7 +2,6 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { LeftNavItems } from "../../../app/components/header/LeftNav";
 import { NavMenuMobile } from "../../../app/components/header/NavMenuMobile";
-import { UserState } from "../../../app/components/providers/types/UserTypes";
 
 describe("Nav Menu Mobile component", () => {
   const DOWN_ARROW = { keyCode: 40 };

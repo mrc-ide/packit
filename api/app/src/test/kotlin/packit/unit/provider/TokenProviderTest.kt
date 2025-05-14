@@ -1,4 +1,4 @@
-package packit.security.provider
+package packit.unit.provider
 
 import com.auth0.jwt.JWT
 import org.junit.jupiter.api.Assertions.*
@@ -7,6 +7,8 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import packit.AppConfig
 import packit.security.profile.UserPrincipal
+import packit.security.provider.TokenProvider
+import packit.security.provider.TokenProviderBuilder
 import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -44,7 +46,7 @@ class TokenProviderBuilderTest
         on { authJWTSecret } doReturn "changesecretkey"
         on { authExpiryDays } doReturn 1
     }
-    
+
     @Test
     fun `issue creates token with correct claims when no added permissions`()
     {

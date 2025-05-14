@@ -1,11 +1,9 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { UserProvider } from "../../../app/components/providers/UserProvider";
-import { UserState } from "../../../app/components/providers/types/UserTypes";
-import { mockExpiredUserState } from "../../mocks";
-import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
+import * as UserProvider from "../../../app/components/providers/UserProvider";
 import { ProtectedRoute } from "../../../app/components/routes/ProtectedRoute";
-
+import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
+import { mockUserProviderState } from "../../mocks";
 const mockedUsedNavigate = jest.fn();
 jest.mock("react-router-dom", () => ({
   ...(jest.requireActual("react-router-dom") as any),
@@ -32,33 +30,29 @@ jest.mock("../../../app/components/providers/AuthConfigProvider", () => ({
   useAuthConfig: () => mockUseAuthConfig()
 }));
 
-const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
-jest.mock("../../../lib/localStorageManager", () => ({
-  getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
-}));
+const mockUserProvideState = mockUserProviderState();
+const mockUseUser = jest.spyOn(UserProvider, "useUser");
 
 const mockWindowNavigate = jest.fn();
 jest.mock("../../../lib/navigate", () => ({
   windowNavigate: (href: string) => mockWindowNavigate(href)
 }));
 
+const renderElement = () => {
+  return render(
+    <MemoryRouter>
+      <Routes>
+        <Route element={<ProtectedRoute />}>
+          <Route element={<div>Protected Content</div>} index />
+        </Route>
+      </Routes>
+    </MemoryRouter>
+  );
+};
 describe("protected routes", () => {
-  const renderElement = () => {
-    return render(
-      <UserProvider>
-        <MemoryRouter>
-          <Routes>
-            <Route element={<ProtectedRoute />}>
-              <Route element={<div>Protected Content</div>} index />
-            </Route>
-          </Routes>
-        </MemoryRouter>
-      </UserProvider>
-    );
-  };
-
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUseUser.mockReturnValue(mockUserProvideState);
   });
 
   it("renders protected content when authenticated", async () => {
@@ -89,9 +83,7 @@ describe("protected routes", () => {
     mockLoggingOut = false;
     mockIsAuthenticated.mockReturnValue(false);
     mockAuthIsExpired.mockReturnValue(true);
-    mockGetUserFromLocalStorage.mockReturnValueOnce(mockExpiredUserState());
     mockUseAuthConfig.mockReturnValue({});
-    localStorage.setItem(LocalStorageKeys.USER, "mockUser");
     renderElement();
 
     await waitFor(() => {
@@ -99,7 +91,7 @@ describe("protected routes", () => {
         "/login?info=You have been signed out because your session expired. Please log in."
       );
       expect(mockSetRequestedUrl).toHaveBeenCalledWith("/");
-      expect(localStorage.getItem(LocalStorageKeys.USER)).toBe(null);
+      expect(mockUserProvideState.removeUser).toHaveBeenCalled();
     });
   });
 
@@ -122,7 +114,6 @@ describe("protected routes", () => {
     mockLoggingOut = false;
     mockIsAuthenticated.mockReturnValue(false);
     mockAuthIsExpired.mockReturnValue(true);
-    mockGetUserFromLocalStorage.mockReturnValueOnce(mockExpiredUserState());
     localStorage.setItem(LocalStorageKeys.USER, "mockUser");
     renderElement();
 

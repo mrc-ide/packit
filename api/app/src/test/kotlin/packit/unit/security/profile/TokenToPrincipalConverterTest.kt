@@ -68,7 +68,6 @@ class TokenToPrincipalConverterTest
             on { getClaim("au") } doReturn mockAuClaim
         }
 
-
         val userPrincipal = UserPrincipal(
             "fakeName",
             "fakeName",
@@ -100,7 +99,6 @@ class TokenToPrincipalConverterTest
             assertEquals(key, "userNameClaimNotInJwt")
             assertEquals(httpStatus, HttpStatus.UNAUTHORIZED)
         }
-
     }
 
     @Test

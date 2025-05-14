@@ -171,12 +171,14 @@ class UserControllerTest : IntegrationTest()
     {
         val runPermission = permissionRepository.findByName("packet.run")!!
         val readPermission = permissionRepository.findByName("packet.read")!!
-        val testRole = roleRepository.save(Role(name = "testRole").apply {
+        val testRole = roleRepository.save(
+            Role(name = "testRole").apply {
             rolePermissions = mutableListOf(
                 RolePermission(role = this, permission = runPermission),
                 RolePermission(role = this, permission = readPermission)
             )
-        })
+        }
+        )
         userRepository.save(
             User(
                 username = "test.user@example.com",

@@ -1,32 +1,29 @@
 import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { ManageAccessLayout } from "../../../../app/components/contents/manageAccess";
-import userEvent from "@testing-library/user-event";
-import { UserProvider } from "../../../../app/components/providers/UserProvider";
-import { UserState } from "../../../../app/components/providers/types/UserTypes";
-import { mockUserState } from "../../../mocks";
+import { server } from "../../../../msw/server";
+import { rest } from "msw";
+import { HttpStatus } from "../../../../lib/types/HttpStatus";
+import { SWRConfig } from "swr";
 
-const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
-jest.mock("../../../../lib/localStorageManager", () => ({
-  getUserFromLocalStorage: () => mockGetUserFromLocalStorage(),
-  getAuthConfigFromLocalStorage: jest.fn().mockReturnValue({ authEnabled: true, enableGithubLogin: true })
-}));
+const renderComponent = () =>
+  render(
+    <SWRConfig value={{ dedupingInterval: 0 }}>
+      <MemoryRouter initialEntries={["/manage-roles"]}>
+        <Routes>
+          <Route element={<ManageAccessLayout />}>
+            <Route path="manage-roles" element={<div>role management</div>} />
+            <Route path="manage-users" element={<div>user management</div>} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    </SWRConfig>
+  );
 
 describe("ManageAccessLayout", () => {
   it("should allow navigation between sidebar and render outlet when user access", async () => {
-    mockGetUserFromLocalStorage.mockReturnValue(mockUserState());
-    render(
-      <UserProvider>
-        <MemoryRouter initialEntries={["/manage-roles"]}>
-          <Routes>
-            <Route element={<ManageAccessLayout />}>
-              <Route path="manage-roles" element={<div>role management</div>} />
-              <Route path="manage-users" element={<div>user management</div>} />
-            </Route>
-          </Routes>
-        </MemoryRouter>
-      </UserProvider>
-    );
+    renderComponent();
 
     await waitFor(() => {
       expect(screen.getByText("role management")).toBeVisible();
@@ -37,21 +34,28 @@ describe("ManageAccessLayout", () => {
     expect(screen.getByText("user management")).toBeVisible();
   });
 
-  it("should show unauthorized when user does not have user.manage authority", () => {
-    mockGetUserFromLocalStorage.mockReturnValue({ ...mockUserState() });
-    render(
-      <UserProvider>
-        <MemoryRouter initialEntries={["/manage-roles"]}>
-          <Routes>
-            <Route element={<ManageAccessLayout />}>
-              <Route path="manage-roles" element={<div>role management</div>} />
-              <Route path="manage-users" element={<div>user management</div>} />
-            </Route>
-          </Routes>
-        </MemoryRouter>
-      </UserProvider>
+  it("should show unauthorized when api returns unauthorized", async () => {
+    server.use(
+      rest.get("*", (req, res, ctx) => {
+        return res(ctx.status(HttpStatus.Unauthorized));
+      })
     );
+    renderComponent();
 
-    expect(screen.getByText(/Unauthorized/)).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByText(/Unauthorized/)).toBeVisible();
+    });
+  });
+  it("should show error message when api returns error no unauthorized", async () => {
+    server.use(
+      rest.get("*", (req, res, ctx) => {
+        return res(ctx.status(HttpStatus.InternalServerError));
+      })
+    );
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText(/Error fetching data/)).toBeVisible();
+    });
   });
 });

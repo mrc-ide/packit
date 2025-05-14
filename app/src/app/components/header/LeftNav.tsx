@@ -11,16 +11,14 @@ export const LeftNavItems = {
 interface LeftNavProps extends React.HTMLAttributes<HTMLElement> {
   authorities: string[];
 }
-export const LeftNav = ({ className, authorities, ...props }: LeftNavProps) => {
-  return (
-    <nav className={cn("flex items-center space-x-4 lg:space-x-6", className)} {...props}>
-      {Object.entries(LeftNavItems).map(([to, title]) =>
-        to === "runner" && !hasPacketRunPermission(authorities) ? null : (
-          <NavigationLink to={to} key={to}>
-            {title}
-          </NavigationLink>
-        )
-      )}
-    </nav>
-  );
-};
+export const LeftNav = ({ className, authorities, ...props }: LeftNavProps) => (
+  <nav className={cn("flex items-center space-x-4 lg:space-x-6", className)} {...props}>
+    {Object.entries(LeftNavItems).map(([to, title]) =>
+      to === "runner" && !hasPacketRunPermission(authorities) ? null : (
+        <NavigationLink to={to} key={to}>
+          {title}
+        </NavigationLink>
+      )
+    )}
+  </nav>
+);
