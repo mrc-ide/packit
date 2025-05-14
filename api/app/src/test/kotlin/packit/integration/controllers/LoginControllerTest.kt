@@ -38,9 +38,6 @@ class LoginControllerTestGithub : IntegrationTest()
     @Autowired
     private lateinit var roleRepository: RoleRepository
 
-    @Autowired
-    private lateinit var tokenDecoder: TokenDecoder
-
     @AfterEach
     fun cleanupData()
     {
