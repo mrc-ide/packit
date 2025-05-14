@@ -2,10 +2,9 @@ package packit.security.provider
 
 import com.auth0.jwt.JWT
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import org.springframework.mock.env.MockEnvironment
 import packit.AppConfig
 import packit.security.profile.UserPrincipal
 import java.time.Duration
@@ -40,36 +39,12 @@ class TokenProviderBuilderTest
         mutableListOf(),
         mutableMapOf()
     )
-    private val environmentVariables = mapOf(
-        "outpack.server.url" to "url",
-        "orderly.runner.url" to "url",
-        "db.url" to "url",
-        "db.user" to "user",
-        "db.password" to "password",
-        "auth.jwt.secret" to "secret",
-        "auth.oauth2.redirect.url" to "redirectUrl",
-        "auth.method" to "basic",
-        "auth.expiryDays" to "1",
-        "auth.enabled" to "true",
-        "auth.githubAPIOrg" to "githubAPIOrg",
-        "auth.githubAPITeam" to "githubAPITeam",
-        "cors.allowedOrigins" to "http://localhost, https://production",
-        "packit.defaultRoles" to "ADMIN,USER"
-    )
-    private val mockEnv = MockEnvironment()
 
-    private lateinit var config: AppConfig
-
-    @BeforeEach
-    fun setupEnv()
-    {
-        environmentVariables.forEach { (key, value) ->
-            mockEnv.setProperty(key, value)
-        }
-        config = AppConfig(mockEnv)
+    private val config = mock<AppConfig> {
+        on { authJWTSecret } doReturn "changesecretkey"
+        on { authExpiryDays } doReturn 1
     }
-
-
+    
     @Test
     fun `issue creates token with correct claims when no added permissions`()
     {

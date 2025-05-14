@@ -13,6 +13,7 @@ import packit.security.provider.TokenDecoder
 import packit.security.provider.TokenProvider
 import java.time.Duration
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class TokenDecoderTest
 {
@@ -50,7 +51,7 @@ class TokenDecoderTest
         assertEquals("packit-api", result.issuer)
         assertEquals("Fake Name", result.getClaim("displayName").asString())
         assertEquals("fakeName", result.getClaim("userName").asString())
-        assertEquals(emptyList(), result.getClaim("au").asList(String::class.java))
+        assertTrue(result.getClaim("au").isMissing)
         assertEquals(expectedExpiresAt, result.expiresAtAsInstant)
     }
 
