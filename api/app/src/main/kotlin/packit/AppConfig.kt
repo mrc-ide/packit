@@ -36,6 +36,7 @@ class AppConfig(private val environment: Environment)
     val dbPassword: String = requiredEnvValue("db.password")
     val authJWTSecret: String = requiredEnvValue("auth.jwt.secret")
     val authRedirectUri: String = requiredEnvValue("auth.oauth2.redirect.url")
+    val authMethod: String = requiredEnvValue("auth.method")
     val authEnableGithubLogin: Boolean = requiredEnvValue("auth.method") == "github"
     val authEnableBasicLogin: Boolean = requiredEnvValue("auth.method") == "basic"
     val authEnablePreAuthLogin: Boolean = requiredEnvValue("auth.method") == "preauth"
