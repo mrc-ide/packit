@@ -32,6 +32,31 @@ import kotlin.test.assertEquals
 
 class LoginControllerTestGithub : IntegrationTest()
 {
+    @Autowired
+    private lateinit var userRepository: UserRepository
+
+    @Autowired
+    private lateinit var roleRepository: RoleRepository
+
+    @Autowired
+    private lateinit var tokenDecoder: TokenDecoder
+
+    @AfterEach
+    fun cleanupData()
+    {
+        val githubUsers = userRepository.findAll().filter{ it.userSource == "github" }
+        githubUsers.forEach {
+            val userName = it.username
+            if (userRepository.existsByUsername(userName)) {
+                userRepository.deleteByUsername(userName)
+            }
+
+            if (roleRepository.existsByName(userName)) {
+                roleRepository.deleteByName(userName)
+            }
+        }
+    }
+
     @Test
     fun `can get config`()
     {
