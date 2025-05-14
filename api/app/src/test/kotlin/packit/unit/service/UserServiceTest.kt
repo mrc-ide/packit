@@ -12,6 +12,7 @@ import packit.exceptions.PackitException
 import packit.model.Role
 import packit.model.User
 import packit.model.dto.CreateBasicUser
+import packit.model.dto.CreateExternalUser
 import packit.model.dto.UpdatePassword
 import packit.repository.UserRepository
 import packit.service.BaseUserService
@@ -32,11 +33,18 @@ class UserServiceTest {
     }
 
     private val passwordEncoder = mock<PasswordEncoder>()
+    private val createUserRoles = listOf("USER", "ADMIN")
     private val createBasicUser = CreateBasicUser(
         email = "email",
         password = "password",
         displayName = "displayName",
-        userRoles = listOf("USER", "ADMIN")
+        userRoles = createUserRoles
+    )
+    private val createExternalUser = CreateExternalUser(
+        username= "external username",
+        email = "external email",
+        displayName = "external displayName",
+        userRoles = createUserRoles
     )
     private val mockGitHubUser = User(
         username = "githubuser",
@@ -72,7 +80,7 @@ class UserServiceTest {
         userSource = "service"
     )
     private val mockRoleService = mock<RoleService> {
-        on { getRolesByRoleNames(createBasicUser.userRoles) } doReturn testRoles
+        on { getRolesByRoleNames(createUserRoles) } doReturn testRoles
         on { createUsernameRole(any()) } doAnswer { Role(it.getArgument(0), isUsername = true) }
     }
 
@@ -332,6 +340,45 @@ class UserServiceTest {
             }
         )
     }
+
+    @Test
+    fun `createExternalUser creates new user`() {
+
+        `when`(mockUserRepository.existsByUsername(createExternalUser.username)).doReturn(false)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        val result = service.createExternalUser(createExternalUser, "preauth")
+
+        verify(mockRoleService).getRolesByRoleNames(createExternalUser.userRoles)
+        verify(mockRoleService).createUsernameRole(createExternalUser.username)
+        verify(mockUserRepository).save(
+            argThat {
+                assertEquals(this.username, createExternalUser.username)
+                assertEquals(this.password, null)
+                assertFalse(this.disabled)
+                assertEquals(this.displayName, createExternalUser.displayName)
+                assertEquals(this.email, createExternalUser.email)
+                assertEquals(this.userSource, "preauth")
+                assertNull(this.lastLoggedIn)
+                assertEquals(this.roles, testRoles.plus(Role(createExternalUser.username, isUsername = true)))
+                true
+            }
+        )
+        assertEquals(result.username, createExternalUser.username)
+    }
+
+    @Test
+    fun `createExternalUser throws error if user already exists`() {
+        `when`(mockUserRepository.existsByUsername(createExternalUser.username)).doReturn(true)
+        val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
+
+        val ex = assertThrows<PackitException> { service.createExternalUser(createExternalUser, "preauth") }
+
+        verify(mockUserRepository).existsByUsername(createExternalUser.username)
+        assertEquals(ex.key, "userAlreadyExists")
+        assertEquals(ex.httpStatus, HttpStatus.BAD_REQUEST)
+    }
+
 
     @Test
     fun `getUsersByUsernames returns all users when all usernames exist in repository`() {
