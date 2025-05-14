@@ -43,6 +43,7 @@ class OAuth2UserServiceTest
         assertEquals(result.name, fakeLogin)
         assertEquals(result.getAttribute("login"), fakeLogin)
         assertEquals(result.getAttribute("name"), fakeName)
+        assertEquals(result.authorities, mutableSetOf())
         verify(mockUserService).saveUserFromGithub(fakeLogin, fakeName, null)
     }
 

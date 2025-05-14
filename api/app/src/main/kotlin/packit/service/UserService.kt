@@ -191,7 +191,7 @@ class BaseUserService(
         return UserPrincipal(
             user.username,
             user.displayName,
-            mutableListOf(),
+            mutableSetOf(),
             mutableMapOf()
         )
     }

@@ -63,7 +63,13 @@ class TokenProviderBuilder(val config: AppConfig, val userPrincipal: UserPrincip
 
     override fun withPermissions(permissions: Collection<String>): JwtBuilder
     {
-        this.permissions = permissions.toMutableSet()
+        if (this.permissions == null)
+        {
+            this.permissions = permissions.toMutableSet()
+        } else
+        {
+            this.permissions!!.retainAll(permissions.toSet())
+        }
         return this
     }
 

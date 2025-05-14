@@ -36,7 +36,6 @@ class TokenToPrincipalConverter(
 
     /**
      * Get the authorities from the JWT or from the database if not present in the JWT.
-     * Authorities in the JWT should only be present for a SERVICE user.
      */
     internal fun getAuthorities(jwtAuthorities: Claim, username: String): MutableCollection<out GrantedAuthority>
     {
