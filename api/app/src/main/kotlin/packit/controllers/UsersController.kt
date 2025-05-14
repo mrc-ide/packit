@@ -16,7 +16,7 @@ class UsersController(private val userService: UserService,) {
     @GetMapping
     fun getAllUsers(): ResponseEntity<List<UserDto>>
     {
-        val allUsers = userService.getAllUsers()
+        val allUsers = userService.getAllNonServiceUsers()
         return ResponseEntity.ok(
             allUsers.map{ it.toDto() }
         )

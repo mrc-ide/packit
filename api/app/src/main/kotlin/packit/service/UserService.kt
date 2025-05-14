@@ -28,7 +28,7 @@ interface UserService
     fun checkAndUpdateLastLoggedIn(username: String)
     fun getServiceUser(): User
     fun getUserPrincipal(user: User): UserPrincipal
-    fun getAllUsers(): List<User>
+    fun getAllNonServiceUsers(): List<User>
 }
 
 @Service
@@ -190,8 +190,8 @@ class BaseUserService(
         )
     }
 
-    override fun getAllUsers(): List<User>
+    override fun getAllNonServiceUsers(): List<User>
     {
-        return userRepository.findAll()
+        return userRepository.findAll().filter{ it.userSource != "service" }
     }
 }

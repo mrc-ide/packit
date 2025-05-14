@@ -1,12 +1,20 @@
 package packit.integration.controllers
 
+import com.fasterxml.jackson.module.kotlin.convertValue
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.assertj.core.api.Assertions.assertThat
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.http.HttpMethod
+import org.springframework.http.ResponseEntity
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.jdbc.Sql
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
 import packit.model.Role
 import packit.model.User
+import packit.model.dto.UserDto
+import packit.model.toDto
 import packit.repository.RoleRepository
 import packit.repository.UserRepository
 import kotlin.test.Test
@@ -22,7 +30,7 @@ class UsersControllerTest: IntegrationTest() {
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `getAllUsers returns list of users`()
+    fun `getAllUsers returns list of non-service users`()
     {
         val testRole1 = roleRepository.save(Role(name = "TEST_ROLE_1"))
         val testRole2 = roleRepository.save(Role(name = "TEST_ROLE_2"))
@@ -45,8 +53,18 @@ class UsersControllerTest: IntegrationTest() {
             )
         )
 
-        val result = restTemplate.getForEntity("/users", String::class.java)
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/users",
+            HttpMethod.GET,
+            getTokenizedHttpEntity(),
+            String::class.java
+        )
         assertSuccess(result)
-        // TODO: test expected result json
+
+        val body = jacksonObjectMapper().readTree(result.body)
+        val contents: List<UserDto> = jacksonObjectMapper().convertValue(body)
+        assertThat(contents.size).isEqualTo(2)
+        assertThat(contents[0]).isEqualTo(testUser1.toDto())
+        assertThat(contents[1]).isEqualTo(testUser2.toDto())
     }
 }
