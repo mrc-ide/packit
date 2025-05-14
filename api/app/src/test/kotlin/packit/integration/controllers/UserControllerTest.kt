@@ -12,6 +12,7 @@ import packit.integration.WithAuthenticatedUser
 import packit.model.Role
 import packit.model.User
 import packit.model.dto.CreateBasicUser
+import packit.model.dto.CreateExternalUser
 import packit.model.dto.UpdateUserRoles
 import packit.model.dto.UserDto
 import packit.repository.RoleRepository
@@ -157,6 +158,62 @@ class UserControllerTest : IntegrationTest()
         assertEquals(HttpStatus.NO_CONTENT, result.statusCode)
         assertEquals(userRepository.findByUsername(testUser.username), null)
         assertEquals(roleRepository.findByName(username), null)
+    }
+}
+
+@TestPropertySource(properties = ["auth.method=preauth"])
+@Sql("/delete-test-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+class UserControllerPreauthTest: IntegrationTest()
+{
+    @Autowired
+    lateinit var userRepository: UserRepository
+
+    private val testCreateExternalUser = CreateExternalUser(
+        username = "test.user",
+        email = "test@email",
+        displayName = "PreAuth User",
+        userRoles = listOf()
+    )
+
+    private val testCreateExternalUserBody = jacksonObjectMapper().writeValueAsString(testCreateExternalUser)
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["user.manage"])
+    fun `users with manage authority can create external users`()
+    {
+        val result = restTemplate.postForEntity(
+            "/user/external",
+            getTokenizedHttpEntity(data = testCreateExternalUserBody),
+            String::class.java
+        )
+
+        val userResult = jacksonObjectMapper().readValue(
+            result.body,
+            object : TypeReference<UserDto>()
+            {}
+        )
+        assertEquals(HttpStatus.CREATED, result.statusCode)
+        assertEquals(testCreateExternalUser.username, userResult.username)
+        assertEquals(testCreateExternalUser.email, userResult.email)
+        assertEquals(testCreateExternalUser.displayName, userResult.displayName)
+        assertEquals("preauth", userResult.userSource)
+        assertEquals(false, userResult.disabled)
+        assertEquals(1, userResult.roles.size)
+        assertEquals(testCreateExternalUser.username, userResult.roles[0].name)
+        assertNotNull(userRepository.findByUsername(testCreateExternalUser.username))
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
+    fun `user without user manage permission cannot create external users`()
+    {
+        val result = restTemplate.postForEntity(
+            "/user/external",
+            getTokenizedHttpEntity(data = testCreateExternalUserBody),
+            String::class.java
+        )
+
+        assertEquals(result.statusCode, HttpStatus.UNAUTHORIZED)
     }
 }
 

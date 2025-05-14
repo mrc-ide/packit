@@ -6,6 +6,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.jdbc.Sql
@@ -18,6 +19,7 @@ import packit.model.toDto
 import packit.repository.RoleRepository
 import packit.repository.UserRepository
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @TestPropertySource(properties = ["auth.method=basic"])
 @Sql("/delete-test-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
@@ -64,5 +66,19 @@ class UsersControllerTest: IntegrationTest() {
         val body = jacksonObjectMapper().readTree(result.body)
         val contents: List<UserDto> = jacksonObjectMapper().convertValue(body)
         assertThat(contents).isEqualTo(listOf(testUser1.toDto(), testUser2.toDto()))
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
+    fun `user without user manage permission cannot get list of users`()
+    {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/users",
+            HttpMethod.GET,
+            getTokenizedHttpEntity(),
+            String::class.java
+        )
+
+        assertEquals(result.statusCode, HttpStatus.UNAUTHORIZED)
     }
 }
