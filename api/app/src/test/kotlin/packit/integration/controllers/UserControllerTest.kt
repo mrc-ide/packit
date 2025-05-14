@@ -185,7 +185,7 @@ class UserControllerTest : IntegrationTest()
 
 @TestPropertySource(properties = ["auth.method=preauth"])
 @Sql("/delete-test-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-class UserControllerPreauthTest: IntegrationTest()
+class UserControllerPreauthTest : IntegrationTest()
 {
     @Autowired
     lateinit var userRepository: UserRepository
@@ -249,7 +249,6 @@ class UserControllerPreauthTest: IntegrationTest()
         val secondResult = getResult()
         assertEquals(HttpStatus.BAD_REQUEST, secondResult.statusCode)
     }
-
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])

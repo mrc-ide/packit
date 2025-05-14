@@ -4,16 +4,13 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import packit.AppConfig
 import packit.controllers.UserController
 import packit.exceptions.PackitException
 import packit.model.User
 import packit.model.dto.CreateBasicUser
 import packit.model.dto.CreateExternalUser
-import packit.model.dto.UserDto
 import packit.model.toDto
 import packit.service.UserRoleService
 import packit.service.UserService

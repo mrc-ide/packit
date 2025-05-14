@@ -41,7 +41,7 @@ class UserServiceTest {
         userRoles = createUserRoles
     )
     private val createExternalUser = CreateExternalUser(
-        username= "external username",
+        username = "external username",
         email = "external email",
         displayName = "external displayName",
         userRoles = createUserRoles
@@ -378,7 +378,6 @@ class UserServiceTest {
         assertEquals(ex.key, "userAlreadyExists")
         assertEquals(ex.httpStatus, HttpStatus.BAD_REQUEST)
     }
-
 
     @Test
     fun `getUsersByUsernames returns all users when all usernames exist in repository`() {

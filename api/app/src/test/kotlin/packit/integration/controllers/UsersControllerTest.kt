@@ -4,7 +4,6 @@ import com.fasterxml.jackson.module.kotlin.convertValue
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -23,7 +22,7 @@ import kotlin.test.assertEquals
 
 @TestPropertySource(properties = ["auth.method=basic"])
 @Sql("/delete-test-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-class UsersControllerTest: IntegrationTest() {
+class UsersControllerTest : IntegrationTest() {
     @Autowired
     private lateinit var userRepository: UserRepository
 
