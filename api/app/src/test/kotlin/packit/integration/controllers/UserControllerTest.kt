@@ -194,7 +194,7 @@ class UserControllerPreauthTest: IntegrationTest()
         username = "test.user",
         email = "test@email",
         displayName = "PreAuth User",
-        userRoles = listOf()
+        userRoles = listOf("ADMIN")
     )
 
     private val testCreateExternalUserBody = jacksonObjectMapper().writeValueAsString(testCreateExternalUser)
@@ -225,8 +225,9 @@ class UserControllerPreauthTest: IntegrationTest()
         assertEquals(testCreateExternalUser.displayName, userResult.displayName)
         assertEquals("preauth", userResult.userSource)
         assertEquals(false, userResult.disabled)
-        assertEquals(1, userResult.roles.size)
-        assertEquals(testCreateExternalUser.username, userResult.roles[0].name)
+        assertEquals(2, userResult.roles.size)
+        assertEquals("ADMIN", userResult.roles[0].name)
+        assertEquals(testCreateExternalUser.username, userResult.roles[1].name)
         assertNotNull(userRepository.findByUsername(testCreateExternalUser.username))
     }
 
@@ -247,6 +248,55 @@ class UserControllerPreauthTest: IntegrationTest()
 
         val secondResult = getResult()
         assertEquals(HttpStatus.BAD_REQUEST, secondResult.statusCode)
+    }
+
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["user.manage"])
+    fun `create external user fails if email is not valid`()
+    {
+        val badEmailUser = CreateExternalUser(
+            username = "test.bad.user",
+            email = "not an email",
+            displayName = "PreAuth User",
+            userRoles = listOf()
+        )
+        val body = jacksonObjectMapper().writeValueAsString(badEmailUser)
+
+        val result = restTemplate.postForEntity(
+            "/user/external",
+            getTokenizedHttpEntity(data = body),
+            String::class.java
+        )
+        assertEquals(HttpStatus.BAD_REQUEST, result.statusCode)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["user.manage"])
+    fun `email and display name are optional when creating external user`()
+    {
+        val minimallUser = CreateExternalUser(
+            username = "test.minimal.user",
+            email = null,
+            displayName = null,
+            userRoles = listOf()
+        )
+        val body = jacksonObjectMapper().writeValueAsString(minimallUser)
+
+        val result = restTemplate.postForEntity(
+            "/user/external",
+            getTokenizedHttpEntity(data = body),
+            String::class.java
+        )
+        val userResult = jacksonObjectMapper().readValue(
+            result.body,
+            object : TypeReference<UserDto>()
+            {}
+        )
+        assertEquals(HttpStatus.CREATED, result.statusCode)
+        assertEquals("test.minimal.user", userResult.username)
+        assertEquals(null, userResult.email)
+        assertEquals(null, userResult.displayName)
     }
 }
 
