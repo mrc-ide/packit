@@ -20,8 +20,7 @@ class OAuth2FailureHandler(
     ) {
         val message = if (exception is PackitAuthenticationException) {
             exceptionHandler.errorDetailForPackitAuthenticationException(exception).detail
-        }
-        else {
+        } else {
             exception.message
         }
 

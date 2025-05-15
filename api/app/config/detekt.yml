@@ -28,7 +28,7 @@ formatting:
   SpacingAroundCurly:
     active: true
   SpacingAroundKeyword:
-    active: false
+    active: true
 
 style:
   MandatoryBracesIfStatements:

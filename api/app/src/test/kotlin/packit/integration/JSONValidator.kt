@@ -39,8 +39,7 @@ class JSONValidator {
             val error = json["errors"].singleOrNull { it["error"].asText() == expectedError }
             if (error != null) {
                 assertThat(error["detail"].asText()).contains(expectedErrorText)
-            }
-            else {
+            } else {
                 fail("Expected error '$expectedError' to be present in $response")
             }
         }
@@ -75,8 +74,7 @@ class JSONValidator {
     private fun parseJson(jsonAsString: String): JsonNode {
         return try {
             JsonLoader.fromString(jsonAsString)
-        }
-        catch (e: JsonParseException) {
+        } catch (e: JsonParseException) {
             throw IOException("Failed to parse text as JSON.\nText was: $jsonAsString\n\n$e")
         }
     }
