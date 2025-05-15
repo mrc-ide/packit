@@ -17,6 +17,7 @@ interface UserRepository : JpaRepository<User, UUID>
     fun deleteByUsername(username: String)
     fun findByEmail(email: String): User?
     fun findByUsernameAndUserSource(username: String, userSource: String): User?
+    fun findByUserSourceNotOrderByUsername(userSource: String): List<User>
     fun existsByUsername(username: String): Boolean
     fun existsByEmail(email: String): Boolean
     fun findByUsernameIn(usernames: List<String>): List<User>

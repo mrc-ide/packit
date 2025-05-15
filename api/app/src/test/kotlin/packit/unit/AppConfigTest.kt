@@ -62,6 +62,7 @@ class AppConfigTest
         assertFalse(sut.authEnableGithubLogin)
         assertFalse(sut.authEnablePreAuthLogin)
         assertTrue(sut.authEnableBasicLogin)
+        assertEquals("basic", sut.authMethod)
         assertEquals(sut.authExpiryDays, 1L)
         assertTrue(sut.authEnabled)
         assertEquals(sut.authGithubAPIOrg, "githubAPIOrg")
