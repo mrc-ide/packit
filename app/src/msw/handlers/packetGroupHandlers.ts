@@ -24,7 +24,7 @@ export const packetGroupHandlers = [
   rest.get(`${packetGroupIndexUri}/${mockPacketGroupResponse.content[0].name}/packets`, (req, res, ctx) => {
     return res(ctx.json(mockPacketGroupResponse.content));
   }),
-  rest.get(`${packetGroupIndexUri}/user-role/read-permission`, (req, res, ctx) => {
+  rest.get(`${packetGroupIndexUri}/_/read-permission`, (req, res, ctx) => {
     return res(ctx.json(mockRolesAndUsersToUpdateRead));
   })
 ];
