@@ -37,7 +37,7 @@ INSERT INTO "user" (username, display_name, email, disabled, user_source, last_l
 VALUES (:'username', :'display_name', :'email', FALSE, 'preauth', NULL);
 
 INSERT INTO "role" (name, is_username)
-VALUES(:'username', TRUE)
+VALUES(:'username', TRUE);
 
 INSERT INTO "user_role" (user_id, role_id)
 VALUES ((SELECT "user".id FROM "user" WHERE "user".username=:'username'), (select role.id from role where role.name=:'username'));
