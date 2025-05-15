@@ -20,7 +20,7 @@ formatting:
   Indentation:
     active: true
   NoLineBreakAfterElse:
-    active: false
+    active: true
   NoWildcardImports:
     active: false
   ParameterListWrapping:
