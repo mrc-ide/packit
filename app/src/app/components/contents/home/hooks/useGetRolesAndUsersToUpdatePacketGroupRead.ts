@@ -9,7 +9,7 @@ import { RolesAndUsersToUpdateRead } from "../../manageAccess/types/RoleWithRela
  */
 export const useGetRolesAndUsersToUpdatePacketGroupRead = () => {
   const { data, isLoading, error, mutate } = useSWR<Record<string, RolesAndUsersToUpdateRead>>(
-    `${appConfig.apiUrl()}/packetGroups/user-role/read-permission`,
+    `${appConfig.apiUrl()}/packetGroups/_/read-permission`,
     (url: string) => fetcher({ url })
   );
 

@@ -13,9 +13,11 @@ data class UpdateReadRoles(
 )
 
 /**
- * @param cantRead Roles and users that are explicitly restricted from reading the resource.
+ * @param cantRead Roles and users which have no permission to read the resource, directly or indirectly.
  * @param withRead Roles and users that have specific read permissions for the resource, which can be revoked.
- * @param canRead Roles and users that are allowed to read the resource, either through specific or broad permissions.
+ * If part of  withRead, this implies canRead.
+ * @param canRead Roles that can read the resource. Users that can
+ * read the resource via their own specific permissions.
  */
 data class RolesAndUsersForReadUpdate(
     val cantRead: BasicRolesAndUsersDto,
