@@ -661,9 +661,9 @@ class UserServiceTest {
     @Test
     fun `getAllNonServiceUsers returns user list filtering out service user`()
     {
-        val userList = listOf(mockBasicUser, mockServiceUser, mockPreauthUser)
-        whenever(mockUserRepository.findAll()).thenReturn(userList)
+        val userList = listOf(mockBasicUser, mockPreauthUser)
+        whenever(mockUserRepository.findByUserSourceNotOrderByUsername("service")).thenReturn(userList)
         val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder)
-        assertEquals(service.getAllNonServiceUsers(), listOf(mockBasicUser, mockPreauthUser))
+        assertEquals(userList, service.getAllNonServiceUsers())
     }
 }
