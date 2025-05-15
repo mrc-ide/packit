@@ -220,6 +220,6 @@ class BaseUserService(
 
     override fun getAllNonServiceUsers(): List<User>
     {
-        return userRepository.findAll().filter{ it.userSource != "service" }
+        return userRepository.findByUserSourceNotOrderByUsername("service")
     }
 }

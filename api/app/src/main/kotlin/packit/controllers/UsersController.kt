@@ -12,7 +12,7 @@ import packit.service.UserService
 @Controller
 @PreAuthorize("hasAuthority('user.manage')")
 @RequestMapping("/users")
-class UsersController(private val userService: UserService,) {
+class UsersController(private val userService: UserService) {
     @GetMapping
     fun getAllUsers(): ResponseEntity<List<UserDto>>
     {
