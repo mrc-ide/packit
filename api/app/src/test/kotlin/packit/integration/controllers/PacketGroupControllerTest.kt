@@ -35,30 +35,25 @@ class PacketGroupControllerTest(
     @Autowired val packetGroupRepository: PacketGroupRepository,
     @Autowired val roleRepository: RoleRepository,
     @Autowired val permissionsRepository: PermissionRepository
-) : IntegrationTest()
-{
-    companion object
-    {
+) : IntegrationTest() {
+    companion object {
         const val idOfComputedResourcePacket = "20240729-154635-88c5c1eb"
     }
 
     @BeforeAll
-    fun setupData()
-    {
+    fun setupData() {
         packetService.importPackets()
     }
 
     @AfterAll
-    fun cleanup()
-    {
+    fun cleanup() {
         packetRepository.deleteAll()
         packetGroupRepository.deleteAll()
     }
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:random-name"])
-    fun `getPacketGroups returns empty page if no permissions match`()
-    {
+    fun `getPacketGroups returns empty page if no permissions match`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packetGroups",
             HttpMethod.GET,
@@ -72,8 +67,7 @@ class PacketGroupControllerTest(
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `return correct page information for get pageable packet groups `()
-    {
+    fun `return correct page information for get pageable packet groups `() {
         val expectedTotalSize = packetGroupRepository.count()
 
         val result: ResponseEntity<String> = restTemplate.exchange(
@@ -92,8 +86,7 @@ class PacketGroupControllerTest(
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `getPacketGroups can get second page with correct information`()
-    {
+    fun `getPacketGroups can get second page with correct information`() {
         val expectedTotalSize = packetGroupRepository.count()
 
         val result: ResponseEntity<String> = restTemplate.exchange(
@@ -117,8 +110,7 @@ class PacketGroupControllerTest(
             "packet.read:packet:computed-resource:$idOfComputedResourcePacket"
         ]
     )
-    fun `getPacketGroups returns of packet groups user can see`()
-    {
+    fun `getPacketGroups returns of packet groups user can see`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packetGroups",
             HttpMethod.GET,
@@ -131,8 +123,7 @@ class PacketGroupControllerTest(
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `getPacketGroups with filtered name`()
-    {
+    fun `getPacketGroups with filtered name`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packetGroups?filterName=test",
             HttpMethod.GET,
@@ -147,8 +138,7 @@ class PacketGroupControllerTest(
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:custom_metadata"])
-    fun `getDisplay returns display name and description`()
-    {
+    fun `getDisplay returns display name and description`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packetGroups/custom_metadata/display",
             HttpMethod.GET,
@@ -164,8 +154,7 @@ class PacketGroupControllerTest(
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:wrong-name"])
-    fun `getDisplay returns 401 if authority is not correct`()
-    {
+    fun `getDisplay returns 401 if authority is not correct`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packetGroups/custom_metadata/display",
             HttpMethod.GET,
@@ -176,8 +165,7 @@ class PacketGroupControllerTest(
     }
 
     @Test
-    fun `getPacketsByName returns error if not authenticated`()
-    {
+    fun `getPacketsByName returns error if not authenticated`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packetGroups/artefact-types/packets",
             HttpMethod.GET
@@ -187,8 +175,7 @@ class PacketGroupControllerTest(
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:random-name"])
-    fun `getPacketsByName returns empty list if no permissions match`()
-    {
+    fun `getPacketsByName returns empty list if no permissions match`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packetGroups/artefact-types/packets",
             HttpMethod.GET,
@@ -203,8 +190,7 @@ class PacketGroupControllerTest(
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packet:computed-resource:$idOfComputedResourcePacket"])
-    fun `getPacketsByName returns of packets user can see`()
-    {
+    fun `getPacketsByName returns of packets user can see`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packetGroups/computed-resource/packets",
             HttpMethod.GET,
@@ -219,8 +205,7 @@ class PacketGroupControllerTest(
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `test can get packet group summary if authenticated`()
-    {
+    fun `test can get packet group summary if authenticated`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packetGroupSummaries?pageNumber=0&pageSize=5&filterName=hell",
             HttpMethod.GET,
@@ -230,8 +215,7 @@ class PacketGroupControllerTest(
     }
 
     @Test
-    fun `test can not get packet group summary if not authenticated`()
-    {
+    fun `test can not get packet group summary if not authenticated`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packetGroupSummaries?pageNumber=0&pageSize=5&filterName=hell",
             HttpMethod.GET
@@ -241,8 +225,7 @@ class PacketGroupControllerTest(
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:random-name"])
-    fun `getPacketGroupSummaries returns empty page if no permissions match`()
-    {
+    fun `getPacketGroupSummaries returns empty page if no permissions match`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packetGroupSummaries",
             HttpMethod.GET,
@@ -254,8 +237,7 @@ class PacketGroupControllerTest(
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:artefact-types", "packet.read:packetGroup:depends"])
-    fun `getPacketGroupSummaries returns list of packet groups user can see`()
-    {
+    fun `getPacketGroupSummaries returns list of packet groups user can see`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packetGroupSummaries",
             HttpMethod.GET,
@@ -269,8 +251,7 @@ class PacketGroupControllerTest(
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.manage:packet:test:123"])
-    fun `user without permission cannot update read permission on roles`()
-    {
+    fun `user without permission cannot update read permission on roles`() {
         val updatePacketReadRoles = jacksonObjectMapper().writeValueAsString(
             UpdatePacketReadRoles(
                 roleNamesToAdd = setOf(),
@@ -289,8 +270,7 @@ class PacketGroupControllerTest(
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.manage"])
-    fun `user with packet manage can update read permission on roles`()
-    {
+    fun `user with packet manage can update read permission on roles`() {
         val packetGroup = packetGroupRepository.findByName("test1")!!
         val roleNamesToAdd = setOf("testRole1", "testRole2")
         val roleNamesToRemove = setOf("testRole3", "testRole4")

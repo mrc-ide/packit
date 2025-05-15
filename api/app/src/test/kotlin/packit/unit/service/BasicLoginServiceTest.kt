@@ -16,8 +16,7 @@ import packit.service.UserService
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class BasicLoginServiceTest
-{
+class BasicLoginServiceTest {
     private val userPrincipal = UserPrincipal(
         "userName",
         "displayName",
@@ -36,8 +35,7 @@ class BasicLoginServiceTest
     private val mockUserService = mock<UserService>()
 
     @Test
-    fun `can authenticate and issue token`()
-    {
+    fun `can authenticate and issue token`() {
         val loginWithPassword = LoginWithPassword("fake email", "fake password")
         val sut = BasicLoginService(mockIssuer, mockAuthenticationManager, mockUserService)
 
@@ -54,8 +52,7 @@ class BasicLoginServiceTest
     }
 
     @Test
-    fun `throws if email and password are empty`()
-    {
+    fun `throws if email and password are empty`() {
         val sut = BasicLoginService(mockIssuer, mockAuthenticationManager, mockUserService)
 
         val ex = assertThrows<PackitException> { sut.authenticateAndIssueToken(LoginWithPassword("", "")) }

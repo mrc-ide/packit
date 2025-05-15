@@ -7,8 +7,7 @@ import packit.model.User
 import java.util.*
 
 @Repository
-interface UserRepository : JpaRepository<User, UUID>
-{
+interface UserRepository : JpaRepository<User, UUID> {
     fun findByUsername(username: String): User?
 
     @Transactional

@@ -12,8 +12,7 @@ import java.time.Instant
 class AuthorizationLogic(
     private val packetService: PacketService,
     private val permissionService: PermissionService,
-)
-{
+) {
     fun canReadPacket(operations: SecurityExpressionOperations, packet: Packet): Boolean =
         // TODO: update with tag when implemented
         operations.hasAnyAuthority(
@@ -26,14 +25,12 @@ class AuthorizationLogic(
             permissionService.buildScopedPermission("packet.manage", packet.name)
         )
 
-    fun canReadPacket(operations: SecurityExpressionOperations, id: String): Boolean
-    {
+    fun canReadPacket(operations: SecurityExpressionOperations, id: String): Boolean {
         val packet = packetService.getPacket(id)
         return canReadPacket(operations, packet)
     }
 
-    fun canReadPacketGroup(operations: SecurityExpressionOperations, name: String): Boolean
-    {
+    fun canReadPacketGroup(operations: SecurityExpressionOperations, name: String): Boolean {
         return operations.hasAnyAuthority(
             "user.manage",
             "packet.read",
@@ -43,8 +40,7 @@ class AuthorizationLogic(
         ) || canReadAnyPacketInGroup(operations, name)
     }
 
-    fun canReadRoles(operations: SecurityExpressionOperations): Boolean
-    {
+    fun canReadRoles(operations: SecurityExpressionOperations): Boolean {
         return operations.hasAuthority("user.manage") ||
                 operations.authentication.authorities.any {
                     it.authority.startsWith("packet.manage")
@@ -55,10 +51,8 @@ class AuthorizationLogic(
         operations: SecurityExpressionOperations,
         packetGroupName: String,
         packetId: String? = null,
-    ): Boolean
-    {
-        return when
-        {
+    ): Boolean {
+        return when {
             operations.hasAnyAuthority("packet.manage", "user.manage") -> true
             // check if the user has permission to manage the packet group
             packetId == null -> operations.hasAnyAuthority(
@@ -97,8 +91,7 @@ class AuthorizationLogic(
     internal fun canReadAnyPacketInGroup(
         operations: SecurityExpressionOperations,
         name: String,
-    ): Boolean
-    {
+    ): Boolean {
         return operations.authentication.authorities.any {
             it.authority.startsWith("packet.read:packet:$name") ||
                     it.authority.startsWith("packet.manage:packet:$name")

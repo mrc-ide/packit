@@ -97,8 +97,7 @@ class ServiceLoginService(
     throw PackitException("externalJwtTokenInvalid", HttpStatus.UNAUTHORIZED)
   }
 
-  companion object
-  {
+  companion object {
     private val log = LoggerFactory.getLogger(ServiceLoginService::class.java)
   }
 }

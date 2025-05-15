@@ -8,8 +8,7 @@ import org.springframework.transaction.annotation.Transactional
 import packit.model.RunInfo
 
 @Repository
-interface RunInfoRepository : JpaRepository<RunInfo, String>
-{
+interface RunInfoRepository : JpaRepository<RunInfo, String> {
     fun findByTaskId(taskId: String): RunInfo?
     fun findAllByPacketGroupNameContaining(packetGroupName: String, pageable: Pageable): Page<RunInfo>
 

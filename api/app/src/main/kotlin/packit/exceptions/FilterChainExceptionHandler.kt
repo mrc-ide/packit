@@ -13,21 +13,19 @@ import java.io.IOException
 @Component
 class FilterChainExceptionHandler(
     private val handlerExceptionResolver: HandlerExceptionResolver
-) : OncePerRequestFilter()
-{
-    companion object
-    {
+) : OncePerRequestFilter() {
+    companion object {
         private val log = LoggerFactory.getLogger(FilterChainExceptionHandler::class.java)
     }
 
     @Throws(ServletException::class, IOException::class)
-    override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain)
-    {
-        try
-        {
+    override fun doFilterInternal(
+        request: HttpServletRequest, response: HttpServletResponse,
+        filterChain: FilterChain
+    ) {
+        try {
             filterChain.doFilter(request, response)
-        } catch (e: Exception)
-        {
+        } catch (e: Exception) {
             log.error("Spring Security Filter Chain Exception:", e)
             handlerExceptionResolver.resolveException(request, response, null, e)
         }

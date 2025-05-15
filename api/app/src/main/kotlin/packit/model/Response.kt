@@ -10,8 +10,7 @@ data class ServerResponse<T>(
         val errors: Any?
 ) : Serializable
 
-data class PackitErrorResponse(val error: ErrorDetail)
-{
+data class PackitErrorResponse(val error: ErrorDetail) {
         val data = mapOf<Any, Any>()
         val status = "failure"
 }

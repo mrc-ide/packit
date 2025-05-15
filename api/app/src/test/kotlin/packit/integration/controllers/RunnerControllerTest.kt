@@ -23,8 +23,7 @@ import packit.repository.UserRepository
 import java.time.Duration
 import kotlin.test.assertEquals
 
-class RunnerControllerTest : IntegrationTest()
-{
+class RunnerControllerTest : IntegrationTest() {
     @Autowired
     private lateinit var runInfoRepository: RunInfoRepository
 
@@ -34,13 +33,11 @@ class RunnerControllerTest : IntegrationTest()
     private val testPacketGroupName = "incoming_data"
     private val testUser = User("test.user@example.com", mutableListOf(), false, "source1", "Test User")
 
-    private fun getSubmitRunInfo(branch: String, commitHash: String): SubmitRunInfo
-    {
+    private fun getSubmitRunInfo(branch: String, commitHash: String): SubmitRunInfo {
         return SubmitRunInfo(testPacketGroupName, branch, commitHash, emptyMap())
     }
 
-    private fun submitTestRun(): Pair<String, GitBranchInfo>
-    {
+    private fun submitTestRun(): Pair<String, GitBranchInfo> {
         val fetchRes: ResponseEntity<Unit> = restTemplate.exchange(
             "/runner/git/fetch",
             HttpMethod.POST,
@@ -82,22 +79,19 @@ class RunnerControllerTest : IntegrationTest()
     }
 
     @BeforeEach
-    fun setupData()
-    {
+    fun setupData() {
         userRepository.save(testUser)
     }
 
     @AfterEach
-    fun cleanupData()
-    {
+    fun cleanupData() {
         runInfoRepository.deleteAllByPacketGroupName(testPacketGroupName)
         userRepository.delete(testUser)
     }
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.run"])
-    fun `can get orderly runner version`()
-    {
+    fun `can get orderly runner version`() {
         val res: ResponseEntity<OrderlyRunnerVersion> = restTemplate.exchange(
             "/runner/version",
             HttpMethod.GET,
@@ -110,8 +104,7 @@ class RunnerControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["none"])
-    fun `gets unauthorized if no packet run authority`()
-    {
+    fun `gets unauthorized if no packet run authority`() {
         val res: ResponseEntity<OrderlyRunnerVersion> = restTemplate.getForEntity(
             "/runner/version",
             OrderlyRunnerVersion::class.java
@@ -122,8 +115,7 @@ class RunnerControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.run"])
-    fun `can fetch git`()
-    {
+    fun `can fetch git`() {
         val res: ResponseEntity<Unit> = restTemplate.exchange(
             "/runner/git/fetch",
             HttpMethod.POST,
@@ -134,8 +126,7 @@ class RunnerControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.run"])
-    fun `can get git branches`()
-    {
+    fun `can get git branches`() {
         val testBranchName = "master"
         val testBranchMessage = "initial commit\n"
         val res: ResponseEntity<GitBranches> = restTemplate.exchange(
@@ -155,8 +146,7 @@ class RunnerControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.run"])
-    fun `can get parameters`()
-    {
+    fun `can get parameters`() {
         val testPacketGroupName = "parameters"
         val expectedParameters = listOf(
             Parameter("a", null),
@@ -174,8 +164,7 @@ class RunnerControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.run"])
-    fun `can get list of packetGroups`()
-    {
+    fun `can get list of packetGroups`() {
         val res: ResponseEntity<List<RunnerPacketGroup>> = restTemplate.exchange(
             "/runner/packetGroups?ref=master",
             HttpMethod.GET,
@@ -191,8 +180,7 @@ class RunnerControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.run"])
-    fun `can submit report run`()
-    {
+    fun `can submit report run`() {
         val (taskId) = submitTestRun()
 
         assertEquals(String::class.java, taskId::class.java)
@@ -200,8 +188,7 @@ class RunnerControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.run"])
-    fun `can get status of single task`()
-    {
+    fun `can get status of single task`() {
         val (taskId, branch) = submitTestRun()
         val statusRes: ResponseEntity<RunInfoDto> = restTemplate.exchange(
             "/runner/status/$taskId",
@@ -217,8 +204,7 @@ class RunnerControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.run"])
-    fun `can get paginated status of multiple tasks`()
-    {
+    fun `can get paginated status of multiple tasks`() {
         val (taskId1, branch1) = submitTestRun()
         val (taskId2, branch2) = submitTestRun()
         val pageNumber = 0
@@ -238,8 +224,7 @@ class RunnerControllerTest : IntegrationTest()
             .let {
                 jacksonObjectMapper().convertValue(
                     it,
-                    object : TypeReference<List<BasicRunInfoDto>>()
-                    {}
+                    object : TypeReference<List<BasicRunInfoDto>>() {}
                 )
             }
 
@@ -256,8 +241,7 @@ class RunnerControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.run"])
-    fun `can get logs of run`()
-    {
+    fun `can get logs of run`() {
         val (taskId) = submitTestRun()
 
         val info = waitForTask(taskId)
@@ -271,8 +255,7 @@ class RunnerControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.run", "outpack.read"])
-    fun `packet produced by runner is pushed to outpack`()
-    {
+    fun `packet produced by runner is pushed to outpack`() {
         val (taskId) = submitTestRun()
 
         val info = waitForTask(taskId)
@@ -290,12 +273,10 @@ class RunnerControllerTest : IntegrationTest()
 }
 
 @TestPropertySource(properties = ["orderly.runner.repository.url=http://example.com"])
-class UnknownRepoRunnerControllerTest : IntegrationTest()
-{
+class UnknownRepoRunnerControllerTest : IntegrationTest() {
     @Test
     @WithAuthenticatedUser(authorities = ["packet.run"])
-    fun `git branches of unknown repo is empty`()
-    {
+    fun `git branches of unknown repo is empty`() {
         val res: ResponseEntity<GitBranches> = restTemplate.exchange(
             "/runner/git/branches",
             HttpMethod.GET,
@@ -308,12 +289,10 @@ class UnknownRepoRunnerControllerTest : IntegrationTest()
 }
 
 @TestPropertySource(properties = ["orderly.runner.enabled=false"])
-class DisabledRunnerControllerTest : IntegrationTest()
-{
+class DisabledRunnerControllerTest : IntegrationTest() {
     @Test
     @WithAuthenticatedUser(authorities = ["packet.run"])
-    fun `cannot get orderly runner version`()
-    {
+    fun `cannot get orderly runner version`() {
         val res: ResponseEntity<JsonNode> = restTemplate.exchange(
             "/runner/version",
             HttpMethod.GET,

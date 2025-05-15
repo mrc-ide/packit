@@ -17,24 +17,21 @@ import packit.service.PacketService
 class PacketController(
     private val packetService: PacketService,
     private val oneTimeTokenService: OneTimeTokenService,
-)
-{
+) {
     @GetMapping
     fun pageableIndex(
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
         @RequestParam(required = false, defaultValue = "50") pageSize: Int,
         @RequestParam(required = false, defaultValue = "") filterName: String,
         @RequestParam(required = false, defaultValue = "") filterId: String,
-    ): ResponseEntity<Page<PacketDto>>
-    {
+    ): ResponseEntity<Page<PacketDto>> {
         val payload = PageablePayload(pageNumber, pageSize)
         return ResponseEntity.ok(packetService.getPackets(payload, filterName, filterId).map { it.toDto() })
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("@authz.canReadPacket(#root, #id)")
-    fun findPacketMetadata(@PathVariable id: String): ResponseEntity<PacketMetadata>
-    {
+    fun findPacketMetadata(@PathVariable id: String): ResponseEntity<PacketMetadata> {
         return ResponseEntity.ok(packetService.getMetadataBy(id))
     }
 

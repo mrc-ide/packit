@@ -19,8 +19,7 @@ class UpdateRolePermission(
     val packetId: String? = null,
     val tagId: Int? = null,
     val packetGroupId: Int? = null
-)
-{
+) {
     init
     {
         val nonNullFields = listOf(packetId, tagId, packetGroupId).count { it != null }

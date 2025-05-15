@@ -7,8 +7,7 @@ import packit.model.Permission
 import packit.model.RolePermission
 import packit.repository.PermissionRepository
 
-interface PermissionService
-{
+interface PermissionService {
     fun checkMatchingPermissions(permissionsToCheck: List<String>): List<Permission>
     fun buildScopedPermission(rolePermission: RolePermission): String
     fun buildScopedPermission(
@@ -24,23 +23,18 @@ interface PermissionService
 @Service
 class BasePermissionService(
     private val permissionRepository: PermissionRepository,
-) : PermissionService
-{
-    override fun checkMatchingPermissions(permissionsToCheck: List<String>): List<Permission>
-    {
+) : PermissionService {
+    override fun checkMatchingPermissions(permissionsToCheck: List<String>): List<Permission> {
         val matchedPermissions = permissionRepository.findByNameIn(permissionsToCheck)
 
-        if (matchedPermissions.size != permissionsToCheck.size)
-        {
+        if (matchedPermissions.size != permissionsToCheck.size) {
             throw PackitException("invalidPermissionsProvided", HttpStatus.BAD_REQUEST)
         }
         return matchedPermissions
     }
 
-    override fun buildScopedPermission(rolePermission: RolePermission): String
-    {
-        val packetGroupName = when
-        {
+    override fun buildScopedPermission(rolePermission: RolePermission): String {
+        val packetGroupName = when {
             rolePermission.packet != null -> rolePermission.packet!!.name
             rolePermission.packetGroup != null -> rolePermission.packetGroup!!.name
             else -> null
@@ -56,8 +50,7 @@ class BasePermissionService(
         packetGroupName: String?,
         packetId: String?,
         tag: String?,
-    ): String
-    {
+    ): String {
         require(listOf(packetGroupName, tag).count { it != null } <= 1) {
             "Only one of packetGroupName or tag can be provided"
         }
@@ -66,8 +59,7 @@ class BasePermissionService(
             "packetGroupName must be provided if packetId is given"
         }
 
-        return when
-        {
+        return when {
             packetId != null -> "$permission:packet:$packetGroupName:$packetId"
             packetGroupName != null -> "$permission:packetGroup:$packetGroupName"
             tag != null -> "$permission:tag:$tag"
@@ -75,8 +67,7 @@ class BasePermissionService(
         }
     }
 
-    override fun getByName(permissionName: String): Permission
-    {
+    override fun getByName(permissionName: String): Permission {
         return permissionRepository.findByName(permissionName)
             ?: throw PackitException("permissionNotFound", HttpStatus.BAD_REQUEST)
     }

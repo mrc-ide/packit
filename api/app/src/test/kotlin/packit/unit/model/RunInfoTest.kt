@@ -8,15 +8,13 @@ import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class RunInfoTest
-{
+class RunInfoTest {
     private val testUser = User("user1", mutableListOf(), false, "source1", "displayName1", id = UUID.randomUUID())
     private val testUserNoDisplayName =
         User("user1", mutableListOf(), false, "source1", displayName = null, id = UUID.randomUUID())
 
     @Test
-    fun `toDto return correct RunInfoDto for RunInfo`()
-    {
+    fun `toDto return correct RunInfoDto for RunInfo`() {
         val runInfo = RunInfo(
             "task_id", "report_name", "PENDING", "hash", "branch", listOf("log1", "log2"),
             1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input"), user = testUser
@@ -38,8 +36,7 @@ class RunInfoTest
     }
 
     @Test
-    fun `toBasicDto return correct BasicRunInfoDto for RunInfo`()
-    {
+    fun `toBasicDto return correct BasicRunInfoDto for RunInfo`() {
         val runInfo = RunInfo(
             "task_id", "report_name", "PENDING", "hash", "branch", listOf("log1", "log2"),
             1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input"), user = testUser
@@ -56,8 +53,7 @@ class RunInfoTest
     }
 
     @Test
-    fun `toDto should fallback to username if displayName is null`()
-    {
+    fun `toDto should fallback to username if displayName is null`() {
 
         val runInfo = RunInfo(
             "task_id", "report_name", "PENDING", "hash", "branch", listOf("log1", "log2"),
@@ -68,8 +64,7 @@ class RunInfoTest
     }
 
     @Test
-    fun `toBasicDto should fallback to username if displayName is null`()
-    {
+    fun `toBasicDto should fallback to username if displayName is null`() {
         val runInfo = RunInfo(
             "task_id", "report_name", "PENDING", "hash", "branch", listOf("log1", "log2"),
             1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input"), user = testUserNoDisplayName

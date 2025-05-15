@@ -20,8 +20,7 @@ import java.util.zip.ZipInputStream
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class PacketControllerTest : IntegrationTest()
-{
+class PacketControllerTest : IntegrationTest() {
     @Autowired
     private lateinit var packetService: PacketService
 
@@ -37,8 +36,7 @@ class PacketControllerTest : IntegrationTest()
     private lateinit var packetControllerTestHelper: PacketControllerTestHelper
 
     @BeforeAll
-    fun setupData()
-    {
+    fun setupData() {
         packetService.importPackets()
     }
 
@@ -48,8 +46,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @AfterAll
-    fun cleanup()
-    {
+    fun cleanup() {
         packetRepository.deleteAll()
         packetGroupRepository.deleteAll()
     }
@@ -72,8 +69,7 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `can get pageable packets`()
-    {
+    fun `can get pageable packets`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets?pageNumber=0&pageSize=5",
             HttpMethod.GET,
@@ -83,16 +79,14 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `does not get pageable packets when not logged in`()
-    {
+    fun `does not get pageable packets when not logged in`() {
         val result = restTemplate.getForEntity("/packets?pageNumber=3&pageSize=5", String::class.java)
         assertUnauthorized(result)
     }
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `can get non pageable packets`()
-    {
+    fun `can get non pageable packets`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets",
             HttpMethod.GET,
@@ -103,8 +97,7 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `get packet metadata by packet id`()
-    {
+    fun `get packet metadata by packet id`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets/$idOfArtefactTypesPacket",
             HttpMethod.GET,
@@ -115,8 +108,7 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packet:artefact-types:$idOfArtefactTypesPacket"])
-    fun `findPacketMetadata returns metadata if user has correct specific permission`()
-    {
+    fun `findPacketMetadata returns metadata if user has correct specific permission`() {
 
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets/$idOfArtefactTypesPacket",
@@ -128,8 +120,7 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packet:name:wrong-id"])
-    fun `findPacketMetadata returns 401 if incorrect specific permission`()
-    {
+    fun `findPacketMetadata returns 401 if incorrect specific permission`() {
 
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets/$idOfArtefactTypesPacket",
@@ -141,8 +132,7 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:random-name"])
-    fun `pageableIndex returns empty page if no permissions match`()
-    {
+    fun `pageableIndex returns empty page if no permissions match`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets",
             HttpMethod.GET,
@@ -154,8 +144,7 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:artefact-types"])
-    fun `pageableIndex returns packets user can see`()
-    {
+    fun `pageableIndex returns packets user can see`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets",
             HttpMethod.GET,
@@ -172,8 +161,7 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:wrong-name"])
-    fun `generateTokenForDownloadingFile returns 401 if no permissions match the packet`()
-    {
+    fun `generateTokenForDownloadingFile returns 401 if no permissions match the packet`() {
         val originalTokenCount = oneTimeTokenRepository.count()
 
         val result: ResponseEntity<String> = packetControllerTestHelper.callGenerateTokenEndpoint(
@@ -187,8 +175,7 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:download-types"])
-    fun `generateTokenForDownloadingFile returns 400 if any of the filepaths are not found on the packet`()
-    {
+    fun `generateTokenForDownloadingFile returns 400 if any of the filepaths are not found on the packet`() {
         val originalTokenCount = oneTimeTokenRepository.count()
 
         val result: ResponseEntity<String> = packetControllerTestHelper.callGenerateTokenEndpoint(
@@ -202,8 +189,7 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:download-types"])
-    fun `generateTokenForDownloadingFile returns 400 if no filepaths are provided`()
-    {
+    fun `generateTokenForDownloadingFile returns 400 if no filepaths are provided`() {
         val originalTokenCount = oneTimeTokenRepository.count()
 
         val result: ResponseEntity<String> = packetControllerTestHelper.callGenerateTokenEndpoint(
@@ -217,8 +203,7 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:download-types"])
-    fun `generateTokenForDownloadingFile creates a token with correct attributes and returns its UUID`()
-    {
+    fun `generateTokenForDownloadingFile creates a token with correct attributes and returns its UUID`() {
         val now = Instant.now()
         val originalTokenCount = oneTimeTokenRepository.count()
         val paths = filePathsAndSizesForDownloadTypesPacket.keys
@@ -240,8 +225,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `streamFile returns 401 'unauthorized' when no token query parameter is provided`()
-    {
+    fun `streamFile returns 401 'unauthorized' when no token query parameter is provided`() {
         val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFileEndpoint(
             path = "a_renamed_common_resource.csv",
             packetId = idOfDownloadTypesPacket3,
@@ -254,8 +238,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `streamFile returns 401 'unauthorized' when passed a token id that does not exist`()
-    {
+    fun `streamFile returns 401 'unauthorized' when passed a token id that does not exist`() {
         val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFileEndpoint(
             path = "a_renamed_common_resource.csv",
             packetId = idOfDownloadTypesPacket3,
@@ -266,8 +249,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `streamFile returns 401 'unauthorized' when the token's filepaths do not match the requested files`()
-    {
+    fun `streamFile returns 401 'unauthorized' when the token's filepaths do not match the requested files`() {
         val token = oneTimeTokenRepository.save(
             OneTimeToken(
                 id = UUID.randomUUID(),
@@ -287,8 +269,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `streamFile returns 401 'unauthorized' when the token's packet does not match the requested packet`()
-    {
+    fun `streamFile returns 401 'unauthorized' when the token's packet does not match the requested packet`() {
         val token = oneTimeTokenRepository.save(
             OneTimeToken(
                 id = UUID.randomUUID(),
@@ -308,8 +289,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `streamFile returns 401 'unauthorized' when the token has expired`()
-    {
+    fun `streamFile returns 401 'unauthorized' when the token has expired`() {
         val token = oneTimeTokenRepository.save(
             OneTimeToken(
                 id = UUID.randomUUID(),
@@ -329,8 +309,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `streamFile can stream a single file, uncompressed, and deletes the one-time token`()
-    {
+    fun `streamFile can stream a single file, uncompressed, and deletes the one-time token`() {
         val token = oneTimeTokenRepository.save(
             OneTimeToken(
                 id = UUID.randomUUID(),
@@ -357,8 +336,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `streamFilesZipped returns 401 'unauthorized' when no token query parameter is provided`()
-    {
+    fun `streamFilesZipped returns 401 'unauthorized' when no token query parameter is provided`() {
         val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFilesZippedEndpoint(
             paths = setOf("a_renamed_common_resource.csv"),
             packetId = idOfDownloadTypesPacket3,
@@ -371,8 +349,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `streamFilesZipped returns 401 'unauthorized' when passed a token id that does not exist`()
-    {
+    fun `streamFilesZipped returns 401 'unauthorized' when passed a token id that does not exist`() {
         val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFilesZippedEndpoint(
             paths = setOf("a_renamed_common_resource.csv"),
             packetId = idOfDownloadTypesPacket3,
@@ -383,8 +360,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `streamFilesZipped returns 401 'unauthorized' when the token's filepaths do not match the requested files`()
-    {
+    fun `streamFilesZipped returns 401 'unauthorized' when the token's filepaths do not match the requested files`() {
         val token = oneTimeTokenRepository.save(
             OneTimeToken(
                 id = UUID.randomUUID(),
@@ -404,8 +380,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `streamFilesZipped returns 401 'unauthorized' when the token's packet does not match the requested packet`()
-    {
+    fun `streamFilesZipped returns 401 'unauthorized' when the token's packet does not match the requested packet`() {
         val token = oneTimeTokenRepository.save(
             OneTimeToken(
                 id = UUID.randomUUID(),
@@ -425,8 +400,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `streamFilesZipped returns 401 'unauthorized' when the token has expired`()
-    {
+    fun `streamFilesZipped returns 401 'unauthorized' when the token has expired`() {
         val token = oneTimeTokenRepository.save(
             OneTimeToken(
                 id = UUID.randomUUID(),
@@ -446,8 +420,7 @@ class PacketControllerTest : IntegrationTest()
     }
 
     @Test
-    fun `streamFilesZipped streams a zip file, and deletes the one-time token`()
-    {
+    fun `streamFilesZipped streams a zip file, and deletes the one-time token`() {
         val paths = filePathsAndSizesForDownloadTypesPacket.keys
         val token = oneTimeTokenRepository.save(
             OneTimeToken(
@@ -493,8 +466,7 @@ class PacketControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:download-types"])
-    fun `streamFilesZipped 400s when passed an empty list of paths`()
-    {
+    fun `streamFilesZipped 400s when passed an empty list of paths`() {
         val token = oneTimeTokenRepository.save(
             OneTimeToken(
                 id = UUID.randomUUID(),

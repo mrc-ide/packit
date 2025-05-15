@@ -21,19 +21,16 @@ class OrderlyRunnerClientTest(
 
     @Value("\${orderly.runner.location-url}")
     val locationUrl: String
-) : IntegrationTest()
-{
+) : IntegrationTest() {
     val sut: OrderlyRunnerClient = OrderlyRunnerClient(runnerUrl)
 
     @BeforeEach
-    fun fetch()
-    {
+    fun fetch() {
         sut.gitFetch(repositoryUrl)
     }
 
     @Test
-    fun `can get version`()
-    {
+    fun `can get version`() {
         val result = sut.getVersion()
 
         assertIs<OrderlyRunnerVersion>(result)
@@ -42,15 +39,13 @@ class OrderlyRunnerClientTest(
     }
 
     @Test
-    fun `can git fetch`()
-    {
+    fun `can git fetch`() {
         val res = sut.gitFetch(repositoryUrl)
         assertEquals(Unit, res)
     }
 
     @Test
-    fun `can get git branches`()
-    {
+    fun `can get git branches`() {
         val testBranchName = "master"
         val testBranchMessage = "initial commit\n"
         val gitBranches = sut.getBranches(repositoryUrl)
@@ -63,8 +58,7 @@ class OrderlyRunnerClientTest(
     }
 
     @Test
-    fun `can get parameters`()
-    {
+    fun `can get parameters`() {
         val testPacketGroupName = "parameters"
         val expectedParameters = listOf(
             Parameter("a", null),
@@ -78,8 +72,7 @@ class OrderlyRunnerClientTest(
     }
 
     @Test
-    fun `can get packet groups`()
-    {
+    fun `can get packet groups`() {
         val runnerPacketGroups = sut.getPacketGroups(repositoryUrl, "HEAD")
 
         runnerPacketGroups.forEach {
@@ -90,8 +83,7 @@ class OrderlyRunnerClientTest(
     }
 
     @Test
-    fun `can submit report run`()
-    {
+    fun `can submit report run`() {
         val branchInfo = sut.getBranches(repositoryUrl)
         val mainBranch = branchInfo.branches[0]
         val parameters = mapOf("a" to 1, "b" to 2)
@@ -109,8 +101,7 @@ class OrderlyRunnerClientTest(
     }
 
     @Test
-    fun `can get statuses of tasks`()
-    {
+    fun `can get statuses of tasks`() {
 //        run 2 tasks
         val branchInfo = sut.getBranches(repositoryUrl)
         val mainBranch = branchInfo.branches[0]

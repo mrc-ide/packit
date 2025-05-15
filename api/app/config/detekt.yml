@@ -26,7 +26,7 @@ formatting:
   ParameterListWrapping:
     active: false
   SpacingAroundCurly:
-    active: false
+    active: true
   SpacingAroundKeyword:
     active: false
 

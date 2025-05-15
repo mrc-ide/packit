@@ -9,16 +9,14 @@ import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
-interface JwtBuilder
-{
+interface JwtBuilder {
     fun withExpiresAt(expiry: Instant): JwtBuilder
     fun withDuration(duration: Duration): JwtBuilder
     fun withPermissions(permissions: Collection<String>): JwtBuilder
     fun issue(): String
 }
 
-interface JwtIssuer
-{
+interface JwtIssuer {
     fun issue(userPrincipal: UserPrincipal): String {
         return builder(userPrincipal).issue()
     }
@@ -31,8 +29,7 @@ interface JwtIssuer
 }
 
 class TokenProviderBuilder(val config: AppConfig, val userPrincipal: UserPrincipal) : JwtBuilder {
-    companion object
-    {
+    companion object {
         const val TOKEN_ISSUER = "packit-api"
         const val TOKEN_AUDIENCE = "packit"
     }
@@ -89,8 +86,7 @@ class TokenProviderBuilder(val config: AppConfig, val userPrincipal: UserPrincip
 }
 
 @Component
-class TokenProvider(val config: AppConfig) : JwtIssuer
-{
+class TokenProvider(val config: AppConfig) : JwtIssuer {
     override fun builder(userPrincipal: UserPrincipal): JwtBuilder {
         return TokenProviderBuilder(config, userPrincipal)
     }

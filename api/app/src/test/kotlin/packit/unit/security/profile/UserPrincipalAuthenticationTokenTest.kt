@@ -5,11 +5,9 @@ import packit.security.profile.UserPrincipal
 import packit.security.profile.UserPrincipalAuthenticationToken
 import kotlin.test.assertEquals
 
-class UserPrincipalAuthenticationTokenTest
-{
+class UserPrincipalAuthenticationTokenTest {
     @Test
-    fun `can get authenticated profile`()
-    {
+    fun `can get authenticated profile`() {
         val userName = "fakeName"
         val displayName = "Fake Name"
 

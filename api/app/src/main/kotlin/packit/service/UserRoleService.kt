@@ -8,8 +8,7 @@ import packit.model.User
 import packit.model.dto.UpdateRoleUsers
 import packit.model.dto.UpdateUserRoles
 
-interface UserRoleService
-{
+interface UserRoleService {
     fun updateRoleUsers(roleName: String, usersToUpdate: UpdateRoleUsers): Role
     fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles): User
 }
@@ -18,10 +17,8 @@ interface UserRoleService
 class BaseUserRoleService(
     private val roleService: RoleService,
     private val userService: UserService
-) : UserRoleService
-{
-    override fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles): User
-    {
+) : UserRoleService {
+    override fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles): User {
         val user = userService.getByUsername(username)
             ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
 
@@ -36,12 +33,10 @@ class BaseUserRoleService(
         return userService.saveUser(user)
     }
 
-    override fun updateRoleUsers(roleName: String, usersToUpdate: UpdateRoleUsers): Role
-    {
+    override fun updateRoleUsers(roleName: String, usersToUpdate: UpdateRoleUsers): Role {
         val role = roleService.getByRoleName(roleName)
             ?: throw PackitException("roleNotFound", HttpStatus.BAD_REQUEST)
-        if (role.isUsername)
-        {
+        if (role.isUsername) {
             throw PackitException("cannotUpdateUsernameRoles", HttpStatus.BAD_REQUEST)
         }
 
@@ -60,12 +55,9 @@ class BaseUserRoleService(
         return role
     }
 
-    internal fun addUsersToRole(role: Role, usersToAdd: List<User>)
-    {
-        for (user in usersToAdd)
-        {
-            if (user.roles.any { role == it })
-            {
+    internal fun addUsersToRole(role: Role, usersToAdd: List<User>) {
+        for (user in usersToAdd) {
+            if (user.roles.any { role == it }) {
                 throw PackitException("userRoleExists", HttpStatus.BAD_REQUEST)
             }
             user.roles.add(role)
@@ -73,10 +65,8 @@ class BaseUserRoleService(
         }
     }
 
-    internal fun removeUsersFromRole(role: Role, usersToRemove: List<User>)
-    {
-        for (user in usersToRemove)
-        {
+    internal fun removeUsersFromRole(role: Role, usersToRemove: List<User>) {
+        for (user in usersToRemove) {
             val matchedRole = user.roles.find { role == it }
                 ?: throw PackitException("userRoleNotExists", HttpStatus.BAD_REQUEST)
 
@@ -85,27 +75,22 @@ class BaseUserRoleService(
         }
     }
 
-    internal fun getRolesForUpdate(roleNames: List<String>): List<Role>
-    {
+    internal fun getRolesForUpdate(roleNames: List<String>): List<Role> {
         val roles = roleService.getRolesByRoleNames(roleNames)
-        if (roles.any { it.isUsername })
-        {
+        if (roles.any { it.isUsername }) {
             throw PackitException("cannotUpdateUsernameRoles", HttpStatus.BAD_REQUEST)
         }
         return roles
     }
 
-    internal fun addRolesToUser(user: User, rolesToAdd: List<Role>)
-    {
-        if (rolesToAdd.any { user.roles.contains(it) })
-        {
+    internal fun addRolesToUser(user: User, rolesToAdd: List<Role>) {
+        if (rolesToAdd.any { user.roles.contains(it) }) {
             throw PackitException("userRoleExists", HttpStatus.BAD_REQUEST)
         }
         user.roles.addAll(rolesToAdd)
     }
 
-    internal fun removeRolesFromUser(user: User, rolesToRemove: List<Role>)
-    {
+    internal fun removeRolesFromUser(user: User, rolesToRemove: List<Role>) {
         val matchedRolesToRemove = rolesToRemove.map { roleToRemove ->
             val matchedRole = user.roles.find { roleToRemove == it }
                 ?: throw PackitException("userRoleNotExists", HttpStatus.BAD_REQUEST)

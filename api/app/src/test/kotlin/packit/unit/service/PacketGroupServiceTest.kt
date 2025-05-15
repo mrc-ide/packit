@@ -20,8 +20,7 @@ import java.time.Instant
 import java.util.*
 import kotlin.test.assertEquals
 
-class PacketGroupServiceTest
-{
+class PacketGroupServiceTest {
     private val now = Instant.now().epochSecond.toDouble()
     private val testPacketLatestId = "20190203-120000-1234dada"
     private val test2PacketLatestId = "20190403-120000-1234dfdf"
@@ -125,8 +124,7 @@ class PacketGroupServiceTest
         )
 
     @Test
-    fun `getPacketGroups calls repository with correct params and returns its result`()
-    {
+    fun `getPacketGroups calls repository with correct params and returns its result`() {
         val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
         val pageablePayload = PageablePayload(0, 10)
         val filterName = "test"
@@ -147,8 +145,7 @@ class PacketGroupServiceTest
     }
 
     @Test
-    fun `getPacketGroupDisplay returns display name and description when there is a description and a display name`()
-    {
+    fun `getPacketGroupDisplay returns display name and description when there is a description and a display name`() {
         val packetIdProjection = mock<PacketIdProjection> {
             on { id } doReturn packetMetadata.id
         }
@@ -166,8 +163,7 @@ class PacketGroupServiceTest
     }
 
     @Test
-    fun `getPacketGroupDisplay returns display name (=name) and null description when there is no description`()
-    {
+    fun `getPacketGroupDisplay returns display name (=name) and null description when there is no description`() {
         val packetMetadataWithNullDesc = packetMetadata.copy(
             custom = mapOf(
                 "orderly" to mapOf(
@@ -195,8 +191,7 @@ class PacketGroupServiceTest
     }
 
     @Test
-    fun `getPacketGroupDisplay returns display name (=name) and null description when there is no custom data`()
-    {
+    fun `getPacketGroupDisplay returns display name (=name) and null description when there is no custom data`() {
         val packetWithoutCustomMetadata = packetMetadata.copy(
             custom = mapOf()
         )
@@ -217,16 +212,13 @@ class PacketGroupServiceTest
     }
 
     @Test
-    fun `gets packet groups summaries`()
-    {
+    fun `gets packet groups summaries`() {
         whenever(packetGroupRepository.findLatestPacketIdForGroup("test"))
-            .thenReturn(object : PacketIdProjection
-            {
+            .thenReturn(object : PacketIdProjection {
                 override val id: String = testPacketLatestId
             })
         whenever(packetGroupRepository.findLatestPacketIdForGroup("test2"))
-            .thenReturn(object : PacketIdProjection
-            {
+            .thenReturn(object : PacketIdProjection {
                 override val id: String = test2PacketLatestId
             })
         val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
@@ -234,8 +226,7 @@ class PacketGroupServiceTest
         val result = sut.getPacketGroupSummaries(PageablePayload(0, 10), "")
 
         assertEquals(result.totalElements, 2)
-        for (i in packetGroupSummaries.indices)
-        {
+        for (i in packetGroupSummaries.indices) {
             assertEquals(result.content[i].name, packetGroupSummaries[i].name)
             assertEquals(result.content[i].packetCount, packetGroupSummaries[i].packetCount)
             assertEquals(result.content[i].latestId, packetGroupSummaries[i].latestId)
@@ -248,16 +239,13 @@ class PacketGroupServiceTest
     }
 
     @Test
-    fun `can filter packet groups summaries by name`()
-    {
+    fun `can filter packet groups summaries by name`() {
         whenever(packetGroupRepository.findLatestPacketIdForGroup("test"))
-            .thenReturn(object : PacketIdProjection
-            {
+            .thenReturn(object : PacketIdProjection {
                 override val id: String = testPacketLatestId
             })
         whenever(packetGroupRepository.findLatestPacketIdForGroup("test2"))
-            .thenReturn(object : PacketIdProjection
-            {
+            .thenReturn(object : PacketIdProjection {
                 override val id: String = test2PacketLatestId
             })
         val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
@@ -271,16 +259,13 @@ class PacketGroupServiceTest
     }
 
     @Test
-    fun `can filter packet groups summaries by display name`()
-    {
+    fun `can filter packet groups summaries by display name`() {
         whenever(packetGroupRepository.findLatestPacketIdForGroup("test"))
-            .thenReturn(object : PacketIdProjection
-            {
+            .thenReturn(object : PacketIdProjection {
                 override val id: String = testPacketLatestId
             })
         whenever(packetGroupRepository.findLatestPacketIdForGroup("test2"))
-            .thenReturn(object : PacketIdProjection
-            {
+            .thenReturn(object : PacketIdProjection {
                 override val id: String = test2PacketLatestId
             })
         val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
@@ -294,8 +279,7 @@ class PacketGroupServiceTest
     }
 
     @Test
-    fun `can get summaries for non-orderly packets that use the outpack custom property to specify a display name`()
-    {
+    fun `can get summaries for non-orderly packets that use the outpack custom property to specify a display name`() {
         val metadataWithDifferentCustomSchema = listOf(
             OutpackMetadata(
                 testPacketLatestId,
@@ -317,8 +301,7 @@ class PacketGroupServiceTest
             on { findAll() } doReturn listOf(PacketGroup("testing"))
         }
         whenever(packetGroupRepo.findLatestPacketIdForGroup("testing"))
-            .thenReturn(object : PacketIdProjection
-            {
+            .thenReturn(object : PacketIdProjection {
                 override val id: String = testPacketLatestId
             })
 
@@ -334,8 +317,7 @@ class PacketGroupServiceTest
     }
 
     @Test
-    fun `getPacketGroup returns packet group when found in repository`()
-    {
+    fun `getPacketGroup returns packet group when found in repository`() {
         val packetGroupId = 1
         val expectedPacketGroup = PacketGroup("test")
         whenever(packetGroupRepository.findById(packetGroupId)).thenReturn(Optional.of(expectedPacketGroup))
@@ -348,8 +330,7 @@ class PacketGroupServiceTest
     }
 
     @Test
-    fun `getPacketGroup throws PackitException when packet group not found`()
-    {
+    fun `getPacketGroup throws PackitException when packet group not found`() {
         val packetGroupId = 999
         whenever(packetGroupRepository.findById(packetGroupId)).thenReturn(Optional.empty())
         val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)

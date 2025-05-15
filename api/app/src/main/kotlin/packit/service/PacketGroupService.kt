@@ -16,8 +16,7 @@ import packit.repository.PacketGroupRepository
 import packit.service.utils.getDescriptionForPacket
 import packit.service.utils.getDisplayNameForPacket
 
-interface PacketGroupService
-{
+interface PacketGroupService {
     fun getPacketGroups(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroup>
     fun getPacketGroupDisplay(name: String): PacketGroupDisplay
     fun getPacketGroupSummaries(pageablePayload: PageablePayload, filter: String): Page<PacketGroupSummary>
@@ -30,16 +29,13 @@ class BasePacketGroupService(
     private val packetGroupRepository: PacketGroupRepository,
     private val packetService: PacketService,
     private val outpackServerClient: OutpackServer
-) : PacketGroupService
-{
-    override fun getPacketGroups(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroup>
-    {
+) : PacketGroupService {
+    override fun getPacketGroups(pageablePayload: PageablePayload, filteredName: String): Page<PacketGroup> {
         val packetGroups = packetGroupRepository.findAllByNameContaining(filteredName, Sort.by("name"))
         return PagingHelper.convertListToPage(packetGroups, pageablePayload)
     }
 
-    override fun getPacketGroupDisplay(name: String): PacketGroupDisplay
-    {
+    override fun getPacketGroupDisplay(name: String): PacketGroupDisplay {
         val latestPacketId = packetGroupRepository.findLatestPacketIdForGroup(name)?.id
             ?: throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
         val metadata = packetService.getMetadataBy(latestPacketId)
@@ -56,8 +52,7 @@ class BasePacketGroupService(
     override fun getPacketGroupSummaries(
         pageablePayload: PageablePayload,
         filter: String
-    ): Page<PacketGroupSummary>
-    {
+    ): Page<PacketGroupSummary> {
         val allPacketGroups = packetGroupRepository.findAll()
         val packetIds = findLatestPacketIdsForGroups(allPacketGroups.map { it.name })
         val allPacketsMetadata = outpackServerClient.getMetadata()
@@ -68,12 +63,10 @@ class BasePacketGroupService(
             .mapNotNull {
                 val display = getDisplayNameForPacket(it.custom, it.name)
 
-                if (it.name.contains(filter, ignoreCase = true) || display.contains(filter, ignoreCase = true))
-                {
+                if (it.name.contains(filter, ignoreCase = true) || display.contains(filter, ignoreCase = true)) {
                     val packetCount = allPacketsMetadata.count { p -> p.name == it.name }
                     it.toPacketGroupSummary(packetCount, display)
-                } else
-                {
+                } else {
                     null
                 }
             }.sortedByDescending { it.latestTime }
@@ -81,14 +74,12 @@ class BasePacketGroupService(
         return PagingHelper.convertListToPage(latestPackets, pageablePayload)
     }
 
-    override fun getPacketGroup(id: Int): PacketGroup
-    {
+    override fun getPacketGroup(id: Int): PacketGroup {
         return packetGroupRepository.findById(id)
             .orElseThrow { PackitException("packetGroupNotFound", HttpStatus.NOT_FOUND) }
     }
 
-    override fun getPacketGroupByName(name: String): PacketGroup
-    {
+    override fun getPacketGroupByName(name: String): PacketGroup {
         return packetGroupRepository.findByName(name)
             ?: throw PackitException("packetGroupNotFound", HttpStatus.NOT_FOUND)
     }
@@ -99,14 +90,11 @@ class BasePacketGroupService(
      * @param names The names of the packet groups.
      * @return For each group, an id of the latest packet in the group.
      */
-    private fun findLatestPacketIdsForGroups(names: List<String>): List<String>
-    {
+    private fun findLatestPacketIdsForGroups(names: List<String>): List<String> {
         return names.mapNotNull {
-            try
-            {
+            try {
                 packetGroupRepository.findLatestPacketIdForGroup(it)?.id
-            } catch (e: AccessDeniedException)
-            {
+            } catch (e: AccessDeniedException) {
                 null
             }
         }

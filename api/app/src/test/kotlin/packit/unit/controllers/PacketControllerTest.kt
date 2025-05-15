@@ -23,8 +23,7 @@ import java.time.Instant
 import java.util.UUID
 import kotlin.test.assertEquals
 
-class PacketControllerTest
-{
+class PacketControllerTest {
     val now = Instant.now().epochSecond.toDouble()
 
     private val packetId = "20180818-164847-7574883b"
@@ -120,8 +119,7 @@ class PacketControllerTest
     private val sut = PacketController(packetService, oneTimeTokenService)
 
     @Test
-    fun `get pageable packets`()
-    {
+    fun `get pageable packets`() {
         val result = sut.pageableIndex(0, 10, "", "")
         assertEquals(result.statusCode, HttpStatus.OK)
         assertEquals(result.body, mockPageablePackets.map { it.toDto() })
@@ -130,8 +128,7 @@ class PacketControllerTest
     }
 
     @Test
-    fun `get packet metadata by id`()
-    {
+    fun `get packet metadata by id`() {
         val result = sut.findPacketMetadata(packetId)
         val responseBody = result.body
         assertEquals(result.statusCode, HttpStatus.OK)
@@ -139,8 +136,7 @@ class PacketControllerTest
     }
 
     @Test
-    fun `generate token for downloading file`()
-    {
+    fun `generate token for downloading file`() {
         val result = sut.generateTokenForDownloadingFile(packetId, listOf("any_file.txt", "another_file.txt"))
         verify(packetService).validateFilesExistForPacket(packetId, listOf("any_file.txt", "another_file.txt"))
         verify(oneTimeTokenService).createToken(packetId, listOf("any_file.txt", "another_file.txt"))
@@ -149,8 +145,7 @@ class PacketControllerTest
     }
 
     @Test
-    fun `stream a single file`()
-    {
+    fun `stream a single file`() {
         val response = MockHttpServletResponse()
 
         sut.streamFile(
@@ -176,8 +171,7 @@ class PacketControllerTest
     }
 
     @Test
-    fun `stream a single file, with inline disposition`()
-    {
+    fun `stream a single file, with inline disposition`() {
         val response = MockHttpServletResponse()
 
         sut.streamFile(
@@ -203,8 +197,7 @@ class PacketControllerTest
     }
 
     @Test
-    fun `stream multiple files as a zip, with a valid token`()
-    {
+    fun `stream multiple files as a zip, with a valid token`() {
         val response = MockHttpServletResponse()
 
         sut.streamFilesZipped(packetId, listOf("file1.txt", "file2.txt"), "my_archive.zip", false, response)

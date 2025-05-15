@@ -18,11 +18,9 @@ import packit.service.UserService
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class LoginControllerTest
-{
+class LoginControllerTest {
     @Test
-    fun `can login with github api token and get packit token`()
-    {
+    fun `can login with github api token and get packit token`() {
         val request = LoginWithToken("fakeToken")
 
         val mockLoginService = mock<GithubAPILoginService> {
@@ -42,8 +40,7 @@ class LoginControllerTest
     }
 
     @Test
-    fun `throws packit exception  if github login is not enabled`()
-    {
+    fun `throws packit exception  if github login is not enabled`() {
         val request = LoginWithToken("fakeToken")
 
         val mockAppConfig = mock<AppConfig> {
@@ -60,8 +57,7 @@ class LoginControllerTest
     }
 
     @Test
-    fun `can login with basic auth and get packit token`()
-    {
+    fun `can login with basic auth and get packit token`() {
         val request = LoginWithPassword("test@email.com", "password")
 
         val mockLoginService = mock<BasicLoginService> {
@@ -81,8 +77,7 @@ class LoginControllerTest
     }
 
     @Test
-    fun `throws packit exception if basic login is not enabled`()
-    {
+    fun `throws packit exception if basic login is not enabled`() {
         val request = LoginWithPassword("test@email.com", "password")
         val mockAppConfig = mock<AppConfig> {
             on { authEnableBasicLogin } doReturn false
@@ -98,8 +93,7 @@ class LoginControllerTest
     }
 
     @Test
-    fun `can get config`()
-    {
+    fun `can get config`() {
         val mockAppConfig = mock<AppConfig> {
             on { authEnableGithubLogin } doReturn false
             on { authEnabled } doReturn true
@@ -122,8 +116,7 @@ class LoginControllerTest
     }
 
     @Test
-    fun `updatePassword throws packit exception if basic login is not enabled`()
-    {
+    fun `updatePassword throws packit exception if basic login is not enabled`() {
         val mockAppConfig = mock<AppConfig> {
             on { authEnableBasicLogin } doReturn false
         }
@@ -138,8 +131,7 @@ class LoginControllerTest
     }
 
     @Test
-    fun `updatePassword calls userService updatePassword`()
-    {
+    fun `updatePassword calls userService updatePassword`() {
         val mockAppConfig = mock<AppConfig> {
             on { authEnableBasicLogin } doReturn true
         }
@@ -153,8 +145,7 @@ class LoginControllerTest
     }
 
     @Test
-    fun `loginWithTrustedHeaders gets token from preauth user service`()
-    {
+    fun `loginWithTrustedHeaders gets token from preauth user service`() {
         val mockAppConfig = mock<AppConfig> {
             on { authEnablePreAuthLogin } doReturn true
         }
@@ -172,8 +163,7 @@ class LoginControllerTest
     }
 
     @Test
-    fun `loginWithTrustedHeaders throws packit exception if preauth not enabled`()
-    {
+    fun `loginWithTrustedHeaders throws packit exception if preauth not enabled`() {
         val mockAppConfig = mock<AppConfig> {
             on { authEnablePreAuthLogin } doReturn false
         }

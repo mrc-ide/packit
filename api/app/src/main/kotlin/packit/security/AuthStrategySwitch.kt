@@ -15,8 +15,7 @@ import packit.security.ott.OTTAuthenticationFilter
 class AuthStrategySwitch(
     private val jwtAuthenticationFilter: JWTAuthenticationFilter,
     private val ottAuthenticationFilter: OTTAuthenticationFilter,
-) : OncePerRequestFilter()
-{
+) : OncePerRequestFilter() {
     // A matcher for /packets/{id}/file and /packets/{id}/files/zip
     val ottEndpointsRegex = Regex("/packets/[^/]+/(file|files/zip)")
 
@@ -25,8 +24,7 @@ class AuthStrategySwitch(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        if (request.servletPath.matches(ottEndpointsRegex))
-        {
+        if (request.servletPath.matches(ottEndpointsRegex)) {
             ottAuthenticationFilter.doFilter(request, response, filterChain)
         } else {
             jwtAuthenticationFilter.doFilter(request, response, filterChain)

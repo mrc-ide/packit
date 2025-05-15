@@ -21,8 +21,7 @@ import packit.service.RoleService
 import java.time.Instant
 import kotlin.test.assertEquals
 
-class PacketGroupControllerTest
-{
+class PacketGroupControllerTest {
     val now = Instant.now().epochSecond.toDouble()
 
     private val packets = listOf(
@@ -82,8 +81,7 @@ class PacketGroupControllerTest
     private val sut = PacketGroupController(packetService, packetGroupService, roleService)
 
     @Test
-    fun `get packet group display name and description`()
-    {
+    fun `get packet group display name and description`() {
         val result: ResponseEntity<PacketGroupDisplay> = sut.getDisplay("test-packetGroupName-1")
 
         assertEquals(HttpStatus.OK, result.statusCode)
@@ -93,8 +91,7 @@ class PacketGroupControllerTest
     }
 
     @Test
-    fun `get packets by packet group name`()
-    {
+    fun `get packets by packet group name`() {
         val result = sut.getPackets("pg1")
 
         assertEquals(result.statusCode, HttpStatus.OK)
@@ -103,8 +100,7 @@ class PacketGroupControllerTest
     }
 
     @Test
-    fun `get packet groups summary`()
-    {
+    fun `get packet groups summary`() {
         val result = sut.getPacketGroupSummaries(0, 10, "")
         assertEquals(result.statusCode, HttpStatus.OK)
         assertEquals(result.body, mockPacketGroupsSummary)

@@ -18,8 +18,7 @@ import packit.model.dto.UpdateRolePermissions
 import packit.model.toDto
 import packit.repository.RoleRepository
 
-interface RoleService
-{
+interface RoleService {
     fun getAdminRole(): Role
     fun getGrantedAuthorities(roles: List<Role>): MutableSet<GrantedAuthority>
     fun createRole(createRole: CreateRole): Role
@@ -42,58 +41,48 @@ class BaseRoleService(
     private val roleRepository: RoleRepository,
     private val permissionService: PermissionService,
     private val rolePermissionService: RolePermissionService,
-) : RoleService
-{
-    override fun getAdminRole(): Role
-    {
+) : RoleService {
+    override fun getAdminRole(): Role {
         return roleRepository.findByName("ADMIN")
             ?: throw PackitException("adminRoleNotFound", HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
-    override fun createRole(createRole: CreateRole): Role
-    {
+    override fun createRole(createRole: CreateRole): Role {
         val permissions = permissionService.checkMatchingPermissions(createRole.permissionNames)
 
         return saveRole(createRole.name, permissions)
     }
 
-    override fun createUsernameRole(username: String): Role
-    {
+    override fun createUsernameRole(username: String): Role {
         val userRole = roleRepository.findByName(username)
-        if (userRole != null)
-        {
+        if (userRole != null) {
             throw PackitException("roleAlreadyExists", HttpStatus.BAD_REQUEST)
         }
         return roleRepository.save(Role(name = username, isUsername = true))
     }
 
-    override fun deleteRole(roleName: String)
-    {
+    override fun deleteRole(roleName: String) {
         val roleToDelete = roleRepository.findByName(roleName)
             ?: throw PackitException("roleNotFound", HttpStatus.BAD_REQUEST)
 
-        if (roleToDelete.name == "ADMIN" || roleToDelete.isUsername)
-        {
+        if (roleToDelete.name == "ADMIN" || roleToDelete.isUsername) {
             throw PackitException("cannotDeleteAdminOrUsernameRole", HttpStatus.BAD_REQUEST)
         }
         roleRepository.deleteByName(roleName)
     }
 
-    override fun deleteUsernameRole(username: String)
-    {
+    override fun deleteUsernameRole(username: String) {
         val roleToDelete = roleRepository.findByName(username)
             ?: throw PackitException("roleNotFound", HttpStatus.INTERNAL_SERVER_ERROR)
 
-        if (!roleToDelete.isUsername)
-        {
+        if (!roleToDelete.isUsername) {
             throw PackitException("roleIsNotUsername", HttpStatus.INTERNAL_SERVER_ERROR)
         }
         roleRepository.deleteByName(username)
     }
 
     @Transactional(rollbackFor = [Exception::class])
-    override fun updatePermissionsToRole(roleName: String, updateRolePermissions: UpdateRolePermissions): Role
-    {
+    override fun updatePermissionsToRole(roleName: String, updateRolePermissions: UpdateRolePermissions): Role {
         val role = roleRepository.findByName(roleName)
             ?: throw PackitException("roleNotFound", HttpStatus.BAD_REQUEST)
 
@@ -105,13 +94,11 @@ class BaseRoleService(
         return roleRepository.save(updatedRole)
     }
 
-    override fun getByRoleName(roleName: String): Role?
-    {
+    override fun getByRoleName(roleName: String): Role? {
         return roleRepository.findByName(roleName)
     }
 
-    override fun getSortedRoleDtos(roles: List<Role>): List<RoleDto>
-    {
+    override fun getSortedRoleDtos(roles: List<Role>): List<RoleDto> {
         return roles.map { role ->
             role.apply {
                 users = users.filterNot { it.isServiceUser() }.sortedBy { it.username }.toMutableList()
@@ -123,35 +110,28 @@ class BaseRoleService(
         }
     }
 
-    override fun getAllRoles(isUsernames: Boolean?): List<Role>
-    {
-        if (isUsernames == null)
-        {
+    override fun getAllRoles(isUsernames: Boolean?): List<Role> {
+        if (isUsernames == null) {
             return roleRepository.findAll(Sort.by("name").ascending())
         }
         return roleRepository.findAllByIsUsernameOrderByName(isUsernames)
     }
 
-    override fun getRolesByRoleNames(roleNames: List<String>): List<Role>
-    {
+    override fun getRolesByRoleNames(roleNames: List<String>): List<Role> {
         val foundRoles = roleRepository.findByNameIn(roleNames)
-        if (foundRoles.size != roleNames.toSet().size)
-        {
+        if (foundRoles.size != roleNames.toSet().size) {
             throw PackitException("invalidRolesProvided", HttpStatus.BAD_REQUEST)
         }
         return foundRoles
     }
 
-    override fun getRole(roleName: String): Role
-    {
+    override fun getRole(roleName: String): Role {
         return roleRepository.findByName(roleName)
             ?: throw PackitException("roleNotFound", HttpStatus.BAD_REQUEST)
     }
 
-    internal fun saveRole(roleName: String, permissions: List<Permission> = listOf()): Role
-    {
-        if (roleRepository.existsByName(roleName))
-        {
+    internal fun saveRole(roleName: String, permissions: List<Permission> = listOf()): Role {
+        if (roleRepository.existsByName(roleName)) {
             throw PackitException("roleAlreadyExists", HttpStatus.BAD_REQUEST)
         }
         val role = Role(name = roleName)
@@ -160,8 +140,7 @@ class BaseRoleService(
         return roleRepository.save(role)
     }
 
-    override fun getGrantedAuthorities(roles: List<Role>): MutableSet<GrantedAuthority>
-    {
+    override fun getGrantedAuthorities(roles: List<Role>): MutableSet<GrantedAuthority> {
         val grantedAuthorities = mutableSetOf<GrantedAuthority>()
         roles.forEach { role ->
             role.rolePermissions.forEach {
@@ -171,8 +150,7 @@ class BaseRoleService(
         return grantedAuthorities
     }
 
-    override fun getDefaultRoles(): List<Role>
-    {
+    override fun getDefaultRoles(): List<Role> {
         return roleRepository.findByIsUsernameAndNameIn(isUsername = false, appConfig.defaultRoles)
     }
 
@@ -180,8 +158,7 @@ class BaseRoleService(
     override fun updatePacketReadPermissionOnRoles(
         updatePacketReadRoles: UpdatePacketReadRoles,
         packetGroupName: String
-    )
-    {
+    ) {
         val roleNamesToUpdate =
             getUniqueRoleNamesForUpdate(updatePacketReadRoles.roleNamesToAdd, updatePacketReadRoles.roleNamesToRemove)
         val rolesToUpdate =
@@ -198,13 +175,11 @@ class BaseRoleService(
         roleRepository.saveAll(updatedRoles)
     }
 
-    internal fun getUniqueRoleNamesForUpdate(roleNamesToAdd: Set<String>, roleNamesToRemove: Set<String>): Set<String>
-    {
+    internal fun getUniqueRoleNamesForUpdate(roleNamesToAdd: Set<String>, roleNamesToRemove: Set<String>): Set<String> {
         // Calculate symmetric difference (roles that appear in only one of the sets)
         val roleNamesToUpdate = (roleNamesToAdd - roleNamesToRemove) + (roleNamesToRemove - roleNamesToAdd)
 
-        if (roleNamesToUpdate.isEmpty())
-        {
+        if (roleNamesToUpdate.isEmpty()) {
             throw PackitException("noRolesToUpdateWithPermission", HttpStatus.BAD_REQUEST)
         }
 
