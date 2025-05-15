@@ -15,7 +15,6 @@ import packit.model.dto.CreateRole
 import packit.model.dto.UpdateReadRoles
 import packit.model.dto.UpdateRolePermissions
 import packit.repository.RoleRepository
-import packit.security.PermissionChecker
 
 interface RoleService
 {
@@ -44,8 +43,7 @@ class BaseRoleService(
     private val appConfig: AppConfig,
     private val roleRepository: RoleRepository,
     private val permissionService: PermissionService,
-    private val rolePermissionService: RolePermissionService,
-    private val permissionChecker: PermissionChecker
+    private val rolePermissionService: RolePermissionService
 ) : RoleService
 {
     override fun getAdminRole(): Role

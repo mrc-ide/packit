@@ -1,32 +1,25 @@
 import { render, screen } from "@testing-library/react";
-// eslint-disable-next-line max-len
-import { UpdatePacketReadPermissionMultiSelectList } from "../../../../app/components/contents/home/UpdatePacketReadPermissionMultiSelectList";
-import { UserWithPermissions } from "../../../../app/components/contents/manageAccess/types/UserWithPermissions";
-import { RoleWithRelationships } from "../../../../app/components/contents/manageAccess/types/RoleWithRelationships";
+import userEvent from "@testing-library/user-event";
 import {
   MultiSelector,
   MultiSelectorContent,
   MultiSelectorInput,
   MultiSelectorTrigger
 } from "../../../../app/components/Base/MultiSelect";
-import userEvent from "@testing-library/user-event";
+// eslint-disable-next-line max-len
+import { UpdatePacketReadPermissionMultiSelectList } from "../../../../app/components/contents/home/UpdatePacketReadPermissionMultiSelectList";
+import { mockRolesAndUsersWithPermissions } from "../../../mocks";
 
 describe("UpdatePacketReadPermissionMultiSelectList", () => {
   it("should render the list of roles and users correctly with styles", async () => {
-    const rolesAndUsers = [
-      { id: "1", name: "Admin" },
-      { id: "3", name: "Guest" },
-      { id: "2", username: "x@gmail.com" },
-      { id: "4", username: "aa@gmail.com" }
-    ] as unknown as (RoleWithRelationships | UserWithPermissions)[];
+    const rolesAndUsersArray = [...mockRolesAndUsersWithPermissions.roles, ...mockRolesAndUsersWithPermissions.users];
     render(
       <MultiSelector onValuesChange={jest.fn()} values={[]}>
         <MultiSelectorTrigger>
           <MultiSelectorInput />
         </MultiSelectorTrigger>
         <MultiSelectorContent>
-          {/* todo fix tests */}
-          <UpdatePacketReadPermissionMultiSelectList rolesAndUsers={rolesAndUsers as any} />
+          <UpdatePacketReadPermissionMultiSelectList rolesAndUsers={mockRolesAndUsersWithPermissions} />
         </MultiSelectorContent>
       </MultiSelector>
     );
@@ -36,8 +29,8 @@ describe("UpdatePacketReadPermissionMultiSelectList", () => {
     userEvent.click(multiSelect);
     const addUserOptions = await screen.findAllByRole("option");
 
-    expect(addUserOptions).toHaveLength(4);
-    rolesAndUsers.forEach((roleOrUser, index) => {
+    expect(addUserOptions).toHaveLength(rolesAndUsersArray.length);
+    rolesAndUsersArray.forEach((roleOrUser, index) => {
       if ("name" in roleOrUser) {
         expect(addUserOptions[index]).toHaveTextContent(roleOrUser.name + "Role");
         expect(addUserOptions[index]).toHaveClass("text-[#7B341E] dark:text-[#FBD38D]");

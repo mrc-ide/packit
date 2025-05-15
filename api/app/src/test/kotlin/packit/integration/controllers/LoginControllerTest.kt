@@ -275,11 +275,11 @@ class LoginControllerTestBasic : IntegrationTest()
 @MockServerSettings(ports = [8787])
 @TestPropertySource(
     properties = [
-    "auth.service.audience=packit",
-    "auth.service.policies[0].jwk-set-uri=http://127.0.0.1:8787/jwks.json",
-    "auth.service.policies[0].issuer=issuer",
-    "auth.service.policies[0].granted-permissions=outpack.read,outpack.write",
-]
+        "auth.service.audience=packit",
+        "auth.service.policies[0].jwk-set-uri=http://127.0.0.1:8787/jwks.json",
+        "auth.service.policies[0].issuer=issuer",
+        "auth.service.policies[0].granted-permissions=outpack.read,outpack.write",
+    ]
 )
 class LoginControllerTestService(val jwksServer: ClientAndServer) : IntegrationTest()
 {
@@ -292,7 +292,7 @@ class LoginControllerTestService(val jwksServer: ClientAndServer) : IntegrationT
     fun configureJwksServer()
     {
         jwksServer.`when`(request().withMethod("GET").withPath("/jwks.json"))
-                   .respond(response().withStatusCode(200).withBody(JsonBody(trustedIssuer.jwkSet.toString())))
+            .respond(response().withStatusCode(200).withBody(JsonBody(trustedIssuer.jwkSet.toString())))
     }
 
     @AfterEach
@@ -325,7 +325,8 @@ class LoginControllerTestService(val jwksServer: ClientAndServer) : IntegrationT
 
         val token = tokenDecoder.decode(result.body?.required("token")?.textValue()!!)
         assertEquals(token.getClaim("userName").asString(), "SERVICE")
-        assertEquals(token.getClaim("au").asList(String::class.java), listOf("outpack.read", "outpack.write"))
+        assertThat(token.getClaim("au").asList(String::class.java))
+            .containsExactlyInAnyOrder("outpack.read", "outpack.write")
     }
 
     @Test

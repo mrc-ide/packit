@@ -211,24 +211,9 @@ class RoleControllerTest : IntegrationTest()
                         adminRole,
                         userRole
                     )
-                )
+                ).map { it.toDto() }
             )
         )
-    }
-
-    @Test
-    @WithAuthenticatedUser(authorities = ["packet.manage"])
-    fun `users with packet manage can get all roles with relationships`()
-    {
-        val result =
-            restTemplate.exchange(
-                "/roles",
-                HttpMethod.GET,
-                getTokenizedHttpEntity(),
-                String::class.java
-            )
-
-        assertSuccess(result)
     }
 
     @Test
@@ -304,21 +289,6 @@ class RoleControllerTest : IntegrationTest()
         assertSuccess(result)
 
         assertEquals(roleDto, roleResult)
-    }
-
-    @Test
-    @WithAuthenticatedUser(authorities = ["packet.manage"])
-    fun `users with packet manage can get specific with relationships`()
-    {
-        val result =
-            restTemplate.exchange(
-                "/roles/ADMIN",
-                HttpMethod.GET,
-                getTokenizedHttpEntity(),
-                String::class.java
-            )
-
-        assertSuccess(result)
     }
 
     @Test

@@ -52,5 +52,3 @@ fun User.toUserWithPermissions() =
         roles = getNonUsernameRoles().map { it.toBasicDto() },
         id = id!!
     )
-
-

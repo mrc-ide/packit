@@ -21,7 +21,7 @@ interface UserRoleFilterService
         packet: Packet
     ): RolesAndUsers
 
-    fun getRolesAndUsersCantPacketReadGroup(
+    fun getRolesAndUsersCantReadPacketReadGroup(
         roles: List<Role>,
         users: List<User>,
         packetGroupName: String
@@ -92,7 +92,7 @@ class BaseUserRoleFilterService(
         return RolesAndUsers(rolesWithRead, usersWithRead)
     }
 
-    override fun getRolesAndUsersCantPacketReadGroup(
+    override fun getRolesAndUsersCantReadPacketReadGroup(
         roles: List<Role>,
         users: List<User>,
         packetGroupName: String
