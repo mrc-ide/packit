@@ -124,7 +124,8 @@ class GithubUserClientTest {
     }
 
     private fun assertSutThrowsPackitAuthenticationException(
-        sut: GithubUserClient, key: String,
+        sut: GithubUserClient,
+        key: String,
         httpStatus: HttpStatus
     ) {
         sut.authenticate(token)

@@ -24,7 +24,7 @@ formatting:
   NoWildcardImports:
     active: false
   ParameterListWrapping:
-    active: false
+    active: true
   SpacingAroundCurly:
     active: true
   SpacingAroundKeyword:
