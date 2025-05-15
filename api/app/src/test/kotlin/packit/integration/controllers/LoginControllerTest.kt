@@ -152,7 +152,7 @@ class LoginControllerTestPreAuth : IntegrationTest()
         val packitToken = jacksonObjectMapper().readTree(result.body).get("token").asText()
         val decodedToken = tokenDecoder.decode(packitToken)
         assertEquals(decodedToken.getClaim("userName").asString(), userName)
-        
+
         val updatedUser = userRepository.findByUsernameAndUserSource(userName, "preauth")
         assertThat(updatedUser!!.lastLoggedIn).isAfterOrEqualTo(now)
     }
