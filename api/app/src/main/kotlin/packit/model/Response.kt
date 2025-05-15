@@ -5,16 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import java.io.Serializable
 
 data class ServerResponse<T>(
-        val status: String,
-        val data: T,
-        val errors: Any?
+    val status: String,
+    val data: T,
+    val errors: Any?
 ) : Serializable
 
 data class PackitErrorResponse(val error: ErrorDetail) {
-        val data = mapOf<Any, Any>()
-        val status = "failure"
+    val data = mapOf<Any, Any>()
+    val status = "failure"
 }
 
 fun PackitErrorResponse.toJsonString() = ObjectMapper().apply {
-        setSerializationInclusion(JsonInclude.Include.NON_NULL)
+    setSerializationInclusion(JsonInclude.Include.NON_NULL)
 }.writeValueAsString(this)

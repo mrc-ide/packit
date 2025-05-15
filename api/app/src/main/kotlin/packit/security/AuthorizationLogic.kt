@@ -42,9 +42,9 @@ class AuthorizationLogic(
 
     fun canReadRoles(operations: SecurityExpressionOperations): Boolean {
         return operations.hasAuthority("user.manage") ||
-                operations.authentication.authorities.any {
-                    it.authority.startsWith("packet.manage")
-                }
+            operations.authentication.authorities.any {
+                it.authority.startsWith("packet.manage")
+            }
     }
 
     fun canUpdatePacketReadRoles(
@@ -83,9 +83,9 @@ class AuthorizationLogic(
         val permittedPaths = auth.getPermittedFilePaths()
 
         return auth.getExpiresAt().isAfter(Instant.now()) &&
-                auth.getPermittedPacketId() == requestedPacketId &&
-                permittedPaths.containsAll(requestedPaths) &&
-                permittedPaths.size == requestedPaths.size
+            auth.getPermittedPacketId() == requestedPacketId &&
+            permittedPaths.containsAll(requestedPaths) &&
+            permittedPaths.size == requestedPaths.size
     }
 
     internal fun canReadAnyPacketInGroup(
@@ -94,7 +94,7 @@ class AuthorizationLogic(
     ): Boolean {
         return operations.authentication.authorities.any {
             it.authority.startsWith("packet.read:packet:$name") ||
-                    it.authority.startsWith("packet.manage:packet:$name")
+                it.authority.startsWith("packet.manage:packet:$name")
         }
     }
 }

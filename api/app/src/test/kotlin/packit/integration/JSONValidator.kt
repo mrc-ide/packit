@@ -29,9 +29,9 @@ class JSONValidator {
     }
 
     fun validateError(
-            response: String,
-            expectedError: String?,
-            expectedErrorText: String?
+        response: String,
+        expectedError: String?,
+        expectedErrorText: String?
     ) {
         val json = parseJson(response)
         checkResultSchema(json, "failure")
@@ -50,7 +50,7 @@ class JSONValidator {
         assertValidates("response-${expectedStatus.lowercase()}", json)
         val status = json["status"].textValue()
         assertThat(status)
-                .isEqualTo(expectedStatus)
+            .isEqualTo(expectedStatus)
     }
 
     private fun assertValidates(name: String, json: JsonNode) {
@@ -58,18 +58,18 @@ class JSONValidator {
         val report = schemaFactory.getJsonSchema(uri.toString()).validate(json)
         if (!report.isSuccess) {
             val msg = "JSON failed schema validation. Attempted to validate: $json against $name. " +
-                    "Report follows: $report"
+                "Report follows: $report"
             fail<Any>(msg)
         }
     }
 
     private fun makeSchemaFactory(): JsonSchemaFactory {
         val loadingConfig = LoadingConfiguration.newBuilder()
-                .dereferencing(Dereferencing.INLINE)
-                .freeze()
+            .dereferencing(Dereferencing.INLINE)
+            .freeze()
         return JsonSchemaFactory.newBuilder()
-                .setLoadingConfiguration(loadingConfig)
-                .freeze()
+            .setLoadingConfiguration(loadingConfig)
+            .freeze()
     }
 
     private fun parseJson(jsonAsString: String): JsonNode {

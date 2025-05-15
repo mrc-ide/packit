@@ -18,7 +18,7 @@ exceptions:
 
 formatting:
   Indentation:
-    active: false
+    active: true
   NoLineBreakAfterElse:
     active: false
   NoWildcardImports:

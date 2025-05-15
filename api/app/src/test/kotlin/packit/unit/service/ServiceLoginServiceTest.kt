@@ -78,8 +78,8 @@ class ServiceLoginServiceTest {
     fun createIssuer(url: String): TestJwtIssuer {
         val issuer = TestJwtIssuer()
         server.expect(ExpectedCount.between(0, Integer.MAX_VALUE), requestTo(url))
-              .andExpect(method(HttpMethod.GET))
-              .andRespond(withSuccess(issuer.jwkSet.toString(), MediaType.APPLICATION_JSON))
+            .andExpect(method(HttpMethod.GET))
+            .andRespond(withSuccess(issuer.jwkSet.toString(), MediaType.APPLICATION_JSON))
         return issuer
     }
 
@@ -189,10 +189,10 @@ class ServiceLoginServiceTest {
                 audience = requiredAudience,
                 policies = listOf(
                     ServiceLoginPolicy(
-                    jwkSetURI = "http://issuer/jwks.json",
-                    issuer = requiredIssuer,
-                    requiredClaims = entry.requiredClaims,
-                )
+                        jwkSetURI = "http://issuer/jwks.json",
+                        issuer = requiredIssuer,
+                        requiredClaims = entry.requiredClaims,
+                    )
                 )
             )
 
@@ -244,10 +244,10 @@ class ServiceLoginServiceTest {
                 audience = "packit",
                 policies = listOf(
                     ServiceLoginPolicy(
-                    jwkSetURI = "http://issuer/jwks.json",
-                    issuer = "issuer",
-                    grantedPermissions = entry.policyPermissions,
-                )
+                        jwkSetURI = "http://issuer/jwks.json",
+                        issuer = "issuer",
+                        grantedPermissions = entry.policyPermissions,
+                    )
                 )
             )
             val token = exchangeTokens(config, { builder ->
@@ -302,10 +302,10 @@ class ServiceLoginServiceTest {
                 audience = "packit",
                 policies = listOf(
                     ServiceLoginPolicy(
-                    jwkSetURI = "http://issuer/jwks.json",
-                    issuer = "issuer",
-                    tokenDuration = entry.policyDuration
-                )
+                        jwkSetURI = "http://issuer/jwks.json",
+                        issuer = "issuer",
+                        tokenDuration = entry.policyDuration
+                    )
                 )
             )
 
@@ -385,16 +385,16 @@ class ServiceLoginServiceTest {
         val readToken = exchangeTokens(
             config,
             issuer1.issue { builder ->
-            builder.issuer("issuer1")
-            builder.audience(listOf("packit"))
-        }
+                builder.issuer("issuer1")
+                builder.audience(listOf("packit"))
+            }
         )
         val writeToken = exchangeTokens(
             config,
             issuer2.issue { builder ->
-            builder.issuer("issuer2")
-            builder.audience(listOf("packit"))
-        }
+                builder.issuer("issuer2")
+                builder.audience(listOf("packit"))
+            }
         )
 
         assertEquals(readToken.getClaimAsStringList("au"), listOf("outpack.read"))
@@ -420,9 +420,9 @@ class ServiceLoginServiceTest {
             exchangeTokens(
                 config,
                 untrustedIssuer.issue { builder ->
-                builder.issuer("issuer")
-                builder.audience(listOf("packit"))
-            }
+                    builder.issuer("issuer")
+                    builder.audience(listOf("packit"))
+                }
             )
         }
         assertEquals(ex.key, "externalJwtTokenInvalid")

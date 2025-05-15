@@ -285,9 +285,9 @@ class UserControllerPreauthTest : IntegrationTest() {
 @Sql("/delete-test-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @TestPropertySource(
     properties = [
-    "auth.method=basic",
-    "packit.defaultRoles=TEST_USER_ROLE,TEST_MISSING_ROLE"
-]
+        "auth.method=basic",
+        "packit.defaultRoles=TEST_USER_ROLE,TEST_MISSING_ROLE"
+    ]
 )
 class UserControllerDefaultRolesTest : IntegrationTest() {
     @Autowired
@@ -306,10 +306,10 @@ class UserControllerDefaultRolesTest : IntegrationTest() {
             "/user/basic",
             getTokenizedHttpEntity(
                 data = CreateBasicUser(
-                email = "test@email",
-                password = "password",
-                displayName = "Random User",
-            )
+                    email = "test@email",
+                    password = "password",
+                    displayName = "Random User",
+                )
             ),
             UserDto::class.java
         )

@@ -118,9 +118,9 @@ class BasePacketService(
 
     private fun String.toSHA256(): String {
         return "sha256:${
-            MessageDigest
-                .getInstance("SHA-256")
-                .digest(this.toByteArray()).toHex()
+        MessageDigest
+            .getInstance("SHA-256")
+            .digest(this.toByteArray()).toHex()
         }"
     }
 

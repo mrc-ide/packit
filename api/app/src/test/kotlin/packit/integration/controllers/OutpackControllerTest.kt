@@ -10,23 +10,23 @@ import kotlin.test.assertEquals
 
 class OutpackControllerTest : IntegrationTest() {
     val testPacket = "{\n" +
-            "  \"schema_version\": \"0.0.1\",\n" +
-            "  \"name\": \"modup-201707-queries1\",\n" +
-            "  \"id\": \"20170818-164847-7574883b\",\n" +
-            "  \"time\": {\n" +
-            "    \"start\": 1503074938.2232,\n" +
-            "    \"end\": 1503074938.2232\n" +
-            "  },\n" +
-            "  \"parameters\": null,\n" +
-            "  \"files\": [],\n" +
-            "  \"depends\": [],\n" +
-            "  \"script\": [\n" +
-            "    \"script.R\"\n" +
-            "  ],\n" +
-            "  \"session\": {\n" +
-            "  },\n" +
-            "  \"custom\": null\n" +
-            "}"
+        "  \"schema_version\": \"0.0.1\",\n" +
+        "  \"name\": \"modup-201707-queries1\",\n" +
+        "  \"id\": \"20170818-164847-7574883b\",\n" +
+        "  \"time\": {\n" +
+        "    \"start\": 1503074938.2232,\n" +
+        "    \"end\": 1503074938.2232\n" +
+        "  },\n" +
+        "  \"parameters\": null,\n" +
+        "  \"files\": [],\n" +
+        "  \"depends\": [],\n" +
+        "  \"script\": [\n" +
+        "    \"script.R\"\n" +
+        "  ],\n" +
+        "  \"session\": {\n" +
+        "  },\n" +
+        "  \"custom\": null\n" +
+        "}"
 
     @Test
     @WithAuthenticatedUser(authorities = ["none"])
