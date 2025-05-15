@@ -351,7 +351,7 @@ class PacketGroupControllerTest(
     {
         val packetGroupNames = listOf("test1", "test2")
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packetGroups/user-role/read-permission",
+            "/packetGroups/_/read-permission",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
