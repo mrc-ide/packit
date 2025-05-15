@@ -17,18 +17,8 @@ exceptions:
     active: false
 
 formatting:
-  Indentation:
-    active: true
-  NoLineBreakAfterElse:
-    active: true
   NoWildcardImports:
     active: false
-  ParameterListWrapping:
-    active: true
-  SpacingAroundCurly:
-    active: true
-  SpacingAroundKeyword:
-    active: true
 
 style:
   MandatoryBracesIfStatements:
