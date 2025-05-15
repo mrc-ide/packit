@@ -1,8 +1,10 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { mockPacket } from "../../../mocks";
 import { PacketFileFullScreen } from "../../../../app/components/contents/packets";
 import { SWRConfig } from "swr";
+import { PacketMetadata } from "../../../../types";
+import { PacketOutlet } from "../../../../app/components/main/PacketOutlet";
 
 jest.mock("../../../../lib/auth/getAuthHeader", () => ({
   getAuthHeader: () => ({ Authorization: "fakeAuthHeader" })
@@ -11,12 +13,12 @@ jest.mock("../../../../lib/auth/getAuthHeader", () => ({
 const imageFile = mockPacket.files.filter((file) => file.path === "directory/graph.png")[0];
 
 describe("PacketFileFullScreen", () => {
-  const renderComponent = (filePath: string) => {
+  const renderComponent = (filePath: string, packet: PacketMetadata = mockPacket) => {
     return render(
       <SWRConfig value={{ dedupingInterval: 0 }}>
-        <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/file/${filePath}`]}>
+        <MemoryRouter initialEntries={[`/${packet.name}/${packet.id}/file/${filePath}`]}>
           <Routes>
-            <Route element={<Outlet context={{ packet: mockPacket }} />}>
+            <Route element={<PacketOutlet />}>
               <Route path="/:packetName/:packetId/file/*" element={<PacketFileFullScreen />} />
             </Route>
           </Routes>
@@ -75,5 +77,13 @@ describe("PacketFileFullScreen", () => {
     renderComponent("orderly.R");
 
     expect(screen.getByText(/not supported/i)).toBeVisible();
+  });
+
+  it("should show an error if the packet name in the URL does not match the packet", async () => {
+    renderComponent(imageFile.path, { ...mockPacket, name: "different-name" });
+
+    await waitFor(() => {
+      expect(screen.getByText(/Error fetching packet details/i)).toBeVisible();
+    });
   });
 });
