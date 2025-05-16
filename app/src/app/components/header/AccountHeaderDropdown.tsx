@@ -1,5 +1,3 @@
-import { getInitials } from "../../../lib/string";
-import { Avatar, AvatarFallback } from "../Base/Avatar";
 import { Button } from "../Base/Button";
 import {
   DropdownMenu,
@@ -11,6 +9,7 @@ import {
 } from "../Base/DropdownMenu";
 import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 import { useUser } from "../providers/UserProvider";
+import { CircleUser } from "lucide-react";
 
 export const AccountHeaderDropdown = () => {
   const { removeUser, user } = useUser();
@@ -24,17 +23,24 @@ export const AccountHeaderDropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 w-10 rounded full">
-          <Avatar className="h-8 w-8">
-            <AvatarFallback>{getInitials(user?.displayName)}</AvatarFallback>
-          </Avatar>
+        <Button
+          aria-label="Account"
+          variant="ghost"
+          size="icon"
+          className="rounded-full data-[state=open]:bg-accent data-[state=open]:text-accent-foreground"
+        >
+          <CircleUser />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
+      <DropdownMenuContent align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-base font-medium leading-none">{user?.displayName}</p>
-            <p className="text-sm leading-none text-muted-foreground">{user?.userName}</p>
+            <p data-testid="user-display-name" className="text-base font-medium leading-none">
+              {user?.displayName}
+            </p>
+            <p data-testid="username" className="text-sm leading-none text-muted-foreground">
+              {user?.userName}
+            </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

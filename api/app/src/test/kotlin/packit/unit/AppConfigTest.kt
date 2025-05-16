@@ -13,7 +13,7 @@ import kotlin.test.assertTrue
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AppConfigTest {
-    private val environmentVariables = mapOf(
+    private val requiredEnvVars = mapOf(
         "outpack.server.url" to "url",
         "orderly.runner.url" to "url",
         "db.url" to "url",
@@ -27,13 +27,13 @@ class AppConfigTest {
         "auth.githubAPIOrg" to "githubAPIOrg",
         "auth.githubAPITeam" to "githubAPITeam",
         "cors.allowedOrigins" to "http://localhost, https://production",
-        "packit.defaultRoles" to "ADMIN,USER"
+        "packit.defaultRoles" to "ADMIN,USER",
     )
     private val mockEnv = MockEnvironment()
 
     @BeforeAll
     fun setupEnv() {
-        environmentVariables.forEach { (key, value) ->
+        requiredEnvVars.forEach { (key, value) ->
             mockEnv.setProperty(key, value)
         }
     }
@@ -65,6 +65,28 @@ class AppConfigTest {
         assertEquals(sut.authGithubAPITeam, "githubAPITeam")
         assertEquals(sut.allowedOrigins, listOf("http://localhost", "https://production"))
         assertEquals(sut.defaultRoles, listOf("ADMIN", "USER"))
+        assertEquals(sut.brandLogoAltText, null)
+        assertEquals(sut.brandLogoFilename, null)
+        assertEquals(sut.brandLogoLink, null)
+    }
+
+    @Test
+    fun `ensure optional env variables are set in config`() {
+        val mockEnv2 = MockEnvironment()
+
+        requiredEnvVars.forEach { (key, value) ->
+            mockEnv2.setProperty(key, value)
+        }
+
+        mockEnv2.setProperty("packit.branding.logoAltText", "This is the logo for our instance")
+        mockEnv2.setProperty("packit.branding.logoFilename", "newest-logo.png")
+        mockEnv2.setProperty("packit.branding.logoLink", "https://example.org/example")
+
+        val sut = AppConfig(mockEnv2)
+
+        assertEquals(sut.brandLogoAltText, "This is the logo for our instance")
+        assertEquals(sut.brandLogoFilename, "newest-logo.png")
+        assertEquals(sut.brandLogoLink, "https://example.org/example")
     }
 
     @Test

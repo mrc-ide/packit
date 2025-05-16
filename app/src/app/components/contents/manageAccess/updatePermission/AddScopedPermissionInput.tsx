@@ -44,7 +44,7 @@ export const AddScopedPermissionInput = ({ scope, form }: AddScopedPermissionInp
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-[350px] justify-between"
+            className="hover:bg-background hover:text-inherit w-[350px] justify-between"
             disabled={scope === "global"}
           >
             {scopeResource?.id ? (scope === "packet" ? scopeResource?.id : scopeResource?.name) : "Select Resource..."}

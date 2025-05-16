@@ -24,6 +24,8 @@ jest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
   })
 }));
 
+const DOWN_ARROW = { keyCode: 40 };
+
 describe("header drop down menu component", () => {
   const renderElement = () => {
     return render(
@@ -39,25 +41,29 @@ describe("header drop down menu component", () => {
     jest.clearAllMocks();
   });
 
-  it("renders drop down menu without user info if not authenticated", async () => {
-    renderElement();
-
-    expect(await screen.findByText("XX")).toBeInTheDocument();
-  });
-
-  it("renders drop down menu without user info if authenticated", async () => {
+  it("renders drop down menu with user info if authenticated", async () => {
     mockGetUserFromLocalStorage.mockReturnValue(mockUserState());
     renderElement();
+    fireEvent.keyDown(await screen.findByRole("button"), DOWN_ARROW);
 
-    expect(await screen.findByText("LJ")).toBeInTheDocument();
+    expect(screen.getByTestId("user-display-name")).toHaveTextContent("LeBron James");
+    expect(screen.getByTestId("username")).toHaveTextContent("goat@example.com");
+  });
+
+  it("renders drop down menu without user info if not authenticated", async () => {
+    renderElement();
+    fireEvent.keyDown(await screen.findByRole("button"), DOWN_ARROW);
+
+    expect(screen.getByTestId("user-display-name")).toHaveTextContent("");
+    expect(screen.getByTestId("username")).toHaveTextContent("");
   });
 
   it("deletes user local storage key when log out is clicked", async () => {
-    const DOWN_ARROW = { keyCode: 40 };
     localStorage.setItem(LocalStorageKeys.USER, "mockUser");
     renderElement();
     fireEvent.keyDown(await screen.findByRole("button"), DOWN_ARROW);
     userEvent.click(await screen.findByText("Log out"));
+
     expect(localStorage.getItem(LocalStorageKeys.USER)).toBe(null);
     expect(mockSetLoggingOut).toHaveBeenCalledWith(true);
   });

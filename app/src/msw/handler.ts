@@ -8,6 +8,7 @@ import { loginHandlers } from "./handlers/loginHandlers";
 import { manageRolesHandlers } from "./handlers/manageRolesHandlers";
 import { tagHandlers } from "./handlers/tagHandler";
 import { runnerHandlers } from "./handlers/runnerHandlers";
+import { configurationHandlers } from "./handlers/configurationHandlers";
 import { usersRolesHandler } from "./handlers/usersRolesHandler";
 
 // catch any missed requests in tests
@@ -23,11 +24,12 @@ export const handlers = [
   ...packetGroupHandlers,
   ...packetHandlers,
   ...authConfigHandlers,
+  ...configurationHandlers,
   ...downloadFileHandlers,
   ...loginHandlers,
   ...manageRolesHandlers,
+  ...runnerHandlers,
   ...tagHandlers,
   ...usersRolesHandler,
-  ...runnerHandlers,
   ...defaultHandlers
 ];
