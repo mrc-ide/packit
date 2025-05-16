@@ -6,9 +6,7 @@ import { Pagination } from "../common/Pagination";
 import { Unauthorized } from "../common/Unauthorized";
 import { PacketGroupSummaryListItem } from "./PacketGroupSummaryListItem";
 import { useGetPacketGroupSummaries } from "./hooks/useGetPacketGroupSummaries";
-import { useUser } from "../../providers/UserProvider";
-import { useGetRolesWithRelationships } from "../manageAccess/hooks/useGetRolesWithRelationships";
-import { canReadRoles } from "../../../../lib/auth/hasPermission";
+import { useGetRolesAndUsersToUpdatePacketGroupRead } from "./hooks/useGetRolesAndUsersToUpdatePacketGroupRead";
 
 interface PacketGroupSummaryListProps {
   filterByName: string;
@@ -22,20 +20,17 @@ export const PacketGroupSummaryList = ({
   pageSize,
   setPageNumber
 }: PacketGroupSummaryListProps) => {
-  const { user } = useUser();
-  const rolesResponse = canReadRoles(user?.authorities) ? useGetRolesWithRelationships() : undefined;
+  const { rolesAndUsers, mutate, isLoading: isRolesLoading } = useGetRolesAndUsersToUpdatePacketGroupRead();
   const {
     packetGroupSummaries,
     isLoading,
     error: packetFetchError
   } = useGetPacketGroupSummaries(pageNumber, pageSize, filterByName);
 
-  if (packetFetchError?.status === HttpStatus.Unauthorized || rolesResponse?.error?.status === HttpStatus.Unauthorized)
-    return <Unauthorized />;
+  if (packetFetchError?.status === HttpStatus.Unauthorized) return <Unauthorized />;
   if (packetFetchError) return <ErrorComponent message="Error fetching packet groups" error={packetFetchError} />;
-  if (rolesResponse?.error) return <ErrorComponent message="Error fetching roles" error={rolesResponse.error} />;
 
-  if (isLoading || rolesResponse?.isLoading)
+  if (isLoading || (isRolesLoading && !packetGroupSummaries))
     return (
       <ul className="flex flex-col border rounded-md">
         {[...Array(2)].map((_, index) => (
@@ -61,7 +56,8 @@ export const PacketGroupSummaryList = ({
             <PacketGroupSummaryListItem
               key={packetGroup.latestId}
               packetGroup={packetGroup}
-              rolesResponse={rolesResponse}
+              rolesAndUsersToUpdateRead={rolesAndUsers?.[packetGroup.name]}
+              mutate={mutate}
             />
           ))}
         </ul>

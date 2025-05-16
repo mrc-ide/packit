@@ -83,6 +83,9 @@ export const createEmptyTestRole = async (page: Page) => {
   await page.getByRole("button", { name: "Add Role" }).click();
   await page.getByRole("textbox", { name: "Name" }).fill(testRoleName);
   await page.getByRole("button", { name: "Add" }).click();
+
+  await expect(page.getByRole("cell", { name: testRoleName, exact: true })).toBeVisible();
+  await page.waitForTimeout(2000); // wait for saving of entity to finish
   await page.getByRole("link", { name: "Packit" }).click();
 
   return testRoleName;

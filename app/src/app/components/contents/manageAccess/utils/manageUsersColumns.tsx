@@ -8,9 +8,9 @@ import { useUser } from "../../../providers/UserProvider";
 import { DeleteUserOrRole } from "../DeleteUserOrRole";
 import { UpdateUserDropdownMenu } from "../manageUsersActions/UpdateUserDropdownMenu";
 import { RoleWithRelationships } from "../types/RoleWithRelationships";
-import { UserWithRoles } from "../types/UserWithRoles";
+import { UserWithPermissions } from "../types/UserWithPermissions";
 
-const columnHelper = createColumnHelper<UserWithRoles>();
+const columnHelper = createColumnHelper<UserWithPermissions>();
 
 export const setupManageUsersColumns = (
   mutate: KeyedMutator<RoleWithRelationships[]>,

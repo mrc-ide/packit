@@ -2,6 +2,7 @@ package packit.model
 
 import jakarta.persistence.*
 import packit.model.dto.BasicRoleDto
+import packit.model.dto.BasicRoleWithUsersDto
 import packit.model.dto.RoleDto
 
 @Entity
@@ -44,3 +45,9 @@ fun Role.toDto() =
     )
 
 fun Role.toBasicDto() = BasicRoleDto(name, id!!)
+
+fun Role.toBasicRoleWithUsersDto() = BasicRoleWithUsersDto(
+    name,
+    id!!,
+    users.map { it.toBasicDto() }
+)

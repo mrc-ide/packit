@@ -9,8 +9,11 @@ import org.springframework.http.HttpStatus
 import org.springframework.test.context.jdbc.Sql
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
-import packit.model.*
+import packit.model.Role
+import packit.model.RolePermission
+import packit.model.User
 import packit.model.dto.*
+import packit.model.toDto
 import packit.repository.PermissionRepository
 import packit.repository.RoleRepository
 import packit.repository.UserRepository
@@ -203,29 +206,14 @@ class RoleControllerTest : IntegrationTest()
 
         assert(
             roles.containsAll(
-                roleService.getSortedRoleDtos(
+                roleService.getSortedRoles(
                     listOf(
                         adminRole,
                         userRole
                     )
-                )
+                ).map { it.toDto() }
             )
         )
-    }
-
-    @Test
-    @WithAuthenticatedUser(authorities = ["packet.manage"])
-    fun `users with packet manage can get all roles with relationships`()
-    {
-        val result =
-            restTemplate.exchange(
-                "/roles",
-                HttpMethod.GET,
-                getTokenizedHttpEntity(),
-                String::class.java
-            )
-
-        assertSuccess(result)
     }
 
     @Test
@@ -240,7 +228,7 @@ class RoleControllerTest : IntegrationTest()
                 getTokenizedHttpEntity(),
                 String::class.java
             )
-        val usernameRoleDtos = roleService.getSortedRoleDtos(
+        val usernameRoleDtos = roleService.getSortedRoles(
             roleRepository.findAllByIsUsernameOrderByName(true)
         )
 
@@ -301,21 +289,6 @@ class RoleControllerTest : IntegrationTest()
         assertSuccess(result)
 
         assertEquals(roleDto, roleResult)
-    }
-
-    @Test
-    @WithAuthenticatedUser(authorities = ["packet.manage"])
-    fun `users with packet manage can get specific with relationships`()
-    {
-        val result =
-            restTemplate.exchange(
-                "/roles/ADMIN",
-                HttpMethod.GET,
-                getTokenizedHttpEntity(),
-                String::class.java
-            )
-
-        assertSuccess(result)
     }
 
     @Test

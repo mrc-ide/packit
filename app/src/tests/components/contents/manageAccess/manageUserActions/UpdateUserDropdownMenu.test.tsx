@@ -10,7 +10,7 @@ describe("UpdateUserDropdownMenu", () => {
     render(
       <UpdateUserDropdownMenu
         mutate={jest.fn()}
-        user={{ roles: [], username: "user1", id: 1, specificPermissions: [] }}
+        user={{ roles: [], username: "user1", id: "1", specificPermissions: [] }}
         roles={[]}
       />
     );
@@ -30,7 +30,7 @@ describe("UpdateUserDropdownMenu", () => {
     render(
       <UpdateUserDropdownMenu
         mutate={jest.fn()}
-        user={{ roles: [], username: "user1", id: 1, specificPermissions: [] }}
+        user={{ roles: [], username: "user1", id: "1", specificPermissions: [] }}
         roles={[]}
       />
     );

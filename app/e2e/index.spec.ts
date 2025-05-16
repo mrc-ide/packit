@@ -77,7 +77,7 @@ test.describe("Index page", () => {
       .filter({ hasText: "Select roles or specific" })
       .getByPlaceholder("Select roles or users...")
       .click();
-    await page.getByRole("option", { name: testRoleName }).click();
+    await page.getByRole("option", { name: `${testRoleName} Role` }).click();
     await page.getByRole("heading", { name: "Update read access on" }).click();
     await page.getByRole("button", { name: "Save" }).click();
     // remove permission
@@ -87,7 +87,7 @@ test.describe("Index page", () => {
       .filter({ hasText: /^Remove read access$/ })
       .getByPlaceholder("Select roles or users...")
       .click();
-    await page.getByRole("option", { name: testRoleName }).click();
+    await page.getByRole("option", { name: `${testRoleName} Role` }).click();
     await page.getByRole("heading", { name: "Update read access on" }).click();
     await page.getByRole("button", { name: "Save" }).click();
     // check to ensure removed and is visible on grant list

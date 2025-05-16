@@ -32,15 +32,18 @@ interface UserService
     fun getServiceUser(): User
     fun getUserPrincipal(user: User): UserPrincipal
     fun getAllNonServiceUsers(): List<User>
+    fun getSortedUsers(users: List<User>): List<User>
 }
 
 @Service
 class BaseUserService(
     private val userRepository: UserRepository,
     private val roleService: RoleService,
-    private val passwordEncoder: PasswordEncoder
+    private val passwordEncoder: PasswordEncoder,
+    private val rolePermissionService: RolePermissionService
 ) : UserService
 {
+
     override fun saveUserFromGithub(username: String, displayName: String?, email: String?): User
     {
         return saveUser(username, displayName, email, "github")
@@ -195,7 +198,8 @@ class BaseUserService(
         val user = userRepository.findByUsername(username)
             ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
 
-        if (user.userSource == "service") {
+        if (user.userSource == "service")
+        {
             throw PackitException("cannotUpdateServiceUser", HttpStatus.BAD_REQUEST)
         }
 
@@ -209,7 +213,8 @@ class BaseUserService(
             ?: throw PackitException("serviceUserNotFound", HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
-    override fun getUserPrincipal(user: User): UserPrincipal {
+    override fun getUserPrincipal(user: User): UserPrincipal
+    {
         return UserPrincipal(
             user.username,
             user.displayName,
@@ -221,5 +226,13 @@ class BaseUserService(
     override fun getAllNonServiceUsers(): List<User>
     {
         return userRepository.findByUserSourceNotOrderByUsername("service")
+    }
+
+    override fun getSortedUsers(users: List<User>): List<User>
+    {
+        return users.onEach { user ->
+            rolePermissionService.sortRolePermissions(user.getSpecificPermissions())
+            user.roles.sortBy { it.name }
+        }
     }
 }

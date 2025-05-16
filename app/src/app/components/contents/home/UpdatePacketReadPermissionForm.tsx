@@ -9,16 +9,15 @@ import { fetcher } from "../../../../lib/fetch";
 import { Form, FormDescription, FormField, FormItem, FormLabel } from "../../Base/Form";
 import { MultiSelector, MultiSelectorContent, MultiSelectorInput, MultiSelectorTrigger } from "../../Base/MultiSelect";
 import { CustomDialogFooter } from "../common/CustomDialogFooter";
-import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
-import { UserWithRoles } from "../manageAccess/types/UserWithRoles";
+import { BasicRolesAndUsers, RolesAndUsersToUpdateRead } from "../manageAccess/types/RoleWithRelationships";
 import { UpdatePacketReadPermissionMultiSelectList } from "./UpdatePacketReadPermissionMultiSelectList";
 
 interface UpdatePacketReadPermissionFormProps {
-  rolesAndUsersCantRead: (RoleWithRelationships | UserWithRoles)[];
-  rolesAndUsersWithRead: (RoleWithRelationships | UserWithRoles)[];
+  rolesAndUsersCantRead: BasicRolesAndUsers;
+  rolesAndUsersWithRead: BasicRolesAndUsers;
   setDialogOpen: Dispatch<SetStateAction<boolean>>;
   packetGroupName: string;
-  mutate: KeyedMutator<RoleWithRelationships[]>;
+  mutate: KeyedMutator<Record<string, RolesAndUsersToUpdateRead>> | KeyedMutator<RolesAndUsersToUpdateRead>;
   packetId?: string;
 }
 export const UpdatePacketReadPermissionForm = ({
@@ -47,14 +46,14 @@ export const UpdatePacketReadPermissionForm = ({
     if (values.roleNamesToAdd.length === 0 && values.roleNamesToRemove.length === 0) {
       return setError("You must add or remove at least one role or user.");
     }
-
     try {
       await fetcher({
-        url: `${appConfig.apiUrl()}/packetGroups/${packetGroupName}/read-permission`,
+        url: `${appConfig.apiUrl()}/${
+          packetId ? `packets/${packetId}/read-permission` : `packetGroups/${packetGroupName}/read-permission`
+        }`,
         body: {
           roleNamesToAdd: values.roleNamesToAdd,
-          roleNamesToRemove: values.roleNamesToRemove,
-          packetId
+          roleNamesToRemove: values.roleNamesToRemove
         },
         method: "PUT"
       });

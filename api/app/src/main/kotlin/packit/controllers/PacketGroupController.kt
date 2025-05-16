@@ -12,12 +12,14 @@ import packit.model.toDto
 import packit.service.PacketGroupService
 import packit.service.PacketService
 import packit.service.RoleService
+import packit.service.UserRoleService
 
 @Controller
 class PacketGroupController(
     private val packetService: PacketService,
     private val packetGroupService: PacketGroupService,
     private val roleService: RoleService,
+    private val userRoleService: UserRoleService
 )
 {
     @GetMapping("/packetGroups")
@@ -62,17 +64,22 @@ class PacketGroupController(
         return ResponseEntity.ok(packetGroupService.getPacketGroupSummaries(payload, filter))
     }
 
+    @PreAuthorize("@authz.canManageAnyPacket(#root)")
+    @GetMapping("packetGroups/_/read-permission")
+    fun getRolesAndUsersForReadPermissionUpdate(): ResponseEntity<Map<String, RolesAndUsersForReadUpdate>>
+    {
+        val packetGroupNames = packetGroupService.getAllPacketGroupsCanManage().map { it.name }
+        val result = userRoleService.getRolesAndUsersForPacketGroupReadUpdate(packetGroupNames)
+
+        return ResponseEntity.ok(result)
+    }
+
     @PreAuthorize(
-        """
-        @authz.canUpdatePacketReadRoles(
-            #root,
-            #name,
-            #updatePacketReadRoles.packetId)
-    """
+        "@authz.canUpdatePacketGroupReadRoles(#root,#name)"
     )
     @PutMapping("packetGroups/{name}/read-permission")
-    fun updatePacketReadPermissionOnRoles(
-        @RequestBody @Validated updatePacketReadRoles: UpdatePacketReadRoles,
+    fun updatePacketGroupReadPermissionOnRoles(
+        @RequestBody @Validated updatePacketReadRoles: UpdateReadRoles,
         @PathVariable name: String
     ): ResponseEntity<Unit>
     {

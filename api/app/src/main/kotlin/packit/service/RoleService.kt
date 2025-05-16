@@ -12,10 +12,8 @@ import packit.model.Permission
 import packit.model.Role
 import packit.model.RolePermission
 import packit.model.dto.CreateRole
-import packit.model.dto.RoleDto
-import packit.model.dto.UpdatePacketReadRoles
+import packit.model.dto.UpdateReadRoles
 import packit.model.dto.UpdateRolePermissions
-import packit.model.toDto
 import packit.repository.RoleRepository
 
 interface RoleService
@@ -31,9 +29,13 @@ interface RoleService
     fun getRole(roleName: String): Role
     fun updatePermissionsToRole(roleName: String, updateRolePermissions: UpdateRolePermissions): Role
     fun getByRoleName(roleName: String): Role?
-    fun getSortedRoleDtos(roles: List<Role>): List<RoleDto>
+    fun getSortedRoles(roles: List<Role>): List<Role>
     fun getDefaultRoles(): List<Role>
-    fun updatePacketReadPermissionOnRoles(updatePacketReadRoles: UpdatePacketReadRoles, packetGroupName: String)
+    fun updatePacketReadPermissionOnRoles(
+        updatePacketReadRoles: UpdateReadRoles,
+        packetGroupName: String,
+        packetId: String? = null
+    )
 }
 
 @Service
@@ -41,7 +43,7 @@ class BaseRoleService(
     private val appConfig: AppConfig,
     private val roleRepository: RoleRepository,
     private val permissionService: PermissionService,
-    private val rolePermissionService: RolePermissionService,
+    private val rolePermissionService: RolePermissionService
 ) : RoleService
 {
     override fun getAdminRole(): Role
@@ -110,16 +112,11 @@ class BaseRoleService(
         return roleRepository.findByName(roleName)
     }
 
-    override fun getSortedRoleDtos(roles: List<Role>): List<RoleDto>
+    override fun getSortedRoles(roles: List<Role>): List<Role>
     {
-        return roles.map { role ->
-            role.apply {
-                users = users.filterNot { it.isServiceUser() }.sortedBy { it.username }.toMutableList()
-                rolePermissions = role.rolePermissions.sortedByDescending {
-                    it.tag == null && it.packet == null && it.packetGroup == null
-                }.toMutableList()
-            }
-            role.toDto()
+        return roles.onEach { role ->
+            rolePermissionService.sortRolePermissions(role.rolePermissions)
+            role.users = role.users.filterNot { it.isServiceUser() }.sortedBy { it.username }.toMutableList()
         }
     }
 
@@ -178,8 +175,9 @@ class BaseRoleService(
 
     @Transactional(rollbackFor = [Exception::class])
     override fun updatePacketReadPermissionOnRoles(
-        updatePacketReadRoles: UpdatePacketReadRoles,
-        packetGroupName: String
+        updatePacketReadRoles: UpdateReadRoles,
+        packetGroupName: String,
+        packetId: String?
     )
     {
         val roleNamesToUpdate =
@@ -192,7 +190,7 @@ class BaseRoleService(
             rolesToUpdate.filter { it.name in updatePacketReadRoles.roleNamesToRemove },
             "packet.read",
             packetGroupName,
-            updatePacketReadRoles.packetId,
+            packetId,
         )
 
         roleRepository.saveAll(updatedRoles)

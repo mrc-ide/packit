@@ -12,7 +12,7 @@ import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.model.*
 import packit.model.dto.CreateRole
-import packit.model.dto.UpdatePacketReadRoles
+import packit.model.dto.UpdateReadRoles
 import packit.model.dto.UpdateRolePermissions
 import packit.repository.RoleRepository
 import packit.service.BaseRoleService
@@ -28,7 +28,8 @@ class RoleServiceTest
     private val roleRepository = mock<RoleRepository>()
     private val permissionService = mock<PermissionService>()
     private val rolePermissionService = mock<RolePermissionService>()
-    private val roleService = BaseRoleService(appConfig, roleRepository, permissionService, rolePermissionService)
+    private val roleService =
+        BaseRoleService(appConfig, roleRepository, permissionService, rolePermissionService)
 
     @Test
     fun `createUsernameRole throws exception if role exists`()
@@ -380,7 +381,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getSortedRoleDtos returns roles sorted by base permissions`()
+    fun `getSortedRoles returns roles sorted by base permissions`()
     {
         val role1 = Role(name = "role1", id = 1).apply {
             rolePermissions = mutableListOf(
@@ -407,12 +408,14 @@ class RoleServiceTest
         }
         val roles = listOf(role1, role2)
 
-        val result = roleService.getSortedRoleDtos(roles)
+        val result = roleService.getSortedRoles(roles)
 
         assertEquals(2, result.size)
-        assertEquals("permission1", result[0].rolePermissions[0].permission)
-        assertEquals("permission3", result[0].rolePermissions[1].permission)
-        assertEquals("permission4", result[1].rolePermissions[0].permission)
+        assertEquals("permission1", result[0].rolePermissions[0].permission.name)
+        assertEquals("permission2", result[0].rolePermissions[1].permission.name)
+        assertEquals(
+            "permission5", result[1].rolePermissions[0].permission.name
+        )
     }
 
     @Test
@@ -446,7 +449,7 @@ class RoleServiceTest
 
         val roles = listOf(role1)
 
-        val result = roleService.getSortedRoleDtos(roles)
+        val result = roleService.getSortedRoles(roles)
 
         assertEquals(1, result.size)
         assertEquals("a user", result[0].users[0].username)
@@ -478,7 +481,7 @@ class RoleServiceTest
 
         val roles = listOf(role1)
 
-        val result = roleService.getSortedRoleDtos(roles)
+        val result = roleService.getSortedRoles(roles)
 
         assertEquals(1, result[0].users.size)
         assert(result[0].users.none { it.username == "service user" })
@@ -606,7 +609,7 @@ class RoleServiceTest
         val packetId = "packet123"
         val packetGroupName = "packetGroup1"
         val updatePacketReadRoles =
-            UpdatePacketReadRoles(packetId, rolesToAdd.toSet(), rolesToRemove.toSet())
+            UpdateReadRoles(rolesToAdd.toSet(), rolesToRemove.toSet())
         val allRoles = updateRoleNames.map { Role(name = it) }
 
         doReturn(updateRoleNames).`when`(spyRoleService)
@@ -616,7 +619,7 @@ class RoleServiceTest
             allRoles
         )
 
-        spyRoleService.updatePacketReadPermissionOnRoles(updatePacketReadRoles, packetGroupName)
+        spyRoleService.updatePacketReadPermissionOnRoles(updatePacketReadRoles, packetGroupName, packetId)
 
         verify(rolePermissionService).applyPermissionToMultipleRoles(
             allRoles.subList(0, 2),
