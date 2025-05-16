@@ -14,7 +14,7 @@ import packit.repository.RoleRepository
 
 /**
  * Integration test for security enabled configuration.
- * Uses roles endpoint to test authentication and authorization.
+ * Uses simple GET /roles endpoint to test authentication and authorization.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract class SecurityEnabledConfigTest : IntegrationTest() {
