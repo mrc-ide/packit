@@ -11,8 +11,7 @@ import kotlin.test.assertEquals
 
 class ConfigurationControllerTest {
     @Test
-    fun `can get config when present`()
-    {
+    fun `can get config when present`() {
         val mockAppConfig = mock<AppConfig> {
             on { brandLogoAltText } doReturn "This is the logo"
             on { brandLogoFilename } doReturn "our-logo.png"
@@ -34,8 +33,7 @@ class ConfigurationControllerTest {
     }
 
     @Test
-    fun `succeeds when no logo config present`()
-    {
+    fun `succeeds when no logo config present`() {
         val mockAppConfig = mock<AppConfig>()
 
         val sut = ConfigurationController(mockAppConfig)

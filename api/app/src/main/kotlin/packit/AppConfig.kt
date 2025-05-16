@@ -13,8 +13,7 @@ class AppConfig(private val environment: Environment) {
         return environment[key] ?: throw IllegalArgumentException("$key not set $environment")
     }
 
-    internal final fun optionalEnvValue(key: String): String?
-    {
+    internal final fun optionalEnvValue(key: String): String? {
         return environment[key]
     }
 

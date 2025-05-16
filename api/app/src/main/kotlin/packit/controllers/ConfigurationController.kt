@@ -7,11 +7,9 @@ import packit.model.dto.LogoDto
 
 @RestController
 @RequestMapping("/configuration")
-class ConfigurationController(private val appConfig: AppConfig)
-{
+class ConfigurationController(private val appConfig: AppConfig) {
     @GetMapping("/logo")
-    fun getLogo(): ResponseEntity<LogoDto>
-    {
+    fun getLogo(): ResponseEntity<LogoDto> {
         return ResponseEntity.ok(
             LogoDto(
                 altText = appConfig.brandLogoAltText,

@@ -46,8 +46,7 @@ class AppConfigTest {
     }
 
     @Test
-    fun `ensure all env variables set in config`()
-    {
+    fun `ensure all env variables set in config`() {
         val sut = AppConfig(mockEnv)
 
         assertEquals(sut.outpackServerUrl, "url")
@@ -72,8 +71,7 @@ class AppConfigTest {
     }
 
     @Test
-    fun `ensure optional env variables are set in config`()
-    {
+    fun `ensure optional env variables are set in config`() {
         val mockEnv2 = MockEnvironment()
 
         requiredEnvVars.forEach { (key, value) ->
