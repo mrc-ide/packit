@@ -50,7 +50,6 @@ class WebSecurityConfig(
     val browserRedirect: BrowserRedirect,
     val exceptionHandler: PackitExceptionHandler
 ) {
-
     @Bean
     @Order(1)
     fun actuatorSecurityFilterChain(httpSecurity: HttpSecurity): SecurityFilterChain {
@@ -126,7 +125,6 @@ class WebSecurityConfig(
                         .anyRequest().authenticated()
                 }
         } else {
-
             this.securityMatcher("/**")
                 .authorizeHttpRequests { it.anyRequest().permitAll() }
         }
