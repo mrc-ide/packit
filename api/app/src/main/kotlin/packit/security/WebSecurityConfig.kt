@@ -1,7 +1,10 @@
 package packit.security
 
 import jakarta.servlet.DispatcherType
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
@@ -26,8 +29,18 @@ import packit.security.oauth2.OAuth2UserService
 import packit.security.provider.JwtIssuer
 import packit.service.BasicUserDetailsService
 
+@ConditionalOnProperty(prefix = "auth", name = ["enabled"], havingValue = "true", matchIfMissing = true)
+@Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+class SecurityEnabledConfig {
+    private val log: Logger = LoggerFactory.getLogger(SecurityEnabledConfig::class.java)
+
+    init {
+        log.info("Authentication and Authorization are enabled")
+    }
+}
+
 @Configuration
 class WebSecurityConfig(
     val customOauth2UserService: OAuth2UserService,
@@ -37,6 +50,7 @@ class WebSecurityConfig(
     val browserRedirect: BrowserRedirect,
     val exceptionHandler: PackitExceptionHandler
 ) {
+
     @Bean
     @Order(1)
     fun actuatorSecurityFilterChain(httpSecurity: HttpSecurity): SecurityFilterChain {
@@ -112,6 +126,7 @@ class WebSecurityConfig(
                         .anyRequest().authenticated()
                 }
         } else {
+
             this.securityMatcher("/**")
                 .authorizeHttpRequests { it.anyRequest().permitAll() }
         }
