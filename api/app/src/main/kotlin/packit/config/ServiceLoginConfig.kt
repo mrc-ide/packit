@@ -6,17 +6,17 @@ import java.time.Duration
 import java.time.temporal.ChronoUnit
 
 data class ServiceLoginPolicy(
-  val jwkSetURI: String,
-  val issuer: String,
-  val requiredClaims: Map<String, String> = mapOf(),
-  val grantedPermissions: List<String> = listOf(),
+    val jwkSetURI: String,
+    val issuer: String,
+    val requiredClaims: Map<String, String> = mapOf(),
+    val grantedPermissions: List<String> = listOf(),
 
-  @DurationUnit(ChronoUnit.SECONDS)
-  val tokenDuration: Duration? = null,
+    @DurationUnit(ChronoUnit.SECONDS)
+    val tokenDuration: Duration? = null,
 )
 
 @ConfigurationProperties(prefix = "auth.service")
 data class ServiceLoginConfig(
-  val audience: String?,
-  val policies: List<ServiceLoginPolicy> = listOf()
+    val audience: String?,
+    val policies: List<ServiceLoginPolicy> = listOf()
 )

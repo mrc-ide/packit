@@ -15,8 +15,7 @@ import packit.service.RoleService
 import packit.service.UserService
 import kotlin.test.assertEquals
 
-class OAuth2UserServiceTest
-{
+class OAuth2UserServiceTest {
     private val mockGithubUserClient = mock<GithubUserClient>()
     private val fakeLogin = "jammy123"
     private val fakeName = "Jammy"
@@ -30,8 +29,7 @@ class OAuth2UserServiceTest
     private val mockRoleService = mock<RoleService>()
 
     @Test
-    fun `can process oauth user attributes`()
-    {
+    fun `can process oauth user attributes`() {
         val mockOAuth2User = mock<OAuth2User> {
             on { attributes } doReturn mapOf("login" to fakeLogin, "name" to fakeName)
         }
@@ -47,8 +45,7 @@ class OAuth2UserServiceTest
     }
 
     @Test
-    fun `can check user github membership`()
-    {
+    fun `can check user github membership`() {
         val mockAccessToken = mock<OAuth2AccessToken> {
             on { tokenValue } doReturn "fakeToken"
         }

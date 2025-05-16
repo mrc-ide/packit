@@ -8,11 +8,9 @@ import packit.integration.WithAuthenticatedUser
 import kotlin.test.assertEquals
 
 @WithAuthenticatedUser(authorities = ["packet.read"])
-class PackitExceptionHandlerTest : IntegrationTest()
-{
+class PackitExceptionHandlerTest : IntegrationTest() {
     @Test
-    fun `throws exception when client error occurred`()
-    {
+    fun `throws exception when client error occurred`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets/nonsense",
             HttpMethod.GET,
@@ -23,8 +21,7 @@ class PackitExceptionHandlerTest : IntegrationTest()
     }
 
     @Test
-    fun `throws bad request exception when request body is not correct`()
-    {
+    fun `throws bad request exception when request body is not correct`() {
         val headers = HttpHeaders()
         val entity = HttpEntity(mapOf("ghtoken" to "xyz"), headers)
 
@@ -38,8 +35,7 @@ class PackitExceptionHandlerTest : IntegrationTest()
     }
 
     @Test
-    fun `throws unauthorized exception when token is invalid`()
-    {
+    fun `throws unauthorized exception when token is invalid`() {
         val headers = HttpHeaders()
         val entity = HttpEntity(mapOf("token" to "xyz"), headers)
 
@@ -54,8 +50,7 @@ class PackitExceptionHandlerTest : IntegrationTest()
     }
 
     @Test
-    fun `throw 404 error when not found endpoint is called`()
-    {
+    fun `throw 404 error when not found endpoint is called`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/wrong-endpoint",
             HttpMethod.GET,
@@ -66,8 +61,7 @@ class PackitExceptionHandlerTest : IntegrationTest()
     }
 
     @Test
-    fun `throw 405 when method not allowed`()
-    {
+    fun `throw 405 when method not allowed`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/auth/login/api",
             HttpMethod.PUT,

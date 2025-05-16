@@ -24,8 +24,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 @Sql("/delete-test-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-class RoleControllerTest : IntegrationTest()
-{
+class RoleControllerTest : IntegrationTest() {
     @Autowired
     private lateinit var userRepository: UserRepository
 
@@ -62,8 +61,7 @@ class RoleControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `users with user manage authority can create roles`()
-    {
+    fun `users with user manage authority can create roles`() {
         val result =
             restTemplate.postForEntity(
                 "/roles",
@@ -82,8 +80,7 @@ class RoleControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["none"])
-    fun `user without user manage permission cannot create roles`()
-    {
+    fun `user without user manage permission cannot create roles`() {
         val result =
             restTemplate.postForEntity(
                 "/roles",
@@ -96,8 +93,7 @@ class RoleControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `reject request if createRole body is invalid`()
-    {
+    fun `reject request if createRole body is invalid`() {
         val result =
             restTemplate.postForEntity(
                 "/roles",
@@ -110,8 +106,7 @@ class RoleControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `users with manage authority can delete roles`()
-    {
+    fun `users with manage authority can delete roles`() {
         roleRepository.save(Role(name = "testRole"))
 
         val result =
@@ -128,8 +123,7 @@ class RoleControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["none"])
-    fun `user without user manage permission cannot delete roles`()
-    {
+    fun `user without user manage permission cannot delete roles`() {
         roleRepository.save(Role(name = "testRole"))
 
         val result =
@@ -145,8 +139,7 @@ class RoleControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `users with manage authority can update role permissions`()
-    {
+    fun `users with manage authority can update role permissions`() {
         val roleName = "testRole"
         val baseRole = roleRepository.save(Role(name = roleName))
         val permission = permissionsRepository.findByName("packet.run")!!
@@ -169,8 +162,7 @@ class RoleControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["none"])
-    fun `user without user manage permission cannot update role permissions`()
-    {
+    fun `user without user manage permission cannot update role permissions`() {
         roleRepository.save(Role(name = "testRole"))
 
         val result = restTemplate.exchange(
@@ -185,8 +177,7 @@ class RoleControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `users with user manage can get all roles with relationships`()
-    {
+    fun `users with user manage can get all roles with relationships`() {
         val adminRole = roleRepository.findByName("ADMIN")!!
         val userRole = roleRepository.save(Role(name = "testRole", isUsername = true))
         val result =
@@ -200,8 +191,7 @@ class RoleControllerTest : IntegrationTest()
         assertSuccess(result)
         val roles = jacksonObjectMapper().readValue(
             result.body,
-            object : TypeReference<List<RoleDto>>()
-            {}
+            object : TypeReference<List<RoleDto>>() {}
         )
 
         assert(
@@ -218,8 +208,7 @@ class RoleControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `users can get username roles with relationships `()
-    {
+    fun `users can get username roles with relationships `() {
         roleRepository.save(Role("test-username", isUsername = true))
         val result =
             restTemplate.exchange(
@@ -234,8 +223,7 @@ class RoleControllerTest : IntegrationTest()
 
         val roles = jacksonObjectMapper().readValue(
             result.body,
-            object : TypeReference<List<RoleDto>>()
-            {}
+            object : TypeReference<List<RoleDto>>() {}
         )
 
         assertEquals(roles.size, usernameRoleDtos.size)
@@ -243,8 +231,7 @@ class RoleControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `users can get non username roles with relationships`()
-    {
+    fun `users can get non username roles with relationships`() {
         val userRole = roleRepository.save(Role("test-user", isUsername = true)).toDto()
         val adminRole = roleRepository.findByName("ADMIN")!!.toDto()
         val result =
@@ -258,8 +245,7 @@ class RoleControllerTest : IntegrationTest()
         assertSuccess(result)
         val roles = jacksonObjectMapper().readValue(
             result.body,
-            object : TypeReference<List<RoleDto>>()
-            {}
+            object : TypeReference<List<RoleDto>>() {}
         )
         val foundAdminRole = roles.find { it.name == adminRole.name }!!
         assertEquals(foundAdminRole.name, adminRole.name)
@@ -270,8 +256,7 @@ class RoleControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `users can get specific with relationships`()
-    {
+    fun `users can get specific with relationships`() {
         val roleDto = roleRepository.findByName("ADMIN")!!.toDto()
         val result =
             restTemplate.exchange(
@@ -283,8 +268,7 @@ class RoleControllerTest : IntegrationTest()
 
         val roleResult = jacksonObjectMapper().readValue(
             result.body,
-            object : TypeReference<RoleDto>()
-            {}
+            object : TypeReference<RoleDto>() {}
         )
         assertSuccess(result)
 
@@ -293,8 +277,7 @@ class RoleControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["none"])
-    fun `user without user manage permission cannot update role users`()
-    {
+    fun `user without user manage permission cannot update role users`() {
         val result =
             restTemplate.exchange(
                 "/roles/ADMIN/users",
@@ -308,8 +291,7 @@ class RoleControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `users with manage authority can update role users`()
-    {
+    fun `users with manage authority can update role users`() {
         val testRole = roleRepository.save(Role(name = "TEST_ROLE"))
         val userToRemove = User(
             username = "test",

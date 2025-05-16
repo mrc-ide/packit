@@ -6,8 +6,7 @@ import packit.exceptions.PackitException
 import packit.model.*
 import packit.model.dto.*
 
-interface UserRoleService
-{
+interface UserRoleService {
     fun updateRoleUsers(roleName: String, usersToUpdate: UpdateRoleUsers): Role
     fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles): User
     fun getAllRolesAndUsersWithPermissions(): RolesAndUsersWithPermissionsDto
@@ -23,15 +22,12 @@ class BaseUserRoleService(
     private val roleService: RoleService,
     private val userService: UserService,
     private val userRoleFilterService: UserRoleFilterService
-) : UserRoleService
-{
-    override fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles): User
-    {
+) : UserRoleService {
+    override fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles): User {
         val user = userService.getByUsername(username)
             ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
 
-        if (user.isServiceUser())
-        {
+        if (user.isServiceUser()) {
             throw PackitException("cannotModifyServiceUser", HttpStatus.BAD_REQUEST)
         }
 
@@ -42,15 +38,13 @@ class BaseUserRoleService(
         return userService.saveUser(user)
     }
 
-    override fun getAllRolesAndUsersWithPermissions(): RolesAndUsersWithPermissionsDto
-    {
+    override fun getAllRolesAndUsersWithPermissions(): RolesAndUsersWithPermissionsDto {
         return createSortedRolesAndUsersWithPermissionsDto(getNonUsernameRolesAndNonServiceUsers())
     }
 
     override fun getRolesAndUsersForPacketGroupReadUpdate(
         packetGroupNames: List<String>
-    ): Map<String, RolesAndUsersForReadUpdate>
-    {
+    ): Map<String, RolesAndUsersForReadUpdate> {
         val (roles, users) = getNonUsernameRolesAndNonServiceUsers()
         return packetGroupNames.associateWith {
             RolesAndUsersForReadUpdate(
@@ -67,8 +61,7 @@ class BaseUserRoleService(
         }
     }
 
-    override fun getRolesAndUsersForPacketReadUpdate(packet: Packet): RolesAndUsersForReadUpdate
-    {
+    override fun getRolesAndUsersForPacketReadUpdate(packet: Packet): RolesAndUsersForReadUpdate {
         val (roles, users) = getNonUsernameRolesAndNonServiceUsers()
 
         return RolesAndUsersForReadUpdate(
@@ -84,20 +77,17 @@ class BaseUserRoleService(
         )
     }
 
-    override fun updateRoleUsers(roleName: String, usersToUpdate: UpdateRoleUsers): Role
-    {
+    override fun updateRoleUsers(roleName: String, usersToUpdate: UpdateRoleUsers): Role {
         val role = roleService.getByRoleName(roleName)
             ?: throw PackitException("roleNotFound", HttpStatus.BAD_REQUEST)
-        if (role.isUsername)
-        {
+        if (role.isUsername) {
             throw PackitException("cannotUpdateUsernameRoles", HttpStatus.BAD_REQUEST)
         }
 
         val updateUsers =
             userService.getUsersByUsernames(usersToUpdate.usernamesToAdd + usersToUpdate.usernamesToRemove)
 
-        if (updateUsers.any { it.isServiceUser() })
-        {
+        if (updateUsers.any { it.isServiceUser() }) {
             throw PackitException("cannotModifyServiceUser", HttpStatus.BAD_REQUEST)
         }
 
@@ -111,8 +101,7 @@ class BaseUserRoleService(
 
     internal fun createSortedRolesAndUsersWithPermissionsDto(
         rolesAndUsers: RolesAndUsers
-    ): RolesAndUsersWithPermissionsDto
-    {
+    ): RolesAndUsersWithPermissionsDto {
         return RolesAndUsersWithPermissionsDto(
             roleService.getSortedRoles(rolesAndUsers.roles).map { it.toDto() },
             userService.getSortedUsers(rolesAndUsers.users).map { it.toUserWithPermissions() }
@@ -121,27 +110,22 @@ class BaseUserRoleService(
 
     internal fun createSortedBasicRolesAndUsers(
         rolesAndUsers: RolesAndUsers
-    ): BasicRolesAndUsersDto
-    {
+    ): BasicRolesAndUsersDto {
         return BasicRolesAndUsersDto(
             roleService.getSortedRoles(rolesAndUsers.roles).map { it.toBasicRoleWithUsersDto() },
             userService.getSortedUsers(rolesAndUsers.users).map { it.toBasicDto() }
         )
     }
 
-    internal fun getNonUsernameRolesAndNonServiceUsers(): RolesAndUsers
-    {
+    internal fun getNonUsernameRolesAndNonServiceUsers(): RolesAndUsers {
         val roles = roleService.getAllRoles(isUsernames = false)
         val users = userService.getAllNonServiceUsers()
         return RolesAndUsers(roles, users)
     }
 
-    internal fun addUsersToRole(role: Role, usersToAdd: List<User>)
-    {
-        for (user in usersToAdd)
-        {
-            if (user.roles.any { role == it })
-            {
+    internal fun addUsersToRole(role: Role, usersToAdd: List<User>) {
+        for (user in usersToAdd) {
+            if (user.roles.any { role == it }) {
                 throw PackitException("userRoleExists", HttpStatus.BAD_REQUEST)
             }
             user.roles.add(role)
@@ -149,10 +133,8 @@ class BaseUserRoleService(
         }
     }
 
-    internal fun removeUsersFromRole(role: Role, usersToRemove: List<User>)
-    {
-        for (user in usersToRemove)
-        {
+    internal fun removeUsersFromRole(role: Role, usersToRemove: List<User>) {
+        for (user in usersToRemove) {
             val matchedRole = user.roles.find { role == it }
                 ?: throw PackitException("userRoleNotExists", HttpStatus.BAD_REQUEST)
 
@@ -161,27 +143,22 @@ class BaseUserRoleService(
         }
     }
 
-    internal fun getRolesForUpdate(roleNames: List<String>): List<Role>
-    {
+    internal fun getRolesForUpdate(roleNames: List<String>): List<Role> {
         val roles = roleService.getRolesByRoleNames(roleNames)
-        if (roles.any { it.isUsername })
-        {
+        if (roles.any { it.isUsername }) {
             throw PackitException("cannotUpdateUsernameRoles", HttpStatus.BAD_REQUEST)
         }
         return roles
     }
 
-    internal fun addRolesToUser(user: User, rolesToAdd: List<Role>)
-    {
-        if (rolesToAdd.any { user.roles.contains(it) })
-        {
+    internal fun addRolesToUser(user: User, rolesToAdd: List<Role>) {
+        if (rolesToAdd.any { user.roles.contains(it) }) {
             throw PackitException("userRoleExists", HttpStatus.BAD_REQUEST)
         }
         user.roles.addAll(rolesToAdd)
     }
 
-    internal fun removeRolesFromUser(user: User, rolesToRemove: List<Role>)
-    {
+    internal fun removeRolesFromUser(user: User, rolesToRemove: List<Role>) {
         val matchedRolesToRemove = rolesToRemove.map { roleToRemove ->
             val matchedRole = user.roles.find { roleToRemove == it }
                 ?: throw PackitException("userRoleNotExists", HttpStatus.BAD_REQUEST)

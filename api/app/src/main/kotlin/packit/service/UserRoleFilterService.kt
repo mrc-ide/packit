@@ -7,8 +7,7 @@ import packit.model.User
 import packit.model.dto.RolesAndUsers
 import packit.security.PermissionChecker
 
-interface UserRoleFilterService
-{
+interface UserRoleFilterService {
     fun getRolesAndUsersWithSpecificReadPacketGroupPermission(
         roles: List<Role>,
         users: List<User>,
@@ -51,14 +50,12 @@ class BaseUserRoleFilterService(
     private val permissionService: PermissionService,
     private val permissionChecker: PermissionChecker,
     private val permissionHelper: UserRolePermissionHelper
-) : UserRoleFilterService
-{
+) : UserRoleFilterService {
     override fun getRolesAndUsersWithSpecificReadPacketGroupPermission(
         roles: List<Role>,
         users: List<User>,
         packetGroupName: String
-    ): RolesAndUsers
-    {
+    ): RolesAndUsers {
         val rolesWithRead =
             roles.filter {
                 permissionHelper.hasOnlySpecificReadPacketGroupPermission(
@@ -81,8 +78,7 @@ class BaseUserRoleFilterService(
         roles: List<Role>,
         users: List<User>,
         packet: Packet
-    ): RolesAndUsers
-    {
+    ): RolesAndUsers {
         val rolesWithRead = roles.filter {
             permissionHelper.hasOnlySpecificReadPacketPermission(it.rolePermissions, packet)
         }
@@ -96,8 +92,7 @@ class BaseUserRoleFilterService(
         roles: List<Role>,
         users: List<User>,
         packetGroupName: String
-    ): RolesAndUsers
-    {
+    ): RolesAndUsers {
         val rolesCantRead = roles.filterNot {
             permissionChecker.canReadPacketGroup(
                 permissionService.mapToScopedPermission(it.rolePermissions),
@@ -107,7 +102,7 @@ class BaseUserRoleFilterService(
 
         val usersCantRead = users.filter { user ->
             !permissionHelper.userHasDirectReadPacketGroupReadPermission(user, packetGroupName) &&
-                    !permissionHelper.userHasPacketGroupReadPermissionViaRole(user, roles, packetGroupName)
+                !permissionHelper.userHasPacketGroupReadPermissionViaRole(user, roles, packetGroupName)
         }
 
         return RolesAndUsers(rolesCantRead, usersCantRead)
@@ -117,8 +112,7 @@ class BaseUserRoleFilterService(
         roles: List<Role>,
         users: List<User>,
         packet: Packet
-    ): RolesAndUsers
-    {
+    ): RolesAndUsers {
         val rolesCantRead = roles.filterNot {
             permissionChecker.canReadPacket(
                 permissionService.mapToScopedPermission(it.rolePermissions),
@@ -128,7 +122,7 @@ class BaseUserRoleFilterService(
         }
         val usersCantRead = users.filter { user ->
             !permissionHelper.userHasDirectPacketReadReadPermission(user, packet) &&
-                    !permissionHelper.userHasPacketReadPermissionViaRole(user, roles, packet)
+                !permissionHelper.userHasPacketReadPermissionViaRole(user, roles, packet)
         }
 
         return RolesAndUsers(rolesCantRead, usersCantRead)
@@ -138,8 +132,7 @@ class BaseUserRoleFilterService(
         roles: List<Role>,
         users: List<User>,
         packet: Packet
-    ): RolesAndUsers
-    {
+    ): RolesAndUsers {
         val rolesCanRead = roles.filter {
             permissionChecker.canReadPacket(
                 permissionService.mapToScopedPermission(it.rolePermissions),
@@ -161,8 +154,7 @@ class BaseUserRoleFilterService(
         roles: List<Role>,
         users: List<User>,
         packetGroupName: String
-    ): RolesAndUsers
-    {
+    ): RolesAndUsers {
         val rolesCanRead = roles.filter {
             permissionChecker.canReadPacketGroup(
                 permissionService.mapToScopedPermission(it.rolePermissions),

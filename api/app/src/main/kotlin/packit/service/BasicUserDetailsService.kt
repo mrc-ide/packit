@@ -10,10 +10,8 @@ import packit.security.profile.UserPrincipal
 class BasicUserDetailsService(
     private val userService: UserService,
     private val roleService: RoleService
-) : UserDetailsService
-{
-    override fun loadUserByUsername(username: String): UserDetails
-    {
+) : UserDetailsService {
+    override fun loadUserByUsername(username: String): UserDetails {
         val user = userService.getUserForBasicLogin(username)
         return BasicUserDetails(
             UserPrincipal(

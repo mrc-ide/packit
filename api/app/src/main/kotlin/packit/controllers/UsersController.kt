@@ -14,11 +14,10 @@ import packit.service.UserService
 @RequestMapping("/users")
 class UsersController(private val userService: UserService) {
     @GetMapping
-    fun getAllUsers(): ResponseEntity<List<UserDto>>
-    {
+    fun getAllUsers(): ResponseEntity<List<UserDto>> {
         val allUsers = userService.getAllNonServiceUsers()
         return ResponseEntity.ok(
-            allUsers.map{ it.toDto() }
+            allUsers.map { it.toDto() }
         )
     }
 }

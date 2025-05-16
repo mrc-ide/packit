@@ -22,8 +22,7 @@ import java.util.*
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-class RoleServiceTest
-{
+class RoleServiceTest {
     private val appConfig = mock<AppConfig>()
     private val roleRepository = mock<RoleRepository>()
     private val permissionService = mock<PermissionService>()
@@ -32,8 +31,7 @@ class RoleServiceTest
         BaseRoleService(appConfig, roleRepository, permissionService, rolePermissionService)
 
     @Test
-    fun `createUsernameRole throws exception if role exists`()
-    {
+    fun `createUsernameRole throws exception if role exists`() {
         val role = Role(name = "username", isUsername = true)
         whenever(roleRepository.findByName("username")).thenReturn(role)
 
@@ -43,8 +41,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `createUsernameRole creates new role with is_username flag`()
-    {
+    fun `createUsernameRole creates new role with is_username flag`() {
         whenever(roleRepository.findByName("username")).thenReturn(null)
         whenever(roleRepository.save(any<Role>())).thenAnswer { it.getArgument(0) }
 
@@ -56,8 +53,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getAdminRole() returns existing role`()
-    {
+    fun `getAdminRole() returns existing role`() {
         val role = Role(name = "ADMIN")
         whenever(roleRepository.findByName("ADMIN")).thenReturn(role)
 
@@ -67,8 +63,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getAdminRole() throws exception if not exists`()
-    {
+    fun `getAdminRole() throws exception if not exists`() {
         whenever(roleRepository.findByName("ADMIN")).thenReturn(null)
 
         assertThrows<PackitException> {
@@ -80,8 +75,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `createRole creates role with matching permissions`()
-    {
+    fun `createRole creates role with matching permissions`() {
         val createRole = CreateRole(name = "newRole", permissionNames = listOf("p1", "p2"))
         val permissions =
             listOf(Permission(name = "p1", description = "d1"), Permission(name = "p2", description = "d2"))
@@ -104,8 +98,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `saveRole throws exception if role already exists`()
-    {
+    fun `saveRole throws exception if role already exists`() {
         whenever(roleRepository.existsByName("roleName")).thenReturn(true)
 
         assertThrows(PackitException::class.java) {
@@ -114,8 +107,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `saveRole saves role with permissions when does not exist`()
-    {
+    fun `saveRole saves role with permissions when does not exist`() {
         val roleName = "roleName"
         val permissions =
             listOf(Permission(name = "p1", description = "d1"), Permission(name = "p2", description = "d2"))
@@ -136,8 +128,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getGrantedAuthorities returns authorities of permissions`()
-    {
+    fun `getGrantedAuthorities returns authorities of permissions`() {
         val role1 =
             createRoleWithPermission("role1", "permission1")
         val role2 =
@@ -164,8 +155,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `deleteRole deletes existing role`()
-    {
+    fun `deleteRole deletes existing role`() {
         val role = Role("existingRole")
         whenever(roleRepository.findByName(role.name)).thenReturn(role)
 
@@ -175,8 +165,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `deleteRole throws exception if role does not exist`()
-    {
+    fun `deleteRole throws exception if role does not exist`() {
         val role = Role("nonExistingRole")
         whenever(roleRepository.findByName(role.name)).thenReturn(null)
 
@@ -186,8 +175,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `deleteRole throws exception if ADMIN role is being deleted`()
-    {
+    fun `deleteRole throws exception if ADMIN role is being deleted`() {
         val role = Role("ADMIN")
         whenever(roleRepository.findByName(role.name)).thenReturn(role)
 
@@ -197,8 +185,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `deleteRole throws exception if role is username role`()
-    {
+    fun `deleteRole throws exception if role is username role`() {
         val role = Role("username", isUsername = true)
         whenever(roleRepository.findByName(role.name)).thenReturn(role)
 
@@ -208,8 +195,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `deleteUsernameRole deletes role when role is username role`()
-    {
+    fun `deleteUsernameRole deletes role when role is username role`() {
         val username = "username"
         val role = Role(name = username, isUsername = true)
         whenever(roleRepository.findByName(username)).thenReturn(role)
@@ -220,8 +206,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `deleteUsernameRole throws exception when role does not exist`()
-    {
+    fun `deleteUsernameRole throws exception when role does not exist`() {
         val username = "nonExistingUser"
         whenever(roleRepository.findByName(username)).thenReturn(null)
 
@@ -232,8 +217,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `deleteUsernameRole throws exception when role is not username role`()
-    {
+    fun `deleteUsernameRole throws exception when role is not username role`() {
         val username = "username"
         val role = Role(name = username, isUsername = false)
         whenever(roleRepository.findByName(username)).thenReturn(role)
@@ -245,8 +229,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `updatePermissionsToRole calls correct methods and returns saved role`()
-    {
+    fun `updatePermissionsToRole calls correct methods and returns saved role`() {
         val roleName = "roleName"
         val permissionName = "permission1"
         val role = createRoleWithPermission(roleName, permissionName)
@@ -267,8 +250,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `updatePermissionsToRole throws exception when role does not exist`()
-    {
+    fun `updatePermissionsToRole throws exception when role does not exist`() {
         val roleName = "nonExistingRole"
         whenever(roleRepository.findByName(roleName)).thenReturn(null)
 
@@ -281,8 +263,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getAllRoles returns all roles when no isUsernamesflag set`()
-    {
+    fun `getAllRoles returns all roles when no isUsernamesflag set`() {
         val roles = listOf(Role(name = "role1"), Role(name = "role2"))
         whenever(roleRepository.findAll(Sort.by("name").ascending())).thenReturn(roles)
 
@@ -293,8 +274,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getAllRoles returns matching roles when all role names exist`()
-    {
+    fun `getAllRoles returns matching roles when all role names exist`() {
         val roleNames = listOf("role1", "role2")
         val roles = listOf(Role(name = "role1"), Role(name = "role2"))
         whenever(roleRepository.findByNameIn(roleNames)).thenReturn(roles)
@@ -305,8 +285,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getRolesWithRelationships throws exception when some role names do not exist`()
-    {
+    fun `getRolesWithRelationships throws exception when some role names do not exist`() {
         val roleNames = listOf("role1", "role2")
         val roles = listOf(Role(name = "role1"))
         whenever(roleRepository.findByNameIn(roleNames)).thenReturn(roles)
@@ -320,8 +299,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getRolesWithRelationships throws exception when no role names exist`()
-    {
+    fun `getRolesWithRelationships throws exception when no role names exist`() {
         val roleNames = listOf("role1", "role2")
         whenever(roleRepository.findByNameIn(roleNames)).thenReturn(emptyList())
 
@@ -334,8 +312,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getRolesWithRelationships returns roles with isUsername flag`()
-    {
+    fun `getRolesWithRelationships returns roles with isUsername flag`() {
         val roles = listOf(Role(name = "username1", isUsername = true), Role(name = "username2", isUsername = true))
         whenever(roleRepository.findAllByIsUsernameOrderByName(true)).thenReturn(roles)
 
@@ -346,8 +323,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getRole returns role by name`()
-    {
+    fun `getRole returns role by name`() {
         val roleName = "roleName"
         val role = Role(name = roleName)
         whenever(roleRepository.findByName(roleName)).thenReturn(role)
@@ -358,8 +334,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getByRoleName returns role when role exists in repository`()
-    {
+    fun `getByRoleName returns role when role exists in repository`() {
         val roleName = "existingRole"
         val role = Role(name = roleName)
         whenever(roleRepository.findByName(roleName)).thenReturn(role)
@@ -370,8 +345,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getByRoleName returns null when role does not exist in repository`()
-    {
+    fun `getByRoleName returns null when role does not exist in repository`() {
         val roleName = "nonExistingRole"
         whenever(roleRepository.findByName(roleName)).thenReturn(null)
 
@@ -381,8 +355,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getSortedRoles returns roles sorted by base permissions`()
-    {
+    fun `getSortedRoles returns roles sorted by base permissions`() {
         val role1 = Role(name = "role1", id = 1).apply {
             rolePermissions = mutableListOf(
                 RolePermission(permission = Permission("permission1", "d1"), role = this, id = 10),
@@ -419,8 +392,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getSortedRoleDtos returns sorted user dtos`()
-    {
+    fun `getSortedRoleDtos returns sorted user dtos`() {
         val role1 = Role(name = "role1", id = 1).apply {
             users = mutableListOf(
                 User(
@@ -458,8 +430,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getSortedRoleDtos filters out service users`()
-    {
+    fun `getSortedRoleDtos filters out service users`() {
         val role1 = Role(name = "role1", id = 1).apply {
             users = mutableListOf(
                 User(
@@ -493,8 +464,7 @@ class RoleServiceTest
         packetId: String? = null,
         packetGroupName: String? = null,
         tagName: String? = null
-    ): Role
-    {
+    ): Role {
         return Role(
             id = 1,
             name = roleName,
@@ -519,8 +489,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getDefaultRoles returns role`()
-    {
+    fun `getDefaultRoles returns role`() {
         val adminRole = Role(name = "ADMIN")
         whenever(appConfig.defaultRoles).thenReturn(listOf("ADMIN"))
         whenever(roleRepository.findByIsUsernameAndNameIn(false, listOf("ADMIN")))
@@ -531,8 +500,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getDefaultRoles can return multiple roles`()
-    {
+    fun `getDefaultRoles can return multiple roles`() {
         val adminRole = Role(name = "ADMIN")
         val userRole = Role(name = "USER")
 
@@ -545,8 +513,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getDefaultRoles ignores unknown roles`()
-    {
+    fun `getDefaultRoles ignores unknown roles`() {
         val adminRole = Role(name = "ADMIN")
         whenever(appConfig.defaultRoles).thenReturn(listOf("ADMIN", "MISSING"))
         whenever(roleRepository.findByIsUsernameAndNameIn(false, listOf("ADMIN", "MISSING")))
@@ -557,8 +524,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getUniqueRoleNamesForUpdate returns symmetric difference of both sets`()
-    {
+    fun `getUniqueRoleNamesForUpdate returns symmetric difference of both sets`() {
         val roleService = BaseRoleService(mock(), mock(), mock(), mock())
         val roleNamesToAdd = setOf("role1", "role2", "shared")
         val roleNamesToRemove = setOf("role3", "role4", "shared")
@@ -570,8 +536,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getUniqueRoleNamesForUpdate throws exception when both sets have same elements`()
-    {
+    fun `getUniqueRoleNamesForUpdate throws exception when both sets have same elements`() {
         val roleService = BaseRoleService(mock(), mock(), mock(), mock())
         val roleNamesToAdd = setOf("role1", "role2")
         val roleNamesToRemove = setOf("role1", "role2")
@@ -585,8 +550,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `getUniqueRoleNamesForUpdate throws exception when both sets are empty`()
-    {
+    fun `getUniqueRoleNamesForUpdate throws exception when both sets are empty`() {
         val roleService = BaseRoleService(mock(), mock(), mock(), mock())
         val roleNamesToAdd = emptySet<String>()
         val roleNamesToRemove = emptySet<String>()
@@ -600,8 +564,7 @@ class RoleServiceTest
     }
 
     @Test
-    fun `updatePacketReadPermissionOnRoles calls correct methods with arguments & returns saved role`()
-    {
+    fun `updatePacketReadPermissionOnRoles calls correct methods with arguments & returns saved role`() {
         val spyRoleService = spy(roleService)
         val rolesToAdd = setOf("role1", "role2")
         val rolesToRemove = setOf("role3", "role4")

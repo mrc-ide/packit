@@ -13,8 +13,7 @@ import kotlin.test.Test
 
 class UsersControllerTest {
     @Test
-    fun `getAllUsers returns expected results`()
-    {
+    fun `getAllUsers returns expected results`() {
         val user1 = User(
             username = "test1@email.com",
             displayName = "Test ONE",

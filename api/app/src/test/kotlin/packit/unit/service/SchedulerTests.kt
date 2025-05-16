@@ -10,8 +10,7 @@ import packit.service.OutpackServerClient
 import packit.service.PacketService
 import packit.service.Scheduler
 
-class SchedulerTests
-{
+class SchedulerTests {
     private val mockOneTimeTokenService = mock<OneTimeTokenService>()
     private val mockPacketService = mock<PacketService> {
         on { getChecksum() } doReturn "1"
@@ -21,16 +20,14 @@ class SchedulerTests
     }
 
     @Test
-    fun `imports packets if checksum has changed`()
-    {
+    fun `imports packets if checksum has changed`() {
         val sut = Scheduler(mockOneTimeTokenService, mockPacketService, mockOutpackServerClient)
         sut.checkPackets()
         verify(mockPacketService).importPackets()
     }
 
     @Test
-    fun `does not import packets if checksum has not changed`()
-    {
+    fun `does not import packets if checksum has not changed`() {
         val mockOutpackServerClient = mock<OutpackServerClient> {
             on { getChecksum() } doReturn "1"
         }
@@ -40,8 +37,7 @@ class SchedulerTests
     }
 
     @Test
-    fun `cleans up expired tokens`()
-    {
+    fun `cleans up expired tokens`() {
         val sut = Scheduler(mockOneTimeTokenService, mockPacketService, mockOutpackServerClient)
         sut.cleanUpExpiredTokens()
         verify(mockOneTimeTokenService).cleanUpExpiredTokens()

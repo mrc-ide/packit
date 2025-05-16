@@ -24,14 +24,12 @@ internal class NoRedirectHttpRequestFactory : SimpleClientHttpRequestFactory() {
 
 class BrowserRedirectStrategyTest : IntegrationTest() {
     @BeforeEach
-    override fun setup()
-    {
+    override fun setup() {
         restTemplate.restTemplate.requestFactory = NoRedirectHttpRequestFactory()
     }
 
     @Test
-    fun `redirects to browser on after authentication attempt`()
-    {
+    fun `redirects to browser on after authentication attempt`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/login/oauth2/code/github",
             HttpMethod.GET,

@@ -14,8 +14,7 @@ import packit.service.BaseUserRolePermissionHelper
 import packit.service.PermissionService
 import java.time.Instant
 
-class UserRolePermissionHelperTest
-{
+class UserRolePermissionHelperTest {
     private val now = Instant.now().epochSecond.toDouble()
     private val packet = Packet(
         "20240101-090000-4321gaga",
@@ -31,8 +30,7 @@ class UserRolePermissionHelperTest
     private val helper = BaseUserRolePermissionHelper(permissionService, permissionChecker)
 
     @Test
-    fun `hasOnlySpecificReadPacketPermission when user has only read permission returns true`()
-    {
+    fun `hasOnlySpecificReadPacketPermission when user has only read permission returns true`() {
         // Arrange
         val permissions = listOf(mock<RolePermission>())
         val scopedPermissions = listOf("read:packet:testPacket:1")
@@ -53,8 +51,7 @@ class UserRolePermissionHelperTest
     }
 
     @Test
-    fun `hasOnlySpecificReadPacketPermission when user has group read permission returns false`()
-    {
+    fun `hasOnlySpecificReadPacketPermission when user has group read permission returns false`() {
         // Arrange
         val permissions = listOf(mock<RolePermission>())
         val scopedPermissions = listOf("read:packetGroup:testPacket")
@@ -75,8 +72,7 @@ class UserRolePermissionHelperTest
     }
 
     @Test
-    fun `hasOnlySpecificReadPacketGroupPermission when user has only group read permission returns true`()
-    {
+    fun `hasOnlySpecificReadPacketGroupPermission when user has only group read permission returns true`() {
         // Arrange
         val permissions = listOf(mock<RolePermission>())
         val packetGroupName = "testPacketGroup"
@@ -92,8 +88,7 @@ class UserRolePermissionHelperTest
     }
 
     @Test
-    fun `hasOnlySpecificReadPacketGroupPermission when user has manage permission returns false`()
-    {
+    fun `hasOnlySpecificReadPacketGroupPermission when user has manage permission returns false`() {
         // Arrange
         val permissions = listOf(mock<RolePermission>())
         val packetGroupName = "testPacketGroup"
@@ -109,8 +104,7 @@ class UserRolePermissionHelperTest
     }
 
     @Test
-    fun `userHasDirectReadPacketGroupReadPermission when user has permission returns true`()
-    {
+    fun `userHasDirectReadPacketGroupReadPermission when user has permission returns true`() {
         // Arrange
         val user = mock<User>()
         val packetGroupName = "testPacketGroup"
@@ -126,8 +120,7 @@ class UserRolePermissionHelperTest
     }
 
     @Test
-    fun `userHasDirectPacketReadReadPermission when user has permission returns true`()
-    {
+    fun `userHasDirectPacketReadReadPermission when user has permission returns true`() {
         // Arrange
         val user = mock<User>()
         val userPermissions = mutableListOf(mock<RolePermission>())
@@ -142,8 +135,7 @@ class UserRolePermissionHelperTest
     }
 
     @Test
-    fun `userHasPacketGroupReadPermissionViaRole when user has role with permission returns true`()
-    {
+    fun `userHasPacketGroupReadPermissionViaRole when user has role with permission returns true`() {
         // Arrange
         val user = mock<User>()
         val roles = listOf(mock<Role>())
@@ -163,8 +155,7 @@ class UserRolePermissionHelperTest
     }
 
     @Test
-    fun `userHasPacketGroupReadPermissionViaRole when user has no roles with permission returns false`()
-    {
+    fun `userHasPacketGroupReadPermissionViaRole when user has no roles with permission returns false`() {
         // Arrange
         val user = mock<User>()
         val roles = listOf<Role>(mock<Role>())
@@ -184,8 +175,7 @@ class UserRolePermissionHelperTest
     }
 
     @Test
-    fun `userHasPacketReadPermissionViaRole when user has role with permission returns true`()
-    {
+    fun `userHasPacketReadPermissionViaRole when user has role with permission returns true`() {
         // Arrange
         val user = mock<User>()
         val roles = listOf(mock<Role>())
@@ -204,8 +194,7 @@ class UserRolePermissionHelperTest
     }
 
     @Test
-    fun `userHasPacketReadPermissionViaRole when all roles are username returns false`()
-    {
+    fun `userHasPacketReadPermissionViaRole when all roles are username returns false`() {
         // Arrange
         val user = mock<User>()
         val roles = listOf(mock<Role>())

@@ -3,8 +3,7 @@ package packit.security
 import org.springframework.stereotype.Service
 import packit.service.PermissionService
 
-interface PermissionChecker
-{
+interface PermissionChecker {
     /** Global Permissions */
     fun hasUserManagePermission(authorities: List<String> = emptyList()): Boolean
     fun hasGlobalPacketManagePermission(authorities: List<String> = emptyList()): Boolean
@@ -39,8 +38,7 @@ interface PermissionChecker
 }
 
 @Service
-class BasePermissionChecker(private val permissionService: PermissionService) : PermissionChecker
-{
+class BasePermissionChecker(private val permissionService: PermissionService) : PermissionChecker {
     /** Global Permissions */
     override fun hasUserManagePermission(authorities: List<String>): Boolean =
         authorities.contains("user.manage")
@@ -77,7 +75,7 @@ class BasePermissionChecker(private val permissionService: PermissionService) : 
         packetId: String
     ): Boolean =
         canManagePacketGroup(authorities, packetGroupName) ||
-                hasPacketManagePermissionForPacket(authorities, packetGroupName, packetId)
+            hasPacketManagePermissionForPacket(authorities, packetGroupName, packetId)
 
     /** Read packets */
     override fun canReadAllPackets(authorities: List<String>): Boolean =
@@ -88,8 +86,8 @@ class BasePermissionChecker(private val permissionService: PermissionService) : 
 
     override fun canReadPacketGroup(authorities: List<String>, packetGroupName: String): Boolean =
         canReadAllPackets(authorities) ||
-                canManagePacketGroup(authorities, packetGroupName) ||
-                hasPacketReadPermissionForGroup(authorities, packetGroupName)
+            canManagePacketGroup(authorities, packetGroupName) ||
+            hasPacketReadPermissionForGroup(authorities, packetGroupName)
 
     override fun canManageAnyPacketInGroup(authorities: List<String>, packetGroupName: String): Boolean =
         authorities.any {
@@ -99,7 +97,7 @@ class BasePermissionChecker(private val permissionService: PermissionService) : 
     override fun canReadAnyPacketInGroup(authorities: List<String>, packetGroupName: String): Boolean =
         authorities.any {
             it.startsWith("packet.read:packet:$packetGroupName") ||
-                    canManageAnyPacketInGroup(authorities, packetGroupName)
+                canManageAnyPacketInGroup(authorities, packetGroupName)
         }
 
     override fun hasAnyPacketManagePermission(authorities: List<String>): Boolean =
@@ -120,6 +118,6 @@ class BasePermissionChecker(private val permissionService: PermissionService) : 
         packetId: String
     ): Boolean =
         canReadPacketGroup(authorities, packetGroup) ||
-                canManagePacket(authorities, packetGroup, packetId) ||
-                hasPacketReadPermissionForPacket(authorities, packetGroup, packetId)
+            canManagePacket(authorities, packetGroup, packetId) ||
+            hasPacketReadPermissionForPacket(authorities, packetGroup, packetId)
 }

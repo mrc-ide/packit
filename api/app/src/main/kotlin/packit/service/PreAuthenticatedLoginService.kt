@@ -9,12 +9,9 @@ import packit.security.provider.JwtIssuer
 class PreAuthenticatedLoginService(
     val jwtIssuer: JwtIssuer,
     val userService: UserService,
-)
-{
-    fun saveUserAndIssueToken(username: String, name: String?, email: String?): Map<String, String>
-    {
-        if (username.isEmpty())
-        {
+) {
+    fun saveUserAndIssueToken(username: String, name: String?, email: String?): Map<String, String> {
+        if (username.isEmpty()) {
             throw PackitException("emptyUsername", HttpStatus.BAD_REQUEST)
         }
 

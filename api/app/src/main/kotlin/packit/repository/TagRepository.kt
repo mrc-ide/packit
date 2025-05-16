@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository
 import packit.model.Tag
 
 @Repository
-interface TagRepository : JpaRepository<Tag, Int>
-{
+interface TagRepository : JpaRepository<Tag, Int> {
     fun findAllByNameContaining(name: String, pageable: Pageable): Page<Tag>
 }

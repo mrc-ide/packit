@@ -13,11 +13,9 @@ import packit.service.UserService
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class PreAuthenticatedLoginServiceTest
-{
+class PreAuthenticatedLoginServiceTest {
     @Test
-    fun `can save user and issue token`()
-    {
+    fun `can save user and issue token`() {
         val mockUser = mock<User>()
         val userPrincipal = UserPrincipal("test.user", "Test User", mutableListOf(), mutableMapOf())
         val mockUserService = mock<UserService> {
@@ -35,8 +33,7 @@ class PreAuthenticatedLoginServiceTest
     }
 
     @Test
-    fun `saveUserAndIssueToken throws exception if username is empty`()
-    {
+    fun `saveUserAndIssueToken throws exception if username is empty`() {
         val sut = PreAuthenticatedLoginService(mock(), mock())
         val ex = assertThrows<PackitException> {
             sut.saveUserAndIssueToken("", "Test User", "test.user@example.com")
