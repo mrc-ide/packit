@@ -3,6 +3,8 @@ import { ReactNode, createContext, useContext, useState } from "react";
 import { getUserFromLocalStorage } from "../../../lib/localStorageManager";
 import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
 import { PacketJwtPayload } from "../../../types";
+import { ErrorComponent } from "../contents/common/ErrorComponent";
+import { useGetUserAuthorities } from "./hooks/useGetUserAuthorities";
 import { UserProviderState, UserState } from "./types/UserTypes";
 
 const UserContext = createContext<UserProviderState | undefined>(undefined);
@@ -21,17 +23,18 @@ interface UserProviderProps {
 
 export const UserProvider = ({ children }: UserProviderProps) => {
   const [userState, setUserState] = useState<UserState | null>(() => getUserFromLocalStorage());
+  const { authorities, error } = useGetUserAuthorities(userState);
 
   const value = {
     user: userState,
+    authorities,
     setUser(jwt: string) {
       const jwtPayload = jwtDecode<PacketJwtPayload>(jwt);
       const user: UserState = {
         token: jwt,
         exp: jwtPayload.exp?.valueOf() ?? 0,
         displayName: jwtPayload.displayName ?? "",
-        userName: jwtPayload.userName ?? "",
-        authorities: jwtPayload.au ?? []
+        userName: jwtPayload.userName ?? ""
       };
       setUserState(user);
       localStorage.setItem(LocalStorageKeys.USER, JSON.stringify(user));
@@ -41,5 +44,8 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       localStorage.removeItem(LocalStorageKeys.USER);
     }
   };
+
+  if (error) return <ErrorComponent message="failed to load user authorities" error={error} />;
+
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

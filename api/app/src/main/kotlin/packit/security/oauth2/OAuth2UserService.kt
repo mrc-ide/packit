@@ -39,13 +39,14 @@ class OAuth2UserService(
 
         var user = userService.saveUserFromGithub(githubInfo.userName(), githubInfo.displayName(), githubInfo.email())
 
-        val principal = UserPrincipal(
-            user.username,
-            user.displayName,
-            roleService.getGrantedAuthorities(user.roles),
-            oAuth2User.attributes
+        return PackitOAuth2User(
+            UserPrincipal(
+                user.username,
+                user.displayName,
+                mutableSetOf(),
+                oAuth2User.attributes
+            )
         )
-        return PackitOAuth2User(principal)
     }
 
     fun checkGithubUserMembership(request: OAuth2UserRequest)

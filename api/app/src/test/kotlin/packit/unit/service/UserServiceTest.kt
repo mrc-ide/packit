@@ -16,6 +16,7 @@ import packit.model.dto.CreateBasicUser
 import packit.model.dto.CreateExternalUser
 import packit.model.dto.UpdatePassword
 import packit.repository.UserRepository
+import packit.security.profile.UserPrincipal
 import packit.service.BaseUserService
 import packit.service.RolePermissionService
 import packit.service.RoleService
@@ -712,5 +713,22 @@ class UserServiceTest
 
         // Verify rolePermissionService was called for each user
         verify(rolePermissionService, times(2)).sortRolePermissions(any())
+    }
+
+    @Test
+    fun `getUserPrincipal returns correct user principal`()
+    {
+        val expectedUserPrincipal = UserPrincipal(
+            name = mockBasicUser.username,
+            displayName = mockBasicUser.displayName,
+            authorities = mutableSetOf(),
+            attributes = mutableMapOf()
+        )
+        val service =
+            BaseUserService(mockUserRepository, mockRoleService, passwordEncoder, rolePermissionService)
+
+        val result = service.getUserPrincipal(mockBasicUser)
+
+        assertEquals(result, expectedUserPrincipal)
     }
 }

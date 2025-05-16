@@ -35,8 +35,8 @@ const getSideBarNavItems = (packetName = "", packetId = "", authorities: string[
 
 export const PacketLayout = () => {
   const { packetId, packetName } = useParams();
-  const { user } = useUser();
-  const sidebarItems = getSideBarNavItems(packetName, packetId, user?.authorities);
+  const { authorities } = useUser();
+  const sidebarItems = getSideBarNavItems(packetName, packetId, authorities);
 
   return (
     <Sidebar sidebarItems={sidebarItems}>

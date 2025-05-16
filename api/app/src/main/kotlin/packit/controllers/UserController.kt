@@ -3,6 +3,7 @@ package packit.controllers
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.stereotype.Controller
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -13,6 +14,7 @@ import packit.model.dto.CreateExternalUser
 import packit.model.dto.UpdateUserRoles
 import packit.model.dto.UserDto
 import packit.model.toDto
+import packit.security.profile.UserPrincipal
 import packit.service.UserRoleService
 import packit.service.UserService
 import java.net.URI
@@ -73,5 +75,15 @@ class UserController(
         userService.deleteUser(username)
 
         return ResponseEntity.noContent().build()
+    }
+
+    @GetMapping("/me/authorities")
+    @PreAuthorize("isAuthenticated()")
+    fun getUserAuthorities(@AuthenticationPrincipal userPrincipal: UserPrincipal): ResponseEntity<List<String>>
+    {
+
+        val userAuthorities = userRoleService.getUserAuthorities(userPrincipal.name)
+
+        return ResponseEntity.ok(userAuthorities)
     }
 }

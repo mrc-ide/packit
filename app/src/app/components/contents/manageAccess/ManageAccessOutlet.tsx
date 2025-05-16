@@ -5,11 +5,18 @@ import { Skeleton } from "../../Base/Skeleton";
 import { RoleWithRelationships } from "./types/RoleWithRelationships";
 import { UserWithPermissions } from "./types/UserWithPermissions";
 import { KeyedMutator } from "swr";
+import { Unauthorized } from "../common/Unauthorized";
+import { HttpStatus } from "../../../../lib/types/HttpStatus";
 
 export const ManageAccessOutlet = () => {
   const { roles, users, isLoading, error, mutate } = useGetRolesAndUsersWithPermissions();
 
-  if (error) return <ErrorComponent message="Error fetching data" error={error} />;
+  if (error) {
+    if (error.status === HttpStatus.Unauthorized) {
+      return <Unauthorized />;
+    }
+    return <ErrorComponent message="Error fetching data" error={error} />;
+  }
 
   if (isLoading)
     return (
