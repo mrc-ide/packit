@@ -4,8 +4,7 @@ import packit.model.Packet
 import packit.model.TimeMetadata
 import packit.model.dto.OutpackMetadata
 
-fun packetToOutpackMetadata(packet: Packet): OutpackMetadata
-{
+fun packetToOutpackMetadata(packet: Packet): OutpackMetadata {
     return OutpackMetadata(
         packet.id,
         packet.name,

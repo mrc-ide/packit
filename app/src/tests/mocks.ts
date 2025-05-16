@@ -1,4 +1,8 @@
-import { RoleWithRelationships } from "../app/components/contents/manageAccess/types/RoleWithRelationships";
+import {
+  RolesAndUsersToUpdateRead,
+  RolesAndUsersWithPermissions,
+  RoleWithRelationships
+} from "../app/components/contents/manageAccess/types/RoleWithRelationships";
 import { GitBranches } from "../app/components/contents/runner/types/GitBranches";
 import { PageableBasicRunInfo, RunInfo } from "../app/components/contents/runner/types/RunInfo";
 import { Parameter, RunnerPacketGroup } from "../app/components/contents/runner/types/RunnerPacketGroup";
@@ -30,7 +34,8 @@ export const mockPacketResponse = {
 export const mockAuthConfig: AuthConfig = {
   enableAuth: true,
   enableGithubLogin: true,
-  enableBasicLogin: true
+  enableBasicLogin: true,
+  enablePreAuthLogin: false
 };
 
 export const mockUserState: () => UserState = () => {
@@ -622,7 +627,7 @@ export const mockUsernameRolesWithRelationships: RoleWithRelationships[] = [
   }
 ];
 
-export const mockUsersWithRoles = [
+export const mockUsersWithPermissions = [
   {
     username: "a@gmail.com",
     id: "b13c35b8-7070-47a8-9266-3a23ae6fd76e",
@@ -737,6 +742,10 @@ export const mockUsersWithRoles = [
   }
 ];
 
+export const mockRolesAndUsersWithPermissions: RolesAndUsersWithPermissions = {
+  roles: mockNonUsernameRolesWithRelationships,
+  users: mockUsersWithPermissions
+};
 export const mockPacketGroupDtos: PageableBasicDto = {
   content: [
     { id: 1, name: "depends" },
@@ -753,6 +762,17 @@ export const mockPacketGroupDtos: PageableBasicDto = {
   number: 0,
   numberOfElements: 5
 };
+export const mockRolesAndUsersToUpdateRead = mockPacketGroupDtos.content.reduce(
+  (acc, packetGroup) => {
+    acc[packetGroup.name] = {
+      withRead: mockRolesAndUsersWithPermissions,
+      cantRead: mockRolesAndUsersWithPermissions,
+      canRead: mockRolesAndUsersWithPermissions
+    };
+    return acc;
+  },
+  {} as Record<string, RolesAndUsersToUpdateRead>
+);
 
 export const mockTags: PageableBasicDto = {
   content: [

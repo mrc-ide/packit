@@ -9,8 +9,7 @@ class OTTAuthenticationToken(
     packetId: String,
     filePaths: List<String>,
     expiresAt: Instant,
-) : AbstractAuthenticationToken(listOf())
-{
+) : AbstractAuthenticationToken(listOf()) {
     private val principal = ottId
     private val details = mapOf(
         "permittedPacket" to packetId,

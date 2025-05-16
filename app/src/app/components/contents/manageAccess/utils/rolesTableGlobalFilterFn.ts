@@ -1,6 +1,6 @@
 import { FilterFn } from "@tanstack/react-table";
 import { RoleWithRelationships } from "../types/RoleWithRelationships";
-import { UserWithRoles } from "../types/UserWithRoles";
+import { UserWithPermissions } from "../types/UserWithPermissions";
 
 export const rolesGlobalFilterFn: FilterFn<RoleWithRelationships> = (row, columnId, filterValue) => {
   const rowValue = row.getValue(columnId);
@@ -14,7 +14,7 @@ export const rolesGlobalFilterFn: FilterFn<RoleWithRelationships> = (row, column
   return false;
 };
 
-export const usersGlobalFilterFn: FilterFn<UserWithRoles> = (row, columnId, filterValue) => {
+export const usersGlobalFilterFn: FilterFn<UserWithPermissions> = (row, columnId, filterValue) => {
   const rowValue = row.getValue(columnId);
   if (typeof rowValue === "string") {
     return rowValue.toLowerCase().includes(filterValue.toLowerCase());

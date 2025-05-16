@@ -17,10 +17,8 @@ import java.util.*
 class JWTAuthenticationFilter(
     val jwtDecoder: JwtDecoder,
     val jwtToPrincipal: TokenToPrincipal,
-)
-{
-    companion object
-    {
+) {
+    companion object {
         private const val BearerTokenSubString = 7
     }
 
@@ -28,8 +26,7 @@ class JWTAuthenticationFilter(
         request: HttpServletRequest,
         response: HttpServletResponse,
         filterChain: FilterChain,
-    )
-    {
+    ) {
         extractToken(request)
             .map(jwtDecoder::decode)
             .map(jwtToPrincipal::convert)
@@ -41,16 +38,12 @@ class JWTAuthenticationFilter(
         filterChain.doFilter(request, response)
     }
 
-    fun extractToken(request: HttpServletRequest): Optional<String>
-    {
+    fun extractToken(request: HttpServletRequest): Optional<String> {
         val token = request.getHeader("Authorization")
-        if (StringUtils.hasText(token))
-        {
-            if (token.startsWith("Bearer "))
-            {
+        if (StringUtils.hasText(token)) {
+            if (token.startsWith("Bearer ")) {
                 return Optional.of(token.substring(BearerTokenSubString))
-            } else
-            {
+            } else {
                 throw PackitException("invalidAuthType", HttpStatus.UNAUTHORIZED)
             }
         }

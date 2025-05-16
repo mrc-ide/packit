@@ -5,11 +5,9 @@ import packit.model.toDto
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class PacketGroupTest
-{
+class PacketGroupTest {
     @Test
-    fun `toDto returns correct PacketGroupDto for given PacketGroup`()
-    {
+    fun `toDto returns correct PacketGroupDto for given PacketGroup`() {
         val packetGroup = PacketGroup("name1")
         packetGroup.id = 1
         val packetGroupDto = packetGroup.toDto()

@@ -1,4 +1,5 @@
 import { BasicPacket, BasicPacketGroup, Tag } from "../../../../../types";
+import { UserWithPermissions } from "./UserWithPermissions";
 
 export interface RolePermission extends BaseRolePermission {
   id: number;
@@ -11,15 +12,34 @@ export interface BaseRolePermission {
   packetGroup?: BasicPacketGroup | null;
 }
 
-interface BasicUser {
+export interface BasicUser {
   username: string;
   id: string;
 }
-
-export interface RoleWithRelationships {
+export interface BasicRole {
   name: string;
-  rolePermissions: RolePermission[];
-  users: BasicUser[];
   id: number;
+}
+export interface BasicRoleWithUsers extends BasicRole {
+  users: BasicUser[];
+}
+
+export interface RoleWithRelationships extends BasicRoleWithUsers {
+  rolePermissions: RolePermission[];
   isUsername: boolean;
+}
+
+export interface RolesAndUsersWithPermissions {
+  roles: RoleWithRelationships[];
+  users: UserWithPermissions[];
+}
+
+export interface BasicRolesAndUsers {
+  roles: BasicRoleWithUsers[];
+  users: BasicUser[];
+}
+export interface RolesAndUsersToUpdateRead {
+  cantRead: BasicRolesAndUsers;
+  withRead: BasicRolesAndUsers;
+  canRead: BasicRolesAndUsers;
 }

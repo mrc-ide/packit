@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { getInitials } from "../../../lib/string";
 import { Avatar, AvatarFallback } from "../Base/Avatar";
 import { Button } from "../Base/Button";
@@ -14,14 +13,12 @@ import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 import { useUser } from "../providers/UserProvider";
 
 export const AccountHeaderDropdown = () => {
-  const navigate = useNavigate();
   const { removeUser, user } = useUser();
   const { setLoggingOut } = useRedirectOnLogin();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     removeUser();
     setLoggingOut(true);
-    navigate("/login");
   };
 
   return (

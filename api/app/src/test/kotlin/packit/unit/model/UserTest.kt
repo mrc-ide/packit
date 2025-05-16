@@ -10,11 +10,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class UserTest
-{
+class UserTest {
     @Test
-    fun `toBasicDto returns correct UserBasicDto for given User`()
-    {
+    fun `toBasicDto returns correct UserBasicDto for given User`() {
         val role = Role("role1")
         val user = User("user1", mutableListOf(role), false, "source1", "displayName1", id = UUID.randomUUID())
         val basicUserDto = user.toBasicDto()
@@ -23,8 +21,7 @@ class UserTest
     }
 
     @Test
-    fun `toDto returns correct UserDto for given User`()
-    {
+    fun `toDto returns correct UserDto for given User`() {
         val roles = mutableListOf(Role("role1", id = 1), Role("role2", id = 2))
         val user =
             User("user1", roles, false, "source1", "displayName1", email = "random@gmail.com", id = UUID.randomUUID())
@@ -42,8 +39,7 @@ class UserTest
     }
 
     @Test
-    fun `isServiceUser works`()
-    {
+    fun `isServiceUser works`() {
         val serviceUser = User("SERVICE", disabled = false, userSource = "service", displayName = null)
         val basicUser = User("user", disabled = false, userSource = "basic", displayName = null)
 

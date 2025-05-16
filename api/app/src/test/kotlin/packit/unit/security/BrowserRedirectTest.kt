@@ -13,8 +13,7 @@ import packit.security.BrowserRedirect
 
 class BrowserRedirectTest {
     @Test
-    fun `can redirect with query string`()
-    {
+    fun `can redirect with query string`() {
         val mockAppConfig = mock<AppConfig> {
             on { authRedirectUri } doReturn "http://localhost:3000/redirect"
         }

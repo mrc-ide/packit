@@ -14,12 +14,9 @@ class GithubAPILoginService(
     val jwtIssuer: JwtIssuer,
     val githubUserClient: GithubUserClient,
     val userService: UserService,
-)
-{
-    fun authenticateAndIssueToken(loginRequest: LoginWithToken): Map<String, String>
-    {
-        if (loginRequest.token.isEmpty())
-        {
+) {
+    fun authenticateAndIssueToken(loginRequest: LoginWithToken): Map<String, String> {
+        if (loginRequest.token.isEmpty()) {
             throw PackitException("emptyGitToken", HttpStatus.BAD_REQUEST)
         }
 
