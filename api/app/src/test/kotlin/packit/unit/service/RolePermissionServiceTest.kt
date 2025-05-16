@@ -12,8 +12,7 @@ import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class RolePermissionServiceTest
-{
+class RolePermissionServiceTest {
     private val now = Instant.now().epochSecond.toDouble()
     private val packetGroup = PacketGroup(name = "name1", id = 1)
     private val packet = Packet(
@@ -43,8 +42,7 @@ class RolePermissionServiceTest
     )
 
     @Test
-    fun `getRolePermissionsToUpdate returns RolePermission list when all entities are found`()
-    {
+    fun `getRolePermissionsToUpdate returns RolePermission list when all entities are found`() {
         val role = Role("role1")
         val mockPacket = mock<Packet>()
         val updateRolePermission = UpdateRolePermission("permission1", "id-1")
@@ -59,8 +57,7 @@ class RolePermissionServiceTest
     }
 
     @Test
-    fun `getRolePermissionsToUpdate returns RolePermission list when packetGroup is found`()
-    {
+    fun `getRolePermissionsToUpdate returns RolePermission list when packetGroup is found`() {
         val role = Role("role1")
         val mockPacketGroup = mock<PacketGroup>()
         val updateRolePermission = UpdateRolePermission("permission1", packetGroupId = 1)
@@ -75,8 +72,7 @@ class RolePermissionServiceTest
     }
 
     @Test
-    fun `getRolePermissionsToUpdate returns RolePermission list when tag is found`()
-    {
+    fun `getRolePermissionsToUpdate returns RolePermission list when tag is found`() {
         val role = Role("role1")
         val mockTag = mock<Tag>()
         val updateRolePermission = UpdateRolePermission("permission1", tagId = 1)
@@ -91,8 +87,7 @@ class RolePermissionServiceTest
     }
 
     @Test
-    fun `updatePermissionsOnRole calls correct methods with arguments returning role`()
-    {
+    fun `updatePermissionsOnRole calls correct methods with arguments returning role`() {
         val role = Role("role1")
         val addRolePermissions = listOf(UpdateRolePermission("permission1"))
         val removeRolePermissions = listOf(UpdateRolePermission("permission2"))
@@ -113,8 +108,7 @@ class RolePermissionServiceTest
     }
 
     @Test
-    fun `removeRolePermissionsFromRole removes role permissions when they exist`()
-    {
+    fun `removeRolePermissionsFromRole removes role permissions when they exist`() {
         val role = Role("role1")
         val permission1 = Permission("permission1", "d1")
         val removeRolePermissions = listOf(UpdateRolePermission(permission1.name))
@@ -131,8 +125,7 @@ class RolePermissionServiceTest
     }
 
     @Test
-    fun `removeRolePermissionsFromRole throws PackitException when role permission does not exist`()
-    {
+    fun `removeRolePermissionsFromRole throws PackitException when role permission does not exist`() {
         val role = Role("role1")
         val permission1 = Permission("permission1", "d1")
         val updateRolePermissions =
@@ -151,8 +144,7 @@ class RolePermissionServiceTest
     }
 
     @Test
-    fun `addPermissionsToRole adds role permissions to role when they do not exist in role`()
-    {
+    fun `addPermissionsToRole adds role permissions to role when they do not exist in role`() {
         val role = Role("role1")
         val permission1 = Permission("permission1", "d1")
         val addRolePermissions = listOf(UpdateRolePermission(permission1.name))
@@ -165,8 +157,7 @@ class RolePermissionServiceTest
     }
 
     @Test
-    fun `addPermissionsToRole throws exception when role permission already exists in role`()
-    {
+    fun `addPermissionsToRole throws exception when role permission already exists in role`() {
         val role = Role("role1")
         val permission1 = Permission("permission1", "d1")
         val addRolePermissions = listOf(UpdateRolePermission(permission1.name))
@@ -182,8 +173,7 @@ class RolePermissionServiceTest
     }
 
     @Test
-    fun `applyPermissionToMultipleRoles calls correct methods with arguments when packetId passed & returns roles`()
-    {
+    fun `applyPermissionToMultipleRoles calls correct methods with arguments when packetId passed & returns roles`() {
         val serviceSpy = spy(service)
         val rolesToAdd = listOf(Role("role1"), Role("role2"))
         val rolesToRemove = listOf(Role("role3"), Role("role4"))
@@ -202,8 +192,7 @@ class RolePermissionServiceTest
     }
 
     @Test
-    fun `applyPermissionToMultipleRoles calls correct methods with arguments when packetId not passed`()
-    {
+    fun `applyPermissionToMultipleRoles calls correct methods with arguments when packetId not passed`() {
         val serviceSpy = spy(service)
         val rolesToAdd = listOf(Role("role1"), Role("role2"))
         val rolesToRemove = listOf(Role("role3"), Role("role4"))
@@ -220,8 +209,7 @@ class RolePermissionServiceTest
     }
 
     @Test
-    fun `applyPermissionToMultipleRoles throws exception when packet name does not match packetGroupName`()
-    {
+    fun `applyPermissionToMultipleRoles throws exception when packet name does not match packetGroupName`() {
         whenever(permissionService.getByName(any())).thenReturn(any<Permission>())
 
         assertThrows<IllegalArgumentException> {
@@ -241,8 +229,7 @@ class RolePermissionServiceTest
     }
 
     @Test
-    fun `removePermissionFromRoles throw error when 2 of packet, packetGroup, tag are not null`()
-    {
+    fun `removePermissionFromRoles throw error when 2 of packet, packetGroup, tag are not null`() {
 
         assertThrows<IllegalArgumentException> {
             service.removePermissionFromRoles(
@@ -261,8 +248,7 @@ class RolePermissionServiceTest
     }
 
     @Test
-    fun `removePermissionFromRoles throw error when rolePermission doesnt exist on a role`()
-    {
+    fun `removePermissionFromRoles throw error when rolePermission doesnt exist on a role`() {
         val roles = listOf(Role("role1"), Role("role2"))
         val permission = Permission("permission1", "d1")
         roles[0].apply {
@@ -288,8 +274,7 @@ class RolePermissionServiceTest
     }
 
     @Test
-    fun `removePermissionFromRoles removes permissions from roles`()
-    {
+    fun `removePermissionFromRoles removes permissions from roles`() {
         val roles = listOf(Role("role1"), Role("role2"))
         val permission = Permission("permission1", "d1")
         roles.forEachIndexed { index, role ->
@@ -306,8 +291,7 @@ class RolePermissionServiceTest
     }
 
     @Test
-    fun `addPermissionToRoles throw error when 2 of packet, packetGroup, tag are not null`()
-    {
+    fun `addPermissionToRoles throw error when 2 of packet, packetGroup, tag are not null`() {
 
         assertThrows<IllegalArgumentException> {
             service.addPermissionToRoles(
@@ -326,8 +310,7 @@ class RolePermissionServiceTest
     }
 
     @Test
-    fun `addPermissionToRoles throw error when rolePermission already exists on a role`()
-    {
+    fun `addPermissionToRoles throw error when rolePermission already exists on a role`() {
         val roles = listOf(Role("role1"), Role("role2"))
         val permission = Permission("permission1", "d1")
         // already exists on role 1, thus will throw error
@@ -353,8 +336,7 @@ class RolePermissionServiceTest
     }
 
     @Test
-    fun `addPermissionToRoles adds permissions from roles`()
-    {
+    fun `addPermissionToRoles adds permissions from roles`() {
         val roles = listOf(Role("role1"), Role("role2"))
         val permission = Permission("permission1", "d1")
         service.addPermissionToRoles(

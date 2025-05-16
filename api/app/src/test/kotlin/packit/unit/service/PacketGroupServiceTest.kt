@@ -6,12 +6,17 @@ import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.*
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.context.SecurityContext
+import org.springframework.security.core.context.SecurityContextHolder
 import packit.exceptions.PackitException
 import packit.model.*
 import packit.model.dto.OutpackMetadata
 import packit.model.dto.PacketGroupSummary
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketIdProjection
+import packit.security.PermissionChecker
 import packit.service.BasePacketGroupService
 import packit.service.OutpackServerClient
 import packit.service.PacketService
@@ -19,9 +24,9 @@ import packit.unit.packetToOutpackMetadata
 import java.time.Instant
 import java.util.*
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-class PacketGroupServiceTest
-{
+class PacketGroupServiceTest {
     private val now = Instant.now().epochSecond.toDouble()
     private val testPacketLatestId = "20190203-120000-1234dada"
     private val test2PacketLatestId = "20190403-120000-1234dfdf"
@@ -106,6 +111,7 @@ class PacketGroupServiceTest
         on { findAll() } doReturn packetGroups
     }
     private val packetService = mock<PacketService>()
+    private val permissionChecker = mock<PermissionChecker>()
     private val packetGroupSummaries =
         listOf(
             PacketGroupSummary(
@@ -125,9 +131,8 @@ class PacketGroupServiceTest
         )
 
     @Test
-    fun `getPacketGroups calls repository with correct params and returns its result`()
-    {
-        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
+    fun `getPacketGroups calls repository with correct params and returns its result`() {
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient, permissionChecker)
         val pageablePayload = PageablePayload(0, 10)
         val filterName = "test"
         val packetGroups = listOf(PacketGroup("test1"), PacketGroup("test2"))
@@ -147,15 +152,14 @@ class PacketGroupServiceTest
     }
 
     @Test
-    fun `getPacketGroupDisplay returns display name and description when there is a description and a display name`()
-    {
+    fun `getPacketGroupDisplay returns display name and description when there is a description and a display name`() {
         val packetIdProjection = mock<PacketIdProjection> {
             on { id } doReturn packetMetadata.id
         }
         whenever(packetGroupRepository.findLatestPacketIdForGroup("test")).thenReturn(packetIdProjection)
         whenever(packetService.getMetadataBy(packetMetadata.id)).thenReturn(packetMetadata)
 
-        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient, permissionChecker)
 
         val result = sut.getPacketGroupDisplay("test")
 
@@ -166,8 +170,7 @@ class PacketGroupServiceTest
     }
 
     @Test
-    fun `getPacketGroupDisplay returns display name (=name) and null description when there is no description`()
-    {
+    fun `getPacketGroupDisplay returns display name (=name) and null description when there is no description`() {
         val packetMetadataWithNullDesc = packetMetadata.copy(
             custom = mapOf(
                 "orderly" to mapOf(
@@ -184,7 +187,7 @@ class PacketGroupServiceTest
         whenever(packetGroupRepository.findLatestPacketIdForGroup("test")).thenReturn(packetIdProjection)
         whenever(packetService.getMetadataBy(packetMetadataWithNullDesc.id)).thenReturn(packetMetadataWithNullDesc)
 
-        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient, permissionChecker)
 
         val result = sut.getPacketGroupDisplay("test")
 
@@ -195,8 +198,7 @@ class PacketGroupServiceTest
     }
 
     @Test
-    fun `getPacketGroupDisplay returns display name (=name) and null description when there is no custom data`()
-    {
+    fun `getPacketGroupDisplay returns display name (=name) and null description when there is no custom data`() {
         val packetWithoutCustomMetadata = packetMetadata.copy(
             custom = mapOf()
         )
@@ -206,7 +208,7 @@ class PacketGroupServiceTest
         whenever(packetGroupRepository.findLatestPacketIdForGroup("test")).thenReturn(packetIdProjection)
         whenever(packetService.getMetadataBy(packetWithoutCustomMetadata.id)).thenReturn(packetWithoutCustomMetadata)
 
-        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient, permissionChecker)
 
         val result = sut.getPacketGroupDisplay("test")
 
@@ -217,25 +219,21 @@ class PacketGroupServiceTest
     }
 
     @Test
-    fun `gets packet groups summaries`()
-    {
+    fun `gets packet groups summaries`() {
         whenever(packetGroupRepository.findLatestPacketIdForGroup("test"))
-            .thenReturn(object : PacketIdProjection
-            {
+            .thenReturn(object : PacketIdProjection {
                 override val id: String = testPacketLatestId
             })
         whenever(packetGroupRepository.findLatestPacketIdForGroup("test2"))
-            .thenReturn(object : PacketIdProjection
-            {
+            .thenReturn(object : PacketIdProjection {
                 override val id: String = test2PacketLatestId
             })
-        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient, permissionChecker)
 
         val result = sut.getPacketGroupSummaries(PageablePayload(0, 10), "")
 
         assertEquals(result.totalElements, 2)
-        for (i in packetGroupSummaries.indices)
-        {
+        for (i in packetGroupSummaries.indices) {
             assertEquals(result.content[i].name, packetGroupSummaries[i].name)
             assertEquals(result.content[i].packetCount, packetGroupSummaries[i].packetCount)
             assertEquals(result.content[i].latestId, packetGroupSummaries[i].latestId)
@@ -248,19 +246,16 @@ class PacketGroupServiceTest
     }
 
     @Test
-    fun `can filter packet groups summaries by name`()
-    {
+    fun `can filter packet groups summaries by name`() {
         whenever(packetGroupRepository.findLatestPacketIdForGroup("test"))
-            .thenReturn(object : PacketIdProjection
-            {
+            .thenReturn(object : PacketIdProjection {
                 override val id: String = testPacketLatestId
             })
         whenever(packetGroupRepository.findLatestPacketIdForGroup("test2"))
-            .thenReturn(object : PacketIdProjection
-            {
+            .thenReturn(object : PacketIdProjection {
                 override val id: String = test2PacketLatestId
             })
-        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient, permissionChecker)
 
         val result = sut.getPacketGroupSummaries(PageablePayload(0, 10), "test2")
 
@@ -271,19 +266,16 @@ class PacketGroupServiceTest
     }
 
     @Test
-    fun `can filter packet groups summaries by display name`()
-    {
+    fun `can filter packet groups summaries by display name`() {
         whenever(packetGroupRepository.findLatestPacketIdForGroup("test"))
-            .thenReturn(object : PacketIdProjection
-            {
+            .thenReturn(object : PacketIdProjection {
                 override val id: String = testPacketLatestId
             })
         whenever(packetGroupRepository.findLatestPacketIdForGroup("test2"))
-            .thenReturn(object : PacketIdProjection
-            {
+            .thenReturn(object : PacketIdProjection {
                 override val id: String = test2PacketLatestId
             })
-        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient, permissionChecker)
 
         val result = sut.getPacketGroupSummaries(PageablePayload(0, 10), "2 Display")
 
@@ -294,8 +286,7 @@ class PacketGroupServiceTest
     }
 
     @Test
-    fun `can get summaries for non-orderly packets that use the outpack custom property to specify a display name`()
-    {
+    fun `can get summaries for non-orderly packets that use the outpack custom property to specify a display name`() {
         val metadataWithDifferentCustomSchema = listOf(
             OutpackMetadata(
                 testPacketLatestId,
@@ -317,12 +308,12 @@ class PacketGroupServiceTest
             on { findAll() } doReturn listOf(PacketGroup("testing"))
         }
         whenever(packetGroupRepo.findLatestPacketIdForGroup("testing"))
-            .thenReturn(object : PacketIdProjection
-            {
+            .thenReturn(object : PacketIdProjection {
                 override val id: String = testPacketLatestId
             })
 
-        val sut = BasePacketGroupService(packetGroupRepo, packetService, differentOutpackServerClient)
+        val sut =
+            BasePacketGroupService(packetGroupRepo, packetService, differentOutpackServerClient, permissionChecker)
 
         val result = sut.getPacketGroupSummaries(PageablePayload(0, 10), "")
 
@@ -334,12 +325,11 @@ class PacketGroupServiceTest
     }
 
     @Test
-    fun `getPacketGroup returns packet group when found in repository`()
-    {
+    fun `getPacketGroup returns packet group when found in repository`() {
         val packetGroupId = 1
         val expectedPacketGroup = PacketGroup("test")
         whenever(packetGroupRepository.findById(packetGroupId)).thenReturn(Optional.of(expectedPacketGroup))
-        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient, permissionChecker)
 
         val result = sut.getPacketGroup(packetGroupId)
 
@@ -348,11 +338,10 @@ class PacketGroupServiceTest
     }
 
     @Test
-    fun `getPacketGroup throws PackitException when packet group not found`()
-    {
+    fun `getPacketGroup throws PackitException when packet group not found`() {
         val packetGroupId = 999
         whenever(packetGroupRepository.findById(packetGroupId)).thenReturn(Optional.empty())
-        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient)
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient, permissionChecker)
 
         assertThrows<PackitException> {
             sut.getPacketGroup(packetGroupId)
@@ -361,5 +350,90 @@ class PacketGroupServiceTest
             assertEquals(HttpStatus.NOT_FOUND, httpStatus)
         }
         verify(packetGroupRepository).findById(packetGroupId)
+    }
+
+    @Test
+    fun `getAllPacketGroupsCanManage filters packet groups when user cannot manage all packets`() {
+        // Setup
+        val allPacketGroups = listOf(
+            PacketGroup("group1"),
+            PacketGroup("group2"),
+            PacketGroup("group3")
+        )
+        whenever(packetGroupRepository.findAll()).thenReturn(allPacketGroups)
+        val authorities = listOf("MANAGE_GROUP1", "MANAGE_GROUP2")
+        setupSecurityContext(authorities)
+        whenever(permissionChecker.canManageAllPackets(authorities)).thenReturn(false)
+        whenever(permissionChecker.hasPacketManagePermissionForGroup(authorities, "group1")).thenReturn(true)
+        whenever(permissionChecker.hasPacketManagePermissionForGroup(authorities, "group2")).thenReturn(true)
+        whenever(permissionChecker.hasPacketManagePermissionForGroup(authorities, "group3")).thenReturn(false)
+
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient, permissionChecker)
+
+        // Execute
+        val result = sut.getAllPacketGroupsCanManage()
+
+        // Verify
+        assertEquals(2, result.size)
+        assertEquals("group1", result[0].name)
+        assertEquals("group2", result[1].name)
+        verify(permissionChecker).canManageAllPackets(authorities)
+        verify(permissionChecker, times(3)).hasPacketManagePermissionForGroup(any(), any())
+    }
+
+    @Test
+    fun `getAllPacketGroupsCanManage returns empty list when user has no permissions`() {
+        // Setup
+        val allPacketGroups = listOf(
+            PacketGroup("group1"),
+            PacketGroup("group2"),
+            PacketGroup("group3")
+        )
+        whenever(packetGroupRepository.findAll()).thenReturn(allPacketGroups)
+        val authorities = listOf("NO_PERMISSIONS")
+        setupSecurityContext(authorities)
+        whenever(permissionChecker.canManageAllPackets(authorities)).thenReturn(false)
+        whenever(permissionChecker.hasPacketManagePermissionForGroup(eq(authorities), any())).thenReturn(false)
+
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient, permissionChecker)
+
+        // Execute
+        val result = sut.getAllPacketGroupsCanManage()
+
+        // Verify
+        assertTrue { result.isEmpty() }
+        verify(permissionChecker).canManageAllPackets(authorities)
+        verify(permissionChecker, times(3)).hasPacketManagePermissionForGroup(any(), any())
+    }
+
+    @Test
+    fun `getAllPacketGroupsCanManage handles empty repository result`() {
+        // Setup
+        whenever(packetGroupRepository.findAll()).thenReturn(emptyList())
+        val authorities = listOf("MANAGE_ALL")
+        setupSecurityContext(authorities)
+        whenever(permissionChecker.canManageAllPackets(authorities)).thenReturn(true)
+
+        val sut = BasePacketGroupService(packetGroupRepository, packetService, outpackServerClient, permissionChecker)
+
+        // Execute
+        val result = sut.getAllPacketGroupsCanManage()
+
+        // Verify
+        assertTrue(result.isEmpty())
+        verify(permissionChecker).canManageAllPackets(authorities)
+        verify(permissionChecker, never()).hasPacketManagePermissionForGroup(any(), any())
+    }
+
+    // Helper function to set up security context with specific authorities
+    private fun setupSecurityContext(authorities: List<String>) {
+        val authentication = mock<Authentication> {
+            on { getAuthorities() } doReturn authorities.map { SimpleGrantedAuthority(it) }
+        }
+        val securityContext = mock<SecurityContext> {
+            on { getAuthentication() } doReturn authentication
+        }
+
+        SecurityContextHolder.setContext(securityContext)
     }
 }

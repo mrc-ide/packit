@@ -3,6 +3,7 @@ package packit.model
 import jakarta.persistence.*
 import packit.model.dto.BasicUserDto
 import packit.model.dto.UserDto
+import packit.model.dto.UserWithPermissions
 import java.time.Instant
 import java.util.*
 
@@ -29,12 +30,24 @@ class User(
     val id: UUID? = null,
     @OneToMany(mappedBy = "user")
     var runInfos: MutableList<RunInfo> = mutableListOf()
-)
-{
+) {
     fun isServiceUser(): Boolean = userSource == "service"
+    fun getSpecificPermissions(): MutableList<RolePermission> =
+        roles.find { it.isUsername && it.name == username }?.rolePermissions
+            ?: mutableListOf()
+
+    fun getNonUsernameRoles(): List<Role> = roles.filterNot { it.isUsername }
 }
 
 fun User.toBasicDto() = BasicUserDto(username, id!!)
 
 fun User.toDto() =
     UserDto(username, roles.map { it.toBasicDto() }, disabled, userSource, displayName, email, id!!)
+
+fun User.toUserWithPermissions() =
+    UserWithPermissions(
+        username = username,
+        specificPermissions = getSpecificPermissions().map { it.toDto() },
+        roles = getNonUsernameRoles().map { it.toBasicDto() },
+        id = id!!
+    )

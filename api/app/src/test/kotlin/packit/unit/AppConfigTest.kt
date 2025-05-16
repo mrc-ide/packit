@@ -12,8 +12,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class AppConfigTest
-{
+class AppConfigTest {
     private val environmentVariables = mapOf(
         "outpack.server.url" to "url",
         "orderly.runner.url" to "url",
@@ -34,24 +33,21 @@ class AppConfigTest
     private val mockEnv = MockEnvironment()
 
     @BeforeAll
-    fun setupEnv()
-    {
+    fun setupEnv() {
         environmentVariables.forEach { (key, value) ->
             mockEnv.setProperty(key, value)
         }
     }
 
     @Test
-    fun `passwordEncoder returns instance of BCryptPasswordEncoder`()
-    {
+    fun `passwordEncoder returns instance of BCryptPasswordEncoder`() {
         val sut = AppConfig(mockEnv)
 
         assert(sut.passwordEncoder() is BCryptPasswordEncoder)
     }
 
     @Test
-    fun `ensure all env variables set in config`()
-    {
+    fun `ensure all env variables set in config`() {
         val sut = AppConfig(mockEnv)
 
         assertEquals(sut.outpackServerUrl, "url")
@@ -61,7 +57,9 @@ class AppConfigTest
         assertEquals(sut.authJWTSecret, "secret")
         assertEquals(sut.authRedirectUri, "redirectUrl")
         assertFalse(sut.authEnableGithubLogin)
+        assertFalse(sut.authEnablePreAuthLogin)
         assertTrue(sut.authEnableBasicLogin)
+        assertEquals("basic", sut.authMethod)
         assertEquals(sut.authExpiryDays, 1L)
         assertTrue(sut.authEnabled)
         assertEquals(sut.authGithubAPIOrg, "githubAPIOrg")
@@ -75,24 +73,21 @@ class AppConfigTest
     }
 
     @Test
-    fun `requiredEnvValue throws exception if key not set`()
-    {
+    fun `requiredEnvValue throws exception if key not set`() {
         val sut = AppConfig(mockEnv)
 
         assertThrows<IllegalArgumentException> { sut.requiredEnvValue("notSet") }
     }
 
     @Test
-    fun `splitList ignores empty values`()
-    {
+    fun `splitList ignores empty values`() {
         val sut = AppConfig(mockEnv)
         assertTrue(sut.splitList("").isEmpty())
         assertTrue(sut.splitList(" ").isEmpty())
     }
 
     @Test
-    fun `splitList trims whitespace`()
-    {
+    fun `splitList trims whitespace`() {
         val sut = AppConfig(mockEnv)
         assertEquals(sut.splitList("foo, bar"), listOf("foo", "bar"))
         assertEquals(sut.splitList(" foo, bar"), listOf("foo", "bar"))

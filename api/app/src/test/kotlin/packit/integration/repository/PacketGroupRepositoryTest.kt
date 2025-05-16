@@ -14,8 +14,7 @@ import java.time.Instant
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class PacketGroupRepositoryTest : RepositoryTest()
-{
+class PacketGroupRepositoryTest : RepositoryTest() {
     @Autowired
     lateinit var packetRepository: PacketRepository
 
@@ -59,23 +58,20 @@ class PacketGroupRepositoryTest : RepositoryTest()
     )
 
     @BeforeEach
-    override fun setup()
-    {
+    override fun setup() {
         packetRepository.deleteAll()
         packetGroupRepository.deleteAll()
     }
 
     @AfterAll
-    fun cleanup()
-    {
+    fun cleanup() {
         packetRepository.deleteAll()
         packetGroupRepository.deleteAll()
     }
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:correct_group"])
-    fun `can find latest packet id by group name`()
-    {
+    fun `can find latest packet id by group name`() {
         packetRepository.saveAll(packets)
         packetGroupRepository.save(packetGroup)
 

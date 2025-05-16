@@ -1,3 +1,5 @@
+import appConfig from "./config/appConfig";
+import { testBaseUrl } from "./tests/lib/constants";
 import { FileMetadata, TimeMetadata } from "./types";
 
 export const bytesToSize = (bytes: number): string => {
@@ -47,3 +49,5 @@ export const getElapsedTime = (time: TimeMetadata) => {
 
   return formattedTime.trim();
 };
+
+export const absoluteApiUrl = () => `${testBaseUrl}${appConfig.apiUrl()}`;

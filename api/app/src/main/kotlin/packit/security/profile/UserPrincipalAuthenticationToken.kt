@@ -3,8 +3,7 @@ package packit.security.profile
 import org.springframework.security.authentication.AbstractAuthenticationToken
 
 class UserPrincipalAuthenticationToken(userPrincipal: UserPrincipal) :
-    AbstractAuthenticationToken(userPrincipal.authorities)
-{
+    AbstractAuthenticationToken(userPrincipal.authorities) {
     private val principal = userPrincipal
 
     init
@@ -12,13 +11,11 @@ class UserPrincipalAuthenticationToken(userPrincipal: UserPrincipal) :
         isAuthenticated = true
     }
 
-    override fun getCredentials(): Any
-    {
+    override fun getCredentials(): Any {
         return ""
     }
 
-    override fun getPrincipal(): Any
-    {
+    override fun getPrincipal(): Any {
         return principal
     }
 }

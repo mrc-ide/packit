@@ -8,11 +8,9 @@ class ErrorDetail(
     private val httpStatus: HttpStatus,
     val detail: String,
     val error: String = defaultError,
-)
-{
+) {
 
-    companion object
-    {
+    companion object {
         const val defaultError = "OTHER_ERROR"
     }
 
@@ -21,8 +19,7 @@ class ErrorDetail(
         .contentType(MediaType.APPLICATION_JSON)
         .body(PackitErrorResponse(this).toJsonString())
 
-    override fun equals(other: Any?): Boolean
-    {
+    override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
@@ -35,16 +32,14 @@ class ErrorDetail(
         return true
     }
 
-    override fun hashCode(): Int
-    {
+    override fun hashCode(): Int {
         var result = httpStatus.hashCode()
         result = 31 * result + detail.hashCode()
         result = 31 * result + error.hashCode()
         return result
     }
 
-    override fun toString(): String
-    {
+    override fun toString(): String {
         return "ErrorDetail(httpStatus=$httpStatus, detail='$detail', error='$error')"
     }
 }

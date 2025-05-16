@@ -10,8 +10,7 @@ on:
       - "main"
   pull_request:
     branches:
-      - "main"
-      - "mrc-*"
+      - "*"
 env:
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 
@@ -67,7 +66,7 @@ jobs:
         if: failure()
         uses: jwalton/gh-docker-logs@v2
         with:
-          dest: '${{ runner.temp }}/docker-logs'
+          dest: "${{ runner.temp }}/docker-logs"
 
       - name: Upload test reports
         uses: actions/upload-artifact@v4

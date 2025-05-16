@@ -15,11 +15,9 @@ import packit.security.provider.TokenProvider
 import packit.unit.helpers.JSON
 import kotlin.test.assertEquals
 
-class TokenToPrincipalConverterTest
-{
+class TokenToPrincipalConverterTest {
     @Test
-    fun `can extract authorities`()
-    {
+    fun `can extract authorities`() {
         val mockClaim = mock<Claim>()
 
         val mockDecodedJWT = mock<DecodedJWT> {
@@ -34,8 +32,7 @@ class TokenToPrincipalConverterTest
     }
 
     @Test
-    fun `converts jwt to user principal`()
-    {
+    fun `converts jwt to user principal`() {
         val userName = "fakeName"
         val displayName = "Fake Name"
         val mockAppConfig = mock<AppConfig> {

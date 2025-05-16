@@ -9,8 +9,7 @@ import packit.repository.OneTimeTokenRepository
 import java.time.Instant
 import java.util.*
 
-interface OneTimeTokenService
-{
+interface OneTimeTokenService {
     fun createToken(packetId: String, filePaths: List<String>): OneTimeToken
     fun getToken(id: UUID): OneTimeToken
     fun cleanUpExpiredTokens()

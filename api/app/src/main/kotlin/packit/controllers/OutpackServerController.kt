@@ -13,19 +13,16 @@ import packit.service.OutpackServerClient
 
 @RestController
 @RequestMapping("/outpack")
-class OutpackServerController(private val outpackServerClient: OutpackServerClient)
-{
+class OutpackServerController(private val outpackServerClient: OutpackServerClient) {
     @PreAuthorize("hasAnyAuthority('outpack.read', 'outpack.write')")
     @GetMapping("/**")
-    fun get(request: HttpServletRequest, response: HttpServletResponse)
-    {
+    fun get(request: HttpServletRequest, response: HttpServletResponse) {
         proxyRequest(request, response, copyRequestBody = false)
     }
 
     @PostMapping("/**")
     @PreAuthorize("hasAuthority('outpack.write')")
-    fun post(request: HttpServletRequest, response: HttpServletResponse)
-    {
+    fun post(request: HttpServletRequest, response: HttpServletResponse) {
         proxyRequest(request, response, copyRequestBody = true)
     }
 
@@ -33,14 +30,12 @@ class OutpackServerController(private val outpackServerClient: OutpackServerClie
         request: HttpServletRequest,
         response: HttpServletResponse,
         copyRequestBody: Boolean
-    )
-    {
+    ) {
         val url = getUrlFragment(request)
         outpackServerClient.proxyRequest(url, request, response, copyRequestBody)
     }
 
-    private fun getUrlFragment(request: HttpServletRequest): String
-    {
+    private fun getUrlFragment(request: HttpServletRequest): String {
         val apm = AntPathMatcher()
         return apm.extractPathWithinPattern(
             request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE) as String,
