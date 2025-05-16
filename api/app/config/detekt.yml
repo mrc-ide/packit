@@ -17,17 +17,7 @@ exceptions:
     active: false
 
 formatting:
-  Indentation:
-    active: false
-  NoLineBreakAfterElse:
-    active: false
   NoWildcardImports:
-    active: false
-  ParameterListWrapping:
-    active: false
-  SpacingAroundCurly:
-    active: false
-  SpacingAroundKeyword:
     active: false
 
 style:

@@ -7,11 +7,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class PacketTest
-{
+class PacketTest {
     @Test
-    fun `toDto returns correct PacketDto for given Packet`()
-    {
+    fun `toDto returns correct PacketDto for given Packet`() {
         val packet = Packet("id1", "name1", "displayName1", emptyMap(), 1.0, 2.0, 3.0)
         val packetDto = packet.toDto()
         assertEquals("id1", packetDto.id)
@@ -24,8 +22,7 @@ class PacketTest
     }
 
     @Test
-    fun `toDto returns correct PacketDto for Packet with non-empty parameters`()
-    {
+    fun `toDto returns correct PacketDto for Packet with non-empty parameters`() {
         val parameters = mapOf("param1" to "value1")
         val packet = Packet("id1", "name1", "displayName1", parameters, 1.0, 2.0, 3.0)
         val packetDto = packet.toDto()
@@ -33,8 +30,7 @@ class PacketTest
     }
 
     @Test
-    fun `toBasicDto returns correct BasicPacketDto for given Packet`()
-    {
+    fun `toBasicDto returns correct BasicPacketDto for given Packet`() {
         val packet = Packet("id1", "name1", "displayName1", emptyMap(), 1.0, 2.0, 3.0)
         val basicPacketDto = packet.toBasicDto()
         assertEquals("id1", basicPacketDto.id)

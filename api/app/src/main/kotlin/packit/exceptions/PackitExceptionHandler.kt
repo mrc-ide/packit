@@ -19,35 +19,29 @@ import packit.service.GenericClientException
 import java.util.*
 
 @RestControllerAdvice
-class PackitExceptionHandler
-{
+class PackitExceptionHandler {
 
     @ExceptionHandler(NoHandlerFoundException::class)
-    fun handleNoHandlerFoundException(e: Exception): Any
-    {
+    fun handleNoHandlerFoundException(e: Exception): Any {
         return ErrorDetail(HttpStatus.NOT_FOUND, e.message ?: "")
             .toResponseEntity()
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException::class)
-    fun handleHttpRequestMethodNotSupportedException(e: Exception): Any
-    {
+    fun handleHttpRequestMethodNotSupportedException(e: Exception): Any {
         return ErrorDetail(HttpStatus.METHOD_NOT_ALLOWED, e.message ?: "")
             .toResponseEntity()
     }
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
-    fun handleHttpMessageNotReadableException(e: Exception): Any
-    {
+    fun handleHttpMessageNotReadableException(e: Exception): Any {
         return ErrorDetail(HttpStatus.BAD_REQUEST, e.message ?: "")
             .toResponseEntity()
     }
 
     @ExceptionHandler(HttpClientErrorException::class, HttpServerErrorException::class)
-    fun handleHttpClientErrorException(e: Exception): ResponseEntity<String>
-    {
-        val status = when (e)
-        {
+    fun handleHttpClientErrorException(e: Exception): ResponseEntity<String> {
+        val status = when (e) {
             is HttpClientErrorException.Unauthorized -> HttpStatus.UNAUTHORIZED
             is HttpClientErrorException.BadRequest -> HttpStatus.BAD_REQUEST
             else -> HttpStatus.INTERNAL_SERVER_ERROR
@@ -57,36 +51,31 @@ class PackitExceptionHandler
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleMethodArgumentNotValidException(e: Exception): ResponseEntity<String>
-    {
+    fun handleMethodArgumentNotValidException(e: Exception): ResponseEntity<String> {
         return ErrorDetail(HttpStatus.BAD_REQUEST, e.message ?: "Invalid argument")
             .toResponseEntity()
     }
 
     @ExceptionHandler(IllegalArgumentException::class)
-    fun handleIllegalArgumentException(e: Exception): ResponseEntity<String>
-    {
+    fun handleIllegalArgumentException(e: Exception): ResponseEntity<String> {
         return ErrorDetail(HttpStatus.BAD_REQUEST, e.message ?: "Invalid argument")
             .toResponseEntity()
     }
 
     @ExceptionHandler(AccessDeniedException::class, AuthenticationException::class)
-    fun handleAccessDenied(e: Exception): ResponseEntity<String>
-    {
+    fun handleAccessDenied(e: Exception): ResponseEntity<String> {
         return ErrorDetail(HttpStatus.UNAUTHORIZED, e.message ?: "Unauthorized")
             .toResponseEntity()
     }
 
     @ExceptionHandler(InternalAuthenticationServiceException::class)
-    fun handleInternalAuthenticationServiceException(e: Exception): ResponseEntity<String>
-    {
+    fun handleInternalAuthenticationServiceException(e: Exception): ResponseEntity<String> {
         return ErrorDetail(HttpStatus.UNAUTHORIZED, e.message ?: "Authentication failed")
             .toResponseEntity()
     }
 
     @ExceptionHandler(GenericClientException::class)
-    fun handleGenericClientException(e: GenericClientException): ResponseEntity<String>
-    {
+    fun handleGenericClientException(e: GenericClientException): ResponseEntity<String> {
         val clientError = e.cause!! as HttpStatusCodeException
         val message = clientError.responseBodyAsString
         return ResponseEntity<String>(message, clientError.responseHeaders, clientError.statusCode)
@@ -95,8 +84,7 @@ class PackitExceptionHandler
     @ExceptionHandler(PackitException::class)
     fun handlePackitException(
         error: PackitException
-    ): ResponseEntity<String>
-    {
+    ): ResponseEntity<String> {
         val resourceBundle = getBundle()
         val errorDetail =
             if (resourceBundle.containsKey(error.key)) resourceBundle.getString(error.key) else error.key
@@ -107,23 +95,20 @@ class PackitExceptionHandler
     @ExceptionHandler(PackitAuthenticationException::class)
     fun handlePackitAuthenticationException(
         error: PackitAuthenticationException
-    ): ResponseEntity<String>
-    {
+    ): ResponseEntity<String> {
         return errorDetailForPackitAuthenticationException(error)
             .toResponseEntity()
     }
 
     fun errorDetailForPackitAuthenticationException(
         error: PackitAuthenticationException
-    ): ErrorDetail
-    {
+    ): ErrorDetail {
         val resourceBundle = getBundle()
 
         return ErrorDetail(error.httpStatus, resourceBundle.getString(error.key))
     }
 
-    private fun getBundle(): ResourceBundle
-    {
+    private fun getBundle(): ResourceBundle {
         return ResourceBundle.getBundle("errorBundle", Locale.ENGLISH)
     }
 }

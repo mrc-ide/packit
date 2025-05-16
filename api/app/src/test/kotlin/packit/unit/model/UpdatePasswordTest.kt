@@ -5,11 +5,9 @@ import packit.model.dto.UpdatePassword
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class UpdatePasswordTest
-{
+class UpdatePasswordTest {
     @Test
-    fun `UpdatePassword initialization succeeds when current and new passwords are different`()
-    {
+    fun `UpdatePassword initialization succeeds when current and new passwords are different`() {
         val currentPassword = "currentPassword"
         val newPassword = "newPassword"
 
@@ -20,8 +18,7 @@ class UpdatePasswordTest
     }
 
     @Test
-    fun `UpdatePassword initialization fails when current and new passwords are the same`()
-    {
+    fun `UpdatePassword initialization fails when current and new passwords are the same`() {
         val currentPassword = "samePassword"
         val newPassword = "samePassword"
 

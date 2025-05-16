@@ -7,7 +7,7 @@ import { ScrollArea } from "../../../Base/ScrollArea";
 import { DeleteUserOrRole } from "../DeleteUserOrRole";
 import { UpdateRoleDropDownMenu } from "../manageRoleActions/UpdateRoleDropDownMenu";
 import { RoleWithRelationships } from "../types/RoleWithRelationships";
-import { UserWithRoles } from "../types/UserWithRoles";
+import { UserWithPermissions } from "../types/UserWithPermissions";
 
 const columnHelper = createColumnHelper<RoleWithRelationships>();
 
@@ -38,7 +38,10 @@ export const roleDefaultColumns = (scrollAreaHeightClass = "h-14") => [
   })
 ];
 
-export const setupManageRolesColumns = (mutate: KeyedMutator<RoleWithRelationships[]>, users: UserWithRoles[]) => [
+export const setupManageRolesColumns = (
+  mutate: KeyedMutator<RoleWithRelationships[]>,
+  users: UserWithPermissions[]
+) => [
   ...roleDefaultColumns(),
   columnHelper.accessor("rolePermissions", {
     header: "Permissions",

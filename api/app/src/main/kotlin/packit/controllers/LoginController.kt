@@ -24,16 +24,13 @@ class LoginController(
     val serviceLoginService: ServiceLoginService,
     val config: AppConfig,
     val userService: UserService,
-)
-{
+) {
     @PostMapping("/login/api")
     @ResponseBody
     fun loginWithGithub(
         @RequestBody @Validated user: LoginWithToken,
-    ): ResponseEntity<Map<String, String>>
-    {
-        if (!config.authEnableGithubLogin)
-        {
+    ): ResponseEntity<Map<String, String>> {
+        if (!config.authEnableGithubLogin) {
             throw PackitException("githubLoginDisabled", HttpStatus.FORBIDDEN)
         }
         val token = gitApiLoginService.authenticateAndIssueToken(user)
@@ -48,10 +45,8 @@ class LoginController(
         @RequestHeader("X-Remote-User") username: String,
         @RequestHeader("X-Remote-Name", required = false) name: String?,
         @RequestHeader("X-Remote-Email", required = false) email: String?
-    ): ResponseEntity<Map<String, String>>
-    {
-        if (!config.authEnablePreAuthLogin)
-        {
+    ): ResponseEntity<Map<String, String>> {
+        if (!config.authEnablePreAuthLogin) {
             throw PackitException("preauthLoginDisabled", HttpStatus.FORBIDDEN)
         }
 
@@ -63,10 +58,8 @@ class LoginController(
     @ResponseBody
     fun loginBasic(
         @RequestBody @Validated user: LoginWithPassword
-    ): ResponseEntity<Map<String, String>>
-    {
-        if (!config.authEnableBasicLogin)
-        {
+    ): ResponseEntity<Map<String, String>> {
+        if (!config.authEnableBasicLogin) {
             throw PackitException("basicLoginDisabled", HttpStatus.FORBIDDEN)
         }
         val token = basicLoginService.authenticateAndIssueToken(user)
@@ -77,8 +70,7 @@ class LoginController(
     @ResponseBody
     fun loginService(
         @RequestBody @Validated user: LoginWithToken,
-    ): ResponseEntity<Map<String, String>>
-    {
+    ): ResponseEntity<Map<String, String>> {
         if (!serviceLoginService.isEnabled()) {
             throw PackitException("serviceLoginDisabled", HttpStatus.FORBIDDEN)
         }
@@ -89,8 +81,7 @@ class LoginController(
 
     @GetMapping("/login/service/audience")
     @ResponseBody
-    fun serviceAudience(): ResponseEntity<Map<String, String>>
-    {
+    fun serviceAudience(): ResponseEntity<Map<String, String>> {
         if (!serviceLoginService.isEnabled()) {
             throw PackitException("serviceLoginDisabled", HttpStatus.FORBIDDEN)
         } else {
@@ -100,8 +91,7 @@ class LoginController(
 
     @GetMapping("/config")
     @ResponseBody
-    fun authConfig(): ResponseEntity<Map<String, Any>>
-    {
+    fun authConfig(): ResponseEntity<Map<String, Any>> {
         val authConfig = mapOf(
             "enableGithubLogin" to config.authEnableGithubLogin,
             "enableBasicLogin" to config.authEnableBasicLogin,
@@ -115,10 +105,8 @@ class LoginController(
     fun updatePassword(
         @PathVariable username: String,
         @RequestBody @Validated updatePassword: UpdatePassword
-    ): ResponseEntity<Unit>
-    {
-        if (!config.authEnableBasicLogin)
-        {
+    ): ResponseEntity<Unit> {
+        if (!config.authEnableBasicLogin) {
             throw PackitException("basicLoginDisabled", HttpStatus.FORBIDDEN)
         }
 

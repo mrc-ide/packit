@@ -8,8 +8,7 @@ import java.time.Instant
 import java.util.*
 import kotlin.test.assertEquals
 
-class OneTimeTokenTest
-{
+class OneTimeTokenTest {
     private val now = Instant.now()
     private val examplePacket = Packet(
         "packetId",
@@ -21,8 +20,7 @@ class OneTimeTokenTest
     )
 
     @Test
-    fun `toDto returns correct OneTimeTokenDto for given OneTimeToken`()
-    {
+    fun `toDto returns correct OneTimeTokenDto for given OneTimeToken`() {
         val token = OneTimeToken(
             id = UUID.randomUUID(),
             packet = examplePacket,

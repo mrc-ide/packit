@@ -1,17 +1,16 @@
 import { cn } from "../../../../lib/cn";
 import { MultiSelectorItem, MultiSelectorList } from "../../Base/MultiSelect";
-import { RoleWithRelationships } from "../manageAccess/types/RoleWithRelationships";
-import { UserWithRoles } from "../manageAccess/types/UserWithRoles";
+import { BasicRolesAndUsers } from "../manageAccess/types/RoleWithRelationships";
 
 interface UpdatePacketReadPermissionMultiSelectListProps {
-  rolesAndUsers: (RoleWithRelationships | UserWithRoles)[];
+  rolesAndUsers: BasicRolesAndUsers;
 }
 export const UpdatePacketReadPermissionMultiSelectList = ({
   rolesAndUsers
 }: UpdatePacketReadPermissionMultiSelectListProps) => {
   return (
     <MultiSelectorList>
-      {rolesAndUsers.map((userRole) => {
+      {[...rolesAndUsers.roles, ...rolesAndUsers.users].map((userRole) => {
         const isUser = "username" in userRole;
         return (
           <MultiSelectorItem

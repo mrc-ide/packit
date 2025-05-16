@@ -17,8 +17,7 @@ import packit.model.ServerResponse
 import java.io.OutputStream
 import java.net.URI
 
-object GenericClient
-{
+object GenericClient {
 
     val log: Logger = LoggerFactory.getLogger(GenericClient::class.java)
 
@@ -28,8 +27,7 @@ object GenericClient
         RestTemplate(requestFactory)
     }
 
-    inline fun <reified T : Any> get(url: String, uriVariables: Map<String, Any> = emptyMap()): T
-    {
+    inline fun <reified T : Any> get(url: String, uriVariables: Map<String, Any> = emptyMap()): T {
         val response = restTemplate.exchange(
             url,
             HttpMethod.GET,
@@ -40,8 +38,7 @@ object GenericClient
         return handleResponse(response)
     }
 
-    inline fun <reified T> post(url: String, body: Any? = null, uriVariables: Map<String, Any> = emptyMap()): T
-    {
+    inline fun <reified T> post(url: String, body: Any? = null, uriVariables: Map<String, Any> = emptyMap()): T {
         log.debug("Posting to {}", url)
 
         val response = restTemplate.exchange(
@@ -60,12 +57,10 @@ object GenericClient
         request: HttpServletRequest,
         response: HttpServletResponse,
         copyRequestBody: Boolean,
-    )
-    {
+    ) {
         val method = request.method
         log.debug("{} {}", method, url)
-        try
-        {
+        try {
             restTemplate.execute(
                 URI(url),
                 HttpMethod.valueOf(method),
@@ -84,8 +79,7 @@ object GenericClient
                     IOUtils.copy(inputStream, response.outputStream)
                 }
             }
-        } catch (e: HttpStatusCodeException)
-        {
+        } catch (e: HttpStatusCodeException) {
             throw GenericClientException(e)
         }
     }
@@ -93,29 +87,24 @@ object GenericClient
     // Takes a lambda argument 'preStream' that can be used to do anything that needs to be done before streaming, such
     // as setting headers of the response (which must be done before the response is 'committed').
     fun streamingGet(url: String, output: OutputStream, preStream: (ClientHttpResponse) -> Unit = {}) {
-        try
-        {
+        try {
             restTemplate.execute(URI(url), HttpMethod.GET, {}) { serverResponse ->
                 preStream(serverResponse)
                 serverResponse.body.use { input ->
                     IOUtils.copy(input, output)
                 }
             }
-        } catch (e: HttpStatusCodeException)
-        {
+        } catch (e: HttpStatusCodeException) {
             log.error("Error response: {}", e.statusText)
             throw PackitException("couldNotGetFile", HttpStatus.valueOf(e.statusCode.value()))
         }
     }
 
-    fun <T> handleResponse(response: ResponseEntity<ServerResponse<T>>): T
-    {
-        if (response.statusCode.isError)
-        {
+    fun <T> handleResponse(response: ResponseEntity<ServerResponse<T>>): T {
+        if (response.statusCode.isError) {
             log.error("Error response: {}", response.body?.errors)
             throw PackitException("httpClientError", HttpStatus.INTERNAL_SERVER_ERROR)
-        } else
-        {
+        } else {
             return response.body!!.data
         }
     }

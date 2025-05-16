@@ -17,11 +17,11 @@ import {
 } from "../../../Base/MultiSelect";
 import { CustomDialogFooter } from "../../common/CustomDialogFooter";
 import { RoleWithRelationships } from "../types/RoleWithRelationships";
-import { UserWithRoles } from "../types/UserWithRoles";
+import { UserWithPermissions } from "../types/UserWithPermissions";
 
 interface UpdateUserRoleFormProps {
   mutate: KeyedMutator<RoleWithRelationships[]>;
-  user: UserWithRoles;
+  user: UserWithPermissions;
   roles: RoleWithRelationships[];
   setOpen: Dispatch<SetStateAction<boolean>>;
 }

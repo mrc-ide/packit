@@ -21,8 +21,7 @@ import packit.service.GithubAPILoginService
 import packit.service.UserService
 import kotlin.test.assertEquals
 
-class GithubAPILoginServiceTest
-{
+class GithubAPILoginServiceTest {
     private val mockConfig = mock<AppConfig>()
     private val username = "username"
     private val displayName = "displayName"
@@ -52,8 +51,7 @@ class GithubAPILoginServiceTest
     }
 
     @Test
-    fun `can authenticate and issue token`()
-    {
+    fun `can authenticate and issue token`() {
         val sut = GithubAPILoginService(mockConfig, mockIssuer, mockGithubUserClient, mockUserService)
 
         val token = sut.authenticateAndIssueToken(LoginWithToken("fake token"))
@@ -65,8 +63,7 @@ class GithubAPILoginServiceTest
     }
 
     @Test
-    fun `throws exception if token is empty`()
-    {
+    fun `throws exception if token is empty`() {
         val sut = GithubAPILoginService(mockConfig, mockIssuer, mockGithubUserClient, mockUserService)
         val ex = assertThrows<PackitException> { sut.authenticateAndIssueToken(LoginWithToken("")) }
         assertEquals("emptyGitToken", ex.key)

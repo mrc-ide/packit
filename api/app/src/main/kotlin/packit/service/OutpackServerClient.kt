@@ -9,8 +9,7 @@ import packit.model.PacketMetadata
 import packit.model.dto.OutpackMetadata
 import java.io.OutputStream
 
-interface OutpackServer
-{
+interface OutpackServer {
     fun getMetadata(from: Double? = null): List<OutpackMetadata>
     fun getMetadataById(id: String): PacketMetadata?
     fun getFileByHash(hash: String, output: OutputStream, preStream: (ClientHttpResponse) -> Unit = {})
@@ -24,8 +23,7 @@ interface OutpackServer
 }
 
 @Service
-class OutpackServerClient(appConfig: AppConfig) : OutpackServer
-{
+class OutpackServerClient(appConfig: AppConfig) : OutpackServer {
     val baseUrl: String = appConfig.outpackServerUrl
 
     override fun proxyRequest(
@@ -33,38 +31,31 @@ class OutpackServerClient(appConfig: AppConfig) : OutpackServer
         request: HttpServletRequest,
         response: HttpServletResponse,
         copyRequestBody: Boolean
-    )
-    {
+    ) {
         GenericClient.proxyRequest(constructUrl(urlFragment), request, response, copyRequestBody)
     }
 
-    override fun getMetadataById(id: String): PacketMetadata
-    {
+    override fun getMetadataById(id: String): PacketMetadata {
         return GenericClient.get(constructUrl("metadata/$id/json"))
     }
 
-    override fun getFileByHash(hash: String, output: OutputStream, preStream: (ClientHttpResponse) -> Unit)
-    {
+    override fun getFileByHash(hash: String, output: OutputStream, preStream: (ClientHttpResponse) -> Unit) {
         GenericClient.streamingGet(constructUrl("file/$hash"), output, preStream)
     }
 
-    override fun getChecksum(): String
-    {
+    override fun getChecksum(): String {
         return GenericClient.get(constructUrl("checksum"))
     }
 
-    override fun getMetadata(from: Double?): List<OutpackMetadata>
-    {
+    override fun getMetadata(from: Double?): List<OutpackMetadata> {
         var url = "packit/metadata"
-        if (from != null)
-        {
+        if (from != null) {
             url = "$url?known_since=$from"
         }
         return GenericClient.get(constructUrl(url))
     }
 
-    private fun constructUrl(urlFragment: String): String
-    {
+    private fun constructUrl(urlFragment: String): String {
         return "$baseUrl/$urlFragment"
     }
 }

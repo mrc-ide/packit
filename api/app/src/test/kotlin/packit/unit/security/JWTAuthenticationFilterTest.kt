@@ -10,11 +10,9 @@ import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class JWTAuthenticationFilterTest
-{
+class JWTAuthenticationFilterTest {
     @Test
-    fun `can extract token from jwt`()
-    {
+    fun `can extract token from jwt`() {
         val mockHttpRequest = mock<HttpServletRequest> {
             on { getHeader("Authorization") } doReturn "Bearer faketoken"
         }
@@ -27,8 +25,7 @@ class JWTAuthenticationFilterTest
     }
 
     @Test
-    fun `can throw PackitException when token type is invalid`()
-    {
+    fun `can throw PackitException when token type is invalid`() {
         val mockHttpRequest = mock<HttpServletRequest> {
             on { getHeader("Authorization") } doReturn "faketoken"
         }
@@ -44,8 +41,7 @@ class JWTAuthenticationFilterTest
     }
 
     @Test
-    fun `returns empty optional if token is empty`()
-    {
+    fun `returns empty optional if token is empty`() {
         val mockHttpRequest = mock<HttpServletRequest>()
 
         val sut = JWTAuthenticationFilter(mock(), mock())

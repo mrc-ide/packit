@@ -19,8 +19,7 @@ open class OAuthHandlerTest {
     protected val mockResponse = mock<HttpServletResponse>()
 
     @BeforeEach
-    fun setup()
-    {
+    fun setup() {
         // ensure the captor is initialised - we initialise the captor through annotation here as using fromClass cannot
         // be used with generic classes
         MockitoAnnotations.openMocks(this)
