@@ -5,8 +5,10 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import packit.exceptions.PackitAuthenticationException
 import packit.exceptions.PackitException
+import packit.model.Role
 import packit.model.User
 import packit.model.dto.CreateBasicUser
+import packit.model.dto.CreateExternalUser
 import packit.model.dto.UpdatePassword
 import packit.repository.UserRepository
 import packit.security.profile.UserPrincipal
@@ -18,6 +20,7 @@ interface UserService
     fun saveUserFromGithub(username: String, displayName: String?, email: String?): User
     fun savePreAuthenticatedUser(username: String, displayName: String?, email: String?): User
     fun createBasicUser(createBasicUser: CreateBasicUser): User
+    fun createExternalUser(createExternalUser: CreateExternalUser, authMethod: String): User
     fun getUserForBasicLogin(username: String): User
     fun deleteUser(username: String)
     fun getUsersByUsernames(usernames: List<String>): List<User>
@@ -79,6 +82,14 @@ class BaseUserService(
         return newUser
     }
 
+    private fun rolesForNewUser(username: String, requestedRoleNames: List<String>): MutableList<Role>
+    {
+        val roles = roleService.getDefaultRoles().toMutableList()
+        roles.addAll(roleService.getRolesByRoleNames(requestedRoleNames).toMutableList())
+        roles.add(roleService.createUsernameRole(username))
+        return roles
+    }
+
     override fun createBasicUser(createBasicUser: CreateBasicUser): User
     {
         if (userRepository.existsByUsername(createBasicUser.email))
@@ -86,10 +97,7 @@ class BaseUserService(
             throw PackitException("userAlreadyExists", HttpStatus.BAD_REQUEST)
         }
 
-        val roles = roleService.getDefaultRoles().toMutableList()
-        roles.addAll(roleService.getRolesByRoleNames(createBasicUser.userRoles).toMutableList())
-        roles.add(roleService.createUsernameRole(createBasicUser.email))
-
+        val roles = rolesForNewUser(createBasicUser.email, createBasicUser.userRoles)
         val newUser = User(
             username = createBasicUser.email,
             displayName = createBasicUser.displayName,
@@ -98,6 +106,26 @@ class BaseUserService(
             userSource = "basic",
             roles = roles,
             password = passwordEncoder.encode(createBasicUser.password)
+        )
+        return userRepository.save(newUser)
+    }
+
+    override fun createExternalUser(createExternalUser: CreateExternalUser, authMethod: String): User
+    {
+        if (userRepository.existsByUsername(createExternalUser.username))
+        {
+            throw PackitException("userAlreadyExists", HttpStatus.BAD_REQUEST)
+        }
+
+        val roles = rolesForNewUser(createExternalUser.username, createExternalUser.userRoles)
+        val newUser = User(
+            username = createExternalUser.username,
+            displayName = createExternalUser.displayName,
+            disabled = false,
+            email = createExternalUser.email,
+            userSource = authMethod,
+            roles = roles,
+            password = null
         )
         return userRepository.save(newUser)
     }
