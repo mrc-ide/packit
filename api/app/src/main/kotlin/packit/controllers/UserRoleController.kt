@@ -11,11 +11,9 @@ import packit.service.UserRoleService
 @Controller
 @RequestMapping("/user-role")
 @PreAuthorize("hasAuthority('user.manage')")
-class UserRoleController(private val userRoleService: UserRoleService)
-{
+class UserRoleController(private val userRoleService: UserRoleService) {
     @GetMapping
-    fun getRolesAndUsers(): ResponseEntity<RolesAndUsersWithPermissionsDto>
-    {
+    fun getRolesAndUsers(): ResponseEntity<RolesAndUsersWithPermissionsDto> {
         val rolesAndUsers = userRoleService.getAllRolesAndUsersWithPermissions()
         return ResponseEntity.ok(rolesAndUsers)
     }

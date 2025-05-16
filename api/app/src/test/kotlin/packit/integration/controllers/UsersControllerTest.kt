@@ -31,8 +31,7 @@ class UsersControllerTest : IntegrationTest() {
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `getAllUsers returns list of non-service users`()
-    {
+    fun `getAllUsers returns list of non-service users`() {
         val testRole1 = roleRepository.save(Role(name = "TEST_ROLE_1"))
         val testRole2 = roleRepository.save(Role(name = "TEST_ROLE_2"))
         val testUser1 = userRepository.save(
@@ -69,8 +68,7 @@ class UsersControllerTest : IntegrationTest() {
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `user without user manage permission cannot get list of users`()
-    {
+    fun `user without user manage permission cannot get list of users`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/users",
             HttpMethod.GET,

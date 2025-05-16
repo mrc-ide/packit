@@ -7,11 +7,9 @@ import org.springframework.security.test.context.support.WithSecurityContextFact
 import packit.security.profile.UserPrincipal
 import packit.security.profile.UserPrincipalAuthenticationToken
 
-class WithMockAuthenticatedSecurityFactory : WithSecurityContextFactory<WithAuthenticatedUser>
-{
+class WithMockAuthenticatedSecurityFactory : WithSecurityContextFactory<WithAuthenticatedUser> {
 
-    override fun createSecurityContext(annotation: WithAuthenticatedUser): SecurityContext
-    {
+    override fun createSecurityContext(annotation: WithAuthenticatedUser): SecurityContext {
         val principal = UserPrincipal(
             "test.user@example.com",
             "Test User",

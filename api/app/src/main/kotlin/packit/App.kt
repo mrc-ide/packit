@@ -10,7 +10,6 @@ import org.springframework.scheduling.annotation.EnableScheduling
 @ConfigurationPropertiesScan
 class App
 
-fun main(args: Array<String>)
-{
+fun main(args: Array<String>) {
     runApplication<App>(args = args)
 }

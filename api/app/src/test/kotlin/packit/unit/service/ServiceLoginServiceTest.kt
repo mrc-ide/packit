@@ -38,8 +38,7 @@ import java.time.temporal.ChronoUnit
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ServiceLoginServiceTest
-{
+class ServiceLoginServiceTest {
     private val restTemplate = RestTemplate()
     private val server = MockRestServiceServer.bindTo(restTemplate).ignoreExpectOrder(true).build()
 
@@ -79,8 +78,8 @@ class ServiceLoginServiceTest
     fun createIssuer(url: String): TestJwtIssuer {
         val issuer = TestJwtIssuer()
         server.expect(ExpectedCount.between(0, Integer.MAX_VALUE), requestTo(url))
-              .andExpect(method(HttpMethod.GET))
-              .andRespond(withSuccess(issuer.jwkSet.toString(), MediaType.APPLICATION_JSON))
+            .andExpect(method(HttpMethod.GET))
+            .andRespond(withSuccess(issuer.jwkSet.toString(), MediaType.APPLICATION_JSON))
         return issuer
     }
 
@@ -111,8 +110,7 @@ class ServiceLoginServiceTest
     }
 
     @Test
-    fun `can exchange tokens`()
-    {
+    fun `can exchange tokens`() {
         val config = ServiceLoginConfig(
             audience = "packit",
             policies = listOf(ServiceLoginPolicy(jwkSetURI = "http://issuer/jwks.json", issuer = "issuer"))
@@ -125,8 +123,7 @@ class ServiceLoginServiceTest
     }
 
     @Test
-    fun `provided token must satisfy all required claims`()
-    {
+    fun `provided token must satisfy all required claims`() {
         val requiredIssuer = "issuer"
         val requiredAudience = "packit"
         data class TestCase(
@@ -192,10 +189,10 @@ class ServiceLoginServiceTest
                 audience = requiredAudience,
                 policies = listOf(
                     ServiceLoginPolicy(
-                    jwkSetURI = "http://issuer/jwks.json",
-                    issuer = requiredIssuer,
-                    requiredClaims = entry.requiredClaims,
-                )
+                        jwkSetURI = "http://issuer/jwks.json",
+                        issuer = requiredIssuer,
+                        requiredClaims = entry.requiredClaims,
+                    )
                 )
             )
 
@@ -226,8 +223,7 @@ class ServiceLoginServiceTest
     }
 
     @Test
-    fun `issued token is granted permissions from the policy`()
-    {
+    fun `issued token is granted permissions from the policy`() {
         class TestCase(
             val policyPermissions: List<String>,
             val expectedPermissions: Set<String>,
@@ -248,10 +244,10 @@ class ServiceLoginServiceTest
                 audience = "packit",
                 policies = listOf(
                     ServiceLoginPolicy(
-                    jwkSetURI = "http://issuer/jwks.json",
-                    issuer = "issuer",
-                    grantedPermissions = entry.policyPermissions,
-                )
+                        jwkSetURI = "http://issuer/jwks.json",
+                        issuer = "issuer",
+                        grantedPermissions = entry.policyPermissions,
+                    )
                 )
             )
             val token = exchangeTokens(config, { builder ->
@@ -263,8 +259,7 @@ class ServiceLoginServiceTest
     }
 
     @Test
-    fun `issued tokens have duration limited by shortest of application configuration, policy and provided token`()
-    {
+    fun `issued tokens have duration limited by shortest of application configuration, policy and provided token`() {
         whenever(mockAppConfig.authExpiryDays).thenReturn(7)
 
         class TestCase(
@@ -307,10 +302,10 @@ class ServiceLoginServiceTest
                 audience = "packit",
                 policies = listOf(
                     ServiceLoginPolicy(
-                    jwkSetURI = "http://issuer/jwks.json",
-                    issuer = "issuer",
-                    tokenDuration = entry.policyDuration
-                )
+                        jwkSetURI = "http://issuer/jwks.json",
+                        issuer = "issuer",
+                        tokenDuration = entry.policyDuration
+                    )
                 )
             )
 
@@ -332,8 +327,7 @@ class ServiceLoginServiceTest
     }
 
     @Test
-    fun `can define multiple policies for the same issuer`()
-    {
+    fun `can define multiple policies for the same issuer`() {
         val config = ServiceLoginConfig(
             audience = "packit",
             policies = listOf(
@@ -368,8 +362,7 @@ class ServiceLoginServiceTest
     }
 
     @Test
-    fun `can define multiple issuers`()
-    {
+    fun `can define multiple issuers`() {
         val issuer1 = createIssuer("http://issuer1/jwks.json")
         val issuer2 = createIssuer("http://issuer2/jwks.json")
 
@@ -392,16 +385,16 @@ class ServiceLoginServiceTest
         val readToken = exchangeTokens(
             config,
             issuer1.issue { builder ->
-            builder.issuer("issuer1")
-            builder.audience(listOf("packit"))
-        }
+                builder.issuer("issuer1")
+                builder.audience(listOf("packit"))
+            }
         )
         val writeToken = exchangeTokens(
             config,
             issuer2.issue { builder ->
-            builder.issuer("issuer2")
-            builder.audience(listOf("packit"))
-        }
+                builder.issuer("issuer2")
+                builder.audience(listOf("packit"))
+            }
         )
 
         assertEquals(readToken.getClaimAsStringList("au"), listOf("outpack.read"))
@@ -409,8 +402,7 @@ class ServiceLoginServiceTest
     }
 
     @Test
-    fun `throws unauthorized if token is signed with wrong key`()
-    {
+    fun `throws unauthorized if token is signed with wrong key`() {
         val untrustedIssuer = createIssuer("http://issuer/jwks.json")
 
         val config = ServiceLoginConfig(
@@ -428,9 +420,9 @@ class ServiceLoginServiceTest
             exchangeTokens(
                 config,
                 untrustedIssuer.issue { builder ->
-                builder.issuer("issuer")
-                builder.audience(listOf("packit"))
-            }
+                    builder.issuer("issuer")
+                    builder.audience(listOf("packit"))
+                }
             )
         }
         assertEquals(ex.key, "externalJwtTokenInvalid")

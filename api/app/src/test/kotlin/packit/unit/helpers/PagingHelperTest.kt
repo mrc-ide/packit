@@ -7,11 +7,9 @@ import packit.helpers.PagingHelper
 import packit.model.PageablePayload
 import kotlin.test.Test
 
-class PagingHelperTest
-{
+class PagingHelperTest {
     @Test
-    fun `convertListToPage returns correct page when list fits into one page`()
-    {
+    fun `convertListToPage returns correct page when list fits into one page`() {
         val list = listOf(1, 2, 3, 4, 5)
         val pageablePayload = PageablePayload(0, 10)
 
@@ -24,8 +22,7 @@ class PagingHelperTest
     }
 
     @Test
-    fun `convertListToPage returns correct page when list spans multiple pages`()
-    {
+    fun `convertListToPage returns correct page when list spans multiple pages`() {
         val list = (1..20).toList()
         val pageablePayload = PageablePayload(1, 10)
 
@@ -38,8 +35,7 @@ class PagingHelperTest
     }
 
     @Test
-    fun `convertListToPage throws exception empty page when pageNumber exceeds list size`()
-    {
+    fun `convertListToPage throws exception empty page when pageNumber exceeds list size`() {
         val list = listOf(1, 2, 3, 4, 5)
         val pageablePayload = PageablePayload(2, 10)
 
@@ -49,8 +45,7 @@ class PagingHelperTest
     }
 
     @Test
-    fun `convertListToPage returns empty page when list is empty`()
-    {
+    fun `convertListToPage returns empty page when list is empty`() {
         val list = emptyList<Int>()
         val pageablePayload = PageablePayload(0, 10)
 
@@ -63,8 +58,7 @@ class PagingHelperTest
     }
 
     @Test
-    fun `convertListToPage throws exception when pageNumber is negative`()
-    {
+    fun `convertListToPage throws exception when pageNumber is negative`() {
         val list = (1..20).toList()
         val pageablePayload = PageablePayload(-1, 10)
 
@@ -74,8 +68,7 @@ class PagingHelperTest
     }
 
     @Test
-    fun `convertListToPage throws exception when pageSize is zero`()
-    {
+    fun `convertListToPage throws exception when pageSize is zero`() {
         val list = (1..20).toList()
         val pageablePayload = PageablePayload(0, 0)
 
@@ -85,8 +78,7 @@ class PagingHelperTest
     }
 
     @Test
-    fun `convertListToPage throws exception when pageSize is negative`()
-    {
+    fun `convertListToPage throws exception when pageSize is negative`() {
         val list = (1..20).toList()
         val pageablePayload = PageablePayload(0, -1)
 

@@ -11,8 +11,7 @@ data class OutpackMetadata(
     val custom: CustomMetadata = null,
 )
 
-fun OutpackMetadata.toPacketGroupSummary(packetCount: Int, displayName: String): PacketGroupSummary
-{
+fun OutpackMetadata.toPacketGroupSummary(packetCount: Int, displayName: String): PacketGroupSummary {
     return PacketGroupSummary(
         name = name,
         packetCount = packetCount,

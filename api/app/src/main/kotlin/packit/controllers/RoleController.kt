@@ -17,11 +17,9 @@ import packit.service.UserRoleService
 @Controller
 @RequestMapping("/roles")
 @PreAuthorize("hasAuthority('user.manage')")
-class RoleController(private val roleService: RoleService, private val userRoleService: UserRoleService)
-{
+class RoleController(private val roleService: RoleService, private val userRoleService: UserRoleService) {
     @PostMapping()
-    fun createRole(@RequestBody @Validated createRole: CreateRole): ResponseEntity<RoleDto>
-    {
+    fun createRole(@RequestBody @Validated createRole: CreateRole): ResponseEntity<RoleDto> {
         val role = roleService.createRole(createRole)
 
         return ResponseEntity<RoleDto>(role.toDto(), HttpStatus.CREATED)
@@ -30,8 +28,7 @@ class RoleController(private val roleService: RoleService, private val userRoleS
     @DeleteMapping("/{roleName}")
     fun deleteRole(
         @PathVariable roleName: String
-    ): ResponseEntity<Unit>
-    {
+    ): ResponseEntity<Unit> {
         roleService.deleteRole(roleName)
 
         return ResponseEntity.noContent().build()
@@ -41,8 +38,7 @@ class RoleController(private val roleService: RoleService, private val userRoleS
     fun updatePermissionsToRole(
         @RequestBody @Validated updateRolePermissions: UpdateRolePermissions,
         @PathVariable roleName: String
-    ): ResponseEntity<RoleDto>
-    {
+    ): ResponseEntity<RoleDto> {
         val updatedRole = roleService.updatePermissionsToRole(roleName, updateRolePermissions)
 
         return ResponseEntity.ok(updatedRole.toDto())
@@ -52,24 +48,21 @@ class RoleController(private val roleService: RoleService, private val userRoleS
     fun updateUsersToRole(
         @RequestBody @Validated usersToUpdate: UpdateRoleUsers,
         @PathVariable roleName: String
-    ): ResponseEntity<RoleDto>
-    {
+    ): ResponseEntity<RoleDto> {
         val updatedRole = userRoleService.updateRoleUsers(roleName, usersToUpdate)
 
         return ResponseEntity.ok(updatedRole.toDto())
     }
 
     @GetMapping
-    fun getRoles(@RequestParam isUsername: Boolean?): ResponseEntity<List<RoleDto>>
-    {
+    fun getRoles(@RequestParam isUsername: Boolean?): ResponseEntity<List<RoleDto>> {
         val roles = roleService.getAllRoles(isUsername)
 
         return ResponseEntity.ok(roleService.getSortedRoles(roles).map { it.toDto() })
     }
 
     @GetMapping("/{roleName}")
-    fun getRoleByName(@PathVariable roleName: String): ResponseEntity<RoleDto>
-    {
+    fun getRoleByName(@PathVariable roleName: String): ResponseEntity<RoleDto> {
         val role = roleService.getRole(roleName)
         return ResponseEntity.ok(role.toDto())
     }

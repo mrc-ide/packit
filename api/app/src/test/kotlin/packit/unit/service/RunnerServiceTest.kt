@@ -23,8 +23,7 @@ import packit.service.UserService
 import java.util.*
 import kotlin.test.assertEquals
 
-class RunnerServiceTest
-{
+class RunnerServiceTest {
     private val filterName = "filter-name"
     private val testUser = User("test-user", mutableListOf(), false, "source1", "displayName1", id = UUID.randomUUID())
 
@@ -78,31 +77,27 @@ class RunnerServiceTest
     )
 
     @Test
-    fun `can get version`()
-    {
+    fun `can get version`() {
         val result = sut.getVersion()
         assertEquals(result, version)
     }
 
     @Test
-    fun `can fetch git`()
-    {
+    fun `can fetch git`() {
         sut.gitFetch()
 
         verify(client).gitFetch(runnerConfig.repository.url)
     }
 
     @Test
-    fun `can get branches`()
-    {
+    fun `can get branches`() {
         sut.getBranches()
 
         verify(client).getBranches(runnerConfig.repository.url)
     }
 
     @Test
-    fun `can get parameters`()
-    {
+    fun `can get parameters`() {
         val packetGroupName = "test-packet-group"
         val ref = "commit-name"
         val testParameters = listOf(
@@ -115,8 +110,7 @@ class RunnerServiceTest
     }
 
     @Test
-    fun `can get packet groups for ref`()
-    {
+    fun `can get packet groups for ref`() {
         val testRunnerPacketGroups = listOf(
             RunnerPacketGroup("test-group", 0.0, true),
             RunnerPacketGroup("test-group", 1.0, false)
@@ -130,8 +124,7 @@ class RunnerServiceTest
     }
 
     @Test
-    fun `can submit run`()
-    {
+    fun `can submit run`() {
         val mockRes = SubmitRunResponse("task-id")
 
         `when`(client.submitRun(any(), any())).thenReturn(mockRes)
@@ -171,8 +164,7 @@ class RunnerServiceTest
     }
 
     @Test
-    fun `can get task status with logs & updates run info of single task`()
-    {
+    fun `can get task status with logs & updates run info of single task`() {
         val taskId = "task-id"
         val taskStatus = TaskStatus(0.0, 1.0, 2.0, 0, listOf("log1", "log2"), "status", "packet-id", taskId)
         val testRunInfo = RunInfo(
@@ -205,8 +197,7 @@ class RunnerServiceTest
     }
 
     @Test
-    fun `throws exception when run info not found for taskId`()
-    {
+    fun `throws exception when run info not found for taskId`() {
         val taskId = "task-id"
         `when`(runInfoRepository.findByTaskId(taskId)).thenReturn(null)
 
@@ -217,8 +208,7 @@ class RunnerServiceTest
     }
 
     @Test
-    fun `can get run infos from db`()
-    {
+    fun `can get run infos from db`() {
         val filterName = "filter-name"
         val payload = PageablePayload(pageNumber = 0, pageSize = 10)
 
@@ -238,8 +228,7 @@ class RunnerServiceTest
     }
 
     @Test
-    fun `can get paginated statuses of tasks without logs`()
-    {
+    fun `can get paginated statuses of tasks without logs`() {
         val taskIds = listOf("task-id1", "task-id2")
         val filterName = "filter-name"
         val payload = PageablePayload(pageNumber = 0, pageSize = 10)
@@ -253,8 +242,7 @@ class RunnerServiceTest
     }
 
     @Test
-    fun `returns empty page if no run infos found`()
-    {
+    fun `returns empty page if no run infos found`() {
         val payload = PageablePayload(pageNumber = 0, pageSize = 10)
         `when`(
             runInfoRepository.findAllByPacketGroupNameContaining(
@@ -269,8 +257,7 @@ class RunnerServiceTest
     }
 
     @Test
-    fun `updateRunInfosWithStatuses should update run infos with statuses`()
-    {
+    fun `updateRunInfosWithStatuses should update run infos with statuses`() {
         val updatedRunInfos = sut.updateRunInfosWithStatuses(PageImpl(testRunInfos), testTaskStatuses)
 
         assertEquals(2, updatedRunInfos.size)
@@ -284,8 +271,7 @@ class RunnerServiceTest
     }
 
     @Test
-    fun `updateRunInfosWithStatuses throws unable to find taskId in statuses recieved`()
-    {
+    fun `updateRunInfosWithStatuses throws unable to find taskId in statuses recieved`() {
         val taskStatuses = listOf(
             TaskStatus(0.0, 1.0, 2.0, 0, listOf("log1", "log2"), "status", "packet-id", "task-id1")
         )
@@ -299,8 +285,7 @@ class RunnerServiceTest
     }
 
     @Test
-    fun `should update run info when no task status logs`()
-    {
+    fun `should update run info when no task status logs`() {
         val taskStatus = TaskStatus(0.0, 1.0, 2.0, 0, null, "status", "packet-id", "task-id")
 
         val updatedRunInfo = sut.updateRunInfo(testRunInfos[0], taskStatus)
@@ -315,8 +300,7 @@ class RunnerServiceTest
     }
 
     @Test
-    fun `should update run info when task status has logs`()
-    {
+    fun `should update run info when task status has logs`() {
         val taskStatus = TaskStatus(0.0, 1.0, 2.0, 0, listOf("log1", "log2"), "status", "packet-id", "task-id")
 
         val updatedRunInfo = sut.updateRunInfo(testRunInfos[0], taskStatus)

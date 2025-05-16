@@ -11,8 +11,7 @@ import java.time.Instant
 class AuthorizationLogic(
     private val packetService: PacketService,
     private val permissionChecker: PermissionChecker,
-)
-{
+) {
     fun canReadPacket(operations: SecurityExpressionOperations, packet: Packet): Boolean =
         // TODO: update with tag when implemented
         permissionChecker.canReadPacket(
@@ -21,14 +20,12 @@ class AuthorizationLogic(
             packet.id
         )
 
-    fun canReadPacket(operations: SecurityExpressionOperations, id: String): Boolean
-    {
+    fun canReadPacket(operations: SecurityExpressionOperations, id: String): Boolean {
         val packet = packetService.getPacket(id)
         return canReadPacket(operations, packet)
     }
 
-    fun canViewPacketGroup(operations: SecurityExpressionOperations, name: String): Boolean
-    {
+    fun canViewPacketGroup(operations: SecurityExpressionOperations, name: String): Boolean {
         return permissionChecker.canReadPacketGroup(
             getAuthorities(operations),
             name
@@ -41,19 +38,16 @@ class AuthorizationLogic(
     fun canUpdatePacketReadRoles(
         operations: SecurityExpressionOperations,
         packetId: String,
-    ): Boolean
-    {
+    ): Boolean {
         val packet = packetService.getPacket(packetId)
         return permissionChecker.canManagePacket(getAuthorities(operations), packet.name, packet.id)
     }
 
-    fun oneTimeTokenValid(operations: SecurityExpressionOperations, packetId: String, path: String): Boolean
-    {
+    fun oneTimeTokenValid(operations: SecurityExpressionOperations, packetId: String, path: String): Boolean {
         return validateOneTimeToken(operations, packetId, listOf(path))
     }
 
-    fun oneTimeTokenValid(operations: SecurityExpressionOperations, packetId: String, paths: List<String>): Boolean
-    {
+    fun oneTimeTokenValid(operations: SecurityExpressionOperations, packetId: String, paths: List<String>): Boolean {
         return validateOneTimeToken(operations, packetId, paths)
     }
 
@@ -61,15 +55,14 @@ class AuthorizationLogic(
         operations: SecurityExpressionOperations,
         requestedPacketId: String,
         requestedPaths: List<String>,
-    ): Boolean
-    {
+    ): Boolean {
         val auth = operations.authentication as OTTAuthenticationToken
         val permittedPaths = auth.getPermittedFilePaths()
 
         return auth.getExpiresAt().isAfter(Instant.now()) &&
-                auth.getPermittedPacketId() == requestedPacketId &&
-                permittedPaths.containsAll(requestedPaths) &&
-                permittedPaths.size == requestedPaths.size
+            auth.getPermittedPacketId() == requestedPacketId &&
+            permittedPaths.containsAll(requestedPaths) &&
+            permittedPaths.size == requestedPaths.size
     }
 
     fun canUpdatePacketGroupReadRoles(

@@ -17,8 +17,7 @@ import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class AuthorizationLogicTest
-{
+class AuthorizationLogicTest {
     private val now = Instant.now().epochSecond.toDouble()
     private val packet = Packet(
         "20180203-120000-abdefg56",
@@ -47,31 +46,26 @@ class AuthorizationLogicTest
     private val authorities = listOf("packet.manage", "packet.read")
     private val ops: SecurityExpressionOperations = object : SecurityExpressionRoot(
         TestingAuthenticationToken("", "", authorities.map { SimpleGrantedAuthority(it) })
-    )
-    {}
+    ) {}
 
     private fun createOttOps(
         ottId: UUID,
         packetId: String,
         filePaths: List<String>,
         expiresAt: Instant,
-    ): SecurityExpressionOperations
-    {
+    ): SecurityExpressionOperations {
         val token = OTTAuthenticationToken(ottId, packetId, filePaths, expiresAt)
-        return object : SecurityExpressionRoot(token)
-        {}
+        return object : SecurityExpressionRoot(token) {}
     }
 
     @Test
-    fun `getAuthorities converts operations to a list of strings`()
-    {
+    fun `getAuthorities converts operations to a list of strings`() {
         val result = sut.getAuthorities(ops)
         assertEquals(result, authorities)
     }
 
     @Test
-    fun `canReadPacket with full packet returns result from PermissionChecker call`()
-    {
+    fun `canReadPacket with full packet returns result from PermissionChecker call`() {
         val result = sut.canReadPacket(ops, packet)
 
         assertTrue(result)
@@ -79,8 +73,7 @@ class AuthorizationLogicTest
     }
 
     @Test
-    fun `canReadPacket with packet id returns result from PermissionChecker call`()
-    {
+    fun `canReadPacket with packet id returns result from PermissionChecker call`() {
         val result = sut.canReadPacket(ops, packet.id)
 
         assertTrue(result)
@@ -88,8 +81,7 @@ class AuthorizationLogicTest
     }
 
     @Test
-    fun `canViewPacketGroup returns true when user can read packet group`()
-    {
+    fun `canViewPacketGroup returns true when user can read packet group`() {
         val result = sut.canViewPacketGroup(ops, "testGroup")
 
         assertTrue(result)
@@ -97,8 +89,7 @@ class AuthorizationLogicTest
     }
 
     @Test
-    fun `canViewPacketGroup returns true when user can read any packet in group`()
-    {
+    fun `canViewPacketGroup returns true when user can read any packet in group`() {
         whenever(permissionChecker.canReadPacketGroup(authorities, "testGroup")).thenReturn(false)
 
         val result = sut.canViewPacketGroup(ops, "testGroup")
@@ -109,8 +100,7 @@ class AuthorizationLogicTest
     }
 
     @Test
-    fun `canUpdatePacketReadRoles returns true when user can manage packet`()
-    {
+    fun `canUpdatePacketReadRoles returns true when user can manage packet`() {
         val result = sut.canUpdatePacketReadRoles(ops, packet.id)
 
         assertTrue(result)
@@ -119,8 +109,7 @@ class AuthorizationLogicTest
     }
 
     @Test
-    fun `oneTimeTokenValid returns true if token has correct permissions and is not expired`()
-    {
+    fun `oneTimeTokenValid returns true if token has correct permissions and is not expired`() {
         val permittedPaths = listOf("file1", "file2")
         val ops = createOttOps(UUID.randomUUID(), packet.id, permittedPaths, Instant.now().plusSeconds(10))
 
@@ -128,8 +117,7 @@ class AuthorizationLogicTest
     }
 
     @Test
-    fun `oneTimeTokenValid returns false if token is expired`()
-    {
+    fun `oneTimeTokenValid returns false if token is expired`() {
         val permittedPaths = listOf("file1", "file2")
         val ops = createOttOps(UUID.randomUUID(), packet.id, permittedPaths, Instant.now().minusSeconds(10))
 
@@ -137,8 +125,7 @@ class AuthorizationLogicTest
     }
 
     @Test
-    fun `oneTimeTokenValid returns false if requested file paths include extra files`()
-    {
+    fun `oneTimeTokenValid returns false if requested file paths include extra files`() {
         val permittedPaths = listOf("file1", "file2")
         val ops = createOttOps(UUID.randomUUID(), packet.id, permittedPaths, Instant.now().plusSeconds(10))
 
@@ -146,8 +133,7 @@ class AuthorizationLogicTest
     }
 
     @Test
-    fun `oneTimeTokenValid returns false if requested file paths do not match permitted file paths`()
-    {
+    fun `oneTimeTokenValid returns false if requested file paths do not match permitted file paths`() {
         val permittedPaths = listOf("file1", "file2")
         val ops = createOttOps(UUID.randomUUID(), packet.id, permittedPaths, Instant.now().plusSeconds(10))
 
@@ -155,8 +141,7 @@ class AuthorizationLogicTest
     }
 
     @Test
-    fun `oneTimeTokenValid returns false if requested packet id does not match permitted packet id`()
-    {
+    fun `oneTimeTokenValid returns false if requested packet id does not match permitted packet id`() {
         val permittedPaths = listOf("file1", "file2")
         val ops = createOttOps(UUID.randomUUID(), packet.id, permittedPaths, Instant.now().plusSeconds(10))
 

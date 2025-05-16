@@ -8,14 +8,12 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Repository
 import packit.model.PacketGroup
 
-interface PacketIdProjection
-{
+interface PacketIdProjection {
     val id: String
 }
 
 @Repository
-interface PacketGroupRepository : JpaRepository<PacketGroup, Int>
-{
+interface PacketGroupRepository : JpaRepository<PacketGroup, Int> {
     @PostFilter("@authz.canViewPacketGroup(#root, filterObject.name)")
     fun findByNameIn(names: List<String>): List<PacketGroup>
 

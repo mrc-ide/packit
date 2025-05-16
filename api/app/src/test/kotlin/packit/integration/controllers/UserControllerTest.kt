@@ -24,8 +24,7 @@ import kotlin.test.assertNotNull
 
 @TestPropertySource(properties = ["auth.method=basic"])
 @Sql("/delete-test-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-class UserControllerTest : IntegrationTest()
-{
+class UserControllerTest : IntegrationTest() {
     @Autowired
     private lateinit var roleRepository: RoleRepository
 
@@ -41,8 +40,7 @@ class UserControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `users with manage authority can create basic users`()
-    {
+    fun `users with manage authority can create basic users`() {
         val result = restTemplate.postForEntity(
             "/user/basic",
             getTokenizedHttpEntity(data = testCreateUserBody),
@@ -51,8 +49,7 @@ class UserControllerTest : IntegrationTest()
 
         val userResult = jacksonObjectMapper().readValue(
             result.body,
-            object : TypeReference<UserDto>()
-            {}
+            object : TypeReference<UserDto>() {}
         )
         assertEquals(HttpStatus.CREATED, result.statusCode)
         assertEquals(testCreateUser.email, userResult.email)
@@ -62,8 +59,7 @@ class UserControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["none"])
-    fun `user without user manage permission cannot create basic users`()
-    {
+    fun `user without user manage permission cannot create basic users`() {
         val result = restTemplate.postForEntity(
             "/user/basic",
             getTokenizedHttpEntity(data = testCreateUserBody),
@@ -75,8 +71,7 @@ class UserControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser
-    fun `reject request if createUser body is invalid`()
-    {
+    fun `reject request if createUser body is invalid`() {
         val invalidEmailAndPasswordBody = jacksonObjectMapper().writeValueAsString(
             CreateBasicUser(
                 email = "random",
@@ -95,8 +90,7 @@ class UserControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `updateUserRoles can add and remove roles from users`()
-    {
+    fun `updateUserRoles can add and remove roles from users`() {
         val testRole = roleRepository.save(Role(name = "TEST_ROLE"))
         val testUser = userRepository.save(
             User(
@@ -123,8 +117,7 @@ class UserControllerTest : IntegrationTest()
 
         val userResult = jacksonObjectMapper().readValue(
             result.body,
-            object : TypeReference<UserDto>()
-            {}
+            object : TypeReference<UserDto>() {}
         )
         assertSuccess(result)
         assertEquals(userRepository.findByUsername("test@email.com")?.roles?.map { it.name }, listOf("ADMIN"))
@@ -135,8 +128,7 @@ class UserControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `deleteUser deletes user and username role`()
-    {
+    fun `deleteUser deletes user and username role`() {
         val username = "test@email.com"
         val testRole = roleRepository.save(Role(name = username, isUsername = true))
         val testUser = userRepository.save(
@@ -163,8 +155,7 @@ class UserControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `cannot create external user when auth method is basic`()
-    {
+    fun `cannot create external user when auth method is basic`() {
         val testCreateExternalUser = CreateExternalUser(
             username = "test.user",
             email = "test@email",
@@ -185,8 +176,7 @@ class UserControllerTest : IntegrationTest()
 
 @TestPropertySource(properties = ["auth.method=preauth"])
 @Sql("/delete-test-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-class UserControllerPreauthTest : IntegrationTest()
-{
+class UserControllerPreauthTest : IntegrationTest() {
     @Autowired
     lateinit var userRepository: UserRepository
 
@@ -199,8 +189,7 @@ class UserControllerPreauthTest : IntegrationTest()
 
     private val testCreateExternalUserBody = jacksonObjectMapper().writeValueAsString(testCreateExternalUser)
 
-    private fun getResult(): ResponseEntity<String>
-    {
+    private fun getResult(): ResponseEntity<String> {
         return restTemplate.postForEntity(
             "/user/external",
             getTokenizedHttpEntity(data = testCreateExternalUserBody),
@@ -210,14 +199,12 @@ class UserControllerPreauthTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `users with manage authority can create external users`()
-    {
+    fun `users with manage authority can create external users`() {
         val result = getResult()
 
         val userResult = jacksonObjectMapper().readValue(
             result.body,
-            object : TypeReference<UserDto>()
-            {}
+            object : TypeReference<UserDto>() {}
         )
         assertEquals(HttpStatus.CREATED, result.statusCode)
         assertEquals(testCreateExternalUser.username, userResult.username)
@@ -233,8 +220,7 @@ class UserControllerPreauthTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `user without user manage permission cannot create external users`()
-    {
+    fun `user without user manage permission cannot create external users`() {
         val result = getResult()
 
         assertEquals(result.statusCode, HttpStatus.UNAUTHORIZED)
@@ -252,8 +238,7 @@ class UserControllerPreauthTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `create external user fails if email is not valid`()
-    {
+    fun `create external user fails if email is not valid`() {
         val badEmailUser = CreateExternalUser(
             username = "test.bad.user",
             email = "not an email",
@@ -272,8 +257,7 @@ class UserControllerPreauthTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `email and display name are optional when creating external user`()
-    {
+    fun `email and display name are optional when creating external user`() {
         val minimallUser = CreateExternalUser(
             username = "test.minimal.user",
             email = null,
@@ -289,8 +273,7 @@ class UserControllerPreauthTest : IntegrationTest()
         )
         val userResult = jacksonObjectMapper().readValue(
             result.body,
-            object : TypeReference<UserDto>()
-            {}
+            object : TypeReference<UserDto>() {}
         )
         assertEquals(HttpStatus.CREATED, result.statusCode)
         assertEquals("test.minimal.user", userResult.username)
@@ -302,12 +285,11 @@ class UserControllerPreauthTest : IntegrationTest()
 @Sql("/delete-test-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @TestPropertySource(
     properties = [
-    "auth.method=basic",
-    "packit.defaultRoles=TEST_USER_ROLE,TEST_MISSING_ROLE"
-]
+        "auth.method=basic",
+        "packit.defaultRoles=TEST_USER_ROLE,TEST_MISSING_ROLE"
+    ]
 )
-class UserControllerDefaultRolesTest : IntegrationTest()
-{
+class UserControllerDefaultRolesTest : IntegrationTest() {
     @Autowired
     lateinit var userRepository: UserRepository
 
@@ -316,8 +298,7 @@ class UserControllerDefaultRolesTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `user is created with default roles`()
-    {
+    fun `user is created with default roles`() {
         roleRepository.save(Role(name = "TEST_USER_ROLE"))
         roleRepository.save(Role(name = "TEST_AUTHOR_ROLE"))
 
@@ -325,10 +306,10 @@ class UserControllerDefaultRolesTest : IntegrationTest()
             "/user/basic",
             getTokenizedHttpEntity(
                 data = CreateBasicUser(
-                email = "test@email",
-                password = "password",
-                displayName = "Random User",
-            )
+                    email = "test@email",
+                    password = "password",
+                    displayName = "Random User",
+                )
             ),
             UserDto::class.java
         )

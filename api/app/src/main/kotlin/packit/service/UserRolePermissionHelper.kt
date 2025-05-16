@@ -7,8 +7,7 @@ import packit.model.RolePermission
 import packit.model.User
 import packit.security.PermissionChecker
 
-interface UserRolePermissionHelper
-{
+interface UserRolePermissionHelper {
     fun hasOnlySpecificReadPacketPermission(permissions: List<RolePermission>, packet: Packet): Boolean
     fun hasOnlySpecificReadPacketGroupPermission(permissions: List<RolePermission>, packetGroupName: String): Boolean
     fun userHasDirectReadPacketGroupReadPermission(user: User, packetGroupName: String): Boolean
@@ -21,25 +20,22 @@ interface UserRolePermissionHelper
 class BaseUserRolePermissionHelper(
     private val permissionService: PermissionService,
     private val permissionChecker: PermissionChecker
-) : UserRolePermissionHelper
-{
-    override fun hasOnlySpecificReadPacketPermission(permissions: List<RolePermission>, packet: Packet): Boolean
-    {
+) : UserRolePermissionHelper {
+    override fun hasOnlySpecificReadPacketPermission(permissions: List<RolePermission>, packet: Packet): Boolean {
         val permissionNames = permissionService.mapToScopedPermission(permissions)
         return permissionChecker.hasPacketReadPermissionForPacket(permissionNames, packet.name, packet.id) &&
-                !permissionChecker.canReadPacketGroup(permissionNames, packet.name) &&
-                !permissionChecker.canManagePacket(permissionNames, packet.name, packet.id)
+            !permissionChecker.canReadPacketGroup(permissionNames, packet.name) &&
+            !permissionChecker.canManagePacket(permissionNames, packet.name, packet.id)
     }
 
     override fun hasOnlySpecificReadPacketGroupPermission(
         permissions: List<RolePermission>,
         packetGroupName: String
-    ): Boolean
-    {
+    ): Boolean {
         val permissionNames = permissionService.mapToScopedPermission(permissions)
         return permissionChecker.hasPacketReadPermissionForGroup(permissionNames, packetGroupName) &&
-                !permissionChecker.canReadAllPackets(permissionNames) &&
-                !permissionChecker.canManagePacketGroup(permissionNames, packetGroupName)
+            !permissionChecker.canReadAllPackets(permissionNames) &&
+            !permissionChecker.canManagePacketGroup(permissionNames, packetGroupName)
     }
 
     override fun userHasDirectReadPacketGroupReadPermission(user: User, packetGroupName: String): Boolean =

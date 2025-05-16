@@ -18,10 +18,8 @@ class Role(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null,
-)
-{
-    override fun equals(other: Any?): Boolean
-    {
+) {
+    override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Role) return false
 
@@ -31,8 +29,7 @@ class Role(
         return true
     }
 
-    override fun hashCode(): Int
-    {
+    override fun hashCode(): Int {
         var result = name.hashCode()
         result = 31 * result + isUsername.hashCode()
         return result

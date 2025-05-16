@@ -16,13 +16,11 @@ import packit.service.BaseTagService
 import java.util.*
 import kotlin.test.assertEquals
 
-class TagServiceTest
-{
+class TagServiceTest {
     private val tagRepository = mock<TagRepository>()
 
     @Test
-    fun `getTags calls repository with correct params and returns its result`()
-    {
+    fun `getTags calls repository with correct params and returns its result`() {
         val pageablePayload = PageablePayload(pageNumber = 0, pageSize = 10)
         val filterName = "tag"
         val tags = listOf(Tag(name = "tag1"), Tag(name = "tag2"))
@@ -48,8 +46,7 @@ class TagServiceTest
     }
 
     @Test
-    fun `getTag returns tag when found in repository`()
-    {
+    fun `getTag returns tag when found in repository`() {
         val tagId = 1
         val expectedTag = Tag(id = tagId, name = "test-tag")
         whenever(tagRepository.findById(tagId)).thenReturn(Optional.of(expectedTag))
@@ -62,8 +59,7 @@ class TagServiceTest
     }
 
     @Test
-    fun `getTag throws exception when tag not found`()
-    {
+    fun `getTag throws exception when tag not found`() {
         val tagId = 999
         whenever(tagRepository.findById(tagId)).thenReturn(Optional.empty())
         val baseTagService = BaseTagService(tagRepository)

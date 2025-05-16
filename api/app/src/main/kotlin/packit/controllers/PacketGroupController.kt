@@ -20,15 +20,13 @@ class PacketGroupController(
     private val packetGroupService: PacketGroupService,
     private val roleService: RoleService,
     private val userRoleService: UserRoleService
-)
-{
+) {
     @GetMapping("/packetGroups")
     fun getPacketGroups(
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
         @RequestParam(required = false, defaultValue = "50") pageSize: Int,
         @RequestParam(required = false, defaultValue = "") filterName: String,
-    ): ResponseEntity<Page<PacketGroupDto>>
-    {
+    ): ResponseEntity<Page<PacketGroupDto>> {
         val payload = PageablePayload(pageNumber, pageSize)
         return ResponseEntity.ok(packetGroupService.getPacketGroups(payload, filterName).map { it.toDto() })
     }
@@ -36,8 +34,7 @@ class PacketGroupController(
     @GetMapping("/packetGroups/{name}/display")
     fun getDisplay(
         @PathVariable name: String
-    ): ResponseEntity<PacketGroupDisplay>
-    {
+    ): ResponseEntity<PacketGroupDisplay> {
         val result = packetGroupService.getPacketGroupDisplay(name)
 
         return ResponseEntity.ok(result)
@@ -46,8 +43,7 @@ class PacketGroupController(
     @GetMapping("/packetGroups/{name}/packets")
     fun getPackets(
         @PathVariable name: String,
-    ): ResponseEntity<List<PacketDto>>
-    {
+    ): ResponseEntity<List<PacketDto>> {
         return ResponseEntity.ok(
             packetService.getPacketsByName(name).map { it.toDto() }
         )
@@ -58,16 +54,14 @@ class PacketGroupController(
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
         @RequestParam(required = false, defaultValue = "50") pageSize: Int,
         @RequestParam(required = false, defaultValue = "") filter: String,
-    ): ResponseEntity<Page<PacketGroupSummary>>
-    {
+    ): ResponseEntity<Page<PacketGroupSummary>> {
         val payload = PageablePayload(pageNumber, pageSize)
         return ResponseEntity.ok(packetGroupService.getPacketGroupSummaries(payload, filter))
     }
 
     @PreAuthorize("@authz.canManageAnyPacket(#root)")
     @GetMapping("packetGroups/_/read-permission")
-    fun getRolesAndUsersForReadPermissionUpdate(): ResponseEntity<Map<String, RolesAndUsersForReadUpdate>>
-    {
+    fun getRolesAndUsersForReadPermissionUpdate(): ResponseEntity<Map<String, RolesAndUsersForReadUpdate>> {
         val packetGroupNames = packetGroupService.getAllPacketGroupsCanManage().map { it.name }
         val result = userRoleService.getRolesAndUsersForPacketGroupReadUpdate(packetGroupNames)
 
@@ -81,8 +75,7 @@ class PacketGroupController(
     fun updatePacketGroupReadPermissionOnRoles(
         @RequestBody @Validated updatePacketReadRoles: UpdateReadRoles,
         @PathVariable name: String
-    ): ResponseEntity<Unit>
-    {
+    ): ResponseEntity<Unit> {
         roleService.updatePacketReadPermissionOnRoles(updatePacketReadRoles, name)
 
         return ResponseEntity.noContent().build()

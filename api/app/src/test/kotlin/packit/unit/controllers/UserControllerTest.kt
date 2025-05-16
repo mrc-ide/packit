@@ -18,8 +18,7 @@ import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class UserControllerTest
-{
+class UserControllerTest {
     private val testUUID = UUID.randomUUID()
     private val testCreateUser = CreateBasicUser(
         email = "test@email.com",
@@ -61,8 +60,7 @@ class UserControllerTest
     private val mockUserRoleService = mock<UserRoleService>()
 
     @Test
-    fun `createBasicUser throws packit exception if basic login is not enabled`()
-    {
+    fun `createBasicUser throws packit exception if basic login is not enabled`() {
         `when`(mockConfig.authEnableBasicLogin) doReturn false
         val sut = UserController(mockConfig, mockUserService, mockUserRoleService)
 
@@ -74,8 +72,7 @@ class UserControllerTest
     }
 
     @Test
-    fun `createBasicUser returns created with user when created`()
-    {
+    fun `createBasicUser returns created with user when created`() {
         val sut = UserController(mockConfig, mockUserService, mockUserRoleService)
 
         val result = sut.createBasicUser(testCreateUser)
@@ -86,8 +83,7 @@ class UserControllerTest
     }
 
     @Test
-    fun `createExternalUser returns created with user when created`()
-    {
+    fun `createExternalUser returns created with user when created`() {
         `when`(mockConfig.authEnableBasicLogin) doReturn false
         `when`(mockConfig.authMethod) doReturn "preauth"
         val sut = UserController(mockConfig, mockUserService, mockUserRoleService)
@@ -99,8 +95,7 @@ class UserControllerTest
     }
 
     @Test
-    fun `createExternalUser throws packit exception if basic login is enabled`()
-    {
+    fun `createExternalUser throws packit exception if basic login is enabled`() {
         `when`(mockConfig.authEnableBasicLogin) doReturn true
         val sut = UserController(mockConfig, mockUserService, mockUserRoleService)
 
@@ -112,8 +107,7 @@ class UserControllerTest
     }
 
     @Test
-    fun `createExternalUser throws packit exception if auth is not enabled`()
-    {
+    fun `createExternalUser throws packit exception if auth is not enabled`() {
         `when`(mockConfig.authEnabled) doReturn false
         val sut = UserController(mockConfig, mockUserService, mockUserRoleService)
 

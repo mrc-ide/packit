@@ -6,11 +6,9 @@ import packit.model.toDto
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class TagTest
-{
+class TagTest {
     @Test
-    fun `toDto returns correct TagDto for given Tag`()
-    {
+    fun `toDto returns correct TagDto for given Tag`() {
         val tag = Tag("tag1", id = 1)
         val tagDto = tag.toDto()
         assertEquals("tag1", tagDto.name)
@@ -18,8 +16,7 @@ class TagTest
     }
 
     @Test
-    fun `toDto throws NullPointerException for Tag with null id`()
-    {
+    fun `toDto throws NullPointerException for Tag with null id`() {
         val tag = Tag("tag1")
         assertThrows<NullPointerException> { tag.toDto() }
     }

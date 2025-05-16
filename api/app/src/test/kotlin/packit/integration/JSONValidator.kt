@@ -11,18 +11,15 @@ import org.assertj.core.api.Assertions.fail
 import java.io.IOException
 import java.net.URI
 
-class JSONValidator
-{
+class JSONValidator {
     private val schemaFactory = makeSchemaFactory()
 
-    fun getData(response: String): JsonNode
-    {
+    fun getData(response: String): JsonNode {
         val json = parseJson(response)
         return json["data"]
     }
 
-    fun validateAgainstOutpackSchema(response: String, schemaName: String)
-    {
+    fun validateAgainstOutpackSchema(response: String, schemaName: String) {
         val json = parseJson(response)
         // Everything must meet the basic response schema
         checkResultSchema(json, "success")
@@ -32,65 +29,52 @@ class JSONValidator
     }
 
     fun validateError(
-            response: String,
-            expectedError: String?,
-            expectedErrorText: String?
-    )
-    {
+        response: String,
+        expectedError: String?,
+        expectedErrorText: String?
+    ) {
         val json = parseJson(response)
         checkResultSchema(json, "failure")
-        if (expectedError != null)
-        {
+        if (expectedError != null) {
             val error = json["errors"].singleOrNull { it["error"].asText() == expectedError }
-            if (error != null)
-            {
+            if (error != null) {
                 assertThat(error["detail"].asText()).contains(expectedErrorText)
-            }
-            else
-            {
+            } else {
                 fail("Expected error '$expectedError' to be present in $response")
             }
         }
     }
 
-    private fun checkResultSchema(json: JsonNode, expectedStatus: String)
-    {
+    private fun checkResultSchema(json: JsonNode, expectedStatus: String) {
         assertValidates("response-${expectedStatus.lowercase()}", json)
         val status = json["status"].textValue()
         assertThat(status)
-                .isEqualTo(expectedStatus)
+            .isEqualTo(expectedStatus)
     }
 
-    private fun assertValidates(name: String, json: JsonNode)
-    {
+    private fun assertValidates(name: String, json: JsonNode) {
         val uri = URI("https://raw.githubusercontent.com/mrc-ide/outpack_server/main/schema/server/$name.json")
         val report = schemaFactory.getJsonSchema(uri.toString()).validate(json)
-        if (!report.isSuccess)
-        {
+        if (!report.isSuccess) {
             val msg = "JSON failed schema validation. Attempted to validate: $json against $name. " +
-                    "Report follows: $report"
+                "Report follows: $report"
             fail<Any>(msg)
         }
     }
 
-    private fun makeSchemaFactory(): JsonSchemaFactory
-    {
+    private fun makeSchemaFactory(): JsonSchemaFactory {
         val loadingConfig = LoadingConfiguration.newBuilder()
-                .dereferencing(Dereferencing.INLINE)
-                .freeze()
+            .dereferencing(Dereferencing.INLINE)
+            .freeze()
         return JsonSchemaFactory.newBuilder()
-                .setLoadingConfiguration(loadingConfig)
-                .freeze()
+            .setLoadingConfiguration(loadingConfig)
+            .freeze()
     }
 
-    private fun parseJson(jsonAsString: String): JsonNode
-    {
-        return try
-        {
+    private fun parseJson(jsonAsString: String): JsonNode {
+        return try {
             JsonLoader.fromString(jsonAsString)
-        }
-        catch (e: JsonParseException)
-        {
+        } catch (e: JsonParseException) {
             throw IOException("Failed to parse text as JSON.\nText was: $jsonAsString\n\n$e")
         }
     }

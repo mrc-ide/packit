@@ -17,16 +17,14 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class TagControllerTest : IntegrationTest()
-{
+class TagControllerTest : IntegrationTest() {
     @Autowired
     private lateinit var tagRepository: TagRepository
 
     private lateinit var tags: List<Tag>
 
     @BeforeAll
-    fun setupData()
-    {
+    fun setupData() {
         tags = tagRepository.saveAll(
             listOf(
                 Tag(name = "test-tag-2"),
@@ -40,15 +38,13 @@ class TagControllerTest : IntegrationTest()
     }
 
     @AfterAll
-    fun cleanup()
-    {
+    fun cleanup() {
         tagRepository.deleteAll(tags)
     }
 
     @Test
     @WithAuthenticatedUser
-    fun `can get ordered pageable tags with name filtered`()
-    {
+    fun `can get ordered pageable tags with name filtered`() {
         val result = restTemplate.exchange(
             "/tag?pageNumber=0&pageSize=10&filterName=test-tag",
             HttpMethod.GET,
@@ -62,8 +58,7 @@ class TagControllerTest : IntegrationTest()
             .let {
                 jacksonObjectMapper().convertValue(
                     it,
-                    object : TypeReference<List<TagDto>>()
-                    {}
+                    object : TypeReference<List<TagDto>>() {}
                 )
             }
 
@@ -75,8 +70,7 @@ class TagControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser
-    fun `return correct page information for get pageable tags`()
-    {
+    fun `return correct page information for get pageable tags`() {
         val result = restTemplate.exchange(
             "/tag?pageNumber=0&pageSize=10&filterName=test-tag",
             HttpMethod.GET,

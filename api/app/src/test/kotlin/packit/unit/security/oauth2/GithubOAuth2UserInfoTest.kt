@@ -4,11 +4,9 @@ import org.junit.jupiter.api.Test
 import packit.security.oauth2.GithubOAuth2UserInfo
 import kotlin.test.assertEquals
 
-class GithubOAuth2UserInfoTest
-{
+class GithubOAuth2UserInfoTest {
     @Test
-    fun `can get github profile attributes`()
-    {
+    fun `can get github profile attributes`() {
         val login = "testUser"
         val name = "Test User"
 

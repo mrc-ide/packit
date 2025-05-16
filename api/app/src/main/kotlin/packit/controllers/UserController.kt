@@ -24,15 +24,12 @@ class UserController(
     private val config: AppConfig,
     private val userService: UserService,
     private val userRoleService: UserRoleService
-)
-{
+) {
     @PostMapping("/basic")
     fun createBasicUser(
         @RequestBody @Validated createBasicUser: CreateBasicUser
-    ): ResponseEntity<UserDto>
-    {
-        if (!config.authEnableBasicLogin)
-        {
+    ): ResponseEntity<UserDto> {
+        if (!config.authEnableBasicLogin) {
             throw PackitException("basicLoginDisabled", HttpStatus.FORBIDDEN)
         }
 
@@ -42,10 +39,8 @@ class UserController(
     }
 
     @PostMapping("/external")
-    fun createExternalUser(@RequestBody @Validated createExternalUser: CreateExternalUser): ResponseEntity<UserDto>
-    {
-        if (config.authEnableBasicLogin || !config.authEnabled)
-        {
+    fun createExternalUser(@RequestBody @Validated createExternalUser: CreateExternalUser): ResponseEntity<UserDto> {
+        if (config.authEnableBasicLogin || !config.authEnabled) {
             throw PackitException("externalLoginDisabled", HttpStatus.FORBIDDEN)
         }
 
@@ -58,8 +53,7 @@ class UserController(
     fun updateUserRoles(
         @RequestBody @Validated updateUserRoles: UpdateUserRoles,
         @PathVariable username: String
-    ): ResponseEntity<UserDto>
-    {
+    ): ResponseEntity<UserDto> {
         val updatedUser = userRoleService.updateUserRoles(username, updateUserRoles)
 
         return ResponseEntity.ok(updatedUser.toDto())
@@ -68,8 +62,7 @@ class UserController(
     @DeleteMapping("/{username}")
     fun deleteUser(
         @PathVariable username: String
-    ): ResponseEntity<Unit>
-    {
+    ): ResponseEntity<Unit> {
         userService.deleteUser(username)
 
         return ResponseEntity.noContent().build()

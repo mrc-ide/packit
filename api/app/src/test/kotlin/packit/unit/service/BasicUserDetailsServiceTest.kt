@@ -13,8 +13,7 @@ import java.time.Instant
 import java.util.*
 import kotlin.test.Test
 
-class BasicUserDetailsServiceTest
-{
+class BasicUserDetailsServiceTest {
     private val mockUserService = mock<UserService>()
     private val mockRoleService = mock<RoleService>()
     private val service = BasicUserDetailsService(mockUserService, mockRoleService)
@@ -31,8 +30,7 @@ class BasicUserDetailsServiceTest
     )
 
     @Test
-    fun `loadUserByUsername returns correct UserDetails for valid username`()
-    {
+    fun `loadUserByUsername returns correct UserDetails for valid username`() {
         whenever(mockUserService.getUserForBasicLogin(mockUser.username)).thenReturn(
             mockUser
         )
