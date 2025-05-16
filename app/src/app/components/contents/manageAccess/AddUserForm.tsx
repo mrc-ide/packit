@@ -74,7 +74,7 @@ export const AddUserForm = ({ mutate, setOpen, roleNames }: AddUserFormProps) =>
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input autoComplete="email" placeholder="enter email..." {...field} />
+                <Input autoComplete="email" placeholder="Enter email..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -86,9 +86,9 @@ export const AddUserForm = ({ mutate, setOpen, roleNames }: AddUserFormProps) =>
           name="displayName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Display Name</FormLabel>
+              <FormLabel>Display name</FormLabel>
               <FormControl>
-                <Input autoComplete="name" placeholder="enter display name..." {...field} />
+                <Input autoComplete="name" placeholder="Enter display name..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -99,10 +99,10 @@ export const AddUserForm = ({ mutate, setOpen, roleNames }: AddUserFormProps) =>
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Temporary Password</FormLabel>
+              <FormLabel>Temporary password</FormLabel>
               <FormDescription className="text-xs mt-0">User must change this password on first login.</FormDescription>
               <FormControl>
-                <Input type="password" autoComplete="password" placeholder="enter password..." {...field} />
+                <Input type="password" autoComplete="password" placeholder="Enter password..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -116,7 +116,7 @@ export const AddUserForm = ({ mutate, setOpen, roleNames }: AddUserFormProps) =>
               <FormLabel>User&apos;s Roles</FormLabel>
               <MultiSelector onValuesChange={field.onChange} values={field.value}>
                 <MultiSelectorTrigger>
-                  <MultiSelectorInput className="text-sm" placeholder="Select Roles" />
+                  <MultiSelectorInput className="text-sm" placeholder="Select roles" />
                 </MultiSelectorTrigger>
                 <MultiSelectorContent>
                   <MultiSelectorList>

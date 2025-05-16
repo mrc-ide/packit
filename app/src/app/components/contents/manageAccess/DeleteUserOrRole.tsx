@@ -53,10 +53,10 @@ export const DeleteUserOrRole = ({ mutate, data: { name, type } }: DeleteUserOrR
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure you want to delete {name}?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. You are about to permanently delete a {type},{" "}
+            This action cannot be undone. You are about to permanently delete a {type}.{" "}
             {type === "role"
-              ? "this will affect all users that have this role and they will lose their associated permissions."
-              : "they will lose access to the application and lose all related data."}
+              ? "This will affect all users that have this role and they will lose their associated permissions."
+              : "They will lose access to the application and lose all related data."}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

@@ -19,10 +19,10 @@ export const UpdateDropdown = ({ setSelectedOption, manageType }: UpdateDropdown
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DialogTrigger asChild onClick={() => setSelectedOption(manageType === "user" ? "roles" : "users")}>
-          <DropdownMenuItem>Update {manageType === "user" ? "Roles" : "Users"}</DropdownMenuItem>
+          <DropdownMenuItem>Update {manageType === "user" ? "roles" : "users"}</DropdownMenuItem>
         </DialogTrigger>
         <DialogTrigger asChild onClick={() => setSelectedOption("permissions")}>
-          <DropdownMenuItem>Update Permissions</DropdownMenuItem>
+          <DropdownMenuItem>Update permissions</DropdownMenuItem>
         </DialogTrigger>
       </DropdownMenuContent>
     </DropdownMenu>

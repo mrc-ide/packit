@@ -24,7 +24,7 @@ export const ThemeToggleButton = () => {
           </Button>
         </TooltipTrigger>
         <TooltipContent align="end">
-          <p>Toggle Theme</p>
+          <p>Toggle theme</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
