@@ -46,6 +46,12 @@ class PacketController(
         return ResponseEntity.ok(packetService.getMetadataBy(id))
     }
 
+    @GetMapping("/{id}/dependencies")
+    @PreAuthorize("@authz.canReadPacket(#root, #id)")
+    fun getPacketDependencies(@PathVariable id: String): ResponseEntity<List<PacketDto>> {
+        return ResponseEntity.ok(packetService.getDependencies(id).map { it.toDto() })
+    }
+
     @PostMapping("/{id}/files/token")
     @PreAuthorize("@authz.canReadPacket(#root, #id)")
     fun generateTokenForDownloadingFile(

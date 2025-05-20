@@ -2,7 +2,7 @@ import { Loader2 } from "lucide-react";
 import { Outlet, useOutletContext } from "react-router-dom";
 import { PacketMetadata } from "../../../types";
 import { ErrorComponent } from "../contents/common/ErrorComponent";
-import { useGetPacketById } from "../contents/common/hooks/useGetPacketById";
+import { useGetPacketById } from "./hooks/useGetPacketById";
 import { HttpStatus } from "../../../lib/types/HttpStatus";
 import { Unauthorized } from "../contents/common/Unauthorized";
 

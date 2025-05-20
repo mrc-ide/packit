@@ -1,19 +1,42 @@
 import { render, screen } from "@testing-library/react";
 import { Accordion } from "../../../../app/components/Base/Accordion";
 import { PacketDependencies } from "../../../../app/components/contents/packets/PacketDependencies";
-import { PacketDepends } from "../../../../types";
-import { MemoryRouter } from "react-router-dom";
+import { PacketMetadata, Packet } from "../../../../types";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { SWRConfig } from "swr";
+import { mockDependencies, mockPacket } from "../../../mocks";
+import { PacketOutlet } from "../../../../app/components/main/PacketOutlet";
+import { rest } from "msw";
+import { packetIndexUri } from "../../../../msw/handlers/packetHandlers";
+import { server } from "../../../../msw/server";
 
-const renderComponent = (dependencies: PacketDepends[] = []) =>
+const renderComponent = (packet: PacketMetadata = mockPacket) =>
   render(
-    <MemoryRouter>
-      <Accordion type="single" defaultValue="dependencies">
-        <PacketDependencies depends={dependencies} />
-      </Accordion>
-    </MemoryRouter>
+    <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>
+      <MemoryRouter initialEntries={[`/${packet.name}/${packet.id}`]}>
+        <Routes>
+          <Route element={<PacketOutlet packetId={packet.id} />} path="/:packetName/:packetId">
+            <Route
+              path="/:packetName/:packetId"
+              element={
+                <Accordion type="single" defaultValue="dependencies">
+                  <PacketDependencies />
+                </Accordion>
+              }
+            />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    </SWRConfig>
   );
+
 describe("PacketDependencies Component", () => {
-  it("should render none if no dependencies", async () => {
+  it("should render helpful message if no dependencies", async () => {
+    server.use(
+      rest.get(`${packetIndexUri}/${mockPacket.id}/dependencies`, (req, res, ctx) => {
+        return res(ctx.json([]));
+      })
+    );
     renderComponent();
 
     expect(screen.getByText(/Dependencies/)).toBeVisible();
@@ -21,19 +44,12 @@ describe("PacketDependencies Component", () => {
   });
 
   it("should render list of packet names with link to packets", async () => {
-    const depends: PacketDepends[] = [
-      { packet: "packet1", query: 'single(id == "packet69" && name == "name1")', files: [] },
-      { packet: "packet2", query: 'latest(name == "name2")', files: [] }
-    ];
+    renderComponent();
 
-    renderComponent(depends);
-
-    expect(screen.getByText(/name1/)).toBeVisible();
-    expect(screen.getByText(/name2/)).toBeVisible();
-
-    const packet1Link = screen.getByRole("link", { name: /packet1/ });
-    const packet2Link = screen.getByRole("link", { name: /packet2/ });
-    expect(packet1Link).toHaveAttribute("href", "/name1/packet1");
-    expect(packet2Link).toHaveAttribute("href", "/name2/packet2");
+    mockDependencies.forEach((dependency: Packet) => {
+      expect(screen.getByText(dependency.id)).toBeVisible();
+      const packetLink = screen.getByRole("link", { name: dependency.id });
+      expect(packetLink).toHaveAttribute("href", `/${dependency.name}/${dependency.id}`);
+    });
   });
 });

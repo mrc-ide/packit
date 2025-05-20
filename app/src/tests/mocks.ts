@@ -375,6 +375,8 @@ export const mockPacketGroupResponse: PageablePackets = {
   numberOfElements: 5
 };
 
+export const mockDependencies = mockPacketGroupResponse.content.slice(1, 3);
+
 export const mockFileBlob = new Blob(["test contents"]);
 
 export const mockNonUsernameRolesWithRelationships: RoleWithRelationships[] = [

@@ -21,8 +21,10 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 interface PacketService {
+    fun getPacket(id: String): Packet
     fun getPackets(pageablePayload: PageablePayload, filterName: String, filterId: String): Page<Packet>
     fun getPackets(): List<Packet>
+    fun getDependencies(id: String): List<Packet>
     fun getChecksum(): String
     fun importPackets()
     fun getMetadataBy(id: String): PacketMetadata
@@ -37,7 +39,6 @@ interface PacketService {
     ): List<Packet>
 
     fun streamZip(paths: List<String>, id: String, output: OutputStream)
-    fun getPacket(id: String): Packet
     fun validateFilesExistForPacket(id: String, paths: List<String>): List<FileMetadata>
 }
 
@@ -72,10 +73,6 @@ class BasePacketService(
         packetGroupRepository.saveAll(newPacketGroups.map { PacketGroup(name = it) })
     }
 
-    override fun getPackets(): List<Packet> {
-        return packetRepository.findAll()
-    }
-
     override fun getPacketsByName(name: String): List<Packet> {
         return packetRepository.findByName(name, Sort.by("startTime").descending())
     }
@@ -83,6 +80,15 @@ class BasePacketService(
     override fun getPacket(id: String): Packet {
         return packetRepository.findById(id)
             .orElseThrow { PackitException("packetNotFound", HttpStatus.NOT_FOUND) }
+    }
+
+    override fun getDependencies(id: String): List<Packet> {
+        val dependencyIds = getMetadataBy(id).depends.map() { it.packet }
+        return packetRepository.findAllById(dependencyIds)
+    }
+
+    override fun getPackets(): List<Packet> {
+        return packetRepository.findAll()
     }
 
     override fun getPackets(pageablePayload: PageablePayload, filterName: String, filterId: String): Page<Packet> {

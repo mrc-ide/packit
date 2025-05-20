@@ -166,7 +166,7 @@ class PacketGroupControllerTest(
     }
 
     @Test
-    fun `getPacketsByName returns error if not authenticated`() {
+    fun `getPackets returns error if not authenticated`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packetGroups/artefact-types/packets",
             HttpMethod.GET
@@ -176,7 +176,7 @@ class PacketGroupControllerTest(
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:random-name"])
-    fun `getPacketsByName returns empty list if no permissions match`() {
+    fun `getPackets returns empty list if no permissions match`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packetGroups/artefact-types/packets",
             HttpMethod.GET,
@@ -191,7 +191,7 @@ class PacketGroupControllerTest(
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packet:computed-resource:$idOfComputedResourcePacket"])
-    fun `getPacketsByName returns of packets user can see`() {
+    fun `getPackets returns list of packets user can see`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packetGroups/computed-resource/packets",
             HttpMethod.GET,

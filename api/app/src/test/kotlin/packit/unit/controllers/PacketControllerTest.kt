@@ -97,6 +97,7 @@ class PacketControllerTest {
         }
         on { getPacketsByName(anyString()) } doReturn packets
         on { validateFilesExistForPacket(anyString(), anyList()) } doReturn packetMetadata[0].files
+        on { getDependencies(packetId) } doReturn packets
 
         packetMetadata.forEach {
             on { getMetadataBy(it.id) } doReturn it
@@ -124,6 +125,14 @@ class PacketControllerTest {
         assertEquals(result.body, mockPageablePackets.map { it.toDto() })
         assertEquals(1, mockPageablePackets.totalPages)
         assertEquals(2, mockPageablePackets.totalElements)
+    }
+
+    @Test
+    fun `get dependencies`() {
+        val result = sut.getPacketDependencies(packetId)
+        verify(packetService).getDependencies(packetId)
+        assertEquals(result.statusCode, HttpStatus.OK)
+        assertEquals(result.body, packets.map { it.toDto() })
     }
 
     @Test

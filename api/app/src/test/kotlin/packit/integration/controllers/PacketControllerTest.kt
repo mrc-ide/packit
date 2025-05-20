@@ -2,6 +2,7 @@ package packit.integration.controllers
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,6 +18,7 @@ import packit.model.OneTimeToken
 import packit.model.Role
 import packit.model.RolePermission
 import packit.model.dto.BasicRolesAndUsersDto
+import packit.model.dto.PacketDto
 import packit.model.dto.RolesAndUsersForReadUpdate
 import packit.model.dto.UpdateReadRoles
 import packit.repository.*
@@ -69,6 +71,8 @@ class PacketControllerTest : IntegrationTest() {
     companion object {
         const val idOfArtefactTypesPacket = "20240729-154633-10abe7d1"
         const val idOfDownloadTypesPacket3 = "20250122-142620-c741b061"
+        const val idOfDependentPacket = "20240729-154642-8f374b0d"
+        const val idOfDependencyPacket = "20240729-154639-25b955eb"
         val filePathsAndSizesForDownloadTypesPacket = mapOf(
             "a_renamed_common_resource.csv" to 11L,
             "artefact1/artefact_data.csv" to 51L,
@@ -80,6 +84,42 @@ class PacketControllerTest : IntegrationTest() {
             "orderly.R" to 884L,
             "presentation.html" to 40L
         )
+    }
+
+    @Test
+    fun `getPacketDependencies returns error if not authenticated`() {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packets/$idOfDependentPacket/dependencies",
+            HttpMethod.GET
+        )
+        assertUnauthorized(result)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read:packet:name:wrong-id"])
+    fun `getPacketDependencies returns error if no permissions match`() {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packets/$idOfDependentPacket/dependencies",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        assertUnauthorized(result)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read:packet:depends:$idOfDependentPacket"])
+    fun `getPacketDependencies returns list of depended-on packets`() {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packets/$idOfDependentPacket/dependencies",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        assertSuccess(result)
+
+        val packets: List<PacketDto> = jacksonObjectMapper().readValue(result.body!!)
+        assertThat(packets).extracting("id").containsExactly(idOfDependencyPacket)
     }
 
     @Test
@@ -124,7 +164,6 @@ class PacketControllerTest : IntegrationTest() {
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packet:artefact-types:$idOfArtefactTypesPacket"])
     fun `findPacketMetadata returns metadata if user has correct specific permission`() {
-
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets/$idOfArtefactTypesPacket",
             HttpMethod.GET,
@@ -142,7 +181,7 @@ class PacketControllerTest : IntegrationTest() {
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
-        assertEquals(HttpStatus.UNAUTHORIZED, result.statusCode)
+        assertUnauthorized(result)
     }
 
     @Test
