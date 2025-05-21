@@ -6,7 +6,10 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
@@ -250,114 +253,151 @@ class PacketGroupControllerTest(
         assertThat(contents).extracting("name").containsExactlyInAnyOrder("artefact-types", "depends")
     }
 
-    @Test
-    @WithAuthenticatedUser(authorities = ["packet.manage:packet:test:123"])
-    fun `user without permission cannot update read permission on roles`() {
-        val updatePacketReadRoles = jacksonObjectMapper().writeValueAsString(
-            UpdateReadRoles(
-                roleNamesToAdd = setOf(),
-                roleNamesToRemove = setOf()
-            )
-        )
-        val result = restTemplate.exchange(
-            "/packetGroups/test1/read-permission",
-            HttpMethod.PUT,
-            getTokenizedHttpEntity(data = updatePacketReadRoles),
-            String::class.java
-        )
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    inner class PacketGroupControllerRolesTests {
+        val roleNamesToStartWithout = setOf("testRole1", "testRole2")
+        val roleNamesToBeginWith = setOf("testRole3", "testRole4")
+        val packetGroupId = "test1"
 
-        assertEquals(result.statusCode, HttpStatus.UNAUTHORIZED)
-    }
+        @BeforeEach
+        fun setupRoles() {
+            val packetGroup = packetGroupRepository.findByName(packetGroupId)!!
 
-    @Test
-    @WithAuthenticatedUser(authorities = ["packet.manage"])
-    fun `user with packet manage can update read permission on roles`() {
-        val packetGroup = packetGroupRepository.findByName("test1")!!
-        val roleNamesToAdd = setOf("testRole1", "testRole2")
-        val roleNamesToRemove = setOf("testRole3", "testRole4")
-        roleRepository.saveAll(
-            roleNamesToAdd.map {
-                Role(name = it)
+            roleRepository.saveAll(roleNamesToStartWithout.map { Role(name = it) })
+            val rolesToRemove = roleRepository.saveAll(
+                roleNamesToBeginWith.map { Role(name = it) }
+            ).onEach {
+                it.rolePermissions = mutableListOf(
+                    RolePermission(
+                        role = it,
+                        permission = permissionsRepository.findByName("packet.read")!!,
+                        packetGroup = packetGroup
+                    )
+                )
             }
-        )
-        val rolesToRemove = roleRepository.saveAll(
-            roleNamesToRemove.map {
-                Role(name = it)
-            }
-        ).onEach {
-            it.rolePermissions = mutableListOf(
-                RolePermission(
-                    role = it,
-                    permission = permissionsRepository.findByName("packet.read")!!,
-                    packetGroup = packetGroup
+            roleRepository.saveAll(rolesToRemove)
+        }
+
+        @AfterEach
+        fun cleanup() {
+            roleRepository.deleteAll()
+        }
+
+        @Test
+        @WithAuthenticatedUser(authorities = ["packet.manage:packet:wrong-name:wrong-id"])
+        fun `user without permission cannot update read permission on roles`() {
+            val updatePacketReadRoles = jacksonObjectMapper().writeValueAsString(
+                UpdateReadRoles(
+                    roleNamesToAdd = setOf(),
+                    roleNamesToRemove = setOf()
                 )
             )
-        }
-        roleRepository.saveAll(rolesToRemove)
-        val updatePacketReadRoles = jacksonObjectMapper().writeValueAsString(
-            UpdateReadRoles(
-                roleNamesToAdd = roleNamesToAdd,
-                roleNamesToRemove = roleNamesToRemove
+            val result = restTemplate.exchange(
+                "/packetGroups/test1/read-permission",
+                HttpMethod.PUT,
+                getTokenizedHttpEntity(data = updatePacketReadRoles),
+                String::class.java
             )
-        )
 
-        val result = restTemplate.exchange(
-            "/packetGroups/${packetGroup.name}/read-permission",
-            HttpMethod.PUT,
-            getTokenizedHttpEntity(data = updatePacketReadRoles),
-            String::class.java
-        )
+            assertEquals(result.statusCode, HttpStatus.UNAUTHORIZED)
+        }
 
-        assertEquals(result.statusCode, HttpStatus.NO_CONTENT)
-        val addedRoles = roleRepository.findByNameIn(roleNamesToAdd.toList())
-        val removedRoles = roleRepository.findByNameIn(roleNamesToRemove.toList())
-        removedRoles.forEach {
-            assertEquals(
-                it.rolePermissions.size,
-                0
+        @Test
+        @WithAuthenticatedUser(authorities = ["packet.manage"])
+        fun `user with packet manage can update read permission on roles`() {
+            val packetGroup = packetGroupRepository.findByName(packetGroupId)!!
+
+            val updatePacketReadRoles = jacksonObjectMapper().writeValueAsString(
+                UpdateReadRoles(
+                    roleNamesToAdd = roleNamesToStartWithout,
+                    roleNamesToRemove = roleNamesToBeginWith
+                )
             )
-        }
-        addedRoles.forEach {
-            assertEquals(
-                it.rolePermissions.first().packetGroup?.id,
-                packetGroup.id
+
+            val result = restTemplate.exchange(
+                "/packetGroups/${packetGroup.name}/read-permission",
+                HttpMethod.PUT,
+                getTokenizedHttpEntity(data = updatePacketReadRoles),
+                String::class.java
             )
+
+            assertEquals(result.statusCode, HttpStatus.NO_CONTENT)
+            val addedRoles = roleRepository.findByNameIn(roleNamesToStartWithout.toList())
+            val removedRoles = roleRepository.findByNameIn(roleNamesToBeginWith.toList())
+            removedRoles.forEach {
+                assertEquals(
+                    it.rolePermissions.size,
+                    0
+                )
+            }
+            addedRoles.forEach {
+                assertEquals(
+                    it.rolePermissions.first().packetGroup?.id,
+                    packetGroup.id
+                )
+            }
         }
-    }
 
-    @Test
-    @WithAuthenticatedUser(authorities = ["packet.manage:packetGroup:test1", "packet.manage:packetGroup:test2"])
-    fun `can get roles and users for packet groups the user has manage permission for`() {
-        val packetGroupNames = listOf("test1", "test2")
-        val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packetGroups/_/read-permission",
-            HttpMethod.GET,
-            getTokenizedHttpEntity()
+        @Test
+        @WithAuthenticatedUser(
+            authorities = [
+                "packet.manage:packetGroup:test1",
+                "packet.manage:packetGroup:test2",
+                "packet.read:packetGroup:custom_metadata" // Can only read, not manage
+            ]
         )
+        fun `can get roles and users for all packet groups the user has manage permissions for, and not others`() {
+            val packetGroupWeCanManage = listOf("test1", "test2")
+            val packetGroupsWeHaveRolesFor = listOf("test1")
+            val packetGroupsWeDoNotHaveRolesFor = listOf("test2")
+            val result: ResponseEntity<String> = restTemplate.exchange(
+                "/packetGroups/_/read-permission",
+                HttpMethod.GET,
+                getTokenizedHttpEntity()
+            )
 
-        assertSuccess(result)
+            assertSuccess(result)
 
-        val body = jacksonObjectMapper().readValue(
-            result.body,
-            object : TypeReference<Map<String, RolesAndUsersForReadUpdate>>() {}
-        )
+            val body = jacksonObjectMapper().readValue(
+                result.body,
+                object : TypeReference<Map<String, RolesAndUsersForReadUpdate>>() {}
+            )
 
-        assertThat(body.keys).containsExactlyInAnyOrderElementsOf(packetGroupNames)
-        body.forEach {
-            val rolesAndUsers = it.value
-            assert(rolesAndUsers.cannotRead is BasicRolesAndUsersDto)
-            assert(rolesAndUsers.withRead is BasicRolesAndUsersDto)
+            assertThat(body.keys).containsExactlyInAnyOrderElementsOf(packetGroupWeCanManage)
+
+            packetGroupsWeDoNotHaveRolesFor.forEach {
+                val rolesAndUsers = body[it]
+                val canReadRoleNames = rolesAndUsers?.canRead?.roles?.map { it.name }
+                val withReadRoleNames = rolesAndUsers?.withRead?.roles?.map { it.name }
+                val cannotReadRoleNames = rolesAndUsers?.cannotRead?.roles?.map { it.name }
+                assertThat(canReadRoleNames).isEmpty()
+                assertThat(withReadRoleNames).isEmpty()
+                assertThat(cannotReadRoleNames).containsExactlyInAnyOrderElementsOf(
+                    roleNamesToStartWithout + roleNamesToBeginWith
+                )
+            }
+
+            packetGroupsWeHaveRolesFor.forEach {
+                val rolesAndUsers = body[it]
+                val canReadRoleNames = rolesAndUsers?.canRead?.roles?.map { it.name }
+                val withReadRoleNames = rolesAndUsers?.withRead?.roles?.map { it.name }
+                val cannotReadRoleNames = rolesAndUsers?.cannotRead?.roles?.map { it.name }
+                assertThat(canReadRoleNames).containsExactlyInAnyOrderElementsOf(roleNamesToBeginWith)
+                assertThat(withReadRoleNames).containsExactlyInAnyOrderElementsOf(roleNamesToBeginWith)
+                assertThat(cannotReadRoleNames).containsExactlyInAnyOrderElementsOf(roleNamesToStartWithout)
+            }
         }
-    }
 
-    @Test
-    @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `getting roles and users for update returns 401 if no packet manage`() {
-        val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packetGroups/read-permission",
-            HttpMethod.GET
-        )
+        @Test
+        @WithAuthenticatedUser(authorities = ["packet.read"])
+        fun `getting roles and users for update returns 401 if no packet manage`() {
+            val result: ResponseEntity<String> = restTemplate.exchange(
+                "/packetGroups/read-permission",
+                HttpMethod.GET
+            )
 
-        assertUnauthorized(result)
+            assertUnauthorized(result)
+        }
     }
 }

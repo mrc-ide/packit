@@ -1,4 +1,4 @@
--- delete all setup test users and roles after each test
+-- delete all setup test users and roles before each test
 DELETE
 FROM "user"
 WHERE username ILIKE '%test%';
