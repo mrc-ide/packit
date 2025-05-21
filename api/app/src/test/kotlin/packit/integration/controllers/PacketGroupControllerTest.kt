@@ -345,7 +345,7 @@ class PacketGroupControllerTest(
         assertThat(body.keys).containsExactlyInAnyOrderElementsOf(packetGroupNames)
         body.forEach {
             val rolesAndUsers = it.value
-            assert(rolesAndUsers.cantRead is BasicRolesAndUsersDto)
+            assert(rolesAndUsers.cannotRead is BasicRolesAndUsersDto)
             assert(rolesAndUsers.withRead is BasicRolesAndUsersDto)
         }
     }

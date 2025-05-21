@@ -31,7 +31,7 @@ describe("UpdatePacketReadPermissionForm", () => {
           mutate={mutate}
           packetGroupName={packetGroupName}
           rolesAndUsersWithRead={canRead}
-          rolesAndUsersCantRead={withRead}
+          rolesAndUsersCannotRead={withRead}
           setDialogOpen={setDialogOpen}
           packetId={packetId}
         />
