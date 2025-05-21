@@ -373,7 +373,6 @@ class UserRoleServiceTest {
 
         val result = serviceSpy.getRolesAndUsersForPacketReadUpdate(packet)
 
-        assert(result is RolesAndUsersForReadUpdate)
         assertEquals(rolesAndUsersDtos, result.canRead)
         assertEquals(rolesAndUsersDtos, result.withRead)
         assertEquals(rolesAndUsersDtos, result.cannotRead)
