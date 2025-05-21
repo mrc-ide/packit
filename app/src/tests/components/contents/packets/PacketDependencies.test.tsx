@@ -39,16 +39,16 @@ describe("PacketDependencies Component", () => {
     );
     renderComponent();
 
-    expect(screen.getByText(/Dependencies/)).toBeVisible();
-    expect(screen.getByText(/This packet has no dependencies on other packets/)).toBeVisible();
+    expect(await screen.findByText(/Dependencies/)).toBeVisible();
+    expect(await screen.findByText(/This packet has no dependencies on other packets/)).toBeVisible();
   });
 
   it("should render list of packet names with link to packets", async () => {
     renderComponent();
 
-    mockDependencies.forEach((dependency: Packet) => {
-      expect(screen.getByText(dependency.id)).toBeVisible();
-      const packetLink = screen.getByRole("link", { name: dependency.id });
+    mockDependencies.forEach(async (dependency: Packet) => {
+      expect(await screen.findByText(dependency.id)).toBeVisible();
+      const packetLink = await screen.findByRole("link", { name: dependency.id });
       expect(packetLink).toHaveAttribute("href", `/${dependency.name}/${dependency.id}`);
     });
   });

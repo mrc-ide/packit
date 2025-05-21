@@ -112,7 +112,6 @@ class PacketServiceTest {
         mock<PacketRepository> {
             on { findAll() } doReturn oldPackets
             on { findAllIds() } doReturn oldPackets.map { it.id }
-            on { findAllById(listOf(oldPackets[0].id)) } doReturn listOf(oldPackets[1], newPackets[0])
             on { findTopByOrderByImportTimeDesc() } doReturn oldPackets.first()
             on { findByName(anyString(), any()) } doReturn oldPackets
             on { findAllByNameContainingAndIdContaining(anyString(), anyString(), any<Sort>()) } doReturn oldPackets
@@ -141,13 +140,15 @@ class PacketServiceTest {
 
     @Test
     fun `gets packet dependencies`() {
-        val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
+        val dependencies = listOf(oldPackets[1], newPackets[0])
+        val mockPacketRepository = mock<PacketRepository> {
+            on { findAllById(listOf("dependency1", "dependency2")) } doReturn dependencies
+        }
+        val sut = BasePacketService(mockPacketRepository, packetGroupRepository, outpackServerClient)
 
-        val result = sut.getDependencies(oldPackets[0].id)
-
-        assertEquals(result, listOf(oldPackets[1], newPackets[0]))
-        verify(outpackServerClient).getMetadataById(oldPackets[0].id)
-        verify(packetRepository).findAllById(listOf(oldPackets[0].id))
+        assertEquals(sut.getDependencies(packetMetadata.id), dependencies)
+        verify(outpackServerClient).getMetadataById(packetMetadata.id)
+        verify(mockPacketRepository).findAllById(listOf("dependency1", "dependency2"))
     }
 
     @Test
