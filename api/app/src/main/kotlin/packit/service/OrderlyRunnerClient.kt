@@ -1,5 +1,6 @@
 package packit.service
 
+import packit.config.RunnerConfig
 import packit.model.dto.GitBranches
 import packit.model.dto.OrderlyRunnerVersion
 import packit.model.dto.Parameter
@@ -8,7 +9,6 @@ import packit.model.dto.RunnerPacketGroup
 import packit.model.dto.RunnerSubmitRunInfo
 import packit.model.dto.SubmitRunResponse
 import packit.model.dto.TaskStatus
-import packit.config.RunnerConfig
 
 interface OrderlyRunner {
     fun getVersion(): OrderlyRunnerVersion

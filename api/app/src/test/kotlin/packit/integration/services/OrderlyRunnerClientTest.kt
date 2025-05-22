@@ -3,14 +3,14 @@ package packit.integration.services
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
+import packit.config.RunnerConfig
+import packit.config.RunnerRepository
 import packit.integration.IntegrationTest
 import packit.model.dto.OrderlyLocation
 import packit.model.dto.OrderlyRunnerVersion
 import packit.model.dto.Parameter
 import packit.model.dto.RunnerSubmitRunInfo
 import packit.service.OrderlyRunnerClient
-import packit.config.RunnerConfig
-import packit.config.RunnerRepository
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
