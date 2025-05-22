@@ -7,7 +7,7 @@ import { PacketOutlet } from "../../../../app/components/main/PacketOutlet";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
 import { server } from "../../../../msw/server";
 import { mockNonUsernameRolesWithRelationships, mockPacket } from "../../../mocks";
-import { packetIndexUri } from "../../../../msw/handlers/packetHandler";
+import { packetIndexUri } from "../../../../msw/handlers/packetHandlers";
 
 const renderComponent = () =>
   render(
