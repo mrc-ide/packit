@@ -44,16 +44,18 @@ describe("header drop down menu component", () => {
   it("renders drop down menu with user info if authenticated", async () => {
     mockGetUserFromLocalStorage.mockReturnValue(mockUserState());
     renderElement();
-    fireEvent.keyDown(await screen.findByRole("button"), DOWN_ARROW);
+    fireEvent.keyDown(await screen.findByLabelText("Account"), DOWN_ARROW);
 
+    expect(await screen.findByText("LJ")).toBeInTheDocument();
     expect(screen.getByTestId("user-display-name")).toHaveTextContent("LeBron James");
     expect(screen.getByTestId("username")).toHaveTextContent("goat@example.com");
   });
 
   it("renders drop down menu without user info if not authenticated", async () => {
     renderElement();
-    fireEvent.keyDown(await screen.findByRole("button"), DOWN_ARROW);
+    fireEvent.keyDown(await screen.findByLabelText("Account"), DOWN_ARROW);
 
+    expect(await screen.findByText("XX")).toBeInTheDocument();
     expect(screen.getByTestId("user-display-name")).toHaveTextContent("");
     expect(screen.getByTestId("username")).toHaveTextContent("");
   });
@@ -61,7 +63,7 @@ describe("header drop down menu component", () => {
   it("deletes user local storage key when log out is clicked", async () => {
     localStorage.setItem(LocalStorageKeys.USER, "mockUser");
     renderElement();
-    fireEvent.keyDown(await screen.findByRole("button"), DOWN_ARROW);
+    fireEvent.keyDown(await screen.findByLabelText("Account"), DOWN_ARROW);
     userEvent.click(await screen.findByText("Log out"));
 
     expect(localStorage.getItem(LocalStorageKeys.USER)).toBe(null);

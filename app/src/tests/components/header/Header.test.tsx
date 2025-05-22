@@ -37,6 +37,7 @@ describe("header component", () => {
     renderElement();
     fireEvent.keyDown(await screen.findByLabelText("Account"), DOWN_ARROW);
 
+    expect(screen.getByText("LJ")).toBeInTheDocument();
     expect(screen.getByTestId("user-display-name")).toHaveTextContent("LeBron James");
     expect(screen.getByTestId("username")).toHaveTextContent("goat@example.com");
   });

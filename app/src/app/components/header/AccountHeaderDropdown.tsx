@@ -9,7 +9,7 @@ import {
 } from "../Base/DropdownMenu";
 import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 import { useUser } from "../providers/UserProvider";
-import { CircleUser } from "lucide-react";
+import { getInitials } from "../../../lib/string";
 
 export const AccountHeaderDropdown = () => {
   const { removeUser, user } = useUser();
@@ -25,11 +25,13 @@ export const AccountHeaderDropdown = () => {
       <DropdownMenuTrigger asChild>
         <Button
           aria-label="Account"
-          variant="ghost"
-          size="icon"
-          className="rounded-full data-[state=open]:bg-accent data-[state=open]:text-accent-foreground"
+          variant="secondary"
+          className="rounded-full h-10 w-10 tracking-wide border
+            hover:opacity-90 hover:bg-accent hover:text-accent-foreground
+            data-[state=open]:bg-accent data-[state=open]:text-accent-foreground
+            "
         >
-          <CircleUser />
+          {getInitials(user?.displayName)}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" forceMount>
@@ -49,7 +51,7 @@ export const AccountHeaderDropdown = () => {
           <DropdownMenuItem className="text-base">Publish Packets</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator /> */}
-        <DropdownMenuItem className="text-base" onClick={handleLogout}>
+        <DropdownMenuItem className="text-base cursor-pointer" onClick={handleLogout}>
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>
