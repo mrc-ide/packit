@@ -6,7 +6,6 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -344,8 +343,9 @@ class PacketGroupControllerTest(
         )
         fun `can get roles and users for all packet groups the user has manage permissions for, and not others`() {
             val packetGroupWeCanManage = listOf("test1", "test2")
-            val packetGroupsWeHaveRolesFor = listOf("test1")
-            val packetGroupsWeDoNotHaveRolesFor = listOf("test2")
+            val packetGroupsWeHaveTestRolesFor = listOf("test1")
+            val packetGroupsWeDoNotHaveTestRolesFor = listOf("test2")
+            val adminRole = roleRepository.findByName("ADMIN")
             val result: ResponseEntity<String> = restTemplate.exchange(
                 "/packetGroups/_/read-permission",
                 HttpMethod.GET,
@@ -361,26 +361,28 @@ class PacketGroupControllerTest(
 
             assertThat(body.keys).containsExactlyInAnyOrderElementsOf(packetGroupWeCanManage)
 
-            packetGroupsWeDoNotHaveRolesFor.forEach {
+            packetGroupsWeDoNotHaveTestRolesFor.forEach {
                 val rolesAndUsers = body[it]
-                val canReadRoleNames = rolesAndUsers?.canRead?.roles?.map { it.name }
-                val withReadRoleNames = rolesAndUsers?.withRead?.roles?.map { it.name }
-                val cannotReadRoleNames = rolesAndUsers?.cannotRead?.roles?.map { it.name }
-                assertThat(canReadRoleNames).isEmpty()
-                assertThat(withReadRoleNames).isEmpty()
-                assertThat(cannotReadRoleNames).containsExactlyInAnyOrderElementsOf(
+                // If an 'ADMIN' role exists (created prior to running the tests), expect it in the can-read roles.
+                assertThat(rolesAndUsers?.canRead?.roles?.map { it.name }).containsExactlyInAnyOrderElementsOf(
+                    listOfNotNull(adminRole?.name)
+                )
+                assertThat(rolesAndUsers?.withRead?.roles?.map { it.name }).isEmpty()
+                assertThat(rolesAndUsers?.cannotRead?.roles?.map { it.name }).containsExactlyInAnyOrderElementsOf(
                     roleNamesToStartWithout + roleNamesToBeginWith
                 )
             }
 
-            packetGroupsWeHaveRolesFor.forEach {
+            packetGroupsWeHaveTestRolesFor.forEach {
                 val rolesAndUsers = body[it]
-                val canReadRoleNames = rolesAndUsers?.canRead?.roles?.map { it.name }
-                val withReadRoleNames = rolesAndUsers?.withRead?.roles?.map { it.name }
-                val cannotReadRoleNames = rolesAndUsers?.cannotRead?.roles?.map { it.name }
-                assertThat(canReadRoleNames).containsExactlyInAnyOrderElementsOf(roleNamesToBeginWith)
-                assertThat(withReadRoleNames).containsExactlyInAnyOrderElementsOf(roleNamesToBeginWith)
-                assertThat(cannotReadRoleNames).containsExactlyInAnyOrderElementsOf(roleNamesToStartWithout)
+                // If an 'ADMIN' role exists (created prior to running the tests), expect it in the can-read roles.
+                assertThat(rolesAndUsers?.canRead?.roles?.map { it.name }).containsExactlyInAnyOrderElementsOf(
+                    roleNamesToBeginWith + listOfNotNull(adminRole?.name)
+                )
+                assertThat(rolesAndUsers?.withRead?.roles?.map { it.name })
+                    .containsExactlyInAnyOrderElementsOf(roleNamesToBeginWith)
+                assertThat(rolesAndUsers?.cannotRead?.roles?.map { it.name })
+                    .containsExactlyInAnyOrderElementsOf(roleNamesToStartWithout)
             }
         }
 

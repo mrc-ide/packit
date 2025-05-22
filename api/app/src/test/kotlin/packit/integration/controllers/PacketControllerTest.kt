@@ -584,12 +584,14 @@ class PacketControllerTest : IntegrationTest() {
                 object : TypeReference<RolesAndUsersForReadUpdate>() {}
             )
 
-            val canReadRoleNames = body.canRead.roles.map { it.name }
-            val withReadRoleNames = body.withRead.roles.map { it.name }
-            val cannotReadRoleNames = body.cannotRead.roles.map { it.name }
-            assertThat(canReadRoleNames).containsExactlyInAnyOrderElementsOf(roleNamesToBeginWith)
-            assertThat(withReadRoleNames).containsExactlyInAnyOrderElementsOf(roleNamesToBeginWith)
-            assertThat(cannotReadRoleNames).containsExactlyInAnyOrderElementsOf(roleNamesToStartWithout)
+            // If an 'ADMIN' role exists (created prior to running the tests), expect it in the list of can-read roles.
+            assertThat(body.canRead.roles.map { it.name }).containsExactlyInAnyOrderElementsOf(
+                roleNamesToBeginWith + listOfNotNull(roleRepository.findByName("ADMIN")?.name)
+            )
+            assertThat(body.withRead.roles.map { it.name })
+                .containsExactlyInAnyOrderElementsOf(roleNamesToBeginWith)
+            assertThat(body.cannotRead.roles.map { it.name })
+                .containsExactlyInAnyOrderElementsOf(roleNamesToStartWithout)
         }
 
         @Test

@@ -15,7 +15,7 @@ data class UpdateReadRoles(
 /**
  * @param cannotRead Roles and users which have no permission to read the resource, directly or indirectly.
  * @param withRead Roles and users that have specific read permissions for the resource, which can be revoked.
- * If part of  withRead, this implies canRead.
+ * If part of withRead, this implies canRead.
  * @param canRead Roles that can read the resource. Users that can
  * read the resource via their own specific permissions.
  */
