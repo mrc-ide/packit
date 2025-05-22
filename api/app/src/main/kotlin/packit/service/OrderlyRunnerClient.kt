@@ -8,6 +8,7 @@ import packit.model.dto.RunnerPacketGroup
 import packit.model.dto.RunnerSubmitRunInfo
 import packit.model.dto.SubmitRunResponse
 import packit.model.dto.TaskStatus
+import packit.config.RunnerConfig
 
 interface OrderlyRunner {
     fun getVersion(): OrderlyRunnerVersion
@@ -19,7 +20,7 @@ interface OrderlyRunner {
     fun getTaskStatuses(taskIds: List<String>, includeLogs: Boolean): List<TaskStatus>
 }
 
-class OrderlyRunnerClient(val baseUrl: String) : OrderlyRunner {
+class OrderlyRunnerClient(val config: RunnerConfig) : OrderlyRunner {
     override fun getVersion(): OrderlyRunnerVersion {
         return GenericClient.get(constructUrl("/"))
     }
@@ -27,7 +28,7 @@ class OrderlyRunnerClient(val baseUrl: String) : OrderlyRunner {
     override fun gitFetch(url: String) {
         return GenericClient.post(
             constructUrl("repository/fetch?url={url}"),
-            RepositoryFetch(sshKey = null),
+            RepositoryFetch(sshKey = config.sshKey),
             mapOf("url" to url)
         )
     }
@@ -70,6 +71,7 @@ class OrderlyRunnerClient(val baseUrl: String) : OrderlyRunner {
     }
 
     private fun constructUrl(urlFragment: String): String {
+        val baseUrl = config.url
         return "$baseUrl/$urlFragment"
     }
 }

@@ -9,6 +9,8 @@ import packit.model.dto.OrderlyRunnerVersion
 import packit.model.dto.Parameter
 import packit.model.dto.RunnerSubmitRunInfo
 import packit.service.OrderlyRunnerClient
+import packit.config.RunnerConfig
+import packit.config.RunnerRepository
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
@@ -20,9 +22,13 @@ class OrderlyRunnerClientTest(
     val repositoryUrl: String,
 
     @Value("\${orderly.runner.location-url}")
-    val locationUrl: String
+    val locationUrl: String,
+
+    @Value("\${orderly.runner.ssh-key}")
+    val sshKey: String?
 ) : IntegrationTest() {
-    val sut: OrderlyRunnerClient = OrderlyRunnerClient(runnerUrl)
+    val config = RunnerConfig(runnerUrl, locationUrl, RunnerRepository(repositoryUrl), sshKey)
+    val sut: OrderlyRunnerClient = OrderlyRunnerClient(config)
 
     @BeforeEach
     fun fetch() {

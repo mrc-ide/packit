@@ -12,5 +12,6 @@ data class RunnerRepository(
 data class RunnerConfig(
     val url: String,
     val locationUrl: String,
-    val repository: RunnerRepository
+    val repository: RunnerRepository,
+    val sshKey: String?
 )

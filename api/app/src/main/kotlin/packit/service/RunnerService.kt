@@ -64,7 +64,7 @@ class BaseRunnerService(
             commitHash = info.commitHash,
             parameters = info.parameters,
             location = OrderlyLocation.http(config.locationUrl),
-            sshKey = null
+            sshKey = config.sshKey
         )
 
         val user = userService.getByUsername(username) ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
@@ -167,7 +167,7 @@ class RunnerServiceConfiguration {
         userService: UserService,
     ): RunnerService {
         if (config != null) {
-            val client = OrderlyRunnerClient(config.url)
+            val client = OrderlyRunnerClient(config)
             return BaseRunnerService(config, client, runInfoRepository, userService)
         } else {
             return DisabledRunnerService()
