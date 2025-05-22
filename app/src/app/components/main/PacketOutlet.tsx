@@ -9,21 +9,7 @@ import { PacketNameError } from "../../../lib/errors";
 
 export const PacketOutlet = () => {
   const { packetName, packetId } = useParams();
-
-  let packet: PacketMetadata | undefined;
-  let isLoading = true;
-  let error: any = null;
-
-  try {
-    const result = useGetPacketById(packetId, packetName);
-    packet = result.packet;
-    isLoading = result.isLoading;
-    error = result.error;
-  } catch (e) {
-    if (e instanceof PacketNameError) {
-      return <ErrorComponent error={e} message="Error fetching packet details" />;
-    }
-  }
+  const { packet, isLoading, error } = useGetPacketById(packetId);
 
   if (error?.status === HttpStatus.Unauthorized) return <Unauthorized />;
   if (error) return <ErrorComponent error={error} message="Error fetching packet details" />;
@@ -34,6 +20,10 @@ export const PacketOutlet = () => {
         <Loader2 className="animate-spin" />
       </div>
     );
+
+  if (packet?.name !== packetName) {
+    return <ErrorComponent error={new PacketNameError()} message="Error fetching packet details" />;
+  }
 
   return packet ? <Outlet context={{ packet }} /> : null;
 };

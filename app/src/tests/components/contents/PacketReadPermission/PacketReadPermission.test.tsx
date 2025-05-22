@@ -8,6 +8,7 @@ import { HttpStatus } from "../../../../lib/types/HttpStatus";
 import { server } from "../../../../msw/server";
 import { mockNonUsernameRolesWithRelationships, mockPacket } from "../../../mocks";
 import { packetIndexUri } from "../../../../msw/handlers/packetHandler";
+import { UserProvider } from "../../../../app/components/providers/UserProvider";
 
 const renderComponent = () =>
   render(
