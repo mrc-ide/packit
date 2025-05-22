@@ -4,10 +4,9 @@ import { MemoryRouter } from "react-router";
 import { SWRConfig } from "swr";
 import { PacketGroupSummaryList } from "../../../../app/components/contents/home/PacketGroupSummaryList";
 import { server } from "../../../../msw/server";
-import { mockPacketGroupSummaries, mockUserState } from "../../../mocks";
+import { mockPacketGroupSummaries } from "../../../mocks";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
 import { UserProvider } from "../../../../app/components/providers/UserProvider";
-import { manageRolesIndexUri } from "../../../../msw/handlers/manageRolesHandlers";
 import { UserState } from "../../../../app/components/providers/types/UserTypes";
 
 const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
