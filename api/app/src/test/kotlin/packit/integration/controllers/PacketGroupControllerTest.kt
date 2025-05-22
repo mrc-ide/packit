@@ -32,7 +32,7 @@ import kotlin.math.ceil
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Sql("/delete-test-users.sql")
+@Sql("/delete-test-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class PacketGroupControllerTest(
     @Autowired val packetService: PacketService,
     @Autowired val packetRepository: PacketRepository,
@@ -277,11 +277,6 @@ class PacketGroupControllerTest(
                 )
             }
             roleRepository.saveAll(rolesToRemove)
-        }
-
-        @AfterEach
-        fun cleanup() {
-            roleRepository.deleteAll()
         }
 
         @Test

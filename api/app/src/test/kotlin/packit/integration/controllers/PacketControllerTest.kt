@@ -16,7 +16,6 @@ import packit.integration.WithAuthenticatedUser
 import packit.model.OneTimeToken
 import packit.model.Role
 import packit.model.RolePermission
-import packit.model.dto.BasicRolesAndUsersDto
 import packit.model.dto.RolesAndUsersForReadUpdate
 import packit.model.dto.UpdateReadRoles
 import packit.repository.*
@@ -28,7 +27,7 @@ import java.util.zip.ZipInputStream
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Sql("/delete-test-users.sql")
+@Sql("/delete-test-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class PacketControllerTest : IntegrationTest() {
     @Autowired
     private lateinit var packetService: PacketService
@@ -519,11 +518,6 @@ class PacketControllerTest : IntegrationTest() {
                 )
             }
             roleRepository.saveAll(rolesToRemove)
-        }
-
-        @AfterEach
-        fun cleanup() {
-            roleRepository.deleteAll()
         }
 
         @Test
