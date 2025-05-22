@@ -14,11 +14,9 @@ import kotlin.test.assertEquals
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 
-abstract class IntegrationTest
-{
+abstract class IntegrationTest {
     @BeforeEach
-    fun setup()
-    {
+    fun setup() {
         // Default test rest template settings throw when examine
         // status of 401 responses, using alternative factory fixes this
         // https://stackoverflow.com/questions/16748969
@@ -41,8 +39,7 @@ abstract class IntegrationTest
     fun getTokenizedHttpEntity(
         contentType: MediaType = MediaType.APPLICATION_JSON,
         data: Any? = null,
-    ): HttpEntity<Any>
-    {
+    ): HttpEntity<Any> {
         val authentication = SecurityContextHolder.getContext().authentication
 
         val tokens = jwtIssuer.issue(authentication.principal as UserPrincipal)
@@ -56,34 +53,28 @@ abstract class IntegrationTest
         return HttpEntity(data, headers)
     }
 
-    fun getBareHttpEntity(): HttpEntity<Any>
-    {
+    fun getBareHttpEntity(): HttpEntity<Any> {
         return HttpEntity(null, HttpHeaders())
     }
 
-    protected fun <T>assertSuccess(responseEntity: ResponseEntity<T>)
-    {
-        assertEquals(responseEntity.statusCode, HttpStatus.OK)
-        assertEquals(responseEntity.headers.contentType, MediaType.APPLICATION_JSON)
+    protected fun <T> assertSuccess(responseEntity: ResponseEntity<T>) {
+        assertEquals(HttpStatus.OK, responseEntity.statusCode)
+        assertEquals(MediaType.APPLICATION_JSON, responseEntity.headers.contentType)
     }
 
-    protected fun <T>assertUnauthorized(responseEntity: ResponseEntity<T>)
-    {
-        assertEquals(responseEntity.statusCode, HttpStatus.UNAUTHORIZED)
+    protected fun <T> assertUnauthorized(responseEntity: ResponseEntity<T>) {
+        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.statusCode)
     }
 
-    protected fun <T>assertForbidden(responseEntity: ResponseEntity<T>)
-    {
-        assertEquals(responseEntity.statusCode, HttpStatus.FORBIDDEN)
+    protected fun <T> assertForbidden(responseEntity: ResponseEntity<T>) {
+        assertEquals(HttpStatus.FORBIDDEN, responseEntity.statusCode)
     }
 
-    protected fun <T>assertBadRequest(responseEntity: ResponseEntity<T>)
-    {
-        assertEquals(responseEntity.statusCode, HttpStatus.BAD_REQUEST)
+    protected fun <T> assertBadRequest(responseEntity: ResponseEntity<T>) {
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.statusCode)
     }
 
-    protected fun <T>assertNotFound(responseEntity: ResponseEntity<T>)
-    {
-        assertEquals(responseEntity.statusCode, HttpStatus.NOT_FOUND)
+    protected fun <T> assertNotFound(responseEntity: ResponseEntity<T>) {
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.statusCode)
     }
 }

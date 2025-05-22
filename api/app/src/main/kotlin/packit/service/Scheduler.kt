@@ -11,30 +11,25 @@ class Scheduler(
     private val oneTimeTokenService: OneTimeTokenService,
     private val packetService: PacketService,
     private val outpackServerClient: OutpackServerClient,
-)
-{
+) {
 
     @Scheduled(fixedDelay = 10000)
-    fun checkPackets()
-    {
+    fun checkPackets() {
         val current = packetService.getChecksum()
         val new = outpackServerClient.getChecksum()
-        if (current != new)
-        {
+        if (current != new) {
             log.info("Refreshing packet metadata")
             packetService.importPackets()
         }
     }
 
     @Scheduled(cron = "@daily")
-    fun cleanUpExpiredTokens()
-    {
+    fun cleanUpExpiredTokens() {
         log.info("Cleaning up expired tokens")
         oneTimeTokenService.cleanUpExpiredTokens()
     }
 
-    companion object
-    {
+    companion object {
         private val log = LoggerFactory.getLogger(Scheduler::class.java)
     }
 }

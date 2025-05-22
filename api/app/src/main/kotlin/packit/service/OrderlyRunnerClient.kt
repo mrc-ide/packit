@@ -9,8 +9,7 @@ import packit.model.dto.RunnerSubmitRunInfo
 import packit.model.dto.SubmitRunResponse
 import packit.model.dto.TaskStatus
 
-interface OrderlyRunner
-{
+interface OrderlyRunner {
     fun getVersion(): OrderlyRunnerVersion
     fun gitFetch(url: String)
     fun getBranches(url: String): GitBranches
@@ -20,15 +19,12 @@ interface OrderlyRunner
     fun getTaskStatuses(taskIds: List<String>, includeLogs: Boolean): List<TaskStatus>
 }
 
-class OrderlyRunnerClient(val baseUrl: String) : OrderlyRunner
-{
-    override fun getVersion(): OrderlyRunnerVersion
-    {
+class OrderlyRunnerClient(val baseUrl: String) : OrderlyRunner {
+    override fun getVersion(): OrderlyRunnerVersion {
         return GenericClient.get(constructUrl("/"))
     }
 
-    override fun gitFetch(url: String)
-    {
+    override fun gitFetch(url: String) {
         return GenericClient.post(
             constructUrl("repository/fetch?url={url}"),
             RepositoryFetch(sshKey = null),
@@ -36,32 +32,28 @@ class OrderlyRunnerClient(val baseUrl: String) : OrderlyRunner
         )
     }
 
-    override fun getBranches(url: String): GitBranches
-    {
+    override fun getBranches(url: String): GitBranches {
         return GenericClient.get(
             constructUrl("repository/branches?url={url}"),
             mapOf("url" to url)
         )
     }
 
-    override fun getPacketGroups(url: String, ref: String): List<RunnerPacketGroup>
-    {
+    override fun getPacketGroups(url: String, ref: String): List<RunnerPacketGroup> {
         return GenericClient.get(
             constructUrl("/report/list?url={url}&ref={ref}"),
             mapOf("url" to url, "ref" to ref)
         )
     }
 
-    override fun getParameters(url: String, ref: String, packetGroupName: String): List<Parameter>
-    {
+    override fun getParameters(url: String, ref: String, packetGroupName: String): List<Parameter> {
         return GenericClient.get(
             constructUrl("report/parameters?url={url}&ref={ref}&name={name}"),
             mapOf("url" to url, "ref" to ref, "name" to packetGroupName)
         )
     }
 
-    override fun submitRun(url: String, info: RunnerSubmitRunInfo): SubmitRunResponse
-    {
+    override fun submitRun(url: String, info: RunnerSubmitRunInfo): SubmitRunResponse {
         return GenericClient.post(
             constructUrl("/report/run?url={url}"),
             info,
@@ -69,8 +61,7 @@ class OrderlyRunnerClient(val baseUrl: String) : OrderlyRunner
         )
     }
 
-    override fun getTaskStatuses(taskIds: List<String>, includeLogs: Boolean): List<TaskStatus>
-    {
+    override fun getTaskStatuses(taskIds: List<String>, includeLogs: Boolean): List<TaskStatus> {
         return GenericClient.post(
             constructUrl("/report/status?include_logs={includeLogs}"),
             taskIds,
@@ -78,8 +69,7 @@ class OrderlyRunnerClient(val baseUrl: String) : OrderlyRunner
         )
     }
 
-    private fun constructUrl(urlFragment: String): String
-    {
+    private fun constructUrl(urlFragment: String): String {
         return "$baseUrl/$urlFragment"
     }
 }

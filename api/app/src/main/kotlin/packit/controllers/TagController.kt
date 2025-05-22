@@ -15,15 +15,13 @@ import packit.service.TagService
 @RequestMapping("/tag")
 class TagController(
     private val tagService: TagService
-)
-{
+) {
     @GetMapping
     fun getTags(
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
         @RequestParam(required = false, defaultValue = "50") pageSize: Int,
         @RequestParam(required = false, defaultValue = "") filterName: String,
-    ): ResponseEntity<Page<TagDto>>
-    {
+    ): ResponseEntity<Page<TagDto>> {
         val payload = PageablePayload(pageNumber, pageSize)
 
         return ResponseEntity.ok(tagService.getTags(payload, filterName).map { it.toDto() })

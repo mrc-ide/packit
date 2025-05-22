@@ -11,29 +11,22 @@ import org.springframework.stereotype.Component
 import packit.AppConfig
 import packit.exceptions.PackitException
 
-interface JwtDecoder
-{
+interface JwtDecoder {
     fun decode(token: String): DecodedJWT
 }
 
 @Component
-class TokenDecoder(val config: AppConfig) : JwtDecoder
-{
-    override fun decode(token: String): DecodedJWT
-    {
-        try
-        {
+class TokenDecoder(val config: AppConfig) : JwtDecoder {
+    override fun decode(token: String): DecodedJWT {
+        try {
             return JWT.require(Algorithm.HMAC256(config.authJWTSecret))
                 .build()
                 .verify(token)
-        } catch (e: SignatureVerificationException)
-        {
+        } catch (e: SignatureVerificationException) {
             throw PackitException("jwtSignatureVerificationFailed", HttpStatus.UNAUTHORIZED)
-        } catch (e: TokenExpiredException)
-        {
+        } catch (e: TokenExpiredException) {
             throw PackitException("jwtTokenExpired", HttpStatus.UNAUTHORIZED)
-        } catch (e: JWTVerificationException)
-        {
+        } catch (e: JWTVerificationException) {
             throw PackitException("jwtVerificationFailed", HttpStatus.UNAUTHORIZED)
         }
     }

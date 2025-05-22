@@ -5,12 +5,12 @@ import { UpdateDialogContent } from "../UpdateDialogContent";
 import { UpdateDropdown, UpdateOptions } from "../UpdateDropdown";
 import { UpdatePermissionsForm } from "../updatePermission/UpdatePermissionsForm";
 import { RoleWithRelationships } from "../types/RoleWithRelationships";
-import { UserWithRoles } from "../types/UserWithRoles";
+import { UserWithPermissions } from "../types/UserWithPermissions";
 import { UpdateRoleUsersForm } from "./UpdateRoleUsersForm";
 
 interface UpdateRoleDropDownMenuProps {
   role: RoleWithRelationships;
-  users: UserWithRoles[];
+  users: UserWithPermissions[];
   mutate: KeyedMutator<RoleWithRelationships[]>;
 }
 export const UpdateRoleDropDownMenu = ({ mutate, role, users }: UpdateRoleDropDownMenuProps) => {

@@ -14,12 +14,9 @@ class BasicLoginService(
     val jwtIssuer: JwtIssuer,
     val authenticationManager: AuthenticationManager,
     val userService: UserService
-)
-{
-    fun authenticateAndIssueToken(loginRequest: LoginWithPassword): Map<String, String>
-    {
-        if (loginRequest.email.isEmpty() || loginRequest.password.isEmpty())
-        {
+) {
+    fun authenticateAndIssueToken(loginRequest: LoginWithPassword): Map<String, String> {
+        if (loginRequest.email.isEmpty() || loginRequest.password.isEmpty()) {
             throw PackitException("emptyCredentials", HttpStatus.BAD_REQUEST)
         }
 

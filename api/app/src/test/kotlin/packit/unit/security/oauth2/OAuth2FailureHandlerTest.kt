@@ -11,8 +11,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class OAuth2FailureHandlerTest : OAuthHandlerTest() {
-    fun assertExpectedRedirectOnException(exception: AuthenticationException, expectedError: String)
-    {
+    fun assertExpectedRedirectOnException(exception: AuthenticationException, expectedError: String) {
         val sut = OAuth2FailureHandler(mockRedirect, PackitExceptionHandler())
         sut.onAuthenticationFailure(mockRequest, mockResponse, exception)
 
@@ -21,8 +20,7 @@ class OAuth2FailureHandlerTest : OAuthHandlerTest() {
     }
 
     @Test
-    fun `can redirect on PackitAuthenticationException`()
-    {
+    fun `can redirect on PackitAuthenticationException`() {
         assertExpectedRedirectOnException(
             PackitAuthenticationException("githubTokenInsufficientPermissions"),
             "The supplied GitHub token does not have sufficient permissions to check user credentials."
@@ -30,8 +28,7 @@ class OAuth2FailureHandlerTest : OAuthHandlerTest() {
     }
 
     @Test
-    fun `can redirect on other exception`()
-    {
+    fun `can redirect on other exception`() {
         val e = OAuth2AuthenticationException(OAuth2Error("invalid_token"), "test error")
         assertExpectedRedirectOnException(e, "test error")
     }

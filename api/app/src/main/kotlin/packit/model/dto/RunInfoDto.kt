@@ -2,8 +2,7 @@ package packit.model.dto
 
 import com.fasterxml.jackson.annotation.JsonValue
 
-enum class Status(@JsonValue val status: String)
-{
+enum class Status(@JsonValue val status: String) {
     PENDING("PENDING"),
     RUNNING("RUNNING"),
     COMPLETE("COMPLETE"),

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*
 import packit.AppConfig
 import packit.exceptions.PackitException
 import packit.model.dto.CreateBasicUser
+import packit.model.dto.CreateExternalUser
 import packit.model.dto.UpdateUserRoles
 import packit.model.dto.UserDto
 import packit.model.toDto
@@ -23,15 +24,12 @@ class UserController(
     private val config: AppConfig,
     private val userService: UserService,
     private val userRoleService: UserRoleService
-)
-{
+) {
     @PostMapping("/basic")
     fun createBasicUser(
         @RequestBody @Validated createBasicUser: CreateBasicUser
-    ): ResponseEntity<UserDto>
-    {
-        if (!config.authEnableBasicLogin)
-        {
+    ): ResponseEntity<UserDto> {
+        if (!config.authEnableBasicLogin) {
             throw PackitException("basicLoginDisabled", HttpStatus.FORBIDDEN)
         }
 
@@ -40,12 +38,22 @@ class UserController(
         return ResponseEntity.created(URI.create("/user/${user.id}")).body(user.toDto())
     }
 
+    @PostMapping("/external")
+    fun createExternalUser(@RequestBody @Validated createExternalUser: CreateExternalUser): ResponseEntity<UserDto> {
+        if (config.authEnableBasicLogin || !config.authEnabled) {
+            throw PackitException("externalLoginDisabled", HttpStatus.FORBIDDEN)
+        }
+
+        val user = userService.createExternalUser(createExternalUser, config.authMethod)
+
+        return ResponseEntity.created(URI.create("/user/${user.id}")).body(user.toDto())
+    }
+
     @PutMapping("/{username}/roles")
     fun updateUserRoles(
         @RequestBody @Validated updateUserRoles: UpdateUserRoles,
         @PathVariable username: String
-    ): ResponseEntity<UserDto>
-    {
+    ): ResponseEntity<UserDto> {
         val updatedUser = userRoleService.updateUserRoles(username, updateUserRoles)
 
         return ResponseEntity.ok(updatedUser.toDto())
@@ -54,8 +62,7 @@ class UserController(
     @DeleteMapping("/{username}")
     fun deleteUser(
         @PathVariable username: String
-    ): ResponseEntity<Unit>
-    {
+    ): ResponseEntity<Unit> {
         userService.deleteUser(username)
 
         return ResponseEntity.noContent().build()

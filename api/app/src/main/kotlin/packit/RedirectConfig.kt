@@ -8,8 +8,7 @@ import org.springframework.security.web.RedirectStrategy
 @Configuration
 class RedirectConfig {
     @Bean
-    fun redirectStrategy(): RedirectStrategy
-    {
+    fun redirectStrategy(): RedirectStrategy {
         return DefaultRedirectStrategy()
     }
 }

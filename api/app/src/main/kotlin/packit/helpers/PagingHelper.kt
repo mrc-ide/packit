@@ -6,10 +6,8 @@ import org.springframework.data.domain.PageRequest
 import packit.model.PageablePayload
 import kotlin.math.min
 
-object PagingHelper
-{
-    fun <T> convertListToPage(list: List<T>, pageablePayload: PageablePayload): Page<T>
-    {
+object PagingHelper {
+    fun <T> convertListToPage(list: List<T>, pageablePayload: PageablePayload): Page<T> {
         val pageable = PageRequest.of(
             pageablePayload.pageNumber,
             pageablePayload.pageSize,

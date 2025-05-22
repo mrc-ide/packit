@@ -7,27 +7,23 @@ import packit.AppConfig
 import packit.exceptions.PackitAuthenticationException
 
 @Component
-class GithubUserClient(private val config: AppConfig, private val githubBuilder: GitHubBuilder = GitHubBuilder())
-{
+class GithubUserClient(private val config: AppConfig, private val githubBuilder: GitHubBuilder = GitHubBuilder()) {
 
     private var github: GitHub? = null
     private var ghUser: GHMyself? = null
 
-    fun authenticate(token: String)
-    {
+    fun authenticate(token: String) {
         connectToClient(token)
         ghUser = getGitHubUser()
     }
 
-    fun getGithubUser(): GHMyself
-    {
+    fun getGithubUser(): GHMyself {
         checkAuthenticated()
         return ghUser!!
     }
 
     @Throws(PackitAuthenticationException::class)
-    fun checkGithubMembership()
-    {
+    fun checkGithubMembership() {
         checkAuthenticated()
 
         val userOrg = try {
@@ -39,8 +35,7 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
         var userOK = userOrg != null // Check if user passes in org check
 
         val allowedTeam = config.authGithubAPITeam
-        if (userOK && allowedTeam.isNotEmpty())
-        {
+        if (userOK && allowedTeam.isNotEmpty()) {
             // We've confirmed user is in org, and required team is not empty, so we need to
             // check team membership too
             val team = userOrg!!.teams[allowedTeam] ?: throw PackitAuthenticationException(
@@ -50,35 +45,28 @@ class GithubUserClient(private val config: AppConfig, private val githubBuilder:
             userOK = ghUser!!.isMemberOf(team) // Check if user passes in team check
         }
 
-        if (!userOK)
-        {
+        if (!userOK) {
             throw PackitAuthenticationException("githubUserRestrictedAccess", HttpStatus.UNAUTHORIZED)
         }
     }
 
-    private fun checkAuthenticated()
-    {
+    private fun checkAuthenticated() {
         checkNotNull(ghUser) { "User has not been authenticated" }
     }
 
-    private fun connectToClient(token: String)
-    {
+    private fun connectToClient(token: String) {
         github = githubBuilder.withOAuthToken(token).build()
     }
 
-    private fun getGitHubUser(): GHMyself
-    {
-        try
-        {
+    private fun getGitHubUser(): GHMyself {
+        try {
             return github!!.myself
-        } catch (e: HttpException)
-        {
+        } catch (e: HttpException) {
             throw throwOnHttpException(e)
         }
     }
 
-    private fun throwOnHttpException(e: HttpException): Exception
-    {
+    private fun throwOnHttpException(e: HttpException): Exception {
         val errorCode = when (e.responseCode) {
             HttpStatus.UNAUTHORIZED.value() -> "githubTokenInvalid"
             HttpStatus.FORBIDDEN.value() -> "githubTokenInsufficientPermissions"

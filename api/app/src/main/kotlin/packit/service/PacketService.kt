@@ -20,8 +20,7 @@ import java.time.Instant
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-interface PacketService
-{
+interface PacketService {
     fun getPackets(pageablePayload: PageablePayload, filterName: String, filterId: String): Page<Packet>
     fun getPackets(): List<Packet>
     fun getChecksum(): String
@@ -47,10 +46,8 @@ class BasePacketService(
     private val packetRepository: PacketRepository,
     private val packetGroupRepository: PacketGroupRepository,
     private val outpackServerClient: OutpackServer,
-) : PacketService
-{
-    override fun importPackets()
-    {
+) : PacketService {
+    override fun importPackets() {
         val mostRecent = packetRepository.findTopByOrderByImportTimeDesc()?.importTime
         val now = Instant.now().epochSecond.toDouble()
         val packets = outpackServerClient.getMetadata(mostRecent)
@@ -68,32 +65,27 @@ class BasePacketService(
         saveUniquePacketGroups(packetGroupNames)
     }
 
-    internal fun saveUniquePacketGroups(packetGroupNames: List<String>)
-    {
+    internal fun saveUniquePacketGroups(packetGroupNames: List<String>) {
         val matchedPacketGroupNames = packetGroupRepository.findByNameIn(packetGroupNames).map { it.name }
         val newPacketGroups =
             packetGroupNames.filter { it !in matchedPacketGroupNames }
         packetGroupRepository.saveAll(newPacketGroups.map { PacketGroup(name = it) })
     }
 
-    override fun getPackets(): List<Packet>
-    {
+    override fun getPackets(): List<Packet> {
         return packetRepository.findAll()
     }
 
-    override fun getPacketsByName(name: String): List<Packet>
-    {
+    override fun getPacketsByName(name: String): List<Packet> {
         return packetRepository.findByName(name, Sort.by("startTime").descending())
     }
 
-    override fun getPacket(id: String): Packet
-    {
+    override fun getPacket(id: String): Packet {
         return packetRepository.findById(id)
             .orElseThrow { PackitException("packetNotFound", HttpStatus.NOT_FOUND) }
     }
 
-    override fun getPackets(pageablePayload: PageablePayload, filterName: String, filterId: String): Page<Packet>
-    {
+    override fun getPackets(pageablePayload: PageablePayload, filterName: String, filterId: String): Page<Packet> {
         val packets = packetRepository.findAllByNameContainingAndIdContaining(
             filterName,
             filterId,
@@ -103,15 +95,13 @@ class BasePacketService(
         return PagingHelper.convertListToPage(packets, pageablePayload)
     }
 
-    override fun getChecksum(): String
-    {
+    override fun getChecksum(): String {
         return packetRepository.findAllIds()
             .joinToString("")
             .toSHA256()
     }
 
-    override fun validateFilesExistForPacket(id: String, paths: List<String>): List<FileMetadata>
-    {
+    override fun validateFilesExistForPacket(id: String, paths: List<String>): List<FileMetadata> {
         val metadataFiles = getMetadataBy(id).files
         val notFoundPaths = paths.filter { path -> metadataFiles.none { it.path == path } }
 
@@ -126,29 +116,25 @@ class BasePacketService(
         return metadataFiles
     }
 
-    private fun String.toSHA256(): String
-    {
+    private fun String.toSHA256(): String {
         return "sha256:${
-            MessageDigest
-                .getInstance("SHA-256")
-                .digest(this.toByteArray()).toHex()
+        MessageDigest
+            .getInstance("SHA-256")
+            .digest(this.toByteArray()).toHex()
         }"
     }
 
-    private fun ByteArray.toHex(): String
-    {
+    private fun ByteArray.toHex(): String {
         return this.joinToString("") { "%02x".format(it) }
     }
 
-    override fun streamZip(paths: List<String>, id: String, output: OutputStream)
-    {
+    override fun streamZip(paths: List<String>, id: String, output: OutputStream) {
         val files = validateFilesExistForPacket(id, paths)
         val hashesByPath = files
             .filter { it.path in paths }
             .associateBy({ it.path }, { it.hash })
 
-        try
-        {
+        try {
             ZipOutputStream(output).use { zipOutputStream ->
                 hashesByPath.forEach { (filename, hash) ->
                     zipOutputStream.putNextEntry(ZipEntry(filename))
@@ -156,15 +142,13 @@ class BasePacketService(
                     zipOutputStream.closeEntry()
                 }
             }
-        } catch (e: Exception)
-        {
+        } catch (e: Exception) {
             // Log error on the back end (does not affect front end, client just downloads an incomplete file)
             throw PackitException("errorCreatingZip", HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
-    override fun getMetadataBy(id: String): PacketMetadata
-    {
+    override fun getMetadataBy(id: String): PacketMetadata {
         return outpackServerClient.getMetadataById(id)
             ?: throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
     }
@@ -174,8 +158,7 @@ class BasePacketService(
         path: String,
         output: OutputStream,
         preStream: (ClientHttpResponse) -> Unit
-    )
-    {
+    ) {
         val files = validateFilesExistForPacket(packetId, listOf(path))
         val hash = files.first { it.path == path }.hash
 

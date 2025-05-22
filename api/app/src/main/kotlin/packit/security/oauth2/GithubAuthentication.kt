@@ -6,8 +6,7 @@ import packit.security.profile.UserPrincipal
 class GithubAuthentication(
     private val userPrincipal: UserPrincipal,
     private val organizations: List<String>
-) : Authentication
-{
+) : Authentication {
     override fun getAuthorities() = userPrincipal.authorities
 
     override fun getCredentials() = organizations
@@ -20,8 +19,7 @@ class GithubAuthentication(
 
     override fun getName() = userPrincipal.name
 
-    override fun setAuthenticated(isAuthenticated: Boolean)
-    {
+    override fun setAuthenticated(isAuthenticated: Boolean) {
         throw UnsupportedOperationException("GithubAuthentication is always authenticated")
     }
 }

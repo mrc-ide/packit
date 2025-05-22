@@ -8,11 +8,9 @@ import packit.exceptions.PackitException
 import packit.exceptions.PackitExceptionHandler
 import kotlin.test.assertEquals
 
-class PackitExceptionHandlerTest
-{
+class PackitExceptionHandlerTest {
     @Test
-    fun `returns error details for PackitAuthenticationException`()
-    {
+    fun `returns error details for PackitAuthenticationException`() {
         val exception = PackitAuthenticationException("githubTokenInsufficientPermissions")
         val sut = PackitExceptionHandler()
         val result = sut.errorDetailForPackitAuthenticationException(exception)
@@ -23,8 +21,7 @@ class PackitExceptionHandlerTest
     }
 
     @Test
-    fun `returns error detail from bundle if found for PackitException`()
-    {
+    fun `returns error detail from bundle if found for PackitException`() {
         val key = "doesNotExist"
         val exception = PackitException(key, HttpStatus.NOT_FOUND)
         val sut = PackitExceptionHandler()
@@ -42,8 +39,7 @@ class PackitExceptionHandlerTest
     }
 
     @Test
-    fun `returns error detail from exception key if not found in bundle for PackitException`()
-    {
+    fun `returns error detail from exception key if not found in bundle for PackitException`() {
         val key = "This key does not exist in error bundle"
         val exception = PackitException(key)
         val sut = PackitExceptionHandler()

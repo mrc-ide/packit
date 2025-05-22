@@ -13,8 +13,7 @@ import packit.model.RunInfo
 import packit.model.dto.*
 import packit.repository.RunInfoRepository
 
-interface RunnerService
-{
+interface RunnerService {
     fun getVersion(): OrderlyRunnerVersion
     fun gitFetch()
     fun getBranches(): GitBranches
@@ -30,25 +29,20 @@ class BaseRunnerService(
     private val orderlyRunnerClient: OrderlyRunner,
     private val runInfoRepository: RunInfoRepository,
     private val userService: UserService,
-) : RunnerService
-{
-    override fun getVersion(): OrderlyRunnerVersion
-    {
+) : RunnerService {
+    override fun getVersion(): OrderlyRunnerVersion {
         return orderlyRunnerClient.getVersion()
     }
 
-    override fun gitFetch()
-    {
+    override fun gitFetch() {
         orderlyRunnerClient.gitFetch(config.repository.url)
     }
 
-    override fun getBranches(): GitBranches
-    {
+    override fun getBranches(): GitBranches {
         return orderlyRunnerClient.getBranches(config.repository.url)
     }
 
-    override fun getParameters(ref: String, packetGroupName: String): List<Parameter>
-    {
+    override fun getParameters(ref: String, packetGroupName: String): List<Parameter> {
         return orderlyRunnerClient.getParameters(
             config.repository.url,
             ref,
@@ -56,16 +50,14 @@ class BaseRunnerService(
         )
     }
 
-    override fun getPacketGroups(ref: String): List<RunnerPacketGroup>
-    {
+    override fun getPacketGroups(ref: String): List<RunnerPacketGroup> {
         return orderlyRunnerClient.getPacketGroups(
             config.repository.url,
             ref
         )
     }
 
-    override fun submitRun(info: SubmitRunInfo, username: String): SubmitRunResponse
-    {
+    override fun submitRun(info: SubmitRunInfo, username: String): SubmitRunResponse {
         val request = RunnerSubmitRunInfo(
             packetGroupName = info.packetGroupName,
             branch = info.branch,
@@ -90,8 +82,7 @@ class BaseRunnerService(
         return res
     }
 
-    override fun getTaskStatus(taskId: String): RunInfo
-    {
+    override fun getTaskStatus(taskId: String): RunInfo {
         val runInfo =
             runInfoRepository.findByTaskId(taskId) ?: throw PackitException("runInfoNotFound", HttpStatus.NOT_FOUND)
 
@@ -103,11 +94,9 @@ class BaseRunnerService(
         return runInfo
     }
 
-    override fun getTasksStatuses(payload: PageablePayload, filterPacketGroupName: String): Page<RunInfo>
-    {
+    override fun getTasksStatuses(payload: PageablePayload, filterPacketGroupName: String): Page<RunInfo> {
         val runInfos = getRunInfos(payload, filterPacketGroupName)
-        if (runInfos.isEmpty)
-        {
+        if (runInfos.isEmpty) {
             return Page.empty()
         }
         val taskIds = runInfos.map { it.taskId }.content
@@ -116,8 +105,7 @@ class BaseRunnerService(
         return updateRunInfosWithStatuses(runInfos, taskStatuses)
     }
 
-    internal fun updateRunInfosWithStatuses(runInfos: Page<RunInfo>, taskStatuses: List<TaskStatus>): Page<RunInfo>
-    {
+    internal fun updateRunInfosWithStatuses(runInfos: Page<RunInfo>, taskStatuses: List<TaskStatus>): Page<RunInfo> {
         runInfos.forEach { runInfo ->
             val taskStatus = taskStatuses.find { it.taskId == runInfo.taskId }
                 ?: throw PackitException("runInfoNotFound", HttpStatus.NOT_FOUND)
@@ -129,14 +117,12 @@ class BaseRunnerService(
         return runInfos
     }
 
-    internal fun updateRunInfo(runInfo: RunInfo, taskStatus: TaskStatus): RunInfo
-    {
+    internal fun updateRunInfo(runInfo: RunInfo, taskStatus: TaskStatus): RunInfo {
         return runInfo.apply {
             timeQueued = taskStatus.timeQueued
             timeStarted = taskStatus.timeStarted
             timeCompleted = taskStatus.timeComplete
-            if (taskStatus.logs != null)
-            {
+            if (taskStatus.logs != null) {
                 logs = taskStatus.logs
             }
             status = taskStatus.status
@@ -145,8 +131,7 @@ class BaseRunnerService(
         }
     }
 
-    internal fun getRunInfos(payload: PageablePayload, filterPacketGroupName: String): Page<RunInfo>
-    {
+    internal fun getRunInfos(payload: PageablePayload, filterPacketGroupName: String): Page<RunInfo> {
         val pageable = PageRequest.of(
             payload.pageNumber,
             payload.pageSize,
@@ -174,8 +159,7 @@ class DisabledRunnerService : RunnerService {
 }
 
 @Configuration
-class RunnerServiceConfiguration
-{
+class RunnerServiceConfiguration {
     @Bean
     fun runnerService(
         config: RunnerConfig?,
