@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DataTable } from "../../../../app/components/contents/common/DataTable";
-import { createColumnHelper } from "@tanstack/react-table";
+import { createColumnHelper, FilterFn } from "@tanstack/react-table";
 import { FilterInput } from "../../../../app/components/contents/common/FilterInput";
 import { useState } from "react";
 
@@ -126,6 +126,47 @@ describe("DataTable", () => {
     userEvent.click(toggle);
     await waitFor(() => {
       expect(screen.getByText("Name")).toBeVisible();
+    });
+  });
+
+  it("should be able to filter data with global filter", async () => {
+    const globalFilterFn: FilterFn<any> = (row, columnId, filterValue) => {
+      const rowValue = row.getValue(columnId);
+
+      if (typeof rowValue === "string") {
+        return rowValue.toLowerCase().includes(filterValue.toLowerCase());
+      }
+      return false;
+    };
+
+    const GlobalFilterComponent = () => {
+      const [globalFilter, setGlobalFilter] = useState("");
+      return (
+        <div>
+          <div>
+            <FilterInput setFilter={setGlobalFilter} placeholder="Global Search..." />
+          </div>
+          <DataTable
+            data={data}
+            columns={columns}
+            clientFiltering
+            globalFiltering={{
+              globalFilter,
+              setGlobalFilter,
+              globalFilterFn,
+              globalFilterCols: ["name", "age"]
+            }}
+          />
+        </div>
+      );
+    };
+    render(<GlobalFilterComponent />);
+
+    userEvent.type(screen.getByPlaceholderText("Global Search..."), "Name 2");
+
+    await waitFor(() => {
+      expect(screen.getByText("Name 2")).toBeVisible();
+      expect(screen.queryByText("Name 0")).not.toBeInTheDocument();
     });
   });
 });

@@ -1,5 +1,6 @@
 import {
   ColumnDef,
+  FilterFnOption,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -21,6 +22,12 @@ interface DataTableProps<TData> {
     columnVisibility: Record<string, boolean>;
     setColumnVisibility: Dispatch<SetStateAction<Record<string, boolean>>>;
   };
+  globalFiltering?: {
+    globalFilter: string;
+    setGlobalFilter: Dispatch<SetStateAction<string>>;
+    globalFilterFn: FilterFnOption<TData>;
+    globalFilterCols: Array<keyof TData>;
+  };
   clientFiltering?: boolean;
 }
 
@@ -29,6 +36,7 @@ export const DataTable = <TData,>({
   columns,
   pagination,
   visibility,
+  globalFiltering,
   clientFiltering = false
 }: DataTableProps<TData>) => {
   const table = useReactTable({
@@ -39,6 +47,10 @@ export const DataTable = <TData,>({
     ...(pagination && { getPaginationRowModel: getPaginationRowModel() }),
     ...(clientFiltering && { getFilteredRowModel: getFilteredRowModel() }),
     ...(visibility && { onColumnVisibilityChange: visibility.setColumnVisibility }),
+    ...(globalFiltering && {
+      onGlobalFilterChange: globalFiltering.setGlobalFilter,
+      globalFilterFn: globalFiltering.globalFilterFn
+    }),
     initialState: {
       ...(pagination && {
         pagination: {
@@ -49,9 +61,13 @@ export const DataTable = <TData,>({
     state: {
       ...(visibility && {
         columnVisibility: visibility.columnVisibility
+      }),
+      ...(globalFiltering && {
+        globalFilter: globalFiltering.globalFilter
       })
     },
-    manualFiltering: clientFiltering ? false : true
+    manualFiltering: clientFiltering ? false : true,
+    getColumnCanGlobalFilter: (column) => globalFiltering?.globalFilterCols.includes(column.id as keyof TData) ?? true
   });
   const rows = table.getRowModel().rows;
 

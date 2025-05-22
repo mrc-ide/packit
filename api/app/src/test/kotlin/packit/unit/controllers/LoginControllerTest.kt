@@ -13,15 +13,14 @@ import packit.model.dto.LoginWithToken
 import packit.model.dto.UpdatePassword
 import packit.service.BasicLoginService
 import packit.service.GithubAPILoginService
+import packit.service.PreAuthenticatedLoginService
 import packit.service.UserService
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class LoginControllerTest
-{
+class LoginControllerTest {
     @Test
-    fun `can login with github api token and get packit token`()
-    {
+    fun `can login with github api token and get packit token`() {
         val request = LoginWithToken("fakeToken")
 
         val mockLoginService = mock<GithubAPILoginService> {
@@ -31,7 +30,7 @@ class LoginControllerTest
             on { authEnableGithubLogin } doReturn true
         }
 
-        val sut = LoginController(mockLoginService, mock(), mock(), mockAppConfig, mock())
+        val sut = LoginController(mockLoginService, mock(), mock(), mock(), mockAppConfig, mock())
 
         val result = sut.loginWithGithub(request)
 
@@ -41,15 +40,14 @@ class LoginControllerTest
     }
 
     @Test
-    fun `throws packit exception  if github login is not enabled`()
-    {
+    fun `throws packit exception  if github login is not enabled`() {
         val request = LoginWithToken("fakeToken")
 
         val mockAppConfig = mock<AppConfig> {
             on { authEnableGithubLogin } doReturn false
         }
 
-        val sut = LoginController(mock(), mock(), mock(), mockAppConfig, mock())
+        val sut = LoginController(mock(), mock(), mock(), mock(), mockAppConfig, mock())
 
         val ex = assertThrows<PackitException> {
             sut.loginWithGithub(request)
@@ -59,8 +57,7 @@ class LoginControllerTest
     }
 
     @Test
-    fun `can login with basic auth and get packit token`()
-    {
+    fun `can login with basic auth and get packit token`() {
         val request = LoginWithPassword("test@email.com", "password")
 
         val mockLoginService = mock<BasicLoginService> {
@@ -70,7 +67,7 @@ class LoginControllerTest
             on { authEnableBasicLogin } doReturn true
         }
 
-        val sut = LoginController(mock(), mockLoginService, mock(), mockAppConfig, mock())
+        val sut = LoginController(mock(), mock(), mockLoginService, mock(), mockAppConfig, mock())
 
         val result = sut.loginBasic(request)
 
@@ -80,14 +77,13 @@ class LoginControllerTest
     }
 
     @Test
-    fun `throws packit exception if basic login is not enabled`()
-    {
+    fun `throws packit exception if basic login is not enabled`() {
         val request = LoginWithPassword("test@email.com", "password")
         val mockAppConfig = mock<AppConfig> {
             on { authEnableBasicLogin } doReturn false
         }
 
-        val sut = LoginController(mock(), mock(), mock(), mockAppConfig, mock())
+        val sut = LoginController(mock(), mock(), mock(), mock(), mockAppConfig, mock())
 
         val ex = assertThrows<PackitException> {
             sut.loginBasic(request)
@@ -97,15 +93,14 @@ class LoginControllerTest
     }
 
     @Test
-    fun `can get config`()
-    {
+    fun `can get config`() {
         val mockAppConfig = mock<AppConfig> {
             on { authEnableGithubLogin } doReturn false
             on { authEnabled } doReturn true
             on { authEnableBasicLogin } doReturn true
         }
 
-        val sut = LoginController(mock(), mock(), mock(), mockAppConfig, mock())
+        val sut = LoginController(mock(), mock(), mock(), mock(), mockAppConfig, mock())
 
         val result = sut.authConfig()
 
@@ -114,19 +109,19 @@ class LoginControllerTest
         val expectedConfig = mapOf(
             "enableGithubLogin" to false,
             "enableBasicLogin" to true,
+            "enablePreAuthLogin" to false,
             "enableAuth" to true,
         )
         assertEquals(result.body, expectedConfig)
     }
 
     @Test
-    fun `updatePassword throws packit exception if basic login is not enabled`()
-    {
+    fun `updatePassword throws packit exception if basic login is not enabled`() {
         val mockAppConfig = mock<AppConfig> {
             on { authEnableBasicLogin } doReturn false
         }
 
-        val sut = LoginController(mock(), mock(), mock(), mockAppConfig, mock())
+        val sut = LoginController(mock(), mock(), mock(), mock(), mockAppConfig, mock())
 
         val ex = assertThrows<PackitException> {
             sut.updatePassword("user@email", UpdatePassword("current", "newpassword"))
@@ -136,17 +131,48 @@ class LoginControllerTest
     }
 
     @Test
-    fun `updatePassword calls userService updatePassword`()
-    {
+    fun `updatePassword calls userService updatePassword`() {
         val mockAppConfig = mock<AppConfig> {
             on { authEnableBasicLogin } doReturn true
         }
         val mockUserService = mock<UserService>()
         val updatePassword = UpdatePassword("current", "newpassword")
-        val sut = LoginController(mock(), mock(), mock(), mockAppConfig, mockUserService)
+        val sut = LoginController(mock(), mock(), mock(), mock(), mockAppConfig, mockUserService)
 
         sut.updatePassword("test@email.com", updatePassword)
 
         verify(mockUserService).updatePassword("test@email.com", updatePassword)
+    }
+
+    @Test
+    fun `loginWithTrustedHeaders gets token from preauth user service`() {
+        val mockAppConfig = mock<AppConfig> {
+            on { authEnablePreAuthLogin } doReturn true
+        }
+
+        val token = "test-token"
+        val tokenMap = mapOf("token" to token)
+        val mockService = mock<PreAuthenticatedLoginService> {
+            on { saveUserAndIssueToken("test.user", "Test User", "test.user@example.com") } doReturn tokenMap
+        }
+
+        val sut = LoginController(mock(), mockService, mock(), mock(), mockAppConfig, mock())
+        val result = sut.loginWithTrustedHeaders("test.user", "Test User", "test.user@example.com")
+        assertEquals(result.statusCode, HttpStatus.OK)
+        assertEquals(result.body, tokenMap)
+    }
+
+    @Test
+    fun `loginWithTrustedHeaders throws packit exception if preauth not enabled`() {
+        val mockAppConfig = mock<AppConfig> {
+            on { authEnablePreAuthLogin } doReturn false
+        }
+
+        val sut = LoginController(mock(), mock(), mock(), mock(), mockAppConfig, mock())
+        val ex = assertThrows<PackitException> {
+            sut.loginWithTrustedHeaders("test.user", "Test User", "test.user@example.com")
+        }
+        assertEquals(ex.httpStatus, HttpStatus.FORBIDDEN)
+        assertEquals(ex.key, "preauthLoginDisabled")
     }
 }

@@ -5,6 +5,7 @@ import { SWRConfig } from "swr";
 import { Home } from "../../../../app/components/contents/home";
 import * as fetch from "../../../../lib/fetch";
 import appConfig from "../../../../config/appConfig";
+import { UserProvider } from "../../../../app/components/providers/UserProvider";
 
 describe("Home component", () => {
   const fetcherSpy = jest.spyOn(fetch, "fetcher");
@@ -12,11 +13,13 @@ describe("Home component", () => {
     render(
       <SWRConfig value={{ dedupingInterval: 0 }}>
         <MemoryRouter>
-          <Home />
+          <UserProvider>
+            <Home />
+          </UserProvider>
         </MemoryRouter>
       </SWRConfig>
     );
-  it("renders reset button when filter is being filled and & calls api 2 times", async () => {
+  it("renders reset button when filter is being filled and & calls api endpoints", async () => {
     renderComponent();
 
     expect(fetcherSpy).toHaveBeenCalledWith({
@@ -33,5 +36,9 @@ describe("Home component", () => {
     expect(fetcherSpy).toHaveBeenCalledWith({
       url: `${appConfig.apiUrl()}/packetGroupSummaries?pageNumber=0&pageSize=50&filter=test`
     });
+
+    expect(fetcherSpy).toHaveBeenCalledWith({ url: `${appConfig.apiUrl()}/packetGroups/_/read-permission` });
+
+    expect(fetcherSpy).toHaveBeenCalledWith({ url: `${appConfig.apiUrl()}/pins/packets` });
   });
 });

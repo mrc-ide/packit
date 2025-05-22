@@ -49,16 +49,16 @@ describe("Pinned Packet component", () => {
     const downloadAllButton = await screen.findByText(/Download artefacts \(\d+\.\d+ KB\)/);
     expect(downloadAllButton).toBeVisible();
     userEvent.click(downloadAllButton);
-    const url = `${appConfig.apiUrl()}/packets/${mockPacket.id}/zip?paths=${encodeURIComponent(
-      [
-        "report.html",
-        "directory/graph.png",
-        "artefact_data.csv",
-        "excel_file.xlsx",
-        "internal_presentation.pdf",
-        "other_extensions.txt"
-      ].join(",")
-    )}`;
-    expect(mockDownload).toHaveBeenCalledWith(url, `parameters_artefacts_${mockPacket.id}.zip`);
+
+    const filesToBeDownloaded = mockPacket.files.filter((file) => [
+      "report.html",
+      "directory/graph.png",
+      "artefact_data.csv",
+      "excel_file.xlsx",
+      "internal_presentation.pdf",
+      "other_extensions.txt"
+    ].includes(file.path));
+    const zipName = `${mockPacket.name}_artefacts_${mockPacket.id}.zip`;
+    expect(mockDownload).toHaveBeenCalledWith(filesToBeDownloaded, mockPacket.id, zipName);
   });
 });

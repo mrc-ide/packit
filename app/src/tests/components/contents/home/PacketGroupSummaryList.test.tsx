@@ -7,6 +7,14 @@ import { server } from "../../../../msw/server";
 import { mockPacketGroupSummaries } from "../../../mocks";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
 import appConfig from "../../../../config/appConfig";
+import { UserProvider } from "../../../../app/components/providers/UserProvider";
+import { UserState } from "../../../../app/components/providers/types/UserTypes";
+
+const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
+jest.mock("../../../../lib/localStorageManager", () => ({
+  ...jest.requireActual("../../../../lib/localStorageManager"),
+  getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
+}));
 
 const endpoint = `${appConfig.apiUrl()}/packetGroupSummaries`;
 
@@ -15,7 +23,9 @@ describe("PacketGroupSummaryList test", () => {
     render(
       <SWRConfig value={{ dedupingInterval: 0 }}>
         <MemoryRouter>
-          <PacketGroupSummaryList filterByName="" pageNumber={0} pageSize={10} setPageNumber={jest.fn()} />
+          <UserProvider>
+            <PacketGroupSummaryList filterByName="" pageNumber={0} pageSize={10} setPageNumber={jest.fn()} />
+          </UserProvider>
         </MemoryRouter>
       </SWRConfig>
     );
@@ -66,7 +76,7 @@ describe("PacketGroupSummaryList test", () => {
     });
   });
 
-  it("should render error message when error occurs", async () => {
+  it("should render error message when error occurs fetching packet groups", async () => {
     server.use(
       rest.get(endpoint, (_req, res, ctx) => {
         return res(ctx.status(400));
@@ -75,11 +85,11 @@ describe("PacketGroupSummaryList test", () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText(/error fetching/i)).toBeVisible();
+      expect(screen.getByText(/error fetching packet groups/i)).toBeVisible();
     });
   });
 
-  it("should render unauthorized when 401 error fetching", async () => {
+  it("should render unauthorized when 401 error fetching packet groups", async () => {
     server.use(
       rest.get(endpoint, (_req, res, ctx) => {
         return res(ctx.status(HttpStatus.Unauthorized));

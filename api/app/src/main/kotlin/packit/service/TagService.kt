@@ -10,8 +10,7 @@ import packit.model.PageablePayload
 import packit.model.Tag
 import packit.repository.TagRepository
 
-interface TagService
-{
+interface TagService {
     fun getTags(pageablePayload: PageablePayload, filterName: String): Page<Tag>
     fun getTag(id: Int): Tag
 }
@@ -19,10 +18,8 @@ interface TagService
 @Service
 class BaseTagService(
     private val tagRepository: TagRepository
-) : TagService
-{
-    override fun getTags(pageablePayload: PageablePayload, filterName: String): Page<Tag>
-    {
+) : TagService {
+    override fun getTags(pageablePayload: PageablePayload, filterName: String): Page<Tag> {
         val pageable = PageRequest.of(
             pageablePayload.pageNumber,
             pageablePayload.pageSize,
@@ -31,8 +28,7 @@ class BaseTagService(
         return tagRepository.findAllByNameContaining(filterName, pageable)
     }
 
-    override fun getTag(id: Int): Tag
-    {
+    override fun getTag(id: Int): Tag {
         return tagRepository.findById(id)
             .orElseThrow { PackitException("tagNotFound", HttpStatus.NOT_FOUND) }
     }

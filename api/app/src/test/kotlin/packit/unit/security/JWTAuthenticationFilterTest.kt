@@ -5,21 +5,19 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import packit.exceptions.PackitException
-import packit.security.TokenAuthenticationFilter
+import packit.security.JWTAuthenticationFilter
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class TokenAuthenticationFilterTest
-{
+class JWTAuthenticationFilterTest {
     @Test
-    fun `can extract token from jwt`()
-    {
+    fun `can extract token from jwt`() {
         val mockHttpRequest = mock<HttpServletRequest> {
             on { getHeader("Authorization") } doReturn "Bearer faketoken"
         }
 
-        val sut = TokenAuthenticationFilter(mock(), mock())
+        val sut = JWTAuthenticationFilter(mock(), mock())
 
         val result = sut.extractToken(mockHttpRequest)
 
@@ -27,13 +25,12 @@ class TokenAuthenticationFilterTest
     }
 
     @Test
-    fun `can throw PackitException when token type is invalid`()
-    {
+    fun `can throw PackitException when token type is invalid`() {
         val mockHttpRequest = mock<HttpServletRequest> {
             on { getHeader("Authorization") } doReturn "faketoken"
         }
 
-        val sut = TokenAuthenticationFilter(mock(), mock())
+        val sut = JWTAuthenticationFilter(mock(), mock())
 
         val thrownError = assertThrows<PackitException> { sut.extractToken(mockHttpRequest) }
 
@@ -44,11 +41,10 @@ class TokenAuthenticationFilterTest
     }
 
     @Test
-    fun `returns empty optional if token is empty`()
-    {
+    fun `returns empty optional if token is empty`() {
         val mockHttpRequest = mock<HttpServletRequest>()
 
-        val sut = TokenAuthenticationFilter(mock(), mock())
+        val sut = JWTAuthenticationFilter(mock(), mock())
 
         val result = sut.extractToken(mockHttpRequest)
 

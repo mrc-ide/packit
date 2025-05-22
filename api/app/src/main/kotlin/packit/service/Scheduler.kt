@@ -8,25 +8,28 @@ import org.springframework.stereotype.Service
 @Service
 @ConditionalOnProperty(value = ["packit.scheduling.enabled"], havingValue = "true", matchIfMissing = true)
 class Scheduler(
-        private val packetService: PacketService,
-        private val outpackServerClient: OutpackServerClient
-)
-{
+    private val oneTimeTokenService: OneTimeTokenService,
+    private val packetService: PacketService,
+    private val outpackServerClient: OutpackServerClient,
+) {
 
     @Scheduled(fixedDelay = 10000, initialDelay = 0)
-    fun checkPackets()
-    {
+    fun checkPackets() {
         val current = packetService.getChecksum()
         val new = outpackServerClient.getChecksum()
-        if (current != new)
-        {
+        if (current != new) {
             log.info("Refreshing packet metadata")
             packetService.importPackets()
         }
     }
 
-    companion object
-    {
+    @Scheduled(cron = "@daily")
+    fun cleanUpExpiredTokens() {
+        log.info("Cleaning up expired tokens")
+        oneTimeTokenService.cleanUpExpiredTokens()
+    }
+
+    companion object {
         private val log = LoggerFactory.getLogger(Scheduler::class.java)
     }
 }

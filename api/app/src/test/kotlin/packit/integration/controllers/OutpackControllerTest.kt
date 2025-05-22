@@ -8,31 +8,29 @@ import packit.integration.WithAuthenticatedUser
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
-class OutpackControllerTest : IntegrationTest()
-{
+class OutpackControllerTest : IntegrationTest() {
     val testPacket = "{\n" +
-            "  \"schema_version\": \"0.0.1\",\n" +
-            "  \"name\": \"modup-201707-queries1\",\n" +
-            "  \"id\": \"20170818-164847-7574883b\",\n" +
-            "  \"time\": {\n" +
-            "    \"start\": 1503074938.2232,\n" +
-            "    \"end\": 1503074938.2232\n" +
-            "  },\n" +
-            "  \"parameters\": null,\n" +
-            "  \"files\": [],\n" +
-            "  \"depends\": [],\n" +
-            "  \"script\": [\n" +
-            "    \"script.R\"\n" +
-            "  ],\n" +
-            "  \"session\": {\n" +
-            "  },\n" +
-            "  \"custom\": null\n" +
-            "}"
+        "  \"schema_version\": \"0.0.1\",\n" +
+        "  \"name\": \"modup-201707-queries1\",\n" +
+        "  \"id\": \"20170818-164847-7574883b\",\n" +
+        "  \"time\": {\n" +
+        "    \"start\": 1503074938.2232,\n" +
+        "    \"end\": 1503074938.2232\n" +
+        "  },\n" +
+        "  \"parameters\": null,\n" +
+        "  \"files\": [],\n" +
+        "  \"depends\": [],\n" +
+        "  \"script\": [\n" +
+        "    \"script.R\"\n" +
+        "  ],\n" +
+        "  \"session\": {\n" +
+        "  },\n" +
+        "  \"custom\": null\n" +
+        "}"
 
     @Test
     @WithAuthenticatedUser(authorities = ["none"])
-    fun `can not GET if no outpack read or write authority`()
-    {
+    fun `can not GET if no outpack read or write authority`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/outpack",
             HttpMethod.GET,
@@ -43,8 +41,7 @@ class OutpackControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["outpack.read"])
-    fun `can not POST if no outpack write authority`()
-    {
+    fun `can not POST if no outpack write authority`() {
         val result = restTemplate.postForEntity(
             "/outpack",
             getTokenizedHttpEntity(MediaType.TEXT_PLAIN, testPacket),
@@ -55,8 +52,7 @@ class OutpackControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["outpack.read"])
-    fun `can GET json from outpack_server`()
-    {
+    fun `can GET json from outpack_server`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/outpack/metadata/list",
             HttpMethod.GET,
@@ -69,8 +65,7 @@ class OutpackControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["outpack.write"])
-    fun `can GET plain text from outpack_server`()
-    {
+    fun `can GET plain text from outpack_server`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/outpack/metadata/20240729-154639-25b955eb/text",
             HttpMethod.GET,
@@ -83,8 +78,7 @@ class OutpackControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["outpack.read"])
-    fun `can GET file from outpack_server`()
-    {
+    fun `can GET file from outpack_server`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/outpack/file/sha256:1a1b649d911106d45dcb58e535aae97904f465e66b11a38d7a70828b53e3a2eb",
             HttpMethod.GET,
@@ -97,8 +91,7 @@ class OutpackControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["outpack.write"])
-    fun `can POST text to outpack_server`()
-    {
+    fun `can POST text to outpack_server`() {
         val result = restTemplate.postForEntity(
             "/outpack/packet/sha256:ad153e5f6720dde3161b229ef73ca2b302fb95a37a092a2c8e3350a8ed6713d4",
             getTokenizedHttpEntity(MediaType.TEXT_PLAIN, testPacket),
@@ -110,8 +103,7 @@ class OutpackControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["outpack.write"])
-    fun `can POST file to outpack_server`()
-    {
+    fun `can POST file to outpack_server`() {
         val result = restTemplate.postForEntity(
             "/outpack/file/sha256:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
             getTokenizedHttpEntity(MediaType.APPLICATION_OCTET_STREAM, "test"),
@@ -123,8 +115,7 @@ class OutpackControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["outpack.write"])
-    fun `can return GET errors from outpack_server`()
-    {
+    fun `can return GET errors from outpack_server`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/outpack/bad",
             HttpMethod.GET,
@@ -140,8 +131,7 @@ class OutpackControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["outpack.write"])
-    fun `can return POST errors from outpack_server`()
-    {
+    fun `can return POST errors from outpack_server`() {
         val result = restTemplate.postForEntity(
             "/outpack/packet/badhash",
             getTokenizedHttpEntity(MediaType.TEXT_PLAIN, testPacket),

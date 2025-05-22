@@ -6,6 +6,7 @@ import { Pagination } from "../common/Pagination";
 import { Unauthorized } from "../common/Unauthorized";
 import { PacketGroupSummaryListItem } from "./PacketGroupSummaryListItem";
 import { useGetPacketGroupSummaries } from "./hooks/useGetPacketGroupSummaries";
+import { useGetRolesAndUsersToUpdatePacketGroupRead } from "./hooks/useGetRolesAndUsersToUpdatePacketGroupRead";
 
 interface PacketGroupSummaryListProps {
   filterByName: string;
@@ -19,12 +20,17 @@ export const PacketGroupSummaryList = ({
   pageSize,
   setPageNumber
 }: PacketGroupSummaryListProps) => {
-  const { packetGroupSummaries, isLoading, error } = useGetPacketGroupSummaries(pageNumber, pageSize, filterByName);
+  const { rolesAndUsers, mutate, isLoading: isRolesLoading } = useGetRolesAndUsersToUpdatePacketGroupRead();
+  const {
+    packetGroupSummaries,
+    isLoading,
+    error: packetFetchError
+  } = useGetPacketGroupSummaries(pageNumber, pageSize, filterByName);
 
-  if (error?.status === HttpStatus.Unauthorized) return <Unauthorized />;
-  if (error) return <ErrorComponent message="Error fetching packet groups" error={error} />;
+  if (packetFetchError?.status === HttpStatus.Unauthorized) return <Unauthorized />;
+  if (packetFetchError) return <ErrorComponent message="Error fetching packet groups" error={packetFetchError} />;
 
-  if (isLoading)
+  if (isLoading || (isRolesLoading && !packetGroupSummaries))
     return (
       <ul className="flex flex-col border rounded-md">
         {[...Array(2)].map((_, index) => (
@@ -47,7 +53,12 @@ export const PacketGroupSummaryList = ({
       ) : (
         <ul className="flex flex-col border rounded-md">
           {packetGroupSummaries?.content?.map((packetGroup) => (
-            <PacketGroupSummaryListItem key={packetGroup.latestId} packetGroup={packetGroup} />
+            <PacketGroupSummaryListItem
+              key={packetGroup.latestId}
+              packetGroup={packetGroup}
+              rolesAndUsersToUpdateRead={rolesAndUsers?.[packetGroup.name]}
+              mutate={mutate}
+            />
           ))}
         </ul>
       )}

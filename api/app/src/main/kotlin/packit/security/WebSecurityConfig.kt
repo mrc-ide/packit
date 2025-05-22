@@ -14,7 +14,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.authentication.logout.LogoutFilter
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
@@ -37,12 +36,10 @@ class WebSecurityConfig(
     val jwtIssuer: JwtIssuer,
     val browserRedirect: BrowserRedirect,
     val exceptionHandler: PackitExceptionHandler
-)
-{
+) {
     @Bean
     @Order(1)
-    fun actuatorSecurityFilterChain(httpSecurity: HttpSecurity): SecurityFilterChain
-    {
+    fun actuatorSecurityFilterChain(httpSecurity: HttpSecurity): SecurityFilterChain {
         // We allow unrestricted access to all the actuator endpoints. In
         // practice however, only select endpoints are enabled in
         // application.properties, and even the ones that are are all exposed on a
@@ -60,16 +57,14 @@ class WebSecurityConfig(
     @Order(2)
     fun securityFilterChain(
         httpSecurity: HttpSecurity,
-        tokenAuthenticationFilter: TokenAuthenticationFilter,
+        authStrategySwitch: AuthStrategySwitch,
         filterChainExceptionHandler: FilterChainExceptionHandler
-
-    ): SecurityFilterChain
-    {
+    ): SecurityFilterChain {
         httpSecurity
             .cors { it.configurationSource(getCorsConfigurationSource()) }
             .csrf { it.disable() }
             .addFilterBefore(filterChainExceptionHandler, LogoutFilter::class.java)
-            .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterAfter(authStrategySwitch, LogoutFilter::class.java)
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .formLogin { it.disable() }
             .handleSecurePaths()
@@ -86,8 +81,7 @@ class WebSecurityConfig(
      * The allowed headers are all headers.
      * @return CorsConfigurationSource
      */
-    private fun getCorsConfigurationSource(): CorsConfigurationSource
-    {
+    private fun getCorsConfigurationSource(): CorsConfigurationSource {
         val corsConfig = CorsConfiguration()
         corsConfig.allowedOriginPatterns = config.allowedOrigins
         corsConfig.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
@@ -95,10 +89,8 @@ class WebSecurityConfig(
         return CorsConfigurationSource { corsConfig }
     }
 
-    fun HttpSecurity.handleOauth2Login(): HttpSecurity
-    {
-        if (config.authEnableGithubLogin)
-        {
+    fun HttpSecurity.handleOauth2Login(): HttpSecurity {
+        if (config.authEnableGithubLogin) {
             this.oauth2Login { oauth2Login ->
                 oauth2Login
                     .userInfoEndpoint { it.userService(customOauth2UserService) }
@@ -109,10 +101,8 @@ class WebSecurityConfig(
         return this
     }
 
-    fun HttpSecurity.handleSecurePaths(): HttpSecurity
-    {
-        if (config.authEnabled)
-        {
+    fun HttpSecurity.handleSecurePaths(): HttpSecurity {
+        if (config.authEnabled) {
             this.securityMatcher("/**")
                 .authorizeHttpRequests {
                     it
@@ -121,8 +111,7 @@ class WebSecurityConfig(
                         .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
                         .anyRequest().authenticated()
                 }
-        } else
-        {
+        } else {
             this.securityMatcher("/**")
                 .authorizeHttpRequests { it.anyRequest().permitAll() }
         }
@@ -131,8 +120,7 @@ class WebSecurityConfig(
     }
 
     @Bean
-    fun authenticationManager(httpSecurity: HttpSecurity): AuthenticationManager
-    {
+    fun authenticationManager(httpSecurity: HttpSecurity): AuthenticationManager {
         return httpSecurity.getSharedObject(AuthenticationManagerBuilder::class.java)
             .userDetailsService(customBasicUserService)
             .passwordEncoder(config.passwordEncoder())

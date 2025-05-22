@@ -30,6 +30,12 @@ The app will be available on port 3000. If you would like to create a super admi
 ./scripts/dev-start --super-user
 ```
 
+You can run in preauth mode with the following. However, bear in mind that the front end will not be functional in this case - 
+use the [Montagu proxy](https://github.com/vimc/montagu-proxy) for a working example with a separate auth provider. 
+```
+./scripts/dev-start --preauth
+```
+
 For more options:
 
 ```

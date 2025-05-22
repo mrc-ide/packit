@@ -13,8 +13,7 @@ import java.time.Instant
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class PacketRepositoryTest : RepositoryTest()
-{
+class PacketRepositoryTest : RepositoryTest() {
     @Autowired
     lateinit var packetRepository: PacketRepository
 
@@ -78,27 +77,23 @@ class PacketRepositoryTest : RepositoryTest()
     )
 
     @BeforeEach
-    override fun setup()
-    {
+    override fun setup() {
         packetRepository.deleteAll()
     }
 
     @AfterAll
-    fun cleanup()
-    {
+    fun cleanup() {
         packetRepository.deleteAll()
     }
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `can get packets from db`()
-    {
+    fun `can get packets from db`() {
         packetRepository.saveAll(packets)
 
         val result = packetRepository.findAll()
 
-        for (i in packets.indices)
-        {
+        for (i in packets.indices) {
             assertEquals(result[i].id, packets[i].id)
             assertEquals(result[i].name, packets[i].name)
             assertEquals(result[i].importTime, packets[i].importTime)
@@ -108,8 +103,7 @@ class PacketRepositoryTest : RepositoryTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `gets filtered by name packets when findByName called`()
-    {
+    fun `gets filtered by name packets when findByName called`() {
         packetRepository.saveAll(packets)
 
         val result = packetRepository.findByName("test1", Sort.by("startTime").descending())
@@ -121,8 +115,7 @@ class PacketRepositoryTest : RepositoryTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `can get sorted packet ids from db`()
-    {
+    fun `can get sorted packet ids from db`() {
         packetRepository.saveAll(packets)
 
         val result = packetRepository.findAllIds()
@@ -142,16 +135,14 @@ class PacketRepositoryTest : RepositoryTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `most recent packet is null if no packets in db`()
-    {
+    fun `most recent packet is null if no packets in db`() {
         val result = packetRepository.findTopByOrderByImportTimeDesc()
         assertEquals(result, null)
     }
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `can get most recent packet from db`()
-    {
+    fun `can get most recent packet from db`() {
         packetRepository.saveAll(packets)
 
         val result = packetRepository.findTopByOrderByImportTimeDesc()
@@ -161,8 +152,7 @@ class PacketRepositoryTest : RepositoryTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `can get packet by id`()
-    {
+    fun `can get packet by id`() {
         packetRepository.saveAll(packets)
 
         val result = packetRepository.findById(packets[0].id)

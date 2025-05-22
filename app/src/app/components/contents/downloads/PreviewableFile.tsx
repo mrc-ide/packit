@@ -14,6 +14,12 @@ interface PreviewableFileProps {
 
 export const PreviewableFile = ({ file, fileName }: PreviewableFileProps) => {
   const { packet } = usePacketOutletContext();
+
+  // The img tag is destroyed and recreated when the hover card is closed and opened.
+  // Use blob URL to cache the image file in browser memory in order to avoid having to fetch the file every time the
+  // hover card closes and opens (which would create a noticeable latency).
+  // Since the blob url is not revoked by the useFileObjectUrl hook until the component is unmounted, the file is
+  // effectively cached while the img tag is not in the DOM, so we only need one one-time token.
   const { fileObjectUrl, error } = useFileObjectUrl(file);
 
   if (error) return <ErrorComponent message="Error loading file" error={error} />;
@@ -34,7 +40,12 @@ export const PreviewableFile = ({ file, fileName }: PreviewableFileProps) => {
           <ExternalLinkIcon size={15} className="min-w-fit ms-1" />
         </Link>
       </HoverCardTrigger>
-      <HoverCardContent className="w-80 bg-card border p-2 shadow" align="start">
+      <HoverCardContent
+        className="w-80 bg-card border p-2 shadow relative left-14"
+        align="start"
+        sideOffset={10}
+        style={{ zIndex: 1 }}
+      >
         <img src={fileObjectUrl} alt={`Preview of the image download ${fileName}`} />
       </HoverCardContent>
     </HoverCard>

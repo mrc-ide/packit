@@ -7,17 +7,42 @@ import { ScrollArea } from "../../../Base/ScrollArea";
 import { DeleteUserOrRole } from "../DeleteUserOrRole";
 import { UpdateRoleDropDownMenu } from "../manageRoleActions/UpdateRoleDropDownMenu";
 import { RoleWithRelationships } from "../types/RoleWithRelationships";
-import { UserWithRoles } from "../types/UserWithRoles";
+import { UserWithPermissions } from "../types/UserWithPermissions";
 
 const columnHelper = createColumnHelper<RoleWithRelationships>();
 
-export const setupManageRolesColumns = (mutate: KeyedMutator<RoleWithRelationships[]>, users: UserWithRoles[]) => [
+export const roleDefaultColumns = (scrollAreaHeightClass = "h-14") => [
   columnHelper.accessor("name", {
     header: "Role",
     cell: ({ getValue }) => {
       return <div>{getValue()}</div>;
     }
   }),
+  columnHelper.accessor("users", {
+    header: "Users",
+    cell: ({ getValue }) => {
+      const users = getValue();
+
+      return (
+        <ScrollArea className={scrollAreaHeightClass} type="auto">
+          <div className="flex flex-wrap gap-1 italic text-xs pl-0.5">
+            {users?.length === 0
+              ? "None"
+              : users.map((user, index) => (
+                  <div key={user.id}>{index === users.length - 1 ? user.username : user.username + ", "}</div>
+                ))}
+          </div>
+        </ScrollArea>
+      );
+    }
+  })
+];
+
+export const setupManageRolesColumns = (
+  mutate: KeyedMutator<RoleWithRelationships[]>,
+  users: UserWithPermissions[]
+) => [
+  ...roleDefaultColumns(),
   columnHelper.accessor("rolePermissions", {
     header: "Permissions",
     cell: ({ getValue }) => {
@@ -34,24 +59,6 @@ export const setupManageRolesColumns = (mutate: KeyedMutator<RoleWithRelationshi
                       ? constructPermissionName(permission)
                       : constructPermissionName(permission) + ","}
                   </div>
-                ))}
-          </div>
-        </ScrollArea>
-      );
-    }
-  }),
-  columnHelper.accessor("users", {
-    header: "Users",
-    cell: ({ getValue }) => {
-      const users = getValue();
-
-      return (
-        <ScrollArea className="h-14" type="auto">
-          <div className="flex flex-wrap gap-1 italic text-xs pl-0.5">
-            {users?.length === 0
-              ? "None"
-              : users.map((user, index) => (
-                  <div key={user.id}>{index === users.length - 1 ? user.username : user.username + ", "}</div>
                 ))}
           </div>
         </ScrollArea>

@@ -1,32 +1,78 @@
-import { downloadFileUri } from "../../msw/handlers/downloadFileHandlers";
-import { download, getFileObjectUrl, getFileUrl } from "../../lib/download";
-import { mockFileBlob } from "../mocks";
+import { download, getFileObjectUrl } from "../../lib/download";
+import { mockFileBlob, mockPacket } from "../mocks";
 import { server } from "../../msw/server";
 import { rest } from "msw";
-import { FileMetadata } from "../../types";
 import appConfig from "../../config/appConfig";
+import { testBaseUrl } from "./constants";
+import { absoluteApiUrl } from "../../helpers";
 
 jest.mock("../../lib/auth/getAuthHeader", () => ({
   getAuthHeader: () => ({ Authorization: "fakeAuthHeader" })
 }));
 
-const url = `${downloadFileUri}?filename=test.txt`;
-const testFile: FileMetadata = {
-  hash: "testHash",
-  path: "testPath",
-  size: 30
+let fetchSpy: jest.SpyInstance;
+let windowSpy: jest.SpyInstance;
+
+const testWindowLocation = `${testBaseUrl}/path/subpath`;
+
+beforeEach(async () => {
+  fetchSpy = jest.spyOn(global, "fetch");
+  windowSpy = jest.spyOn(globalThis, "window", "get");
+  windowSpy.mockImplementation(() => ({
+    location: {
+      href: testWindowLocation
+    }
+  }));
+});
+
+afterEach(() => {
+  fetchSpy.mockRestore();
+  windowSpy.mockRestore();
+});
+
+const setUpUnsuccessfulTokenResponse = () => {
+  server.use(
+    rest.post(`${appConfig.apiUrl()}/packets/${mockPacket.id}/files/token`, (req, res, ctx) => {
+      return res(
+        ctx.status(500),
+        ctx.json({
+          error: {
+            error: "OTHER_ERROR",
+            detail: "test token endpoint error"
+          }
+        })
+      );
+    })
+  );
 };
 
 describe("download", () => {
-  const fakeObjectUrl = "fakeObjectUrl";
-
-  it("downloads on successful response", async () => {
-    const mockCreateObjectUrl = jest.fn(() => fakeObjectUrl);
-    const mockRevokeObjectUrl = jest.fn();
-
+  it("getFileObjectUrl can fetch a file and pack it into a blob URL", async () => {
+    const mockCreateObjectUrl = jest.fn(() => "fakeObjectUrl");
     URL.createObjectURL = mockCreateObjectUrl;
-    URL.revokeObjectURL = mockRevokeObjectUrl;
 
+    await getFileObjectUrl(mockPacket.files[0], mockPacket.id, "directory/fakeFilename");
+
+    expect(fetchSpy).toHaveBeenCalledWith(
+      `${absoluteApiUrl()}/packets/${mockPacket.id}/files/token?paths=${mockPacket.files[0].path}`,
+      {
+        method: "POST",
+        headers: { Authorization: "fakeAuthHeader" }
+      }
+    );
+
+    expect(fetchSpy).toHaveBeenCalledWith(
+      `${absoluteApiUrl()}/packets/${mockPacket.id}/file` +
+        `?path=${mockPacket.files[0].path}&token=fakeTokenId&filename=directory%2FfakeFilename&inline=true`,
+      {
+        method: "GET"
+      }
+    );
+
+    expect(mockCreateObjectUrl).toHaveBeenCalledWith(mockFileBlob);
+  });
+
+  it("can download a stream of a single file by clicking on an anchor tag with a 'download' attribute", async () => {
     const mockFileLink = {
       href: "",
       setAttribute: jest.fn(),
@@ -40,64 +86,95 @@ describe("download", () => {
     document.body.appendChild = mockAppendChild;
     document.body.removeChild = mockRemoveChild;
 
-    await download(url, "test.txt");
+    await download([mockPacket.files[0]], mockPacket.id, "fakeFilename");
 
-    expect(mockCreateObjectUrl).toHaveBeenCalledWith(mockFileBlob);
-    expect(mockFileLink.setAttribute).toHaveBeenCalledWith("download", "test.txt");
+    expect(fetchSpy).toHaveBeenCalledWith(
+      `${absoluteApiUrl()}/packets/${mockPacket.id}/files/token?paths=${mockPacket.files[0].path}`,
+      {
+        method: "POST",
+        headers: { Authorization: "fakeAuthHeader" }
+      }
+    );
+
+    expect(mockFileLink.href).toEqual(
+      `${absoluteApiUrl()}/packets/${mockPacket.id}/file?` +
+        `path=${mockPacket.files[0].path}&token=fakeTokenId&filename=fakeFilename&inline=false`
+    );
+    expect(mockFileLink.setAttribute).toHaveBeenCalledWith("download", "fakeFilename");
     expect(mockAppendChild).toHaveBeenCalledWith(mockFileLink);
     expect(mockFileLink.click).toHaveBeenCalled();
     expect(mockRemoveChild).toHaveBeenCalledWith(mockFileLink);
-    expect(mockRevokeObjectUrl).toHaveBeenCalledWith(fakeObjectUrl);
   });
 
-  const setupUnsuccessfulResponse = (responseJson: object) => {
+  it("can download a stream of multiple files as a zip by clicking on an anchor tag", async () => {
+    const mockFileLink = {
+      href: "",
+      setAttribute: jest.fn(),
+      click: jest.fn()
+    } as any;
+
+    const mockAppendChild = jest.fn();
+    const mockRemoveChild = jest.fn();
+
+    document.createElement = () => mockFileLink;
+    document.body.appendChild = mockAppendChild;
+    document.body.removeChild = mockRemoveChild;
+
+    await download([mockPacket.files[0], mockPacket.files[1]], mockPacket.id, "fakeFilename");
+
+    expect(fetchSpy).toHaveBeenCalledWith(
+      `${absoluteApiUrl()}/packets/${mockPacket.id}/files/token?` +
+        `paths=${mockPacket.files[0].path}&paths=${mockPacket.files[1].path}`,
+      {
+        method: "POST",
+        headers: { Authorization: "fakeAuthHeader" }
+      }
+    );
+
+    expect(mockFileLink.href).toBe(
+      `${absoluteApiUrl()}/packets/${mockPacket.id}/files/zip?` +
+        `paths=${mockPacket.files[0].path}&paths=${mockPacket.files[1].path}` +
+        `&token=fakeTokenId&filename=fakeFilename&inline=false`
+    );
+    expect(mockFileLink.setAttribute).toHaveBeenCalledWith("download", "fakeFilename");
+    expect(mockAppendChild).toHaveBeenCalledWith(mockFileLink);
+    expect(mockFileLink.click).toHaveBeenCalled();
+    expect(mockRemoveChild).toHaveBeenCalledWith(mockFileLink);
+  });
+
+  it("getFileObjectUrl throws error on unsuccessful response from /token endpoint", async () => {
+    setUpUnsuccessfulTokenResponse();
+
+    await expect(getFileObjectUrl(mockPacket.files[0], mockPacket.id, "fakeFilename")).rejects.toEqual(
+      new Error("Error: test token endpoint error")
+    );
+  });
+
+  it("getFileObjectUrl throws error on unsuccessful response from file endpoint", async () => {
     server.use(
-      rest.get(downloadFileUri, (req, res, ctx) => {
-        return res(ctx.status(500), ctx.json(responseJson));
+      rest.get(`${appConfig.apiUrl()}/packets/${mockPacket.id}/file`, (req, res, ctx) => {
+        return res(
+          ctx.status(500),
+          ctx.json({
+            error: {
+              error: "OTHER_ERROR",
+              detail: "test files endpoint error"
+            }
+          })
+        );
       })
     );
-  };
 
-  it("throws error on unsuccessful response", async () => {
-    setupUnsuccessfulResponse({
-      error: {
-        error: "OTHER_ERROR",
-        detail: "test server error"
-      }
-    });
-
-    await expect(download(url, "test.txt")).rejects.toEqual(new Error("Error: test server error"));
+    await expect(getFileObjectUrl(mockPacket.files[0], mockPacket.id, "fakeFilename")).rejects.toEqual(
+      new Error("Error: test files endpoint error")
+    );
   });
 
-  it("throws error with default message on unsuccessful response", async () => {
-    setupUnsuccessfulResponse({
-      error: {
-        error: "OTHER_ERROR"
-      }
-    });
+  it("download throws error on unsuccessful response from /token endpoint", async () => {
+    setUpUnsuccessfulTokenResponse();
 
-    await expect(download(url, "test.txt")).rejects.toEqual(new Error("Error downloading test.txt"));
-  });
-
-  it("can getFileObjectUrl", async () => {
-    const mockCreateObjectUrl = jest.fn(() => fakeObjectUrl);
-
-    URL.createObjectURL = mockCreateObjectUrl;
-
-    const result = await getFileObjectUrl(url, "test.txt");
-    expect(result).toBe(fakeObjectUrl);
-    expect(mockCreateObjectUrl).toHaveBeenCalledWith(mockFileBlob);
-  });
-
-  it("can get file url for request a file with inline content-disposition", () => {
-    const result = getFileUrl(testFile, "testPacketId", true);
-
-    expect(result).toBe(`${appConfig.apiUrl()}/packets/testPacketId/file?hash=testHash&filename=testPath&inline=true`);
-  });
-
-  it("can get file url for request a file with attachment content-disposition", () => {
-    const result = getFileUrl(testFile, "testPacketId");
-
-    expect(result).toBe(`${appConfig.apiUrl()}/packets/testPacketId/file?hash=testHash&filename=testPath&inline=false`);
+    await expect(download([mockPacket.files[0]], mockPacket.id, "fakeFilename")).rejects.toEqual(
+      new Error("Error: test token endpoint error")
+    );
   });
 });

@@ -29,8 +29,7 @@ class RolePermission(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null,
-)
-{
+) {
     init
     {
         val nonNullFields = listOf(packet, tag, packetGroup).count { it != null }
@@ -39,10 +38,8 @@ class RolePermission(
         }
     }
 
-    override fun equals(other: Any?): Boolean
-    {
-        return when
-        {
+    override fun equals(other: Any?): Boolean {
+        return when {
             this === other -> true
             other !is RolePermission -> false
             role.name != other.role.name -> false
@@ -54,8 +51,7 @@ class RolePermission(
         }
     }
 
-    override fun hashCode(): Int
-    {
+    override fun hashCode(): Int {
         val prime = 31
         var result = role.name.hashCode()
         result = prime * result + permission.name.hashCode()

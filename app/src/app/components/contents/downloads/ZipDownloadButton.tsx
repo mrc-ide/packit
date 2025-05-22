@@ -1,4 +1,4 @@
-import { download, getZipUrl } from "../../../../lib/download";
+import { download } from "../../../../lib/download";
 import { Button, buttonVariants } from "../../Base/Button";
 import { FolderDown, Loader2 } from "lucide-react";
 import { FileMetadata } from "../../../../types";
@@ -6,7 +6,7 @@ import { useState } from "react";
 import { filesToSize } from "../../../../helpers";
 import type { VariantProps } from "class-variance-authority";
 
-interface FileGroupDownloadButtonProps {
+interface ZipDownloadButtonProps {
   files: FileMetadata[];
   zipName: string;
   packetId: string;
@@ -26,7 +26,7 @@ export const ZipDownloadButton = ({
   className,
   containerClassName,
   disabled
-}: FileGroupDownloadButtonProps) => {
+}: ZipDownloadButtonProps) => {
   const [error, setError] = useState("");
   const [downloading, setDownloading] = useState(false);
 
@@ -38,7 +38,7 @@ export const ZipDownloadButton = ({
     }
     setDownloading(true);
     setError("");
-    await download(getZipUrl(packetId, files), zipName)
+    await download(files, packetId, zipName)
       .catch((e) => {
         setError(e.message);
       })

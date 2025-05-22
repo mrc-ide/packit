@@ -5,7 +5,6 @@ import { Custom } from "../../../../../types";
 import { OrderlyDownloads } from "../../../../../app/components/contents/downloads/orderly/OrderlyDownloads";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
-import appConfig from "../../../../../config/appConfig";
 
 const mockDownload = jest.fn();
 jest.mock("../../../../../lib/download", () => ({
@@ -77,7 +76,9 @@ describe("orderly downloads component", () => {
   it("renders the 'Download' button which downloads the 'other' files as a group", async () => {
     renderComponent(mockPacket.custom as Custom);
 
-    const otherFiles = ["data.csv", "orderly.R", "a_renamed_common_resource.csv"];
+    const otherFiles = mockPacket.files.filter((file) =>
+      ["orderly.R", "a_renamed_common_resource.csv", "data.csv"].includes(file.path)
+    );
     const otherFilesDownloadButtonMatcher = /Download \(\d+.\d+ bytes\)/;
 
     userEvent.click(await screen.findByText("Other files"));
@@ -87,7 +88,13 @@ describe("orderly downloads component", () => {
     });
 
     userEvent.click(await screen.findByText(otherFilesDownloadButtonMatcher));
-    const url = `${appConfig.apiUrl()}/packets/${mockPacket.id}/zip?paths=${encodeURIComponent(otherFiles.join(","))}`;
-    expect(mockDownload).toHaveBeenCalledWith(url, `parameters_other_resources_${mockPacket.id}.zip`);
+    expect(mockDownload).toHaveBeenCalledWith(
+      expect.arrayContaining(otherFiles),
+      mockPacket.id,
+      `parameters_other_resources_${mockPacket.id}.zip`
+    );
+
+    const filesDownloaded = mockDownload.mock.calls[0][0];
+    expect(filesDownloaded.length).toEqual(otherFiles.length);
   });
 });
