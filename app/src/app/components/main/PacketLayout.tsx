@@ -40,7 +40,7 @@ export const PacketLayout = () => {
 
   return (
     <Sidebar sidebarItems={sidebarItems}>
-      <PacketOutlet packetId={packetId} />
+      <PacketOutlet />
     </Sidebar>
   );
 };

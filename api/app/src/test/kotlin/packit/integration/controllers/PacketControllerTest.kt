@@ -17,7 +17,6 @@ import packit.integration.WithAuthenticatedUser
 import packit.model.OneTimeToken
 import packit.model.Role
 import packit.model.RolePermission
-import packit.model.dto.BasicRolesAndUsersDto
 import packit.model.dto.PacketDto
 import packit.model.dto.RolesAndUsersForReadUpdate
 import packit.model.dto.UpdateReadRoles
@@ -30,7 +29,7 @@ import java.util.zip.ZipInputStream
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Sql("/delete-test-users.sql")
+@Sql("/delete-test-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class PacketControllerTest : IntegrationTest() {
     @Autowired
     private lateinit var packetService: PacketService
@@ -539,82 +538,112 @@ class PacketControllerTest : IntegrationTest() {
         assertBadRequest(result)
     }
 
-    @Test
-    @WithAuthenticatedUser(authorities = ["packet.manage"])
-    fun `user with packet manage can update read permission on roles`() {
-        val packet = packetRepository.findAll().first()
-        val roleNamesToAdd = setOf("testRole1", "testRole2")
-        val roleNamesToRemove = setOf("testRole3", "testRole4")
-        roleRepository.saveAll(
-            roleNamesToAdd.map {
-                Role(name = it)
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    inner class PacketControllerRolesTests {
+        val roleNamesToStartWithout = setOf("testRole1", "testRole2")
+        val roleNamesToBeginWith = setOf("testRole3", "testRole4")
+
+        @BeforeEach
+        fun setupRoles() {
+            val artefactTypesPacket = packetRepository.findById(idOfArtefactTypesPacket).orElse(null)
+            val packetReadPermission = permissionsRepository.findByName("packet.read")
+            roleRepository.saveAll(roleNamesToStartWithout.map { Role(name = it) })
+            val rolesToRemove = roleRepository.saveAll(
+                roleNamesToBeginWith.map { Role(name = it) }
+            ).onEach {
+                it.rolePermissions = mutableListOf(
+                    RolePermission(role = it, permission = packetReadPermission!!, packet = artefactTypesPacket!!)
+                )
             }
-        )
-        val rolesToRemove = roleRepository.saveAll(
-            roleNamesToRemove.map {
-                Role(name = it)
-            }
-        ).onEach {
-            it.rolePermissions = mutableListOf(
-                RolePermission(
-                    role = it,
-                    permission = permissionsRepository.findByName("packet.read")!!,
-                    packet = packet
+            roleRepository.saveAll(rolesToRemove)
+        }
+
+        @Test
+        @WithAuthenticatedUser(authorities = ["packet.manage:packet:test:123"])
+        fun `user without permission cannot update read permission on roles`() {
+            val updatePacketReadRoles = jacksonObjectMapper().writeValueAsString(
+                UpdateReadRoles(
+                    roleNamesToAdd = setOf(),
+                    roleNamesToRemove = setOf()
                 )
             )
-        }
-        roleRepository.saveAll(rolesToRemove)
-        val updatePacketReadRoles = jacksonObjectMapper().writeValueAsString(
-            UpdateReadRoles(
-                roleNamesToAdd = roleNamesToAdd,
-                roleNamesToRemove = roleNamesToRemove
+            val result = restTemplate.exchange(
+                "/packets/$idOfArtefactTypesPacket/read-permission",
+                HttpMethod.PUT,
+                getTokenizedHttpEntity(data = updatePacketReadRoles),
+                String::class.java
             )
-        )
 
-        val result = restTemplate.exchange(
-            "/packets/${packet.id}/read-permission",
-            HttpMethod.PUT,
-            getTokenizedHttpEntity(data = updatePacketReadRoles),
-            String::class.java
-        )
-
-        assertEquals(result.statusCode, HttpStatus.NO_CONTENT)
-        val addedRoles = roleRepository.findByNameIn(roleNamesToAdd.toList())
-        val removedRoles = roleRepository.findByNameIn(roleNamesToRemove.toList())
-        removedRoles.forEach {
-            assertEquals(
-                it.rolePermissions.size,
-                0
-            )
+            assertEquals(result.statusCode, HttpStatus.UNAUTHORIZED)
         }
-        addedRoles.forEach {
-            assertEquals(
-                it.rolePermissions.first().packet?.id,
-                packet.id
+
+        @Test
+        @WithAuthenticatedUser(authorities = ["packet.manage:packet:artefact-types:$idOfArtefactTypesPacket"])
+        fun `user with packet manage can update read permission on roles`() {
+            val updatePacketReadRoles = jacksonObjectMapper().writeValueAsString(
+                UpdateReadRoles(
+                    roleNamesToAdd = roleNamesToStartWithout,
+                    roleNamesToRemove = roleNamesToBeginWith
+                )
             )
+
+            val result = restTemplate.exchange(
+                "/packets/$idOfArtefactTypesPacket/read-permission",
+                HttpMethod.PUT,
+                getTokenizedHttpEntity(data = updatePacketReadRoles),
+                String::class.java
+            )
+
+            assertEquals(result.statusCode, HttpStatus.NO_CONTENT)
+            roleNamesToBeginWith.forEach {
+                val role = roleRepository.findByName(it)!!
+                assertEquals(role.rolePermissions.size, 0)
+            }
+            roleNamesToStartWithout.forEach {
+                val role = roleRepository.findByName(it)!!
+                assertEquals(role.rolePermissions.first().packet?.id, idOfArtefactTypesPacket)
+            }
         }
-    }
 
-    @Test
-    @WithAuthenticatedUser(authorities = ["packet.manage"])
-    fun `can get roles and users for update for packet`() {
-        val packet = packetRepository.findAll().first()
-        val result = restTemplate.exchange(
-            "/packets/${packet.id}/read-permission",
-            HttpMethod.GET,
-            getTokenizedHttpEntity(),
-            String::class.java
-        )
+        @Test
+        @WithAuthenticatedUser(authorities = ["packet.manage:packet:artefact-types:$idOfArtefactTypesPacket"])
+        fun `can get roles and users for packet the user has manage permission for`() {
+            val result = restTemplate.exchange(
+                "/packets/$idOfArtefactTypesPacket/read-permission",
+                HttpMethod.GET,
+                getTokenizedHttpEntity(),
+                String::class.java
+            )
 
-        assertSuccess(result)
+            assertSuccess(result)
 
-        val body = jacksonObjectMapper().readValue(
-            result.body,
-            object : TypeReference<RolesAndUsersForReadUpdate>() {}
-        )
+            val body = jacksonObjectMapper().readValue(
+                result.body,
+                object : TypeReference<RolesAndUsersForReadUpdate>() {}
+            )
 
-        assert(body.canRead is BasicRolesAndUsersDto)
-        assert(body.withRead is BasicRolesAndUsersDto)
-        assert(body.cantRead is BasicRolesAndUsersDto)
+            // If an 'ADMIN' role exists (created prior to running the tests), expect it in the list of can-read roles.
+            assertThat(body.canRead.roles.map { it.name }).containsExactlyInAnyOrderElementsOf(
+                roleNamesToBeginWith + listOfNotNull(roleRepository.findByName("ADMIN")?.name)
+            )
+            assertThat(body.withRead.roles.map { it.name })
+                .containsExactlyInAnyOrderElementsOf(roleNamesToBeginWith)
+            assertThat(body.cannotRead.roles.map { it.name })
+                .containsExactlyInAnyOrderElementsOf(roleNamesToStartWithout)
+        }
+
+        @Test
+        @WithAuthenticatedUser(authorities = ["packet.manage:test:wrong-id"])
+        fun `getting roles and users for update returns 401 if no packet manage`() {
+            val result = restTemplate.exchange(
+                "/packets/$idOfArtefactTypesPacket/read-permission",
+                HttpMethod.GET,
+                getTokenizedHttpEntity(),
+                String::class.java
+            )
+
+            assertUnauthorized(result)
+        }
     }
 }

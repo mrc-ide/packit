@@ -11,6 +11,7 @@ import { mockPacket } from "../../mocks";
 import { HttpStatus } from "../../../lib/types/HttpStatus";
 import { UserProvider } from "../../../app/components/providers/UserProvider";
 import { UserState } from "../../../app/components/providers/types/UserTypes";
+import { PacketMetadata } from "../../../types";
 
 jest.mock("../../../lib/download", () => ({
   ...jest.requireActual("../../../lib/download"),
@@ -27,11 +28,11 @@ jest.mock("../../../lib/localStorageManager", () => ({
 }));
 
 describe("Packet Layout test", () => {
-  const renderComponent = () => {
+  const renderComponent = (packet: PacketMetadata = mockPacket) => {
     render(
       <SWRConfig value={{ dedupingInterval: 0 }}>
         <UserProvider>
-          <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}`]}>
+          <MemoryRouter initialEntries={[`/${packet.name}/${packet.id}`]}>
             <Routes>
               <Route element={<PacketLayout />} path="/:packetName/:packetId">
                 <Route path="/:packetName/:packetId" element={<PacketDetails />} />
@@ -105,6 +106,14 @@ describe("Packet Layout test", () => {
 
     await waitFor(() => {
       expect(screen.getByText(/read access page/i)).toBeVisible();
+    });
+  });
+
+  it("should show an error if the packet name in the URL does not match the packet", async () => {
+    renderComponent({ ...mockPacket, name: "different-name" });
+
+    await waitFor(() => {
+      expect(screen.getByText(/Error fetching packet details/i)).toBeVisible();
     });
   });
 });

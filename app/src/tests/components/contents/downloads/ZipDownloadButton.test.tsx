@@ -35,7 +35,7 @@ describe("ZipDownloadButton", () => {
       <SWRConfig value={{ dedupingInterval: 0 }}>
         <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/downloads`]}>
           <Routes>
-            <Route element={<PacketOutlet packetId={mockPacket.id} />}>
+            <Route element={<PacketOutlet />}>
               <Route
                 path="/:packetName/:packetId/downloads"
                 element={<ZipDownloadButton files={files} zipName={zipName} buttonText={buttonText} variant="ghost" />}

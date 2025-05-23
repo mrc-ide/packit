@@ -8,17 +8,20 @@ import { HttpStatus } from "../../../../lib/types/HttpStatus";
 import { server } from "../../../../msw/server";
 import { mockNonUsernameRolesWithRelationships, mockPacket } from "../../../mocks";
 import { packetIndexUri } from "../../../../msw/handlers/packetHandlers";
+import { UserProvider } from "../../../../app/components/providers/UserProvider";
 
 const renderComponent = () =>
   render(
     <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>
-      <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/read-access`]}>
-        <Routes>
-          <Route element={<PacketOutlet packetId={mockPacket.id} />}>
-            <Route path="/:packetName/:packetId/read-access" element={<PacketReadPermission />} />
-          </Route>
-        </Routes>
-      </MemoryRouter>
+      <UserProvider>
+        <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/read-access`]}>
+          <Routes>
+            <Route element={<PacketOutlet />}>
+              <Route path="/:packetName/:packetId/read-access" element={<PacketReadPermission />} />
+            </Route>
+          </Routes>
+        </MemoryRouter>
+      </UserProvider>
     </SWRConfig>
   );
 
