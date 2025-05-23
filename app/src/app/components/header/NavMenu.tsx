@@ -9,8 +9,6 @@ import { Button, buttonVariants } from "../Base/Button";
 export const NavItems: { [key: string]: string } = {
   runner: "Runner",
   "manage-roles": "Manage Access"
-  // "run-workflow": "Workflow Runner",
-  // documentation: "Documentation",
   // accessibility: "Accessibility",
 };
 
