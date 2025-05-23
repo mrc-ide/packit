@@ -38,7 +38,7 @@ See [packit-deploy](https://github.com/mrc-ide/packit-deploy) README for conside
 
 At the time of writing, the accent colours are used for some button styles and for the border of the header. We may find other places to introduce it in future.
 
-The deploy tool replaces the custom.css file wholesale with css rules that encode the configured colours as css variables (if colour configuration is provided). These are picked up by [app/tailwind.config.js](app/tailwind.config.js) for Tailwind to include in various css class definitions that make use of those variables. If the custom css variables are undefined, the app/tailwind.config.js properties fall back to defaults defined in [app/src/styles/globals.css](app/src/styles/globals.css).
+The deploy tool replaces the custom.css file wholesale with css rules that encode the configured colours as css variables (if colour configuration is provided). These are picked up by [app/tailwind.config.js](app/tailwind.config.js) as properties for Tailwind to include in various css class definitions. We define those Tailwind properties to reference both the custom variable names as well as fallbacks, so that, if the custom css variables are undefined, the browser will apply those default colours (defaults defined in [app/src/styles/globals.css](app/src/styles/globals.css)).
 
 The default branding colours of Packit are different from the examples in the deploy tool, so that developers can easily see which colour is being used. The default colour values follow the expected dark/lightness of the customisable colours: e.g. '--accent' is a dark colour and '--accent-foreground' is a light colour.
 
