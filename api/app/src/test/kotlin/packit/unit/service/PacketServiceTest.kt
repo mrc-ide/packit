@@ -102,7 +102,10 @@ class PacketServiceTest {
                     )
                 )
             ),
-            emptyList()
+            listOf(
+                DependsMetadata("dependency1", "query", listOf()),
+                DependsMetadata("dependency2", "query", listOf()),
+            ),
         )
 
     private val packetRepository =
@@ -134,6 +137,19 @@ class PacketServiceTest {
                 outputStream.write("mocked output content".toByteArray())
             }
         }
+
+    @Test
+    fun `gets packet dependencies`() {
+        val dependencies = listOf(oldPackets[1], newPackets[0])
+        val mockPacketRepository = mock<PacketRepository> {
+            on { findAllById(listOf("dependency1", "dependency2")) } doReturn dependencies
+        }
+        val sut = BasePacketService(mockPacketRepository, packetGroupRepository, outpackServerClient)
+
+        assertEquals(sut.getDependencies(packetMetadata.id), dependencies)
+        verify(outpackServerClient).getMetadataById(packetMetadata.id)
+        verify(mockPacketRepository).findAllById(listOf("dependency1", "dependency2"))
+    }
 
     @Test
     fun `gets packets`() {

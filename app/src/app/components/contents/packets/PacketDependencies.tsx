@@ -1,12 +1,12 @@
 import { ListTree } from "lucide-react";
-import { PacketDepends } from "../../../../types";
 import { AccordionContent, AccordionItem, AccordionTrigger } from "../../Base/Accordion";
-import { PacketDependency } from "./PacketDependency";
+import { Link, useParams } from "react-router-dom";
+import { useGetPacketDependencies } from "./hooks/useGetPacketDependencies";
 
-interface PacketDependenciesProps {
-  depends: PacketDepends[];
-}
-export const PacketDependencies = ({ depends }: PacketDependenciesProps) => {
+export const PacketDependencies = () => {
+  const { packetId } = useParams();
+  const { dependencies } = useGetPacketDependencies(packetId);
+
   return (
     <div>
       <AccordionItem value="dependencies">
@@ -18,10 +18,20 @@ export const PacketDependencies = ({ depends }: PacketDependenciesProps) => {
         </AccordionTrigger>
         <AccordionContent>
           <ul className="space-y-1 overflow-y-auto max-h-80">
-            {depends.length === 0 ? (
+            {dependencies && dependencies.length === 0 ? (
               <div className="italic text-sm">This packet has no dependencies on other packets</div>
             ) : (
-              depends.map((dependency) => <PacketDependency key={dependency.packet} dependency={dependency} />)
+              dependencies?.map((dependency) => (
+                <li key={dependency.id}>
+                  <span className="font-semibold mr-2">{dependency.name}</span>
+                  <Link
+                    to={`/${dependency.name}/${dependency.id}`}
+                    className="hover:underline decoration-blue-500 text-sm font-semibold text-blue-500"
+                  >
+                    {dependency.id}
+                  </Link>
+                </li>
+              ))
             )}
           </ul>
         </AccordionContent>

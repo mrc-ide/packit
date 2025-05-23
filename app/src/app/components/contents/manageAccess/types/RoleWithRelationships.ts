@@ -16,10 +16,12 @@ export interface BasicUser {
   username: string;
   id: string;
 }
+
 export interface BasicRole {
   name: string;
   id: number;
 }
+
 export interface BasicRoleWithUsers extends BasicRole {
   users: BasicUser[];
 }
@@ -38,6 +40,7 @@ export interface BasicRolesAndUsers {
   roles: BasicRoleWithUsers[];
   users: BasicUser[];
 }
+
 export interface RolesAndUsersToUpdateRead {
   cannotRead: BasicRolesAndUsers;
   withRead: BasicRolesAndUsers;
