@@ -3,6 +3,8 @@ package packit.integration.services
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
+import packit.config.RunnerConfig
+import packit.config.RunnerRepository
 import packit.integration.IntegrationTest
 import packit.model.dto.OrderlyLocation
 import packit.model.dto.OrderlyRunnerVersion
@@ -20,9 +22,13 @@ class OrderlyRunnerClientTest(
     val repositoryUrl: String,
 
     @Value("\${orderly.runner.location-url}")
-    val locationUrl: String
+    val locationUrl: String,
+
+    @Value("\${orderly.runner.ssh-key}")
+    val sshKey: String?
 ) : IntegrationTest() {
-    val sut: OrderlyRunnerClient = OrderlyRunnerClient(runnerUrl)
+    val config: RunnerConfig = RunnerConfig(runnerUrl, locationUrl, RunnerRepository(repositoryUrl), sshKey)
+    val sut: OrderlyRunnerClient = OrderlyRunnerClient(config)
 
     @BeforeEach
     fun fetch() {
