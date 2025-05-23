@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { Accordion } from "../../../../app/components/Base/Accordion";
 import { PacketDependencies } from "../../../../app/components/contents/packets/PacketDependencies";
-import { PacketMetadata, Packet } from "../../../../types";
+import { PacketMetadata, BasicPacket } from "../../../../types";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
 import { mockDependencies, mockPacket } from "../../../mocks";
@@ -46,7 +46,7 @@ describe("PacketDependencies Component", () => {
   it("should render list of packet names with link to packets", async () => {
     renderComponent();
 
-    mockDependencies.forEach(async (dependency: Packet) => {
+    mockDependencies.forEach(async (dependency: BasicPacket) => {
       expect(await screen.findByText(dependency.id)).toBeVisible();
       const packetLink = await screen.findByRole("link", { name: dependency.id });
       expect(packetLink).toHaveAttribute("href", `/${dependency.name}/${dependency.id}`);

@@ -132,7 +132,7 @@ class PacketControllerTest {
         val result = sut.getPacketDependencies(packetId)
         verify(packetService).getDependencies(packetId)
         assertEquals(result.statusCode, HttpStatus.OK)
-        assertEquals(result.body, packets.map { it.toDto() })
+        assertEquals(result.body, packets.map { it.toBasicDto() })
     }
 
     @Test

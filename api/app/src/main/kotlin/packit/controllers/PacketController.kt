@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.*
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
 import packit.model.dto.OneTimeTokenDto
+import packit.model.dto.BasicPacketDto
 import packit.model.dto.PacketDto
 import packit.model.dto.RolesAndUsersForReadUpdate
 import packit.model.dto.UpdateReadRoles
+import packit.model.toBasicDto
 import packit.model.toDto
 import packit.service.OneTimeTokenService
 import packit.service.PacketService
@@ -48,8 +50,8 @@ class PacketController(
 
     @GetMapping("/{id}/dependencies")
     @PreAuthorize("@authz.canReadPacket(#root, #id)")
-    fun getPacketDependencies(@PathVariable id: String): ResponseEntity<List<PacketDto>> {
-        return ResponseEntity.ok(packetService.getDependencies(id).map { it.toDto() })
+    fun getPacketDependencies(@PathVariable id: String): ResponseEntity<List<BasicPacketDto>> {
+        return ResponseEntity.ok(packetService.getDependencies(id).map { it.toBasicDto() })
     }
 
     @PostMapping("/{id}/files/token")
