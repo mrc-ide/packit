@@ -5,11 +5,11 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.springframework.http.HttpStatus
 import packit.AppConfig
-import packit.controllers.ConfigurationController
+import packit.controllers.BrandLogoController
 import packit.model.dto.LogoDto
 import kotlin.test.assertEquals
 
-class ConfigurationControllerTest {
+class BrandLogoControllerTest {
     @Test
     fun `can get config when present`() {
         val mockAppConfig = mock<AppConfig> {
@@ -18,9 +18,9 @@ class ConfigurationControllerTest {
             on { brandLogoLink } doReturn "https://example.org"
         }
 
-        val sut = ConfigurationController(mockAppConfig)
+        val sut = BrandLogoController(mockAppConfig)
 
-        val result = sut.getLogo()
+        val result = sut.getConfig()
 
         assertEquals(result.statusCode, HttpStatus.OK)
 
@@ -36,9 +36,9 @@ class ConfigurationControllerTest {
     fun `succeeds when no logo config present`() {
         val mockAppConfig = mock<AppConfig>()
 
-        val sut = ConfigurationController(mockAppConfig)
+        val sut = BrandLogoController(mockAppConfig)
 
-        val result = sut.getLogo()
+        val result = sut.getConfig()
 
         assertEquals(result.statusCode, HttpStatus.OK)
 

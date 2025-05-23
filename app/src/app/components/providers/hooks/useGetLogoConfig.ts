@@ -5,7 +5,7 @@ import { LogoConfiguration } from "../../../../types";
 
 export const useGetLogoConfig = () => {
   const { data, isLoading, error } = useSWR<LogoConfiguration>(
-    `${appConfig.apiUrl()}/configuration/logo`,
+    `${appConfig.apiUrl()}/logo/config`,
     (url: string) => fetcher({ url, noAuth: true })
   );
 
