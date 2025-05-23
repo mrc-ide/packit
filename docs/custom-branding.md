@@ -12,7 +12,7 @@ VIMC logos and favicons are stored [here](https://www.dropbox.com/scl/fo/pua5qof
 
 In [`public/index.html`](public/index.html), the deploy tool replaces the string `favicon.ico` with the file name of the configured favicon (if supplied during deployment). By allowing any file name, this implementation allows the file to have a different extension (e.g. `.png`) as preferred by the hosting organisation. At the time of writing, by default, the app doesn't have a favicon, so will use the browser's default favicon.
 
-N.B. in the case of the favicon.ico file in VIMC's favicon dropbox folder, I found that it still had a white background when the browser (as opposed to Packit) was in dark mode, so I used an online converter to create an ico file from a png, since there are some minor reasons to prefer `.ico` to `.png`. (Those are: backwards-compatibility for very old browsers, and things like [this](https://stackoverflow.com/a/11092646).)
+N.B. in the case of the favicon.ico file in VIMC's favicon dropbox folder, I found that it still had a white background when the browser (as opposed to Packit) was in dark mode, so I used an online converter to create an ico file from a png (cropped from their portrait logo), since there are some minor reasons to prefer `.ico` to `.png`. (Those are: backwards-compatibility for very old browsers, and things like [this](https://stackoverflow.com/a/11092646).)
 
 ## Page title
 
