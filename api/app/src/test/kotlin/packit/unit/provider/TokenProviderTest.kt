@@ -14,11 +14,9 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 
-class TokenProviderTest
-{
+class TokenProviderTest {
     @Test
-    fun `builder returns TokenProviderBuilder with correct config and user`()
-    {
+    fun `builder returns TokenProviderBuilder with correct config and user`() {
         val userPrincipal = UserPrincipal(
             "name",
             "displayName",
@@ -33,8 +31,7 @@ class TokenProviderTest
     }
 }
 
-class TokenProviderBuilderTest
-{
+class TokenProviderBuilderTest {
     private val userPrincipal = UserPrincipal(
         "name",
         "displayName",
@@ -48,8 +45,7 @@ class TokenProviderBuilderTest
     }
 
     @Test
-    fun `issue creates token with correct claims when no added permissions`()
-    {
+    fun `issue creates token with correct claims when no added permissions`() {
         val builder = TokenProviderBuilder(config, userPrincipal)
         val token = builder.issue()
 
@@ -65,8 +61,7 @@ class TokenProviderBuilderTest
     }
 
     @Test
-    fun `issue includes permissions when available`()
-    {
+    fun `issue includes permissions when available`() {
 
         val builder = TokenProviderBuilder(config, userPrincipal)
         val permissions = listOf("packet.read", "packet.write")
@@ -78,8 +73,7 @@ class TokenProviderBuilderTest
     }
 
     @Test
-    fun `withExpiresAt sets expiry when earlier than default`()
-    {
+    fun `withExpiresAt sets expiry when earlier than default`() {
         val builder = TokenProviderBuilder(config, userPrincipal)
         val earlierExpiry = Instant.now().plus(1, ChronoUnit.HOURS)
         val token = builder.withExpiresAt(earlierExpiry).issue()
@@ -90,8 +84,7 @@ class TokenProviderBuilderTest
     }
 
     @Test
-    fun `withExpiresAt is ignored when later than default`()
-    {
+    fun `withExpiresAt is ignored when later than default`() {
         val builder = TokenProviderBuilder(config, userPrincipal)
         val laterExpiry = Instant.now().plus(30, ChronoUnit.DAYS)
         val token = builder.withExpiresAt(laterExpiry).issue()
@@ -103,8 +96,7 @@ class TokenProviderBuilderTest
     }
 
     @Test
-    fun `withDuration reduces token lifetime when shorter than default`()
-    {
+    fun `withDuration reduces token lifetime when shorter than default`() {
         val builder = TokenProviderBuilder(config, userPrincipal)
         val shorterDuration = Duration.ofHours(1)
         val token = builder.withDuration(shorterDuration).issue()
@@ -116,8 +108,7 @@ class TokenProviderBuilderTest
     }
 
     @Test
-    fun `withDuration is ignored when longer than default`()
-    {
+    fun `withDuration is ignored when longer than default`() {
         val builder = TokenProviderBuilder(config, userPrincipal)
         val longerDuration = Duration.ofDays(30)
         val token = builder.withDuration(longerDuration).issue()
@@ -129,8 +120,7 @@ class TokenProviderBuilderTest
     }
 
     @Test
-    fun `withPermissions initializes permissions when null`()
-    {
+    fun `withPermissions initializes permissions when null`() {
         val builder = TokenProviderBuilder(config, userPrincipal)
         val permissions = listOf("packet.read", "packet.write")
 
@@ -143,8 +133,7 @@ class TokenProviderBuilderTest
     }
 
     @Test
-    fun `withPermissions retains intersection of existing and new permissions`()
-    {
+    fun `withPermissions retains intersection of existing and new permissions`() {
         val builder = TokenProviderBuilder(config, userPrincipal)
         val firstPermissions = listOf("packet.read", "packet.write")
         val secondPermissions = listOf("packet.write", "outpack.read")
@@ -160,8 +149,7 @@ class TokenProviderBuilderTest
     }
 
     @Test
-    fun `withExpiresAt and withDuration use earliest expiry`()
-    {
+    fun `withExpiresAt and withDuration use earliest expiry`() {
         val builder = TokenProviderBuilder(config, userPrincipal)
         val specificExpiry = Instant.now().plus(3, ChronoUnit.HOURS)
         val shorterDuration = Duration.ofHours(1)

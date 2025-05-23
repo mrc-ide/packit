@@ -8,11 +8,9 @@ import packit.security.profile.PackitOAuth2User
 import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
 
-class OAuth2SuccessHandlerTest : OAuthHandlerTest()
-{
+class OAuth2SuccessHandlerTest : OAuthHandlerTest() {
     @Test
-    fun `can redirect on authentication exception`()
-    {
+    fun `can redirect on authentication exception`() {
         val userPrincipal = UserPrincipal("userName", "displayName", mutableListOf(), mutableMapOf())
         val mockAuth = mock<Authentication> {
             on { principal } doReturn PackitOAuth2User(

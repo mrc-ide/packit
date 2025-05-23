@@ -11,8 +11,7 @@ import org.springframework.test.web.client.match.MockRestRequestMatchers.*
 import org.springframework.test.web.client.response.DefaultResponseCreator.*
 import org.springframework.test.web.client.response.MockRestResponseCreators.*
 
-class TestJwtIssuer
-{
+class TestJwtIssuer {
     val jwkSet = JWKSet(RSAKeyGenerator(2048).keyIDFromThumbprint(true).generate())
     private val encoder = NimbusJwtEncoder(ImmutableJWKSet(jwkSet))
 

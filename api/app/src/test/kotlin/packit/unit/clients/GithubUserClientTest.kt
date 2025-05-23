@@ -3,11 +3,7 @@ package packit.unit.clients
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.kohsuke.github.*
 import org.mockito.ArgumentMatchers.anyString
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.doThrow
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
+import org.mockito.kotlin.*
 import org.springframework.http.HttpStatus
 import packit.AppConfig
 import packit.clients.GithubUserClient
@@ -15,8 +11,7 @@ import packit.exceptions.PackitAuthenticationException
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class GithubUserClientTest
-{
+class GithubUserClientTest {
     private val mockConfig = mock<AppConfig> {
         on { authGithubAPIOrg } doReturn "mrc-ide"
         on { authGithubAPITeam } doReturn "packit"
@@ -55,16 +50,14 @@ class GithubUserClientTest
     private val token = "12345"
 
     @Test
-    fun `can authenticate`()
-    {
+    fun `can authenticate`() {
         sut.authenticate(token)
         verify(mockGithubBuilder).withOAuthToken(token)
         verify(mockGithubBuilder).build()
     }
 
     @Test
-    fun `can getUser`()
-    {
+    fun `can getUser`() {
         sut.authenticate(token)
 
         val githubUser = sut.getGithubUser()
@@ -75,15 +68,13 @@ class GithubUserClientTest
     }
 
     @Test
-    fun `can check github org membership`()
-    {
+    fun `can check github org membership`() {
         sut.authenticate(token)
         sut.checkGithubMembership()
     }
 
     @Test
-    fun `authenticates successfully when no team configured and user is in allowed org`()
-    {
+    fun `authenticates successfully when no team configured and user is in allowed org`() {
         val mockNoTeamConfig = mock<AppConfig> {
             on { authGithubAPIOrg } doReturn "mrc-ide"
             on { authGithubAPITeam } doReturn ""
@@ -94,8 +85,7 @@ class GithubUserClientTest
     }
 
     @Test
-    fun `throws expected exception when user is not in allowed org`()
-    {
+    fun `throws expected exception when user is not in allowed org`() {
         val mockErrorConfig = mock<AppConfig> {
             on { authGithubAPIOrg } doReturn "mrc-idex"
         }
@@ -104,15 +94,13 @@ class GithubUserClientTest
     }
 
     @Test
-    fun `throw expected exception when reading orgs is forbidden`()
-    {
+    fun `throw expected exception when reading orgs is forbidden`() {
         whenever(mockMyself.allOrganizations).thenThrow(HttpException("test error", 403, "", ""))
         assertSutThrowsPackitAuthenticationException(sut, "githubTokenInsufficientPermissions", HttpStatus.FORBIDDEN)
     }
 
     @Test
-    fun `throws expected exception when user is not in allowed team`()
-    {
+    fun `throws expected exception when user is not in allowed team`() {
         val mockErrorConfig = mock<AppConfig> {
             on { authGithubAPIOrg } doReturn "mrc-ide"
             on { authGithubAPITeam } doReturn "another-team"
@@ -122,18 +110,23 @@ class GithubUserClientTest
     }
 
     @Test
-    fun `throws expected exception when allowed team is not in allowed org`()
-    {
+    fun `throws expected exception when allowed team is not in allowed org`() {
         val mockErrorConfig = mock<AppConfig> {
             on { authGithubAPIOrg } doReturn "mrc-ide"
             on { authGithubAPITeam } doReturn "team-not-in-org"
         }
         val errorSut = GithubUserClient(mockErrorConfig, mockGithubBuilder)
-        assertSutThrowsPackitAuthenticationException(errorSut, "githubConfigTeamNotInOrg", HttpStatus.UNAUTHORIZED)
+        assertSutThrowsPackitAuthenticationException(
+            errorSut,
+            "githubConfigTeamNotInOrg", HttpStatus.UNAUTHORIZED
+        )
     }
 
-    private fun assertSutThrowsPackitAuthenticationException(sut: GithubUserClient, key: String, httpStatus: HttpStatus)
-    {
+    private fun assertSutThrowsPackitAuthenticationException(
+        sut: GithubUserClient,
+        key: String,
+        httpStatus: HttpStatus
+    ) {
         sut.authenticate(token)
         assertThatThrownBy { sut.checkGithubMembership() }
             .isInstanceOf(PackitAuthenticationException::class.java)
@@ -145,8 +138,7 @@ class GithubUserClientTest
         exceptionStatusCode: Int,
         expectedPackitExceptionKey: String,
         expectedPackitExceptionStatus: HttpStatus
-    )
-    {
+    ) {
         val mockErroringGithub = mock<GitHub> {
             on { myself } doThrow HttpException("test error", exceptionStatusCode, "", "")
         }
@@ -163,33 +155,28 @@ class GithubUserClientTest
     }
 
     @Test
-    fun `handles unauthorized error on authenticate`()
-    {
+    fun `handles unauthorized error on authenticate`() {
         assertHandlesHttpExceptionOnAuthenticate(401, "githubTokenInvalid", HttpStatus.UNAUTHORIZED)
     }
 
     @Test
-    fun `handles other Http exceptions on authenticate`()
-    {
+    fun `handles other Http exceptions on authenticate`() {
         assertHandlesHttpExceptionOnAuthenticate(400, "githubTokenUnexpectedError", HttpStatus.BAD_REQUEST)
     }
 
-    private fun assertThrowsUserNotAutheticated(call: () -> Any)
-    {
+    private fun assertThrowsUserNotAutheticated(call: () -> Any) {
         assertThatThrownBy { call() }
             .isInstanceOf(IllegalStateException::class.java)
             .hasMessage("User has not been authenticated")
     }
 
     @Test
-    fun `handles not authenticated on getUser`()
-    {
+    fun `handles not authenticated on getUser`() {
         assertThrowsUserNotAutheticated { sut.getGithubUser() }
     }
 
     @Test
-    fun `handles not authenticated on checkGithubOrgMembership`()
-    {
+    fun `handles not authenticated on checkGithubOrgMembership`() {
         assertThrowsUserNotAutheticated { sut.checkGithubMembership() }
     }
 }

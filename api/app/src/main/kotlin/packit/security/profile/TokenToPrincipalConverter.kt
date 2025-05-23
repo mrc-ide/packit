@@ -10,8 +10,7 @@ import packit.exceptions.PackitException
 import packit.service.RoleService
 import packit.service.UserService
 
-interface TokenToPrincipal
-{
+interface TokenToPrincipal {
     fun convert(jwt: DecodedJWT): UserPrincipal
 }
 
@@ -19,10 +18,8 @@ interface TokenToPrincipal
 class TokenToPrincipalConverter(
     private val userService: UserService,
     private val roleService: RoleService,
-) : TokenToPrincipal
-{
-    override fun convert(jwt: DecodedJWT): UserPrincipal
-    {
+) : TokenToPrincipal {
+    override fun convert(jwt: DecodedJWT): UserPrincipal {
         val username = jwt.getClaim("userName").asString()
             ?: throw PackitException("userNameClaimNotInJwt", HttpStatus.UNAUTHORIZED)
 
@@ -37,10 +34,8 @@ class TokenToPrincipalConverter(
     /**
      * Get the authorities from the JWT or from the database if not present in the JWT.
      */
-    internal fun getAuthorities(jwtAuthorities: Claim, username: String): MutableCollection<out GrantedAuthority>
-    {
-        if (!jwtAuthorities.isMissing)
-        {
+    internal fun getAuthorities(jwtAuthorities: Claim, username: String): MutableCollection<out GrantedAuthority> {
+        if (!jwtAuthorities.isMissing) {
             return extractAuthorities(jwtAuthorities)
         }
         val user = userService.getByUsername(username) ?: throw PackitException(
@@ -50,8 +45,7 @@ class TokenToPrincipalConverter(
         return roleService.getGrantedAuthorities(user.roles)
     }
 
-    internal fun extractAuthorities(jwtAuthorities: Claim): MutableCollection<out GrantedAuthority>
-    {
+    internal fun extractAuthorities(jwtAuthorities: Claim): MutableCollection<out GrantedAuthority> {
         return if (jwtAuthorities.isNull) mutableListOf() else jwtAuthorities.asList(SimpleGrantedAuthority::class.java)
     }
 }

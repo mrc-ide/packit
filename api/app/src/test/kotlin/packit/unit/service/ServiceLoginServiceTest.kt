@@ -41,8 +41,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-class ServiceLoginServiceTest
-{
+class ServiceLoginServiceTest {
     private val restTemplate = RestTemplate()
     private val server = MockRestServiceServer.bindTo(restTemplate).ignoreExpectOrder(true).build()
 
@@ -73,8 +72,7 @@ class ServiceLoginServiceTest
     lateinit var defaultIssuer: TestJwtIssuer
 
     // Create a TestJwtIssuer and register its JWK set on the mock rest template.
-    private fun createIssuer(url: String): TestJwtIssuer
-    {
+    private fun createIssuer(url: String): TestJwtIssuer {
         val issuer = TestJwtIssuer()
         server.expect(ExpectedCount.between(0, Integer.MAX_VALUE), requestTo(url))
             .andExpect(method(HttpMethod.GET))
@@ -82,13 +80,11 @@ class ServiceLoginServiceTest
         return issuer
     }
 
-    private fun exchangeTokens(config: ServiceLoginConfig, token: String): Jwt
-    {
+    private fun exchangeTokens(config: ServiceLoginConfig, token: String): Jwt {
         val sut = ServiceLoginService(TokenProvider(mockAppConfig), mockUserService, config, restTemplate)
         val result = sut.authenticateAndIssueToken(LoginWithToken(token))
 
-        val processor = object : DefaultJWTProcessor<SecurityContext>()
-        {
+        val processor = object : DefaultJWTProcessor<SecurityContext>() {
             // The default implementation enforces signature verification, but in this
             // testing context we don't care.
             override fun process(jwt: SignedJWT, context: SecurityContext?) = jwt.jwtClaimsSet
@@ -96,26 +92,22 @@ class ServiceLoginServiceTest
         return NimbusJwtDecoder(processor).decode(result["token"]!!)
     }
 
-    private fun exchangeTokens(config: ServiceLoginConfig, f: (JwtClaimsSet.Builder) -> Unit): Jwt
-    {
+    private fun exchangeTokens(config: ServiceLoginConfig, f: (JwtClaimsSet.Builder) -> Unit): Jwt {
         return exchangeTokens(config, defaultIssuer.issue(f))
     }
 
     @BeforeEach
-    fun setup()
-    {
+    fun setup() {
         defaultIssuer = createIssuer("http://issuer/jwks.json")
     }
 
     @AfterEach
-    fun reset()
-    {
+    fun reset() {
         server.reset()
     }
 
     @Test
-    fun `can exchange tokens`()
-    {
+    fun `can exchange tokens`() {
         val config = ServiceLoginConfig(
             audience = "packit",
             policies = listOf(ServiceLoginPolicy(jwkSetURI = "http://issuer/jwks.json", issuer = "issuer"))
@@ -128,8 +120,7 @@ class ServiceLoginServiceTest
     }
 
     @Test
-    fun `provided token must satisfy all required claims`()
-    {
+    fun `provided token must satisfy all required claims`() {
         val requiredIssuer = "issuer"
         val requiredAudience = "packit"
 
@@ -192,8 +183,7 @@ class ServiceLoginServiceTest
             ),
         )
 
-        for (entry in testCases)
-        {
+        for (entry in testCases) {
             val config = ServiceLoginConfig(
                 audience = requiredAudience,
                 policies = listOf(
@@ -206,27 +196,22 @@ class ServiceLoginServiceTest
             )
 
             val fn = { builder: JwtClaimsSet.Builder ->
-                if (entry.providedIssuer != null)
-                {
+                if (entry.providedIssuer != null) {
                     builder.issuer(entry.providedIssuer)
                 }
-                if (entry.providedAudience != null)
-                {
+                if (entry.providedAudience != null) {
                     builder.audience(entry.providedAudience)
                 }
-                for ((name, value) in entry.providedClaims)
-                {
+                for ((name, value) in entry.providedClaims) {
                     builder.claim(name, value)
                 }
             }
 
-            if (entry.expectSuccess)
-            {
+            if (entry.expectSuccess) {
                 assertDoesNotThrow("$entry") {
                     exchangeTokens(config, fn)
                 }
-            } else
-            {
+            } else {
                 val ex = assertThrows<PackitException>("$entry") {
                     exchangeTokens(config, fn)
                 }
@@ -237,8 +222,7 @@ class ServiceLoginServiceTest
     }
 
     @Test
-    fun `issued token is granted permissions from the policy`()
-    {
+    fun `issued token is granted permissions from the policy`() {
         class TestCase(
             val policyPermissions: List<String>,
             val expectedPermissions: Set<String>? = null,
@@ -250,8 +234,7 @@ class ServiceLoginServiceTest
             TestCase(listOf("outpack.read", "outpack.write"), setOf("outpack.read", "outpack.write")),
         )
 
-        for (entry in testCases)
-        {
+        for (entry in testCases) {
             val config = ServiceLoginConfig(
                 audience = "packit",
                 policies = listOf(
@@ -266,19 +249,16 @@ class ServiceLoginServiceTest
                 builder.issuer("issuer")
                 builder.audience(listOf("packit"))
             }
-            if (entry.expectedPermissions == null)
-            {
+            if (entry.expectedPermissions == null) {
                 assertNull(token.getClaim<List<String>?>("au"))
-            } else
-            {
+            } else {
                 assertEquals(token.getClaimAsStringList("au").toSet(), entry.expectedPermissions)
             }
         }
     }
 
     @Test
-    fun `issued tokens have duration limited by shortest of application configuration, policy and provided token`()
-    {
+    fun `issued tokens have duration limited by shortest of application configuration, policy and provided token`() {
         whenever(mockAppConfig.authExpiryDays).thenReturn(7)
 
         class TestCase(
@@ -316,8 +296,7 @@ class ServiceLoginServiceTest
             ),
         )
 
-        for (entry in testCases)
-        {
+        for (entry in testCases) {
             val config = ServiceLoginConfig(
                 audience = "packit",
                 policies = listOf(
@@ -333,8 +312,7 @@ class ServiceLoginServiceTest
             val token = exchangeTokens(config, { builder ->
                 builder.issuer("issuer")
                 builder.audience(listOf("packit"))
-                if (entry.tokenDuration != null)
-                {
+                if (entry.tokenDuration != null) {
                     builder.expiresAt(Instant.now() + entry.tokenDuration)
                 }
             })
@@ -348,8 +326,7 @@ class ServiceLoginServiceTest
     }
 
     @Test
-    fun `can define multiple policies for the same issuer`()
-    {
+    fun `can define multiple policies for the same issuer`() {
         val config = ServiceLoginConfig(
             audience = "packit",
             policies = listOf(
@@ -384,8 +361,7 @@ class ServiceLoginServiceTest
     }
 
     @Test
-    fun `can define multiple issuers`()
-    {
+    fun `can define multiple issuers`() {
         val issuer1 = createIssuer("http://issuer1/jwks.json")
         val issuer2 = createIssuer("http://issuer2/jwks.json")
 
@@ -425,8 +401,7 @@ class ServiceLoginServiceTest
     }
 
     @Test
-    fun `throws unauthorized if token is signed with wrong key`()
-    {
+    fun `throws unauthorized if token is signed with wrong key`() {
         val untrustedIssuer = createIssuer("http://issuer/jwks.json")
 
         val config = ServiceLoginConfig(

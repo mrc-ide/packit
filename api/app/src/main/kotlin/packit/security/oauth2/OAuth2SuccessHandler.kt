@@ -14,14 +14,12 @@ import packit.security.provider.JwtIssuer
 class OAuth2SuccessHandler(
     private val redirect: BrowserRedirect,
     val jwtIssuer: JwtIssuer,
-) : SimpleUrlAuthenticationSuccessHandler()
-{
+) : SimpleUrlAuthenticationSuccessHandler() {
     override fun onAuthenticationSuccess(
         request: HttpServletRequest,
         response: HttpServletResponse,
         authentication: Authentication,
-    )
-    {
+    ) {
         handle(request, response, authentication)
         super.clearAuthenticationAttributes(request)
     }
@@ -30,8 +28,7 @@ class OAuth2SuccessHandler(
         request: HttpServletRequest,
         response: HttpServletResponse,
         authentication: Authentication,
-    )
-    {
+    ) {
         val user = authentication.principal as PackitOAuth2User
         val token = jwtIssuer.issue(user.principal)
 

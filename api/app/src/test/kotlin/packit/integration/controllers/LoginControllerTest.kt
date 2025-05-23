@@ -31,8 +31,7 @@ import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class LoginControllerTestGithub : IntegrationTest()
-{
+class LoginControllerTestGithub : IntegrationTest() {
     @Autowired
     private lateinit var userRepository: UserRepository
 
@@ -40,9 +39,8 @@ class LoginControllerTestGithub : IntegrationTest()
     private lateinit var roleRepository: RoleRepository
 
     @AfterEach
-    fun cleanupData()
-    {
-        val githubUsers = userRepository.findAll().filter{ it.userSource == "github" }
+    fun cleanupData() {
+        val githubUsers = userRepository.findAll().filter { it.userSource == "github" }
         githubUsers.forEach {
             val userName = it.username
             if (userRepository.existsByUsername(userName)) {
@@ -56,16 +54,14 @@ class LoginControllerTestGithub : IntegrationTest()
     }
 
     @Test
-    fun `can get config`()
-    {
+    fun `can get config`() {
         val result = restTemplate.getForEntity("/auth/config", String::class.java)
 
         assertSuccess(result)
     }
 
     @Test
-    fun `can login with github API`()
-    {
+    fun `can login with github API`() {
 
         val token = env.getProperty("GITHUB_ACCESS_TOKEN")!!
 
@@ -78,23 +74,20 @@ class LoginControllerTestGithub : IntegrationTest()
     }
 
     @Test
-    fun `can receive 401 response when request login to API with invalid token`()
-    {
+    fun `can receive 401 response when request login to API with invalid token`() {
         val result = LoginTestHelper.getGithubLoginResponse(LoginWithToken("badtoken"), restTemplate)
         assertUnauthorized(result)
     }
 
     @Test
-    fun `basic login returns forbidden when basic login is disabled`()
-    {
+    fun `basic login returns forbidden when basic login is disabled`() {
         val result =
             LoginTestHelper.getBasicLoginResponse(LoginWithPassword("email@email.com", "password"), restTemplate)
         assertForbidden(result)
     }
 
     @Test
-    fun `preauth login returns forbidden when preauth login is disabled`()
-    {
+    fun `preauth login returns forbidden when preauth login is disabled`() {
         val result =
             LoginTestHelper.getPreauthLoginResponse(
                 "preauth.user", "Preauth User", "preauth.user@example.com",
@@ -105,8 +98,7 @@ class LoginControllerTestGithub : IntegrationTest()
 }
 
 @TestPropertySource(properties = ["auth.method=preauth"])
-class LoginControllerTestPreAuth : IntegrationTest()
-{
+class LoginControllerTestPreAuth : IntegrationTest() {
     private val userEmail = "test.user@example.com"
     private val userName = "test.user"
     private val userDisplayName = "Test User"
@@ -121,22 +113,18 @@ class LoginControllerTestPreAuth : IntegrationTest()
     private lateinit var tokenDecoder: TokenDecoder
 
     @AfterEach
-    fun cleanupData()
-    {
-        if (userRepository.existsByUsername(userName))
-        {
+    fun cleanupData() {
+        if (userRepository.existsByUsername(userName)) {
             userRepository.deleteByUsername(userName)
         }
 
-        if (roleRepository.existsByName(userName))
-        {
+        if (roleRepository.existsByName(userName)) {
             roleRepository.deleteByName(userName)
         }
     }
 
     @Test
-    fun `can login without existing user`()
-    {
+    fun `can login without existing user`() {
         val result =
             LoginTestHelper.getPreauthLoginResponse(
                 userName, userDisplayName, userEmail, restTemplate
@@ -150,8 +138,7 @@ class LoginControllerTestPreAuth : IntegrationTest()
     }
 
     @Test
-    fun `can login with existing user`()
-    {
+    fun `can login with existing user`() {
         val testUser = User(
             username = userName,
             displayName = userDisplayName,
@@ -180,8 +167,7 @@ class LoginControllerTestPreAuth : IntegrationTest()
     }
 
     @Test
-    fun `returns 400 when username header not provided`()
-    {
+    fun `returns 400 when username header not provided`() {
         val result =
             LoginTestHelper.getPreauthLoginResponse(
                 null, userDisplayName, userEmail, restTemplate
@@ -192,8 +178,7 @@ class LoginControllerTestPreAuth : IntegrationTest()
     }
 
     @Test
-    fun `email and display name headers are optional`()
-    {
+    fun `email and display name headers are optional`() {
         val result =
             LoginTestHelper.getPreauthLoginResponse(
                 userName, null, null, restTemplate
@@ -207,8 +192,7 @@ class LoginControllerTestPreAuth : IntegrationTest()
 }
 
 @TestPropertySource(properties = ["auth.method=basic"])
-class LoginControllerTestBasic : IntegrationTest()
-{
+class LoginControllerTestBasic : IntegrationTest() {
     @Autowired
     lateinit var userRepository: UserRepository
 
@@ -219,8 +203,7 @@ class LoginControllerTestBasic : IntegrationTest()
     val userPassword = "password"
 
     @BeforeEach
-    fun setupData()
-    {
+    fun setupData() {
         testUser = User(
             username = "test@email.com",
             displayName = "test user",
@@ -235,14 +218,12 @@ class LoginControllerTestBasic : IntegrationTest()
     }
 
     @AfterEach
-    fun cleanupData()
-    {
+    fun cleanupData() {
         userRepository.delete(testUser)
     }
 
     @Test
-    fun `returns token on successful basic login`()
-    {
+    fun `returns token on successful basic login`() {
         val result =
             LoginTestHelper.getBasicLoginResponse(
                 LoginWithPassword(testUser.username, "password"),
@@ -254,15 +235,13 @@ class LoginControllerTestBasic : IntegrationTest()
     }
 
     @Test
-    fun `returns forbidden when github login is disabled`()
-    {
+    fun `returns forbidden when github login is disabled`() {
         val result = LoginTestHelper.getGithubLoginResponse(LoginWithToken("token"), restTemplate)
         assertForbidden(result)
     }
 
     @Test
-    fun `returns unauthorized when user user is not found`()
-    {
+    fun `returns unauthorized when user user is not found`() {
         val result =
             LoginTestHelper.getBasicLoginResponse(LoginWithPassword("notexists@example.com", "password"), restTemplate)
 
@@ -270,8 +249,7 @@ class LoginControllerTestBasic : IntegrationTest()
     }
 
     @Test
-    fun `returns unauthorized when password is incorrect`()
-    {
+    fun `returns unauthorized when password is incorrect`() {
         val result =
             LoginTestHelper.getBasicLoginResponse(LoginWithPassword("admin@example.com", "notcorrect"), restTemplate)
 
@@ -279,8 +257,7 @@ class LoginControllerTestBasic : IntegrationTest()
     }
 
     @Test
-    fun `updatePassword can update a user's password`()
-    {
+    fun `updatePassword can update a user's password`() {
         val newPassword = "newPassword"
         val updatePassword = UpdatePassword(userPassword, newPassword)
 
@@ -300,37 +277,32 @@ class LoginControllerTestBasic : IntegrationTest()
         "auth.service.policies[0].granted-permissions=outpack.read,outpack.write",
     ]
 )
-class LoginControllerTestService(val jwksServer: ClientAndServer) : IntegrationTest()
-{
+class LoginControllerTestService(val jwksServer: ClientAndServer) : IntegrationTest() {
     val trustedIssuer = TestJwtIssuer()
 
     @Autowired
     private lateinit var tokenDecoder: TokenDecoder
 
     @BeforeEach
-    fun configureJwksServer()
-    {
+    fun configureJwksServer() {
         jwksServer.`when`(request().withMethod("GET").withPath("/jwks.json"))
             .respond(response().withStatusCode(200).withBody(JsonBody(trustedIssuer.jwkSet.toString())))
     }
 
     @AfterEach
-    fun resetJwksServer()
-    {
+    fun resetJwksServer() {
         jwksServer.reset()
     }
 
     @Test
-    fun `can get expected audience`()
-    {
+    fun `can get expected audience`() {
         val result = restTemplate.getForEntity("/auth/login/service/audience", JsonNode::class.java)
         assertSuccess(result)
         assertEquals(result.body?.required("audience")?.textValue(), "packit")
     }
 
     @Test
-    fun `can login with external JWT`()
-    {
+    fun `can login with external JWT`() {
         val externalToken = trustedIssuer.issue { builder ->
             builder.issuer("issuer")
             builder.audience(listOf("packit"))
@@ -349,8 +321,7 @@ class LoginControllerTestService(val jwksServer: ClientAndServer) : IntegrationT
     }
 
     @Test
-    fun `returns unauthorized when token is signed with different key`()
-    {
+    fun `returns unauthorized when token is signed with different key`() {
         val untrustedIssuer = TestJwtIssuer()
         val externalToken = untrustedIssuer.issue { builder ->
             builder.issuer("issuer")
@@ -365,8 +336,7 @@ class LoginControllerTestService(val jwksServer: ClientAndServer) : IntegrationT
     }
 
     @Test
-    fun `returns unauthorized when token has invalid claims`()
-    {
+    fun `returns unauthorized when token has invalid claims`() {
         val token = trustedIssuer.issue { builder ->
             builder.issuer("issuer")
             builder.audience(listOf("not-packit"))
@@ -376,10 +346,8 @@ class LoginControllerTestService(val jwksServer: ClientAndServer) : IntegrationT
     }
 }
 
-object LoginTestHelper
-{
-    fun getBasicLoginResponse(body: LoginWithPassword, restTemplate: TestRestTemplate): ResponseEntity<String>
-    {
+object LoginTestHelper {
+    fun getBasicLoginResponse(body: LoginWithPassword, restTemplate: TestRestTemplate): ResponseEntity<String> {
         val jsonBody = jacksonObjectMapper().writeValueAsString(body)
         return getLoginResponse(jsonBody, restTemplate, "/auth/login/basic")
     }
@@ -389,19 +357,15 @@ object LoginTestHelper
         displayName: String?,
         email: String?,
         restTemplate: TestRestTemplate
-    ): ResponseEntity<String>
-    {
+    ): ResponseEntity<String> {
         val headers = HttpHeaders()
-        if (user != null)
-        {
+        if (user != null) {
             headers.add("X-Remote-User", user)
         }
-        if (displayName != null)
-        {
+        if (displayName != null) {
             headers.add("X-Remote-Name", displayName)
         }
-        if (email != null)
-        {
+        if (email != null) {
             headers.add("X-Remote-Email", email)
         }
         val requestEntity = HttpEntity<String?>(headers)
@@ -410,8 +374,7 @@ object LoginTestHelper
         )
     }
 
-    fun getGithubLoginResponse(body: LoginWithToken, restTemplate: TestRestTemplate): ResponseEntity<String>
-    {
+    fun getGithubLoginResponse(body: LoginWithToken, restTemplate: TestRestTemplate): ResponseEntity<String> {
         val jsonBody = jacksonObjectMapper().writeValueAsString(body)
         return getLoginResponse(jsonBody, restTemplate, "/auth/login/api")
     }
@@ -420,8 +383,7 @@ object LoginTestHelper
         body: UpdatePassword,
         restTemplate: TestRestTemplate,
         username: String
-    ): ResponseEntity<String>
-    {
+    ): ResponseEntity<String> {
         val jsonBody = jacksonObjectMapper().writeValueAsString(body)
         return getLoginResponse(jsonBody, restTemplate, "/auth/$username/basic/password")
     }
@@ -430,8 +392,7 @@ object LoginTestHelper
         jsonBody: String,
         restTemplate: TestRestTemplate,
         url: String
-    ): ResponseEntity<String>
-    {
+    ): ResponseEntity<String> {
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_JSON
 

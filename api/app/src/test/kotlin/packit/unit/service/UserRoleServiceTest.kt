@@ -21,8 +21,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class UserRoleServiceTest
-{
+class UserRoleServiceTest {
     private val adminRole = Role("ADMIN", id = 10)
     private val testRoles = listOf(Role("USER", id = 11), adminRole)
     private val mockUserService = mock<UserService>()
@@ -52,8 +51,7 @@ class UserRoleServiceTest
     private val service = BaseUserRoleService(mockRoleService, mockUserService, userRoleFilterService)
 
     @Test
-    fun `updateUserRoles adds and remove roles from user`()
-    {
+    fun `updateUserRoles adds and remove roles from user`() {
         val roleToAdd = Role("NEW_ROLE")
         val roleToRemove = Role("USER")
         val updateUserRoles = UpdateUserRoles(listOf(roleToAdd.name), listOf(roleToRemove.name))
@@ -74,8 +72,7 @@ class UserRoleServiceTest
     }
 
     @Test
-    fun `updateUserRoles throws exception when adding role that  already exists`()
-    {
+    fun `updateUserRoles throws exception when adding role that  already exists`() {
         `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(mockUser.roles)
         `when`(mockUserService.getByUsername(mockUser.username)).doReturn(mockUser)
 
@@ -92,8 +89,7 @@ class UserRoleServiceTest
     }
 
     @Test
-    fun `updateUserRoles throws exception when user not found`()
-    {
+    fun `updateUserRoles throws exception when user not found`() {
         `when`(mockUserService.getByUsername(mockUser.username)).doReturn(null)
 
         val ex = assertThrows<PackitException> { service.updateUserRoles("nonexistent", UpdateUserRoles()) }
@@ -103,8 +99,7 @@ class UserRoleServiceTest
     }
 
     @Test
-    fun `updateUserRoles throws exception when trying to add username role`()
-    {
+    fun `updateUserRoles throws exception when trying to add username role`() {
         val usernameRole = Role(mockUser.username, isUsername = true)
         `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(listOf(usernameRole))
         `when`(mockUserService.getByUsername(mockUser.username)).doReturn(mockUser)
@@ -121,8 +116,7 @@ class UserRoleServiceTest
     }
 
     @Test
-    fun `updateUserRoles throws exception when trying to remove role that does not exist`()
-    {
+    fun `updateUserRoles throws exception when trying to remove role that does not exist`() {
         val nonExistentRole = Role("NON_EXISTENT_ROLE")
         `when`(mockRoleService.getRolesByRoleNames(anyList())).doReturn(listOf(nonExistentRole))
         `when`(mockUserService.getByUsername(mockUser.username)).doReturn(mockUser)
@@ -140,8 +134,7 @@ class UserRoleServiceTest
     }
 
     @Test
-    fun `updateRoleUsers adds and remove users from role`()
-    {
+    fun `updateRoleUsers adds and remove users from role`() {
         val userToDelete = mockUser
         val userToAdd = User(
             "username2",
@@ -174,8 +167,7 @@ class UserRoleServiceTest
     }
 
     @Test
-    fun `updateRoleUsers throws exception when role not found`()
-    {
+    fun `updateRoleUsers throws exception when role not found`() {
         `when`(mockRoleService.getByRoleName(mockRole.name)).doReturn(null)
 
         val ex = assertThrows<PackitException> { service.updateRoleUsers(mockRole.name, UpdateRoleUsers()) }
@@ -185,8 +177,7 @@ class UserRoleServiceTest
     }
 
     @Test
-    fun `updateRoleUsers throws exception when trying to update username role`()
-    {
+    fun `updateRoleUsers throws exception when trying to update username role`() {
         val usernameRole = Role(mockUser.username, isUsername = true)
         `when`(mockRoleService.getByRoleName(usernameRole.name)).doReturn(usernameRole)
 
@@ -199,8 +190,7 @@ class UserRoleServiceTest
     }
 
     @Test
-    fun `updateRoleUsers throws exception when adding user is already part of role`()
-    {
+    fun `updateRoleUsers throws exception when adding user is already part of role`() {
         val usersToDelete = listOf(mockUser)
         val usersToAdd = listOf(mockUser)
         mockUser.roles.add(mockRole)
@@ -215,8 +205,7 @@ class UserRoleServiceTest
     }
 
     @Test
-    fun `updateRoleUsers throws exception when removing user that is not part of role`()
-    {
+    fun `updateRoleUsers throws exception when removing user that is not part of role`() {
         val usersToDelete = listOf(mockUser)
         val updateRoleUsers = UpdateRoleUsers(usernamesToRemove = usersToDelete.map { it.username })
         `when`(mockRoleService.getByRoleName(mockRole.name)).doReturn(mockRole)
@@ -229,8 +218,7 @@ class UserRoleServiceTest
     }
 
     @Test
-    fun `updateRoleUsers throws exception when adding service account to roles`()
-    {
+    fun `updateRoleUsers throws exception when adding service account to roles`() {
         whenever(mockRoleService.getByRoleName(mockRole.name)).doReturn(mockRole)
         whenever(mockUserService.getUsersByUsernames(listOf(mockServiceUser.username)))
             .doReturn(listOf(mockServiceUser))
@@ -244,8 +232,7 @@ class UserRoleServiceTest
     }
 
     @Test
-    fun `updateUserRoles throws exception when adding roles to service account`()
-    {
+    fun `updateUserRoles throws exception when adding roles to service account`() {
         whenever(mockUserService.getByUsername(mockServiceUser.username)).doReturn(mockServiceUser)
         whenever(mockRoleService.getRolesByRoleNames(listOf(mockRole.name))).doReturn(listOf(mockRole))
 
@@ -261,8 +248,7 @@ class UserRoleServiceTest
     }
 
     @Test
-    fun `getNonUsernameRolesAndNonServiceUsers returns correct roles and users`()
-    {
+    fun `getNonUsernameRolesAndNonServiceUsers returns correct roles and users`() {
         `when`(mockRoleService.getAllRoles(false)).thenReturn(testRoles)
         `when`(mockUserService.getAllNonServiceUsers()).thenReturn(listOf(mockUser))
 
@@ -275,8 +261,7 @@ class UserRoleServiceTest
     }
 
     @Test
-    fun `createSortedRolesAndUsersWithPermissionsDto returns correct dto`()
-    {
+    fun `createSortedRolesAndUsersWithPermissionsDto returns correct dto`() {
         val rolesAndUsers = RolesAndUsers(
             roles = listOf(mockRole),
             users = listOf(mockUser)
@@ -296,8 +281,7 @@ class UserRoleServiceTest
     }
 
     @Test
-    fun `getAllRolesAndUsersWithPermissions returns calls of internal functions`()
-    {
+    fun `getAllRolesAndUsersWithPermissions returns calls of internal functions`() {
         val expected = RolesAndUsersWithPermissionsDto(
             roles = listOf(mockRole.toDto()),
             users = listOf(mockUser.toUserWithPermissions())
@@ -312,8 +296,7 @@ class UserRoleServiceTest
     }
 
     @Test
-    fun `getRolesAndUsersForPacketGroupReadUpdate returns correct dto`()
-    {
+    fun `getRolesAndUsersForPacketGroupReadUpdate returns correct dto`() {
         val rolesAndUsers = RolesAndUsers(
             roles = listOf(mockRole),
             users = listOf(mockUser)
@@ -359,8 +342,7 @@ class UserRoleServiceTest
     }
 
     @Test
-    fun `getRolesAndUsersForPacketReadUpdate returns correct DTO`()
-    {
+    fun `getRolesAndUsersForPacketReadUpdate returns correct DTO`() {
         val rolesAndUsers = RolesAndUsers(
             roles = listOf(mockRole),
             users = listOf(mockUser)
@@ -415,8 +397,7 @@ class UserRoleServiceTest
     }
 
     @Test
-    fun `createSortedBasicRolesAndUsers correctly returns sorted dto`()
-    {
+    fun `createSortedBasicRolesAndUsers correctly returns sorted dto`() {
         val rolesAndUsers = RolesAndUsers(
             roles = listOf(mockRole),
             users = listOf(mockUser)
@@ -436,8 +417,7 @@ class UserRoleServiceTest
     }
 
     @Test
-    fun `getUserAuthorities throws exception if user not found`()
-    {
+    fun `getUserAuthorities throws exception if user not found`() {
         whenever(mockUserService.getByUsername("nonexistent")).thenReturn(null)
 
         val ex = assertThrows<PackitException> { service.getUserAuthorities("nonexistent") }
@@ -447,8 +427,7 @@ class UserRoleServiceTest
     }
 
     @Test
-    fun `getUserAuthorities returns user authorities`()
-    {
+    fun `getUserAuthorities returns user authorities`() {
         val expectedAuthorities: MutableSet<GrantedAuthority> =
             mutableSetOf(
                 SimpleGrantedAuthority("packet.read"),

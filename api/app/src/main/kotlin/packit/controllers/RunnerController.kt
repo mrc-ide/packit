@@ -17,24 +17,20 @@ import packit.service.RunnerService
 @RestController
 @RequestMapping("/runner")
 @PreAuthorize("hasAuthority('packet.run')")
-class RunnerController(private val runnerService: RunnerService)
-{
+class RunnerController(private val runnerService: RunnerService) {
     @GetMapping("/version")
-    fun getVersion(): ResponseEntity<OrderlyRunnerVersion>
-    {
+    fun getVersion(): ResponseEntity<OrderlyRunnerVersion> {
         return ResponseEntity.ok(runnerService.getVersion())
     }
 
     @PostMapping("/git/fetch")
-    fun gitFetch(): ResponseEntity<Unit>
-    {
+    fun gitFetch(): ResponseEntity<Unit> {
         runnerService.gitFetch()
         return ResponseEntity.noContent().build()
     }
 
     @GetMapping("/git/branches")
-    fun getBranches(): ResponseEntity<GitBranches>
-    {
+    fun getBranches(): ResponseEntity<GitBranches> {
         try {
             return ResponseEntity.ok(runnerService.getBranches())
         } catch (e: HttpClientErrorException.NotFound) {
@@ -54,16 +50,14 @@ class RunnerController(private val runnerService: RunnerService)
     fun getParameters(
         @PathVariable packetGroupName: String,
         @RequestParam(defaultValue = "HEAD") ref: String
-    ): ResponseEntity<List<Parameter>>
-    {
+    ): ResponseEntity<List<Parameter>> {
         return ResponseEntity.ok(runnerService.getParameters(ref, packetGroupName))
     }
 
     @GetMapping("/packetGroups")
     fun getPacketGroups(
         @RequestParam(defaultValue = "HEAD") ref: String
-    ): ResponseEntity<List<RunnerPacketGroup>>
-    {
+    ): ResponseEntity<List<RunnerPacketGroup>> {
         return ResponseEntity.ok(runnerService.getPacketGroups(ref))
     }
 
@@ -71,8 +65,7 @@ class RunnerController(private val runnerService: RunnerService)
     fun submitRun(
         @RequestBody @Validated submitRunInfo: SubmitRunInfo,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
-    ): ResponseEntity<SubmitRunResponse>
-    {
+    ): ResponseEntity<SubmitRunResponse> {
         return ResponseEntity.ok(
             runnerService.submitRun(
                 submitRunInfo, userPrincipal.name
@@ -81,8 +74,7 @@ class RunnerController(private val runnerService: RunnerService)
     }
 
     @GetMapping("/status/{taskId}")
-    fun getTaskStatus(@PathVariable taskId: String): ResponseEntity<RunInfoDto>
-    {
+    fun getTaskStatus(@PathVariable taskId: String): ResponseEntity<RunInfoDto> {
         return ResponseEntity.ok(runnerService.getTaskStatus(taskId).toDto())
     }
 
@@ -91,8 +83,7 @@ class RunnerController(private val runnerService: RunnerService)
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
         @RequestParam(required = false, defaultValue = "50") pageSize: Int,
         @RequestParam(required = false, defaultValue = "") filterPacketGroupName: String,
-    ): ResponseEntity<Page<BasicRunInfoDto>>
-    {
+    ): ResponseEntity<Page<BasicRunInfoDto>> {
         val payload = PageablePayload(pageNumber, pageSize)
         return ResponseEntity.ok(runnerService.getTasksStatuses(payload, filterPacketGroupName).map { it.toBasicDto() })
     }

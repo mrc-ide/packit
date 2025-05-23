@@ -7,11 +7,9 @@ import packit.AppConfig
 import javax.sql.DataSource
 
 @Configuration
-class DbConfig
-{
+class DbConfig {
     @Bean
-    fun dataSource(appConfig: AppConfig): DataSource
-    {
+    fun dataSource(appConfig: AppConfig): DataSource {
         val dataSourceBuilder = DataSourceBuilder.create()
         dataSourceBuilder.driverClassName("org.postgresql.Driver")
         dataSourceBuilder.url(appConfig.dbUrl)

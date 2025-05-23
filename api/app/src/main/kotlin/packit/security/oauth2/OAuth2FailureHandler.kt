@@ -17,16 +17,14 @@ class OAuth2FailureHandler(
         request: HttpServletRequest,
         response: HttpServletResponse,
         exception: AuthenticationException
-    )
-    {
+    ) {
         val message = if (exception is PackitAuthenticationException) {
             exceptionHandler.errorDetailForPackitAuthenticationException(exception).detail
-        }
-        else {
+        } else {
             exception.message
         }
 
-        val queryString = LinkedMultiValueMap<String, String>().apply{ this.add("error", message) }
+        val queryString = LinkedMultiValueMap<String, String>().apply { this.add("error", message) }
         redirect.redirectToBrowser(request, response, queryString)
     }
 }

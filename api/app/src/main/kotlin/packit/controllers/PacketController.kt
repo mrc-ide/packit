@@ -28,24 +28,21 @@ class PacketController(
     private val roleService: RoleService,
     private val userRoleService: UserRoleService,
     private val oneTimeTokenService: OneTimeTokenService,
-)
-{
+) {
     @GetMapping
     fun pageableIndex(
         @RequestParam(required = false, defaultValue = "0") pageNumber: Int,
         @RequestParam(required = false, defaultValue = "50") pageSize: Int,
         @RequestParam(required = false, defaultValue = "") filterName: String,
         @RequestParam(required = false, defaultValue = "") filterId: String,
-    ): ResponseEntity<Page<PacketDto>>
-    {
+    ): ResponseEntity<Page<PacketDto>> {
         val payload = PageablePayload(pageNumber, pageSize)
         return ResponseEntity.ok(packetService.getPackets(payload, filterName, filterId).map { it.toDto() })
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("@authz.canReadPacket(#root, #id)")
-    fun findPacketMetadata(@PathVariable id: String): ResponseEntity<PacketMetadata>
-    {
+    fun findPacketMetadata(@PathVariable id: String): ResponseEntity<PacketMetadata> {
         return ResponseEntity.ok(packetService.getMetadataBy(id))
     }
 
@@ -54,8 +51,7 @@ class PacketController(
     fun generateTokenForDownloadingFile(
         @PathVariable id: String,
         @RequestParam paths: List<String>,
-    ): ResponseEntity<OneTimeTokenDto>
-    {
+    ): ResponseEntity<OneTimeTokenDto> {
         packetService.validateFilesExistForPacket(id, paths)
         val oneTimeToken = oneTimeTokenService.createToken(id, paths)
         return ResponseEntity.ok(oneTimeToken.toDto())
@@ -69,8 +65,7 @@ class PacketController(
         @RequestParam filename: String, // The suggested name for the client to use when saving the file
         @RequestParam inline: Boolean = false,
         response: HttpServletResponse,
-    )
-    {
+    ) {
         val disposition = if (inline) ContentDisposition.inline() else ContentDisposition.attachment()
         response.setHeader("Content-Disposition", disposition.filename(filename).build().toString())
         response.contentType = getMediaType(filename).orElse(MediaType.APPLICATION_OCTET_STREAM).toString()
@@ -87,8 +82,7 @@ class PacketController(
         @RequestParam filename: String, // The suggested name for the client to use when saving the file
         @RequestParam inline: Boolean = false,
         response: HttpServletResponse,
-    )
-    {
+    ) {
         val disposition = if (inline) ContentDisposition.inline() else ContentDisposition.attachment()
         response.setHeader("Content-Disposition", disposition.filename(filename).build().toString())
         response.contentType = "application/zip"
@@ -101,8 +95,7 @@ class PacketController(
     @GetMapping("/{id}/read-permission")
     fun getRolesAndUsersForReadPermissionUpdate(
         @PathVariable id: String,
-    ): ResponseEntity<RolesAndUsersForReadUpdate>
-    {
+    ): ResponseEntity<RolesAndUsersForReadUpdate> {
         val packet = packetService.getPacket(id)
         val result = userRoleService.getRolesAndUsersForPacketReadUpdate(packet)
 
@@ -114,9 +107,9 @@ class PacketController(
     )
     @PutMapping("/{id}/read-permission")
     fun updatePacketReadPermissionOnRoles(
-        @RequestBody @Validated updatePacketReadRoles: UpdateReadRoles, @PathVariable id: String
-    ): ResponseEntity<Unit>
-    {
+        @RequestBody @Validated updatePacketReadRoles: UpdateReadRoles,
+        @PathVariable id: String
+    ): ResponseEntity<Unit> {
         val packet = packetService.getPacket(id)
 
         roleService.updatePacketReadPermissionOnRoles(updatePacketReadRoles, packet.name, packet.id)

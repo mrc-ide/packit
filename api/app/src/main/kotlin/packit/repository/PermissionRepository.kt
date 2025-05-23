@@ -5,8 +5,7 @@ import org.springframework.stereotype.Repository
 import packit.model.Permission
 
 @Repository
-interface PermissionRepository : JpaRepository<Permission, Int>
-{
+interface PermissionRepository : JpaRepository<Permission, Int> {
     fun findByNameIn(names: List<String>): List<Permission>
     fun findByName(name: String): Permission?
 }

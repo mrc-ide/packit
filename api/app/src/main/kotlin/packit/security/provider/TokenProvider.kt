@@ -9,18 +9,15 @@ import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
-interface JwtBuilder
-{
+interface JwtBuilder {
     fun withExpiresAt(expiry: Instant): JwtBuilder
     fun withDuration(duration: Duration): JwtBuilder
     fun withPermissions(permissions: Collection<String>): JwtBuilder
     fun issue(): String
 }
 
-interface JwtIssuer
-{
-    fun issue(userPrincipal: UserPrincipal): String
-    {
+interface JwtIssuer {
+    fun issue(userPrincipal: UserPrincipal): String {
         return builder(userPrincipal).issue()
     }
 
@@ -31,10 +28,8 @@ interface JwtIssuer
     fun builder(userPrincipal: UserPrincipal): JwtBuilder
 }
 
-class TokenProviderBuilder(val config: AppConfig, val userPrincipal: UserPrincipal) : JwtBuilder
-{
-    companion object
-    {
+class TokenProviderBuilder(val config: AppConfig, val userPrincipal: UserPrincipal) : JwtBuilder {
+    companion object {
         const val TOKEN_ISSUER = "packit-api"
         const val TOKEN_AUDIENCE = "packit"
     }
@@ -43,42 +38,33 @@ class TokenProviderBuilder(val config: AppConfig, val userPrincipal: UserPrincip
     private var expiry: Instant? = null
     private var permissions: MutableSet<String>? = null
 
-    override fun withExpiresAt(expiry: Instant): JwtBuilder
-    {
-        if (this.expiry == null || expiry > this.expiry)
-        {
+    override fun withExpiresAt(expiry: Instant): JwtBuilder {
+        if (this.expiry == null || expiry > this.expiry) {
             this.expiry = expiry
         }
         return this
     }
 
-    override fun withDuration(duration: Duration): JwtBuilder
-    {
-        if (duration < this.duration)
-        {
+    override fun withDuration(duration: Duration): JwtBuilder {
+        if (duration < this.duration) {
             this.duration = duration
         }
         return this
     }
 
-    override fun withPermissions(permissions: Collection<String>): JwtBuilder
-    {
-        if (this.permissions == null)
-        {
+    override fun withPermissions(permissions: Collection<String>): JwtBuilder {
+        if (this.permissions == null) {
             this.permissions = permissions.toMutableSet()
-        } else
-        {
+        } else {
             this.permissions!!.retainAll(permissions.toSet())
         }
         return this
     }
 
-    override fun issue(): String
-    {
+    override fun issue(): String {
         val issuedAt = Instant.now()
         var expiresAt = issuedAt.plus(duration)
-        if (expiry != null && expiry!! < expiresAt)
-        {
+        if (expiry != null && expiry!! < expiresAt) {
             expiresAt = expiry
         }
 
@@ -88,8 +74,7 @@ class TokenProviderBuilder(val config: AppConfig, val userPrincipal: UserPrincip
             .withClaim("userName", userPrincipal.name)
             .withClaim("displayName", userPrincipal.displayName)
             .apply {
-                if (!permissions.isNullOrEmpty())
-                {
+                if (!permissions.isNullOrEmpty()) {
                     this.withClaim("au", permissions!!.toList())
                 }
             }
@@ -100,10 +85,8 @@ class TokenProviderBuilder(val config: AppConfig, val userPrincipal: UserPrincip
 }
 
 @Component
-class TokenProvider(val config: AppConfig) : JwtIssuer
-{
-    override fun builder(userPrincipal: UserPrincipal): JwtBuilder
-    {
+class TokenProvider(val config: AppConfig) : JwtIssuer {
+    override fun builder(userPrincipal: UserPrincipal): JwtBuilder {
         return TokenProviderBuilder(config, userPrincipal)
     }
 }

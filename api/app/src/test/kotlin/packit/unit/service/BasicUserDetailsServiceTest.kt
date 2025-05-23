@@ -13,8 +13,7 @@ import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class BasicUserDetailsServiceTest
-{
+class BasicUserDetailsServiceTest {
     private val mockUserService = mock<UserService>()
     private val service = BasicUserDetailsService(mockUserService)
     private val mockUser = User(
@@ -37,8 +36,7 @@ class BasicUserDetailsServiceTest
     )
 
     @Test
-    fun `loadUserByUsername returns correct UserDetails for valid username`()
-    {
+    fun `loadUserByUsername returns correct UserDetails for valid username`() {
         whenever(mockUserService.getUserForBasicLogin(mockUser.username)).thenReturn(
             mockUser
         )

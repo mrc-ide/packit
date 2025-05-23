@@ -17,10 +17,8 @@ class OAuth2UserService(
     private val userService: UserService,
     private val roleService: RoleService
 ) :
-    DefaultOAuth2UserService()
-{
-    override fun loadUser(userRequest: OAuth2UserRequest): OAuth2User
-    {
+    DefaultOAuth2UserService() {
+    override fun loadUser(userRequest: OAuth2UserRequest): OAuth2User {
         val oAuth2User = super.loadUser(userRequest)
 
         checkGithubUserMembership(userRequest)
@@ -28,12 +26,10 @@ class OAuth2UserService(
         return processOAuth2User(oAuth2User)
     }
 
-    fun processOAuth2User(oAuth2User: OAuth2User): OAuth2User
-    {
+    fun processOAuth2User(oAuth2User: OAuth2User): OAuth2User {
         val githubInfo = GithubOAuth2UserInfo(oAuth2User.attributes)
 
-        if (githubInfo.userName().isEmpty())
-        {
+        if (githubInfo.userName().isEmpty()) {
             throw PackitException("Username not found from Github provider")
         }
 
@@ -49,8 +45,7 @@ class OAuth2UserService(
         )
     }
 
-    fun checkGithubUserMembership(request: OAuth2UserRequest)
-    {
+    fun checkGithubUserMembership(request: OAuth2UserRequest) {
         githubUserClient.authenticate(request.accessToken.tokenValue)
         githubUserClient.checkGithubMembership()
     }

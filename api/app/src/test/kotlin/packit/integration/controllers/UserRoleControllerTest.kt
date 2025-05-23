@@ -19,8 +19,7 @@ import packit.repository.UserRepository
 import kotlin.test.assertEquals
 
 @Sql("/delete-test-users.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-class UserRoleControllerTest : IntegrationTest()
-{
+class UserRoleControllerTest : IntegrationTest() {
     @Autowired
     private lateinit var userRepository: UserRepository
 
@@ -32,8 +31,7 @@ class UserRoleControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["none"])
-    fun `getRolesAndUsers user without user manage permission cannot get`()
-    {
+    fun `getRolesAndUsers user without user manage permission cannot get`() {
         val result =
             restTemplate.exchange(
                 "/user-role",
@@ -47,8 +45,7 @@ class UserRoleControllerTest : IntegrationTest()
 
     @Test
     @WithAuthenticatedUser(authorities = ["user.manage"])
-    fun `getRolesAndUsers user with permissions gets correct response`()
-    {
+    fun `getRolesAndUsers user with permissions gets correct response`() {
         val runPermission = permissionRepository.findByName("packet.run")!!
         val testRoles = roleRepository.saveAll(
             listOf(
@@ -83,8 +80,7 @@ class UserRoleControllerTest : IntegrationTest()
 
         val userAndRoles = jacksonObjectMapper().readValue(
             result.body,
-            object : TypeReference<RolesAndUsersWithPermissionsDto>()
-            {}
+            object : TypeReference<RolesAndUsersWithPermissionsDto>() {}
         )
 
         val roles = userAndRoles.roles.filter { it.name == "testRole1" || it.name == "testRole2" }

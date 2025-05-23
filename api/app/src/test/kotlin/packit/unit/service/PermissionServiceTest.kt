@@ -17,14 +17,12 @@ import packit.service.BasePermissionService
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class PermissionServiceTest
-{
+class PermissionServiceTest {
     private lateinit var permissionRepository: PermissionRepository
     private lateinit var basePermissionService: BasePermissionService
 
     @BeforeEach
-    fun setup()
-    {
+    fun setup() {
         permissionRepository = mock()
         basePermissionService = BasePermissionService(permissionRepository)
     }
@@ -50,8 +48,7 @@ class PermissionServiceTest
     )
 
     @Test
-    fun `checkMatchingPermissions returns matched permissions when all permissions exist`()
-    {
+    fun `checkMatchingPermissions returns matched permissions when all permissions exist`() {
         val permissionsToCheck = listOf("p1", "p2")
         val matchedPermissions = listOf(Permission("p1", "d1"), Permission("p2", "d2"))
         whenever(permissionRepository.findByNameIn(permissionsToCheck)).thenReturn(matchedPermissions)
@@ -62,8 +59,7 @@ class PermissionServiceTest
     }
 
     @Test
-    fun `checkMatchingPermissions throws PackitException when not all permissions exist`()
-    {
+    fun `checkMatchingPermissions throws PackitException when not all permissions exist`() {
         val permissionsToCheck = listOf("p1", "p2")
         val matchedPermissions = listOf(Permission("p1", "d2"))
         whenever(permissionRepository.findByNameIn(permissionsToCheck)).thenReturn(matchedPermissions)
@@ -74,8 +70,7 @@ class PermissionServiceTest
     }
 
     @Test
-    fun `buildScopedPermission returns permission name with packet name and id`()
-    {
+    fun `buildScopedPermission returns permission name with packet name and id`() {
         val rolePermission = createRolePermission(packetId = "123")
 
         val result = basePermissionService.buildScopedPermission(rolePermission)
@@ -84,8 +79,7 @@ class PermissionServiceTest
     }
 
     @Test
-    fun `buildScopedPermission returns permission name with packetGroup id`()
-    {
+    fun `buildScopedPermission returns permission name with packetGroup id`() {
         val rolePermission =
             createRolePermission(packetGroupName = "packetGroupName")
 
@@ -95,8 +89,7 @@ class PermissionServiceTest
     }
 
     @Test
-    fun `buildScopedPermission returns permission name with tag id`()
-    {
+    fun `buildScopedPermission returns permission name with tag id`() {
         val rolePermission = createRolePermission(tagName = "tagName")
 
         val result = basePermissionService.buildScopedPermission(rolePermission)
@@ -105,8 +98,7 @@ class PermissionServiceTest
     }
 
     @Test
-    fun `buildScopedPermission returns permission name when no scope`()
-    {
+    fun `buildScopedPermission returns permission name when no scope`() {
         val rolePermission = createRolePermission()
 
         val result = basePermissionService.buildScopedPermission(rolePermission)
@@ -115,8 +107,7 @@ class PermissionServiceTest
     }
 
     @Test
-    fun `getByName returns permission when found in repository`()
-    {
+    fun `getByName returns permission when found in repository`() {
         val permissionName = "permission.read"
         val expectedPermission = Permission(permissionName, "Read permission")
         whenever(permissionRepository.findByName(permissionName)).thenReturn(expectedPermission)
@@ -127,8 +118,7 @@ class PermissionServiceTest
     }
 
     @Test
-    fun `getByName throws PackitException when permission not found`()
-    {
+    fun `getByName throws PackitException when permission not found`() {
         val permissionName = "permission.nonexistent"
         whenever(permissionRepository.findByName(permissionName)).thenReturn(null)
 
@@ -142,8 +132,7 @@ class PermissionServiceTest
     }
 
     @Test
-    fun `buildScopedPermission throws error when both packetGroup and tag are provided`()
-    {
+    fun `buildScopedPermission throws error when both packetGroup and tag are provided`() {
 
         val packetGroupName = "packetGroupName"
         val tagName = "tagName"
@@ -160,8 +149,7 @@ class PermissionServiceTest
     }
 
     @Test
-    fun `buildScopedPermission throws error when packetId is provided without packetGroupName`()
-    {
+    fun `buildScopedPermission throws error when packetId is provided without packetGroupName`() {
         val packetId = "packetId"
         val packetGroupName = null
 
@@ -177,8 +165,7 @@ class PermissionServiceTest
     }
 
     @Test
-    fun `mapToScopedPermission returns list of scoped permissions`()
-    {
+    fun `mapToScopedPermission returns list of scoped permissions`() {
         val rolePermissions = listOf(
             createRolePermission(packetId = "123"),
             createRolePermission(packetGroupName = "group"),

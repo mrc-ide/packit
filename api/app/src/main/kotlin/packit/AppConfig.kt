@@ -8,15 +8,12 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
 
 @Component
-class AppConfig(private val environment: Environment)
-{
-    internal final fun requiredEnvValue(key: String): String
-    {
+class AppConfig(private val environment: Environment) {
+    internal final fun requiredEnvValue(key: String): String {
         return environment[key] ?: throw IllegalArgumentException("$key not set $environment")
     }
 
-    internal final fun splitList(value: String): List<String>
-    {
+    internal final fun splitList(value: String): List<String> {
         if (value.isBlank()) {
             return listOf()
         } else {
@@ -25,8 +22,7 @@ class AppConfig(private val environment: Environment)
     }
 
     @Bean
-    fun passwordEncoder(): PasswordEncoder
-    {
+    fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder()
     }
 

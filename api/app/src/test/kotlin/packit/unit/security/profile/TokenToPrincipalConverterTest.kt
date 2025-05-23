@@ -18,15 +18,13 @@ import packit.service.RoleService
 import packit.service.UserService
 import kotlin.test.assertEquals
 
-class TokenToPrincipalConverterTest
-{
+class TokenToPrincipalConverterTest {
     private val roleService = mock<RoleService>()
     private val userService = mock<UserService>()
     private val tokenConverter = TokenToPrincipalConverter(userService, roleService)
 
     @Test
-    fun `can extract authorities from jwt claim au`()
-    {
+    fun `can extract authorities from jwt claim au`() {
         val mockClaim = mock<Claim> {
             on { isNull } doReturn true
         }
@@ -37,8 +35,7 @@ class TokenToPrincipalConverterTest
     }
 
     @Test
-    fun `returns empty list if null au claim when extracting from token`()
-    {
+    fun `returns empty list if null au claim when extracting from token`() {
         val mockClaim = mock<Claim> {
             on { isNull } doReturn true
         }
@@ -49,8 +46,7 @@ class TokenToPrincipalConverterTest
     }
 
     @Test
-    fun `converts jwt to user principal if au present in jwt`()
-    {
+    fun `converts jwt to user principal if au present in jwt`() {
         val mockNameClaim = mock<Claim> {
             on { asString() } doReturn "fakeName"
             on { isNull } doReturn false
@@ -86,8 +82,7 @@ class TokenToPrincipalConverterTest
     }
 
     @Test
-    fun `throws error when username claim is missing`()
-    {
+    fun `throws error when username claim is missing`() {
         val mockDecodedJwt = mock<DecodedJWT> {
             on { getClaim("userName") } doReturn mock<Claim>()
         }
@@ -102,8 +97,7 @@ class TokenToPrincipalConverterTest
     }
 
     @Test
-    fun `getAuthorities throws exception when user not found`()
-    {
+    fun `getAuthorities throws exception when user not found`() {
         val mockClaim = mock<Claim> {
             on { isMissing } doReturn true
         }
@@ -116,8 +110,7 @@ class TokenToPrincipalConverterTest
     }
 
     @Test
-    fun `getAuthorities returns returns authorities when missing au claim`()
-    {
+    fun `getAuthorities returns returns authorities when missing au claim`() {
         val mockClaim = mock<Claim> {
             on { isMissing } doReturn true
         }
