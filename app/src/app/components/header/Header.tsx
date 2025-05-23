@@ -9,14 +9,14 @@ import { useBrandingContext } from "../providers/BrandingProvider";
 
 export const Header = () => {
   const { user } = useUser();
-  const { logoConfig, logoConfigIsLoaded, brandName } = useBrandingContext();
+  const { logoConfig, brandName } = useBrandingContext();
   const logoLinkDestination = logoConfig?.linkDestination || "/";
 
   return (
     <header>
       <div data-testid="header">
         <div className="flex items-center h-20 border-b shadow-sm border-accent">
-          {logoConfigIsLoaded && brandName && (
+          {logoConfig && (
             <>
               {logoConfig?.filename && (
                 <NavLink to={logoLinkDestination} className="h-full p-2 hidden md:block flex-shrink-0 ml-2 mr-6">
