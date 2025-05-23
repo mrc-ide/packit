@@ -47,7 +47,7 @@ export const AddScopedPermissionInput = ({ scope, form }: AddScopedPermissionInp
             className="hover:bg-background hover:text-inherit w-[350px] justify-between"
             disabled={scope === "global"}
           >
-            {scopeResource?.id ? (scope === "packet" ? scopeResource?.id : scopeResource?.name) : "Select Resource..."}
+            {scopeResource?.id ? (scope === "packet" ? scopeResource?.id : scopeResource?.name) : "Select resource..."}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
