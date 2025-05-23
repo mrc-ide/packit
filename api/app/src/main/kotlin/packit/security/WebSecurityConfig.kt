@@ -115,20 +115,15 @@ class WebSecurityConfig(
     }
 
     fun HttpSecurity.handleSecurePaths(): HttpSecurity {
-        if (config.authEnabled) {
-            this.securityMatcher("/**")
-                .authorizeHttpRequests {
-                    it
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers("/auth/**", "/oauth2/**").permitAll()
-                        .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
-                        .anyRequest().authenticated()
-                }
-        } else {
-            this.securityMatcher("/**")
-                .authorizeHttpRequests { it.anyRequest().permitAll() }
-        }
-
+        this.securityMatcher("/**")
+            .authorizeHttpRequests {
+                it
+                    .requestMatchers("/").permitAll()
+                    .requestMatchers("/auth/**", "/oauth2/**").permitAll()
+                    .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
+                    .anyRequest().authenticated()
+            }
+        
         return this
     }
 
