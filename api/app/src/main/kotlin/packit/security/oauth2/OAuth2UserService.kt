@@ -8,16 +8,13 @@ import packit.clients.GithubUserClient
 import packit.exceptions.PackitException
 import packit.security.profile.PackitOAuth2User
 import packit.security.profile.UserPrincipal
-import packit.service.RoleService
 import packit.service.UserService
 
 @Component
 class OAuth2UserService(
     private val githubUserClient: GithubUserClient,
-    private val userService: UserService,
-    private val roleService: RoleService
-) :
-    DefaultOAuth2UserService() {
+    private val userService: UserService
+) : DefaultOAuth2UserService() {
     override fun loadUser(userRequest: OAuth2UserRequest): OAuth2User {
         val oAuth2User = super.loadUser(userRequest)
 
@@ -39,8 +36,7 @@ class OAuth2UserService(
             UserPrincipal(
                 user.username,
                 user.displayName,
-                mutableSetOf(),
-                oAuth2User.attributes
+                setOf(),
             )
         )
     }

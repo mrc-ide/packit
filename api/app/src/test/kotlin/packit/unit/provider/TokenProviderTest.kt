@@ -21,7 +21,6 @@ class TokenProviderTest {
             "name",
             "displayName",
             mutableListOf(),
-            mutableMapOf()
         )
 
         val provider = TokenProvider(mock())
@@ -36,7 +35,6 @@ class TokenProviderBuilderTest {
         "name",
         "displayName",
         mutableListOf(),
-        mutableMapOf()
     )
 
     private val config = mock<AppConfig> {

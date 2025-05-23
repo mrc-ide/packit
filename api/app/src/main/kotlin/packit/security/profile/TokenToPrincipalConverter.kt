@@ -27,7 +27,6 @@ class TokenToPrincipalConverter(
             username,
             jwt.getClaim("displayName").let { if (it.isNull) null else it.asString() },
             getAuthorities(jwt.getClaim("au"), username),
-            mutableMapOf()
         )
     }
 

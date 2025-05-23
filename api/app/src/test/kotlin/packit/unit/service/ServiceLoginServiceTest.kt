@@ -57,7 +57,6 @@ class ServiceLoginServiceTest {
         name = "service",
         displayName = "Service Account",
         authorities = mutableSetOf(),
-        attributes = mutableMapOf(),
     )
 
     private val mockAppConfig = mock<AppConfig>() {
@@ -66,7 +65,6 @@ class ServiceLoginServiceTest {
     }
     private val mockUserService = mock<UserService>() {
         on { getServiceUser() } doAnswer { serviceUser }
-        on { getUserPrincipal(serviceUser) } doAnswer { serviceUserPrincipal }
     }
 
     lateinit var defaultIssuer: TestJwtIssuer
@@ -229,7 +227,7 @@ class ServiceLoginServiceTest {
         )
 
         val testCases = listOf(
-            TestCase(listOf(), null),
+            TestCase(listOf(), setOf()),
             TestCase(listOf("outpack.read"), setOf("outpack.read")),
             TestCase(listOf("outpack.read", "outpack.write"), setOf("outpack.read", "outpack.write")),
         )

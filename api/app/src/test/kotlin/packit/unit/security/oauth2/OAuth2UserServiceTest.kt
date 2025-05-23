@@ -11,7 +11,6 @@ import packit.clients.GithubUserClient
 import packit.model.Role
 import packit.model.User
 import packit.security.oauth2.OAuth2UserService
-import packit.service.RoleService
 import packit.service.UserService
 import kotlin.test.assertEquals
 
@@ -26,25 +25,7 @@ class OAuth2UserServiceTest {
     private val mockUserService = mock<UserService> {
         on { saveUserFromGithub(fakeLogin, fakeName, null) } doReturn fakeUser
     }
-    private val mockRoleService = mock<RoleService>()
-
-    @Test
-    fun `can process oauth user attributes`() {
-        val mockOAuth2User = mock<OAuth2User> {
-            on { attributes } doReturn mapOf("login" to fakeLogin, "name" to fakeName)
-        }
-
-        val sut = OAuth2UserService(mockGithubUserClient, mockUserService, mockRoleService)
-
-        val result = sut.processOAuth2User(mockOAuth2User)
-
-        assertEquals(result.name, fakeLogin)
-        assertEquals(result.getAttribute("login"), fakeLogin)
-        assertEquals(result.getAttribute("name"), fakeName)
-        assertEquals(result.authorities, mutableSetOf())
-        verify(mockUserService).saveUserFromGithub(fakeLogin, fakeName, null)
-    }
-
+    
     @Test
     fun `can check user github membership`() {
         val mockAccessToken = mock<OAuth2AccessToken> {
@@ -54,7 +35,7 @@ class OAuth2UserServiceTest {
             on { accessToken } doReturn mockAccessToken
         }
 
-        val sut = OAuth2UserService(mockGithubUserClient, mockUserService, mockRoleService)
+        val sut = OAuth2UserService(mockGithubUserClient, mockUserService)
 
         sut.checkGithubUserMembership(mockRequest)
         verify(mockGithubUserClient).authenticate("fakeToken")

@@ -1,12 +1,12 @@
 package packit.unit.service
 
 import org.junit.jupiter.api.assertThrows
+import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.springframework.http.HttpStatus
 import packit.exceptions.PackitException
 import packit.model.User
-import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
 import packit.service.PreAuthenticatedLoginService
 import packit.service.UserService
@@ -16,19 +16,28 @@ import kotlin.test.assertEquals
 class PreAuthenticatedLoginServiceTest {
     @Test
     fun `can save user and issue token`() {
-        val mockUser = mock<User>()
-        val userPrincipal = UserPrincipal("test.user", "Test User", mutableListOf(), mutableMapOf())
+        val name = "test.user"
+        val displayName = "Test User"
+        val mockUser = mock<User> {
+            on { username } doReturn name
+            on { it.displayName } doReturn displayName
+        }
         val mockUserService = mock<UserService> {
-            on { savePreAuthenticatedUser("test.user", "Test User", "test.user@example.com") } doReturn mockUser
-            on { getUserPrincipal(mockUser) } doReturn userPrincipal
+            on {
+                savePreAuthenticatedUser(
+                    name,
+                    displayName,
+                    "test.user@example.com"
+                )
+            } doReturn mockUser
         }
         val token = "test-token"
         val mockjwtIssuer = mock<JwtIssuer> {
-            on { issue(userPrincipal) } doReturn token
+            on { issue(argThat { this.name == name }) } doReturn token
         }
 
         val sut = PreAuthenticatedLoginService(mockjwtIssuer, mockUserService)
-        val result = sut.saveUserAndIssueToken("test.user", "Test User", "test.user@example.com")
+        val result = sut.saveUserAndIssueToken(name, displayName, "test.user@example.com")
         assertEquals(result, mapOf("token" to token))
     }
 

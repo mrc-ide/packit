@@ -2,7 +2,6 @@ package packit.integration.controllers
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import org.assertj.core.api.Assertions.assertThat
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -12,13 +11,11 @@ import org.springframework.test.context.jdbc.Sql
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
 import packit.model.Role
-import packit.model.RolePermission
 import packit.model.User
 import packit.model.dto.CreateBasicUser
 import packit.model.dto.CreateExternalUser
 import packit.model.dto.UpdateUserRoles
 import packit.model.dto.UserDto
-import packit.repository.PermissionRepository
 import packit.repository.RoleRepository
 import packit.repository.UserRepository
 import kotlin.test.Test
@@ -33,9 +30,6 @@ class UserControllerTest : IntegrationTest() {
 
     @Autowired
     lateinit var userRepository: UserRepository
-
-    @Autowired
-    lateinit var permissionRepository: PermissionRepository
 
     private val testCreateUser = CreateBasicUser(
         email = "test@email",
@@ -160,28 +154,8 @@ class UserControllerTest : IntegrationTest() {
     }
 
     @Test
-    @WithAuthenticatedUser(authorities = ["none"])
+    @WithAuthenticatedUser(authorities = ["packet.read", "packet.run"])
     fun `can get user authorities if authenticated`() {
-        val runPermission = permissionRepository.findByName("packet.run")!!
-        val readPermission = permissionRepository.findByName("packet.read")!!
-        val testRole = roleRepository.save(
-            Role(name = "testRole").apply {
-                rolePermissions = mutableListOf(
-                    RolePermission(role = this, permission = runPermission),
-                    RolePermission(role = this, permission = readPermission)
-                )
-            }
-        )
-        userRepository.save(
-            User(
-                username = "test.user@example.com",
-                disabled = false,
-                userSource = "basic",
-                displayName = "test user",
-                roles = mutableListOf(testRole)
-            )
-        )
-
         val result = restTemplate.exchange(
             "/user/me/authorities",
             HttpMethod.GET,
@@ -195,7 +169,7 @@ class UserControllerTest : IntegrationTest() {
             object : TypeReference<List<String>>() {}
         )
 
-        assertThat(userAuthorities).containsSequence(listOf("packet.read", "packet.run"))
+        assertEquals(userAuthorities, listOf("packet.read", "packet.run"))
     }
 
     @Test
@@ -207,6 +181,7 @@ class UserControllerTest : IntegrationTest() {
 
         assertEquals(result.statusCode, HttpStatus.UNAUTHORIZED)
     }
+
     @WithAuthenticatedUser(authorities = ["user.manage"])
     fun `cannot create external user when auth method is basic`() {
         val testCreateExternalUser = CreateExternalUser(

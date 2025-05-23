@@ -74,7 +74,7 @@ class TokenProviderBuilder(val config: AppConfig, val userPrincipal: UserPrincip
             .withClaim("userName", userPrincipal.name)
             .withClaim("displayName", userPrincipal.displayName)
             .apply {
-                if (!permissions.isNullOrEmpty()) {
+                if (permissions != null) {
                     this.withClaim("au", permissions!!.toList())
                 }
             }

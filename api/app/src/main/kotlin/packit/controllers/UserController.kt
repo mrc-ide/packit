@@ -73,9 +73,6 @@ class UserController(
     @GetMapping("/me/authorities")
     @PreAuthorize("isAuthenticated()")
     fun getUserAuthorities(@AuthenticationPrincipal userPrincipal: UserPrincipal): ResponseEntity<List<String>> {
-
-        val userAuthorities = userRoleService.getUserAuthorities(userPrincipal.name)
-
-        return ResponseEntity.ok(userAuthorities)
+        return ResponseEntity.ok(userPrincipal.authorities.map { it.authority })
     }
 }

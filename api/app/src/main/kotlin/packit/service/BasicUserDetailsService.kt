@@ -4,6 +4,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Component
 import packit.security.profile.BasicUserDetails
+import packit.security.profile.UserPrincipal
 
 @Component
 class BasicUserDetailsService(
@@ -12,7 +13,11 @@ class BasicUserDetailsService(
     override fun loadUserByUsername(username: String): UserDetails {
         val user = userService.getUserForBasicLogin(username)
         return BasicUserDetails(
-            userService.getUserPrincipal(user),
+            UserPrincipal(
+                user.username,
+                user.displayName,
+                setOf(),
+            ),
             user.password!!
         )
     }

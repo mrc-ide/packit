@@ -9,7 +9,7 @@ class BasicUserDetails(
     @JsonIgnore
     private val password: String
 ) : UserDetails {
-    override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
+    override fun getAuthorities(): Collection<GrantedAuthority> {
         return principal.authorities
     }
 

@@ -71,7 +71,6 @@ class TokenToPrincipalConverterTest {
                 SimpleGrantedAuthority("packet.read"),
                 SimpleGrantedAuthority("packet.run")
             ),
-            mutableMapOf()
         )
 
         val result = tokenConverter.convert(mockDecodedJwt)
