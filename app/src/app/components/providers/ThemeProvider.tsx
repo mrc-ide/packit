@@ -3,7 +3,7 @@ import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
 import { Theme, ThemeProviderProps, ThemeProviderState } from "./types/ThemeTypes";
 
 const ThemeProviderContext = createContext<ThemeProviderState>({
-  theme: "system",
+  theme: "light",
   setTheme: () => null
 });
 
@@ -15,7 +15,7 @@ export const useTheme = () => {
   return context;
 };
 
-export const ThemeProvider = ({ children, defaultTheme = "system", ...props }: ThemeProviderProps) => {
+export const ThemeProvider = ({ children, defaultTheme = "light", ...props }: ThemeProviderProps) => {
   const [theme, setTheme] = useState<Theme>(
     () => (localStorage.getItem(LocalStorageKeys.THEME) as Theme) || defaultTheme
   );

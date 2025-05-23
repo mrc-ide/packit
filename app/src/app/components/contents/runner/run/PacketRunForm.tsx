@@ -20,7 +20,7 @@ export interface PacketRunFormProps {
 }
 export const packetRunFormSchema = z.object({
   branch: z.string({ required_error: "Branch is required" }),
-  packetGroupName: z.string({ required_error: "Packet Group name is required" }),
+  packetGroupName: z.string({ required_error: "Packet group name is required" }),
   parameters: z.array(
     z.object({
       name: z.string(),

@@ -18,11 +18,7 @@ export const Sidebar = ({ sidebarItems, children }: SidebarProps) => {
             <NavLink
               key={index}
               to={item.to}
-              className={cn(
-                buttonVariants({ variant: "ghost" }),
-                pathname === item.to ? "bg-muted hover:bg-muted" : "hover:bg-transparent hover:underline",
-                "justify-start"
-              )}
+              className={cn(buttonVariants({ variant: pathname === item.to ? "secondary" : "link" }), "justify-start")}
             >
               {item.title}
             </NavLink>
