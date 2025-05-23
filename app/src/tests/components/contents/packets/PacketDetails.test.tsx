@@ -18,7 +18,7 @@ describe("packet details component", () => {
       <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>
         <MemoryRouter initialEntries={[`/${packet.name}/${packet.id}`]}>
           <Routes>
-            <Route element={<PacketOutlet packetId={packet.id} />} path="/:packetName/:packetId">
+            <Route element={<PacketOutlet />} path="/:packetName/:packetId">
               <Route path="/:packetName/:packetId" element={<PacketDetails />} />
             </Route>
           </Routes>

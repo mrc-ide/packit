@@ -1,15 +1,14 @@
 import { Loader2 } from "lucide-react";
-import { Outlet, useOutletContext } from "react-router-dom";
+import { Outlet, useOutletContext, useParams } from "react-router-dom";
 import { PacketMetadata } from "../../../types";
 import { ErrorComponent } from "../contents/common/ErrorComponent";
 import { useGetPacketById } from "../contents/common/hooks/useGetPacketById";
 import { HttpStatus } from "../../../lib/types/HttpStatus";
 import { Unauthorized } from "../contents/common/Unauthorized";
+import { PacketNameError } from "../../../lib/errors";
 
-interface PacketOutletProps {
-  packetId: string | undefined;
-}
-export const PacketOutlet = ({ packetId }: PacketOutletProps) => {
+export const PacketOutlet = () => {
+  const { packetName, packetId } = useParams();
   const { packet, isLoading, error } = useGetPacketById(packetId);
 
   if (error?.status === HttpStatus.Unauthorized) return <Unauthorized />;
@@ -21,6 +20,10 @@ export const PacketOutlet = ({ packetId }: PacketOutletProps) => {
         <Loader2 className="animate-spin" />
       </div>
     );
+
+  if (packet?.name !== packetName) {
+    return <ErrorComponent error={new PacketNameError()} message="Error fetching packet details" />;
+  }
 
   return packet ? <Outlet context={{ packet }} /> : null;
 };
