@@ -16,9 +16,7 @@ export const BrandingProvider = ({ children }: { children: ReactNode }) => {
   if (error) return <ErrorComponent message={error.message} error={error} />;
 
   return (
-    <BrandingContext.Provider value={{ logoConfig, brandName: document.title }}>
-      {children}
-    </BrandingContext.Provider>
+    <BrandingContext.Provider value={{ logoConfig, brandName: document.title }}>{children}</BrandingContext.Provider>
   );
 };
 

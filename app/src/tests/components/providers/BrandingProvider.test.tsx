@@ -11,8 +11,9 @@ describe("BrandingProvider", () => {
       useBrandingContext();
       return <div>test</div>;
     };
-    expect(() => render(<ShouldErrorComponent />))
-      .toThrowError("useBrandingContext must be used within a BrandingProvider");
+    expect(() => render(<ShouldErrorComponent />)).toThrowError(
+      "useBrandingContext must be used within a BrandingProvider"
+    );
   });
 
   it("provides logo branding information and brand name", async () => {
