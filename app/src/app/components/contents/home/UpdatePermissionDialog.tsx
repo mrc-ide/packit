@@ -43,7 +43,7 @@ export const UpdatePermissionDialog = ({
           <DialogTitle>Update read access on {packetGroupName}</DialogTitle>
         </DialogHeader>
         <UpdatePacketReadPermissionForm
-          rolesAndUsersCantRead={rolesAndUsersToUpdateRead.cantRead}
+          rolesAndUsersCannotRead={rolesAndUsersToUpdateRead.cannotRead}
           rolesAndUsersWithRead={rolesAndUsersToUpdateRead.withRead}
           setDialogOpen={setDialogOpen}
           packetGroupName={packetGroupName}

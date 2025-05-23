@@ -51,8 +51,8 @@ class BaseUserRoleService(
                 canRead = createSortedBasicRolesAndUsers(
                     userRoleFilterService.getRolesAndSpecificUsersCanReadPacketGroup(roles, users, it)
                 ),
-                cantRead = createSortedBasicRolesAndUsers(
-                    userRoleFilterService.getRolesAndUsersCantReadPacketReadGroup(roles, users, it)
+                cannotRead = createSortedBasicRolesAndUsers(
+                    userRoleFilterService.getRolesAndUsersCannotReadPacketReadGroup(roles, users, it)
                 ),
                 withRead = createSortedBasicRolesAndUsers(
                     userRoleFilterService.getRolesAndUsersWithSpecificReadPacketGroupPermission(roles, users, it)
@@ -68,8 +68,8 @@ class BaseUserRoleService(
             canRead = createSortedBasicRolesAndUsers(
                 userRoleFilterService.getRolesAndSpecificUsersCanReadPacket(roles, users, packet)
             ),
-            cantRead = createSortedBasicRolesAndUsers(
-                userRoleFilterService.getRolesAndUsersCantReadPacket(roles, users, packet)
+            cannotRead = createSortedBasicRolesAndUsers(
+                userRoleFilterService.getRolesAndUsersCannotReadPacket(roles, users, packet)
             ),
             withRead = createSortedBasicRolesAndUsers(
                 userRoleFilterService.getRolesAndUsersWithSpecificReadPacketPermission(roles, users, packet),

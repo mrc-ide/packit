@@ -12,7 +12,7 @@ describe("UpdatePacketReadButton", () => {
   it("should render dialog on button click correctly", async () => {
     render(
       <UpdatePacketReadButton
-        rolesAndUsersCantRead={{} as any}
+        rolesAndUsersCannotRead={{} as any}
         rolesAndUsersWithRead={{} as any}
         packet={packet}
         mutate={jest.fn()}
@@ -29,7 +29,7 @@ describe("UpdatePacketReadButton", () => {
   it("should be able to open and close dialog", async () => {
     render(
       <UpdatePacketReadButton
-        rolesAndUsersCantRead={{} as any}
+        rolesAndUsersCannotRead={{} as any}
         rolesAndUsersWithRead={{} as any}
         packet={packet}
         mutate={jest.fn()}
