@@ -33,7 +33,7 @@ export const PacketRunPacketGroupField = ({ form, packetGroups }: PacketRunPacke
                   aria-expanded={open}
                   className={cn(
                     "hover:bg-background hover:text-inherit w-[350px] sm:w-[450px] justify-between",
-                    !field.value && "text-muted-foreground"
+                    !field.value && "text-muted-foreground hover:text-muted-foreground"
                   )}
                 >
                   {field.value || "Select packet group..."}
