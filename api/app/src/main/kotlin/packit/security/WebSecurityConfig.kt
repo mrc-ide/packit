@@ -123,7 +123,7 @@ class WebSecurityConfig(
                     .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
                     .anyRequest().authenticated()
             }
-        
+
         return this
     }
 
