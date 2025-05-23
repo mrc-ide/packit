@@ -6,13 +6,11 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest
 import org.springframework.security.oauth2.core.OAuth2AccessToken
-import org.springframework.security.oauth2.core.user.OAuth2User
 import packit.clients.GithubUserClient
 import packit.model.Role
 import packit.model.User
 import packit.security.oauth2.OAuth2UserService
 import packit.service.UserService
-import kotlin.test.assertEquals
 
 class OAuth2UserServiceTest {
     private val mockGithubUserClient = mock<GithubUserClient>()
@@ -25,7 +23,7 @@ class OAuth2UserServiceTest {
     private val mockUserService = mock<UserService> {
         on { saveUserFromGithub(fakeLogin, fakeName, null) } doReturn fakeUser
     }
-    
+
     @Test
     fun `can check user github membership`() {
         val mockAccessToken = mock<OAuth2AccessToken> {
