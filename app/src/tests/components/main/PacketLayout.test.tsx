@@ -21,10 +21,10 @@ URL.revokeObjectURL = jest.fn();
 
 const mockUseUser = jest.spyOn(UserProvider, "useUser");
 
-const renderComponent = () => {
+const renderComponent = (packet = mockPacket) => {
   render(
     <SWRConfig value={{ dedupingInterval: 0 }}>
-      <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}`]}>
+      <MemoryRouter initialEntries={[`/${packet.name}/${packet.id}`]}>
         <Routes>
           <Route element={<PacketLayout />} path="/:packetName/:packetId">
             <Route path="/:packetName/:packetId" element={<PacketDetails />} />
