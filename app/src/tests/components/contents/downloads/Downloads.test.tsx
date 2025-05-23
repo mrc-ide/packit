@@ -24,7 +24,7 @@ describe("download component", () => {
       <SWRConfig value={{ dedupingInterval: 0 }}>
         <MemoryRouter initialEntries={[`/${packet.name}/${packet.id}/downloads`]}>
           <Routes>
-            <Route element={<PacketOutlet packetId={packet.id} />}>
+            <Route element={<PacketOutlet />}>
               <Route path="/:packetName/:packetId/downloads" element={<Downloads />} />
             </Route>
           </Routes>

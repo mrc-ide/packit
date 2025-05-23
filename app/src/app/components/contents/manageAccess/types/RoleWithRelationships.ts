@@ -39,7 +39,7 @@ export interface BasicRolesAndUsers {
   users: BasicUser[];
 }
 export interface RolesAndUsersToUpdateRead {
-  cantRead: BasicRolesAndUsers;
+  cannotRead: BasicRolesAndUsers;
   withRead: BasicRolesAndUsers;
   canRead: BasicRolesAndUsers;
 }

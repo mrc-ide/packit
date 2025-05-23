@@ -310,7 +310,7 @@ class UserRoleServiceTest {
         `when`(userRoleFilterService.getRolesAndSpecificUsersCanReadPacketGroup(any(), any(), any())).thenReturn(
             rolesAndUsers
         )
-        `when`(userRoleFilterService.getRolesAndUsersCantReadPacketReadGroup(any(), any(), any())).thenReturn(
+        `when`(userRoleFilterService.getRolesAndUsersCannotReadPacketReadGroup(any(), any(), any())).thenReturn(
             rolesAndUsers
         )
         `when`(
@@ -328,7 +328,7 @@ class UserRoleServiceTest {
         assertEquals(packetGroupNames, result.keys.toList())
         packetGroupNames.forEach {
             assert(result[it] is RolesAndUsersForReadUpdate)
-            verify(userRoleFilterService).getRolesAndUsersCantReadPacketReadGroup(
+            verify(userRoleFilterService).getRolesAndUsersCannotReadPacketReadGroup(
                 rolesAndUsers.roles,
                 rolesAndUsers.users,
                 it
@@ -357,7 +357,7 @@ class UserRoleServiceTest {
             rolesAndUsers
         )
         `when`(
-            userRoleFilterService.getRolesAndUsersCantReadPacket(
+            userRoleFilterService.getRolesAndUsersCannotReadPacket(
                 any(),
                 any(),
                 any()
@@ -375,16 +375,15 @@ class UserRoleServiceTest {
 
         val result = serviceSpy.getRolesAndUsersForPacketReadUpdate(packet)
 
-        assert(result is RolesAndUsersForReadUpdate)
         assertEquals(rolesAndUsersDtos, result.canRead)
         assertEquals(rolesAndUsersDtos, result.withRead)
-        assertEquals(rolesAndUsersDtos, result.cantRead)
+        assertEquals(rolesAndUsersDtos, result.cannotRead)
         verify(userRoleFilterService).getRolesAndSpecificUsersCanReadPacket(
             rolesAndUsers.roles,
             rolesAndUsers.users,
             packet
         )
-        verify(userRoleFilterService).getRolesAndUsersCantReadPacket(
+        verify(userRoleFilterService).getRolesAndUsersCannotReadPacket(
             rolesAndUsers.roles,
             rolesAndUsers.users,
             packet

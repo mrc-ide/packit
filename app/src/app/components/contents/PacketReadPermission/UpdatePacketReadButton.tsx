@@ -9,14 +9,14 @@ import { RolesAndUsersToUpdateRead, BasicRolesAndUsers } from "../manageAccess/t
 
 interface UpdatePacketReadButtonProps {
   packet: PacketMetadata;
-  rolesAndUsersCantRead: BasicRolesAndUsers;
+  rolesAndUsersCannotRead: BasicRolesAndUsers;
   rolesAndUsersWithRead: BasicRolesAndUsers;
   mutate: KeyedMutator<RolesAndUsersToUpdateRead>;
 }
 
 export const UpdatePacketReadButton = ({
   packet,
-  rolesAndUsersCantRead,
+  rolesAndUsersCannotRead,
   rolesAndUsersWithRead,
   mutate
 }: UpdatePacketReadButtonProps) => {
@@ -34,7 +34,7 @@ export const UpdatePacketReadButton = ({
           <DialogTitle>Update read access on {packet.id}</DialogTitle>
         </DialogHeader>
         <UpdatePacketReadPermissionForm
-          rolesAndUsersCantRead={rolesAndUsersCantRead}
+          rolesAndUsersCannotRead={rolesAndUsersCannotRead}
           rolesAndUsersWithRead={rolesAndUsersWithRead}
           setDialogOpen={setDialogOpen}
           packetGroupName={packet.name}

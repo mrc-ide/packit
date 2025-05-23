@@ -105,4 +105,12 @@ describe("Packet Layout test", () => {
       expect(screen.getByText(/read access page/i)).toBeVisible();
     });
   });
+
+  it("should show an error if the packet name in the URL does not match the packet", async () => {
+    renderComponent({ ...mockPacket, name: "different-name" });
+
+    await waitFor(() => {
+      expect(screen.getByText(/Error fetching packet details/i)).toBeVisible();
+    });
+  });
 });

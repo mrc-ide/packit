@@ -31,7 +31,7 @@ export const PacketReadPermission = () => {
         <PacketHeader packetName={packetName} packetId={packetId} displayName={packet.displayName} />
         <UpdatePacketReadButton
           packet={packet}
-          rolesAndUsersCantRead={rolesAndUsers.cantRead}
+          rolesAndUsersCannotRead={rolesAndUsers.cannotRead}
           rolesAndUsersWithRead={rolesAndUsers.withRead}
           mutate={mutate}
         />

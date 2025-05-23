@@ -17,7 +17,7 @@ export const packetHandlers = [
     const rolesAndUsers: RolesAndUsersToUpdateRead = {
       withRead: mockRolesAndUsersWithPermissions,
       canRead: mockRolesAndUsersWithPermissions,
-      cantRead: mockRolesAndUsersWithPermissions
+      cannotRead: mockRolesAndUsersWithPermissions
     };
     return res(ctx.json(rolesAndUsers));
   })
