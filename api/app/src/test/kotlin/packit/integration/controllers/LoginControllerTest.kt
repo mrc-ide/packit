@@ -29,6 +29,7 @@ import packit.security.provider.TokenDecoder
 import packit.testing.TestJwtIssuer
 import java.time.Instant
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class LoginControllerTestGithub : IntegrationTest() {
     @Autowired
@@ -125,7 +126,7 @@ class LoginControllerTestPreAuth : IntegrationTest() {
     @Test
     fun `can login without existing user`() {
         val result =
-            packit.integration.controllers.LoginTestHelper.getPreauthLoginResponse(
+            LoginTestHelper.getPreauthLoginResponse(
                 userName, userDisplayName, userEmail, restTemplate
             )
 
@@ -133,10 +134,7 @@ class LoginControllerTestPreAuth : IntegrationTest() {
         val packitToken = jacksonObjectMapper().readTree(result.body).get("token").asText()
         val decodedToken = tokenDecoder.decode(packitToken)
         assertEquals(decodedToken.getClaim("userName").asString(), userName)
-        // Expect newly created user to have empty permissions list
-        assertEquals(decodedToken.getClaim("au").asList(String::class.java), listOf())
-
-        assertThat(userRepository.existsByUsername(userName)).isTrue()
+        assertTrue { userRepository.existsByUsername(userName) }
     }
 
     @Test
@@ -149,7 +147,7 @@ class LoginControllerTestPreAuth : IntegrationTest() {
             disabled = false,
             email = userEmail,
             userSource = "preauth",
-            roles = mutableListOf(adminRole),
+            roles = mutableListOf(),
             password = null,
             lastLoggedIn = null
         )
@@ -157,7 +155,7 @@ class LoginControllerTestPreAuth : IntegrationTest() {
         val now = Instant.now()
 
         val result =
-            packit.integration.controllers.LoginTestHelper.getPreauthLoginResponse(
+            LoginTestHelper.getPreauthLoginResponse(
                 userName, userDisplayName, userEmail, restTemplate
             )
 
@@ -165,7 +163,6 @@ class LoginControllerTestPreAuth : IntegrationTest() {
         val packitToken = jacksonObjectMapper().readTree(result.body).get("token").asText()
         val decodedToken = tokenDecoder.decode(packitToken)
         assertEquals(decodedToken.getClaim("userName").asString(), userName)
-        assertEquals(decodedToken.getClaim("au").asList(String::class.java), adminPerms)
 
         val updatedUser = userRepository.findByUsernameAndUserSource(userName, "preauth")
         assertThat(updatedUser!!.lastLoggedIn).isAfterOrEqualTo(now)
@@ -174,7 +171,7 @@ class LoginControllerTestPreAuth : IntegrationTest() {
     @Test
     fun `returns 400 when username header not provided`() {
         val result =
-            packit.integration.controllers.LoginTestHelper.getPreauthLoginResponse(
+            LoginTestHelper.getPreauthLoginResponse(
                 null, userDisplayName, userEmail, restTemplate
             )
         assertEquals(result.statusCode, HttpStatus.BAD_REQUEST)
@@ -185,7 +182,7 @@ class LoginControllerTestPreAuth : IntegrationTest() {
     @Test
     fun `email and display name headers are optional`() {
         val result =
-            packit.integration.controllers.LoginTestHelper.getPreauthLoginResponse(
+            LoginTestHelper.getPreauthLoginResponse(
                 userName, null, null, restTemplate
             )
 

@@ -3,66 +3,125 @@ package packit.unit.security.profile
 import com.auth0.jwt.interfaces.Claim
 import com.auth0.jwt.interfaces.DecodedJWT
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import org.springframework.security.core.Authentication
+import org.mockito.kotlin.whenever
+import org.springframework.http.HttpStatus
+import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
-import packit.AppConfig
+import packit.exceptions.PackitException
+import packit.model.User
 import packit.security.profile.TokenToPrincipalConverter
 import packit.security.profile.UserPrincipal
-import packit.security.provider.TokenDecoder
-import packit.security.provider.TokenProvider
-import packit.unit.helpers.JSON
+import packit.service.RoleService
+import packit.service.UserService
 import kotlin.test.assertEquals
 
 class TokenToPrincipalConverterTest {
-    @Test
-    fun `can extract authorities`() {
-        val mockClaim = mock<Claim>()
+    private val roleService = mock<RoleService>()
+    private val userService = mock<UserService>()
+    private val tokenConverter = TokenToPrincipalConverter(userService, roleService)
 
-        val mockDecodedJWT = mock<DecodedJWT> {
-            on { getClaim("au") } doReturn mockClaim
+    @Test
+    fun `can extract authorities from jwt claim au`() {
+        val mockClaim = mock<Claim> {
+            on { isNull } doReturn true
         }
 
-        val sut = TokenToPrincipalConverter()
-
-        val result = sut.extractAuthorities(mockDecodedJWT)
+        val result = tokenConverter.extractAuthorities(mockClaim)
 
         assertEquals(result, mockClaim.asList(SimpleGrantedAuthority::class.java))
     }
 
     @Test
-    fun `converts jwt to user principal`() {
-        val userName = "fakeName"
-        val displayName = "Fake Name"
-        val mockAppConfig = mock<AppConfig> {
-            on { authJWTSecret } doReturn "changesecretkey"
-            on { authExpiryDays } doReturn 1
+    fun `returns empty list if null au claim when extracting from token`() {
+        val mockClaim = mock<Claim> {
+            on { isNull } doReturn true
+        }
+
+        val result = tokenConverter.extractAuthorities(mockClaim)
+
+        assertEquals(result, mutableListOf<SimpleGrantedAuthority>())
+    }
+
+    @Test
+    fun `converts jwt to user principal if au present in jwt`() {
+        val mockNameClaim = mock<Claim> {
+            on { asString() } doReturn "fakeName"
+            on { isNull } doReturn false
+        }
+        val mockAuClaim = mock<Claim> {
+            on { isMissing } doReturn false
+            on { isNull } doReturn false
+            on { asList(SimpleGrantedAuthority::class.java) } doReturn mutableListOf(
+                SimpleGrantedAuthority("packet.read"), SimpleGrantedAuthority("packet.run")
+            )
+        }
+        val mockDecodedJwt = mock<DecodedJWT> {
+            on { getClaim("userName") } doReturn mockNameClaim
+            on { getClaim("displayName") } doReturn mockNameClaim
+            on { getClaim("au") } doReturn mockAuClaim
         }
 
         val userPrincipal = UserPrincipal(
-            userName,
-            displayName,
-            mutableListOf(),
-            mutableMapOf()
+            "fakeName",
+            "fakeName",
+            mutableListOf(
+                SimpleGrantedAuthority("packet.read"),
+                SimpleGrantedAuthority("packet.run")
+            ),
         )
 
-        val mockAuthentication = mock<Authentication> {
-            on { principal } doReturn userPrincipal
+        val result = tokenConverter.convert(mockDecodedJwt)
+
+        assertEquals(result.name, userPrincipal.name)
+        assertEquals(result.displayName, userPrincipal.displayName)
+        assertEquals(result.authorities, userPrincipal.authorities)
+    }
+
+    @Test
+    fun `throws error when username claim is missing`() {
+        val mockDecodedJwt = mock<DecodedJWT> {
+            on { getClaim("userName") } doReturn mock<Claim>()
         }
 
-        val provider = TokenProvider(mockAppConfig)
+        assertThrows<PackitException> {
+            tokenConverter.convert(mockDecodedJwt)
+        }.apply {
 
-        val jwtToken = provider.issue(mockAuthentication.principal as UserPrincipal)
+            assertEquals(key, "userNameClaimNotInJwt")
+            assertEquals(httpStatus, HttpStatus.UNAUTHORIZED)
+        }
+    }
 
-        val tokenDecoder = TokenDecoder(mockAppConfig)
+    @Test
+    fun `getAuthorities throws exception when user not found`() {
+        val mockClaim = mock<Claim> {
+            on { isMissing } doReturn true
+        }
+        assertThrows<PackitException> {
+            tokenConverter.getAuthorities(mockClaim, "testUser")
+        }.apply {
+            assertEquals(key, "userNotFound")
+            assertEquals(httpStatus, HttpStatus.UNAUTHORIZED)
+        }
+    }
 
-        val decodedJwt = tokenDecoder.decode(jwtToken)
+    @Test
+    fun `getAuthorities returns returns authorities when missing au claim`() {
+        val mockClaim = mock<Claim> {
+            on { isMissing } doReturn true
+        }
+        val mockUser = mock<User>()
+        val authorities: MutableSet<GrantedAuthority> =
+            mutableSetOf(SimpleGrantedAuthority("packet.read"))
 
-        val sut = TokenToPrincipalConverter()
+        whenever(userService.getByUsername("testUser")).doReturn(mockUser)
+        whenever(roleService.getGrantedAuthorities(mockUser.roles)).doReturn(authorities)
 
-        val result = sut.convert(decodedJwt)
+        val result = tokenConverter.getAuthorities(mockClaim, "testUser")
 
-        assertEquals(JSON.stringify(userPrincipal), JSON.stringify(result))
+        assertEquals(result, authorities)
     }
 }

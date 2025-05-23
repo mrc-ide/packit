@@ -4,12 +4,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator
 import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames
-import org.springframework.security.oauth2.jwt.Jwt
-import org.springframework.security.oauth2.jwt.JwtClaimValidator
-import org.springframework.security.oauth2.jwt.JwtException
-import org.springframework.security.oauth2.jwt.JwtIssuerValidator
-import org.springframework.security.oauth2.jwt.JwtTimestampValidator
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
+import org.springframework.security.oauth2.jwt.*
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
 import org.springframework.web.client.RestTemplate
@@ -17,6 +12,7 @@ import packit.config.ServiceLoginConfig
 import packit.config.ServiceLoginPolicy
 import packit.exceptions.PackitException
 import packit.model.dto.LoginWithToken
+import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
 import java.util.function.Predicate
 
@@ -67,7 +63,11 @@ class ServiceLoginService(
 
     private fun issueToken(verifiedToken: Jwt, policy: ServiceLoginPolicy): String {
         val user = userService.getServiceUser()
-        val userPrincipal = userService.getUserPrincipal(user)
+        val userPrincipal = UserPrincipal(
+            user.username,
+            user.displayName,
+            setOf(),
+        )
         val tokenBuilder = jwtIssuer.builder(userPrincipal)
         tokenBuilder.withPermissions(policy.grantedPermissions)
 

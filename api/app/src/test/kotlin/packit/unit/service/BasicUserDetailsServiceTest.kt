@@ -1,22 +1,20 @@
 package packit.unit.service
 
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import org.springframework.security.core.userdetails.UserDetails
 import packit.model.User
 import packit.service.BasicUserDetailsService
-import packit.service.RoleService
 import packit.service.UserService
 import java.time.Instant
 import java.util.*
 import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class BasicUserDetailsServiceTest {
     private val mockUserService = mock<UserService>()
-    private val mockRoleService = mock<RoleService>()
-    private val service = BasicUserDetailsService(mockUserService, mockRoleService)
+    private val service = BasicUserDetailsService(mockUserService)
     private val mockUser = User(
         "username",
         mutableListOf(),
@@ -37,7 +35,8 @@ class BasicUserDetailsServiceTest {
         val userDetails: UserDetails = service.loadUserByUsername(mockUser.username)
 
         assertEquals(mockUser.username, userDetails.username)
+        assertTrue { userDetails.authorities.isEmpty() }
         assertEquals(mockUser.password, userDetails.password)
-        assertTrue(userDetails.isEnabled)
+        assertTrue { userDetails.isEnabled }
     }
 }

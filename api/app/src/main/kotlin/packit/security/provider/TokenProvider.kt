@@ -56,7 +56,7 @@ class TokenProviderBuilder(val config: AppConfig, val userPrincipal: UserPrincip
         if (this.permissions == null) {
             this.permissions = permissions.toMutableSet()
         } else {
-            this.permissions!!.retainAll(permissions)
+            this.permissions!!.retainAll(permissions.toSet())
         }
         return this
     }
@@ -68,17 +68,16 @@ class TokenProviderBuilder(val config: AppConfig, val userPrincipal: UserPrincip
             expiresAt = expiry
         }
 
-        val permissions = userPrincipal.authorities.map { it.authority }.toMutableList()
-        if (this.permissions != null) {
-            permissions.retainAll(this.permissions!!)
-        }
-
         return JWT.create()
             .withAudience(TOKEN_AUDIENCE)
             .withIssuer(TOKEN_ISSUER)
             .withClaim("userName", userPrincipal.name)
             .withClaim("displayName", userPrincipal.displayName)
-            .withClaim("au", permissions)
+            .apply {
+                if (permissions != null) {
+                    this.withClaim("au", permissions!!.toList())
+                }
+            }
             .withIssuedAt(issuedAt)
             .withExpiresAt(expiresAt)
             .sign(Algorithm.HMAC256(config.authJWTSecret))

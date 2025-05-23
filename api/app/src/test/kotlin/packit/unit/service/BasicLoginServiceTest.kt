@@ -21,7 +21,6 @@ class BasicLoginServiceTest {
         "userName",
         "displayName",
         mutableListOf(),
-        mutableMapOf()
     )
     private val mockIssuer = mock<JwtIssuer> {
         on { issue(argThat { this == userPrincipal }) } doReturn "fake jwt"

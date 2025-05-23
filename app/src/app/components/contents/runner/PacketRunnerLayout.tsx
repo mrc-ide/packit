@@ -17,9 +17,8 @@ const sidebarItems: SidebarItem[] = [
 ];
 
 export const PacketRunnerLayout = () => {
-  const { user } = useUser();
-
-  if (!hasPacketRunPermission(user?.authorities)) {
+  const { authorities } = useUser();
+  if (!hasPacketRunPermission(authorities)) {
     return <Unauthorized />;
   }
   return (

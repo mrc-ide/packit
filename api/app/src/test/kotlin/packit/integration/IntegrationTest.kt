@@ -41,14 +41,15 @@ abstract class IntegrationTest {
         data: Any? = null,
     ): HttpEntity<Any> {
         val authentication = SecurityContextHolder.getContext().authentication
-
-        val tokens = jwtIssuer.issue(authentication.principal as UserPrincipal)
+        val tokenBuilder = jwtIssuer.builder(authentication.principal as UserPrincipal)
+        tokenBuilder.withPermissions(authentication.authorities.map { it.authority })
+        val token = tokenBuilder.issue()
 
         val headers = HttpHeaders()
 
         headers.contentType = contentType
 
-        headers.setBearerAuth(tokens)
+        headers.setBearerAuth(token)
 
         return HttpEntity(data, headers)
     }

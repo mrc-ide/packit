@@ -2,14 +2,13 @@ import { Menu } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { Button } from "../Base/Button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../Base/DropdownMenu";
-import { UserState } from "../providers/types/UserTypes";
 import { LeftNavItems } from "./LeftNav";
 import { hasPacketRunPermission } from "../../../lib/auth/hasPermission";
 
 interface NavMenuMobileProps {
-  user: UserState;
+  authorities: string[];
 }
-export const NavMenuMobile = ({ user }: NavMenuMobileProps) => {
+export const NavMenuMobile = ({ authorities }: NavMenuMobileProps) => {
   return (
     <div className="mx-3 flex items-center md:hidden">
       <DropdownMenu>
@@ -20,7 +19,7 @@ export const NavMenuMobile = ({ user }: NavMenuMobileProps) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-48">
           {Object.entries(LeftNavItems).map(([to, title]) =>
-            to === "runner" && !hasPacketRunPermission(user.authorities) ? null : (
+            to === "runner" && !hasPacketRunPermission(authorities) ? null : (
               <DropdownMenuItem key={to} asChild>
                 <NavLink to={to}>{title}</NavLink>
               </DropdownMenuItem>

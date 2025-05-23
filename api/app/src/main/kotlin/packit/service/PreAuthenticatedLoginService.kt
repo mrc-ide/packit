@@ -3,6 +3,7 @@ package packit.service
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import packit.exceptions.PackitException
+import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
 
 @Component
@@ -16,7 +17,13 @@ class PreAuthenticatedLoginService(
         }
 
         val user = userService.savePreAuthenticatedUser(username, name, email)
-        val token = jwtIssuer.issue(userService.getUserPrincipal(user))
+        val token = jwtIssuer.issue(
+            UserPrincipal(
+                user.username,
+                user.displayName,
+                setOf(),
+            )
+        )
 
         return mapOf("token" to token)
     }

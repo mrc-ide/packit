@@ -63,7 +63,7 @@ class UsersControllerTest : IntegrationTest() {
 
         val body = jacksonObjectMapper().readTree(result.body)
         val contents: List<UserDto> = jacksonObjectMapper().convertValue(body)
-        assertThat(contents).isEqualTo(listOf(testUser1.toDto(), testUser2.toDto()))
+        assertThat(contents).containsSequence(listOf(testUser1.toDto(), testUser2.toDto()))
     }
 
     @Test

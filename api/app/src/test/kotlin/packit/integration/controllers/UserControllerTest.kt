@@ -154,6 +154,34 @@ class UserControllerTest : IntegrationTest() {
     }
 
     @Test
+    @WithAuthenticatedUser(authorities = ["packet.read", "packet.run"])
+    fun `can get user authorities if authenticated`() {
+        val result = restTemplate.exchange(
+            "/user/me/authorities",
+            HttpMethod.GET,
+            getTokenizedHttpEntity(),
+            String::class.java
+        )
+
+        assertSuccess(result)
+        val userAuthorities = jacksonObjectMapper().readValue(
+            result.body,
+            object : TypeReference<List<String>>() {}
+        )
+
+        assertEquals(userAuthorities, listOf("packet.read", "packet.run"))
+    }
+
+    @Test
+    fun `can not get authorites if not authenticated`() {
+        val result = restTemplate.getForEntity(
+            "/user/me/authorities",
+            List::class.java
+        )
+
+        assertEquals(result.statusCode, HttpStatus.UNAUTHORIZED)
+    }
+
     @WithAuthenticatedUser(authorities = ["user.manage"])
     fun `cannot create external user when auth method is basic`() {
         val testCreateExternalUser = CreateExternalUser(

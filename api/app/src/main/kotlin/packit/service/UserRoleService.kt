@@ -15,6 +15,7 @@ interface UserRoleService {
     ): Map<String, RolesAndUsersForReadUpdate>
 
     fun getRolesAndUsersForPacketReadUpdate(packet: Packet): RolesAndUsersForReadUpdate
+    fun getUserAuthorities(username: String): List<String>
 }
 
 @Service
@@ -75,6 +76,13 @@ class BaseUserRoleService(
                 userRoleFilterService.getRolesAndUsersWithSpecificReadPacketPermission(roles, users, packet),
             )
         )
+    }
+
+    override fun getUserAuthorities(username: String): List<String> {
+        val user = userService.getByUsername(username)
+            ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
+
+        return roleService.getGrantedAuthorities(user.roles).map { it.authority }
     }
 
     override fun updateRoleUsers(roleName: String, usersToUpdate: UpdateRoleUsers): Role {
