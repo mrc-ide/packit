@@ -40,7 +40,12 @@ export const DeleteUserOrRole = ({ mutate, data: { name, type } }: DeleteUserOrR
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="outline" size="icon" aria-label={`delete-${type}`}>
+        <Button
+          variant="outline"
+          size="icon"
+          aria-label={`delete-${type}`}
+          className="hover:bg-red-100 dark:hover:bg-red-950"
+        >
           <Trash2 className="h-4 w-4 text-red-500" />
         </Button>
       </AlertDialogTrigger>

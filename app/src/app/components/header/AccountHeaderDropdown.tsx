@@ -1,5 +1,3 @@
-import { getInitials } from "../../../lib/string";
-import { Avatar, AvatarFallback } from "../Base/Avatar";
 import { Button } from "../Base/Button";
 import {
   DropdownMenu,
@@ -11,6 +9,7 @@ import {
 } from "../Base/DropdownMenu";
 import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 import { useUser } from "../providers/UserProvider";
+import { getInitials } from "../../../lib/string";
 
 export const AccountHeaderDropdown = () => {
   const { removeUser, user } = useUser();
@@ -24,17 +23,26 @@ export const AccountHeaderDropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 w-10 rounded full">
-          <Avatar className="h-8 w-8">
-            <AvatarFallback>{getInitials(user?.displayName)}</AvatarFallback>
-          </Avatar>
+        <Button
+          aria-label="Account"
+          variant="secondary"
+          className="rounded-full h-10 w-10 tracking-wide border
+            hover:opacity-90 hover:bg-accent hover:text-accent-foreground
+            data-[state=open]:bg-accent data-[state=open]:text-accent-foreground
+            "
+        >
+          {getInitials(user?.displayName)}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
+      <DropdownMenuContent align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-base font-medium leading-none">{user?.displayName}</p>
-            <p className="text-sm leading-none text-muted-foreground">{user?.userName}</p>
+            <p data-testid="user-display-name" className="text-base font-medium leading-none">
+              {user?.displayName}
+            </p>
+            <p data-testid="username" className="text-sm leading-none text-muted-foreground">
+              {user?.userName}
+            </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -43,7 +51,7 @@ export const AccountHeaderDropdown = () => {
           <DropdownMenuItem className="text-base">Publish Packets</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator /> */}
-        <DropdownMenuItem className="text-base" onClick={handleLogout}>
+        <DropdownMenuItem className="text-base cursor-pointer" onClick={handleLogout}>
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>

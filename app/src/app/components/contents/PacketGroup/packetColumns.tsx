@@ -23,9 +23,9 @@ export const setupPacketColumns = (allParametersKeys: Set<string>) => {
         return (
           <div className="flex flex-col items-start space-y-1 mb-1 mt-0.5">
             <Button
-              variant="ghost"
+              variant="link"
               size="sm"
-              className="sm:w-32 lg:w-40 justify-start h-fit py-1.5"
+              className="w-fit justify-start h-fit py-1.5"
               onClick={() => column.toggleSorting(sortedDirection === "asc")}
             >
               Packet
@@ -108,9 +108,9 @@ export const setupPacketColumns = (allParametersKeys: Set<string>) => {
         return (
           <div className="flex flex-col items-start space-y-1 mb-1 mt-0.5">
             <Button
-              variant="ghost"
+              variant="link"
               size="sm"
-              className="sm:w-24 lg:w-32 justify-start h-fit py-1.5"
+              className="w-fit justify-start h-fit py-1.5"
               onClick={() => column.toggleSorting(sortedDirection === "asc")}
             >
               {key}
