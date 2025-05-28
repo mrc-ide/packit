@@ -40,6 +40,7 @@ class AppConfig(private val environment: Environment) {
     val authEnabled: Boolean = requiredEnvValue("auth.enabled").toBoolean()
     val authGithubAPIOrg: String = requiredEnvValue("auth.githubAPIOrg")
     val authGithubAPITeam: String = requiredEnvValue("auth.githubAPITeam")
+    val authDeviceFlowExpirySeconds: Long = requiredEnvValue("auth.deviceFlowExpirySeconds").toLong()
     val allowedOrigins: List<String> = splitList(requiredEnvValue("cors.allowedOrigins"))
     val defaultRoles: List<String> = splitList(requiredEnvValue("packit.defaultRoles"))
 }
