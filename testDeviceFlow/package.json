@@ -1,0 +1,19 @@
+{
+  "name": "testdeviceflow",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test-local": "export PACKIT_URL=http://localhost:3000 && npm run test",
+    "test": "tsc index.ts && node index.js"
+  },
+  "keywords": [],
+  "author": "reside-ic",
+  "license": "MIT",
+  "description": "Local testing for packit device flow",
+  "dependencies": {
+    "@inquirer/prompts": "^7.5.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}
