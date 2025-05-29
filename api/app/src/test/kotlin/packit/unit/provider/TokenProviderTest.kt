@@ -12,7 +12,6 @@ import packit.security.provider.TokenProviderBuilder
 import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import kotlin.math.abs
 
 class TokenProviderTest {
     @Test
@@ -86,13 +85,13 @@ class TokenProviderBuilderTest {
     @Test
     fun `withExpiresAt is ignored when later than default`() {
         val builder = TokenProviderBuilder(config, user)
-        val laterExpiry = Instant.now().plus(30, ChronoUnit.DAYS)
+        val laterExpiry = Instant.now().plus(30, ChronoUnit.DAYS).truncatedTo(ChronoUnit.SECONDS)
         val token = builder.withExpiresAt(laterExpiry).issue()
 
         val decoded = JWT.decode(token)
+
         val expectedExpiry = Instant.now().plus(1, ChronoUnit.DAYS)
-        // Ensure expiry is closer to default (1 day) than to requested 30 days
-        assertTrue(abs(expectedExpiry.epochSecond - decoded.expiresAt.toInstant().epochSecond) < 3600)
+        assertEquals(expectedExpiry.epochSecond, decoded.expiresAt.toInstant().epochSecond)
     }
 
     @Test
@@ -102,9 +101,9 @@ class TokenProviderBuilderTest {
         val token = builder.withDuration(shorterDuration).issue()
 
         val decoded = JWT.decode(token)
+
         val expectedExpiry = decoded.issuedAt.toInstant().plus(shorterDuration)
-        // Allow 1 second tolerance for test execution time
-        assertTrue(abs(expectedExpiry.epochSecond - decoded.expiresAt.toInstant().epochSecond) <= 1)
+        assertEquals(expectedExpiry.epochSecond, decoded.expiresAt.toInstant().epochSecond)
     }
 
     @Test
@@ -114,9 +113,8 @@ class TokenProviderBuilderTest {
         val token = builder.withDuration(longerDuration).issue()
 
         val decoded = JWT.decode(token)
-        val expectedExpiry = Instant.ofEpochSecond(decoded.issuedAt.time / 1000).plus(1, ChronoUnit.DAYS)
-        // Allow 1 second tolerance for test execution time
-        assertTrue(abs(expectedExpiry.epochSecond - decoded.expiresAt.toInstant().epochSecond) <= 1)
+        val expectedExpiry = decoded.issuedAt.toInstant().plus(1, ChronoUnit.DAYS)
+        assertEquals(expectedExpiry.epochSecond, decoded.expiresAt.toInstant().epochSecond)
     }
 
     @Test
@@ -160,8 +158,8 @@ class TokenProviderBuilderTest {
             .issue()
 
         val decoded = JWT.decode(token)
+
         val expectedExpiry = Instant.ofEpochSecond(decoded.issuedAt.time / 1000).plus(shorterDuration)
-        // Allow 1 second tolerance for test execution time
-        assertTrue(abs(expectedExpiry.epochSecond - decoded.expiresAt.toInstant().epochSecond) <= 1)
+        assertEquals(expectedExpiry.epochSecond, decoded.expiresAt.toInstant().epochSecond)
     }
 }

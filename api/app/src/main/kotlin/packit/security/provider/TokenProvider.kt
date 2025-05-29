@@ -52,7 +52,7 @@ class TokenProviderBuilder(val config: AppConfig, val user: User) : JwtBuilder {
         if (this.permissions == null) {
             this.permissions = permissions.toMutableSet()
         } else {
-            this.permissions!!.retainAll(permissions.toSet())
+            this.permissions!!.retainAll(permissions)
         }
         return this
     }

@@ -14,10 +14,10 @@ class AppConfig(private val environment: Environment) {
     }
 
     internal final fun splitList(value: String): List<String> {
-        if (value.isBlank()) {
-            return listOf()
+        return if (value.isBlank()) {
+            listOf()
         } else {
-            return value.split(",").map { it.trim() }
+            value.split(",").map { it.trim() }
         }
     }
 
