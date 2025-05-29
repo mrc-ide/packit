@@ -108,6 +108,7 @@ class WebSecurityConfig(
                     it
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/auth/**", "/oauth2/**").permitAll()
+                        .requestMatchers("/deviceAuth/**").permitAll() // TODO: Handle auth refusal in controller?
                         .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
                         .anyRequest().authenticated()
                 }

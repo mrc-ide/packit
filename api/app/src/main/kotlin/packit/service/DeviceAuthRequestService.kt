@@ -28,6 +28,6 @@ class BaseDeviceAuthRequestService(private val appConfig: AppConfig): DeviceAuth
 
     override fun cleanUpExpiredRequests() {
         val now = Instant.now()
-        requests.removeAll{ it.expiryTime > now }
+        requests.removeAll{ it.expiryTime < now }
     }
 }
