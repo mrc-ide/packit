@@ -12,7 +12,7 @@ class BasicUserDetails(
     }
 
     override fun getPassword(): String {
-        return user.password ?: throw IllegalStateException("Password is not set for user: ${user.username}")
+        return user.password ?: error("Password is not set for user: ${user.username}")
     }
 
     override fun getUsername(): String {

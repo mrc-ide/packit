@@ -24,7 +24,7 @@ class TokenDecoderTest {
     fun `can decode JWT token`() {
         val userName = "fakeName"
         val displayName = "Fake Name"
-        
+
         val user = User(
             username = userName,
             displayName = displayName,
@@ -66,7 +66,7 @@ class TokenDecoderTest {
     fun `throws exception when using unknown jwt token provider`() {
         val jwtToken =
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE" +
-                    "2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                "2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
 
         val tokenDecoder = TokenDecoder(mockAppConfig)
 
@@ -81,8 +81,8 @@ class TokenDecoderTest {
     fun `throws exception when using expired jwt token`() {
         val jwtToken =
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwYWNraXQiLCJpc3MiOiJwYWNraXQtYXBpIiwiZW1haWwiO" +
-                    "iJ0ZXN0QGVtYWlsLmNvbSIsIm5hbWUiOiJmYWtlTmFtZSIsImRhdGV0aW1lIjoxNjk1MzA0MzU4LCJhdSI6W10sImV" +
-                    "4cCI6MTY5NTM5MDc1OH0.8MkhkfOZfeKPssUw2h65JkE-i9LgbjRFEqZJl9hcgKw"
+                "iJ0ZXN0QGVtYWlsLmNvbSIsIm5hbWUiOiJmYWtlTmFtZSIsImRhdGV0aW1lIjoxNjk1MzA0MzU4LCJhdSI6W10sImV" +
+                "4cCI6MTY5NTM5MDc1OH0.8MkhkfOZfeKPssUw2h65JkE-i9LgbjRFEqZJl9hcgKw"
 
         val tokenDecoder = TokenDecoder(mockAppConfig)
 
