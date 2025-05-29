@@ -4,6 +4,7 @@ import com.nimbusds.oauth2.sdk.device.DeviceCode
 import com.nimbusds.oauth2.sdk.device.UserCode
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.springframework.http.HttpStatus
 import packit.AppConfig
 import packit.controllers.DeviceAuthController
@@ -38,5 +39,30 @@ class DeviceAuthControllerTest {
         assertEquals("testUserCode", resultBody.userCode)
         assertEquals("http://example.com/device", resultBody.verificationUri)
         assertEquals(100, resultBody.expiresIn)
+    }
+
+    @Test
+    fun `returns 200 on validate known user code`() {
+        val userCode = "testUserCode"
+        val mockDeviceAuthRequestService = mock<DeviceAuthRequestService> {
+            on { validateRequest(userCode) } doReturn true
+        }
+
+        val sut  = DeviceAuthController(mock(), mockDeviceAuthRequestService)
+        val result = sut.validateDeviceAuthRequest(userCode)
+        assertEquals(HttpStatus.OK, result.statusCode)
+        verify(mockDeviceAuthRequestService).validateRequest(userCode)
+    }
+
+    @Test
+    fun `returns 400 on validated unknown user code`() {
+        val userCode = "testUserCode"
+        val mockDeviceAuthRequestService = mock<DeviceAuthRequestService> {
+            on { validateRequest(userCode) } doReturn false
+        }
+
+        val sut  = DeviceAuthController(mock(), mockDeviceAuthRequestService)
+        val result = sut.validateDeviceAuthRequest(userCode)
+        assertEquals(HttpStatus.BAD_REQUEST, result.statusCode)
     }
 }

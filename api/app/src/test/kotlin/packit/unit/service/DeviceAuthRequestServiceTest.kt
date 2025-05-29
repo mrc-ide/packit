@@ -32,6 +32,7 @@ class DeviceAuthRequestServiceTest {
         assertEquals(fixedClock.instant().plusSeconds(200), result.expiryTime)
         assertEquals(9, result.userCode.value.length)
         assertEquals(86, result.deviceCode.value.length)  // default device code format
+        assertEquals(false, result.validated)
     }
 
     @Test
@@ -64,5 +65,14 @@ class DeviceAuthRequestServiceTest {
 
         assertNull(sut.findRequest(oldRequest.deviceCode.value))
         assertNotNull(sut.findRequest(freshRequest.deviceCode.value))
+    }
+
+    @Test
+    fun `can validate request`() {
+        val sut = BaseDeviceAuthRequestService(mockAppConfig, fixedClock)
+        val request = sut.newDeviceAuthRequest()
+
+        assertEquals(true, sut.validateRequest(request.userCode.value))
+        assertEquals(false, sut.validateRequest("some nonexistent code"))
     }
 }
