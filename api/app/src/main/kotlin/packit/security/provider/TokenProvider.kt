@@ -4,7 +4,7 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import org.springframework.stereotype.Component
 import packit.AppConfig
-import packit.security.profile.UserPrincipal
+import packit.model.User
 import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -17,14 +17,14 @@ interface JwtBuilder {
 }
 
 interface JwtIssuer {
-    fun issue(userPrincipal: UserPrincipal): String {
-        return builder(userPrincipal).issue()
+    fun issue(user: User): String {
+        return builder(user).issue()
     }
 
-    fun builder(userPrincipal: UserPrincipal): JwtBuilder
+    fun builder(user: User): JwtBuilder
 }
 
-class TokenProviderBuilder(val config: AppConfig, val userPrincipal: UserPrincipal) : JwtBuilder {
+class TokenProviderBuilder(val config: AppConfig, val user: User) : JwtBuilder {
     companion object {
         const val TOKEN_ISSUER = "packit-api"
         const val TOKEN_AUDIENCE = "packit"
@@ -67,8 +67,8 @@ class TokenProviderBuilder(val config: AppConfig, val userPrincipal: UserPrincip
         return JWT.create()
             .withAudience(TOKEN_AUDIENCE)
             .withIssuer(TOKEN_ISSUER)
-            .withClaim("userName", userPrincipal.name)
-            .withClaim("displayName", userPrincipal.displayName)
+            .withClaim("userName", user.username)
+            .withClaim("displayName", user.displayName)
             .apply {
                 if (permissions != null) {
                     this.withClaim("au", permissions!!.toList())
@@ -82,7 +82,7 @@ class TokenProviderBuilder(val config: AppConfig, val userPrincipal: UserPrincip
 
 @Component
 class TokenProvider(val config: AppConfig) : JwtIssuer {
-    override fun builder(userPrincipal: UserPrincipal): JwtBuilder {
-        return TokenProviderBuilder(config, userPrincipal)
+    override fun builder(user: User): JwtBuilder {
+        return TokenProviderBuilder(config, user)
     }
 }

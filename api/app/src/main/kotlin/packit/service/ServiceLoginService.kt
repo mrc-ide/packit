@@ -12,7 +12,6 @@ import packit.config.ServiceLoginConfig
 import packit.config.ServiceLoginPolicy
 import packit.exceptions.PackitException
 import packit.model.dto.LoginWithToken
-import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
 import java.util.function.Predicate
 
@@ -63,12 +62,7 @@ class ServiceLoginService(
 
     private fun issueToken(verifiedToken: Jwt, policy: ServiceLoginPolicy): String {
         val user = userService.getServiceUser()
-        val userPrincipal = UserPrincipal(
-            user.username,
-            user.displayName,
-            setOf(),
-        )
-        val tokenBuilder = jwtIssuer.builder(userPrincipal)
+        val tokenBuilder = jwtIssuer.builder(user)
         tokenBuilder.withPermissions(policy.grantedPermissions)
 
         val expiresAt = verifiedToken.expiresAt

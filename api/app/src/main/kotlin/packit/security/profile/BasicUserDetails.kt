@@ -1,24 +1,22 @@
 package packit.security.profile
 
-import net.minidev.json.annotate.JsonIgnore
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
+import packit.model.User
 
 class BasicUserDetails(
-    val principal: UserPrincipal,
-    @JsonIgnore
-    private val password: String
+    val user: User
 ) : UserDetails {
     override fun getAuthorities(): Collection<GrantedAuthority> {
-        return principal.authorities
+        return setOf()
     }
 
     override fun getPassword(): String {
-        return password
+        return user.password ?: throw IllegalStateException("Password is not set for user: ${user.username}")
     }
 
     override fun getUsername(): String {
-        return principal.name
+        return user.username
     }
 
     override fun isAccountNonExpired(): Boolean {

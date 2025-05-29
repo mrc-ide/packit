@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component
 import packit.clients.GithubUserClient
 import packit.exceptions.PackitException
 import packit.security.profile.PackitOAuth2User
-import packit.security.profile.UserPrincipal
 import packit.service.UserService
 
 @Component
@@ -32,13 +31,7 @@ class OAuth2UserService(
 
         var user = userService.saveUserFromGithub(githubInfo.userName(), githubInfo.displayName(), githubInfo.email())
 
-        return PackitOAuth2User(
-            UserPrincipal(
-                user.username,
-                user.displayName,
-                setOf(),
-            )
-        )
+        return PackitOAuth2User(user)
     }
 
     fun checkGithubUserMembership(request: OAuth2UserRequest) {

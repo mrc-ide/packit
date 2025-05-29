@@ -5,10 +5,9 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.springframework.http.HttpStatus
-import org.springframework.security.core.Authentication
 import packit.AppConfig
 import packit.exceptions.PackitException
-import packit.security.profile.UserPrincipal
+import packit.model.User
 import packit.security.provider.TokenDecoder
 import packit.security.provider.TokenProvider
 import java.time.Duration
@@ -25,20 +24,17 @@ class TokenDecoderTest {
     fun `can decode JWT token`() {
         val userName = "fakeName"
         val displayName = "Fake Name"
-
-        val userPrincipal = UserPrincipal(
-            userName,
-            displayName,
-            mutableListOf(),
+        
+        val user = User(
+            username = userName,
+            displayName = displayName,
+            disabled = false,
+            userSource = "basic",
         )
-
-        val mockAuthentication = mock<Authentication> {
-            on { principal } doReturn userPrincipal
-        }
 
         val provider = TokenProvider(mockAppConfig)
 
-        val jwtToken = provider.issue(mockAuthentication.principal as UserPrincipal)
+        val jwtToken = provider.issue(user)
 
         val result = TokenDecoder(mockAppConfig).decode(jwtToken)
 
@@ -70,7 +66,7 @@ class TokenDecoderTest {
     fun `throws exception when using unknown jwt token provider`() {
         val jwtToken =
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE" +
-                "2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                    "2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
 
         val tokenDecoder = TokenDecoder(mockAppConfig)
 
@@ -85,8 +81,8 @@ class TokenDecoderTest {
     fun `throws exception when using expired jwt token`() {
         val jwtToken =
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwYWNraXQiLCJpc3MiOiJwYWNraXQtYXBpIiwiZW1haWwiO" +
-                "iJ0ZXN0QGVtYWlsLmNvbSIsIm5hbWUiOiJmYWtlTmFtZSIsImRhdGV0aW1lIjoxNjk1MzA0MzU4LCJhdSI6W10sImV" +
-                "4cCI6MTY5NTM5MDc1OH0.8MkhkfOZfeKPssUw2h65JkE-i9LgbjRFEqZJl9hcgKw"
+                    "iJ0ZXN0QGVtYWlsLmNvbSIsIm5hbWUiOiJmYWtlTmFtZSIsImRhdGV0aW1lIjoxNjk1MzA0MzU4LCJhdSI6W10sImV" +
+                    "4cCI6MTY5NTM5MDc1OH0.8MkhkfOZfeKPssUw2h65JkE-i9LgbjRFEqZJl9hcgKw"
 
         val tokenDecoder = TokenDecoder(mockAppConfig)
 

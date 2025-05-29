@@ -27,6 +27,12 @@ class PackitExceptionHandler {
             .toResponseEntity()
     }
 
+    @ExceptionHandler(IllegalStateException::class)
+    fun handleIllegalStateException(e: Exception): Any {
+        return ErrorDetail(HttpStatus.INTERNAL_SERVER_ERROR, e.message ?: "")
+            .toResponseEntity()
+    }
+
     @ExceptionHandler(HttpRequestMethodNotSupportedException::class)
     fun handleHttpRequestMethodNotSupportedException(e: Exception): Any {
         return ErrorDetail(HttpStatus.METHOD_NOT_ALLOWED, e.message ?: "")

@@ -33,7 +33,7 @@ class PreAuthenticatedLoginServiceTest {
         }
         val token = "test-token"
         val mockjwtIssuer = mock<JwtIssuer> {
-            on { issue(argThat { this.name == name }) } doReturn token
+            on { issue(argThat { this.username == name }) } doReturn token
         }
 
         val sut = PreAuthenticatedLoginService(mockjwtIssuer, mockUserService)

@@ -6,7 +6,6 @@ import packit.AppConfig
 import packit.clients.GithubUserClient
 import packit.exceptions.PackitException
 import packit.model.dto.LoginWithToken
-import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
 
 @Component
@@ -26,13 +25,7 @@ class GithubAPILoginService(
         val githubUser = githubUserClient.getGithubUser()
 
         var user = userService.saveUserFromGithub(githubUser.login, githubUser.name, githubUser.email)
-        val token = jwtIssuer.issue(
-            UserPrincipal(
-                user.username,
-                user.displayName,
-                setOf(),
-            )
-        )
+        val token = jwtIssuer.issue(user)
 
         return mapOf("token" to token)
     }

@@ -36,7 +36,7 @@ class GithubAPILoginServiceTest {
         on { saveUserFromGithub(username, displayName, null) } doReturn fakeUser
     }
     private val mockIssuer = mock<JwtIssuer> {
-        on { issue(argThat { this.name == username }) } doReturn "fake jwt"
+        on { issue(argThat { this.username == username }) } doReturn "fake jwt"
     }
     private val mockGithubUserClient = mock<GithubUserClient> {
         on { getGithubUser() } doReturn fakeGHMyself
