@@ -1,14 +1,14 @@
 package packit.model.dto
 
-import com.fasterxml.jackson.annotation.JsonAlias
+import com.fasterxml.jackson.annotation.JsonProperty
 
 data class DeviceAuthDto (
-    @JsonAlias("device_code")
+    @JsonProperty("device_code")
     val deviceCode: String,
-    @JsonAlias("user_code")
+    @JsonProperty("user_code")
     val userCode: String,
-    @JsonAlias("verification_uri")
+    @JsonProperty("verification_uri")
     val verificationUri: String,
-    @JsonAlias("expires_in")
+    @JsonProperty("expires_in")
     val expiresIn: Long
 )
