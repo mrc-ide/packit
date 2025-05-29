@@ -24,7 +24,7 @@ class DeviceAuthController(
         val response = DeviceAuthDto(
             deviceAuthRequest.deviceCode.value,
             deviceAuthRequest.userCode.value,
-            appConfig.authDeviceFlowVerificationUrl,
+            appConfig.authDeviceFlowVerificationUri,
             appConfig.authDeviceFlowExpirySeconds
         )
         return ResponseEntity.ok(response)

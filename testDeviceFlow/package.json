@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test-local": "export PACKIT_URL=http://localhost:3000 && npm run test",
+    "test-local": "export PACKIT_API_URL=http://localhost:8080 && npm run test",
     "test": "tsc index.ts && node index.js"
   },
   "keywords": [],
@@ -14,6 +14,7 @@
     "@inquirer/prompts": "^7.5.3"
   },
   "devDependencies": {
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "@types/node": "^22.15.24"
   }
 }

@@ -26,6 +26,8 @@ class AppConfigTest {
         "auth.enabled" to "true",
         "auth.githubAPIOrg" to "githubAPIOrg",
         "auth.githubAPITeam" to "githubAPITeam",
+        "auth.deviceFlowExpirySeconds" to "500",
+        "auth.deviceFlowVerificationUri" to "http://localhost/device",
         "cors.allowedOrigins" to "http://localhost, https://production",
         "packit.defaultRoles" to "ADMIN,USER"
     )
@@ -63,6 +65,8 @@ class AppConfigTest {
         assertTrue(sut.authEnabled)
         assertEquals(sut.authGithubAPIOrg, "githubAPIOrg")
         assertEquals(sut.authGithubAPITeam, "githubAPITeam")
+        assertEquals(sut.authDeviceFlowExpirySeconds, 500L)
+        assertEquals(sut.authDeviceFlowVerificationUri, "http://localhost/device")
         assertEquals(sut.allowedOrigins, listOf("http://localhost", "https://production"))
         assertEquals(sut.defaultRoles, listOf("ADMIN", "USER"))
     }

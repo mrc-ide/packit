@@ -11,7 +11,7 @@ class Scheduler(
     private val oneTimeTokenService: OneTimeTokenService,
     private val packetService: PacketService,
     private val outpackServerClient: OutpackServerClient,
-    private val deviceAuthRequestService: BaseDeviceAuthRequestService
+    private val deviceAuthRequestService: DeviceAuthRequestService
 ) {
 
     @Scheduled(fixedDelay = 10000)
