@@ -21,10 +21,6 @@ interface JwtIssuer {
         return builder(userPrincipal).issue()
     }
 
-    // The builder method can be used to customize the returned token.
-    //
-    // The builder can only ever be used to weaken a token, eg. by reducing its
-    // permissions or shorten its lifespan.
     fun builder(userPrincipal: UserPrincipal): JwtBuilder
 }
 

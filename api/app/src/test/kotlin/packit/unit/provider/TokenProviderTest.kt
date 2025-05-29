@@ -73,12 +73,12 @@ class TokenProviderBuilderTest {
     @Test
     fun `withExpiresAt sets expiry when earlier than default`() {
         val builder = TokenProviderBuilder(config, userPrincipal)
-        val earlierExpiry = Instant.now().plus(1, ChronoUnit.HOURS)
+        val earlierExpiry = Instant.now().plus(1, ChronoUnit.HOURS).truncatedTo(ChronoUnit.SECONDS)
         val token = builder.withExpiresAt(earlierExpiry).issue()
 
         val decoded = JWT.decode(token)
-        // Allow 1 second tolerance for test execution time
-        assertTrue(abs(earlierExpiry.epochSecond - decoded.expiresAt.toInstant().epochSecond) <= 1)
+
+        assertEquals(earlierExpiry.epochSecond, decoded.expiresAt.toInstant().epochSecond)
     }
 
     @Test
@@ -100,7 +100,7 @@ class TokenProviderBuilderTest {
         val token = builder.withDuration(shorterDuration).issue()
 
         val decoded = JWT.decode(token)
-        val expectedExpiry = Instant.ofEpochSecond(decoded.issuedAt.time / 1000).plus(shorterDuration)
+        val expectedExpiry = decoded.issuedAt.toInstant().plus(shorterDuration)
         // Allow 1 second tolerance for test execution time
         assertTrue(abs(expectedExpiry.epochSecond - decoded.expiresAt.toInstant().epochSecond) <= 1)
     }

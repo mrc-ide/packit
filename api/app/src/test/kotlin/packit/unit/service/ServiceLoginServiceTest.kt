@@ -56,7 +56,7 @@ class ServiceLoginServiceTest {
     private val serviceUserPrincipal = UserPrincipal(
         name = "service",
         displayName = "Service Account",
-        authorities = mutableSetOf(),
+        authorities = setOf(),
     )
 
     private val mockAppConfig = mock<AppConfig>() {
@@ -223,7 +223,7 @@ class ServiceLoginServiceTest {
     fun `issued token is granted permissions from the policy`() {
         class TestCase(
             val policyPermissions: List<String>,
-            val expectedPermissions: Set<String>? = null,
+            val expectedPermissions: Set<String>?,
         )
 
         val testCases = listOf(
