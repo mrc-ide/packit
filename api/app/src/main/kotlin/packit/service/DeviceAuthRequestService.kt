@@ -11,6 +11,7 @@ interface DeviceAuthRequestService {
     fun newDeviceAuthRequest(): DeviceAuthRequest
     fun cleanUpExpiredRequests()
     fun findRequest(deviceCode: String): DeviceAuthRequest?
+    fun validateRequest(userCode: String): Boolean
 }
 
 @Service
@@ -21,7 +22,8 @@ class BaseDeviceAuthRequestService(private val appConfig: AppConfig, private val
         val req = DeviceAuthRequest(
             UserCode(), // defaults to 8 * letter only
             DeviceCode(64),
-            clock.instant().plusSeconds(appConfig.authDeviceFlowExpirySeconds)
+            clock.instant().plusSeconds(appConfig.authDeviceFlowExpirySeconds),
+            false
         )
         requests.add(req)
         return req
@@ -32,7 +34,18 @@ class BaseDeviceAuthRequestService(private val appConfig: AppConfig, private val
         requests.removeAll{ it.expiryTime < now }
     }
 
+    // TODO: this may become obsolete eventually - or maybe not - this should find the device request and let the
+    // controller issue the token.. if validated is true..
     override fun findRequest(deviceCode: String): DeviceAuthRequest? {
         return requests.firstOrNull { it.deviceCode.value == deviceCode }
+    }
+
+    override fun validateRequest(userCode: String): Boolean {
+        val request = requests.firstOrNull { it.userCode.value == userCode }
+        if (request == null) {
+            return false
+        }
+        request.validated = true
+        return true
     }
 }

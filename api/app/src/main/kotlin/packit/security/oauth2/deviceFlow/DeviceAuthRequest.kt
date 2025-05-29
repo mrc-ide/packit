@@ -8,5 +8,6 @@ import java.time.Instant
 data class DeviceAuthRequest (
     val userCode: UserCode,
     val deviceCode: DeviceCode,
-    val expiryTime: Instant
+    val expiryTime: Instant,
+    var validated: Boolean
 )

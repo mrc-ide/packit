@@ -2,6 +2,7 @@ package packit.controllers
 
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import packit.AppConfig
@@ -28,5 +29,14 @@ class DeviceAuthController(
             appConfig.authDeviceFlowExpirySeconds
         )
         return ResponseEntity.ok(response)
+    }
+
+    @PostMapping("/validate")
+    fun validateDeviceAuthRequest(@RequestBody userCode: String): ResponseEntity<Unit> {
+        return if (deviceAuthRequestService.validateRequest(userCode)) {
+            ResponseEntity.ok().build()
+        } else {
+            ResponseEntity.badRequest().build()
+        }
     }
 }
