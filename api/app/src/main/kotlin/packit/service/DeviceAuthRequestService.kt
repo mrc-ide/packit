@@ -45,6 +45,11 @@ class BaseDeviceAuthRequestService(private val appConfig: AppConfig, private val
         if (request == null) {
             return false
         }
+        // remove request from list if it is expired
+        if (request.expiryTime < clock.instant()) {
+            requests.remove(request)
+            return false
+        }
         request.validated = true
         return true
     }

@@ -5,7 +5,6 @@ import kotlin.test.assertEquals
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
 import packit.AppConfig
 import packit.service.BaseDeviceAuthRequestService
 import java.time.Clock
@@ -74,5 +73,21 @@ class DeviceAuthRequestServiceTest {
 
         assertEquals(true, sut.validateRequest(request.userCode.value))
         assertEquals(false, sut.validateRequest("some nonexistent code"))
+    }
+
+    @Test
+    fun `validate expired request returns false and removes from list`() {
+        val mockClock = mock<Clock>()
+        var now = Instant.now()
+
+        doAnswer {
+            now
+        }.`when`(mockClock).instant()
+        val sut = BaseDeviceAuthRequestService(mockAppConfig, mockClock)
+        val request = sut.newDeviceAuthRequest()
+
+        now = now.plusSeconds(201)
+        assertEquals(false, sut.validateRequest(request.userCode.value))
+        assertNull(sut.findRequest(request.userCode.value))
     }
 }

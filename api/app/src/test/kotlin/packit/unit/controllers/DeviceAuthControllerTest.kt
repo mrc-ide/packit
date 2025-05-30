@@ -25,7 +25,8 @@ class DeviceAuthControllerTest {
         val testDeviceAuthRequest = DeviceAuthRequest(
             UserCode("testUserCode"),
             DeviceCode("testDeviceCode"),
-            Instant.now()
+            Instant.now(),
+            false
         )
         val mockDevicAuthRequestService = mock<DeviceAuthRequestService> {
             on { newDeviceAuthRequest() } doReturn testDeviceAuthRequest
