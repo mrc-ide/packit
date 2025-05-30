@@ -12,6 +12,7 @@ interface UpdatePermissionDialogProps {
   rolesAndUsersToUpdateRead: RolesAndUsersToUpdateRead;
   mutate: KeyedMutator<Record<string, RolesAndUsersToUpdateRead>>;
 }
+
 export const UpdatePermissionDialog = ({
   packetGroupName,
   rolesAndUsersToUpdateRead,

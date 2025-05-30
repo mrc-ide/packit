@@ -23,7 +23,7 @@ export const PacketDetails = () => {
       )}
       <Accordion type="multiple" defaultValue={["parameters", "dependencies", "reports"]}>
         <PacketParameters parameters={packet?.parameters ?? {}} />
-        <PacketDependencies depends={packet?.depends ?? []} />
+        <PacketDependencies />
         <PacketReports packet={packet} />
       </Accordion>
     </>

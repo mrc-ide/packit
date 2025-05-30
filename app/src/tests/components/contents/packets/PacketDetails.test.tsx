@@ -6,7 +6,8 @@ import { PacketDetails } from "../../../../app/components/contents/packets";
 import { PacketOutlet } from "../../../../app/components/main/PacketOutlet";
 import { server } from "../../../../msw/server";
 import { PacketMetadata } from "../../../../types";
-import { mockPacket } from "../../../mocks";
+import { mockDependencies, mockPacket } from "../../../mocks";
+import { packetIndexUri } from "../../../../msw/handlers/packetHandlers";
 
 jest.mock("../../../../lib/download", () => ({
   getFileObjectUrl: async () => "fakeObjectUrl"
@@ -66,7 +67,7 @@ describe("packet details component", () => {
 
   it("should not render parameters or files when none", async () => {
     server.use(
-      rest.get("*", (req, res, ctx) => {
+      rest.get(`${packetIndexUri}/${mockPacket.id}`, (req, res, ctx) => {
         return res(ctx.json({ ...mockPacket, parameters: {}, files: [] }));
       })
     );
@@ -82,9 +83,9 @@ describe("packet details component", () => {
   it("should render dependencies when present", async () => {
     renderComponent();
 
-    await waitFor(() => {
-      mockPacket.depends.forEach((depend) => {
-        expect(screen.getByText(depend.packet)).toBeVisible();
+    await waitFor(async () => {
+      mockDependencies.forEach(async (depend) => {
+        expect(await screen.findByText(depend.id)).toBeVisible();
       });
     });
   });
