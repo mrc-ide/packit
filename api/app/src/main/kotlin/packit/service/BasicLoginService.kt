@@ -29,7 +29,7 @@ class BasicLoginService(
         userService.checkAndUpdateLastLoggedIn(loginRequest.email)
 
         val userDetails = (authentication.principal as BasicUserDetails)
-        val token = jwtIssuer.issue(userDetails.principal)
+        val token = jwtIssuer.issue(userDetails.user)
 
         return mapOf("token" to token)
     }

@@ -15,7 +15,6 @@ class UserPrincipalAuthenticationTokenTest {
             userName,
             displayName,
             mutableListOf(),
-            mutableMapOf()
         )
 
         val result = UserPrincipalAuthenticationToken(userPrincipal)

@@ -2,19 +2,20 @@ package packit.security.profile
 
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.oauth2.core.user.OAuth2User
+import packit.model.User
 
 class PackitOAuth2User(
-    val principal: UserPrincipal
+    val user: User
 ) : OAuth2User {
-    override fun getAttributes(): MutableMap<String, Any> {
-        return principal.attributes
+    override fun getAttributes(): Map<String, Any> {
+        return mapOf()
     }
 
-    override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        return principal.authorities
+    override fun getAuthorities(): Collection<GrantedAuthority> {
+        return setOf()
     }
 
     override fun getName(): String {
-        return principal.name
+        return user.username
     }
 }

@@ -8,14 +8,12 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.springframework.http.HttpStatus
-import org.springframework.security.core.authority.SimpleGrantedAuthority
 import packit.AppConfig
 import packit.clients.GithubUserClient
 import packit.exceptions.PackitException
 import packit.model.Role
 import packit.model.User
 import packit.model.dto.LoginWithToken
-import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
 import packit.service.GithubAPILoginService
 import packit.service.UserService
@@ -33,18 +31,12 @@ class GithubAPILoginServiceTest {
         username = username, displayName = displayName, disabled = false,
         userSource = "github", roles = mutableListOf(Role(name = "USER"))
     )
-    private val userPrincipal = UserPrincipal(
-        username,
-        displayName,
-        mutableSetOf(SimpleGrantedAuthority("USER")),
-        mutableMapOf()
-    )
+
     private val mockUserService = mock<UserService> {
         on { saveUserFromGithub(username, displayName, null) } doReturn fakeUser
-        on { getUserPrincipal(fakeUser) } doReturn userPrincipal
     }
     private val mockIssuer = mock<JwtIssuer> {
-        on { issue(argThat { this == userPrincipal }) } doReturn "fake jwt"
+        on { issue(argThat { this.username == username }) } doReturn "fake jwt"
     }
     private val mockGithubUserClient = mock<GithubUserClient> {
         on { getGithubUser() } doReturn fakeGHMyself

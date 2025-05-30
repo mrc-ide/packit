@@ -9,9 +9,7 @@ import { PacketLayout } from "../../../app/components/main";
 import { server } from "../../../msw/server";
 import { mockPacket } from "../../mocks";
 import { HttpStatus } from "../../../lib/types/HttpStatus";
-import { UserProvider } from "../../../app/components/providers/UserProvider";
-import { UserState } from "../../../app/components/providers/types/UserTypes";
-import { PacketMetadata } from "../../../types";
+import * as UserProvider from "../../../app/components/providers/UserProvider";
 
 jest.mock("../../../lib/download", () => ({
   ...jest.requireActual("../../../lib/download"),
@@ -21,32 +19,31 @@ jest.mock("../../../lib/download", () => ({
 URL.createObjectURL = jest.fn();
 URL.revokeObjectURL = jest.fn();
 
-const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
-jest.mock("../../../lib/localStorageManager", () => ({
-  ...jest.requireActual("../../../lib/localStorageManager"),
-  getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
-}));
+const mockUseUser = jest.spyOn(UserProvider, "useUser");
 
+const renderComponent = (packet = mockPacket) => {
+  render(
+    <SWRConfig value={{ dedupingInterval: 0 }}>
+      <MemoryRouter initialEntries={[`/${packet.name}/${packet.id}`]}>
+        <Routes>
+          <Route element={<PacketLayout />} path="/:packetName/:packetId">
+            <Route path="/:packetName/:packetId" element={<PacketDetails />} />
+            <Route path="/:packetName/:packetId/metadata" element={<Metadata />} />
+            <Route path="/:packetName/:packetId/downloads" element={<Downloads />} />
+            <Route path="/:packetName/:packetId/read-access" element={<div> read access page</div>} />
+            {/* <Route path="/:packetName/:packetId/changelogs" element={<ChangeLogs />} /> */}
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    </SWRConfig>
+  );
+};
 describe("Packet Layout test", () => {
-  const renderComponent = (packet: PacketMetadata = mockPacket) => {
-    render(
-      <SWRConfig value={{ dedupingInterval: 0 }}>
-        <UserProvider>
-          <MemoryRouter initialEntries={[`/${packet.name}/${packet.id}`]}>
-            <Routes>
-              <Route element={<PacketLayout />} path="/:packetName/:packetId">
-                <Route path="/:packetName/:packetId" element={<PacketDetails />} />
-                <Route path="/:packetName/:packetId/metadata" element={<Metadata />} />
-                <Route path="/:packetName/:packetId/downloads" element={<Downloads />} />
-                <Route path="/:packetName/:packetId/read-access" element={<div> read access page</div>} />
-                {/* <Route path="/:packetName/:packetId/changelogs" element={<ChangeLogs />} /> */}
-              </Route>
-            </Routes>
-          </MemoryRouter>
-        </UserProvider>
-      </SWRConfig>
-    );
-  };
+  beforeEach(() => {
+    mockUseUser.mockReturnValue({
+      authorities: []
+    } as any);
+  });
 
   it("should show sidebar components and able to go through pages", async () => {
     renderComponent();
@@ -96,7 +93,7 @@ describe("Packet Layout test", () => {
   });
 
   it("should be able to go to read access page if user has manage access", async () => {
-    mockGetUserFromLocalStorage.mockReturnValue({
+    mockUseUser.mockReturnValue({
       authorities: ["packet.manage"]
     } as any);
 
