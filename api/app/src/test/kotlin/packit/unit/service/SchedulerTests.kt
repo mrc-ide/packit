@@ -5,6 +5,7 @@ import org.mockito.internal.verification.Times
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
+import packit.service.DeviceAuthRequestService
 import packit.service.OneTimeTokenService
 import packit.service.OutpackServerClient
 import packit.service.PacketService
@@ -19,9 +20,15 @@ class SchedulerTests {
         on { getChecksum() } doReturn "2"
     }
 
+    private val mockDeviceAuthRequestService = mock<DeviceAuthRequestService> {}
+
+    private fun getSut(): Scheduler {
+        return Scheduler(mockOneTimeTokenService, mockPacketService, mockOutpackServerClient, mockDeviceAuthRequestService)
+    }
+
     @Test
     fun `imports packets if checksum has changed`() {
-        val sut = Scheduler(mockOneTimeTokenService, mockPacketService, mockOutpackServerClient)
+        val sut = getSut()
         sut.checkPackets()
         verify(mockPacketService).importPackets()
     }
@@ -31,15 +38,21 @@ class SchedulerTests {
         val mockOutpackServerClient = mock<OutpackServerClient> {
             on { getChecksum() } doReturn "1"
         }
-        val sut = Scheduler(mockOneTimeTokenService, mockPacketService, mockOutpackServerClient)
-        sut.checkPackets()
+        val sut = getSut()
         verify(mockPacketService, Times(0)).importPackets()
     }
 
     @Test
     fun `cleans up expired tokens`() {
-        val sut = Scheduler(mockOneTimeTokenService, mockPacketService, mockOutpackServerClient)
+        val sut = getSut()
         sut.cleanUpExpiredTokens()
         verify(mockOneTimeTokenService).cleanUpExpiredTokens()
+    }
+
+    @Test
+    fun `cleans up expired device auth requests`() {
+        val sut = getSut()
+        sut.cleanUpExpiredDeviceAuthRequests()
+        verify(mockDeviceAuthRequestService).cleanUpExpiredRequests()
     }
 }
