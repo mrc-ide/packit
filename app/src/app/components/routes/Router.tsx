@@ -3,7 +3,7 @@ import { App } from "../../App";
 import { NotFound } from "../NotFound";
 import { Downloads, Home, Metadata, PacketGroup } from "../contents";
 import { PacketDetails, PacketFileFullScreen } from "../contents/packets";
-import { Login, Redirect, UpdatePassword, AuthLayoutForm } from "../login";
+import { Login, Redirect, UpdatePassword, AuthLayoutForm, DeviceLogin } from "../login";
 import { Breadcrumb } from "../main/Breadcrumb";
 import { PacketLayout } from "../main";
 import { ProtectedRoute } from "./ProtectedRoute";
@@ -22,6 +22,9 @@ export const Router = () => {
         </Route>
         {/* <Route path="accessibility" element={<Accessibility />} /> */}
         <Route path="redirect" element={<Redirect />} />
+        <Route element={< ProtectedRoute />}>
+          <Route path="/device" element={<DeviceLogin />}></Route>
+        </Route>
         <Route element={<ProtectedRoute />}>
           <Route path="*" element={<NotFound />} />
         </Route>
