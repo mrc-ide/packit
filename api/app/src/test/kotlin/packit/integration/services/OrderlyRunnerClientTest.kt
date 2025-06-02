@@ -15,6 +15,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
 class OrderlyRunnerClientTest(config: RunnerConfig) : IntegrationTest() {
+    val locationUrl = config.locationUrl
     val repo: RunnerRepository = config.repository
     val sut: OrderlyRunnerClient = OrderlyRunnerClient(config)
 
