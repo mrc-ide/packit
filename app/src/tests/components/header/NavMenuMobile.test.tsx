@@ -2,14 +2,13 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { LeftNavItems } from "../../../app/components/header/LeftNav";
 import { NavMenuMobile } from "../../../app/components/header/NavMenuMobile";
-import { UserState } from "../../../app/components/providers/types/UserTypes";
 
 describe("Nav Menu Mobile component", () => {
   const DOWN_ARROW = { keyCode: 40 };
   it("should render mobile nav menu with all links if packet.run permission is present", async () => {
     render(
       <MemoryRouter>
-        <NavMenuMobile user={{ authorities: ["packet.run"] } as UserState} />
+        <NavMenuMobile authorities={["packet.run"]} />
       </MemoryRouter>
     );
 
@@ -26,7 +25,7 @@ describe("Nav Menu Mobile component", () => {
   it("should render all menu items except runner when packet.run permission is not present", async () => {
     render(
       <MemoryRouter>
-        <NavMenuMobile user={{ authorities: [""] } as UserState} />
+        <NavMenuMobile authorities={[""]} />
       </MemoryRouter>
     );
 

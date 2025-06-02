@@ -1,13 +1,12 @@
 import { render, screen } from "@testing-library/react";
 import { LeftNav, LeftNavItems } from "../../../app/components/header/LeftNav";
-import { UserState } from "../../../app/components/providers/types/UserTypes";
 import { MemoryRouter } from "react-router-dom";
 
 describe("LeftNav component", () => {
   it("should render all left nav components when packet.run permission is present", () => {
     render(
       <MemoryRouter>
-        <LeftNav user={{ authorities: ["packet.run"] } as UserState} />
+        <LeftNav authorities={["packet.run"]} />
       </MemoryRouter>
     );
 
@@ -22,7 +21,7 @@ describe("LeftNav component", () => {
   it("should render all nav items except runner when packet.run permission is not present", () => {
     render(
       <MemoryRouter>
-        <LeftNav user={{ authorities: [""] } as UserState} />
+        <LeftNav authorities={[""]} />
       </MemoryRouter>
     );
 

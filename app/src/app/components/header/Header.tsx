@@ -11,7 +11,7 @@ import { LeftNav } from "./LeftNav";
 import { hasUserManagePermission } from "../../../lib/auth/hasPermission";
 
 export const Header = () => {
-  const { user } = useUser();
+  const { authorities, user } = useUser();
 
   return (
     <header>
@@ -24,13 +24,13 @@ export const Header = () => {
                 Packit
               </div>
             </NavLink>
-            {user && <NavMenuMobile user={user} />}
-            {user && <LeftNav className="mx-6 hidden md:flex" user={user} />}
+            {authorities && <NavMenuMobile authorities={authorities} />}
+            {authorities && <LeftNav className="mx-6 hidden md:flex" authorities={authorities} />}
             <div className="ml-auto flex items-center space-x-4">
               {/* <NavigationLink to="/accessibility" className="mx-6 hidden md:flex">
                 Accessibility
               </NavigationLink> */}
-              {hasUserManagePermission(user?.authorities) && (
+              {hasUserManagePermission(authorities) && (
                 <NavLink to="/manage-roles" className={cn(buttonVariants({ variant: "ghost" }), "justify-start")}>
                   Manage Access
                 </NavLink>

@@ -9,6 +9,7 @@ import { manageRolesHandlers } from "./handlers/manageRolesHandlers";
 import { tagHandlers } from "./handlers/tagHandler";
 import { runnerHandlers } from "./handlers/runnerHandlers";
 import { usersRolesHandler } from "./handlers/usersRolesHandler";
+import { userHandlers } from "./handlers/userHandlers";
 
 // catch any missed requests in tests
 const defaultHandlers = [
@@ -29,5 +30,6 @@ export const handlers = [
   ...tagHandlers,
   ...usersRolesHandler,
   ...runnerHandlers,
+  ...userHandlers,
   ...defaultHandlers
 ];
