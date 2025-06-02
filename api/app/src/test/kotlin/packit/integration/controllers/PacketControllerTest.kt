@@ -118,7 +118,7 @@ class PacketControllerTest : IntegrationTest() {
 
         assertSuccess(result)
 
-        val packets: List<PacketDto> = jacksonObjectMapper().readValue(result.body!!)
+        val packets: List<BasicPacketDto> = jacksonObjectMapper().readValue(result.body!!)
         assertThat(packets).extracting("id").containsExactly(idOfDependencyPacket)
     }
 
