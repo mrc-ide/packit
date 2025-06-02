@@ -1,11 +1,13 @@
 import { ListTree } from "lucide-react";
+import { Link } from "react-router-dom";
 import { AccordionContent, AccordionItem, AccordionTrigger } from "../../Base/Accordion";
-import { Link, useParams } from "react-router-dom";
-import { useGetPacketDependencies } from "./hooks/useGetPacketDependencies";
-
-export const PacketDependencies = () => {
-  const { packetId } = useParams();
-  const { dependencies } = useGetPacketDependencies(packetId);
+import { PacketDepends } from "../../../../types";
+import { useGetPackets } from "./hooks/useGetPackets";
+interface PacketDependenciesProps {
+  depends: PacketDepends[];
+}
+export const PacketDependencies = ({ depends }: PacketDependenciesProps) => {
+  const { packets: dependencies } = useGetPackets(depends.map((d) => d.packet));
 
   return (
     <div>
@@ -19,7 +21,7 @@ export const PacketDependencies = () => {
         <AccordionContent>
           <ul className="space-y-1 overflow-y-auto max-h-80">
             {dependencies && dependencies.length === 0 ? (
-              <div className="italic text-sm">This packet has no dependencies on other packets</div>
+              <div className="italic text-sm">None</div>
             ) : (
               dependencies?.map((dependency) => (
                 <li key={dependency.id}>

@@ -4,8 +4,7 @@ import { MemoryRouter } from "react-router-dom";
 import { RedirectOnLoginProvider } from "../../../app/components/providers/RedirectOnLoginProvider";
 import { ThemeProvider } from "../../../app/components/providers/ThemeProvider";
 import * as UserProvider from "../../../app/components/providers/UserProvider";
-import { UserState } from "../../../app/components/providers/types/UserTypes";
-import { mockUserProviderState, mockUserState } from "../../mocks";
+import { mockUserProviderState } from "../../mocks";
 import { Header } from "../../../app/components/header";
 
 const mockUseUser = jest.spyOn(UserProvider, "useUser");

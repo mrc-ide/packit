@@ -18,7 +18,6 @@ import packit.model.OneTimeToken
 import packit.model.Role
 import packit.model.RolePermission
 import packit.model.dto.BasicPacketDto
-import packit.model.dto.PacketDto
 import packit.model.dto.RolesAndUsersForReadUpdate
 import packit.model.dto.UpdateReadRoles
 import packit.repository.*
@@ -71,8 +70,6 @@ class PacketControllerTest : IntegrationTest() {
     companion object {
         const val idOfArtefactTypesPacket = "20240729-154633-10abe7d1"
         const val idOfDownloadTypesPacket3 = "20250122-142620-c741b061"
-        const val idOfDependentPacket = "20240729-154642-8f374b0d"
-        const val idOfDependencyPacket = "20240729-154639-25b955eb"
         val filePathsAndSizesForDownloadTypesPacket = mapOf(
             "a_renamed_common_resource.csv" to 11L,
             "artefact1/artefact_data.csv" to 51L,
@@ -87,39 +84,29 @@ class PacketControllerTest : IntegrationTest() {
     }
 
     @Test
-    fun `getPacketDependencies returns error if not authenticated`() {
-        val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/$idOfDependentPacket/dependencies",
-            HttpMethod.GET
-        )
+    fun `getPacketsByIds returns error if not authenticated`() {
+        val result: ResponseEntity<String> = restTemplate.exchange("/packets", HttpMethod.POST)
         assertUnauthorized(result)
     }
 
     @Test
-    @WithAuthenticatedUser(authorities = ["packet.read:packet:name:wrong-id"])
-    fun `getPacketDependencies returns error if no permissions match`() {
+    @WithAuthenticatedUser(authorities = ["packet.read"])
+    fun `getPacketsByIds returns list of basic packet details by passing a list of ids in request body`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/$idOfDependentPacket/dependencies",
-            HttpMethod.GET,
-            getTokenizedHttpEntity()
-        )
-
-        assertUnauthorized(result)
-    }
-
-    @Test
-    @WithAuthenticatedUser(authorities = ["packet.read:packet:depends:$idOfDependentPacket"])
-    fun `getPacketDependencies returns list of depended-on packets`() {
-        val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packets/$idOfDependentPacket/dependencies",
-            HttpMethod.GET,
-            getTokenizedHttpEntity()
+            "/packets",
+            HttpMethod.POST,
+            getTokenizedHttpEntity(
+                data = jacksonObjectMapper().writeValueAsString(
+                    listOf(idOfArtefactTypesPacket, idOfDownloadTypesPacket3)
+                )
+            )
         )
 
         assertSuccess(result)
 
         val packets: List<BasicPacketDto> = jacksonObjectMapper().readValue(result.body!!)
-        assertThat(packets).extracting("id").containsExactly(idOfDependencyPacket)
+        assertThat(packets).extracting("id")
+            .containsExactlyInAnyOrder(idOfArtefactTypesPacket, idOfDownloadTypesPacket3)
     }
 
     @Test

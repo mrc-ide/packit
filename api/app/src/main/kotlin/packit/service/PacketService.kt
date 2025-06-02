@@ -22,9 +22,9 @@ import java.util.zip.ZipOutputStream
 
 interface PacketService {
     fun getPacket(id: String): Packet
-    fun getPackets(pageablePayload: PageablePayload, filterName: String, filterId: String): Page<Packet>
     fun getPackets(): List<Packet>
-    fun getDependencies(id: String): List<Packet>
+    fun getPackets(ids: List<String>): List<Packet>
+    fun getPackets(pageablePayload: PageablePayload, filterName: String, filterId: String): Page<Packet>
     fun getChecksum(): String
     fun importPackets()
     fun getMetadataBy(id: String): PacketMetadata
@@ -82,13 +82,12 @@ class BasePacketService(
             .orElseThrow { PackitException("packetNotFound", HttpStatus.NOT_FOUND) }
     }
 
-    override fun getDependencies(id: String): List<Packet> {
-        val dependencyIds = getMetadataBy(id).depends.map() { it.packet }
-        return packetRepository.findAllById(dependencyIds)
-    }
-
     override fun getPackets(): List<Packet> {
         return packetRepository.findAll()
+    }
+
+    override fun getPackets(ids: List<String>): List<Packet> {
+        return packetRepository.findAllById(ids)
     }
 
     override fun getPackets(pageablePayload: PageablePayload, filterName: String, filterId: String): Page<Packet> {

@@ -97,7 +97,7 @@ class PacketControllerTest {
         }
         on { getPacketsByName(anyString()) } doReturn packets
         on { validateFilesExistForPacket(anyString(), anyList()) } doReturn packetMetadata[0].files
-        on { getDependencies(packetId) } doReturn packets
+        on { getPackets(packets.map { it.id }) } doReturn packets
 
         packetMetadata.forEach {
             on { getMetadataBy(it.id) } doReturn it
@@ -128,9 +128,10 @@ class PacketControllerTest {
     }
 
     @Test
-    fun `get dependencies`() {
-        val result = sut.getPacketDependencies(packetId)
-        verify(packetService).getDependencies(packetId)
+    fun `get a list of basic details of packets by ids`() {
+        val packetIds = packets.map { it.id }
+        val result = sut.getPacketsByIds(packetIds)
+        verify(packetService).getPackets(packetIds)
         assertEquals(result.statusCode, HttpStatus.OK)
         assertEquals(result.body, packets.map { it.toBasicDto() })
     }
