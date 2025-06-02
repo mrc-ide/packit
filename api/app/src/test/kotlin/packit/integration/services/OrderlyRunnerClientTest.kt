@@ -14,9 +14,21 @@ import packit.service.OrderlyRunnerClient
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
-class OrderlyRunnerClientTest(config: RunnerConfig) : IntegrationTest() {
-    val locationUrl = config.locationUrl
-    val repo: RunnerRepository = config.repository
+class OrderlyRunnerClientTest(
+    @Value("\${orderly.runner.url}")
+    val runnerUrl: String,
+
+    @Value("\${orderly.runner.repository.url}")
+    val repositoryUrl: String,
+
+    @Value("\${orderly.runner.repository.ssh-key}")
+    val sshKey: String?,
+
+    @Value("\${orderly.runner.location-url}")
+    val locationUrl: String
+) : IntegrationTest() {
+    val repo: RunnerRepository = RunnerRepository(repositoryUrl, sshKey)
+    val config: RunnerConfig = RunnerConfig(runnerUrl, locationUrl, repo)
     val sut: OrderlyRunnerClient = OrderlyRunnerClient(config)
 
     @BeforeEach
