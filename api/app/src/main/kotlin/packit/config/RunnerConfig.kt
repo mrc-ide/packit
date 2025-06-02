@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 
 data class RunnerRepository(
     val url: String,
+    val sshKey: String?
 )
 
 @ConfigurationProperties(prefix = "orderly.runner")
@@ -12,6 +13,5 @@ data class RunnerRepository(
 data class RunnerConfig(
     val url: String,
     val locationUrl: String,
-    val repository: RunnerRepository,
-    val sshKey: String?
+    val repository: RunnerRepository
 )

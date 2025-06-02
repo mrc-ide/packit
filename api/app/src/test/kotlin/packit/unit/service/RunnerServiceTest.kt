@@ -66,8 +66,7 @@ class RunnerServiceTest {
     private val runnerConfig = RunnerConfig(
         url = "",
         locationUrl = "https://example.com/outpack",
-        repository = RunnerRepository("https://example.com/git/repo"),
-        sshKey = null
+        repository = RunnerRepository("https://example.com/git/repo", null)
     )
 
     private val sut = BaseRunnerService(

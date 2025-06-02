@@ -64,7 +64,7 @@ class BaseRunnerService(
             commitHash = info.commitHash,
             parameters = info.parameters,
             location = OrderlyLocation.http(config.locationUrl),
-            sshKey = config.sshKey
+            sshKey = config.repository.sshKey
         )
 
         val user = userService.getByUsername(username) ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)

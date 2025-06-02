@@ -24,10 +24,10 @@ class OrderlyRunnerClientTest(
     @Value("\${orderly.runner.location-url}")
     val locationUrl: String,
 
-    @Value("\${orderly.runner.ssh-key}")
+    @Value("\${orderly.runner.repository.ssh-key}")
     val sshKey: String?
 ) : IntegrationTest() {
-    val config: RunnerConfig = RunnerConfig(runnerUrl, locationUrl, RunnerRepository(repositoryUrl), sshKey)
+    val config: RunnerConfig = RunnerConfig(runnerUrl, locationUrl, RunnerRepository(repositoryUrl, sshKey))
     val sut: OrderlyRunnerClient = OrderlyRunnerClient(config)
 
     @BeforeEach

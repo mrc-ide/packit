@@ -28,7 +28,7 @@ class OrderlyRunnerClient(val config: RunnerConfig) : OrderlyRunner {
     override fun gitFetch(url: String) {
         return GenericClient.post(
             constructUrl("repository/fetch?url={url}"),
-            RepositoryFetch(sshKey = config.sshKey),
+            RepositoryFetch(sshKey = config.repository.sshKey),
             mapOf("url" to url)
         )
     }
