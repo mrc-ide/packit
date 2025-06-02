@@ -14,25 +14,13 @@ import packit.service.OrderlyRunnerClient
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
-class OrderlyRunnerClientTest(
-    @Value("\${orderly.runner.url}")
-    val runnerUrl: String,
-
-    @Value("\${orderly.runner.repository.url}")
-    val repositoryUrl: String,
-
-    @Value("\${orderly.runner.location-url}")
-    val locationUrl: String,
-
-    @Value("\${orderly.runner.repository.ssh-key}")
-    val sshKey: String?
-) : IntegrationTest() {
-    val config: RunnerConfig = RunnerConfig(runnerUrl, locationUrl, RunnerRepository(repositoryUrl, sshKey))
+class OrderlyRunnerClientTest(config: RunnerConfig) : IntegrationTest() {
+    val repo: RunnerRepository = config.repository
     val sut: OrderlyRunnerClient = OrderlyRunnerClient(config)
 
     @BeforeEach
     fun fetch() {
-        sut.gitFetch(repositoryUrl)
+        sut.gitFetch(repo)
     }
 
     @Test
@@ -46,7 +34,7 @@ class OrderlyRunnerClientTest(
 
     @Test
     fun `can git fetch`() {
-        val res = sut.gitFetch(repositoryUrl)
+        val res = sut.gitFetch(repo)
         assertEquals(Unit, res)
     }
 
@@ -54,7 +42,7 @@ class OrderlyRunnerClientTest(
     fun `can get git branches`() {
         val testBranchName = "master"
         val testBranchMessage = "initial commit\n"
-        val gitBranches = sut.getBranches(repositoryUrl)
+        val gitBranches = sut.getBranches(repo)
 
         assertEquals(testBranchName, gitBranches.defaultBranch)
         assertEquals(testBranchName, gitBranches.branches[0].name)
@@ -72,14 +60,14 @@ class OrderlyRunnerClientTest(
             Parameter("c", null)
         )
 
-        val result = sut.getParameters(repositoryUrl, "HEAD", testPacketGroupName)
+        val result = sut.getParameters(repo, "HEAD", testPacketGroupName)
 
         assertEquals(expectedParameters, result)
     }
 
     @Test
     fun `can get packet groups`() {
-        val runnerPacketGroups = sut.getPacketGroups(repositoryUrl, "HEAD")
+        val runnerPacketGroups = sut.getPacketGroups(repo, "HEAD")
 
         runnerPacketGroups.forEach {
             assertEquals(String::class.java, it.name::class.java)
@@ -90,7 +78,7 @@ class OrderlyRunnerClientTest(
 
     @Test
     fun `can submit report run`() {
-        val branchInfo = sut.getBranches(repositoryUrl)
+        val branchInfo = sut.getBranches(repo)
         val mainBranch = branchInfo.branches[0]
         val parameters = mapOf("a" to 1, "b" to 2)
         val submitInfo = RunnerSubmitRunInfo(
@@ -101,7 +89,7 @@ class OrderlyRunnerClientTest(
             parameters = parameters,
             location = OrderlyLocation.http(locationUrl)
         )
-        val res = sut.submitRun(repositoryUrl, submitInfo)
+        val res = sut.submitRun(repo, submitInfo)
 
         assertEquals(String::class.java, res.taskId::class.java)
     }
@@ -109,7 +97,7 @@ class OrderlyRunnerClientTest(
     @Test
     fun `can get statuses of tasks`() {
 //        run 2 tasks
-        val branchInfo = sut.getBranches(repositoryUrl)
+        val branchInfo = sut.getBranches(repo)
         val mainBranch = branchInfo.branches[0]
         val parameters = mapOf("a" to 1, "b" to 2)
         val submitInfo = RunnerSubmitRunInfo(
@@ -120,8 +108,8 @@ class OrderlyRunnerClientTest(
             parameters = parameters,
             location = OrderlyLocation.http(locationUrl)
         )
-        val res1 = sut.submitRun(repositoryUrl, submitInfo)
-        val res2 = sut.submitRun(repositoryUrl, submitInfo)
+        val res1 = sut.submitRun(repo, submitInfo)
+        val res2 = sut.submitRun(repo, submitInfo)
 
         val taskIds = listOf(res1.taskId, res2.taskId)
 
