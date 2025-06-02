@@ -86,7 +86,7 @@ class RunnerServiceTest {
     fun `can fetch git`() {
         sut.gitFetch()
 
-       verify(client).gitFetch(runnerConfig.repository)
+        verify(client).gitFetch(runnerConfig.repository)
     }
 
     @Test
