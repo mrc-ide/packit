@@ -1,6 +1,5 @@
 import { hasPacketRunPermission, hasUserManagePermission } from "../../../lib/auth/hasPermission";
 import { cn } from "../../../lib/cn";
-import { UserState } from "../providers/types/UserTypes";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "../Base/DropdownMenu";
 import { Menu } from "lucide-react";
 import { NavLink } from "react-router-dom";
@@ -11,15 +10,14 @@ export const NavItems: { [key: string]: string } = {
   "manage-roles": "Manage Access"
   // accessibility: "Accessibility",
 };
-
 interface NavMenuProps extends React.HTMLAttributes<HTMLElement> {
-  user: UserState;
+  authorities: string[]
 }
-export const NavMenu = ({ className, user, ...props }: NavMenuProps) => {
+export const NavMenu = ({ className, authorities, ...props }: NavMenuProps) => {
   const displayableItems = Object.keys(NavItems).filter((to) => {
-    if (to === "runner" && !hasPacketRunPermission(user.authorities)) {
+    if (to === "runner" && !hasPacketRunPermission(authorities)) {
       return false;
-    } else if (to === "manage-roles" && !hasUserManagePermission(user.authorities)) {
+    } else if (to === "manage-roles" && !hasUserManagePermission(authorities)) {
       return false;
     } else {
       return true;

@@ -8,7 +8,7 @@ import { NavMenu } from "./NavMenu";
 import { useBrandingContext } from "../providers/BrandingProvider";
 
 export const Header = () => {
-  const { user } = useUser();
+  const { authorities, user } = useUser();
   const { logoConfig, brandName } = useBrandingContext();
   const logoLinkDestination = logoConfig?.linkDestination || "/";
 
@@ -32,7 +32,7 @@ export const Header = () => {
             </>
           )}
           <div className="flex flex-1 h-20 items-center px-4">
-            {user && <NavMenu className="hidden md:flex" user={user} />}
+            {authorities && <NavMenu className="hidden md:flex" authorities={authorities} />}
             <div className="flex items-center space-x-4 ml-auto">
               <ThemeToggleButton />
               {user && <AccountHeaderDropdown />}

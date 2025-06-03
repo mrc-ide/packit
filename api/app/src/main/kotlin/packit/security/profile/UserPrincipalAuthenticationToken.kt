@@ -6,8 +6,7 @@ class UserPrincipalAuthenticationToken(userPrincipal: UserPrincipal) :
     AbstractAuthenticationToken(userPrincipal.authorities) {
     private val principal = userPrincipal
 
-    init
-    {
+    init {
         isAuthenticated = true
     }
 

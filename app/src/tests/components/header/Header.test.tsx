@@ -3,37 +3,31 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { RedirectOnLoginProvider } from "../../../app/components/providers/RedirectOnLoginProvider";
 import { ThemeProvider } from "../../../app/components/providers/ThemeProvider";
-import { UserProvider } from "../../../app/components/providers/UserProvider";
-import { UserState } from "../../../app/components/providers/types/UserTypes";
-import { mockUserState } from "../../mocks";
+import * as UserProvider from "../../../app/components/providers/UserProvider";
+import { mockUserProviderState } from "../../mocks";
 import { Header } from "../../../app/components/header";
 import { BrandingProvider } from "../../../app/components/providers/BrandingProvider";
 
-const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
-jest.mock("../../../lib/localStorageManager", () => ({
-  getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
-}));
+const mockUseUser = jest.spyOn(UserProvider, "useUser");
 
 describe("header component", () => {
   const renderElement = () => {
     return render(
       <MemoryRouter>
         <ThemeProvider>
-          <UserProvider>
-            <BrandingProvider>
-              <RedirectOnLoginProvider>
-                <Header />
-              </RedirectOnLoginProvider>
-            </BrandingProvider>
-          </UserProvider>
+          <BrandingProvider>
+            <RedirectOnLoginProvider>
+              <Header />
+            </RedirectOnLoginProvider>
+          </BrandingProvider>
         </ThemeProvider>
       </MemoryRouter>
     );
   };
 
-  it("can render header user related items when authenticated", async () => {
+  it("can render user related items when authenticated", async () => {
     const DOWN_ARROW = { keyCode: 40 };
-    mockGetUserFromLocalStorage.mockReturnValue(mockUserState());
+    mockUseUser.mockReturnValue(mockUserProviderState());
     renderElement();
     fireEvent.keyDown(await screen.findByLabelText("Account"), DOWN_ARROW);
 
@@ -43,7 +37,7 @@ describe("header component", () => {
   });
 
   it("should change theme when theme button is clicked", async () => {
-    mockGetUserFromLocalStorage.mockReturnValue(mockUserState());
+    mockUseUser.mockReturnValue(mockUserProviderState());
     renderElement();
 
     const darkThemeButton = screen.getByRole("button", { name: "theme-light" });
@@ -56,28 +50,28 @@ describe("header component", () => {
   });
 
   it("should render link to manage access when user has user.manage authority", () => {
-    mockGetUserFromLocalStorage.mockReturnValue(mockUserState());
+    mockUseUser.mockReturnValue(mockUserProviderState());
     renderElement();
 
     expect(screen.getByRole("link", { name: "Manage Access" })).toBeInTheDocument();
   });
 
   it("should not render link to manage access when user does not have user.manage authority", () => {
-    mockGetUserFromLocalStorage.mockReturnValue({ ...mockUserState(), authorities: [] });
+    mockUseUser.mockReturnValue({ authorities: [] } as any);
     renderElement();
 
     expect(screen.queryByRole("link", { name: "Manage Access" })).not.toBeInTheDocument();
   });
 
   it("should render nav menu if user is present", async () => {
-    mockGetUserFromLocalStorage.mockReturnValue(mockUserState());
+    mockUseUser.mockReturnValue(mockUserProviderState());
     renderElement();
 
     expect(screen.getByRole("link", { name: /runner/i })).toBeInTheDocument();
   });
 
   it("should render the app title", async () => {
-    mockGetUserFromLocalStorage.mockReturnValue(mockUserState());
+    mockUseUser.mockReturnValue(mockUserProviderState());
     renderElement();
 
     await waitFor(() => {
@@ -86,7 +80,7 @@ describe("header component", () => {
   });
 
   it("should render the logo, with alt text, correct image filename, and correct link destination", async () => {
-    mockGetUserFromLocalStorage.mockReturnValue(mockUserState());
+    mockUseUser.mockReturnValue(mockUserProviderState());
     renderElement();
 
     await waitFor(() => {

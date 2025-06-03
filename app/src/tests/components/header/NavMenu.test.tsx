@@ -1,13 +1,12 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { NavMenu, NavItems } from "../../../app/components/header/NavMenu";
-import { UserState } from "../../../app/components/providers/types/UserTypes";
 import { MemoryRouter } from "react-router-dom";
 
 describe("NavMenu component", () => {
   it("should render all nav items when relevant permissions are present", () => {
     render(
       <MemoryRouter>
-        <NavMenu user={{ authorities: ["packet.run", "user.manage"] } as UserState} />
+        <NavMenu authorities={["packet.run", "user.manage"]} />
       </MemoryRouter>
     );
 
@@ -20,7 +19,7 @@ describe("NavMenu component", () => {
   it("should not render Runner nav item when relevant permission is not present", () => {
     render(
       <MemoryRouter>
-        <NavMenu user={{ authorities: ["user.manage"] } as UserState} />
+        <NavMenu authorities={["user.manage"]} />
       </MemoryRouter>
     );
 
@@ -38,7 +37,7 @@ describe("NavMenu component", () => {
   it("should not render Manage Access nav item when relevant permission is not present", () => {
     render(
       <MemoryRouter>
-        <NavMenu user={{ authorities: ["packet.run"] } as UserState} />
+        <NavMenu authorities={["packet.run"]} />
       </MemoryRouter>
     );
 
@@ -56,7 +55,7 @@ describe("NavMenu component", () => {
   it("should render all non-secured nav items when no permissions are present", () => {
     render(
       <MemoryRouter>
-        <NavMenu user={{ authorities: [""] } as UserState} />
+        <NavMenu authorities={[""]} />
       </MemoryRouter>
     );
 

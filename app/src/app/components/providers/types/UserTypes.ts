@@ -3,10 +3,10 @@ export interface UserState {
   exp: number;
   displayName: string;
   userName: string;
-  authorities: string[];
 }
 export interface UserProviderState {
   user: UserState | null;
+  authorities?: string[];
   setUser: (jwt: string) => void;
   removeUser: () => void;
 }

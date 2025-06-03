@@ -143,7 +143,6 @@ export interface FileMetadata {
 export interface PacketJwtPayload extends JwtPayload {
   displayName: string;
   userName: string;
-  au: string[];
 }
 
 export interface PacketErrorBody {
