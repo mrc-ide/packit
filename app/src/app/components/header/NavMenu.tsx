@@ -11,7 +11,7 @@ export const NavItems: { [key: string]: string } = {
   // accessibility: "Accessibility",
 };
 interface NavMenuProps extends React.HTMLAttributes<HTMLElement> {
-  authorities: string[]
+  authorities: string[];
 }
 export const NavMenu = ({ className, authorities, ...props }: NavMenuProps) => {
   const displayableItems = Object.keys(NavItems).filter((to) => {
