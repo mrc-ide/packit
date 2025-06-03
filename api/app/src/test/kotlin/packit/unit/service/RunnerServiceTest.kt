@@ -66,7 +66,7 @@ class RunnerServiceTest {
     private val runnerConfig = RunnerConfig(
         url = "",
         locationUrl = "https://example.com/outpack",
-        repository = RunnerRepository("https://example.com/git/repo"),
+        repository = RunnerRepository("https://example.com/git/repo", null)
     )
 
     private val sut = BaseRunnerService(
@@ -86,14 +86,14 @@ class RunnerServiceTest {
     fun `can fetch git`() {
         sut.gitFetch()
 
-        verify(client).gitFetch(runnerConfig.repository.url)
+        verify(client).gitFetch(runnerConfig.repository)
     }
 
     @Test
     fun `can get branches`() {
         sut.getBranches()
 
-        verify(client).getBranches(runnerConfig.repository.url)
+        verify(client).getBranches(runnerConfig.repository)
     }
 
     @Test
@@ -103,7 +103,7 @@ class RunnerServiceTest {
         val testParameters = listOf(
             Parameter("test-name", "test-value")
         )
-        `when`(client.getParameters(runnerConfig.repository.url, ref, packetGroupName)).thenReturn(testParameters)
+        `when`(client.getParameters(runnerConfig.repository, ref, packetGroupName)).thenReturn(testParameters)
 
         val parameters = sut.getParameters(ref, packetGroupName)
         assertEquals(testParameters, parameters)
@@ -116,7 +116,7 @@ class RunnerServiceTest {
             RunnerPacketGroup("test-group", 1.0, false)
         )
         val ref = "branch-name"
-        `when`(client.getPacketGroups(runnerConfig.repository.url, ref)).thenReturn(testRunnerPacketGroups)
+        `when`(client.getPacketGroups(runnerConfig.repository, ref)).thenReturn(testRunnerPacketGroups)
 
         val packetGroups = sut.getPacketGroups(ref)
 
@@ -146,7 +146,7 @@ class RunnerServiceTest {
             OrderlyLocation.http(runnerConfig.locationUrl)
         )
         verify(client).submitRun(
-            runnerConfig.repository.url,
+            runnerConfig.repository,
             expectedRunnerSubmitRunInfo
         )
         verify(userService).getByUsername(testUser.username)
