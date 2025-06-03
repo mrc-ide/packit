@@ -5,23 +5,26 @@ import { AuthConfigProvider } from "./app/components/providers/AuthConfigProvide
 import { ThemeProvider } from "./app/components/providers/ThemeProvider";
 import { UserProvider } from "./app/components/providers/UserProvider";
 import { RedirectOnLoginProvider } from "./app/components/providers/RedirectOnLoginProvider";
+import { BrandingProvider } from "./app/components/providers/BrandingProvider";
 import reportWebVitals from "./reportWebVitals";
 import "./styles/globals.css";
 import { Router } from "./app/components/routes/Router";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <ThemeProvider>
-      <AuthConfigProvider>
-        <UserProvider>
-          <RedirectOnLoginProvider>
-            <BrowserRouter basename={process.env.PUBLIC_URL}>
-              <Router />
-            </BrowserRouter>
-          </RedirectOnLoginProvider>
-        </UserProvider>
-      </AuthConfigProvider>
-    </ThemeProvider>
+    <BrandingProvider>
+      <ThemeProvider>
+        <AuthConfigProvider>
+          <UserProvider>
+            <RedirectOnLoginProvider>
+              <BrowserRouter basename={process.env.PUBLIC_URL}>
+                <Router />
+              </BrowserRouter>
+            </RedirectOnLoginProvider>
+          </UserProvider>
+        </AuthConfigProvider>
+      </ThemeProvider>
+    </BrandingProvider>
   </React.StrictMode>
 );
 

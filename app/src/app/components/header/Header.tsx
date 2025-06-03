@@ -4,37 +4,36 @@ import { AccountHeaderDropdown } from "./AccountHeaderDropdown";
 
 import { useUser } from "../providers/UserProvider";
 import { ThemeToggleButton } from "./ThemeToggleButton";
-import { cn } from "../../../lib/cn";
-import { buttonVariants } from "../Base/Button";
-import { NavMenuMobile } from "./NavMenuMobile";
-import { LeftNav } from "./LeftNav";
-import { hasUserManagePermission } from "../../../lib/auth/hasPermission";
+import { NavMenu } from "./NavMenu";
+import { useBrandingContext } from "../providers/BrandingProvider";
 
 export const Header = () => {
   const { authorities, user } = useUser();
+  const { logoConfig, brandName } = useBrandingContext();
+  const logoLinkDestination = logoConfig?.linkDestination || "/";
 
   return (
     <header>
-      <div data-testid="header" className="flex-col">
-        <div className="border-b shadow-sm dark:shadow-accent">
-          <div className="flex h-20 items-center px-4">
-            <NavLink to="/">
-              <div className="text-xl font-extrabold flex gap-1 items-center">
-                <PackageOpen />
-                Packit
-              </div>
-            </NavLink>
-            {authorities && <NavMenuMobile authorities={authorities} />}
-            {authorities && <LeftNav className="mx-6 hidden md:flex" authorities={authorities} />}
-            <div className="ml-auto flex items-center space-x-4">
-              {/* <NavigationLink to="/accessibility" className="mx-6 hidden md:flex">
-                Accessibility
-              </NavigationLink> */}
-              {hasUserManagePermission(authorities) && (
-                <NavLink to="/manage-roles" className={cn(buttonVariants({ variant: "ghost" }), "justify-start")}>
-                  Manage Access
+      <div data-testid="header">
+        <div className="flex items-center h-20 border-b shadow-sm border-accent">
+          {logoConfig && (
+            <>
+              {logoConfig?.filename && (
+                <NavLink to={logoLinkDestination} className="h-full p-2 hidden md:block flex-shrink-0 ml-2 mr-6">
+                  <img src={`/img/${logoConfig?.filename}`} className="h-full" alt={logoConfig?.altText} />
                 </NavLink>
               )}
+              <NavLink to="/" className="mx-4">
+                <div className="text-xl font-extrabold flex gap-1 items-center tracking-tight">
+                  {!logoConfig?.filename && <PackageOpen className="mr-1" />}
+                  {brandName}
+                </div>
+              </NavLink>
+            </>
+          )}
+          <div className="flex flex-1 h-20 items-center px-4">
+            {authorities && <NavMenu className="hidden md:flex" authorities={authorities} />}
+            <div className="flex items-center space-x-4 ml-auto">
               <ThemeToggleButton />
               {user && <AccountHeaderDropdown />}
             </div>

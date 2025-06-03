@@ -62,10 +62,12 @@ export interface PacketDepends {
   query: string;
   files: PacketDependsFiles[];
 }
+
 export interface PacketDependsFiles {
   here: string;
   there: string;
 }
+
 export interface GitMetadata {
   branch: string;
   sha: string;
@@ -168,7 +170,14 @@ export interface BasicPacketGroup {
   name: string;
   id: number;
 }
+
 export interface Tag {
   name: string;
   id: number;
+}
+
+export interface LogoConfiguration {
+  altText?: string;
+  filename?: string;
+  linkDestination?: string;
 }

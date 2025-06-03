@@ -16,8 +16,9 @@ jest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
     setLoggingOut: mockSetLoggingOut
   })
 }));
-
 const mockUseUser = jest.spyOn(UserProvider, "useUser");
+
+const DOWN_ARROW = { keyCode: 40 };
 
 describe("header drop down menu component", () => {
   const renderElement = () => {
@@ -36,25 +37,32 @@ describe("header drop down menu component", () => {
     mockUseUser.mockReturnValue({ ...mockUserProviderState(), user: null });
     renderElement();
 
+    fireEvent.keyDown(await screen.findByLabelText("Account"), DOWN_ARROW);
+
     expect(await screen.findByText("XX")).toBeInTheDocument();
+    expect(screen.getByTestId("user-display-name")).toHaveTextContent("");
+    expect(screen.getByTestId("username")).toHaveTextContent("");
   });
 
-  it("renders drop down menu without user info if authenticated", async () => {
+  it("renders drop down menu with user initials if authenticated", async () => {
     mockUseUser.mockReturnValue(mockUserProviderState());
     renderElement();
+    fireEvent.keyDown(await screen.findByLabelText("Account"), DOWN_ARROW);
 
     expect(await screen.findByText("LJ")).toBeInTheDocument();
+    expect(screen.getByTestId("user-display-name")).toHaveTextContent("LeBron James");
+    expect(screen.getByTestId("username")).toHaveTextContent("goat@example.com");
   });
 
   it("calls removeUser and setLoggingOut on logout click", async () => {
     const state = mockUserProviderState();
     mockUseUser.mockReturnValue(state);
-    const DOWN_ARROW = { keyCode: 40 };
 
     renderElement();
 
-    fireEvent.keyDown(await screen.findByRole("button"), DOWN_ARROW);
+    fireEvent.keyDown(await screen.findByLabelText("Account"), DOWN_ARROW);
     userEvent.click(await screen.findByText("Log out"));
+
     expect(state.removeUser).toHaveBeenCalled();
     expect(mockSetLoggingOut).toHaveBeenCalledWith(true);
   });

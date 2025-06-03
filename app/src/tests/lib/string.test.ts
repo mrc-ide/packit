@@ -16,6 +16,7 @@ describe("getInitials", () => {
     expect(getInitials("Bob Johnson")).toBe("BJ");
   });
 });
+
 describe("kebabToSentenceCase", () => {
   it("returns the same string if there is no hyphen", () => {
     expect(kebabToSentenceCase("hello")).toBe("hello");
