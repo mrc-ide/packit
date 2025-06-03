@@ -20,7 +20,7 @@ Again in [`public/index.html`](app/public/index.html), the deploy tool replaces 
 
 ## Brand name
 
-This is used as the app's name in the header component, and likely will be re-used elsewhere in the app. The front end derives it from the page title, storing it in the context of a BrandingProvider that makes it available across the app. Deriving it from the page title, rather than via a request to the back-end, is intended to save the time it takes to make that trip.
+This is used as the app's name in the header component, and likely will be re-used elsewhere in the app. The front end derives it from the page title, storing it in the context of a BrandingProvider that makes it available across the app. Deriving it from the page title, rather than via a request to the back-end, is intended to save the time it would take to make that trip.
 
 ## Logo configuration
 
@@ -40,14 +40,8 @@ At the time of writing, the accent colours are used for some button styles and f
 
 The deploy tool replaces the custom.css file wholesale with css rules that encode the configured colours as css variables (if colour configuration is provided). These are picked up by [app/tailwind.config.js](app/tailwind.config.js) as properties for Tailwind to include in various css class definitions. We define those Tailwind properties to reference both the custom variable names as well as fallbacks, so that, if the custom css variables are undefined, the browser will apply those default colours (defaults defined in [app/src/styles/globals.css](app/src/styles/globals.css)).
 
-The default branding colours of Packit are different from the examples in the deploy tool, so that developers can easily see which colour is being used. The default colour values follow the expected dark/lightness of the customisable colours: e.g. '--accent' is a dark colour and '--accent-foreground' is a light colour.
+The default branding colours of Packit are different from the examples in the deploy tool, so that developers can easily see which colour is being used. The default colour values follow the expected brightness of the customisable colours: e.g. '--accent' is dark in colour and '--accent-foreground' is light in colour.
 
-In order for all the variables to be defined, the deploy tool copies the dark colour settings from the light ones if no dark ones are provided. This means that the front-end doesn't know whether the hosting organisation configured specific dark values or not.
+### Theme
 
-## Dark mode options
-
-Dark mode affects styling colours, but has no effect on logos.
-
-In order to minimise the demands made of the hosting organisation and to reduce code complexity, it is a second-class feature (hence the default theme being light mode). A premise here is that dark mode is not an essential requirement and so we should strive to avoid creating work for ourselves or others around maintaining it.
-
-Hosting organisations may not have the resources, or not care enough about dark mode, to have designed a logo that will work in both modes (which would often entail different colouring). An assumption that the organisation is equally happy with their branding resources in both modes is one that will often be broken. With light mode as the default, it's reasonable for an organisation to provide only a single set of accent colours and logos; they would only have to do the work of ensuring good colour contrasts once. With dark mode fully supported, we would be demanding more work from them to set up their instance, by doubling the number of colours and logos that they must configure. So we thought it would be preferable to make light mode the default, and then if a user still finds dark mode usable, they can make the switch.
+Dark-mode and light-mode are enabled/disabled by environment variables set in the API by the deploy tool. If both are enabled, the user may toggle between them. The theme affects styling colours, but has no effect on logos.

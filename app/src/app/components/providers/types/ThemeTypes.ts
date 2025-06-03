@@ -6,6 +6,7 @@ export interface ThemeProviderProps {
 }
 
 export interface ThemeProviderState {
+  availableThemes: Theme[];
   theme: Theme;
-  setTheme: (theme: Theme) => void;
+  setCurrentTheme: (theme: Theme) => void;
 }
