@@ -6,7 +6,7 @@ import { PacketDetails } from "../../../../app/components/contents/packets";
 import { PacketOutlet } from "../../../../app/components/main/PacketOutlet";
 import { server } from "../../../../msw/server";
 import { PacketMetadata } from "../../../../types";
-import { mockBasicPackets, mockPacket } from "../../../mocks";
+import { mockPackets, mockPacket } from "../../../mocks";
 import { packetIndexUri } from "../../../../msw/handlers/packetHandlers";
 
 jest.mock("../../../../lib/download", () => ({
@@ -85,7 +85,7 @@ describe("packet details component", () => {
       rest.post(`${packetIndexUri}`, async (req, res, ctx) => {
         const body = await req.json();
         if (body === mockPacket.depends) {
-          return res(ctx.json(mockBasicPackets));
+          return res(ctx.json(mockPackets));
         }
       })
     );
@@ -93,7 +93,7 @@ describe("packet details component", () => {
     renderComponent();
 
     await waitFor(async () => {
-      mockBasicPackets.forEach(async (packet) => {
+      mockPackets.forEach(async (packet) => {
         expect(await screen.findByText(packet.id)).toBeVisible();
       });
     });

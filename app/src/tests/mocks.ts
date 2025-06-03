@@ -15,7 +15,6 @@ import {
   PageablePacketGroupSummaries,
   PageablePackets,
   InputFileType,
-  BasicPacket
 } from "../types";
 
 export const mockPacketResponse = {
@@ -380,9 +379,7 @@ export const mockPacketGroupResponse: PageablePackets = {
   numberOfElements: 5
 };
 
-export const mockBasicPackets = mockPacketGroupResponse.content.slice(1, 3).map((packet) => {
-  return { id: packet.id, name: packet.name } as BasicPacket;
-});
+export const mockPackets = mockPacketGroupResponse.content.slice(1, 3);
 
 export const mockFileBlob = new Blob(["test contents"]);
 

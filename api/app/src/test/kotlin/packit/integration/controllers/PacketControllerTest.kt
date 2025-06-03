@@ -17,7 +17,6 @@ import packit.integration.WithAuthenticatedUser
 import packit.model.OneTimeToken
 import packit.model.Role
 import packit.model.RolePermission
-import packit.model.dto.BasicPacketDto
 import packit.model.dto.RolesAndUsersForReadUpdate
 import packit.model.dto.UpdateReadRoles
 import packit.repository.*
@@ -91,7 +90,7 @@ class PacketControllerTest : IntegrationTest() {
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
-    fun `getPacketsByIds returns list of basic packet details by passing a list of ids in request body`() {
+    fun `getPacketsByIds returns list of packet details by passing a list of ids in request body`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets",
             HttpMethod.POST,
@@ -104,7 +103,7 @@ class PacketControllerTest : IntegrationTest() {
 
         assertSuccess(result)
 
-        val packets: List<BasicPacketDto> = jacksonObjectMapper().readValue(result.body!!)
+        val packets: List<PacketDto> = jacksonObjectMapper().readValue(result.body!!)
         assertThat(packets).extracting("id")
             .containsExactlyInAnyOrder(idOfArtefactTypesPacket, idOfDownloadTypesPacket3)
     }

@@ -1,11 +1,6 @@
 import { rest } from "msw";
 import appConfig from "../../config/appConfig";
-import {
-  mockBasicPackets,
-  mockPacket,
-  mockPacketGroupResponse,
-  mockRolesAndUsersWithPermissions
-} from "../../tests/mocks";
+import { mockPackets, mockPacket, mockPacketGroupResponse, mockRolesAndUsersWithPermissions } from "../../tests/mocks";
 // eslint-disable-next-line max-len
 import { RolesAndUsersToUpdateRead } from "../../app/components/contents/manageAccess/types/RoleWithRelationships";
 
@@ -18,7 +13,7 @@ export const packetHandlers = [
   rest.post(`${packetIndexUri}`, async (req, res, ctx) => {
     const body = await req.json();
     if (body.length > 0) {
-      return res(ctx.json(mockBasicPackets));
+      return res(ctx.json(mockPackets));
     } else {
       return res(ctx.json([]));
     }

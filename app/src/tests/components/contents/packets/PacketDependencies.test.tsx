@@ -3,7 +3,7 @@ import { Accordion } from "../../../../app/components/Base/Accordion";
 import { PacketDependencies } from "../../../../app/components/contents/packets/PacketDependencies";
 import { BasicPacket, PacketDepends } from "../../../../types";
 import { MemoryRouter } from "react-router-dom";
-import { mockBasicPackets } from "../../../mocks";
+import { mockPackets } from "../../../mocks";
 
 const renderComponent = (depends: PacketDepends[] = []) =>
   render(
@@ -23,7 +23,7 @@ describe("PacketDependencies Component", () => {
   });
 
   it("should render list of packet names with link to packets", async () => {
-    const depends: PacketDepends[] = mockBasicPackets.map((packet) => ({
+    const depends: PacketDepends[] = mockPackets.map((packet) => ({
       packet: packet.id,
       query: "mock query",
       files: []
@@ -31,7 +31,7 @@ describe("PacketDependencies Component", () => {
 
     renderComponent(depends);
 
-    mockBasicPackets.forEach(async (packet: BasicPacket) => {
+    mockPackets.forEach(async (packet: BasicPacket) => {
       expect(await screen.findByText(packet.id)).toBeVisible();
       const packetLink = await screen.findByRole("link", { name: packet.id });
       expect(packetLink).toHaveAttribute("href", `/${packet.name}/${packet.id}`);
