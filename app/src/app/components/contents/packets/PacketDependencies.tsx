@@ -20,7 +20,7 @@ export const PacketDependencies = ({ depends }: PacketDependenciesProps) => {
         </AccordionTrigger>
         <AccordionContent>
           <ul className="space-y-1 overflow-y-auto max-h-80">
-            {dependencies && dependencies.length === 0 ? (
+            {depends.length === 0 ? (
               <div className="italic text-sm">None</div>
             ) : (
               dependencies?.map((dependency) => (

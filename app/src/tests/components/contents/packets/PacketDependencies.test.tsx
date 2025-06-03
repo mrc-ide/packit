@@ -5,7 +5,7 @@ import { BasicPacket, PacketDepends } from "../../../../types";
 import { MemoryRouter } from "react-router-dom";
 import { mockPackets } from "../../../mocks";
 
-const renderComponent = (depends: PacketDepends[] = []) =>
+const renderComponent = (depends: PacketDepends[]) =>
   render(
     <MemoryRouter>
       <Accordion type="single" defaultValue="dependencies">
@@ -16,7 +16,7 @@ const renderComponent = (depends: PacketDepends[] = []) =>
 
 describe("PacketDependencies Component", () => {
   it("should render helpful message if no dependencies", async () => {
-    renderComponent();
+    renderComponent([]);
 
     expect(await screen.findByText(/Dependencies/)).toBeVisible();
     expect(await screen.findByText(/None/)).toBeVisible();
