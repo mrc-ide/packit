@@ -14,7 +14,7 @@ import {
   PageableBasicDto,
   PageablePacketGroupSummaries,
   PageablePackets,
-  InputFileType,
+  InputFileType
 } from "../types";
 
 export const mockPacketResponse = {

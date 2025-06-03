@@ -17,6 +17,7 @@ import packit.integration.WithAuthenticatedUser
 import packit.model.OneTimeToken
 import packit.model.Role
 import packit.model.RolePermission
+import packit.model.dto.PacketDto
 import packit.model.dto.RolesAndUsersForReadUpdate
 import packit.model.dto.UpdateReadRoles
 import packit.repository.*
