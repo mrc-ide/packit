@@ -1,4 +1,4 @@
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { cn } from "../../../../../lib/cn";
 import { Button } from "../../../Base/Button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../../../Base/Command";
@@ -23,7 +23,7 @@ export const PacketRunPacketGroupField = ({ form, packetGroups }: PacketRunPacke
       name="packetGroupName"
       render={({ field }) => (
         <FormItem className="flex flex-col">
-          <FormLabel className="font-semibold text-lg">Packet Group Name</FormLabel>
+          <FormLabel className="font-semibold text-lg">Packet group name</FormLabel>
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <FormControl>
@@ -31,10 +31,13 @@ export const PacketRunPacketGroupField = ({ form, packetGroups }: PacketRunPacke
                   variant="outline"
                   role="combobox"
                   aria-expanded={open}
-                  className={cn("w-[350px] sm:w-[450px] justify-between", !field.value && "text-muted-foreground")}
+                  className={cn(
+                    "hover:bg-background hover:text-inherit w-[350px] sm:w-[450px] justify-between",
+                    !field.value && "text-muted-foreground hover:text-muted-foreground"
+                  )}
                 >
-                  {field.value || "Select Packet Group..."}
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  {field.value || "Select packet group..."}
+                  <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </FormControl>
             </PopoverTrigger>

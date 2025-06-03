@@ -3,15 +3,18 @@ import { MemoryRouter } from "react-router-dom";
 import { UserProvider } from "../../app/components/providers/UserProvider";
 import { RedirectOnLoginProvider } from "../../app/components/providers/RedirectOnLoginProvider";
 import { App } from "../../app/App";
+import { BrandingProvider } from "../../app/components/providers/BrandingProvider";
 
 describe("app component", () => {
   const renderElement = () => {
     return render(
       <MemoryRouter initialEntries={["/"]}>
         <UserProvider>
-          <RedirectOnLoginProvider>
-            <App />
-          </RedirectOnLoginProvider>
+          <BrandingProvider>
+            <RedirectOnLoginProvider>
+              <App />
+            </RedirectOnLoginProvider>
+          </BrandingProvider>
         </UserProvider>
       </MemoryRouter>
     );

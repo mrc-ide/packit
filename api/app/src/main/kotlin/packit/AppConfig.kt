@@ -13,6 +13,10 @@ class AppConfig(private val environment: Environment) {
         return environment[key] ?: throw IllegalArgumentException("$key not set $environment")
     }
 
+    internal final fun optionalEnvValue(key: String): String? {
+        return environment[key]
+    }
+
     internal final fun splitList(value: String): List<String> {
         return if (value.isBlank()) {
             listOf()
@@ -42,4 +46,7 @@ class AppConfig(private val environment: Environment) {
     val authGithubAPITeam: String = requiredEnvValue("auth.githubAPITeam")
     val allowedOrigins: List<String> = splitList(requiredEnvValue("cors.allowedOrigins"))
     val defaultRoles: List<String> = splitList(requiredEnvValue("packit.defaultRoles"))
+    val brandLogoAltText: String? = optionalEnvValue("packit.branding.logoAltText")
+    val brandLogoFilename: String? = optionalEnvValue("packit.branding.logoFilename")
+    val brandLogoLink: String? = optionalEnvValue("packit.branding.logoLink")
 }

@@ -1,4 +1,4 @@
-The components in the `Base` directory are lifted from [shadcn](https://ui.shadcn.com). As the [introduction page](https://ui.shadcn.com/docs) says,
+The components in this directory are lifted from [shadcn](https://ui.shadcn.com). As the [introduction page](https://ui.shadcn.com/docs) says,
 
 > This is NOT a component library. It's a collection of re-usable components that you can copy and paste into your apps.
 >
