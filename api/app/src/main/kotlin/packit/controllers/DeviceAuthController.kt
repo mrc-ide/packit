@@ -31,7 +31,7 @@ class DeviceAuthController(
         return ResponseEntity.ok(response)
     }
 
-    @PostMapping("/validate")
+    @PostMapping("/validate", consumes=["text/plain"])
     fun validateDeviceAuthRequest(@RequestBody userCode: String): ResponseEntity<Unit> {
         return if (deviceAuthRequestService.validateRequest(userCode)) {
             ResponseEntity.ok().build()
