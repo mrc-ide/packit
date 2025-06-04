@@ -40,6 +40,13 @@ class PacketController(
         return ResponseEntity.ok(packetService.getPackets(payload, filterName, filterId).map { it.toDto() })
     }
 
+    @PostMapping
+    fun getPacketsByIds(
+        @RequestBody packetIds: List<String>
+    ): ResponseEntity<List<PacketDto>> {
+        return ResponseEntity.ok(packetService.getPackets(packetIds).map { it.toDto() })
+    }
+
     @GetMapping("/{id}")
     @PreAuthorize("@authz.canReadPacket(#root, #id)")
     fun findPacketMetadata(@PathVariable id: String): ResponseEntity<PacketMetadata> {
