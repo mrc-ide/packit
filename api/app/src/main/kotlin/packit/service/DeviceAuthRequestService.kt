@@ -5,13 +5,14 @@ import com.nimbusds.oauth2.sdk.device.UserCode
 import org.springframework.stereotype.Service
 import packit.AppConfig
 import packit.security.oauth2.deviceFlow.DeviceAuthRequest
+import packit.security.profile.UserPrincipal
 import java.time.Clock
 
 interface DeviceAuthRequestService {
     fun newDeviceAuthRequest(): DeviceAuthRequest
     fun cleanUpExpiredRequests()
     fun findRequest(deviceCode: String): DeviceAuthRequest?
-    fun validateRequest(userCode: String): Boolean
+    fun validateRequest(userCode: String, userPrincipal: UserPrincipal): Boolean
 }
 
 @Service
@@ -23,7 +24,7 @@ class BaseDeviceAuthRequestService(private val appConfig: AppConfig, private val
             UserCode(), // defaults to 8 * letter only
             DeviceCode(64),
             clock.instant().plusSeconds(appConfig.authDeviceFlowExpirySeconds),
-            false
+            null
         )
         requests.add(req)
         return req
@@ -40,7 +41,7 @@ class BaseDeviceAuthRequestService(private val appConfig: AppConfig, private val
         return requests.firstOrNull { it.deviceCode.value == deviceCode }
     }
 
-    override fun validateRequest(userCode: String): Boolean {
+    override fun validateRequest(userCode: String, userPrincipal: UserPrincipal): Boolean {
         val request = requests.firstOrNull { it.userCode.value == userCode }
         if (request == null) {
             return false
@@ -50,7 +51,8 @@ class BaseDeviceAuthRequestService(private val appConfig: AppConfig, private val
             requests.remove(request)
             return false
         }
-        request.validated = true
+        request.validatedBy = userPrincipal
+        println("validate by " + userPrincipal.name)
         return true
     }
 }

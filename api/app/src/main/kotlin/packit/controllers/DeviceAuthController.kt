@@ -1,12 +1,15 @@
 package packit.controllers
 
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import packit.AppConfig
 import packit.model.dto.DeviceAuthDto
+import packit.security.oauth2.deviceFlow.DeviceAuthRequest
+import packit.security.profile.UserPrincipal
 import packit.service.DeviceAuthRequestService
 
 @RestController
@@ -32,8 +35,11 @@ class DeviceAuthController(
     }
 
     @PostMapping("/validate", consumes=["text/plain"])
-    fun validateDeviceAuthRequest(@RequestBody userCode: String): ResponseEntity<Unit> {
-        return if (deviceAuthRequestService.validateRequest(userCode)) {
+    fun validateDeviceAuthRequest(
+        @RequestBody userCode: String,
+        @AuthenticationPrincipal userPrincipal: UserPrincipal
+    ): ResponseEntity<Unit> {
+        return if (deviceAuthRequestService.validateRequest(userCode, userPrincipal)) {
             ResponseEntity.ok().build()
         } else {
             ResponseEntity.badRequest().build()
