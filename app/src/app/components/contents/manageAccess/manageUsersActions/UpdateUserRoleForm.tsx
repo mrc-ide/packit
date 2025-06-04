@@ -69,10 +69,10 @@ export const UpdateUserRoleForm = ({ mutate, user, roles, setOpen }: UpdateUserR
           name="roleNamesToAdd"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Roles to Add</FormLabel>
+              <FormLabel>Roles to add</FormLabel>
               <MultiSelector onValuesChange={field.onChange} values={field.value}>
                 <MultiSelectorTrigger>
-                  <MultiSelectorInput className="text-sm" placeholder="Select Roles to Add" />
+                  <MultiSelectorInput className="text-sm" placeholder="Select roles to add" />
                 </MultiSelectorTrigger>
                 <MultiSelectorContent>
                   <MultiSelectorList>
@@ -95,7 +95,7 @@ export const UpdateUserRoleForm = ({ mutate, user, roles, setOpen }: UpdateUserR
               <FormLabel>Roles to Remove</FormLabel>
               <MultiSelector onValuesChange={field.onChange} values={field.value}>
                 <MultiSelectorTrigger>
-                  <MultiSelectorInput className="text-sm" placeholder="Select Roles to Remove" />
+                  <MultiSelectorInput className="text-sm" placeholder="Select roles to remove" />
                 </MultiSelectorTrigger>
                 <MultiSelectorContent>
                   <MultiSelectorList>

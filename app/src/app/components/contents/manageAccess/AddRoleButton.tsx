@@ -17,12 +17,12 @@ export const AddRoleButton = ({ mutate }: AddRoleButtonProps) => {
       <DialogTrigger asChild>
         <Button size="sm">
           <SquarePlus className="mr-2 h-5 w-5" />
-          Add Role
+          Add role
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md" onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader>
-          <DialogTitle>Add new Role</DialogTitle>
+          <DialogTitle>Add new role</DialogTitle>
         </DialogHeader>
         <AddRoleForm mutate={mutate} setOpen={setOpen} />
       </DialogContent>

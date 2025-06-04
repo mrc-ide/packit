@@ -41,7 +41,7 @@ export const setupManageUsersColumns = (
     }
   }),
   columnHelper.accessor("specificPermissions", {
-    header: "User Specific Permissions",
+    header: "User-specific permissions",
     cell: ({ getValue }) => {
       const rolePermissions = getValue();
 
