@@ -3,9 +3,10 @@ import {Button} from "../Base/Button";
 import appConfig from "../../../config/appConfig";
 import {ApiError} from "../../../lib/errors";
 import {HttpStatus} from "../../../lib/types/HttpStatus";
-import {useState} from "react";
+import React, {useState} from "react";
 import {getAuthHeader} from "../../../lib/auth/getAuthHeader";
 import {PacketErrorBody} from "../../../types";
+import {Check} from "lucide-react";
 
 export const DeviceLogin = () => {
 
@@ -28,7 +29,7 @@ export const DeviceLogin = () => {
             method: "POST",
             body: userCode,
             headers: {
-                "Content-Type": "text.plain",
+                "Content-Type": "text/plain",
                 ...getAuthHeader()
             }
         });
@@ -40,7 +41,10 @@ export const DeviceLogin = () => {
             <div className="space-y-4 text-center mt-8">
                 <h1 className="text-2xl font-semibold tracking-tight">Packit API Login</h1>
                 {resultStatus == HttpStatus.OK && (
-                    <div>Success! You are now logged in and can acccess Packit API from your console. </div>
+                    <div>
+                        <Check className="mx-auto h-20 w-20 text-muted-foreground" />
+                        Success! You are now logged in and can access Packit API from your console.
+                    </div>
                 )}
                 {resultStatus != HttpStatus.OK && (
                     <>
@@ -52,7 +56,10 @@ export const DeviceLogin = () => {
                         placeholder={""}
                         autoFocus={true}
                         onChange={handleChange}
-                        classNames={ {container: "mx-auto"} }
+                        classNames={ {
+                            container: "mx-auto",
+                            characterSelected:""
+                        } }
                     />
                     <Button onClick={handleSubmit} disabled={userCode.length !== USER_CODE_LENGTH}>
                         Continue
@@ -61,9 +68,8 @@ export const DeviceLogin = () => {
                 )}
 
                 {resultStatus == HttpStatus.BadRequest && (
-                    <div>Code has expired or is not recognised.</div>
+                    <p className="text-destructive">Code has expired or is not recognised.</p>
                 )}
-
             </div>
         </>
     );

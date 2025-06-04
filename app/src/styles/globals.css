@@ -111,3 +111,20 @@ iframe {
   width: 1em;
   height: 1em;
 }
+
+/* TOD: scope this into the DeviceFlow component with custom classes */
+.vi__character--selected {
+  color: hsl(var(--muted-foreground));
+  outline-color: hsl(var(--muted));
+}
+
+.vi__character--inactive {
+  color: hsl(var(--muted-foreground));
+  background-color: hsl(var(--muted));
+}
+
+.vi__character--selected:not(.vi__character--filled)::before {
+  content: "|";
+  position: relative;
+  top: -5px;
+}
