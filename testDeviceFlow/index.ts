@@ -30,12 +30,12 @@ const pollForToken = (device_code: string) => {
         const body = await tokenResponse.json();
         if (status == 200) {
             console.log("Token received:")
-            console.log(JSON.stringify(body));
+            console.log(JSON.stringify(body, null, 2));
         } else if (status == 400 && body.error.detail == "authorization_pending") {
             pollForToken(device_code);
         } else {
             console.log(`Unexpected error response ${status} from token request:`);
-            console.log(JSON.stringify(body));
+            console.log(JSON.stringify(body, null, 2));
         }
     }, 5000);
 }
