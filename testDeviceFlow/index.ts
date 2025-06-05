@@ -1,11 +1,23 @@
-import { input } from '@inquirer/prompts';
+import * as readline from "readline/promises";
 
-// TODO: read this from env var or prompt user
-const PACKIT_API_URL="http://localhost:8080";
 const GRANT_TYPE= "urn:ietf:params:oauth:grant-type:device_code";
 
+let packitApiUrl = process.env.PACKIT_API_URL;
+
+const promptForPackitApiUrl = async () => {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+    packitApiUrl = await rl.question("Enter the Packit API url:");
+    if (packitApiUrl.endsWith("/")) {
+        packitApiUrl = packitApiUrl.substring(0, packitApiUrl.length-1)
+    }
+    rl.close();
+}
+
 const makeDeviceAuthRequest = async() => {
-    const response = await fetch(`${PACKIT_API_URL}/deviceAuth`, {
+    const response = await fetch(`${packitApiUrl}/deviceAuth`, {
         method: "POST"
     });
     if (!response.ok) {
@@ -15,7 +27,7 @@ const makeDeviceAuthRequest = async() => {
 }
 
 const makeTokenRequest = async(device_code: string) => {
-    const response = await fetch(`${PACKIT_API_URL}/deviceAuth/token`, {
+    const response = await fetch(`${packitApiUrl}/deviceAuth/token`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ device_code, grant_type: GRANT_TYPE })
@@ -41,7 +53,11 @@ const pollForToken = (device_code: string) => {
 }
 
 const runFlow = async() => {
-    console.log(`Making device flow request to Packit at: ${PACKIT_API_URL}`)
+    if (!packitApiUrl) {
+        await promptForPackitApiUrl();
+    }
+
+    console.log(`Making device flow request to Packit at: ${packitApiUrl}`)
     const deviceRequestResponse = await makeDeviceAuthRequest();
 
     if (deviceRequestResponse.status !== 200) {
