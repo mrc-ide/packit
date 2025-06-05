@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -eu
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --email)
+            EMAIL="$2"
+            shift 2
+            ;;
+        *)
+            echo "Invalid argument: $1"
+            exit 1
+            ;;
+    esac
+done
+
+psql -U packituser -d packit \
+    --single-transaction \
+    -v ON_ERROR_STOP=on \
+    -v "email=$EMAIL" <<EOF
+
+INSERT INTO "user_role" (user_id, role_id)
+VALUES ((SELECT "user".id FROM "user" WHERE "user".email=:'email'), 1);
+EOF
