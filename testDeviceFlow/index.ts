@@ -1,7 +1,8 @@
 import { input } from '@inquirer/prompts';
 
 // TODO: read this from env var or prompt user
-const PACKIT_API_URL="http://localhost:8080"
+const PACKIT_API_URL="http://localhost:8080";
+const GRANT_TYPE= "urn:ietf:params:oauth:grant-type:device_code";
 
 const makeDeviceAuthRequest = async() => {
     const response = await fetch(`${PACKIT_API_URL}/deviceAuth`, {
@@ -17,9 +18,26 @@ const makeTokenRequest = async(device_code: string) => {
     const response = await fetch(`${PACKIT_API_URL}/deviceAuth/token`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ device_code, grant_type: "urn:ietf:params:oauth:grant-type:device_code" })
+        body: JSON.stringify({ device_code, grant_type: GRANT_TYPE })
     });
     return response;
+}
+
+const pollForToken = (device_code: string) => {
+    setTimeout(async () => {
+        const tokenResponse = await makeTokenRequest(device_code);
+        const status = tokenResponse.status;
+        const body = await tokenResponse.json();
+        if (status == 200) {
+            console.log("Token received:")
+            console.log(JSON.stringify(body));
+        } else if (status == 400 && body.error.detail == "authorization_pending") {
+            pollForToken(device_code);
+        } else {
+            console.log(`Unexpected error response ${status} from token request:`);
+            console.log(JSON.stringify(body));
+        }
+    }, 5000);
 }
 
 const runFlow = async() => {
@@ -36,10 +54,8 @@ const runFlow = async() => {
     console.log(`Browse to ${verification_uri} and enter code: ${user_code}`);
     console.log(`Code will expire in ${expires_in} seconds.`);
 
-    const tokenResponse = await makeTokenRequest(device_code);
-    console.log(`Token response ${tokenResponse.status}: `);
-    const body = await tokenResponse.text()
-    console.log(body)
+    console.log("Polling for token... (Press Ctrl-C to exit)");
+    pollForToken(device_code);
 }
 
 runFlow();
