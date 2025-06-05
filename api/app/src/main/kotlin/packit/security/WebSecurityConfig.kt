@@ -108,7 +108,7 @@ class WebSecurityConfig(
                     it
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/auth/**", "/oauth2/**").permitAll()
-                        .requestMatchers("/deviceAuth").permitAll()
+                        .requestMatchers("/deviceAuth", "/deviceAuth/token").permitAll()
                         .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
                         .anyRequest().authenticated()
                 }
