@@ -40,7 +40,6 @@ export const ThemeProvider = ({ children, ...props }: ThemeProviderProps) => {
 
   if (error) return <ErrorComponent message={error.message} error={error} />;
 
-  // possible todo: only set local storage theme if it is one of the available themes
   const [theme, setTheme] = useState<Theme>(
     () => (localStorage.getItem(LocalStorageKeys.THEME) as Theme) || defaultTheme
   );
