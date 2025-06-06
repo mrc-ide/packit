@@ -15,7 +15,7 @@ import {
   PageablePacketGroupSummaries,
   PageablePackets,
   InputFileType,
-  LogoConfiguration
+  BrandingConfiguration
 } from "../types";
 
 export const mockPacketResponse = {
@@ -39,10 +39,12 @@ export const mockAuthConfig: AuthConfig = {
   enablePreAuthLogin: false
 };
 
-export const mockLogoConfig: LogoConfiguration = {
-  altText: "This logo has alt text",
-  filename: "logo-for-website.png",
-  linkDestination: "https://example.com"
+export const mockBrandingConfig: BrandingConfiguration = {
+  darkModeEnabled: true,
+  lightModeEnabled: true,
+  logoAltText: "This logo has alt text",
+  logoFilename: "logo-for-website.png",
+  logoLinkDestination: "https://example.com"
 };
 
 export const mockUserState = (): UserState => {

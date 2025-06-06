@@ -11,7 +11,7 @@ import { usersRolesIndexUri } from "../../../../msw/handlers/usersRolesHandler";
 
 const renderComponent = () => {
   render(
-    <SWRConfig value={{ dedupingInterval: 0 }}>
+    <SWRConfig value={{ provider: () => new Map() }}>
       <MemoryRouter initialEntries={["/manage-roles"]}>
         <Routes>
           <Route element={<ManageAccessOutlet />}>

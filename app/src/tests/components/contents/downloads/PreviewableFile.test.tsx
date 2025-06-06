@@ -14,7 +14,7 @@ const imageFile = mockPacket.files.filter((file) => file.path === "directory/gra
 
 const renderComponent = (file: FileMetadata, fileName: string) => {
   return render(
-    <SWRConfig value={{ dedupingInterval: 0 }}>
+    <SWRConfig value={{ provider: () => new Map() }}>
       <MemoryRouter initialEntries={["/"]}>
         <Routes>
           <Route element={<Outlet context={{ packet: mockPacket }} />}>

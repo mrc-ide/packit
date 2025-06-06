@@ -22,7 +22,7 @@ const packet = {
 describe("PacketReport component", () => {
   const renderComponent = (fileHash = mockHash) => {
     return render(
-      <SWRConfig value={{ dedupingInterval: 0 }}>
+      <SWRConfig value={{ provider: () => new Map() }}>
         <MemoryRouter initialEntries={["/"]}>
           <Routes>
             <Route element={<Outlet context={{ packet }} />}>

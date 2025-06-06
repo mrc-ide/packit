@@ -1,22 +1,24 @@
 import { createContext, useContext, ReactNode } from "react";
-import { LogoConfiguration } from "../../../types";
-import { useGetLogoConfig } from "./hooks/useGetLogoConfig";
+import { BrandingConfiguration } from "../../../types";
+import { useGetBrandingConfig } from "./hooks/useGetBrandingConfig";
 import { ErrorComponent } from "../contents/common/ErrorComponent";
 
 interface BrandingContextType {
-  logoConfig: LogoConfiguration | undefined;
+  brandingConfig: BrandingConfiguration | undefined;
   brandName: string;
 }
 
 const BrandingContext = createContext<BrandingContextType | undefined>(undefined);
 
 export const BrandingProvider = ({ children }: { children: ReactNode }) => {
-  const { logoConfig, error } = useGetLogoConfig();
+  const { brandingConfig, error } = useGetBrandingConfig();
 
   if (error) return <ErrorComponent message={error.message} error={error} />;
 
   return (
-    <BrandingContext.Provider value={{ logoConfig, brandName: document.title }}>{children}</BrandingContext.Provider>
+    <BrandingContext.Provider value={{ brandingConfig, brandName: document.title }}>
+      {children}
+    </BrandingContext.Provider>
   );
 };
 

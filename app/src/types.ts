@@ -176,8 +176,10 @@ export interface Tag {
   id: number;
 }
 
-export interface LogoConfiguration {
-  altText?: string;
-  filename?: string;
-  linkDestination?: string;
+export interface BrandingConfiguration {
+  darkModeEnabled: boolean;
+  lightModeEnabled: boolean;
+  logoAltText?: string;
+  logoFilename?: string;
+  logoLinkDestination?: string;
 }

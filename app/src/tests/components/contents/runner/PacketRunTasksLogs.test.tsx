@@ -18,7 +18,7 @@ describe("PacketRunTasksLogs component", () => {
       })
     );
     render(
-      <SWRConfig value={{ dedupingInterval: 0 }}>
+      <SWRConfig value={{ provider: () => new Map() }}>
         <MemoryRouter>
           <PacketRunTasksLogs />
         </MemoryRouter>

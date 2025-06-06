@@ -121,7 +121,7 @@ class WebSecurityConfig(
                     it
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/auth/**", "/oauth2/**").permitAll()
-                        .requestMatchers("/logo/config").permitAll()
+                        .requestMatchers("/branding/config").permitAll()
                         .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
                         .anyRequest().authenticated()
                 }

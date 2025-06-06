@@ -16,7 +16,7 @@ URL.revokeObjectURL = jest.fn();
 describe("Packet reports component", () => {
   const renderComponent = (packet: PacketMetadata) => {
     return render(
-      <SWRConfig value={{ dedupingInterval: 0 }}>
+      <SWRConfig value={{ provider: () => new Map() }}>
         <MemoryRouter initialEntries={["/"]}>
           <Routes>
             <Route element={<Outlet context={{ packet }} />}>

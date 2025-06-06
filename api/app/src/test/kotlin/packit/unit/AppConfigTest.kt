@@ -28,6 +28,8 @@ class AppConfigTest {
         "auth.githubAPITeam" to "githubAPITeam",
         "cors.allowedOrigins" to "http://localhost, https://production",
         "packit.defaultRoles" to "ADMIN,USER",
+        "packit.branding.darkModeEnabled" to "true",
+        "packit.branding.lightModeEnabled" to "false"
     )
     private val mockEnv = MockEnvironment()
 
@@ -68,6 +70,8 @@ class AppConfigTest {
         assertEquals(sut.brandLogoAltText, null)
         assertEquals(sut.brandLogoFilename, null)
         assertEquals(sut.brandLogoLink, null)
+        assertTrue(sut.darkModeEnabled)
+        assertFalse(sut.lightModeEnabled)
     }
 
     @Test
