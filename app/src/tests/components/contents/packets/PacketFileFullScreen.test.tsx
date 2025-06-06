@@ -36,7 +36,9 @@ describe("PacketFileFullScreen", () => {
 
     const { unmount } = renderComponent("report.html");
 
-    expect((await screen.findByTestId("report-iframe", {}, {timeout: 2000})).getAttribute("src")).toBe("testFileObjectUrl");
+    expect((await screen.findByTestId("report-iframe", {}, { timeout: 2000 })).getAttribute("src")).toBe(
+      "testFileObjectUrl"
+    );
 
     unmount();
 
