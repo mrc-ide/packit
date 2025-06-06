@@ -50,18 +50,22 @@ test.describe("Demo packet page", { tag: TAG_DEMO_PACKETS }, () => {
       await expect(depItems).toHaveCount(2);
       const dep1Name = "explicit";
       const dep1Id = "20240729-154639-25b955eb";
-      await expect(await depItems.first()).toHaveText(`${dep1Name}${dep1Id}`);
-      await expect(await depItems.first().getByRole("link")).toHaveAttribute(
-        "href",
-        getInstanceRelativePath(baseURL, `${dep1Name}/${dep1Id}`)
-      );
+      const dep1ListItem = await depItems.first();
+      const dep1Href = getInstanceRelativePath(baseURL, `${dep1Name}/${dep1Id}`);
+      await expect(dep1ListItem).toHaveText(`${dep1Name}${dep1Id}`);
+      await expect(dep1ListItem.getByRole("link")).toHaveAttribute("href", dep1Href);
       const dep2Name = "custom_metadata";
       const dep2Id = "20241122-111130-544ddd35";
-      await expect(await depItems.last()).toHaveText(`${dep2Name}${dep2Id}`);
-      await expect(await depItems.last().getByRole("link")).toHaveAttribute(
-        "href",
-        getInstanceRelativePath(baseURL, `${dep2Name}/${dep2Id}`)
-      );
+      const dep2ListItem = await depItems.last();
+      const dep2Href = getInstanceRelativePath(baseURL, `${dep2Name}/${dep2Id}`);
+      await expect(dep2ListItem).toHaveText(`${dep2Name}${dep2Id}`);
+      await expect(dep2ListItem.getByRole("link")).toHaveAttribute("href", dep2Href);
+      await dep1ListItem.click();
+      const dep1DependsDiv = await getPacketPageAccordionSection(page, "Dependencies");
+      const noneDiv = await dep1DependsDiv.locator(".italic");
+      if ((await noneDiv.count()) > 0) {
+        await expect(noneDiv).toHaveText("None");
+      }
     });
 
     test("can see reports", async ({ page }) => {

@@ -102,7 +102,7 @@ class PacketServiceTest {
                     )
                 )
             ),
-            emptyList()
+            emptyList(),
         )
 
     private val packetRepository =
@@ -134,6 +134,19 @@ class PacketServiceTest {
                 outputStream.write("mocked output content".toByteArray())
             }
         }
+
+    @Test
+    fun `gets packets by a list of ids`() {
+        val packets = listOf(oldPackets[1], newPackets[0])
+        val packetIds = packets.map { it.id }
+        val mockPacketRepository = mock<PacketRepository> {
+            on { findAllById(packetIds) } doReturn packets
+        }
+        val sut = BasePacketService(mockPacketRepository, packetGroupRepository, outpackServerClient)
+
+        assertEquals(sut.getPackets(packetIds), packets)
+        verify(mockPacketRepository).findAllById(packetIds)
+    }
 
     @Test
     fun `gets packets`() {
