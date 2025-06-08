@@ -2,6 +2,8 @@ package packit.integration.controllers
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.hibernate.validator.internal.constraintvalidators.bv.AssertTrueValidator
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -9,10 +11,15 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
+import packit.model.dto.DeviceAuthFetchToken
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class DeviceAuthControllerTest: IntegrationTest() {
+    @Autowired
+    private lateinit var assertTrueValidator: AssertTrueValidator
+
     private fun getDeviceRequestResult(): JsonNode {
         val result = restTemplate.postForEntity("/deviceAuth", null, String::class.java)
         assertSuccess(result)
@@ -25,6 +32,24 @@ class DeviceAuthControllerTest: IntegrationTest() {
             HttpMethod.POST,
             getTokenizedHttpEntity(MediaType.TEXT_PLAIN, userCode)
         )
+    }
+
+    private fun getTokenResult(deviceCode: String, grantType: String): ResponseEntity<String> {
+        val tokenRequestBody = jacksonObjectMapper().writeValueAsString(
+            DeviceAuthFetchToken(deviceCode, grantType)
+        )
+        return restTemplate.postForEntity(
+            "/deviceAuth/token",
+            getTokenizedHttpEntity(data = tokenRequestBody),
+            String::class.java
+        )
+    }
+
+    private fun assertTokenRequestError(result: ResponseEntity<String>, expectedErrorCode: String) {
+        assertBadRequest(result)
+        val resultBody = jacksonObjectMapper().readTree(result.body)
+        val error = resultBody["errors"]["0"]["detail"].asText()
+        assertEquals(expectedErrorCode, error)
     }
 
     @Test
@@ -57,4 +82,41 @@ class DeviceAuthControllerTest: IntegrationTest() {
 
         assertUnauthorized(result)
     }
+
+    @Test
+    fun `can fetch token for validated code`() {
+        val deviceRequestResult = getDeviceRequestResult()
+        val userCode = deviceRequestResult["user_code"].asText()
+        val validateResult = getDeviceAuthRequestValidateResult(userCode)
+        assertSuccess(validateResult)
+
+        // fetch the token
+        val deviceCode = deviceRequestResult["device_code"].asText()
+        val result = getTokenResult(deviceCode, "urn:ietf:params:oauth:grant-type:device_code")
+
+        assertSuccess(result)
+        val resultBody = jacksonObjectMapper().readTree(result.body)
+        assertTrue(resultBody["access_token"].asText().length > 0)
+        assertEquals(24 * 3600, resultBody["expires_in"].asInt())
+        assertEquals("Bearer", resultBody["token_type"].asText())
+    }
+
+    @Test
+    fun `fetch token returns expected error for incorrect grant type`() {
+        val deviceRequestResult = getDeviceRequestResult()
+        val userCode = deviceRequestResult["user_code"].asText()
+        getDeviceAuthRequestValidateResult(userCode)
+
+        val deviceCode = deviceRequestResult["device_code"].asText()
+        val result = getTokenResult(deviceCode, "not a grant type")
+        assertTokenRequestError(result, "unsupported_grant_type")
+    }
+
+
+    /*integration test:
+
+
+    not found
+    not validated
+    expired*/
 }
