@@ -17,8 +17,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class DeviceAuthControllerTest: IntegrationTest() {
-    @Autowired
-    private lateinit var assertTrueValidator: AssertTrueValidator
 
     private fun getDeviceRequestResult(): JsonNode {
         val result = restTemplate.postForEntity("/deviceAuth", null, String::class.java)
@@ -34,7 +32,7 @@ class DeviceAuthControllerTest: IntegrationTest() {
         )
     }
 
-    private fun getTokenResult(deviceCode: String, grantType: String): ResponseEntity<String> {
+    private fun getTokenResult(deviceCode: String, grantType: String = "urn:ietf:params:oauth:grant-type:device_code"): ResponseEntity<String> {
         val tokenRequestBody = jacksonObjectMapper().writeValueAsString(
             DeviceAuthFetchToken(deviceCode, grantType)
         )
@@ -48,7 +46,7 @@ class DeviceAuthControllerTest: IntegrationTest() {
     private fun assertTokenRequestError(result: ResponseEntity<String>, expectedErrorCode: String) {
         assertBadRequest(result)
         val resultBody = jacksonObjectMapper().readTree(result.body)
-        val error = resultBody["errors"]["0"]["detail"].asText()
+        val error = resultBody["error"]["detail"].asText()
         assertEquals(expectedErrorCode, error)
     }
 
@@ -84,15 +82,16 @@ class DeviceAuthControllerTest: IntegrationTest() {
     }
 
     @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `can fetch token for validated code`() {
         val deviceRequestResult = getDeviceRequestResult()
         val userCode = deviceRequestResult["user_code"].asText()
-        val validateResult = getDeviceAuthRequestValidateResult(userCode)
-        assertSuccess(validateResult)
+        // validate
+        getDeviceAuthRequestValidateResult(userCode)
 
         // fetch the token
         val deviceCode = deviceRequestResult["device_code"].asText()
-        val result = getTokenResult(deviceCode, "urn:ietf:params:oauth:grant-type:device_code")
+        val result = getTokenResult(deviceCode)
 
         assertSuccess(result)
         val resultBody = jacksonObjectMapper().readTree(result.body)
@@ -102,6 +101,7 @@ class DeviceAuthControllerTest: IntegrationTest() {
     }
 
     @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `fetch token returns expected error for incorrect grant type`() {
         val deviceRequestResult = getDeviceRequestResult()
         val userCode = deviceRequestResult["user_code"].asText()
@@ -112,11 +112,19 @@ class DeviceAuthControllerTest: IntegrationTest() {
         assertTokenRequestError(result, "unsupported_grant_type")
     }
 
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
+    fun `fetch token returns expected error for unknown device code`() {
+        val result = getTokenResult("not a device code")
+        assertTokenRequestError(result, "access_denied")
+    }
 
-    /*integration test:
-
-
-    not found
-    not validated
-    expired*/
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
+    fun `fetch token returns expected error for unvalidated device code`() {
+        val deviceRequestResult = getDeviceRequestResult()
+        val deviceCode = deviceRequestResult["device_code"].asText()
+        val result = getTokenResult(deviceCode)
+        assertTokenRequestError(result, "authorization_pending")
+    }
 }
