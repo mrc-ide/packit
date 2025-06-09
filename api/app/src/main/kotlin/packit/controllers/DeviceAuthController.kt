@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import packit.AppConfig
+import packit.exceptions.DeviceAuthTokenException
 import packit.model.dto.DeviceAuthDto
 import packit.model.dto.DeviceAuthFetchToken
 import packit.model.dto.DeviceAuthTokenDto
@@ -25,6 +26,7 @@ class DeviceAuthController(
     private val jwtIssuer: JwtIssuer
 ) {
 
+    private val EXPECTED_GRANT_TYPE = "urn:ietf:params:oauth:grant-type:device_code"
     private val expiresIn = appConfig.authExpiryDays.days.inWholeSeconds
 
     // TODO: link to spec
@@ -48,17 +50,15 @@ class DeviceAuthController(
         @RequestBody userCode: String,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<Unit> {
-        return if (deviceAuthRequestService.validateRequest(userCode, userPrincipal)) {
-            ResponseEntity.ok().build()
-        } else {
-            ResponseEntity.badRequest().build()
-        }
+        deviceAuthRequestService.validateRequest(userCode, userPrincipal)
+        return ResponseEntity.ok().build()
     }
 
     @PostMapping("/token")
     fun fetchToken(@RequestBody @Validated deviceAuthFetchToken: DeviceAuthFetchToken): ResponseEntity<DeviceAuthTokenDto> {
-        // Get request from service by device code
-        // TODO: if grant is wrong, error = unsupported_grant_type
+        if (deviceAuthFetchToken.grantType != EXPECTED_GRANT_TYPE) {
+            throw DeviceAuthTokenException("unsupported_grant_type")
+        }
         val validatingUser = deviceAuthRequestService.useValidatedRequest(deviceAuthFetchToken.deviceCode)
         val token = jwtIssuer.issue(validatingUser)
         return ResponseEntity.ok(DeviceAuthTokenDto(token, expiresIn))
