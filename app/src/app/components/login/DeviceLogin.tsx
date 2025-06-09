@@ -12,15 +12,13 @@ export const DeviceLogin = () => {
 
     const USER_CODE_LENGTH = 9;
 
-    //let resultStatus = null;
     const [userCode, setUserCode] = useState('');
     const [resultStatus, setResultStatus] = useState<HttpStatus | null>(null);
 
-    // TODO: auto focus input
     // TODO: enter key should press button if code is complete
 
     const handleChange = (newValue: string) => {
-        setUserCode(newValue);
+        setUserCode(newValue.toUpperCase());
     };
 
     const handleSubmit = async () => {
@@ -52,7 +50,7 @@ export const DeviceLogin = () => {
                     <VerificationInput
                         value={userCode}
                         length={USER_CODE_LENGTH}
-                        validChars={'A-Z-'}
+                        validChars={'A-Za-z-'}
                         placeholder={""}
                         autoFocus={true}
                         onChange={handleChange}

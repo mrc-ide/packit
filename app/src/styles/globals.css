@@ -122,9 +122,3 @@ iframe {
   color: hsl(var(--muted-foreground));
   background-color: hsl(var(--muted));
 }
-
-.vi__character--selected:not(.vi__character--filled)::before {
-  content: "|";
-  position: relative;
-  top: -5px;
-}
