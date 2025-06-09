@@ -3,10 +3,7 @@ name: build-montagu-packit-front-end
 on:
   push:
     branches:
-      - "main"
-  pull_request:
-    branches:
-      - "*"
+      - "main" # Add feature branch here if you need a non-main image to deploy
 
 env:
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
