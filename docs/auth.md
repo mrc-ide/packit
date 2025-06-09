@@ -153,7 +153,32 @@ auth.external-jwt.policies[0].granted-permissions=outpack.read,outpack.write
 [github-oidc]: https://docs.github.com/en/actions/security-for-github-actions/security-hardening-your-deployments/about-security-hardening-with-openid-connect
 [buildkite-oidc]: https://buildkite.com/docs/pipelines/security/oidc
 
-## Device Flow
-https://datatracker.ietf.org/doc/html/rfc6749
-- POSTS are application/json application/x-www-form-urlencoded
-- Error response conform to our usual format where the error detail (in this case one of the codes defined in  the spec, e.g. `access denied`) in nested under top level `error` property. 
+## Device Authorization Flow
+Packit supports [device authorization](https://datatracker.ietf.org/doc/html/rfc8628). 
+
+### API
+The endpoints for this are
+implemented in the `DeviceAuthController`. These are:
+- **Device Authorization Request**: `POST /deviceAuth  (unsecured)` 
+  Registers a new device authorization request and returns a user code (which the user enters at the device url), the device url
+  itself (a dedicated page in the front end) and a device code.
+- **Validate User Code**: `POST /deviceAuth/validate (secured)`
+  Receives the user code and marks the associated device auth request as validated by the authenticated user. This endpoint
+  is accessed by the page at the device url, which is only accessible by logged in users. 
+- **Access Token endpoint**: `POST /deviceAuth/token (unsecured)`
+  The device can poll this endpoint (posting the device code) while waiting for the user code to be validated. It returns a 400 until the 
+  request is validated. Once validated, the endpoint returns an access token for the validating user. 
+
+Some slight deviations from the spec:
+- The device authorization request endpoint is a POST, but does not take a body as `client_id` and `scope` are not used. 
+- The other endpoints expect `application/json` not `application/x-www-form-urlencoded` which appears to be expected in the spec.
+- Error responses conform to our usual format where the error detail (in this case one of the codes defined in the 
+spec, e.g. `access denied`) in nested under top level `error` property. 
+
+### DeviceAuthRequestService
+This class manages pending device auth requests, as an in-memory list (so requests are invalidated when the API restarts).
+Requests expire after a time defined in app config (`authDeviceFlowExpirySeconds`). The `Scheduler` periodically clears
+out expired requests which have not been used.
+
+## Test Device Flow app
+You can test device auth flow against any Packit server using the node app in `/testDeviceFlow` - see the README there for details. 
