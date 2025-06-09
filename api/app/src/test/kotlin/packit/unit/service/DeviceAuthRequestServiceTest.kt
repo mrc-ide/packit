@@ -79,14 +79,12 @@ class DeviceAuthRequestServiceTest {
         val sut = BaseDeviceAuthRequestService(mockAppConfig, fixedClock)
         val request = sut.newDeviceAuthRequest()
 
-        assertEquals(true, sut.validateRequest(request.userCode.value, testValidatingUser1))
+        sut.validateRequest(request.userCode.value, testValidatingUser1)
         assertSame(request.validatedBy, testValidatingUser1)
-
-        assertEquals(false, sut.validateRequest("some nonexistent code", testValidatingUser2))
     }
 
     @Test
-    fun `validate expired request returns false and removes from list`() {
+    fun `validate expired request throws error and removes from list`() {
         val mockClock = mock<Clock>()
         var now = Instant.now()
 
@@ -97,8 +95,37 @@ class DeviceAuthRequestServiceTest {
         val request = sut.newDeviceAuthRequest()
 
         now = now.plusSeconds(201)
-        assertEquals(false, sut.validateRequest(request.userCode.value, testValidatingUser1))
+        assertThrows<DeviceAuthTokenException> {
+            sut.validateRequest(request.userCode.value, testValidatingUser1)
+        }.apply {
+            assertEquals("token_expired", key)
+            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+        }
         assertNull(sut.findRequest(request.userCode.value))
+    }
+
+    @Test
+    fun `validate non-existent request throws error`() {
+        val sut = BaseDeviceAuthRequestService(mockAppConfig, fixedClock)
+        assertThrows<DeviceAuthTokenException> {
+            sut.validateRequest("not a code", testValidatingUser1)
+        }.apply {
+            assertEquals("access_denied", key)
+            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+        }
+    }
+
+    @Test
+    fun `validate request which has already been validated throws error`() {
+        val sut = BaseDeviceAuthRequestService(mockAppConfig, fixedClock)
+        val request = sut.newDeviceAuthRequest()
+        sut.validateRequest(request.userCode.value, testValidatingUser1)
+        assertThrows<DeviceAuthTokenException> {
+            sut.validateRequest(request.userCode.value, testValidatingUser1)
+        }.apply {
+            assertEquals("access_denied", key)
+            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+        }
     }
 
     @Test
@@ -106,8 +133,8 @@ class DeviceAuthRequestServiceTest {
         val sut = BaseDeviceAuthRequestService(mockAppConfig, fixedClock)
         val dar1 = sut.newDeviceAuthRequest()
         val dar2 = sut.newDeviceAuthRequest()
-        assertEquals(true, sut.validateRequest(dar2.userCode.value, testValidatingUser2))
-        assertEquals(true, sut.validateRequest(dar1.userCode.value, testValidatingUser1))
+        sut.validateRequest(dar2.userCode.value, testValidatingUser2)
+        sut.validateRequest(dar1.userCode.value, testValidatingUser1)
         val result1 = sut.useValidatedRequest(dar1.deviceCode.value)
         assertSame(testValidatingUser1, result1)
         val result2 = sut.useValidatedRequest(dar2.deviceCode.value)

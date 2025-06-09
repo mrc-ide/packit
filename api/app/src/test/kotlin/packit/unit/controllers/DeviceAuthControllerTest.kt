@@ -51,28 +51,14 @@ class DeviceAuthControllerTest {
     }
 
     @Test
-    fun `returns 200 on validate known user code`() {
+    fun `returns 200 on validate user code`() {
         val userCode = "testUserCode"
-        val mockDeviceAuthRequestService = mock<DeviceAuthRequestService> {
-            on { validateRequest(userCode, testValidatingUser) } doReturn true
-        }
+        val mockDeviceAuthRequestService = mock<DeviceAuthRequestService>()
 
         val sut  = DeviceAuthController(mock(), mockDeviceAuthRequestService, mock())
         val result = sut.validateDeviceAuthRequest(userCode, testValidatingUser)
         assertEquals(HttpStatus.OK, result.statusCode)
         verify(mockDeviceAuthRequestService).validateRequest(userCode, testValidatingUser)
-    }
-
-    @Test
-    fun `returns 400 on validated unknown user code`() {
-        val userCode = "testUserCode"
-        val mockDeviceAuthRequestService = mock<DeviceAuthRequestService> {
-            on { validateRequest(userCode, testValidatingUser) } doReturn false
-        }
-
-        val sut  = DeviceAuthController(mock(), mockDeviceAuthRequestService, mock())
-        val result = sut.validateDeviceAuthRequest(userCode, testValidatingUser)
-        assertEquals(HttpStatus.BAD_REQUEST, result.statusCode)
     }
 
     @Test

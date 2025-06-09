@@ -2,8 +2,6 @@ package packit.integration.controllers
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import org.hibernate.validator.internal.constraintvalidators.bv.AssertTrueValidator
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -24,7 +22,7 @@ class DeviceAuthControllerTest: IntegrationTest() {
         return jacksonObjectMapper().readTree(result.body)
     }
 
-    private fun getDeviceAuthRequestValidateResult(userCode: String): ResponseEntity<Unit> {
+    private fun getDeviceAuthRequestValidateResult(userCode: String): ResponseEntity<String> {
         return restTemplate.exchange(
             "/deviceAuth/validate",
             HttpMethod.POST,
@@ -43,9 +41,9 @@ class DeviceAuthControllerTest: IntegrationTest() {
         )
     }
 
-    private fun assertTokenRequestError(result: ResponseEntity<String>, expectedErrorCode: String) {
+    private fun assertDeviceAuthRequestError(result: ResponseEntity<String>, expectedErrorCode: String) {
         assertBadRequest(result)
-        val resultBody = jacksonObjectMapper().readTree(result.body)
+        val resultBody = jacksonObjectMapper().readTree(result.body as String)
         val error = resultBody["error"]["detail"].asText()
         assertEquals(expectedErrorCode, error)
     }
@@ -67,18 +65,25 @@ class DeviceAuthControllerTest: IntegrationTest() {
         val result = getDeviceAuthRequestValidateResult(userCode)
         assertEquals(HttpStatus.OK, result.statusCode)
 
-        // Should get 400 for unknown code
-        val unknownCodeResult = getDeviceAuthRequestValidateResult("not a real code")
-        assertBadRequest(unknownCodeResult)
+        // Check expected error if attempt to validate a code which has already been validated
+        val repeatResult = getDeviceAuthRequestValidateResult(userCode)
+        assertDeviceAuthRequestError(repeatResult, "access_denied")
     }
 
     @Test
-    fun `cannot validate device auth user code if not authenticated`() {
+    fun `cannot validate user code if not authenticated`() {
         val deviceRequestResult = getDeviceRequestResult()
         val userCode = deviceRequestResult["user_code"].asText()
         val result = restTemplate.postForEntity("/deviceAuth/validate", userCode, String::class.java)
 
         assertUnauthorized(result)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
+    fun `cannot validate user code which does not exist`() {
+        val result = getDeviceAuthRequestValidateResult("not a user code")
+        assertDeviceAuthRequestError(result, "access_denied")
     }
 
     @Test
@@ -109,14 +114,14 @@ class DeviceAuthControllerTest: IntegrationTest() {
 
         val deviceCode = deviceRequestResult["device_code"].asText()
         val result = getTokenResult(deviceCode, "not a grant type")
-        assertTokenRequestError(result, "unsupported_grant_type")
+        assertDeviceAuthRequestError(result, "unsupported_grant_type")
     }
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `fetch token returns expected error for unknown device code`() {
         val result = getTokenResult("not a device code")
-        assertTokenRequestError(result, "access_denied")
+        assertDeviceAuthRequestError(result, "access_denied")
     }
 
     @Test
@@ -125,6 +130,6 @@ class DeviceAuthControllerTest: IntegrationTest() {
         val deviceRequestResult = getDeviceRequestResult()
         val deviceCode = deviceRequestResult["device_code"].asText()
         val result = getTokenResult(deviceCode)
-        assertTokenRequestError(result, "authorization_pending")
+        assertDeviceAuthRequestError(result, "authorization_pending")
     }
 }

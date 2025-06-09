@@ -152,3 +152,8 @@ auth.external-jwt.policies[0].granted-permissions=outpack.read,outpack.write
 
 [github-oidc]: https://docs.github.com/en/actions/security-for-github-actions/security-hardening-your-deployments/about-security-hardening-with-openid-connect
 [buildkite-oidc]: https://buildkite.com/docs/pipelines/security/oidc
+
+## Device Flow
+https://datatracker.ietf.org/doc/html/rfc6749
+- POSTS are application/json application/x-www-form-urlencoded
+- Error response conform to our usual format where the error detail (in this case one of the codes defined in  the spec, e.g. `access denied`) in nested under top level `error` property. 

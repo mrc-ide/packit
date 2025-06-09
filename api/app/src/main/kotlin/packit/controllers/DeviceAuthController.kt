@@ -50,11 +50,8 @@ class DeviceAuthController(
         @RequestBody userCode: String,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<Unit> {
-        return if (deviceAuthRequestService.validateRequest(userCode, userPrincipal)) {
-            ResponseEntity.ok().build()
-        } else {
-            ResponseEntity.badRequest().build()
-        }
+        deviceAuthRequestService.validateRequest(userCode, userPrincipal)
+        return ResponseEntity.ok().build()
     }
 
     @PostMapping("/token")

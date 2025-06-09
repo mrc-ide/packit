@@ -13,7 +13,7 @@ interface DeviceAuthRequestService {
     fun newDeviceAuthRequest(): DeviceAuthRequest
     fun cleanUpExpiredRequests()
     fun findRequest(deviceCode: String): DeviceAuthRequest?
-    fun validateRequest(userCode: String, userPrincipal: UserPrincipal): Boolean
+    fun validateRequest(userCode: String, userPrincipal: UserPrincipal): Unit
     fun useValidatedRequest(deviceCode: String): UserPrincipal
 }
 
@@ -33,8 +33,7 @@ class BaseDeviceAuthRequestService(private val appConfig: AppConfig, private val
     }
 
     override fun cleanUpExpiredRequests() {
-        val now = clock.instant()
-        requests.removeAll{ it.expiryTime < now }
+        requests.removeAll{ isExpired(it) }
     }
 
     // TODO: this may become obsolete eventually - or maybe not - this should find the device request and let the
@@ -43,20 +42,18 @@ class BaseDeviceAuthRequestService(private val appConfig: AppConfig, private val
         return requests.firstOrNull { it.deviceCode.value == deviceCode }
     }
 
-    override fun validateRequest(userCode: String, userPrincipal: UserPrincipal): Boolean {
-        // Mark a request as validated by a given user
+    override fun validateRequest(userCode: String, userPrincipal: UserPrincipal) {
+        // Mark a request as validated by a given user. Return error if request not found, or already validated
         val request = requests.firstOrNull { it.userCode.value == userCode }
-        if (request == null) {
-            return false
+        if (request == null || request.validatedBy != null) {
+            throw DeviceAuthTokenException("access_denied")
         }
         // remove request from list if it is expired
-        if (request.expiryTime < clock.instant()) {
+        if (isExpired(request)) {
             removeRequest(request)
-            return false
+            throw DeviceAuthTokenException("expired_token")
         }
         request.validatedBy = userPrincipal
-        
-        return true
     }
 
     override fun useValidatedRequest(deviceCode: String): UserPrincipal {
@@ -67,7 +64,7 @@ class BaseDeviceAuthRequestService(private val appConfig: AppConfig, private val
         if (request == null) {
             throw DeviceAuthTokenException("access_denied")
         }
-        if (request.expiryTime < clock.instant()) { // TODO: make this dry
+        if (isExpired(request)) {
             removeRequest(request)
             throw DeviceAuthTokenException("expired_token")
         }
@@ -81,4 +78,6 @@ class BaseDeviceAuthRequestService(private val appConfig: AppConfig, private val
     private fun removeRequest(request: DeviceAuthRequest) {
         requests.remove(request)
     }
+
+    private fun isExpired(request: DeviceAuthRequest): Boolean  = request.expiryTime < clock.instant()
 }
