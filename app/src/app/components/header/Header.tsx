@@ -20,7 +20,11 @@ export const Header = () => {
             <>
               {logoConfig?.filename && (
                 <NavLink to={logoLinkDestination} className="h-full p-2 hidden md:block flex-shrink-0 ml-2 mr-6">
-                  <img src={`/img/${logoConfig?.filename}`} className="h-full" alt={logoConfig?.altText} />
+                  <img
+                    src={`${process.env.PUBLIC_URL}/img/${logoConfig?.filename}`}
+                    className="h-full"
+                    alt={logoConfig?.altText}
+                  />
                 </NavLink>
               )}
               <NavLink to="/" className="mx-4">
