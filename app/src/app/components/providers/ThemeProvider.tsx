@@ -38,13 +38,20 @@ const getSystemTheme = (): Theme => {
 export const ThemeProvider = ({ children, ...props }: ThemeProviderProps) => {
   const { brandingConfig, isLoading, error } = useGetBrandingConfig();
 
-  if (error) return <ErrorComponent message={error.message} error={error} />;
-
   const [theme, setTheme] = useState<Theme>(
     () => (localStorage.getItem(LocalStorageKeys.THEME) as Theme) || DEFAULT_THEME
   );
 
   const [availableThemes, setAvailableThemes] = useState<Theme[]>([]);
+
+  // Work out if the theme we're thinking of applying is available, and update the theme if not.
+  const verifyThemeIsAvailable = () => {
+    const proposedTheme = theme === "system" ? getSystemTheme() : theme;
+
+    if (!availableThemes.includes(proposedTheme) && availableThemes.length !== 0) {
+      setTheme(availableThemes[0]);
+    }
+  };
 
   useEffect(() => {
     if (!isLoading && brandingConfig) {
@@ -57,15 +64,6 @@ export const ThemeProvider = ({ children, ...props }: ThemeProviderProps) => {
       }
     }
   }, [brandingConfig, isLoading]);
-
-  // Work out if the theme we're thinking of applying is available, and update the theme if not.
-  const verifyThemeIsAvailable = () => {
-    const proposedTheme = theme === "system" ? getSystemTheme() : theme;
-
-    if (!availableThemes.includes(proposedTheme) && availableThemes.length !== 0) {
-      setTheme(availableThemes[0]);
-    }
-  };
 
   useEffect(verifyThemeIsAvailable, [availableThemes]);
 
@@ -91,6 +89,8 @@ export const ThemeProvider = ({ children, ...props }: ThemeProviderProps) => {
       localStorage.setItem(LocalStorageKeys.THEME, theme);
     }
   };
+
+  if (error) return <ErrorComponent message={error.message} error={error} />;
 
   return (
     <ThemeProviderContext.Provider {...props} value={value}>
