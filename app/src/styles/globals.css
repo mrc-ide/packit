@@ -114,8 +114,9 @@ iframe {
 
 /* TOD: scope this into the DeviceFlow component with custom classes */
 .vi__character--selected {
-  color: var(--muted-foreground);
-  outline-color: var(--muted-foreground);
+  color: var(--foreground);
+  outline-color: var(--accent);
+  outline-width: thin;
 }
 
 .vi__character--inactive {
