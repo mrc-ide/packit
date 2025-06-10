@@ -112,14 +112,12 @@ iframe {
   height: 1em;
 }
 
-/* TOD: scope this into the DeviceFlow component with custom classes */
-.vi__character--selected {
+.verification-input-selected-char {
   color: var(--foreground);
-  outline-color: var(--accent);
+  outline-color: var(--muted-foreground);
   outline-width: thin;
 }
 
-.vi__character--inactive {
-  color: var(--muted-foreground);
+.verification-input-inactive-char {
   background-color: var(--muted);
 }

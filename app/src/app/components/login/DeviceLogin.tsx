@@ -54,7 +54,8 @@ export const DeviceLogin = () => {
                         onChange={handleChange}
                         classNames={ {
                             container: "mx-auto",
-                            characterSelected:""
+                            characterSelected: "verification-input-selected-char",
+                            characterInactive: "verification-input-inactive-char"
                         } }
                     />
                     <Button onClick={handleSubmit} disabled={userCode.length !== USER_CODE_LENGTH}>
