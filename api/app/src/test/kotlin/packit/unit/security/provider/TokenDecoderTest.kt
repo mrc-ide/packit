@@ -5,14 +5,14 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.springframework.http.HttpStatus
-import org.springframework.security.core.Authentication
 import packit.AppConfig
 import packit.exceptions.PackitException
-import packit.security.profile.UserPrincipal
+import packit.model.User
 import packit.security.provider.TokenDecoder
 import packit.security.provider.TokenProvider
 import java.time.Duration
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class TokenDecoderTest {
     private val mockAppConfig = mock<AppConfig> {
@@ -25,20 +25,16 @@ class TokenDecoderTest {
         val userName = "fakeName"
         val displayName = "Fake Name"
 
-        val userPrincipal = UserPrincipal(
-            userName,
-            displayName,
-            mutableListOf(),
-            mutableMapOf()
+        val user = User(
+            username = userName,
+            displayName = displayName,
+            disabled = false,
+            userSource = "basic",
         )
-
-        val mockAuthentication = mock<Authentication> {
-            on { principal } doReturn userPrincipal
-        }
 
         val provider = TokenProvider(mockAppConfig)
 
-        val jwtToken = provider.issue(mockAuthentication.principal as UserPrincipal)
+        val jwtToken = provider.issue(user)
 
         val result = TokenDecoder(mockAppConfig).decode(jwtToken)
 
@@ -48,7 +44,7 @@ class TokenDecoderTest {
         assertEquals("packit-api", result.issuer)
         assertEquals("Fake Name", result.getClaim("displayName").asString())
         assertEquals("fakeName", result.getClaim("userName").asString())
-        assertEquals(emptyList(), result.getClaim("au").asList(String::class.java))
+        assertTrue(result.getClaim("au").isMissing)
         assertEquals(expectedExpiresAt, result.expiresAtAsInstant)
     }
 

@@ -97,6 +97,7 @@ class PacketControllerTest {
         }
         on { getPacketsByName(anyString()) } doReturn packets
         on { validateFilesExistForPacket(anyString(), anyList()) } doReturn packetMetadata[0].files
+        on { getPackets(packets.map { it.id }) } doReturn packets
 
         packetMetadata.forEach {
             on { getMetadataBy(it.id) } doReturn it
@@ -124,6 +125,15 @@ class PacketControllerTest {
         assertEquals(result.body, mockPageablePackets.map { it.toDto() })
         assertEquals(1, mockPageablePackets.totalPages)
         assertEquals(2, mockPageablePackets.totalElements)
+    }
+
+    @Test
+    fun `get a list of basic details of packets by ids`() {
+        val packetIds = packets.map { it.id }
+        val result = sut.getPacketsByIds(packetIds)
+        verify(packetService).getPackets(packetIds)
+        assertEquals(result.statusCode, HttpStatus.OK)
+        assertEquals(result.body, packets.map { it.toDto() })
     }
 
     @Test

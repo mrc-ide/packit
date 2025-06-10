@@ -35,16 +35,16 @@ class BaseRunnerService(
     }
 
     override fun gitFetch() {
-        orderlyRunnerClient.gitFetch(config.repository.url)
+        orderlyRunnerClient.gitFetch(config.repository)
     }
 
     override fun getBranches(): GitBranches {
-        return orderlyRunnerClient.getBranches(config.repository.url)
+        return orderlyRunnerClient.getBranches(config.repository)
     }
 
     override fun getParameters(ref: String, packetGroupName: String): List<Parameter> {
         return orderlyRunnerClient.getParameters(
-            config.repository.url,
+            config.repository,
             ref,
             packetGroupName
         )
@@ -52,7 +52,7 @@ class BaseRunnerService(
 
     override fun getPacketGroups(ref: String): List<RunnerPacketGroup> {
         return orderlyRunnerClient.getPacketGroups(
-            config.repository.url,
+            config.repository,
             ref
         )
     }
@@ -64,11 +64,11 @@ class BaseRunnerService(
             commitHash = info.commitHash,
             parameters = info.parameters,
             location = OrderlyLocation.http(config.locationUrl),
-            sshKey = null
+            sshKey = config.repository.sshKey
         )
 
         val user = userService.getByUsername(username) ?: throw PackitException("userNotFound", HttpStatus.NOT_FOUND)
-        val res = orderlyRunnerClient.submitRun(config.repository.url, request)
+        val res = orderlyRunnerClient.submitRun(config.repository, request)
         val runInfo = RunInfo(
             res.taskId,
             packetGroupName = info.packetGroupName,
@@ -167,7 +167,7 @@ class RunnerServiceConfiguration {
         userService: UserService,
     ): RunnerService {
         if (config != null) {
-            val client = OrderlyRunnerClient(config.url)
+            val client = OrderlyRunnerClient(config)
             return BaseRunnerService(config, client, runInfoRepository, userService)
         } else {
             return DisabledRunnerService()

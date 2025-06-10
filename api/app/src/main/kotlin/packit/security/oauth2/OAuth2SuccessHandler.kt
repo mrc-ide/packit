@@ -29,8 +29,8 @@ class OAuth2SuccessHandler(
         response: HttpServletResponse,
         authentication: Authentication,
     ) {
-        val user = authentication.principal as PackitOAuth2User
-        val token = jwtIssuer.issue(user.principal)
+        val oAuthUser = authentication.principal as PackitOAuth2User
+        val token = jwtIssuer.issue(oAuthUser.user)
 
         val queryString = LinkedMultiValueMap<String, String>().apply { this.add("token", token) }
         redirect.redirectToBrowser(request, response, queryString)

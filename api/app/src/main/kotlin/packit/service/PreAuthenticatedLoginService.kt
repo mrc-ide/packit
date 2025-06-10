@@ -16,7 +16,7 @@ class PreAuthenticatedLoginService(
         }
 
         val user = userService.savePreAuthenticatedUser(username, name, email)
-        val token = jwtIssuer.issue(userService.getUserPrincipal(user))
+        val token = jwtIssuer.issue(user)
 
         return mapOf("token" to token)
     }

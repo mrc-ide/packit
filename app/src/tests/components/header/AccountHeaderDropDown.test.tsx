@@ -2,35 +2,29 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { AccountHeaderDropdown } from "../../../app/components/header/AccountHeaderDropdown";
-import { UserProvider } from "../../../app/components/providers/UserProvider";
-import { UserState } from "../../../app/components/providers/types/UserTypes";
-import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
-import { mockUserState } from "../../mocks";
+import * as UserProvider from "../../../app/components/providers/UserProvider";
+import { mockUserProviderState } from "../../mocks";
 
 const mockedUsedNavigate = jest.fn();
 jest.mock("react-router-dom", () => ({
   ...(jest.requireActual("react-router-dom") as any),
   useNavigate: () => mockedUsedNavigate
 }));
-const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
-jest.mock("../../../lib/localStorageManager", () => ({
-  getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
-}));
-
 const mockSetLoggingOut = jest.fn();
 jest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
   useRedirectOnLogin: () => ({
     setLoggingOut: mockSetLoggingOut
   })
 }));
+const mockUseUser = jest.spyOn(UserProvider, "useUser");
+
+const DOWN_ARROW = { keyCode: 40 };
 
 describe("header drop down menu component", () => {
   const renderElement = () => {
     return render(
       <MemoryRouter>
-        <UserProvider>
-          <AccountHeaderDropdown />
-        </UserProvider>
+        <AccountHeaderDropdown />
       </MemoryRouter>
     );
   };
@@ -39,26 +33,37 @@ describe("header drop down menu component", () => {
     jest.clearAllMocks();
   });
 
-  it("renders drop down menu without user info if not authenticated", async () => {
+  it("renders drop down menu without user initials if not authenticated", async () => {
+    mockUseUser.mockReturnValue({ ...mockUserProviderState(), user: null });
     renderElement();
+
+    fireEvent.keyDown(await screen.findByLabelText("Account"), DOWN_ARROW);
 
     expect(await screen.findByText("XX")).toBeInTheDocument();
+    expect(screen.getByTestId("user-display-name")).toHaveTextContent("");
+    expect(screen.getByTestId("username")).toHaveTextContent("");
   });
 
-  it("renders drop down menu without user info if authenticated", async () => {
-    mockGetUserFromLocalStorage.mockReturnValue(mockUserState());
+  it("renders drop down menu with user initials if authenticated", async () => {
+    mockUseUser.mockReturnValue(mockUserProviderState());
     renderElement();
+    fireEvent.keyDown(await screen.findByLabelText("Account"), DOWN_ARROW);
 
     expect(await screen.findByText("LJ")).toBeInTheDocument();
+    expect(screen.getByTestId("user-display-name")).toHaveTextContent("LeBron James");
+    expect(screen.getByTestId("username")).toHaveTextContent("goat@example.com");
   });
 
-  it("deletes user local storage key when log out is clicked", async () => {
-    const DOWN_ARROW = { keyCode: 40 };
-    localStorage.setItem(LocalStorageKeys.USER, "mockUser");
+  it("calls removeUser and setLoggingOut on logout click", async () => {
+    const state = mockUserProviderState();
+    mockUseUser.mockReturnValue(state);
+
     renderElement();
-    fireEvent.keyDown(await screen.findByRole("button"), DOWN_ARROW);
+
+    fireEvent.keyDown(await screen.findByLabelText("Account"), DOWN_ARROW);
     userEvent.click(await screen.findByText("Log out"));
-    expect(localStorage.getItem(LocalStorageKeys.USER)).toBe(null);
+
+    expect(state.removeUser).toHaveBeenCalled();
     expect(mockSetLoggingOut).toHaveBeenCalledWith(true);
   });
 });
