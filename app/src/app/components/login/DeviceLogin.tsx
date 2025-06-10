@@ -13,8 +13,6 @@ export const DeviceLogin = () => {
     const [userCode, setUserCode] = useState('');
     const [resultStatus, setResultStatus] = useState<HttpStatus | null>(null);
 
-    // TODO: enter key should press button if code is complete
-
     const handleChange = (newValue: string) => {
         setUserCode(newValue.toUpperCase());
     };
@@ -32,9 +30,18 @@ export const DeviceLogin = () => {
         setResultStatus(res.status as HttpStatus);
     };
 
+    const handleKeyDown = async (key: string) => {
+        // Enter key submits code if it is complete
+        if ((key === "Enter") && (userCode.length === USER_CODE_LENGTH)) {
+            await handleSubmit();
+        }
+    };
+
     return (
         <>
-            <div className="space-y-4 text-center mt-8">
+            <div
+                className="space-y-4 text-center mt-8"
+                onKeyDown={(e) => handleKeyDown(e.key)}>
                 <h1 className="text-2xl font-semibold tracking-tight">Packit API Login</h1>
                 {resultStatus == HttpStatus.OK && (
                     <div>
@@ -58,7 +65,10 @@ export const DeviceLogin = () => {
                             characterInactive: "verification-input-inactive-char"
                         } }
                     />
-                    <Button onClick={handleSubmit} disabled={userCode.length !== USER_CODE_LENGTH}>
+                    <Button
+                        onClick={handleSubmit}
+                        disabled={userCode.length !== USER_CODE_LENGTH}
+                    >
                         Continue
                     </Button>
                     </>
