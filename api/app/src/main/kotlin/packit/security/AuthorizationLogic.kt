@@ -3,7 +3,6 @@ package packit.security
 import org.springframework.security.access.expression.SecurityExpressionOperations
 import org.springframework.stereotype.Component
 import packit.model.Packet
-import packit.model.PacketMetadata
 import packit.security.ott.OTTAuthenticationToken
 import packit.service.PacketService
 import java.time.Instant
