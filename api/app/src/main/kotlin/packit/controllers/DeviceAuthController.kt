@@ -16,6 +16,7 @@ import packit.security.oauth2.deviceFlow.DeviceAuthRequest
 import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
 import packit.service.DeviceAuthRequestService
+import packit.service.UserService
 import kotlin.time.Duration.Companion.days
 // See docs/auth.md for details on Device Authorization Flow
 @RestController
@@ -23,6 +24,7 @@ import kotlin.time.Duration.Companion.days
 class DeviceAuthController(
     private val appConfig: AppConfig,
     private val deviceAuthRequestService: DeviceAuthRequestService,
+    private val userService: UserService,
     private val jwtIssuer: JwtIssuer
 ) {
 
@@ -46,7 +48,8 @@ class DeviceAuthController(
         @RequestBody userCode: String,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<Unit> {
-        deviceAuthRequestService.validateRequest(userCode, userPrincipal)
+        val user = userService.getByUsername(userPrincipal.name)!!
+        deviceAuthRequestService.validateRequest(userCode, user)
         return ResponseEntity.ok().build()
     }
 

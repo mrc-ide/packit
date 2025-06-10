@@ -5,16 +5,16 @@ import com.nimbusds.oauth2.sdk.device.UserCode
 import org.springframework.stereotype.Service
 import packit.AppConfig
 import packit.exceptions.DeviceAuthTokenException
+import packit.model.User
 import packit.security.oauth2.deviceFlow.DeviceAuthRequest
-import packit.security.profile.UserPrincipal
 import java.time.Clock
 
 interface DeviceAuthRequestService {
     fun newDeviceAuthRequest(): DeviceAuthRequest
     fun cleanUpExpiredRequests()
     fun findRequest(deviceCode: String): DeviceAuthRequest?
-    fun validateRequest(userCode: String, userPrincipal: UserPrincipal): Unit
-    fun useValidatedRequest(deviceCode: String): UserPrincipal
+    fun validateRequest(userCode: String, user: User): Unit
+    fun useValidatedRequest(deviceCode: String): User
 }
 
 @Service
@@ -40,7 +40,7 @@ class BaseDeviceAuthRequestService(private val appConfig: AppConfig, private val
         return requests.firstOrNull { it.deviceCode.value == deviceCode }
     }
 
-    override fun validateRequest(userCode: String, userPrincipal: UserPrincipal) {
+    override fun validateRequest(userCode: String, user: User) {
         // Mark a request as validated by a given user. Return error if request not found, or already validated
         val request = requests.firstOrNull { it.userCode.value == userCode }
         if (request == null || request.validatedBy != null) {
@@ -51,10 +51,10 @@ class BaseDeviceAuthRequestService(private val appConfig: AppConfig, private val
             removeRequest(request)
             throw DeviceAuthTokenException("expired_token")
         }
-        request.validatedBy = userPrincipal
+        request.validatedBy = user
     }
 
-    override fun useValidatedRequest(deviceCode: String): UserPrincipal {
+    override fun useValidatedRequest(deviceCode: String): User {
         // Find a validated request identified by the given device code, remove it from the list and
         // return the validating user so the controller can issue their access token
         // Throw 400 if not found, not validated or expired
