@@ -1,26 +1,23 @@
 package packit.unit.service
 
-
 import org.junit.jupiter.api.assertThrows
-import kotlin.test.assertEquals
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.springframework.http.HttpStatus
 import packit.AppConfig
 import packit.exceptions.DeviceAuthTokenException
-import packit.model.dto.DeviceAuthFetchToken
-import packit.security.profile.UserPrincipal
+import packit.model.User
 import packit.service.BaseDeviceAuthRequestService
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertSame
-
 
 class DeviceAuthRequestServiceTest {
     val mockAppConfig = mock<AppConfig> {
@@ -28,9 +25,8 @@ class DeviceAuthRequestServiceTest {
     }
 
     val fixedClock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
-    val testValidatingUser1 = UserPrincipal("userName1", "displayName1", mutableListOf(), mutableMapOf())
-    val testValidatingUser2 = UserPrincipal("userName2", "displayName2", mutableListOf(), mutableMapOf())
-
+    val testValidatingUser1 = User("userName1", displayName = "displayName1", disabled = false, userSource = "basic")
+    val testValidatingUser2 = User("userName2", displayName = "displayName2", disabled = false, userSource = "basic")
 
     @Test
     fun `can issue new device auth request`() {
@@ -38,7 +34,7 @@ class DeviceAuthRequestServiceTest {
         val result = sut.newDeviceAuthRequest()
         assertEquals(fixedClock.instant().plusSeconds(200), result.expiryTime)
         assertEquals(9, result.userCode.value.length)
-        assertEquals(86, result.deviceCode.value.length)  // default device code format
+        assertEquals(86, result.deviceCode.value.length) // default device code format
         assertEquals(null, result.validatedBy)
     }
 
@@ -61,7 +57,7 @@ class DeviceAuthRequestServiceTest {
         doAnswer {
             now
         }.`when`(mockClock).instant()
-        val sut = BaseDeviceAuthRequestService(mockAppConfig, mockClock)F
+        val sut = BaseDeviceAuthRequestService(mockAppConfig, mockClock)
         val oldRequest = sut.newDeviceAuthRequest()
         assertNotNull(sut.findRequest(oldRequest.deviceCode.value))
 
@@ -98,7 +94,7 @@ class DeviceAuthRequestServiceTest {
         assertThrows<DeviceAuthTokenException> {
             sut.validateRequest(request.userCode.value, testValidatingUser1)
         }.apply {
-            assertEquals("token_expired", key)
+            assertEquals("expired_token", key)
             assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
         }
         assertNull(sut.findRequest(request.userCode.value))

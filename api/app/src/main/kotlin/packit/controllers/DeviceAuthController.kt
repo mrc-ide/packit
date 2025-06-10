@@ -12,7 +12,6 @@ import packit.exceptions.DeviceAuthTokenException
 import packit.model.dto.DeviceAuthDto
 import packit.model.dto.DeviceAuthFetchToken
 import packit.model.dto.DeviceAuthTokenDto
-import packit.security.oauth2.deviceFlow.DeviceAuthRequest
 import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
 import packit.service.DeviceAuthRequestService
@@ -28,7 +27,7 @@ class DeviceAuthController(
     private val jwtIssuer: JwtIssuer
 ) {
 
-    private val EXPECTED_GRANT_TYPE = "urn:ietf:params:oauth:grant-type:device_code"
+    private val expectedGrantType = "urn:ietf:params:oauth:grant-type:device_code"
     private val expiresIn = appConfig.authExpiryDays.days.inWholeSeconds
 
     @PostMapping()
@@ -43,7 +42,7 @@ class DeviceAuthController(
         return ResponseEntity.ok(response)
     }
 
-    @PostMapping("/validate", consumes=["text/plain"])
+    @PostMapping("/validate", consumes = ["text/plain"])
     fun validateDeviceAuthRequest(
         @RequestBody userCode: String,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
@@ -54,8 +53,10 @@ class DeviceAuthController(
     }
 
     @PostMapping("/token")
-    fun fetchToken(@RequestBody @Validated deviceAuthFetchToken: DeviceAuthFetchToken): ResponseEntity<DeviceAuthTokenDto> {
-        if (deviceAuthFetchToken.grantType != EXPECTED_GRANT_TYPE) {
+    fun fetchToken(
+        @RequestBody @Validated deviceAuthFetchToken: DeviceAuthFetchToken
+    ): ResponseEntity<DeviceAuthTokenDto> {
+        if (deviceAuthFetchToken.grantType != expectedGrantType) {
             throw DeviceAuthTokenException("unsupported_grant_type")
         }
         val validatingUser = deviceAuthRequestService.useValidatedRequest(deviceAuthFetchToken.deviceCode)

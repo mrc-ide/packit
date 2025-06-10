@@ -6,7 +6,7 @@ import packit.model.User
 import java.time.Instant
 
 // We keep a list of device flow authorization requests in memory so we can validate when a user code is entered
-data class DeviceAuthRequest (
+data class DeviceAuthRequest(
     val userCode: UserCode,
     val deviceCode: DeviceCode,
     val expiryTime: Instant,

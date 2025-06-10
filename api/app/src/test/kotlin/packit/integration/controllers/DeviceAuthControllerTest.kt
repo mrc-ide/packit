@@ -2,19 +2,48 @@ package packit.integration.controllers
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.test.context.TestPropertySource
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
+import packit.model.User
 import packit.model.dto.DeviceAuthFetchToken
+import packit.repository.UserRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class DeviceAuthControllerTest: IntegrationTest() {
+@TestPropertySource(properties = ["auth.method=basic"])
+class DeviceAuthControllerTest : IntegrationTest() {
+    private lateinit var testUser: User
+
+    @Autowired
+    lateinit var userRepository: UserRepository
+
+    @BeforeEach
+    fun setupData() {
+        testUser = User(
+            username = "test.user@example.com",
+            displayName = "test user",
+            disabled = false,
+            email = "test.user@example.com",
+            userSource = "basic",
+            roles = mutableListOf()
+        )
+        userRepository.save(testUser)
+    }
+
+    @AfterEach
+    fun cleanupData() {
+        userRepository.delete(testUser)
+    }
 
     private fun getDeviceRequestResult(): JsonNode {
         val result = restTemplate.postForEntity("/deviceAuth", null, String::class.java)
@@ -30,7 +59,10 @@ class DeviceAuthControllerTest: IntegrationTest() {
         )
     }
 
-    private fun getTokenResult(deviceCode: String, grantType: String = "urn:ietf:params:oauth:grant-type:device_code"): ResponseEntity<String> {
+    private fun getTokenResult(
+        deviceCode: String,
+        grantType: String = "urn:ietf:params:oauth:grant-type:device_code"
+    ): ResponseEntity<String> {
         val tokenRequestBody = jacksonObjectMapper().writeValueAsString(
             DeviceAuthFetchToken(deviceCode, grantType)
         )

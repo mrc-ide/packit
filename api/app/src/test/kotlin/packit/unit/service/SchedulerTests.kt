@@ -23,7 +23,10 @@ class SchedulerTests {
     private val mockDeviceAuthRequestService = mock<DeviceAuthRequestService> {}
 
     private fun getSut(): Scheduler {
-        return Scheduler(mockOneTimeTokenService, mockPacketService, mockOutpackServerClient, mockDeviceAuthRequestService)
+        return Scheduler(
+            mockOneTimeTokenService, mockPacketService, mockOutpackServerClient,
+            mockDeviceAuthRequestService
+        )
     }
 
     @Test
