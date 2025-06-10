@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
 import { Theme, ThemeProviderProps, ThemeProviderState } from "./types/ThemeTypes";
 import { useGetBrandingConfig } from "./hooks/useGetBrandingConfig";
@@ -26,30 +26,28 @@ export const ThemeProvider = ({ children, ...props }: ThemeProviderProps) => {
     () => (localStorage.getItem(LocalStorageKeys.THEME) as Theme) || DEFAULT_THEME
   );
 
-  const [availableThemes, setAvailableThemes] = useState<Theme[]>([]);
-
-  // Work out if the theme we're thinking of applying is available, and update the theme if not.
-  const verifyThemeIsAvailable = () => {
-    const proposedTheme = theme === "system" ? getSystemTheme() : theme;
-
-    if (!availableThemes.includes(proposedTheme) && availableThemes.length !== 0) {
-      setTheme(availableThemes[0]);
-    }
-  };
-
-  useEffect(() => {
-    if (!isLoading && brandingConfig) {
-      if (brandingConfig.darkModeEnabled && !brandingConfig.lightModeEnabled) {
-        setAvailableThemes(["dark"]);
-      } else if (brandingConfig.lightModeEnabled && !brandingConfig.darkModeEnabled) {
-        setAvailableThemes(["light"]);
-      } else {
-        setAvailableThemes(DEFAULT_AVAILABLE_THEMES);
-      }
+  const availableThemes = useMemo((): Theme[] => {
+    if (isLoading || !brandingConfig) {
+      return [];
+    } else if (brandingConfig.darkModeEnabled && !brandingConfig.lightModeEnabled) {
+      return ["dark"];
+    } else if (brandingConfig.lightModeEnabled && !brandingConfig.darkModeEnabled) {
+      return ["light"];
+    } else {
+      return DEFAULT_AVAILABLE_THEMES;
     }
   }, [brandingConfig, isLoading]);
 
-  useEffect(verifyThemeIsAvailable, [availableThemes]);
+  useEffect(() => {
+    if (!isLoading && brandingConfig) {
+      const themeToSet = theme === "system" ? getSystemTheme() : theme;
+      if (!availableThemes.includes(themeToSet) && availableThemes.length !== 0) {
+        setTheme(availableThemes[0]);
+      } else {
+        setTheme(themeToSet);
+      }
+    }
+  }, [brandingConfig, isLoading]);
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -67,10 +65,9 @@ export const ThemeProvider = ({ children, ...props }: ThemeProviderProps) => {
   const value = {
     availableThemes,
     theme,
-    setTheme: (theme: Theme) => {
-      verifyThemeIsAvailable();
-      setTheme(theme);
-      localStorage.setItem(LocalStorageKeys.THEME, theme);
+    setTheme: (newTheme: Theme) => {
+      setTheme(newTheme);
+      localStorage.setItem(LocalStorageKeys.THEME, newTheme);
     }
   };
 
