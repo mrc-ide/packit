@@ -1,11 +1,9 @@
 import VerificationInput from "react-verification-input";
 import {Button} from "../Base/Button";
 import appConfig from "../../../config/appConfig";
-import {ApiError} from "../../../lib/errors";
 import {HttpStatus} from "../../../lib/types/HttpStatus";
-import React, {useState} from "react";
+import {useState} from "react";
 import {getAuthHeader} from "../../../lib/auth/getAuthHeader";
-import {PacketErrorBody} from "../../../types";
 import {Check} from "lucide-react";
 
 export const DeviceLogin = () => {

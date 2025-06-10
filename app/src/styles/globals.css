@@ -114,11 +114,11 @@ iframe {
 
 /* TOD: scope this into the DeviceFlow component with custom classes */
 .vi__character--selected {
-  color: hsl(var(--muted-foreground));
-  outline-color: hsl(var(--muted));
+  color: var(--muted-foreground);
+  outline-color: var(--muted-foreground);
 }
 
 .vi__character--inactive {
-  color: hsl(var(--muted-foreground));
-  background-color: hsl(var(--muted));
+  color: var(--muted-foreground);
+  background-color: var(--muted);
 }
