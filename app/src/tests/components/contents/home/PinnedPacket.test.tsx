@@ -5,7 +5,6 @@ import { SWRConfig } from "swr";
 import { MemoryRouter } from "react-router-dom";
 import { PacketMetadata } from "../../../../types";
 import userEvent from "@testing-library/user-event";
-import appConfig from "../../../../config/appConfig";
 
 const mockDownload = jest.fn();
 jest.mock("../../../../lib/download", () => ({
@@ -50,14 +49,16 @@ describe("Pinned Packet component", () => {
     expect(downloadAllButton).toBeVisible();
     userEvent.click(downloadAllButton);
 
-    const filesToBeDownloaded = mockPacket.files.filter((file) => [
-      "report.html",
-      "directory/graph.png",
-      "artefact_data.csv",
-      "excel_file.xlsx",
-      "internal_presentation.pdf",
-      "other_extensions.txt"
-    ].includes(file.path));
+    const filesToBeDownloaded = mockPacket.files.filter((file) =>
+      [
+        "report.html",
+        "directory/graph.png",
+        "artefact_data.csv",
+        "excel_file.xlsx",
+        "internal_presentation.pdf",
+        "other_extensions.txt"
+      ].includes(file.path)
+    );
     const zipName = `${mockPacket.name}_artefacts_${mockPacket.id}.zip`;
     expect(mockDownload).toHaveBeenCalledWith(filesToBeDownloaded, mockPacket.id, zipName);
   });
