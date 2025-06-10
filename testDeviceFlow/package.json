@@ -11,6 +11,7 @@
   "license": "MIT",
   "description": "Local testing for packit device flow",
   "dependencies": {
+    "undici": "^7.10.0"
   },
   "devDependencies": {
     "typescript": "^5.8.3",
