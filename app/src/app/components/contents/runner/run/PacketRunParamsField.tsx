@@ -37,7 +37,7 @@ export const PacketRunParamsField = ({ packetGroupName, branchCommit, form }: Pa
 
   return (
     <div className="space-y-2">
-      <FormLabel className="font-semibold text-lg">Packet Group Parameters</FormLabel>
+      <FormLabel className="font-semibold text-lg">Packet group parameters</FormLabel>
       {parameters ? (
         <div className="flex flex-col space-y-3">
           {fields.length == 0 ? (

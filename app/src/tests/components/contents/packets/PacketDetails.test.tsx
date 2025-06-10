@@ -6,7 +6,8 @@ import { PacketDetails } from "../../../../app/components/contents/packets";
 import { PacketOutlet } from "../../../../app/components/main/PacketOutlet";
 import { server } from "../../../../msw/server";
 import { PacketMetadata } from "../../../../types";
-import { mockPacket } from "../../../mocks";
+import { mockPackets, mockPacket } from "../../../mocks";
+import { packetIndexUri } from "../../../../msw/handlers/packetHandlers";
 
 jest.mock("../../../../lib/download", () => ({
   getFileObjectUrl: async () => "fakeObjectUrl"
@@ -18,7 +19,7 @@ describe("packet details component", () => {
       <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>
         <MemoryRouter initialEntries={[`/${packet.name}/${packet.id}`]}>
           <Routes>
-            <Route element={<PacketOutlet packetId={packet.id} />} path="/:packetName/:packetId">
+            <Route element={<PacketOutlet />} path="/:packetName/:packetId">
               <Route path="/:packetName/:packetId" element={<PacketDetails />} />
             </Route>
           </Routes>
@@ -66,7 +67,7 @@ describe("packet details component", () => {
 
   it("should not render parameters or files when none", async () => {
     server.use(
-      rest.get("*", (req, res, ctx) => {
+      rest.get(`${packetIndexUri}/${mockPacket.id}`, (req, res, ctx) => {
         return res(ctx.json({ ...mockPacket, parameters: {}, files: [] }));
       })
     );
@@ -80,11 +81,20 @@ describe("packet details component", () => {
   });
 
   it("should render dependencies when present", async () => {
+    server.use(
+      rest.post(`${packetIndexUri}`, async (req, res, ctx) => {
+        const body = await req.json();
+        if (body === mockPacket.depends) {
+          return res(ctx.json(mockPackets));
+        }
+      })
+    );
+
     renderComponent();
 
-    await waitFor(() => {
-      mockPacket.depends.forEach((depend) => {
-        expect(screen.getByText(depend.packet)).toBeVisible();
+    await waitFor(async () => {
+      mockPackets.forEach(async (packet) => {
+        expect(await screen.findByText(packet.id)).toBeVisible();
       });
     });
   });

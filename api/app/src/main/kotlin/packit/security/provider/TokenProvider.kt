@@ -4,7 +4,7 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import org.springframework.stereotype.Component
 import packit.AppConfig
-import packit.security.profile.UserPrincipal
+import packit.model.User
 import java.time.Duration
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -17,18 +17,14 @@ interface JwtBuilder {
 }
 
 interface JwtIssuer {
-    fun issue(userPrincipal: UserPrincipal): String {
-        return builder(userPrincipal).issue()
+    fun issue(user: User): String {
+        return builder(user).issue()
     }
 
-    // The builder method can be used to customize the returned token.
-    //
-    // The builder can only ever be used to weaken a token, eg. by reducing its
-    // permissions or shorten its lifespan.
-    fun builder(userPrincipal: UserPrincipal): JwtBuilder
+    fun builder(user: User): JwtBuilder
 }
 
-class TokenProviderBuilder(val config: AppConfig, val userPrincipal: UserPrincipal) : JwtBuilder {
+class TokenProviderBuilder(val config: AppConfig, val user: User) : JwtBuilder {
     companion object {
         const val TOKEN_ISSUER = "packit-api"
         const val TOKEN_AUDIENCE = "packit"
@@ -68,17 +64,16 @@ class TokenProviderBuilder(val config: AppConfig, val userPrincipal: UserPrincip
             expiresAt = expiry
         }
 
-        val permissions = userPrincipal.authorities.map { it.authority }.toMutableList()
-        if (this.permissions != null) {
-            permissions.retainAll(this.permissions!!)
-        }
-
         return JWT.create()
             .withAudience(TOKEN_AUDIENCE)
             .withIssuer(TOKEN_ISSUER)
-            .withClaim("userName", userPrincipal.name)
-            .withClaim("displayName", userPrincipal.displayName)
-            .withClaim("au", permissions)
+            .withClaim("userName", user.username)
+            .withClaim("displayName", user.displayName)
+            .apply {
+                if (permissions != null) {
+                    this.withClaim("au", permissions!!.toList())
+                }
+            }
             .withIssuedAt(issuedAt)
             .withExpiresAt(expiresAt)
             .sign(Algorithm.HMAC256(config.authJWTSecret))
@@ -87,7 +82,7 @@ class TokenProviderBuilder(val config: AppConfig, val userPrincipal: UserPrincip
 
 @Component
 class TokenProvider(val config: AppConfig) : JwtIssuer {
-    override fun builder(userPrincipal: UserPrincipal): JwtBuilder {
-        return TokenProviderBuilder(config, userPrincipal)
+    override fun builder(user: User): JwtBuilder {
+        return TokenProviderBuilder(config, user)
     }
 }

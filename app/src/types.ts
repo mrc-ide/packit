@@ -139,7 +139,6 @@ export interface FileMetadata {
 export interface PacketJwtPayload extends JwtPayload {
   displayName: string;
   userName: string;
-  au: string[];
 }
 
 export interface PacketErrorBody {
@@ -171,4 +170,10 @@ export interface BasicPacketGroup {
 export interface Tag {
   name: string;
   id: number;
+}
+
+export interface LogoConfiguration {
+  altText?: string;
+  filename?: string;
+  linkDestination?: string;
 }

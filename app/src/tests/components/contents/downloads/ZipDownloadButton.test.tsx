@@ -1,9 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { SWRConfig } from "swr";
 import { ZipDownloadButton } from "../../../../app/components/contents/downloads/ZipDownloadButton";
-import { PacketOutlet } from "../../../../app/components/main/PacketOutlet";
 import { FileMetadata } from "../../../../types";
 import { mockPacket } from "../../../mocks";
 

@@ -8,6 +8,7 @@ import org.springframework.core.env.Environment
 import org.springframework.http.*
 import org.springframework.http.client.SimpleClientHttpRequestFactory
 import org.springframework.security.core.context.SecurityContextHolder
+import packit.model.User
 import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
 import kotlin.test.assertEquals
@@ -41,14 +42,21 @@ abstract class IntegrationTest {
         data: Any? = null,
     ): HttpEntity<Any> {
         val authentication = SecurityContextHolder.getContext().authentication
-
-        val tokens = jwtIssuer.issue(authentication.principal as UserPrincipal)
+        val testUser = User(
+            username = (authentication.principal as UserPrincipal).name,
+            displayName = (authentication.principal as UserPrincipal).displayName,
+            disabled = false,
+            userSource = "basic"
+        )
+        val tokenBuilder = jwtIssuer.builder(testUser)
+        tokenBuilder.withPermissions(authentication.authorities.map { it.authority })
+        val token = tokenBuilder.issue()
 
         val headers = HttpHeaders()
 
         headers.contentType = contentType
 
-        headers.setBearerAuth(tokens)
+        headers.setBearerAuth(token)
 
         return HttpEntity(data, headers)
     }

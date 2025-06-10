@@ -5,6 +5,8 @@ import org.mockito.ArgumentMatchers.anyList
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.*
 import org.springframework.http.HttpStatus
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import packit.exceptions.PackitException
 import packit.model.*
 import packit.model.dto.*
@@ -308,7 +310,7 @@ class UserRoleServiceTest {
         `when`(userRoleFilterService.getRolesAndSpecificUsersCanReadPacketGroup(any(), any(), any())).thenReturn(
             rolesAndUsers
         )
-        `when`(userRoleFilterService.getRolesAndUsersCantReadPacketReadGroup(any(), any(), any())).thenReturn(
+        `when`(userRoleFilterService.getRolesAndUsersCannotReadPacketReadGroup(any(), any(), any())).thenReturn(
             rolesAndUsers
         )
         `when`(
@@ -326,7 +328,7 @@ class UserRoleServiceTest {
         assertEquals(packetGroupNames, result.keys.toList())
         packetGroupNames.forEach {
             assert(result[it] is RolesAndUsersForReadUpdate)
-            verify(userRoleFilterService).getRolesAndUsersCantReadPacketReadGroup(
+            verify(userRoleFilterService).getRolesAndUsersCannotReadPacketReadGroup(
                 rolesAndUsers.roles,
                 rolesAndUsers.users,
                 it
@@ -355,7 +357,7 @@ class UserRoleServiceTest {
             rolesAndUsers
         )
         `when`(
-            userRoleFilterService.getRolesAndUsersCantReadPacket(
+            userRoleFilterService.getRolesAndUsersCannotReadPacket(
                 any(),
                 any(),
                 any()
@@ -373,16 +375,15 @@ class UserRoleServiceTest {
 
         val result = serviceSpy.getRolesAndUsersForPacketReadUpdate(packet)
 
-        assert(result is RolesAndUsersForReadUpdate)
         assertEquals(rolesAndUsersDtos, result.canRead)
         assertEquals(rolesAndUsersDtos, result.withRead)
-        assertEquals(rolesAndUsersDtos, result.cantRead)
+        assertEquals(rolesAndUsersDtos, result.cannotRead)
         verify(userRoleFilterService).getRolesAndSpecificUsersCanReadPacket(
             rolesAndUsers.roles,
             rolesAndUsers.users,
             packet
         )
-        verify(userRoleFilterService).getRolesAndUsersCantReadPacket(
+        verify(userRoleFilterService).getRolesAndUsersCannotReadPacket(
             rolesAndUsers.roles,
             rolesAndUsers.users,
             packet
@@ -412,5 +413,31 @@ class UserRoleServiceTest {
         assertEquals(expectedDto, result)
         verify(mockRoleService).getSortedRoles(rolesAndUsers.roles)
         verify(mockUserService).getSortedUsers(rolesAndUsers.users)
+    }
+
+    @Test
+    fun `getUserAuthorities throws exception if user not found`() {
+        whenever(mockUserService.getByUsername("nonexistent")).thenReturn(null)
+
+        val ex = assertThrows<PackitException> { service.getUserAuthorities("nonexistent") }
+
+        assertEquals(ex.key, "userNotFound")
+        assertEquals(ex.httpStatus, HttpStatus.NOT_FOUND)
+    }
+
+    @Test
+    fun `getUserAuthorities returns user authorities`() {
+        val expectedAuthorities: MutableSet<GrantedAuthority> =
+            mutableSetOf(
+                SimpleGrantedAuthority("packet.read"),
+                SimpleGrantedAuthority("packet.write")
+            )
+        val mockUser = mock<User>()
+        whenever(mockUserService.getByUsername("username")).thenReturn(mockUser)
+        whenever(mockRoleService.getGrantedAuthorities(mockUser.roles)).thenReturn(expectedAuthorities)
+
+        val result = service.getUserAuthorities("username")
+
+        assertEquals(expectedAuthorities.map { it.authority }, result)
     }
 }

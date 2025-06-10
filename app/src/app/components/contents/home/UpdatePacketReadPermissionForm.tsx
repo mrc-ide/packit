@@ -13,15 +13,16 @@ import { BasicRolesAndUsers, RolesAndUsersToUpdateRead } from "../manageAccess/t
 import { UpdatePacketReadPermissionMultiSelectList } from "./UpdatePacketReadPermissionMultiSelectList";
 
 interface UpdatePacketReadPermissionFormProps {
-  rolesAndUsersCantRead: BasicRolesAndUsers;
+  rolesAndUsersCannotRead: BasicRolesAndUsers;
   rolesAndUsersWithRead: BasicRolesAndUsers;
   setDialogOpen: Dispatch<SetStateAction<boolean>>;
   packetGroupName: string;
   mutate: KeyedMutator<Record<string, RolesAndUsersToUpdateRead>> | KeyedMutator<RolesAndUsersToUpdateRead>;
   packetId?: string;
 }
+
 export const UpdatePacketReadPermissionForm = ({
-  rolesAndUsersCantRead,
+  rolesAndUsersCannotRead,
   rolesAndUsersWithRead,
   setDialogOpen,
   packetGroupName,
@@ -90,7 +91,7 @@ export const UpdatePacketReadPermissionForm = ({
                   <MultiSelectorInput className="text-sm" placeholder="Select roles or users..." />
                 </MultiSelectorTrigger>
                 <MultiSelectorContent>
-                  <UpdatePacketReadPermissionMultiSelectList rolesAndUsers={rolesAndUsersCantRead} />
+                  <UpdatePacketReadPermissionMultiSelectList rolesAndUsers={rolesAndUsersCannotRead} />
                 </MultiSelectorContent>
               </MultiSelector>
             </FormItem>

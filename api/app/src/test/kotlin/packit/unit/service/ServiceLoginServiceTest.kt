@@ -1,4 +1,5 @@
 package packit.unit.service
+
 import com.nimbusds.jose.proc.SecurityContext
 import com.nimbusds.jwt.SignedJWT
 import com.nimbusds.jwt.proc.DefaultJWTProcessor
@@ -7,19 +8,20 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-import org.mockito.kotlin.*
+import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.jwt.JwtClaimsSet
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
 import org.springframework.test.web.client.ExpectedCount
 import org.springframework.test.web.client.MockRestServiceServer
-import org.springframework.test.web.client.match.MockRestRequestMatchers.*
-import org.springframework.test.web.client.response.DefaultResponseCreator.*
-import org.springframework.test.web.client.response.MockRestResponseCreators.*
+import org.springframework.test.web.client.match.MockRestRequestMatchers.method
+import org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo
+import org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess
 import org.springframework.web.client.RestTemplate
 import packit.AppConfig
 import packit.config.ServiceLoginConfig
@@ -37,6 +39,7 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class ServiceLoginServiceTest {
     private val restTemplate = RestTemplate()
@@ -53,14 +56,7 @@ class ServiceLoginServiceTest {
     private val serviceUserPrincipal = UserPrincipal(
         name = "service",
         displayName = "Service Account",
-        authorities = listOf(
-            "packet.read",
-            "packet.run",
-            "outpack.read",
-            "outpack.write",
-            "user.manage",
-        ).map { SimpleGrantedAuthority(it) }.toMutableList(),
-        attributes = mutableMapOf(),
+        authorities = setOf(),
     )
 
     private val mockAppConfig = mock<AppConfig>() {
@@ -69,13 +65,12 @@ class ServiceLoginServiceTest {
     }
     private val mockUserService = mock<UserService>() {
         on { getServiceUser() } doAnswer { serviceUser }
-        on { getUserPrincipal(serviceUser) } doAnswer { serviceUserPrincipal }
     }
 
     lateinit var defaultIssuer: TestJwtIssuer
 
     // Create a TestJwtIssuer and register its JWK set on the mock rest template.
-    fun createIssuer(url: String): TestJwtIssuer {
+    private fun createIssuer(url: String): TestJwtIssuer {
         val issuer = TestJwtIssuer()
         server.expect(ExpectedCount.between(0, Integer.MAX_VALUE), requestTo(url))
             .andExpect(method(HttpMethod.GET))
@@ -83,19 +78,19 @@ class ServiceLoginServiceTest {
         return issuer
     }
 
-    fun exchangeTokens(config: ServiceLoginConfig, token: String): Jwt {
+    private fun exchangeTokens(config: ServiceLoginConfig, token: String): Jwt {
         val sut = ServiceLoginService(TokenProvider(mockAppConfig), mockUserService, config, restTemplate)
         val result = sut.authenticateAndIssueToken(LoginWithToken(token))
 
         val processor = object : DefaultJWTProcessor<SecurityContext>() {
             // The default implementation enforces signature verification, but in this
             // testing context we don't care.
-            override fun process(jwt: SignedJWT, context: SecurityContext?) = jwt.getJWTClaimsSet()
+            override fun process(jwt: SignedJWT, context: SecurityContext?) = jwt.jwtClaimsSet
         }
         return NimbusJwtDecoder(processor).decode(result["token"]!!)
     }
 
-    fun exchangeTokens(config: ServiceLoginConfig, f: (JwtClaimsSet.Builder) -> Unit): Jwt {
+    private fun exchangeTokens(config: ServiceLoginConfig, f: (JwtClaimsSet.Builder) -> Unit): Jwt {
         return exchangeTokens(config, defaultIssuer.issue(f))
     }
 
@@ -126,6 +121,7 @@ class ServiceLoginServiceTest {
     fun `provided token must satisfy all required claims`() {
         val requiredIssuer = "issuer"
         val requiredAudience = "packit"
+
         data class TestCase(
             val providedClaims: Map<String, Any> = mapOf(),
             val providedIssuer: String? = requiredIssuer,
@@ -133,6 +129,7 @@ class ServiceLoginServiceTest {
             val requiredClaims: Map<String, String> = mapOf(),
             val expectSuccess: Boolean,
         )
+
         val testCases = listOf(
             TestCase(providedAudience = listOf("packit"), expectSuccess = true),
             TestCase(providedAudience = listOf("packit", "other"), expectSuccess = true),
@@ -226,17 +223,13 @@ class ServiceLoginServiceTest {
     fun `issued token is granted permissions from the policy`() {
         class TestCase(
             val policyPermissions: List<String>,
-            val expectedPermissions: Set<String>,
+            val expectedPermissions: Set<String>?,
         )
+
         val testCases = listOf(
-            TestCase(listOf<String>(), setOf<String>()),
+            TestCase(listOf(), setOf()),
             TestCase(listOf("outpack.read"), setOf("outpack.read")),
             TestCase(listOf("outpack.read", "outpack.write"), setOf("outpack.read", "outpack.write")),
-            TestCase(listOf("not.a.real.permission"), setOf()),
-
-            // TODO: this currently returns an empty set, because the JwtIssuer doesn't support narrowing permissions
-            // from a global permission to a fine-grained one.
-            TestCase(listOf("packet.read:packetGroup:packet-name"), setOf())
         )
 
         for (entry in testCases) {
@@ -250,11 +243,15 @@ class ServiceLoginServiceTest {
                     )
                 )
             )
-            val token = exchangeTokens(config, { builder ->
+            val token = exchangeTokens(config) { builder ->
                 builder.issuer("issuer")
                 builder.audience(listOf("packit"))
-            })
-            assertEquals(token.getClaimAsStringList("au").toSet(), entry.expectedPermissions)
+            }
+            if (entry.expectedPermissions == null) {
+                assertNull(token.getClaim<List<String>?>("au"))
+            } else {
+                assertEquals(token.getClaimAsStringList("au").toSet(), entry.expectedPermissions)
+            }
         }
     }
 

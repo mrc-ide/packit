@@ -7,9 +7,9 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import packit.exceptions.PackitException
+import packit.model.User
 import packit.model.dto.LoginWithPassword
 import packit.security.profile.BasicUserDetails
-import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
 import packit.service.BasicLoginService
 import packit.service.UserService
@@ -17,17 +17,18 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class BasicLoginServiceTest {
-    private val userPrincipal = UserPrincipal(
-        "userName",
-        "displayName",
-        mutableListOf(),
-        mutableMapOf()
+    private val user = User(
+        username = "userName",
+        displayName = "displayName",
+        password = "password",
+        disabled = false,
+        userSource = "basic"
     )
     private val mockIssuer = mock<JwtIssuer> {
-        on { issue(argThat { this == userPrincipal }) } doReturn "fake jwt"
+        on { issue(argThat { this == user }) } doReturn "fake jwt"
     }
     private val mockAuthentication = mock<Authentication> {
-        on { principal } doReturn BasicUserDetails(userPrincipal, "password")
+        on { principal } doReturn BasicUserDetails(user)
     }
     private val mockAuthenticationManager = mock<AuthenticationManager> {
         on { authenticate(any<UsernamePasswordAuthenticationToken>()) } doReturn mockAuthentication

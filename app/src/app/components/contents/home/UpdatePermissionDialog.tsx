@@ -12,6 +12,7 @@ interface UpdatePermissionDialogProps {
   rolesAndUsersToUpdateRead: RolesAndUsersToUpdateRead;
   mutate: KeyedMutator<Record<string, RolesAndUsersToUpdateRead>>;
 }
+
 export const UpdatePermissionDialog = ({
   packetGroupName,
   rolesAndUsersToUpdateRead,
@@ -26,11 +27,11 @@ export const UpdatePermissionDialog = ({
           <TooltipTrigger asChild>
             <Button
               aria-label={`manage-access-${packetGroupName}`}
-              variant="outline"
+              variant="ghost"
               size="icon"
               onClick={() => setDialogOpen(true)}
             >
-              <UserCog size={18} />
+              <UserCog size={20} />
             </Button>
           </TooltipTrigger>
           <TooltipContent>
@@ -43,7 +44,7 @@ export const UpdatePermissionDialog = ({
           <DialogTitle>Update read access on {packetGroupName}</DialogTitle>
         </DialogHeader>
         <UpdatePacketReadPermissionForm
-          rolesAndUsersCantRead={rolesAndUsersToUpdateRead.cantRead}
+          rolesAndUsersCannotRead={rolesAndUsersToUpdateRead.cannotRead}
           rolesAndUsersWithRead={rolesAndUsersToUpdateRead.withRead}
           setDialogOpen={setDialogOpen}
           packetGroupName={packetGroupName}

@@ -7,14 +7,15 @@ import { GitBranches } from "../app/components/contents/runner/types/GitBranches
 import { PageableBasicRunInfo, RunInfo } from "../app/components/contents/runner/types/RunInfo";
 import { Parameter, RunnerPacketGroup } from "../app/components/contents/runner/types/RunnerPacketGroup";
 import { AuthConfig } from "../app/components/providers/types/AuthConfigTypes";
-import { UserState } from "../app/components/providers/types/UserTypes";
+import { UserProviderState, UserState } from "../app/components/providers/types/UserTypes";
 import {
   Custom,
   PacketMetadata,
   PageableBasicDto,
   PageablePacketGroupSummaries,
   PageablePackets,
-  InputFileType
+  InputFileType,
+  LogoConfiguration
 } from "../types";
 
 export const mockPacketResponse = {
@@ -38,27 +39,37 @@ export const mockAuthConfig: AuthConfig = {
   enablePreAuthLogin: false
 };
 
-export const mockUserState: () => UserState = () => {
-  return {
-    displayName: "LeBron James",
-    userName: "goat",
-    token:
-      // eslint-disable-next-line max-len
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwYWNraXQiLCJpc3MiOiJwYWNraXQtYXBpIiwidXNlck5hbWUiOiJhYnN0ZXJuYXRvciIsImRpc3BsYXlOYW1lIjoiQW5tb2wgVGhhcGFyIiwiZGF0ZXRpbWUiOjE3MDI5NzgyMjgsImF1IjpbIltVU0VSXSJdLCJleHAiOjE3MDMwNjQ2Mjh9.o3b4PzZX76nP2tUxndGvusx-rytOkApodZ-geVPH9Pg",
-    exp: Math.floor(Date.now() / 1000) + 3600, // expires in 1 hour
-    authorities: ["user.manage", "packet.read", "packet.run"]
-  };
+export const mockLogoConfig: LogoConfiguration = {
+  altText: "This logo has alt text",
+  filename: "logo-for-website.png",
+  linkDestination: "https://example.com"
 };
 
-export const mockExpiredUserState: () => UserState = () => {
+export const mockUserState = (): UserState => {
   return {
     displayName: "LeBron James",
-    userName: "goat",
+    userName: "goat@example.com",
     token:
       // eslint-disable-next-line max-len
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwYWNraXQiLCJpc3MiOiJwYWNraXQtYXBpIiwidXNlck5hbWUiOiJhYnN0ZXJuYXRvciIsImRpc3BsYXlOYW1lIjoiQW5tb2wgVGhhcGFyIiwiZGF0ZXRpbWUiOjE3MDI5NzgyMjgsImF1IjpbIltVU0VSXSJdLCJleHAiOjE3MDMwNjQ2Mjh9.o3b4PzZX76nP2tUxndGvusx-rytOkApodZ-geVPH9Pg",
-    exp: Math.floor(Date.now() / 1000) - 3600, // expired 1 hour ago
-    authorities: ["user.manage", "packet.read", "packet.run"]
+    exp: Math.floor(Date.now() / 1000) + 3600 // expires in 1 hour
+  };
+};
+export const mockAuthorities = ["user.manage", "packet.read", "packet.run"];
+export const mockUserProviderState = (): UserProviderState => ({
+  user: mockUserState(),
+  authorities: mockAuthorities,
+  setUser: jest.fn(),
+  removeUser: jest.fn()
+});
+export const mockExpiredUserState = (): UserState => {
+  return {
+    displayName: "LeBron James",
+    userName: "goat@example.com",
+    token:
+      // eslint-disable-next-line max-len
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwYWNraXQiLCJpc3MiOiJwYWNraXQtYXBpIiwidXNlck5hbWUiOiJhYnN0ZXJuYXRvciIsImRpc3BsYXlOYW1lIjoiQW5tb2wgVGhhcGFyIiwiZGF0ZXRpbWUiOjE3MDI5NzgyMjgsImF1IjpbIltVU0VSXSJdLCJleHAiOjE3MDMwNjQ2Mjh9.o3b4PzZX76nP2tUxndGvusx-rytOkApodZ-geVPH9Pg",
+    exp: Math.floor(Date.now() / 1000) - 3600 // expired 1 hour ago
   };
 };
 
@@ -374,6 +385,8 @@ export const mockPacketGroupResponse: PageablePackets = {
   number: 0,
   numberOfElements: 5
 };
+
+export const mockPackets = mockPacketGroupResponse.content.slice(1, 3);
 
 export const mockFileBlob = new Blob(["test contents"]);
 
@@ -766,7 +779,7 @@ export const mockRolesAndUsersToUpdateRead = mockPacketGroupDtos.content.reduce(
   (acc, packetGroup) => {
     acc[packetGroup.name] = {
       withRead: mockRolesAndUsersWithPermissions,
-      cantRead: mockRolesAndUsersWithPermissions,
+      cannotRead: mockRolesAndUsersWithPermissions,
       canRead: mockRolesAndUsersWithPermissions
     };
     return acc;

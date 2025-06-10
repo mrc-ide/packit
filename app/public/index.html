@@ -2,11 +2,20 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <!--
+      The deploy tool replaces the (first instance of) the string
+      'favicon.ico' with the filename of the configured favicon (if supplied).
+    -->
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta name="description" content="Web interface for outpack" />
+    <!--
+      The deploy tool replaces the content of the (first) title tag with
+      a title tag containing the configured brand name (if supplied).
+    -->
     <title>Packit</title>
+    <link href="%PUBLIC_URL%/css/custom.css" rel="stylesheet" />
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

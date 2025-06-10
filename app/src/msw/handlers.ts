@@ -8,7 +8,9 @@ import { loginHandlers } from "./handlers/loginHandlers";
 import { manageRolesHandlers } from "./handlers/manageRolesHandlers";
 import { tagHandlers } from "./handlers/tagHandlers";
 import { runnerHandlers } from "./handlers/runnerHandlers";
+import { brandLogoHandlers } from "./handlers/brandLogoHandlers";
 import { usersRolesHandler } from "./handlers/usersRolesHandler";
+import { userHandlers } from "./handlers/userHandlers";
 
 // catch any missed requests in tests
 const defaultHandlers = [
@@ -19,15 +21,17 @@ const defaultHandlers = [
 ];
 
 export const handlers = [
-  ...packetGroupSummaryHandlers,
-  ...packetGroupHandlers,
-  ...packetHandlers,
   ...authConfigHandlers,
+  ...brandLogoHandlers,
   ...downloadFileHandlers,
   ...loginHandlers,
   ...manageRolesHandlers,
-  ...tagHandlers,
-  ...usersRolesHandler,
   ...runnerHandlers,
+  ...packetGroupSummaryHandlers,
+  ...packetGroupHandlers,
+  ...packetHandlers,
+  ...tagHandlers,
+  ...userHandlers,
+  ...usersRolesHandler,
   ...defaultHandlers
 ];

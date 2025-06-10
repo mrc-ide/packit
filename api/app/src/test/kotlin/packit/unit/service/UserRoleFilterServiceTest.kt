@@ -84,7 +84,7 @@ class UserRoleFilterServiceTest {
         whenever(permissionHelper.userHasPacketGroupReadPermissionViaRole(any(), any(), any())).thenReturn(false)
 
         val result =
-            userRoleFilterService.getRolesAndUsersCantReadPacketReadGroup(
+            userRoleFilterService.getRolesAndUsersCannotReadPacketReadGroup(
                 rolesAndUsers.roles,
                 rolesAndUsers.users,
                 packetGroupName
@@ -104,7 +104,7 @@ class UserRoleFilterServiceTest {
         whenever(permissionHelper.userHasPacketGroupReadPermissionViaRole(any(), any(), any())).thenReturn(true)
 
         val result =
-            userRoleFilterService.getRolesAndUsersCantReadPacketReadGroup(
+            userRoleFilterService.getRolesAndUsersCannotReadPacketReadGroup(
                 rolesAndUsers.roles,
                 rolesAndUsers.users,
                 packetGroupName
@@ -120,7 +120,7 @@ class UserRoleFilterServiceTest {
         whenever(permissionHelper.userHasPacketGroupReadPermissionViaRole(any(), any(), any())).thenReturn(false)
 
         val result =
-            userRoleFilterService.getRolesAndUsersCantReadPacketReadGroup(
+            userRoleFilterService.getRolesAndUsersCannotReadPacketReadGroup(
                 rolesAndUsers.roles,
                 rolesAndUsers.users,
                 packetGroupName
@@ -130,14 +130,14 @@ class UserRoleFilterServiceTest {
     }
 
     @Test
-    fun `getRolesAndUsersCantReadPacket returns all roles and users`() {
+    fun `getRolesAndUsersCannotReadPacket returns all roles and users`() {
         val packet = mock<Packet>()
         whenever(permissionChecker.canReadPacket(authorities, packet.name, packet.id)).thenReturn(false)
         whenever(permissionHelper.userHasDirectPacketReadReadPermission(any(), any())).thenReturn(false)
         whenever(permissionHelper.userHasPacketReadPermissionViaRole(any(), any(), any())).thenReturn(false)
 
         val result =
-            userRoleFilterService.getRolesAndUsersCantReadPacket(
+            userRoleFilterService.getRolesAndUsersCannotReadPacket(
                 rolesAndUsers.roles,
                 rolesAndUsers.users,
                 packet
@@ -151,14 +151,14 @@ class UserRoleFilterServiceTest {
     }
 
     @Test
-    fun `getRolesAndUsersCantReadPacket returns empty list when all roles and users can read`() {
+    fun `getRolesAndUsersCannotReadPacket returns empty list when all roles and users can read`() {
         val packet = mock<Packet>()
         whenever(permissionChecker.canReadPacket(authorities, packet.name, packet.id)).thenReturn(true)
         whenever(permissionHelper.userHasDirectPacketReadReadPermission(any(), any())).thenReturn(true)
         whenever(permissionHelper.userHasPacketReadPermissionViaRole(any(), any(), any())).thenReturn(true)
 
         val result =
-            userRoleFilterService.getRolesAndUsersCantReadPacket(
+            userRoleFilterService.getRolesAndUsersCannotReadPacket(
                 rolesAndUsers.roles,
                 rolesAndUsers.users,
                 packet
@@ -168,14 +168,14 @@ class UserRoleFilterServiceTest {
     }
 
     @Test
-    fun `getRolesAndUsersCantReadPacket returns empty user list when can read via user role`() {
+    fun `getRolesAndUsersCannotReadPacket returns empty user list when can read via user role`() {
         val packet = mock<Packet>()
         whenever(permissionChecker.canReadPacket(authorities, packet.name, packet.id)).thenReturn(false)
         whenever(permissionHelper.userHasDirectPacketReadReadPermission(any(), any())).thenReturn(true)
         whenever(permissionHelper.userHasPacketReadPermissionViaRole(any(), any(), any())).thenReturn(false)
 
         val result =
-            userRoleFilterService.getRolesAndUsersCantReadPacket(
+            userRoleFilterService.getRolesAndUsersCannotReadPacket(
                 rolesAndUsers.roles,
                 rolesAndUsers.users,
                 packet

@@ -77,6 +77,10 @@ See [app/README.md](https://github.com/mrc-ide/packit/blob/main/app/README.md)
 
 See [docs/auth.md](docs/auth.md)
 
+## Custom branding configuration
+
+See [docs/custom-branding.md](docs/custom-brandin.md)
+
 ## e2e Tests
 
 Playwright tests are in `./app/e2e`. There are three npm scripts defined in `app/package.json`:
