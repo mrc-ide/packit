@@ -13,11 +13,9 @@ import packit.service.PacketService
 class PinController(
     private val packetService: PacketService,
     private val pinRepository: PinRepository
-)
-{
+) {
     @GetMapping("/packets")
-    fun getPinnedPackets(): ResponseEntity<List<PacketMetadata>>
-    {
+    fun getPinnedPackets(): ResponseEntity<List<PacketMetadata>> {
         val pins = pinRepository.findAll()
 
         val packets = pins.map { pin ->
