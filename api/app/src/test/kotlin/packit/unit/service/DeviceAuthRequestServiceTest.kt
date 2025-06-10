@@ -9,8 +9,8 @@ import org.mockito.kotlin.mock
 import org.springframework.http.HttpStatus
 import packit.AppConfig
 import packit.exceptions.DeviceAuthTokenException
+import packit.model.User
 import packit.model.dto.DeviceAuthFetchToken
-import packit.security.profile.UserPrincipal
 import packit.service.BaseDeviceAuthRequestService
 import java.time.Clock
 import java.time.Instant
@@ -28,9 +28,8 @@ class DeviceAuthRequestServiceTest {
     }
 
     val fixedClock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
-    val testValidatingUser1 = UserPrincipal("userName1", "displayName1", mutableListOf(), mutableMapOf())
-    val testValidatingUser2 = UserPrincipal("userName2", "displayName2", mutableListOf(), mutableMapOf())
-
+    val testValidatingUser1 = User("userName1", displayName="displayName1", disabled=false, userSource="basic")
+    val testValidatingUser2 = User("userName2", displayName="displayName2", disabled=false, userSource="basic")
 
     @Test
     fun `can issue new device auth request`() {
@@ -61,7 +60,7 @@ class DeviceAuthRequestServiceTest {
         doAnswer {
             now
         }.`when`(mockClock).instant()
-        val sut = BaseDeviceAuthRequestService(mockAppConfig, mockClock)F
+        val sut = BaseDeviceAuthRequestService(mockAppConfig, mockClock)
         val oldRequest = sut.newDeviceAuthRequest()
         assertNotNull(sut.findRequest(oldRequest.deviceCode.value))
 
@@ -98,7 +97,7 @@ class DeviceAuthRequestServiceTest {
         assertThrows<DeviceAuthTokenException> {
             sut.validateRequest(request.userCode.value, testValidatingUser1)
         }.apply {
-            assertEquals("token_expired", key)
+            assertEquals("expired_token", key)
             assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
         }
         assertNull(sut.findRequest(request.userCode.value))
