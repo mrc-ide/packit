@@ -38,7 +38,7 @@ class PinControllerTest : IntegrationTest() {
     }
 
     @Test
-    @WithAuthenticatedUser(authorities = [])
+    @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `getPinnedPackets should return sorted packet metadata`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/pins/packets",
@@ -54,8 +54,25 @@ class PinControllerTest : IntegrationTest() {
     }
 
     @Test
-    fun `getPinnedPackets should return 401 when not authenticated`() {
-        val result = restTemplate.getForEntity("/pins/packets", String::class.java)
-        assertThat(result.statusCode).isEqualTo(HttpStatus.UNAUTHORIZED)
+    fun `getPinnedPackets returns error when not authenticated`() {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/pins/packets",
+            HttpMethod.GET,
+        )
+        assertUnauthorized(result)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read:packet:test1:20240729-154657-76529696"])
+    fun `getPinnedPackets returns partial list if permissions partially overlap with pinned packets`() {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/pins/packets",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+        assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
+        val body = jacksonObjectMapper().readTree(result.body)
+        assertThat(body.size()).isEqualTo(1)
+        assertThat(body[0].get("id").textValue()).isEqualTo(packetIds[2])
     }
 }
