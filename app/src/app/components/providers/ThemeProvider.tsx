@@ -3,13 +3,7 @@ import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
 import { Theme, ThemeProviderProps, ThemeProviderState } from "./types/ThemeTypes";
 import { useGetBrandingConfig } from "./hooks/useGetBrandingConfig";
 import { ErrorComponent } from "../contents/common/ErrorComponent";
-
-// DEFAULT_THEME is to be used if both themes are available and no user preference is set in local storage
-const DEFAULT_THEME = "system";
-// PRIVILEGED_THEME is to be used if both themes are available, no user preference is set in local storage,
-// and there is no system preference
-const PRIVILEGED_THEME = "light";
-const DEFAULT_AVAILABLE_THEMES: Theme[] = ["dark", "light"];
+import { DEFAULT_AVAILABLE_THEMES, DEFAULT_THEME, getSystemTheme } from "./utils/themeUtils";
 
 const ThemeProviderContext = createContext<ThemeProviderState>({
   availableThemes: DEFAULT_AVAILABLE_THEMES,
@@ -23,16 +17,6 @@ export const useTheme = () => {
   if (context === undefined) throw new Error("useTheme must be used within a ThemeProvider");
 
   return context;
-};
-
-const getSystemTheme = (): Theme => {
-  if (window.matchMedia("(prefers-color-scheme: dark)")?.matches) {
-    return "dark";
-  } else if (window.matchMedia("(prefers-color-scheme: light)")?.matches) {
-    return "light";
-  } else {
-    return PRIVILEGED_THEME;
-  }
 };
 
 export const ThemeProvider = ({ children, ...props }: ThemeProviderProps) => {
