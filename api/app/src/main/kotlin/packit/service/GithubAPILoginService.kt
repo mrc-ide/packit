@@ -25,7 +25,7 @@ class GithubAPILoginService(
         val githubUser = githubUserClient.getGithubUser()
 
         var user = userService.saveUserFromGithub(githubUser.login, githubUser.name, githubUser.email)
-        val token = jwtIssuer.issue(userService.getUserPrincipal(user))
+        val token = jwtIssuer.issue(user)
 
         return mapOf("token" to token)
     }

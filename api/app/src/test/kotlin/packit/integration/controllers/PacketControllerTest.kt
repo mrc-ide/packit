@@ -2,6 +2,7 @@ package packit.integration.controllers
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,6 +17,7 @@ import packit.integration.WithAuthenticatedUser
 import packit.model.OneTimeToken
 import packit.model.Role
 import packit.model.RolePermission
+import packit.model.dto.PacketDto
 import packit.model.dto.RolesAndUsersForReadUpdate
 import packit.model.dto.UpdateReadRoles
 import packit.repository.*
@@ -82,6 +84,32 @@ class PacketControllerTest : IntegrationTest() {
     }
 
     @Test
+    fun `getPacketsByIds returns error if not authenticated`() {
+        val result: ResponseEntity<String> = restTemplate.exchange("/packets", HttpMethod.POST)
+        assertUnauthorized(result)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
+    fun `getPacketsByIds returns list of packet details by passing a list of ids in request body`() {
+        val result: ResponseEntity<String> = restTemplate.exchange(
+            "/packets",
+            HttpMethod.POST,
+            getTokenizedHttpEntity(
+                data = jacksonObjectMapper().writeValueAsString(
+                    listOf(idOfArtefactTypesPacket, idOfDownloadTypesPacket3)
+                )
+            )
+        )
+
+        assertSuccess(result)
+
+        val packets: List<PacketDto> = jacksonObjectMapper().readValue(result.body!!)
+        assertThat(packets).extracting("id")
+            .containsExactlyInAnyOrder(idOfArtefactTypesPacket, idOfDownloadTypesPacket3)
+    }
+
+    @Test
     @WithAuthenticatedUser(authorities = ["packet.read"])
     fun `can get pageable packets`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
@@ -123,7 +151,6 @@ class PacketControllerTest : IntegrationTest() {
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packet:artefact-types:$idOfArtefactTypesPacket"])
     fun `findPacketMetadata returns metadata if user has correct specific permission`() {
-
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets/$idOfArtefactTypesPacket",
             HttpMethod.GET,
@@ -141,7 +168,7 @@ class PacketControllerTest : IntegrationTest() {
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
-        assertEquals(HttpStatus.UNAUTHORIZED, result.statusCode)
+        assertUnauthorized(result)
     }
 
     @Test

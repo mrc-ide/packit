@@ -61,7 +61,7 @@ class DeviceAuthRequestServiceTest {
         doAnswer {
             now
         }.`when`(mockClock).instant()
-        val sut = BaseDeviceAuthRequestService(mockAppConfig, mockClock)
+        val sut = BaseDeviceAuthRequestService(mockAppConfig, mockClock)F
         val oldRequest = sut.newDeviceAuthRequest()
         assertNotNull(sut.findRequest(oldRequest.deviceCode.value))
 

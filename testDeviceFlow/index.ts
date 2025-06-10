@@ -48,7 +48,7 @@ const testToken = async (access_token: string ) => {
         throw Error(`Response ${response.status} when testing access token`);
     }
     const data = await response.json();
-    const packetGroupNames = data.content[0]?.map((pg) => pg.name);
+    const packetGroupNames = data.content.map((pg) => pg.name);
     console.log("Used access token to successfully fetch first page of packet groups:")
     console.log(JSON.stringify(packetGroupNames));
 }

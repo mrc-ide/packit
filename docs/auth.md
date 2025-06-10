@@ -170,7 +170,7 @@ implemented in the `DeviceAuthController`. These are:
   request is validated. Once validated, the endpoint returns an access token for the validating user. 
 
 Some slight deviations from the spec:
-- The device authorization request endpoint is a POST, but does not take a body as `client_id` and `scope` are not used. 
+- The device authorization request endpoint is a POST as defined in spec, but does not take a body as `client_id` and `scope` are not used. 
 - The other endpoints expect `application/json` not `application/x-www-form-urlencoded` which appears to be expected in the spec.
 - Error responses conform to our usual format where the error detail (in this case one of the codes defined in the 
 spec, e.g. `access denied`) in nested under top level `error` property. 

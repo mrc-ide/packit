@@ -3,7 +3,7 @@ import { MemoryRouter } from "react-router-dom";
 import { Sidebar } from "../../../../app/components/contents/common/Sidebar";
 
 describe("Sidebar", () => {
-  it("should render sidebar items with children and correct classes", () => {
+  it("should render sidebar items with children and correct button type based on current route", () => {
     const sidebarItems = [
       {
         to: "/manage-roles",
@@ -22,8 +22,8 @@ describe("Sidebar", () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByRole("link", { name: "Manage Roles" })).toHaveClass("bg-muted hover:bg-muted active");
-    expect(screen.getByRole("link", { name: "Manage Users" })).toHaveClass("hover:bg-transparent hover:underline");
+    expect(screen.getByRole("link", { name: "Manage Roles" })).toHaveClass("bg-secondary");
+    expect(screen.getByRole("link", { name: "Manage Users" })).not.toHaveClass("bg-secondary");
     expect(screen.getByText("main content")).toBeVisible();
   });
 });

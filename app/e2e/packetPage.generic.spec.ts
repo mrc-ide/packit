@@ -42,7 +42,7 @@ test.describe("Packet page", () => {
       // Section should contain either no dependencies text, or at least one list item with link
       const noneDiv = await dependenciesDiv.locator(".italic");
       if ((await noneDiv.count()) > 0) {
-        await expect(noneDiv).toHaveText("This packet has no dependencies on other packets");
+        await expect(noneDiv).toHaveText("None");
       } else {
         const depItems = await dependenciesDiv.getByRole("listitem");
         await expect(await depItems.count()).toBeGreaterThan(0);
