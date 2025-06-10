@@ -53,8 +53,8 @@ class AppConfig(private val environment: Environment) {
     val lightModeEnabled: Boolean = requiredEnvValue("packit.branding.lightModeEnabled").toBoolean()
 
     init {
-        if (!darkModeEnabled && !lightModeEnabled) {
-            throw IllegalArgumentException("At least one theme must be enabled.")
+        require(darkModeEnabled || lightModeEnabled) {
+            "At least one theme must be enabled."
         }
     }
 }
