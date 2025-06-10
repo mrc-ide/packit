@@ -36,8 +36,6 @@ class BaseDeviceAuthRequestService(private val appConfig: AppConfig, private val
         requests.removeAll{ isExpired(it) }
     }
 
-    // TODO: this may become obsolete eventually - or maybe not - this should find the device request and let the
-    // controller issue the token.. if validated is true..
     override fun findRequest(deviceCode: String): DeviceAuthRequest? {
         return requests.firstOrNull { it.deviceCode.value == deviceCode }
     }
@@ -60,7 +58,7 @@ class BaseDeviceAuthRequestService(private val appConfig: AppConfig, private val
         // Find a validated request identified by the given device code, remove it from the list and
         // return the validating user so the controller can issue their access token
         // Throw 400 if not found, not validated or expired
-        val request = requests.firstOrNull { it.deviceCode.value == deviceCode }
+        val request = findRequest(deviceCode)
         if (request == null) {
             throw DeviceAuthTokenException("access_denied")
         }

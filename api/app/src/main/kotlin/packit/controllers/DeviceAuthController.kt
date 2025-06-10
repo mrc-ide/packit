@@ -17,7 +17,7 @@ import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
 import packit.service.DeviceAuthRequestService
 import kotlin.time.Duration.Companion.days
-
+// See docs/auth.md for details on Device Authorization Flow
 @RestController
 @RequestMapping("/deviceAuth")
 class DeviceAuthController(
@@ -29,12 +29,8 @@ class DeviceAuthController(
     private val EXPECTED_GRANT_TYPE = "urn:ietf:params:oauth:grant-type:device_code"
     private val expiresIn = appConfig.authExpiryDays.days.inWholeSeconds
 
-    // TODO: link to spec
-    // TODO: note somewhere - keeping this at a different base root from main "auth" just to keep it separate, but open to argument!
-    // TODO: note somewhere - seems odd for POST w no body, but that's what spec seems to suggest
     @PostMapping()
     fun deviceAuthRequest(): ResponseEntity<DeviceAuthDto> {
-        // TODO: note role of each request including this one
         val deviceAuthRequest = deviceAuthRequestService.newDeviceAuthRequest()
         val response = DeviceAuthDto(
             deviceAuthRequest.deviceCode.value,
