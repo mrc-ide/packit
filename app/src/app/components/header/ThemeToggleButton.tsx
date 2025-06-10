@@ -4,7 +4,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../Bas
 import { useTheme } from "../providers/ThemeProvider";
 
 export const ThemeToggleButton = () => {
-  const { theme, availableThemes, setCurrentTheme } = useTheme();
+  const { theme, availableThemes, setTheme } = useTheme();
 
   if (availableThemes.length <= 1) {
     return null; // Don't render the button if only one theme is available
@@ -23,7 +23,7 @@ export const ThemeToggleButton = () => {
             className="rounded-full"
             variant="ghost"
             size="icon"
-            onClick={() => setCurrentTheme(otherTheme)}
+            onClick={() => setTheme(otherTheme)}
           >
             {currentTheme === "dark" ? <MoonStar /> : <Sun />}
           </Button>

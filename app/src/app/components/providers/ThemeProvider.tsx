@@ -4,17 +4,17 @@ import { Theme, ThemeProviderProps, ThemeProviderState } from "./types/ThemeType
 import { useGetBrandingConfig } from "./hooks/useGetBrandingConfig";
 import { ErrorComponent } from "../contents/common/ErrorComponent";
 
-// defaultTheme is to be used if both themes are available and no user preference is set in local storage
-const defaultTheme = "system";
-// privilegedTheme is to be used if both themes are available, no user preference is set in local storage,
+// DEFAULT_THEME is to be used if both themes are available and no user preference is set in local storage
+const DEFAULT_THEME = "system";
+// PRIVILEGED_THEME is to be used if both themes are available, no user preference is set in local storage,
 // and there is no system preference
-const privilegedTheme = "light";
-const defaultAvailableThemes: Theme[] = ["dark", "light"];
+const PRIVILEGED_THEME = "light";
+const DEFAULT_AVAILABLE_THEMES: Theme[] = ["dark", "light"];
 
 const ThemeProviderContext = createContext<ThemeProviderState>({
-  availableThemes: defaultAvailableThemes,
-  theme: defaultTheme,
-  setCurrentTheme: () => null
+  availableThemes: DEFAULT_AVAILABLE_THEMES,
+  theme: DEFAULT_THEME,
+  setTheme: () => null
 });
 
 export const useTheme = () => {
@@ -31,7 +31,7 @@ const getSystemTheme = (): Theme => {
   } else if (window.matchMedia("(prefers-color-scheme: light)")?.matches) {
     return "light";
   } else {
-    return privilegedTheme;
+    return PRIVILEGED_THEME;
   }
 };
 
@@ -41,7 +41,7 @@ export const ThemeProvider = ({ children, ...props }: ThemeProviderProps) => {
   if (error) return <ErrorComponent message={error.message} error={error} />;
 
   const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem(LocalStorageKeys.THEME) as Theme) || defaultTheme
+    () => (localStorage.getItem(LocalStorageKeys.THEME) as Theme) || DEFAULT_THEME
   );
 
   const [availableThemes, setAvailableThemes] = useState<Theme[]>([]);
@@ -53,7 +53,7 @@ export const ThemeProvider = ({ children, ...props }: ThemeProviderProps) => {
       } else if (brandingConfig.lightModeEnabled && !brandingConfig.darkModeEnabled) {
         setAvailableThemes(["light"]);
       } else {
-        setAvailableThemes(defaultAvailableThemes);
+        setAvailableThemes(DEFAULT_AVAILABLE_THEMES);
       }
     }
   }, [brandingConfig, isLoading]);
@@ -72,7 +72,7 @@ export const ThemeProvider = ({ children, ...props }: ThemeProviderProps) => {
   useEffect(() => {
     const root = window.document.documentElement;
 
-    root.classList.remove(...defaultAvailableThemes);
+    root.classList.remove(...DEFAULT_AVAILABLE_THEMES);
 
     if (theme === "system") {
       const systemTheme = getSystemTheme();
@@ -85,7 +85,7 @@ export const ThemeProvider = ({ children, ...props }: ThemeProviderProps) => {
   const value = {
     availableThemes,
     theme,
-    setCurrentTheme: (theme: Theme) => {
+    setTheme: (theme: Theme) => {
       verifyThemeIsAvailable();
       setTheme(theme);
       localStorage.setItem(LocalStorageKeys.THEME, theme);
