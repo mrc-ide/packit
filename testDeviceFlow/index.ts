@@ -1,8 +1,17 @@
 import * as readline from "readline/promises";
+import { Agent, setGlobalDispatcher } from "undici";
 
 const GRANT_TYPE= "urn:ietf:params:oauth:grant-type:device_code";
 
 let packitApiUrl = process.env.PACKIT_API_URL;
+
+// Allow self-signed certs
+const agent = new Agent({
+    connect: {
+        rejectUnauthorized: false
+    }
+});
+setGlobalDispatcher(agent);
 
 const promptForPackitApiUrl = async () => {
     const rl = readline.createInterface({
