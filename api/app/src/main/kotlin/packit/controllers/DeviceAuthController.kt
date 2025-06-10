@@ -17,6 +17,7 @@ import packit.security.provider.JwtIssuer
 import packit.service.DeviceAuthRequestService
 import packit.service.UserService
 import kotlin.time.Duration.Companion.days
+
 // See docs/auth.md for details on Device Authorization Flow
 @RestController
 @RequestMapping("/deviceAuth")
