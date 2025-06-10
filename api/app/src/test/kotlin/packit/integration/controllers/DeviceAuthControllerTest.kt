@@ -16,14 +16,12 @@ import packit.integration.WithAuthenticatedUser
 import packit.model.User
 import packit.model.dto.DeviceAuthFetchToken
 import packit.repository.UserRepository
-import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-
 @TestPropertySource(properties = ["auth.method=basic"])
-class DeviceAuthControllerTest: IntegrationTest() {
+class DeviceAuthControllerTest : IntegrationTest() {
     private lateinit var testUser: User
 
     @Autowired
@@ -61,7 +59,10 @@ class DeviceAuthControllerTest: IntegrationTest() {
         )
     }
 
-    private fun getTokenResult(deviceCode: String, grantType: String = "urn:ietf:params:oauth:grant-type:device_code"): ResponseEntity<String> {
+    private fun getTokenResult(
+        deviceCode: String,
+        grantType: String = "urn:ietf:params:oauth:grant-type:device_code"
+    ): ResponseEntity<String> {
         val tokenRequestBody = jacksonObjectMapper().writeValueAsString(
             DeviceAuthFetchToken(deviceCode, grantType)
         )

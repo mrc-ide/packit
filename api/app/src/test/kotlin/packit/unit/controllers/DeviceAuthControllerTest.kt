@@ -22,13 +22,13 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DeviceAuthControllerTest {
-    val GRANT_TYPE = "urn:ietf:params:oauth:grant-type:device_code"
+    val grantType = "urn:ietf:params:oauth:grant-type:device_code"
     val testValidatingUserPrincipal = UserPrincipal("testuser", "Test User", mutableListOf())
     val testValidatingUser = User("testuser", displayName = "Test User", disabled = false, userSource = "basic")
 
     @Test
     fun `can request device flow`() {
-        val mockAppConfig  = mock<AppConfig> {
+        val mockAppConfig = mock<AppConfig> {
             on { authDeviceFlowExpirySeconds } doReturn 100
             on { authDeviceFlowVerificationUri } doReturn "http://example.com/device"
         }
@@ -43,7 +43,7 @@ class DeviceAuthControllerTest {
             on { newDeviceAuthRequest() } doReturn testDeviceAuthRequest
         }
 
-        val sut = DeviceAuthController(mockAppConfig, mockDevicAuthRequestService, mock(),  mock())
+        val sut = DeviceAuthController(mockAppConfig, mockDevicAuthRequestService, mock(), mock())
         val result = sut.deviceAuthRequest()
         assertEquals(HttpStatus.OK, result.statusCode)
         val resultBody = result.body
@@ -62,7 +62,7 @@ class DeviceAuthControllerTest {
             on { getByUsername(testValidatingUserPrincipal.name) } doReturn testValidatingUser
         }
 
-        val sut  = DeviceAuthController(mock(), mockDeviceAuthRequestService, mockUserService, mock())
+        val sut = DeviceAuthController(mock(), mockDeviceAuthRequestService, mockUserService, mock())
         val result = sut.validateDeviceAuthRequest(userCode, testValidatingUserPrincipal)
         assertEquals(HttpStatus.OK, result.statusCode)
         verify(mockDeviceAuthRequestService).validateRequest(userCode, testValidatingUser)
@@ -78,12 +78,12 @@ class DeviceAuthControllerTest {
         val mockJwtIssuer = mock<JwtIssuer> {
             on { issue(testValidatingUser) } doReturn testToken
         }
-        val mockAppConfig  = mock<AppConfig> {
+        val mockAppConfig = mock<AppConfig> {
             on { authExpiryDays } doReturn 2
         }
 
-        val sut  = DeviceAuthController(mockAppConfig, mockDeviceAuthRequestService, mock(), mockJwtIssuer)
-        val result = sut.fetchToken(DeviceAuthFetchToken(deviceCode, GRANT_TYPE))
+        val sut = DeviceAuthController(mockAppConfig, mockDeviceAuthRequestService, mock(), mockJwtIssuer)
+        val result = sut.fetchToken(DeviceAuthFetchToken(deviceCode, grantType))
         assertEquals(HttpStatus.OK, result.statusCode)
         val resultBody = result.body
         assertEquals(testToken, resultBody!!.accessToken)

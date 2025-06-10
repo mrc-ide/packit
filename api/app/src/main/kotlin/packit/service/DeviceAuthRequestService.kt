@@ -18,13 +18,20 @@ interface DeviceAuthRequestService {
 }
 
 @Service
-class BaseDeviceAuthRequestService(private val appConfig: AppConfig, private val clock: Clock): DeviceAuthRequestService {
+class BaseDeviceAuthRequestService(
+    private val appConfig: AppConfig,
+    private val clock: Clock
+) : DeviceAuthRequestService {
     private val requests: MutableList<DeviceAuthRequest> = mutableListOf()
+
+    companion object {
+        const val DEVICE_CODE_LENGTH = 64
+    }
 
     override fun newDeviceAuthRequest(): DeviceAuthRequest {
         val req = DeviceAuthRequest(
             UserCode(), // defaults to 8 * letter only
-            DeviceCode(64),
+            DeviceCode(DEVICE_CODE_LENGTH),
             clock.instant().plusSeconds(appConfig.authDeviceFlowExpirySeconds),
             null
         )
@@ -33,7 +40,7 @@ class BaseDeviceAuthRequestService(private val appConfig: AppConfig, private val
     }
 
     override fun cleanUpExpiredRequests() {
-        requests.removeAll{ isExpired(it) }
+        requests.removeAll { isExpired(it) }
     }
 
     override fun findRequest(deviceCode: String): DeviceAuthRequest? {
@@ -77,5 +84,5 @@ class BaseDeviceAuthRequestService(private val appConfig: AppConfig, private val
         requests.remove(request)
     }
 
-    private fun isExpired(request: DeviceAuthRequest): Boolean  = request.expiryTime < clock.instant()
+    private fun isExpired(request: DeviceAuthRequest): Boolean = request.expiryTime < clock.instant()
 }
