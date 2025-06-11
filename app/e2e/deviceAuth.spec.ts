@@ -11,13 +11,13 @@ test.describe("Device auth", () => {
         expect(user_code.length).toBe(9);
         expect(verification_uri).toBe(baseURL + "device");
 
-        // 2. Log into front end and validate user code
+        // 2. Validate user code at /device page
         await page.goto("/device");
         await page.getByRole("textbox").fill(user_code);
         await page.getByRole("button", { name: /Continue/ }).click();
         await expect(await page.getByText("Success!")).toBeVisible();
 
-        // 3. Get access token for device code
+        // 3. To check that validation has succeeded, get access token for device code
         const tokenResponse = await apiUtils.post("/deviceAuth/token", {
             device_code,
             grant_type: "urn:ietf:params:oauth:grant-type:device_code" // required grant type
@@ -31,5 +31,12 @@ test.describe("Device auth", () => {
         expect(groupsResponse.status).toBe(200);
         const { content } = await groupsResponse.json();
         expect(content.length).toBeGreaterThan(0);
+    });
+
+    test("can see error message when enter invalid user code", async ({page}) => {
+        await page.goto("/device");
+        await page.getByRole("textbox").fill("BAD-CODE-");
+        await page.getByRole("button", { name: /Continue/ }).click();
+        await expect(await page.getByText("Code has expired or is not recognised.")).toBeVisible();
     });
 });
