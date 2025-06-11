@@ -10,7 +10,7 @@ export const DeviceLogin = () => {
 
     const USER_CODE_LENGTH = 9;
 
-    const [userCode, setUserCode] = useState('');
+    const [userCode, setUserCode] = useState("");
     const [resultStatus, setResultStatus] = useState<HttpStatus | null>(null);
 
     const handleChange = (newValue: string) => {
@@ -28,6 +28,9 @@ export const DeviceLogin = () => {
             }
         });
         setResultStatus(res.status as HttpStatus);
+        if (res.status != HttpStatus.OK) {
+            setUserCode("");
+        }
     };
 
     const handleKeyDown = async (key: string) => {
@@ -76,6 +79,9 @@ export const DeviceLogin = () => {
 
                 {resultStatus == HttpStatus.BadRequest && (
                     <p className="text-destructive">Code has expired or is not recognised.</p>
+                )}
+                {resultStatus !== null && resultStatus != HttpStatus.OK && resultStatus != HttpStatus.BadRequest && (
+                    <p className="text-destructive">An unexpected error occurred.</p>
                 )}
             </div>
         </>

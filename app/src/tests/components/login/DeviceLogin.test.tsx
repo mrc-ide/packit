@@ -51,6 +51,29 @@ describe("DeviceLogin", () => {
            expect(screen.queryByText(errorText)).toBeInTheDocument();
        });
        expect(textbox).toBeInTheDocument();
+       // should have cleared text value
+       expect(textbox).toHaveValue("");
+       expect(button).toBeInTheDocument();
+   });
+
+   it("can see error message on unexpected status code", async () => {
+       server.use(
+           rest.post(`${appConfig.apiUrl()}/deviceAuth/validate`, (req, res, ctx) => {
+               return res(ctx.status(500), ctx.json({error: { detail: "test_error" }}));
+           })
+       );
+       renderComponent();
+       const button = getButton();
+       const textbox = getTextBox();
+       const errorText = /An unexpected error occurred./;
+       expect(screen.queryByText(errorText)).toBeNull;
+       userEvent.type(textbox, "ABCD-EFGH");
+       userEvent.click(button);
+       await waitFor(() => {
+           expect(screen.queryByText(errorText)).toBeInTheDocument();
+       });
+       expect(textbox).toBeInTheDocument();
+       expect(textbox).toHaveValue("");
        expect(button).toBeInTheDocument();
    });
 
