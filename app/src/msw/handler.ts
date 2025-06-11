@@ -11,6 +11,7 @@ import { runnerHandlers } from "./handlers/runnerHandlers";
 import { brandLogoHandlers } from "./handlers/brandLogoHandlers";
 import { usersRolesHandler } from "./handlers/usersRolesHandler";
 import { userHandlers } from "./handlers/userHandlers";
+import {deviceAuthHandlers} from "./handlers/deviceAuthHandlers";
 
 // catch any missed requests in tests
 const defaultHandlers = [
@@ -33,5 +34,6 @@ export const handlers = [
   ...tagHandlers,
   ...userHandlers,
   ...usersRolesHandler,
+  ...deviceAuthHandlers,
   ...defaultHandlers
 ];

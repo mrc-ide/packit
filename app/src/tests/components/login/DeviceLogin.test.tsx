@@ -1,0 +1,86 @@
+import {render, screen, waitFor} from "@testing-library/react";
+import {DeviceLogin} from "../../../app/components/login";
+import userEvent from "@testing-library/user-event";
+import {server} from "../../../msw/server";
+import {rest} from "msw";
+import appConfig from "../../../config/appConfig";
+
+describe("DeviceLogin", () => {
+   const renderComponent = () => {
+       render(<DeviceLogin />);
+   };
+
+   const getButton = () => screen.getByRole("button", {name: /Continue/});
+   const getTextBox = () => screen.getByRole("textbox", {});
+
+    const successText = /Success! You are now logged in and can access Packit API from your console./;
+
+    it("can submit valid code and see success message", async () => {
+        renderComponent();
+        const button = getButton();
+        const textbox = getTextBox();
+        expect(button).not.toBeEnabled();
+        expect(screen.queryByText(successText)).toBeNull;
+        expect(textbox).toHaveFocus();
+        userEvent.type(textbox, "ABCD-EFGH");
+        expect(button).toBeEnabled();
+
+        userEvent.click(button);
+
+        await waitFor(() => {
+            expect(screen.queryByText(successText)).toBeInTheDocument();
+        });
+        expect(textbox).not.toBeInTheDocument();
+        expect(button).not.toBeInTheDocument();
+   });
+
+   it("can submit invalid code and see error message", async () => {
+       server.use(
+           rest.post(`${appConfig.apiUrl()}/deviceAuth/validate`, (req, res, ctx) => {
+               return res(ctx.status(400), ctx.json({error: { detail: "test_error" }}));
+           })
+       );
+       renderComponent();
+       const button = getButton();
+       const textbox = getTextBox();
+       const errorText = /Code has expired or is not recognised./;
+       expect(screen.queryByText(errorText)).toBeNull;
+       userEvent.type(textbox, "ABCD-EFGH");
+       userEvent.click(button);
+       await waitFor(() => {
+           expect(screen.queryByText(errorText)).toBeInTheDocument();
+       });
+       expect(textbox).toBeInTheDocument();
+       expect(button).toBeInTheDocument();
+   });
+
+   it("can press Enter to submit code, but only when it is complete", async () => {
+       renderComponent();
+       const textbox = getTextBox();
+       userEvent.type(textbox, "ABCD-{enter}");
+       // code should not have been submitted
+       await expect(
+           screen.findByText(successText, {}, { timeout: 500 })
+       ).rejects.toThrow();
+
+       userEvent.type(textbox, "ABCD-EFGH{enter}");
+       // code should have been submitted
+       await waitFor(() => {
+           expect(screen.queryByText(successText)).toBeInTheDocument();
+       });
+   });
+
+   it("cannot enter invalid characters", () => {
+       renderComponent();
+       const textbox = getTextBox();
+       userEvent.type(textbox, "A!1-_B");
+       expect(textbox).toHaveValue("A-B");
+   });
+
+    it("lower case letters are converted to upper case", () => {
+        renderComponent();
+        const textbox = getTextBox();
+        userEvent.type(textbox, "Abcd-Efgh");
+        expect(textbox).toHaveValue("ABCD-EFGH");
+    });
+});
