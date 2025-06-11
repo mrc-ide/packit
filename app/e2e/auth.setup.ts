@@ -1,8 +1,9 @@
 import { test as setup, expect } from "./tagCheckFixture";
 import { Page } from "@playwright/test";
+import {PackitApiUtils} from "./apiUtils";
 
-const authMethodIsBasic = async (apiURL: string) => {
-  const response = await fetch(`${apiURL}/auth/config`);
+const authMethodIsBasic = async (apiUtils: PackitApiUtils) => {
+  const response = await apiUtils.get("/auth/config");
   if (!response.ok) {
     throw Error(`Unable to get auth type from api. Status was ${response.status}`);
   }
@@ -31,7 +32,7 @@ const doBasicLogin = async (user: string, password: string, page: Page) => {
   await page.getByRole("button", { name: /Log in/i }).click();
 };
 
-const doGithubLogin = async (page: Page, apiURL: string) => {
+const doGithubLogin = async (page: Page, apiUtils: PackitApiUtils) => {
   // github PAT may be set in env, otherwise login to github interactively
   let githubToken = process.env.GITHUB_ACCESS_TOKEN;
 
@@ -53,14 +54,8 @@ const doGithubLogin = async (page: Page, apiURL: string) => {
     githubToken = tokenAuthentication.token;
   }
 
-  const packitResponse = await fetch(`${apiURL}/auth/login/api`, {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ token: githubToken })
-  });
+  const packitResponse = await apiUtils.post("/auth/login/api", JSON.stringify({ token: githubToken }));
+
   if (!packitResponse.ok) {
     throw Error(`Unable to get token from api. Status was ${packitResponse.status}`);
   }
@@ -76,13 +71,13 @@ setup("authenticate", async ({ page, baseURL }, testInfo) => {
   console.log(`Authenticating with ${baseURL}`);
   // If baseURL is default localhost (used by CI),  we assume that we're running locally with api on
   // port 8080, otherwise that api is accessible from baseURL/api
-  const apiURL = baseURL === "http://localhost:3000/" ? "http://localhost:8080" : `${baseURL}/packit/api`;
-  const basicAuth = await authMethodIsBasic(apiURL);
+  const apiUtils = new PackitApiUtils(baseURL);
+  const basicAuth = await authMethodIsBasic(apiUtils);
   if (basicAuth) {
     const [basicUser, basicPassword] = getBasicCredentials();
     await doBasicLogin(basicUser, basicPassword, page); // get credentials interactively
   } else {
-    await doGithubLogin(page, apiURL);
+    await doGithubLogin(page, apiUtils);
   }
 
   // Check login has succeeded - admin user should have user access role
