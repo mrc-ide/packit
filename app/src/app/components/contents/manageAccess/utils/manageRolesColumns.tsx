@@ -3,7 +3,6 @@ import { EllipsisVertical, Trash2 } from "lucide-react";
 import { KeyedMutator } from "swr";
 import { constructPermissionName } from "../../../../../lib/constructPermissionName";
 import { Button } from "../../../Base/Button";
-import { ScrollArea } from "../../../Base/ScrollArea";
 import { DeleteUserOrRole } from "../DeleteUserOrRole";
 import { UpdateRoleDropDownMenu } from "../manageRoleActions/UpdateRoleDropDownMenu";
 import { RoleWithRelationships } from "../types/RoleWithRelationships";
@@ -11,7 +10,7 @@ import { UserWithPermissions } from "../types/UserWithPermissions";
 
 const columnHelper = createColumnHelper<RoleWithRelationships>();
 
-export const roleDefaultColumns = (scrollAreaHeightClass = "h-14") => [
+export const roleDefaultColumns = (maxHeightLimit = 20) => [
   columnHelper.accessor("name", {
     header: "Role",
     cell: ({ getValue }) => {
@@ -24,15 +23,16 @@ export const roleDefaultColumns = (scrollAreaHeightClass = "h-14") => [
       const users = getValue();
 
       return (
-        <ScrollArea className={scrollAreaHeightClass} type="auto">
-          <div className="flex flex-wrap gap-1 italic text-xs pl-0.5">
-            {users?.length === 0
-              ? "None"
-              : users.map((user, index) => (
-                  <div key={user.id}>{index === users.length - 1 ? user.username : user.username + ", "}</div>
-                ))}
-          </div>
-        </ScrollArea>
+        <div
+          className={`flex flex-wrap gap-1 italic text-xs pl-0.5 overflow-auto 
+            max-h-${maxHeightLimit} [&::-webkit-scrollbar]:w-2`}
+        >
+          {users?.length === 0
+            ? "None"
+            : users.map((user, index) => (
+                <div key={user.id}>{index === users.length - 1 ? user.username : user.username + ", "}</div>
+              ))}
+        </div>
       );
     }
   })
@@ -40,28 +40,30 @@ export const roleDefaultColumns = (scrollAreaHeightClass = "h-14") => [
 
 export const setupManageRolesColumns = (
   mutate: KeyedMutator<RoleWithRelationships[]>,
-  users: UserWithPermissions[]
+  users: UserWithPermissions[],
+  maxRowHeight = 20
 ) => [
-  ...roleDefaultColumns(),
+  ...roleDefaultColumns(maxRowHeight),
   columnHelper.accessor("rolePermissions", {
     header: "Permissions",
     cell: ({ getValue }) => {
       const permissions = getValue();
 
       return (
-        <ScrollArea className="h-14" type="auto">
-          <div className="flex flex-wrap italic gap-0.5  text-xs pl-0.5">
-            {permissions?.length === 0
-              ? "None"
-              : permissions.map((permission, index) => (
-                  <div key={permission.id}>
-                    {index === permissions.length - 1
-                      ? constructPermissionName(permission)
-                      : constructPermissionName(permission) + ","}
-                  </div>
-                ))}
-          </div>
-        </ScrollArea>
+        <div
+          className={`flex flex-wrap italic gap-0.5 text-xs pl-0.5 
+            overflow-auto max-h-${maxRowHeight} [&::-webkit-scrollbar]:w-2`}
+        >
+          {permissions?.length === 0
+            ? "None"
+            : permissions.map((permission, index) => (
+                <div key={permission.id}>
+                  {index === permissions.length - 1
+                    ? constructPermissionName(permission)
+                    : constructPermissionName(permission) + ","}
+                </div>
+              ))}
+        </div>
       );
     }
   }),

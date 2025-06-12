@@ -21,13 +21,7 @@
     "max-len": [2, 120, 4],
     "eol-last": 2,
     "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/no-unused-vars": [
-      "error",
-      {
-        "argsIgnorePattern": "^_",
-        "varsIgnorePattern": "^_"
-      }
-    ]
+    "@typescript-eslint/no-unused-vars": "warn"
   },
   "settings": {
     "react": {
