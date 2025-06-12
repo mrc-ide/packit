@@ -39,7 +39,7 @@ class PinServiceTest {
         TimeMetadata(
             Instant.now().minusSeconds(1000).epochSecond.toDouble(),
             Instant.now().minusSeconds(1000).epochSecond.toDouble(),
-            ),
+        ),
         emptyMap(),
         emptyList()
     )
@@ -59,11 +59,13 @@ class PinServiceTest {
 
     @Test
     fun `findAllPinnedPackets should return sorted list of pinned packets`() {
-        whenever(pinRepository.findAll()).thenReturn(listOf(
-            Pin(UUID.randomUUID(), newPacket.id),
-            Pin(UUID.randomUUID(), oldPacket.id),
-            Pin(UUID.randomUUID(), middlePacket.id),
-        ))
+        whenever(pinRepository.findAll()).thenReturn(
+            listOf(
+                Pin(UUID.randomUUID(), newPacket.id),
+                Pin(UUID.randomUUID(), oldPacket.id),
+                Pin(UUID.randomUUID(), middlePacket.id),
+            )
+        )
         whenever(packetService.getMetadataBy(newPacket.id)).thenReturn(newPacket)
         whenever(packetService.getMetadataBy(oldPacket.id)).thenReturn(oldPacket)
         whenever(packetService.getMetadataBy(middlePacket.id)).thenReturn(middlePacket)
