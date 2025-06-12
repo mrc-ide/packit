@@ -4,3 +4,5 @@
 packit.iml
 app/test-results
 app/playwright-report
+testDeviceFlow/node_modules
+testDeviceFlow/index.js
