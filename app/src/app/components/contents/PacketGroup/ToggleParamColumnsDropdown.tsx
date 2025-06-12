@@ -32,7 +32,7 @@ export const ToggleParamColumnsDropdownColumns = ({
       <DropdownMenuTrigger asChild disabled={allParametersKeys.size === 0}>
         <Button variant="outline" size="sm" className="ml-auto flex gap-1">
           <Settings2 className="h-5 w-5" />
-          Parameter Columns
+          Parameter columns
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

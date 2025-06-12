@@ -69,10 +69,10 @@ export const UpdateRoleUsersForm = ({ role, users, mutate, setOpen }: UpdateRole
           name="usernamesToAdd"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Users to Add</FormLabel>
+              <FormLabel>Users to add</FormLabel>
               <MultiSelector onValuesChange={field.onChange} values={field.value}>
                 <MultiSelectorTrigger>
-                  <MultiSelectorInput className="text-sm" placeholder="Select Usernames to Add" />
+                  <MultiSelectorInput className="text-sm" placeholder="Select usernames to add" />
                 </MultiSelectorTrigger>
                 <MultiSelectorContent>
                   <MultiSelectorList>
@@ -92,10 +92,10 @@ export const UpdateRoleUsersForm = ({ role, users, mutate, setOpen }: UpdateRole
           name="usernamesToRemove"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Users to Remove</FormLabel>
+              <FormLabel>Users to remove</FormLabel>
               <MultiSelector onValuesChange={field.onChange} values={field.value}>
                 <MultiSelectorTrigger>
-                  <MultiSelectorInput className="text-sm" placeholder="Select Usernames to Remove" />
+                  <MultiSelectorInput className="text-sm" placeholder="Select usernames to remove" />
                 </MultiSelectorTrigger>
                 <MultiSelectorContent>
                   <MultiSelectorList>
