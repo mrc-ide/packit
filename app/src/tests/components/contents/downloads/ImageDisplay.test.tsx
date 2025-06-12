@@ -21,7 +21,7 @@ describe("image display component", () => {
 
   const renderComponent = () => {
     return render(
-      <SWRConfig value={{ dedupingInterval: 0 }}>
+      <SWRConfig value={{ provider: () => new Map() }}>
         <MemoryRouter initialEntries={["/"]}>
           <Routes>
             <Route element={<Outlet context={{ packet }} />}>

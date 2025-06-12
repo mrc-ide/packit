@@ -26,7 +26,7 @@ const reportFile = mockPacket.files.filter((file) => file.path === "report.html"
 
 const renderComponent = (packet?: PacketMetadata) => {
   render(
-    <SWRConfig value={{ dedupingInterval: 0 }}>
+    <SWRConfig value={{ provider: () => new Map() }}>
       <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/downloads`]}>
         <Routes>
           <Route element={<Outlet context={{ packet }} />}>

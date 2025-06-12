@@ -32,7 +32,7 @@ describe("ZipDownloadButton", () => {
 
   const renderComponent = (files = filesToDownload) => {
     return render(
-      <SWRConfig value={{ dedupingInterval: 0 }}>
+      <SWRConfig value={{ provider: () => new Map() }}>
         <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/downloads`]}>
           <Routes>
             <Route element={<PacketOutlet />}>

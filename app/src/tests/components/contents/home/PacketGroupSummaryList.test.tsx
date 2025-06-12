@@ -18,7 +18,7 @@ jest.mock("../../../../lib/localStorageManager", () => ({
 describe("PacketList test", () => {
   const renderComponent = () =>
     render(
-      <SWRConfig value={{ dedupingInterval: 0 }}>
+      <SWRConfig value={{ provider: () => new Map() }}>
         <MemoryRouter>
           <UserProvider>
             <PacketGroupSummaryList filterByName="" pageNumber={0} pageSize={10} setPageNumber={jest.fn()} />

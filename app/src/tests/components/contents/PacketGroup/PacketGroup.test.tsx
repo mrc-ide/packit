@@ -13,7 +13,7 @@ describe("PacketGroup", () => {
   const latestPacketDescription = mockPacket.custom?.orderly.description.long as string;
   const renderComponent = (packetGroup: string = packetGroupName) =>
     render(
-      <SWRConfig value={{ dedupingInterval: 0 }}>
+      <SWRConfig value={{ provider: () => new Map() }}>
         <MemoryRouter initialEntries={[`/${packetGroup}`]}>
           <Routes>
             <Route path="/:packetName" element={<PacketGroup />} />

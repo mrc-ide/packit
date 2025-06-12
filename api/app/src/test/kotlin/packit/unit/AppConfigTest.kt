@@ -28,6 +28,8 @@ class AppConfigTest {
         "auth.githubAPITeam" to "githubAPITeam",
         "cors.allowedOrigins" to "http://localhost, https://production",
         "packit.defaultRoles" to "ADMIN,USER",
+        "packit.branding.darkModeEnabled" to "true",
+        "packit.branding.lightModeEnabled" to "false"
     )
     private val mockEnv = MockEnvironment()
 
@@ -68,25 +70,38 @@ class AppConfigTest {
         assertEquals(sut.brandLogoAltText, null)
         assertEquals(sut.brandLogoFilename, null)
         assertEquals(sut.brandLogoLink, null)
+        assertTrue(sut.darkModeEnabled)
+        assertFalse(sut.lightModeEnabled)
     }
 
     @Test
     fun `ensure optional env variables are set in config`() {
-        val mockEnv2 = MockEnvironment()
+        val mockEnvWithOptionalVariables = MockEnvironment()
 
         requiredEnvVars.forEach { (key, value) ->
-            mockEnv2.setProperty(key, value)
+            mockEnvWithOptionalVariables.setProperty(key, value)
         }
 
-        mockEnv2.setProperty("packit.branding.logoAltText", "This is the logo for our instance")
-        mockEnv2.setProperty("packit.branding.logoFilename", "newest-logo.png")
-        mockEnv2.setProperty("packit.branding.logoLink", "https://example.org/example")
+        mockEnvWithOptionalVariables.setProperty("packit.branding.logoAltText", "This is the logo for our instance")
+        mockEnvWithOptionalVariables.setProperty("packit.branding.logoFilename", "newest-logo.png")
+        mockEnvWithOptionalVariables.setProperty("packit.branding.logoLink", "https://example.org/example")
 
-        val sut = AppConfig(mockEnv2)
+        val sut = AppConfig(mockEnvWithOptionalVariables)
 
         assertEquals(sut.brandLogoAltText, "This is the logo for our instance")
         assertEquals(sut.brandLogoFilename, "newest-logo.png")
         assertEquals(sut.brandLogoLink, "https://example.org/example")
+    }
+
+    @Test
+    fun `ensure at least one theme is enabled`() {
+        val invalidMockEnv = MockEnvironment()
+
+        invalidMockEnv.setProperty("packit.branding.darkModeEnabled", "false")
+        invalidMockEnv.setProperty("packit.branding.lightModeEnabled", "false")
+        assertThrows<IllegalArgumentException> {
+            AppConfig(invalidMockEnv)
+        }
     }
 
     @Test
