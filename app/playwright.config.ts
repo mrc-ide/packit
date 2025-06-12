@@ -56,37 +56,37 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: process.env.CI
     ? [
-        setupProject,
-        {
-          name: "chromium",
-          use: {
-            ...devices["Desktop Chrome"],
-            // Use prepared auth state.
-            storageState: authStorageStateFile
-          },
-          dependencies: ["setup"]
+      setupProject,
+      {
+        name: "chromium",
+        use: {
+          ...devices["Desktop Chrome"],
+          // Use prepared auth state.
+          storageState: authStorageStateFile
         },
-        {
-          name: "webkit",
-          use: {
-            ...devices["Desktop Safari"],
-            // Use prepared auth state.
-            storageState: authStorageStateFile
-          },
-          dependencies: ["setup"]
-        }
-      ]
+        dependencies: ["setup"]
+      },
+      {
+        name: "webkit",
+        use: {
+          ...devices["Desktop Safari"],
+          // Use prepared auth state.
+          storageState: authStorageStateFile
+        },
+        dependencies: ["setup"]
+      }
+    ]
     : /* Just test on Chrome when running on local dev */
-      [
-        setupProject,
-        {
-          name: "chromium",
-          use: {
-            ...devices["Desktop Chrome"],
-            // Use prepared auth state.
-            storageState: authStorageStateFile
-          },
-          dependencies: ["setup"]
-        }
-      ]
+    [
+      setupProject,
+      {
+        name: "chromium",
+        use: {
+          ...devices["Desktop Chrome"],
+          // Use prepared auth state.
+          storageState: authStorageStateFile
+        },
+        dependencies: ["setup"]
+      }
+    ]
 });
