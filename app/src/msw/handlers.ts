@@ -6,7 +6,7 @@ import { packetGroupSummaryHandlers } from "./handlers/packetGroupSummaryHandler
 import { packetHandlers } from "./handlers/packetHandlers";
 import { loginHandlers } from "./handlers/loginHandlers";
 import { manageRolesHandlers } from "./handlers/manageRolesHandlers";
-import { tagHandlers } from "./handlers/tagHandler";
+import { tagHandlers } from "./handlers/tagHandlers";
 import { runnerHandlers } from "./handlers/runnerHandlers";
 import { brandLogoHandlers } from "./handlers/brandLogoHandlers";
 import { usersRolesHandler } from "./handlers/usersRolesHandler";

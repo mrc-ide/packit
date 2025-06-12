@@ -41,10 +41,6 @@ export interface Packet {
   endTime: number;
 }
 
-export interface PacketTableProps {
-  data: Packet[];
-}
-
 export interface PacketMetadata {
   id: string;
   name: string;
