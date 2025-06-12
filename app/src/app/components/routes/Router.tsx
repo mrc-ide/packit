@@ -22,7 +22,7 @@ export const Router = () => {
         </Route>
         {/* <Route path="accessibility" element={<Accessibility />} /> */}
         <Route path="redirect" element={<Redirect />} />
-        <Route element={< ProtectedRoute />}>
+        <Route element={<ProtectedRoute />}>
           <Route path="/device" element={<DeviceLogin />}></Route>
         </Route>
         <Route element={<ProtectedRoute />}>

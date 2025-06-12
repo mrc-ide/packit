@@ -1,6 +1,6 @@
 import { test as setup, expect } from "./tagCheckFixture";
 import { Page } from "@playwright/test";
-import {PackitApiUtils} from "./apiUtils";
+import { PackitApiUtils } from "./apiUtils";
 
 const authMethodIsBasic = async (apiUtils: PackitApiUtils) => {
   const response = await apiUtils.get("/auth/config");
