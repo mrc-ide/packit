@@ -14,7 +14,11 @@ Now this super user can be used to create users and log in initially.
 
 ## Pin a packet
 
-`./scripts/create-packet-pin --packet-id <id of an existing packet>`
+`./bin/create-packet-pin --packet-id <id of an existing packet>`
+
+## Unpin a packet
+
+`./bin/delete-packet-pin --packet-id <id of an existing packet>`
 
 ## Development: Run direct postgres query.
 This can be to insert test data or just for testing. 

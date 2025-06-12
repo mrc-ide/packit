@@ -25,10 +25,7 @@ echo "Creating pin for packet id: $PACKET_ID"
 if ! psql -U packituser -d packit \
     --single-transaction \
     -v ON_ERROR_STOP=on \
-    -v "packet=$PACKET_ID" <<EOF
-INSERT INTO "pin" (packet_id)
-VALUES (:'packet');
-EOF
+    -c "INSERT INTO \"pin\" (packet_id) VALUES ('$PACKET_ID');"
 then
     echo "Error: Failed to execute psql command for packet id: $PACKET_ID"
     exit 1

@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -eux
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --packet-id)
+            PACKET_ID="$2"
+            shift 2
+            ;;
+        *)
+            echo "Invalid argument: $1"
+            exit 1
+            ;;
+    esac
+done
+
+if [ -z "${PACKET_ID:-}" ]; then
+    echo "Error: --packet-id argument is required."
+    exit 1
+fi
+
+echo "Checking if pin exists for packet id: $PACKET_ID"
+
+if ! PIN_EXISTS_RESULT=$(psql -U packituser -d packit \
+    -tA \
+    -v ON_ERROR_STOP=on \
+    -c "SELECT 1 FROM \"pin\" WHERE packet_id = '$PACKET_ID' LIMIT 1;")
+then
+    echo "Error: psql command failed while checking for pin for packet id: $PACKET_ID"
+    exit 1
+fi
+
+if [ -z "$PIN_EXISTS_RESULT" ] || [ "$PIN_EXISTS_RESULT" != "1" ]; then
+    echo "Error: Pin not found for packet id: $PACKET_ID"
+    exit 1
+fi
+
+echo "Pin for packet_id '$PACKET_ID' found. Proceeding to delete pin."
+
+if ! psql -U packituser -d packit \
+    -v ON_ERROR_STOP=on \
+    -c "DELETE FROM \"pin\" WHERE packet_id = '$PACKET_ID';"
+then
+    echo "Error: psql command failed while deleting pin for packet id: $PACKET_ID"
+    exit 1
+fi
+
+echo "Successfully deleted pin for packet id: $PACKET_ID"
+
