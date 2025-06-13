@@ -42,6 +42,8 @@ describe("ManageUsers", () => {
     await waitFor(() => {
       mockUsersWithPermissions.forEach((user) => {
         expect(screen.getAllByText(user.username, { exact: false })[0]).toBeVisible();
+        expect(screen.getAllByText(user.email ?? "no email", { exact: false })[0]).toBeVisible();
+        expect(screen.getAllByText(user.displayName ?? "no display name", { exact: false })[0]).toBeVisible();
         user.specificPermissions.forEach((permission) => {
           expect(screen.getAllByText(permission.permission, { exact: false })[0]).toBeVisible();
         });
@@ -74,7 +76,7 @@ describe("ManageUsers", () => {
     mockAuthConfig.mockReturnValue({ enableBasicLogin: false });
     renderComponent();
 
-    const filterInput = await screen.findByPlaceholderText(/Search by user or role/i);
+    const filterInput = await screen.findByPlaceholderText(/Search by username or role/i);
     userEvent.type(filterInput, "x@gmail");
 
     await waitFor(() => {
@@ -90,7 +92,7 @@ describe("ManageUsers", () => {
     mockAuthConfig.mockReturnValue({ enableBasicLogin: false });
     renderComponent();
 
-    const filterInput = await screen.findByPlaceholderText(/Search by user or role/i);
+    const filterInput = await screen.findByPlaceholderText(/Search by username or role/i);
     userEvent.type(filterInput, "x@gmail");
 
     await waitFor(() => {
@@ -103,7 +105,7 @@ describe("ManageUsers", () => {
       expect(filterInput).toHaveValue("");
     });
     mockUsersWithPermissions.forEach((user) => {
-      expect(screen.getByText(user.username)).toBeVisible();
+      expect(screen.getAllByText(user.username)[0]).toBeVisible();
     });
   });
 
