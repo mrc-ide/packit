@@ -24,14 +24,31 @@ When determining a user's effective permissions, the system evaluates:
 
 ### Global Permissions
 
-These permissions apply across the entire application and cannot be scoped to specific resources.
+These permissions apply across the entire application:
 
-| Permission      | Description                    | Capabilities                                                                                                                                                            |
-| --------------- | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `user.manage`   | Complete administrative access | • Manage users and roles<br>• Assign permissions to users and roles<br>• Manage read permissions on packets and packet groups<br>• Automatic read access to all packets |
-| `packet.run`    | Execute packet groups          | • Access packet runner interface<br>• Run any packet groups<br>• View packet run logs                                                                                   |
-| `outpack.read`  | Read outpack server data       | • Make read calls to the outpack server                                                                                                                                 |
-| `outpack.write` | Write outpack server data      | • Make write calls to the outpack server<br>• Includes `outpack.read` capabilities                                                                                      |
+#### `user.manage`
+
+- **Purpose**: Complete administrative access
+- **Capabilities**:
+  - Manage users and roles
+  - Assign permissions to users and roles
+  - Manage read permissions on packets and packet groups
+  - Automatically includes read access to all packets
+
+#### `packet.run`
+
+- **Purpose**: Run packet groups to create new packets
+- **Capabilities**:
+  - Access the packet runner interface
+  - Run any packet groups
+  - View logs of packet runs
+
+#### `outpack.read` and `outpack.write`
+
+- **Purpose**: Direct outpack server interaction
+- **Capabilities**:
+  - `outpack.read`: Make read calls to the outpack server
+  - `outpack.write`: Make write calls to the outpack server (includes read access)
 
 ### Scoped Permissions
 
@@ -39,7 +56,11 @@ These permissions can be applied globally or restricted to specific resources us
 
 #### `packet.read`
 
-Grants read access to packets with flexible scoping options.
+- **Purpose**: Grants read access to packets with flexible scoping options.
+- **Capabilities**:
+  - View packet details
+  - Access packet metadata
+  - View packet groups and their contents
 
 **Scope Examples:**
 
@@ -50,13 +71,13 @@ Grants read access to packets with flexible scoping options.
 
 #### `packet.manage`
 
-Allows management of read access permissions for packets.
+- **Purpose**: Allows management of read access permissions for packets.
 
-**Capabilities:**
+- **Capabilities:**
 
-- Grant read access to users or roles for packet groups or individual packets
-- Revoke read access from users or roles
-- Automatically includes `packet.read` for managed resources
+  - Grant read access to users or roles for packet groups or individual packets
+  - Revoke read access from users or roles
+  - Automatically includes `packet.read` for managed resources
 
 **Scope Examples:**
 
@@ -126,14 +147,6 @@ If a user cannot access expected resources:
 2. **Review direct permissions** - Check if the user has conflicting or missing direct permissions
 3. **Verify scoping** - Ensure permission scopes match the target resources exactly
 4. **Test incrementally** - Start with broader permissions and narrow down to identify the issue
-
-### Common Issues
-
-| Issue                                | Likely Cause                     | Solution                                          |
-| ------------------------------------ | -------------------------------- | ------------------------------------------------- |
-| User can't see any packets           | Missing `packet.read` permission | Assign global `packet.read` or scoped permissions |
-| User can't run packets               | Missing `packet.run` permission  | Assign `packet.run` global permission             |
-| Permission changes not taking effect | Cache or session issue           | Have user refresh their page                      |
 
 ## Security Best Practices
 
