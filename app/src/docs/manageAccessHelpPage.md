@@ -72,7 +72,6 @@ These permissions can be applied globally or restricted to specific resources us
 #### `packet.manage`
 
 - **Purpose**: Allows management of read access permissions for packets.
-
 - **Capabilities:**
 
   - Grant read access to users or roles for packet groups or individual packets
