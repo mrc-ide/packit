@@ -49,5 +49,7 @@ fun User.toUserWithPermissions() =
         username = username,
         specificPermissions = getSpecificPermissions().map { it.toDto() },
         roles = getNonUsernameRoles().map { it.toBasicDto() },
-        id = id!!
+        id = id!!,
+        email = email,
+        displayName = displayName,
     )

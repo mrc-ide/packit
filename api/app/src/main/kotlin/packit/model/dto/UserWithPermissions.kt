@@ -7,4 +7,6 @@ data class UserWithPermissions(
     val roles: List<BasicRoleDto> = listOf(),
     val specificPermissions: List<RolePermissionDto> = listOf(),
     val id: UUID,
+    val email: String? = null,
+    val displayName: String? = null
 )

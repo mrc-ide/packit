@@ -22,7 +22,7 @@ export const ManageUsers = () => {
       </div>
       <div className="space-y-4 flex flex-col">
         <div className="flex justify-between">
-          <FilterInput setFilter={setFilterValue} placeholder="Search by user or role..." />
+          <FilterInput setFilter={setFilterValue} placeholder="Search by username or role..." />
           {authConfig?.enableBasicLogin && (
             <AddBasicUserButton mutate={mutate} roleNames={roles.map((role) => role.name)} />
           )}

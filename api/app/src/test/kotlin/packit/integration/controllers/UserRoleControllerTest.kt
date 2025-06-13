@@ -90,6 +90,8 @@ class UserRoleControllerTest : IntegrationTest() {
         assertEquals(roles[0].name, "testRole1")
         assertEquals(roles[1].name, "testRole2")
         assertEquals(user.username, "test1@gmail.com")
+        assertEquals(user.displayName, "test user")
+        assertEquals(user.email, null)
         assertEquals(user.specificPermissions.size, 1)
         assertEquals(user.specificPermissions[0].permission, runPermission.name)
         assertEquals(user.roles.size, 1)
