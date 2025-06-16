@@ -2,20 +2,31 @@ import { useState } from "react";
 import { DataTable } from "../common/DataTable";
 import { useManageAccessLayoutContext } from "./ManageAccessOutlet";
 
-import { AddRoleButton } from "./AddRoleButton";
-import { FilterInput } from "../common/FilterInput";
+import { HelpCircle } from "lucide-react";
 import { PAGE_SIZE } from "../../../../lib/constants";
+import { FilterInput } from "../common/FilterInput";
+import { AddRoleButton } from "./AddRoleButton";
 import { setupManageRolesColumns } from "./utils/manageRolesColumns";
 import { rolesGlobalFilterFn } from "./utils/rolesTableGlobalFilterFn";
+
+import { NavLink } from "react-router-dom";
 
 export const ManageRoles = () => {
   const { roles, users, mutate } = useManageAccessLayoutContext();
   const [filterValue, setFilterValue] = useState("");
-
   return (
     <>
       <div>
-        <h2 className="text-2xl font-bold tracking-tight">Manage Roles</h2>
+        <div className="flex gap-2 items-center">
+          <h2 className="text-2xl font-bold tracking-tight">Manage Roles</h2>
+          <NavLink
+            to={"/docs/manage-access-help"}
+            key={"/docs/manage-access-help"}
+            className="text-blue-500   hover:text-blue-600"
+          >
+            <HelpCircle className="h-5 w-5" />
+          </NavLink>
+        </div>
         <p className="text-muted-foreground">Add roles, update users and permissions on roles</p>
       </div>
       <div className="space-y-4 flex flex-col">

@@ -67,11 +67,12 @@ These permissions can be applied globally or restricted to specific resources us
 - `packet.read` - Global read access to all packets
 - `packet.read:packetGroup:group1` - Read access to all packets in group1
 - `packet.read:packet:group1:id` - Read access to specific packet with ID "id" in group1
-- `packet.read:tag:tag2` *(coming soon)* - Read access to packets tagged with "tag2"
+- `packet.read:tag:tag2` _(coming soon)_ - Read access to packets tagged with "tag2"
 
 #### `packet.manage`
 
 - **Purpose**: Allows management of read access permissions for packets.
+
 - **Capabilities:**
 
   - Grant read access to users or roles for packet groups or individual packets
@@ -83,7 +84,7 @@ These permissions can be applied globally or restricted to specific resources us
 - `packet.manage` - Can manage read access for any packet
 - `packet.manage:packetGroup:group1` - Can manage read access for group1 packets only
 - `packet.manage:packet:group1:id` - Can manage read access for one specific packet
-- `packet.manage:tag:tag2` *(coming soon)* - Can manage read access for tagged packets
+- `packet.manage:tag:tag2` _(coming soon)_ - Can manage read access for tagged packets
 
 ### Permission Dependencies
 
@@ -143,7 +144,7 @@ Some permissions automatically include others:
 If a user cannot access expected resources:
 
 1. **Check role permissions** - Verify all assigned roles have the necessary permissions
-2. **Review direct permissions** - Check if the user has conflicting or missing direct permissions
+2. **Stale Permissions** - If a user recently had permissions changed, ensure they refresh their page to load the latest permissions
 3. **Verify scoping** - Ensure permission scopes match the target resources exactly
 4. **Test incrementally** - Start with broader permissions and narrow down to identify the issue
 
@@ -165,4 +166,4 @@ If you encounter issues with access management or need assistance:
 
 ---
 
-*Last updated: 14/06/2025*
+_Last updated: 14/06/2025_
