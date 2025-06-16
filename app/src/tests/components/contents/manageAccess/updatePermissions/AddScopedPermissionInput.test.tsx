@@ -23,7 +23,7 @@ describe("AddScopedPermissionInput", () => {
     render(<AddScopedPermissionInput scope="packet" form={form} />);
 
     expect(screen.getByRole("combobox")).toBeEnabled();
-    expect(screen.getByText(/Select Resource.../i)).toBeVisible();
+    expect(screen.getByText(/select resource.../i)).toBeVisible();
   });
 
   it("should allow selecting of tags if scope is tag & allow search", async () => {

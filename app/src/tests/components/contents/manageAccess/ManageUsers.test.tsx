@@ -62,14 +62,14 @@ describe("ManageUsers", () => {
     mockAuthConfig.mockReturnValue({ enableBasicLogin: true });
     renderComponent();
 
-    expect(screen.getByRole("button", { name: "Add User" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Add user" })).toBeVisible();
   });
 
   it("should not render add user button if basic login is disabled", async () => {
     mockAuthConfig.mockReturnValue({ enableBasicLogin: false });
     renderComponent();
 
-    expect(screen.queryByRole("button", { name: "Add User" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Add user" })).not.toBeInTheDocument();
   });
 
   it("should filter users by name", async () => {
