@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
 import { Theme, ThemeProviderProps, ThemeProviderState } from "./types/ThemeTypes";
 import { useGetBrandingConfig } from "./hooks/useGetBrandingConfig";
@@ -26,17 +26,14 @@ export const ThemeProvider = ({ children, ...props }: ThemeProviderProps) => {
     () => (localStorage.getItem(LocalStorageKeys.THEME) as Theme) || DEFAULT_THEME
   );
 
-  const availableThemes = useMemo((): Theme[] => {
-    if (isLoading || !brandingConfig) {
-      return [];
-    } else if (brandingConfig.darkModeEnabled && !brandingConfig.lightModeEnabled) {
-      return ["dark"];
-    } else if (brandingConfig.lightModeEnabled && !brandingConfig.darkModeEnabled) {
-      return ["light"];
-    } else {
-      return DEFAULT_AVAILABLE_THEMES;
-    }
-  }, [brandingConfig, isLoading]);
+  let availableThemes = DEFAULT_AVAILABLE_THEMES;
+  if (isLoading || !brandingConfig) {
+    availableThemes = [];
+  } else if (brandingConfig.darkModeEnabled && !brandingConfig.lightModeEnabled) {
+    availableThemes = ["dark"];
+  } else if (brandingConfig.lightModeEnabled && !brandingConfig.darkModeEnabled) {
+    availableThemes = ["light"];
+  }
 
   useEffect(() => {
     if (!isLoading && brandingConfig) {
