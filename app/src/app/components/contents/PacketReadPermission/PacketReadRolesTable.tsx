@@ -20,7 +20,7 @@ export const PacketReadRolesTable = ({ roles }: PacketReadRolesTableProps) => {
       </div>
       <div className="max-h-96 overflow-auto">
         <DataTable<BasicRoleWithUsers>
-          columns={roleDefaultColumns(7) as ColumnDef<BasicRoleWithUsers>[]}
+          columns={roleDefaultColumns("max-h-7") as ColumnDef<BasicRoleWithUsers>[]}
           clientFiltering
           data={roles}
           globalFiltering={{

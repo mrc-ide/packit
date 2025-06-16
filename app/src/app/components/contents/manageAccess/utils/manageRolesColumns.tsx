@@ -7,10 +7,11 @@ import { DeleteUserOrRole } from "../DeleteUserOrRole";
 import { UpdateRoleDropDownMenu } from "../manageRoleActions/UpdateRoleDropDownMenu";
 import { RoleWithRelationships } from "../types/RoleWithRelationships";
 import { UserWithPermissions } from "../types/UserWithPermissions";
+import { cn } from "../../../../../lib/cn";
 
 const columnHelper = createColumnHelper<RoleWithRelationships>();
 
-export const roleDefaultColumns = (maxHeightLimit = 20) => [
+export const roleDefaultColumns = (rowMaxHeight = "max-h-20") => [
   columnHelper.accessor("name", {
     header: "Role",
     cell: ({ getValue }) => {
@@ -24,8 +25,10 @@ export const roleDefaultColumns = (maxHeightLimit = 20) => [
 
       return (
         <div
-          className={`flex flex-wrap gap-1 italic text-xs pl-0.5 overflow-auto 
-            max-h-${maxHeightLimit} [&::-webkit-scrollbar]:w-2`}
+          className={cn(
+            "flex flex-wrap gap-1 italic text-xs pl-0.5 overflow-auto [&::-webkit-scrollbar]:w-2",
+            rowMaxHeight
+          )}
         >
           {users?.length === 0
             ? "None"
@@ -41,19 +44,16 @@ export const roleDefaultColumns = (maxHeightLimit = 20) => [
 export const setupManageRolesColumns = (
   mutate: KeyedMutator<RoleWithRelationships[]>,
   users: UserWithPermissions[],
-  maxRowHeight = 20
+  rowMaxHeight = "max-h-20"
 ) => [
-  ...roleDefaultColumns(maxRowHeight),
+  ...roleDefaultColumns(rowMaxHeight),
   columnHelper.accessor("rolePermissions", {
     header: "Permissions",
     cell: ({ getValue }) => {
       const permissions = getValue();
 
       return (
-        <div
-          className={`flex flex-wrap italic gap-0.5 text-xs pl-0.5 
-            overflow-auto max-h-${maxRowHeight} [&::-webkit-scrollbar]:w-2`}
-        >
+        <div className={cn("flex flex-wrap italic gap-0.5 text-xs pl-0.5 overflow-auto", rowMaxHeight)}>
           {permissions?.length === 0
             ? "None"
             : permissions.map((permission, index) => (

@@ -35,7 +35,7 @@ export const setupManageUsersColumns = (
       const roles = getValue();
 
       return (
-        <div className="flex flex-wrap italic gap-0.5 text-xs pl-0.5 max-h-20 overflow-auto">
+        <div className="flex flex-wrap italic gap-0.5 text-xs pl-0.5 max-h-20 overflow-auto [&::-webkit-scrollbar]:w-2">
           {roles?.length === 0
             ? "None"
             : roles.map((role, index) => (
