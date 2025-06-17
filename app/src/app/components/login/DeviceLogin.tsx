@@ -24,7 +24,7 @@ export const DeviceLogin = () => {
       await fetcher({
         url,
         method: "POST",
-        body: userCode
+        body: {user_code: userCode}
       });
       // TODO: this will get changed!
       setResultStatus(HttpStatus.OK);
