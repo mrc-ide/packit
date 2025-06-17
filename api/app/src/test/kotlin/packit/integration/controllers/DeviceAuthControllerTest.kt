@@ -14,7 +14,6 @@ import org.springframework.test.context.TestPropertySource
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
 import packit.model.User
-import packit.model.dto.DeviceAuthFetchToken
 import packit.repository.UserRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals

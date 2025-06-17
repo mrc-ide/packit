@@ -35,21 +35,30 @@ class BaseDeviceAuthRequestService(
             clock.instant().plusSeconds(appConfig.authDeviceFlowExpirySeconds),
             null
         )
-        requests.add(req)
+        synchronized(requests, {
+            requests.add(req)
+        })
         return req
     }
 
     override fun cleanUpExpiredRequests() {
-        requests.removeAll { isExpired(it) }
+        synchronized(requests, {
+            requests.removeAll { isExpired(it) }
+        })
     }
 
     override fun findRequest(deviceCode: String): DeviceAuthRequest? {
-        return requests.firstOrNull { it.deviceCode.value == deviceCode }
+        synchronized(requests, {
+            return requests.firstOrNull { it.deviceCode.value == deviceCode }
+        })
     }
 
     override fun validateRequest(userCode: String, user: User) {
         // Mark a request as validated by a given user. Return error if request not found, or already validated
-        val request = requests.firstOrNull { it.userCode.value == userCode }
+        val request = synchronized(requests, {
+            requests.firstOrNull { it.userCode.value == userCode }
+        })
+
         if (request == null || request.validatedBy != null) {
             throw DeviceAuthTokenException("access_denied")
         }
@@ -81,7 +90,9 @@ class BaseDeviceAuthRequestService(
     }
 
     private fun removeRequest(request: DeviceAuthRequest) {
-        requests.remove(request)
+        synchronized(requests, {
+            requests.remove(request)
+        })
     }
 
     private fun isExpired(request: DeviceAuthRequest): Boolean = request.expiryTime < clock.instant()
