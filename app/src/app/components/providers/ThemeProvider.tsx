@@ -20,7 +20,7 @@ export const useTheme = () => {
   return context;
 };
 
-const getAvailableThemes = (isLoading: boolean, brandingConfig: BrandingConfiguration | undefined): Theme[] =>{
+const getAvailableThemes = (isLoading: boolean, brandingConfig: BrandingConfiguration | undefined): Theme[] => {
   if (isLoading || !brandingConfig) {
     return [];
   } else if (brandingConfig.darkModeEnabled && !brandingConfig.lightModeEnabled) {
@@ -30,7 +30,7 @@ const getAvailableThemes = (isLoading: boolean, brandingConfig: BrandingConfigur
   } else {
     return DEFAULT_AVAILABLE_THEMES;
   }
-}
+};
 
 export const ThemeProvider = ({ children, ...props }: ThemeProviderProps) => {
   const { brandingConfig, isLoading, error } = useGetBrandingConfig();
