@@ -11,7 +11,7 @@ Packit uses a role-based access control (RBAC) system that provides flexible, fi
 - **Permissions** define what actions users can perform within the application.
 - **Roles** contain permissions that are automatically inherited by all assigned users
 - **Users** can have direct permissions in addition to those inherited from their roles
-  
+
 ### Permission Resolution
 
 When determining a user's effective permissions, the system evaluates:
@@ -57,7 +57,7 @@ When determining a user's effective permissions, the system evaluates:
 3. Add or remove role assignments
 4. Save changes
 
-**To modify a user's permissions:**  
+**To modify a user's permissions:**
 
 1. In the Users table, click the **⋯** menu for the desired user
 2. Select **Update permissions**
@@ -145,7 +145,7 @@ Some permissions necessarily entail others:
 If a user cannot access expected resources:
 
 1. **Check role permissions** - Verify all assigned roles have the necessary permissions
-2. **Stale permissions** - If a user recently had permissions changed, ensure they refresh their page to load the latest permissions  
+2. **Stale permissions** - If a user recently had permissions changed, ensure they refresh their page to load the latest permissions
 3. **Verify scoping** - Ensure permission scopes match the target resources exactly
 4. **Test incrementally** - Start with broader permissions and narrow down to identify the issue
 
@@ -162,7 +162,7 @@ If a user cannot access expected resources:
 If you encounter issues with access management or need assistance:
 
 - Contact the **Reside Software team**
-- Include specific error messages and user details when reporting issues. Err on the side of preserving / providing more information.  
+- Include specific error messages and user details when reporting issues. Err on the side of preserving / providing more information.
 - Provide screenshots of permission configurations when possible
 
 ---
