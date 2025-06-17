@@ -11,7 +11,6 @@ import packit.AppConfig
 import packit.controllers.DeviceAuthController
 import packit.exceptions.DeviceAuthTokenException
 import packit.model.User
-import packit.model.dto.DeviceAuthFetchToken
 import packit.security.oauth2.deviceFlow.DeviceAuthRequest
 import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
