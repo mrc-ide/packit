@@ -4,6 +4,7 @@ import { Theme, ThemeProviderProps, ThemeProviderState } from "./types/ThemeType
 import { useGetBrandingConfig } from "./hooks/useGetBrandingConfig";
 import { ErrorComponent } from "../contents/common/ErrorComponent";
 import { DEFAULT_AVAILABLE_THEMES, DEFAULT_THEME, getSystemTheme } from "./utils/themeUtils";
+import { BrandingConfiguration } from "../../../types";
 
 const ThemeProviderContext = createContext<ThemeProviderState>({
   availableThemes: DEFAULT_AVAILABLE_THEMES,
@@ -19,6 +20,18 @@ export const useTheme = () => {
   return context;
 };
 
+const getAvailableThemes = (isLoading: boolean, brandingConfig: BrandingConfiguration | undefined): Theme[] =>{
+  if (isLoading || !brandingConfig) {
+    return [];
+  } else if (brandingConfig.darkModeEnabled && !brandingConfig.lightModeEnabled) {
+    return ["dark"];
+  } else if (brandingConfig.lightModeEnabled && !brandingConfig.darkModeEnabled) {
+    return ["light"];
+  } else {
+    return DEFAULT_AVAILABLE_THEMES;
+  }
+}
+
 export const ThemeProvider = ({ children, ...props }: ThemeProviderProps) => {
   const { brandingConfig, isLoading, error } = useGetBrandingConfig();
 
@@ -26,14 +39,7 @@ export const ThemeProvider = ({ children, ...props }: ThemeProviderProps) => {
     () => (localStorage.getItem(LocalStorageKeys.THEME) as Theme) || DEFAULT_THEME
   );
 
-  let availableThemes = DEFAULT_AVAILABLE_THEMES;
-  if (isLoading || !brandingConfig) {
-    availableThemes = [];
-  } else if (brandingConfig.darkModeEnabled && !brandingConfig.lightModeEnabled) {
-    availableThemes = ["dark"];
-  } else if (brandingConfig.lightModeEnabled && !brandingConfig.darkModeEnabled) {
-    availableThemes = ["light"];
-  }
+  const availableThemes = getAvailableThemes(isLoading, brandingConfig);
 
   useEffect(() => {
     if (!isLoading && brandingConfig) {
