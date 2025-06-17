@@ -3,8 +3,9 @@ import { Button } from "../Base/Button";
 import appConfig from "../../../config/appConfig";
 import { HttpStatus } from "../../../lib/types/HttpStatus";
 import { useState } from "react";
-import { getAuthHeader } from "../../../lib/auth/getAuthHeader";
 import { Check } from "lucide-react";
+import {fetcher} from "../../../lib/fetch";
+import {ApiError} from "../../../lib/errors";
 
 export const DeviceLogin = () => {
   const USER_CODE_LENGTH = 9;
@@ -18,17 +19,21 @@ export const DeviceLogin = () => {
 
   const handleSubmit = async () => {
     const url = `${appConfig.apiUrl()}/deviceAuth/validate`;
-    const res = await fetch(url, {
-      method: "POST",
-      body: userCode,
-      headers: {
-        "Content-Type": "text/plain",
-        ...getAuthHeader()
+
+    try {
+      await fetcher({
+        url,
+        method: "POST",
+        body: userCode
+      });
+      // TODO: this will get changed!
+      setResultStatus(HttpStatus.OK);
+
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setResultStatus(error.status);
+        setUserCode("");
       }
-    });
-    setResultStatus(res.status as HttpStatus);
-    if (res.status != HttpStatus.OK) {
-      setUserCode("");
     }
   };
 
