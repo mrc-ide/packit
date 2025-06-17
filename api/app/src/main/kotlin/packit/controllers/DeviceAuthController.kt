@@ -53,14 +53,15 @@ class DeviceAuthController(
         return ResponseEntity.ok().build()
     }
 
-    @PostMapping("/token")
+    @PostMapping("/token", consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
     fun fetchToken(
-        @RequestBody @Validated deviceAuthFetchToken: DeviceAuthFetchToken
+        @RequestParam("grant_type") grantType: String,
+        @RequestParam("device_code") deviceCode: String,
     ): ResponseEntity<DeviceAuthTokenDto> {
-        if (deviceAuthFetchToken.grantType != expectedGrantType) {
+        if (grantType != expectedGrantType) {
             throw DeviceAuthTokenException("unsupported_grant_type")
         }
-        val validatingUser = deviceAuthRequestService.useValidatedRequest(deviceAuthFetchToken.deviceCode)
+        val validatingUser = deviceAuthRequestService.useValidatedRequest(deviceCode)
         val token = jwtIssuer.issue(validatingUser)
         return ResponseEntity.ok(DeviceAuthTokenDto(token, expiresIn))
     }
