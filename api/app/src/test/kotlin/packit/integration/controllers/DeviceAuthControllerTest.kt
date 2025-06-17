@@ -63,12 +63,10 @@ class DeviceAuthControllerTest : IntegrationTest() {
         deviceCode: String,
         grantType: String = "urn:ietf:params:oauth:grant-type:device_code"
     ): ResponseEntity<String> {
-        val tokenRequestBody = jacksonObjectMapper().writeValueAsString(
-            DeviceAuthFetchToken(deviceCode, grantType)
-        )
+        val tokenRequestBody = "device_code=$deviceCode&grant_type=$grantType"
         return restTemplate.postForEntity(
             "/deviceAuth/token",
-            getTokenizedHttpEntity(data = tokenRequestBody),
+            getTokenizedHttpEntity(MediaType.APPLICATION_FORM_URLENCODED, tokenRequestBody),
             String::class.java
         )
     }
