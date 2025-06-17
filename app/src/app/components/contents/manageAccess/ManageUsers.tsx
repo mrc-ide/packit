@@ -21,11 +21,7 @@ export const ManageUsers = () => {
       <div>
         <div className="flex gap-2 items-center">
           <h2 className="text-2xl font-bold tracking-tight">Manage Users</h2>
-          <NavLink
-            to={"/docs/manage-access-help"}
-            key={"/docs/manage-access-help"}
-            className="text-blue-500   hover:text-blue-600"
-          >
+          <NavLink to={"/docs/manage-access-help"} className="text-blue-500   hover:text-blue-600">
             <HelpCircle className="h-5 w-5" />
           </NavLink>
         </div>
