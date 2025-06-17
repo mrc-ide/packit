@@ -22,6 +22,8 @@ class BaseDeviceAuthRequestService(
     private val appConfig: AppConfig,
     private val clock: Clock
 ) : DeviceAuthRequestService {
+    // List of pending device auth requests - accessed by multiple threads so all read/writes should be done in
+    // synchronised blocks using this requests list as lock reference
     private val requests: MutableList<DeviceAuthRequest> = mutableListOf()
 
     companion object {
