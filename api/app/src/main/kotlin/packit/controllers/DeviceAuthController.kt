@@ -12,6 +12,7 @@ import packit.AppConfig
 import packit.exceptions.DeviceAuthTokenException
 import packit.model.dto.DeviceAuthDto
 import packit.model.dto.DeviceAuthTokenDto
+import packit.model.dto.DeviceAuthValidate
 import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
 import packit.service.DeviceAuthRequestService
@@ -45,10 +46,10 @@ class DeviceAuthController(
 
     @PostMapping("/validate")
     fun validateDeviceAuthRequest(
-        @RequestBody userCode: String,
+        @RequestBody deviceAuthValidate: DeviceAuthValidate,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<Unit> {
-        println("USER CODE IS $userCode")
+        val userCode = deviceAuthValidate.userCode
         val user = userService.getByUsername(userPrincipal.name)!!
         deviceAuthRequestService.validateRequest(userCode, user)
         return ResponseEntity.ok().build()
