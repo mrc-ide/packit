@@ -36,12 +36,12 @@ const makeDeviceAuthRequest = async () => {
 }
 
 const makeTokenRequest = async (device_code: string) => {
-    const response = await fetch(`${packitApiUrl}/deviceAuth/token`, {
+    const body = `device_code=${device_code}&grant_type=${GRANT_TYPE}`;
+    return await fetch(`${packitApiUrl}/deviceAuth/token`, {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ device_code, grant_type: GRANT_TYPE })
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+        body
     });
-    return response;
 }
 
 const testToken = async (access_token: string ) => {

@@ -83,7 +83,7 @@ class DeviceAuthControllerTest {
         }
 
         val sut = DeviceAuthController(mockAppConfig, mockDeviceAuthRequestService, mock(), mockJwtIssuer)
-        val result = sut.fetchToken(DeviceAuthFetchToken(deviceCode, grantType))
+        val result = sut.fetchToken(grantType, deviceCode)
         assertEquals(HttpStatus.OK, result.statusCode)
         val resultBody = result.body
         assertEquals(testToken, resultBody!!.accessToken)
@@ -94,7 +94,7 @@ class DeviceAuthControllerTest {
     fun `throws exception if wrong grant type`() {
         val sut = DeviceAuthController(mock(), mock(), mock(), mock())
         assertThrows<DeviceAuthTokenException> {
-            sut.fetchToken(DeviceAuthFetchToken("test code", "bad grant"))
+            sut.fetchToken("bad grant", "test code")
         }.apply {
             assertEquals("unsupported_grant_type", key)
             assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
