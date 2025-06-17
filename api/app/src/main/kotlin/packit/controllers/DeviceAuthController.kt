@@ -43,11 +43,12 @@ class DeviceAuthController(
         return ResponseEntity.ok(response)
     }
 
-    @PostMapping("/validate", consumes = ["text/plain"])
+    @PostMapping("/validate")
     fun validateDeviceAuthRequest(
         @RequestBody userCode: String,
         @AuthenticationPrincipal userPrincipal: UserPrincipal
     ): ResponseEntity<Unit> {
+        println("USER CODE IS $userCode")
         val user = userService.getByUsername(userPrincipal.name)!!
         deviceAuthRequestService.validateRequest(userCode, user)
         return ResponseEntity.ok().build()
