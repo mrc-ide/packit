@@ -11,6 +11,7 @@ import packit.AppConfig
 import packit.controllers.DeviceAuthController
 import packit.exceptions.DeviceAuthTokenException
 import packit.model.User
+import packit.model.dto.DeviceAuthValidate
 import packit.security.oauth2.deviceFlow.DeviceAuthRequest
 import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
@@ -62,7 +63,7 @@ class DeviceAuthControllerTest {
         }
 
         val sut = DeviceAuthController(mock(), mockDeviceAuthRequestService, mockUserService, mock())
-        val result = sut.validateDeviceAuthRequest(userCode, testValidatingUserPrincipal)
+        val result = sut.validateDeviceAuthRequest(DeviceAuthValidate(userCode), testValidatingUserPrincipal)
         assertEquals(HttpStatus.OK, result.statusCode)
         verify(mockDeviceAuthRequestService).validateRequest(userCode, testValidatingUser)
     }

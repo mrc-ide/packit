@@ -14,6 +14,7 @@ import org.springframework.test.context.TestPropertySource
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
 import packit.model.User
+import packit.model.dto.DeviceAuthValidate
 import packit.repository.UserRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -51,10 +52,13 @@ class DeviceAuthControllerTest : IntegrationTest() {
     }
 
     private fun getDeviceAuthRequestValidateResult(userCode: String): ResponseEntity<String> {
+        val validateRequestBody = jacksonObjectMapper().writeValueAsString(
+            DeviceAuthValidate(userCode)
+        )
         return restTemplate.exchange(
             "/deviceAuth/validate",
             HttpMethod.POST,
-            getTokenizedHttpEntity(data=userCode)
+            getTokenizedHttpEntity(data=validateRequestBody)
         )
     }
 
