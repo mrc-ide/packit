@@ -82,5 +82,4 @@ class UserTest {
             userWithPermissions.specificPermissions
         )
     }
-
 }
