@@ -14,7 +14,7 @@ jest.mock("../../../../lib/localStorageManager", () => ({
   getAuthConfigFromLocalStorage: () => mockAuthConfig(),
   getUserFromLocalStorage: () => mockUser()
 }));
-const renderComponent = () => {
+const renderComponent = () =>
   render(
     <SWRConfig value={{ dedupingInterval: 0 }}>
       <AuthConfigProvider>
@@ -30,20 +30,19 @@ const renderComponent = () => {
       </AuthConfigProvider>
     </SWRConfig>
   );
-};
-
 describe("ManageUsers", () => {
   it("it should render users data correctly", async () => {
     mockAuthConfig.mockReturnValue({ enableBasicLogin: false });
     mockUser.mockReturnValue({ userName: mockUsersWithPermissions[0].username });
     renderComponent();
 
-    // only username roles are rendered
     await waitFor(() => {
       mockUsersWithPermissions.forEach((user) => {
-        expect(screen.getAllByText(user.username, { exact: false })[0]).toBeVisible();
-        expect(screen.getAllByText(user.email ?? "no email", { exact: false })[0]).toBeVisible();
-        expect(screen.getAllByText(user.displayName ?? "no display name", { exact: false })[0]).toBeVisible();
+        const userColumn = screen.getAllByText(user.username, { exact: false })[0].parentElement as HTMLElement;
+        expect(userColumn).toHaveTextContent(user.username);
+        expect(userColumn).toHaveTextContent(user.email ?? "No email");
+        expect(userColumn).toHaveTextContent(user.displayName ?? "No display name");
+
         user.specificPermissions.forEach((permission) => {
           expect(screen.getAllByText(permission.permission, { exact: false })[0]).toBeVisible();
         });
