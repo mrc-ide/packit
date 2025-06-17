@@ -1,9 +1,6 @@
 package packit.unit.model
 
-import packit.model.Role
-import packit.model.User
-import packit.model.toBasicDto
-import packit.model.toDto
+import packit.model.*
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -46,4 +43,44 @@ class UserTest {
         assertTrue(serviceUser.isServiceUser())
         assertFalse(basicUser.isServiceUser())
     }
+
+    @Test
+    fun `toUserWithPermissions returns correct UserWithPermissions for given User`() {
+        val role1 = Role("role1", id = 1, isUsername = false).apply {
+            rolePermissions = mutableListOf(RolePermission(this, Permission("permission1", "desc1", id = 1), id = 1))
+        }
+
+        val username = "username"
+        val usernameRole = Role(username, id = 2, isUsername = true).apply {
+            rolePermissions = mutableListOf(RolePermission(this, Permission("permission2", "desc2", id = 1), id = 2))
+        }
+
+        val basicUser = User(
+            username,
+            disabled = false,
+            userSource = "basic",
+            displayName = "user display name",
+            email = "user@gmail.com",
+            roles = mutableListOf(role1, usernameRole),
+            id = UUID.randomUUID()
+        )
+
+        val userWithPermissions = basicUser.toUserWithPermissions()
+
+        assertEquals(basicUser.username, userWithPermissions.username)
+        assertEquals(basicUser.displayName, userWithPermissions.displayName)
+        assertEquals(basicUser.email, userWithPermissions.email)
+        assertEquals(basicUser.id, userWithPermissions.id)
+        assertEquals(
+            listOf(role1.toBasicDto()),
+            userWithPermissions.roles
+        )
+        assertEquals(
+            listOf(
+                usernameRole.rolePermissions.first().toDto()
+            ),
+            userWithPermissions.specificPermissions
+        )
+    }
+
 }
