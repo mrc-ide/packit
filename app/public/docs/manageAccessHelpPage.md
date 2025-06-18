@@ -9,7 +9,7 @@ Packit uses a role-based access control (RBAC) system that provides flexible, fi
 ### Roles, Permissions, and Users
 
 - **Permissions** define what actions users can perform within the application.
-- **Roles** contain permissions that are automatically inherited by all assigned users
+- **Roles** contain permissions that are automatically inherited by all users with that role
 - **Users** can have direct permissions in addition to those inherited from their roles
 
 ### Permission Resolution
@@ -17,52 +17,56 @@ Packit uses a role-based access control (RBAC) system that provides flexible, fi
 When determining a user's effective permissions, the system evaluates:
 
 1. **Role permissions** - All permissions from assigned roles
-2. **Direct user permissions** - Specific permissions assigned directly to the user
-3. **Scope precedence** - Global permissions override scoped permissions for the same action
+1. **Direct user permissions** - Specific permissions assigned directly to the user
+1. **Scope precedence** - Global permissions override scoped permissions for the same action
+1. **Permission inheritance** - Combines all role permissions with direct user permissions, with the most permissive scope taking precedence
 
 ## Managing Access
 
 ### Creating Roles
 
 1. Navigate to **Manage Roles**
-2. Click **Add Role**
-3. Enter role name and description
-4. Select appropriate global permissions (if any are required)
-5. Click **Save**
-6. Assign users and scoped permissions as needed
+1. Click **Add Role**
+1. Enter role name and description
+1. Select appropriate global permissions (if any are required)
+1. Click **Save**
+1. Assign users and scoped permissions as needed
 
 ### Updating Role Assignments
 
 **To modify users assigned to a role:**
 
 1. Navigate to **Manage Roles**
-2. In the Roles table, click the **⋯** (three dots) menu for the desired role
-3. Select **Update users**
-4. Add or remove users as needed
-5. Save changes
+1. In the Roles table, click the **⋯** (three dots) menu for the desired role
+1. Select **Update users**
+1. Add or remove users as needed
+1. Save changes
 
 **To modify role permissions:**
 
+1. Navigate to **Manage Roles**
 1. In the Roles table, click the **⋯** menu for the desired role
-2. Select **Update permissions**
-3. Add or remove permissions as needed
-4. Save changes
+1. Select **Update permissions**
+1. Add or remove permissions as needed
+1. Save changes
 
 ### Managing User Access
 
 **To modify a user's roles:**
 
+1. Navigate to **Manage Users**
 1. In the Users table, click the **⋯** menu for the desired user
-2. Select **Update roles**
-3. Add or remove role assignments
-4. Save changes
+1. Select **Update roles**
+1. Add or remove role assignments
+1. Save changes
 
 **To modify a user's permissions:**
 
+1. Navigate to **Manage Users**
 1. In the Users table, click the **⋯** menu for the desired user
-2. Select **Update permissions**
-3. Add or remove specific permissions
-4. Save changes
+1. Select **Update permissions**
+1. Add or remove specific permissions
+1. Save changes
 
 ## Permission Types
 
@@ -80,10 +84,10 @@ These permissions apply across the entire application:
 
 #### `outpack.read` and `outpack.write`
 
-- **Purpose**: Direct outpack server interaction
+- **Purpose**: Direct packet metadata access
 - **Capabilities**:
-  - `outpack.read`: Make read calls to the outpack server
-  - `outpack.write`: Make write calls to the outpack server (includes read access)
+  - `outpack.read`: Read all packet metadata
+  - `outpack.write`: Push packets directly to server without using the packet runner
 
 #### `user.manage`
 
@@ -109,7 +113,7 @@ These permissions can be applied globally or restricted to specific resources us
 **Scope Examples:**
 
 - `packet.read` - Global read access to all packets
-- `packet.read:packetGroup:group1` - Read access to all packets in the group with name 'group1'
+- `packet.read:packetGroup:group1` - Read access to all packets in the group with name "group1"
 - `packet.read:packet:group1:123` - Read access to specific packet with ID "123" in group1
 - `packet.read:tag:tag2` _(coming soon)_ - Read access to packets tagged with "tag2"
 
@@ -161,7 +165,7 @@ If a user cannot access expected resources:
 
 If you encounter issues with access management or need assistance:
 
-- Contact the **Reside Software team**
+- Contact the **RESIDE Software team**
 - Include specific error messages and user details when reporting issues. Err on the side of preserving / providing more information.
 - Provide screenshots of permission configurations when possible
 
