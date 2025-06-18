@@ -17,11 +17,12 @@ export const DeviceActivation = () => {
     const formSchema = z.object({
         user_code: z
             .string()
-            .toUpperCase() // TODO: also interpose the -
+            .toUpperCase()
             .regex(
                 /^[A-Z]{8}$/,
                 "Unexpected user code format"
             )
+            .transform((val) => `${val.slice(0, 4)}-${val.slice(4)}`) // inject hyphen into the right position
     });
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -52,7 +53,10 @@ export const DeviceActivation = () => {
                     <FormItem>
                         <FormLabel>Enter your user code</FormLabel>
                         <FormControl>
-                            <InputOTP {...field} maxLength={8} pattern={REGEXP_ONLY_CHARS}>
+                            <InputOTP {...field}
+                                      maxLength={8}
+                                      pattern={REGEXP_ONLY_CHARS}
+                                      pasteTransformer={(pasted) => pasted.replaceAll("-", "")}>
                                 <InputOTPGroup>
                                     <InputOTPSlot index={0} />
                                     <InputOTPSlot index={1} />
@@ -75,5 +79,4 @@ export const DeviceActivation = () => {
             {success}{fetchError}
         </Form>
     );
-    // TODO: Make sure pasteable from console
 }
