@@ -8,7 +8,7 @@ import appConfig from "../../../config/appConfig";
 import {ApiError} from "../../../lib/errors";
 import {HttpStatus} from "../../../lib/types/HttpStatus";
 import {Button} from "../Base/Button";
-import {Form, FormControl, FormField, FormItem, FormLabel} from "../Base/Form";
+import {Form, FormControl, FormField, FormItem} from "../Base/Form";
 import {InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator} from "../Base/InputOTP";
 
 export const DeviceActivation = () => {
@@ -48,29 +48,29 @@ export const DeviceActivation = () => {
     };
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
                 <FormField control={form.control} name="user_code" render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Enter your user code</FormLabel>
-                        <FormControl>
+                         <FormControl>
                             <InputOTP {...field}
-                                      maxLength={8}
-                                      pattern={REGEXP_ONLY_CHARS}
-                                      pasteTransformer={(pasted) => pasted.replaceAll("-", "")}>
-                                <InputOTPGroup>
-                                    <InputOTPSlot index={0} />
-                                    <InputOTPSlot index={1} />
-                                    <InputOTPSlot index={2} />
-                                    <InputOTPSlot index={3} />
-                                </InputOTPGroup>
-                                <InputOTPSeparator />
-                                <InputOTPGroup>
-                                    <InputOTPSlot index={4} />
-                                    <InputOTPSlot index={5} />
-                                    <InputOTPSlot index={6} />
-                                    <InputOTPSlot index={7} />
-                                </InputOTPGroup>
-                            </InputOTP>
+                                autoFocus={true}
+                                maxLength={8}
+                                pattern={REGEXP_ONLY_CHARS}
+                                pasteTransformer={(pasted: string) => pasted.replaceAll("-", "")}>
+                            <InputOTPGroup>
+                                <InputOTPSlot index={0} />
+                                <InputOTPSlot index={1} />
+                                <InputOTPSlot index={2} />
+                                <InputOTPSlot index={3} />
+                            </InputOTPGroup>
+                            <InputOTPSeparator />
+                            <InputOTPGroup>
+                                <InputOTPSlot index={4} />
+                                <InputOTPSlot index={5} />
+                                <InputOTPSlot index={6} />
+                                <InputOTPSlot index={7} />
+                            </InputOTPGroup>
+                        </InputOTP>
                         </FormControl>
                     </FormItem>
                 )}/>
@@ -78,5 +78,6 @@ export const DeviceActivation = () => {
             </form>
             {success}{fetchError}
         </Form>
+
     );
 }

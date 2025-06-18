@@ -1,18 +1,21 @@
 "use client"
 
 import * as React from "react"
-import { OTPInput, OTPInputContext } from "input-otp"
+import {OTPInput, OTPInputContext, OTPInputProps} from "input-otp"
 import { MinusIcon } from "lucide-react"
 
 import { cn } from "../../../lib/cn";
 
-function InputOTP({
+
+// NB This implementation differs slightly from the code pasted from shad cn, by wrapping result in React.forwardRef to
+// avoid warning "Function components cannot be given refs."
+const InputOTP = React.forwardRef<HTMLInputElement, OTPInputProps>(({
                       className,
                       containerClassName,
                       ...props
                   }: React.ComponentProps<typeof OTPInput> & {
     containerClassName?: string
-}) {
+}, ref) => {
     return (
         <OTPInput
             data-slot="input-otp"
@@ -22,9 +25,11 @@ function InputOTP({
             )}
             className={cn("disabled:cursor-not-allowed", className)}
             {...props}
+            ref={ref}
         />
     )
-}
+});
+InputOTP.displayName = "Input OTP";
 
 function InputOTPGroup({ className, ...props }: React.ComponentProps<"div">) {
     return (
