@@ -86,11 +86,11 @@ class BaseRunnerService(
         val runInfo =
             runInfoRepository.findByTaskId(taskId) ?: throw PackitException("runInfoNotFound", HttpStatus.NOT_FOUND)
 
-        val taskStatus = orderlyRunnerClient.getTaskStatuses(listOf(taskId), true).first()
+        val taskStatus = orderlyRunnerClient.getTaskStatuses(listOf(taskId), true)
+            .firstOrNull() ?: return runInfo
 
         updateRunInfo(runInfo, taskStatus)
         runInfoRepository.save(runInfo)
-
         return runInfo
     }
 
@@ -108,7 +108,7 @@ class BaseRunnerService(
     internal fun updateRunInfosWithStatuses(runInfos: Page<RunInfo>, taskStatuses: List<TaskStatus>): Page<RunInfo> {
         runInfos.forEach { runInfo ->
             val taskStatus = taskStatuses.find { it.taskId == runInfo.taskId }
-                ?: throw PackitException("runInfoNotFound", HttpStatus.NOT_FOUND)
+                ?: return@forEach
 
             updateRunInfo(runInfo, taskStatus)
         }
