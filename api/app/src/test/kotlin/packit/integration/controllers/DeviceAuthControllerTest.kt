@@ -58,7 +58,7 @@ class DeviceAuthControllerTest : IntegrationTest() {
         return restTemplate.exchange(
             "/deviceAuth/validate",
             HttpMethod.POST,
-            getTokenizedHttpEntity(data=validateRequestBody)
+            getTokenizedHttpEntity(data = validateRequestBody)
         )
     }
 
