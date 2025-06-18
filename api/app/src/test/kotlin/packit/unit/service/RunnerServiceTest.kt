@@ -208,6 +208,29 @@ class RunnerServiceTest {
     }
 
     @Test
+    fun `does not update run info if task status not found from orderly runner`() {
+        val taskId = "task-id"
+        val testRunInfo = RunInfo(
+            taskId,
+            packetGroupName = "packet-group",
+            commitHash = "hash",
+            branch = "branch",
+            parameters = null,
+            status = Status.PENDING.toString(),
+            user = testUser
+        )
+        `when`(runInfoRepository.findByTaskId(taskId)).thenReturn(testRunInfo)
+        `when`(client.getTaskStatuses(listOf(taskId), true)).thenReturn(emptyList())
+        val serviceSpy = spy(sut)
+
+        val result = serviceSpy.getTaskStatus(taskId)
+
+        verify(runInfoRepository, never()).save(any())
+        verify(serviceSpy, never()).updateRunInfo(any(), any())
+        assertEquals(testRunInfo, result)
+    }
+
+    @Test
     fun `can get run infos from db`() {
         val filterName = "filter-name"
         val payload = PageablePayload(pageNumber = 0, pageSize = 10)
@@ -271,17 +294,15 @@ class RunnerServiceTest {
     }
 
     @Test
-    fun `updateRunInfosWithStatuses throws unable to find taskId in statuses recieved`() {
+    fun `updateRunInfosWithStatuses only updates found RunInfos`() {
         val taskStatuses = listOf(
             TaskStatus(0.0, 1.0, 2.0, 0, listOf("log1", "log2"), "status", "packet-id", "task-id1")
         )
+        val serviceSpy = spy(sut)
 
-        assertThrows<PackitException> {
-            sut.updateRunInfosWithStatuses(PageImpl(testRunInfos), taskStatuses)
-        }.apply {
-            assertEquals("runInfoNotFound", key)
-            assertEquals(HttpStatus.NOT_FOUND, httpStatus)
-        }
+        val runInfos = serviceSpy.updateRunInfosWithStatuses(PageImpl(testRunInfos), taskStatuses)
+
+        verify(serviceSpy, times(1)).updateRunInfo(any(), eq(taskStatuses[0]))
     }
 
     @Test
