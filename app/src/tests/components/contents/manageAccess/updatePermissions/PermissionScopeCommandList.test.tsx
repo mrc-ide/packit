@@ -11,7 +11,7 @@ import { ReactNode } from "react";
 
 const renderComponent = (children: ReactNode) =>
   render(
-    <SWRConfig value={{ dedupingInterval: 0 }}>
+    <SWRConfig value={{ provider: () => new Map() }}>
       <Command>{children}</Command>
     </SWRConfig>
   );

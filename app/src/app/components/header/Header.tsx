@@ -9,27 +9,27 @@ import { useBrandingContext } from "../providers/BrandingProvider";
 
 export const Header = () => {
   const { authorities, user } = useUser();
-  const { logoConfig, brandName } = useBrandingContext();
-  const logoLinkDestination = logoConfig?.linkDestination || "/";
+  const { brandingConfig, brandName } = useBrandingContext();
+  const logoLinkDestination = brandingConfig?.logoLinkDestination || "/";
 
   return (
     <header>
       <div data-testid="header">
         <div className="flex items-center h-20 border-b shadow-sm border-accent">
-          {logoConfig && (
+          {brandingConfig && (
             <>
-              {logoConfig?.filename && (
+              {brandingConfig?.logoFilename && (
                 <NavLink to={logoLinkDestination} className="h-full p-2 hidden md:block flex-shrink-0 ml-2 mr-6">
                   <img
-                    src={`${process.env.PUBLIC_URL}/img/${logoConfig?.filename}`}
+                    src={`${process.env.PUBLIC_URL}/img/${brandingConfig?.logoFilename}`}
                     className="h-full"
-                    alt={logoConfig?.altText}
+                    alt={brandingConfig?.logoAltText}
                   />
                 </NavLink>
               )}
               <NavLink to="/" className="mx-4">
                 <div className="text-xl font-extrabold flex gap-1 items-center tracking-tight">
-                  {!logoConfig?.filename && <PackageOpen className="mr-1" />}
+                  {!brandingConfig?.logoFilename && <PackageOpen className="mr-1" />}
                   {brandName}
                 </div>
               </NavLink>
