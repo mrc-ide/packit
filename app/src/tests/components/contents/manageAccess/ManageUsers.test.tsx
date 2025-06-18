@@ -104,6 +104,7 @@ describe("ManageUsers", () => {
       expect(filterInput).toHaveValue("");
     });
     mockUsersWithPermissions.forEach((user) => {
+      // email is same as username thus need to getall and get the first one
       expect(screen.getAllByText(user.username)[0]).toBeVisible();
     });
   });
