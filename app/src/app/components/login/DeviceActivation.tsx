@@ -9,6 +9,7 @@ import {ApiError} from "../../../lib/errors";
 import {HttpStatus} from "../../../lib/types/HttpStatus";
 import {Button} from "../Base/Button";
 import {Form, FormControl, FormField, FormItem} from "../Base/Form";
+import { Check } from "lucide-react";
 import {InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator} from "../Base/InputOTP";
 
 export const DeviceActivation = () => {
@@ -47,37 +48,54 @@ export const DeviceActivation = () => {
         }
     };
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
-                <FormField control={form.control} name="user_code" render={({ field }) => (
-                    <FormItem>
-                         <FormControl>
-                            <InputOTP {...field}
-                                autoFocus={true}
-                                maxLength={8}
-                                pattern={REGEXP_ONLY_CHARS}
-                                pasteTransformer={(pasted: string) => pasted.replaceAll("-", "")}>
-                            <InputOTPGroup>
-                                <InputOTPSlot index={0} />
-                                <InputOTPSlot index={1} />
-                                <InputOTPSlot index={2} />
-                                <InputOTPSlot index={3} />
-                            </InputOTPGroup>
-                            <InputOTPSeparator />
-                            <InputOTPGroup>
-                                <InputOTPSlot index={4} />
-                                <InputOTPSlot index={5} />
-                                <InputOTPSlot index={6} />
-                                <InputOTPSlot index={7} />
-                            </InputOTPGroup>
-                        </InputOTP>
-                        </FormControl>
-                    </FormItem>
-                )}/>
-                <Button type="submit" disabled={!form.formState.isValid}>Continue</Button>
-            </form>
-            {success}{fetchError}
-        </Form>
-
+        <div className="space-y-4 text-center mt-8">
+            <h1 className="text-2xl font-semibold tracking-tight">Packit API Activation</h1>
+            {success && (
+                <div>
+                    <Check className="mx-auto h-20 w-20 text-muted-foreground" />
+                    Success! You are now logged in and can access Packit API from your console.
+                </div>
+            )}
+            {!success && (
+                <>
+                <p>Enter the code displayed in your console.</p>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                        <FormField control={form.control} name="user_code" render={({ field }) => (
+                            <FormItem>
+                                 <FormControl>
+                                    <InputOTP {...field}
+                                        autoFocus={true}
+                                        maxLength={8}
+                                        pattern={REGEXP_ONLY_CHARS}
+                                        pasteTransformer={(pasted: string) => pasted.replaceAll("-", "")}
+                                        containerClassName="inline-flex">
+                                    <InputOTPGroup>
+                                        <InputOTPSlot index={0} />
+                                        <InputOTPSlot index={1} />
+                                        <InputOTPSlot index={2} />
+                                        <InputOTPSlot index={3} />
+                                    </InputOTPGroup>
+                                    <InputOTPSeparator />
+                                    <InputOTPGroup>
+                                        <InputOTPSlot index={4} />
+                                        <InputOTPSlot index={5} />
+                                        <InputOTPSlot index={6} />
+                                        <InputOTPSlot index={7} />
+                                    </InputOTPGroup>
+                                </InputOTP>
+                                </FormControl>
+                            </FormItem>
+                        )}/>
+                        <Button type="submit" disabled={!form.formState.isValid}>Continue</Button>
+                    </form>
+                </Form>
+                {fetchError && (
+                    <p className="text-destructive">{fetchError}</p>
+                )}
+                </>
+            )}
+        </div>
     );
 }
+// TODO: terminology
