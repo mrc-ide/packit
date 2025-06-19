@@ -86,7 +86,7 @@ These permissions apply across the entire application:
 
 - **Purpose**: Direct packet metadata access
 - **Capabilities**:
-  - `outpack.read`: Read all packet metadata
+  - `outpack.read`: Read all packet data and metadata
   - `outpack.write`: Push packets directly to server without using the packet runner
 
 #### `user.manage`
