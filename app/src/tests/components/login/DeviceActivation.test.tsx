@@ -1,4 +1,4 @@
-import {act, render, screen, waitFor, waitForOptions} from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { DeviceActivation } from "../../../app/components/login";
 import userEvent from "@testing-library/user-event";
 import { server } from "../../../msw/server";
@@ -7,8 +7,6 @@ import appConfig from "../../../config/appConfig";
 import * as fetch from "../../../lib/fetch";
 
 describe("DeviceActivation", () => {
-  //const fetcherSpy = jest.spyOn(fetch, "fetcher");s
-
   const renderComponent = () => {
     render(<DeviceActivation/>);
   };
@@ -16,10 +14,17 @@ describe("DeviceActivation", () => {
   const getButton = () => screen.getByRole("button", { name: /Continue/ });
   const getTextBox = () => screen.getByRole("textbox", {});
 
+  const clickButtonWhenEnabled = async (button: HTMLElement) => {
+    await waitFor(() => {
+      expect(button).toBeEnabled();
+    });
+
+    userEvent.click(button);
+  };
+
   const successText = /Success! Code is activated - you can now access Packit API from your console./;
 
   beforeEach(() => {
-    jest.clearAllMocks();
     document.elementFromPoint = (x, y) => null;
   });
 
@@ -31,12 +36,7 @@ describe("DeviceActivation", () => {
     expect(screen.queryByText(successText)).toBeNull;
     expect(textbox).toHaveFocus();
     userEvent.type(textbox, "ABCD-EFGH");
-    await waitFor(() => {
-      expect(button).toBeEnabled();
-    });
-
-    userEvent.click(button);
-
+    await clickButtonWhenEnabled(button);
     await waitFor(() => {
       expect(screen.queryByText(successText)).toBeInTheDocument();
     });
@@ -56,10 +56,7 @@ describe("DeviceActivation", () => {
     const errorText = /Code has expired or is not recognised./;
     expect(screen.queryByText(errorText)).toBeNull;
     userEvent.type(textbox, "ABCD-EFGH");
-    await waitFor(() => {
-      expect(button).toBeEnabled();
-    });
-    userEvent.click(button);
+    await clickButtonWhenEnabled(button);
     await waitFor(() => {
       expect(screen.queryByText(errorText)).toBeInTheDocument();
     });
@@ -69,7 +66,7 @@ describe("DeviceActivation", () => {
     expect(button).toBeInTheDocument();
   });
 
-  /*it("can see error message on unexpected status code", async () => {
+  it("can see error message on unexpected status code", async () => {
     server.use(
       rest.post(`${appConfig.apiUrl()}/deviceAuth/validate`, (req, res, ctx) => {
         return res(ctx.status(500), ctx.json({ error: { detail: "test_error" } }));
@@ -81,7 +78,7 @@ describe("DeviceActivation", () => {
     const errorText = /An unexpected error occurred./;
     expect(screen.queryByText(errorText)).toBeNull;
     userEvent.type(textbox, "ABCD-EFGH");
-    userEvent.click(button);
+    await clickButtonWhenEnabled(button);
     await waitFor(() => {
       expect(screen.queryByText(errorText)).toBeInTheDocument();
     });
@@ -104,6 +101,7 @@ describe("DeviceActivation", () => {
     });
   });
 
+
   it("cannot enter invalid characters", () => {
     renderComponent();
     const textbox = getTextBox();
@@ -112,6 +110,7 @@ describe("DeviceActivation", () => {
   });
 
   it("lower case letters are converted to upper case on submit", async () => {
+    const fetcherSpy = jest.spyOn(fetch, "fetcher");
     renderComponent();
     const textbox = getTextBox();
     userEvent.type(textbox, "Abcd-Efgh{enter}");
@@ -122,5 +121,5 @@ describe("DeviceActivation", () => {
         method: "POST"
       });
     });
-  });*/
+  });
 });
