@@ -3,6 +3,7 @@ import {
   RolesAndUsersWithPermissions,
   RoleWithRelationships
 } from "../app/components/contents/manageAccess/types/RoleWithRelationships";
+import { UserWithPermissions } from "../app/components/contents/manageAccess/types/UserWithPermissions";
 import { GitBranches } from "../app/components/contents/runner/types/GitBranches";
 import { PageableBasicRunInfo, RunInfo } from "../app/components/contents/runner/types/RunInfo";
 import { Parameter, RunnerPacketGroup } from "../app/components/contents/runner/types/RunnerPacketGroup";
@@ -15,7 +16,7 @@ import {
   PageablePacketGroupSummaries,
   PageablePackets,
   InputFileType,
-  LogoConfiguration
+  BrandingConfiguration
 } from "../types";
 
 export const mockPacketResponse = {
@@ -39,10 +40,12 @@ export const mockAuthConfig: AuthConfig = {
   enablePreAuthLogin: false
 };
 
-export const mockLogoConfig: LogoConfiguration = {
-  altText: "This logo has alt text",
-  filename: "logo-for-website.png",
-  linkDestination: "https://example.com"
+export const mockBrandingConfig: BrandingConfiguration = {
+  darkModeEnabled: true,
+  lightModeEnabled: true,
+  logoAltText: "This logo has alt text",
+  logoFilename: "logo-for-website.png",
+  logoLinkDestination: "https://example.com"
 };
 
 export const mockUserState = (): UserState => {
@@ -640,9 +643,11 @@ export const mockUsernameRolesWithRelationships: RoleWithRelationships[] = [
   }
 ];
 
-export const mockUsersWithPermissions = [
+export const mockUsersWithPermissions: UserWithPermissions[] = [
   {
     username: "a@gmail.com",
+    email: "a@gmail.com",
+    displayName: "a town",
     id: "b13c35b8-7070-47a8-9266-3a23ae6fd76e",
     roles: [
       {
@@ -686,6 +691,8 @@ export const mockUsersWithPermissions = [
   },
   {
     username: "b@gmail.com",
+    email: "b@gmail.com",
+    displayName: "beta palace",
     id: "fd261b07-9a4b-4a1d-9b66-88d708b63264",
     roles: [
       {
@@ -701,6 +708,8 @@ export const mockUsersWithPermissions = [
   },
   {
     username: "c@gmail.com",
+    email: "c@gmail.com",
+    displayName: "c city",
     id: "5390a192-371c-49fe-8b67-efcc250daaa9",
     roles: [
       {
@@ -727,6 +736,8 @@ export const mockUsersWithPermissions = [
   },
   {
     username: "d@gmail.com",
+    email: "d@gmail.com",
+    displayName: "d castle",
     id: "3c0e2e83-c7a9-420c-82db-c3327931f1c0",
     roles: [
       {
@@ -738,6 +749,7 @@ export const mockUsersWithPermissions = [
   },
   {
     username: "e@gmail.com",
+    email: "e@gmail.com",
     id: "a3e56ca4-e9ed-474a-bd4d-3d60508746d1",
     roles: [
       {

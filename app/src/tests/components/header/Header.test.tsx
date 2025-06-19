@@ -7,23 +7,32 @@ import * as UserProvider from "../../../app/components/providers/UserProvider";
 import { mockUserProviderState } from "../../mocks";
 import { Header } from "../../../app/components/header";
 import { BrandingProvider } from "../../../app/components/providers/BrandingProvider";
+import { expectThemeClass, handleRequestWithEnabledThemes } from "../../testUtils";
+import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
+import { SWRConfig } from "swr";
 
 const mockUseUser = jest.spyOn(UserProvider, "useUser");
 
 describe("header component", () => {
   const renderElement = () => {
     return render(
-      <MemoryRouter>
-        <ThemeProvider>
-          <BrandingProvider>
-            <RedirectOnLoginProvider>
-              <Header />
-            </RedirectOnLoginProvider>
-          </BrandingProvider>
-        </ThemeProvider>
-      </MemoryRouter>
+      <SWRConfig value={{ provider: () => new Map() }}>
+        <MemoryRouter>
+          <ThemeProvider>
+            <BrandingProvider>
+              <RedirectOnLoginProvider>
+                <Header />
+              </RedirectOnLoginProvider>
+            </BrandingProvider>
+          </ThemeProvider>
+        </MemoryRouter>
+      </SWRConfig>
     );
   };
+
+  afterEach(() => {
+    localStorage.removeItem(LocalStorageKeys.THEME);
+  });
 
   it("can render user related items when authenticated", async () => {
     const DOWN_ARROW = { keyCode: 40 };
@@ -40,13 +49,49 @@ describe("header component", () => {
     mockUseUser.mockReturnValue(mockUserProviderState());
     renderElement();
 
-    const darkThemeButton = screen.getByRole("button", { name: "theme-light" });
+    const darkThemeButton = await screen.findByRole("button", { name: "theme-dark" });
 
     await userEvent.click(darkThemeButton);
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: "theme-dark" })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "theme-light" })).toBeInTheDocument();
+      expectThemeClass("dark");
+      expect(localStorage.getItem(LocalStorageKeys.THEME)).toBe("dark");
     });
+
+    const lightThemeButton = screen.getByRole("button", { name: "theme-light" });
+
+    await userEvent.click(lightThemeButton);
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "theme-dark" })).toBeInTheDocument();
+      expectThemeClass("light");
+      expect(localStorage.getItem(LocalStorageKeys.THEME)).toBe("light");
+    });
+  });
+
+  it("should not render the theme toggle when only dark mode is available to be applied", async () => {
+    handleRequestWithEnabledThemes(["dark"]);
+
+    mockUseUser.mockReturnValue(mockUserProviderState());
+    renderElement();
+
+    expect(screen.queryByRole("button", { name: "theme-dark" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "theme-light" })).not.toBeInTheDocument();
+
+    await waitFor(() => expectThemeClass("dark"));
+  });
+
+  it("should not render the theme toggle when only light mode is available to be applied", async () => {
+    handleRequestWithEnabledThemes(["light"]);
+
+    mockUseUser.mockReturnValue(mockUserProviderState());
+    renderElement();
+
+    expect(screen.queryByRole("button", { name: "theme-dark" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "theme-light" })).not.toBeInTheDocument();
+
+    await waitFor(() => expectThemeClass("light"));
   });
 
   it("should render link to manage access when user has user.manage authority", () => {

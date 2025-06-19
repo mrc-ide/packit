@@ -21,7 +21,7 @@ class User(
     var roles: MutableList<Role> = mutableListOf(),
     var disabled: Boolean,
     val userSource: String,
-    val displayName: String?,
+    val displayName: String? = null,
     val email: String? = null,
     var password: String? = null,
     var lastLoggedIn: Instant? = null,
@@ -49,5 +49,7 @@ fun User.toUserWithPermissions() =
         username = username,
         specificPermissions = getSpecificPermissions().map { it.toDto() },
         roles = getNonUsernameRoles().map { it.toBasicDto() },
-        id = id!!
+        id = id!!,
+        email = email,
+        displayName = displayName,
     )

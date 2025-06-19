@@ -5,4 +5,6 @@ export interface UserWithPermissions {
   id: string;
   roles: BasicRole[];
   specificPermissions: RolePermission[];
+  email?: string;
+  displayName?: string;
 }
