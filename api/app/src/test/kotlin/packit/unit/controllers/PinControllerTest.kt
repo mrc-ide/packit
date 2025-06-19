@@ -44,7 +44,7 @@ class PinControllerTest {
     private val sut = PinController(pinService)
 
     @Test
-    fun `getPinnedPackets should return sorted packet metadata`() {
+    fun `getPinnedPackets should return packet metadata`() {
         val response = sut.getPinnedPackets()
         val responseBody = response.body
 
