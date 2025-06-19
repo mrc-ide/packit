@@ -1,4 +1,5 @@
 package packit.integration.controllers
+
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -213,7 +214,7 @@ class RunnerControllerTest : IntegrationTest() {
 
         val res = restTemplate.exchange(
             "/runner/list/status?pageNumber=$pageNumber&pageSize=" +
-                "$pageSize&filterPacketGroupName=$filterPacketGroupName",
+                    "$pageSize&filterPacketGroupName=$filterPacketGroupName",
             HttpMethod.GET,
             getTokenizedHttpEntity(),
             String::class.java
@@ -248,9 +249,9 @@ class RunnerControllerTest : IntegrationTest() {
         assertEquals(taskId, info.taskId)
         assertEquals(Status.COMPLETE, info.status)
 
-        assertThat(info.logs).anySatisfy({
+        assertThat(info.logs).anySatisfy {
             assertThat(it).contains("Starting packet 'incoming_data'")
-        })
+        }
     }
 
     @Test

@@ -176,7 +176,12 @@ class RunnerServiceTest {
             status = Status.PENDING.toString(),
             user = testUser
         )
-        `when`(client.getTaskStatuses(listOf(taskId), true)).thenReturn(listOf(taskStatus))
+        `when`(client.getTaskStatuses(listOf(taskId), true)).thenReturn(
+            TaskStatusesResponse(
+                listOf(taskStatus),
+                emptyList()
+            )
+        )
         `when`(runInfoRepository.findByTaskId(taskId)).thenReturn(testRunInfo)
 
         val result = sut.getTaskStatus(taskId)
@@ -220,7 +225,7 @@ class RunnerServiceTest {
             user = testUser
         )
         `when`(runInfoRepository.findByTaskId(taskId)).thenReturn(testRunInfo)
-        `when`(client.getTaskStatuses(listOf(taskId), true)).thenReturn(emptyList())
+        `when`(client.getTaskStatuses(listOf(taskId), true)).thenReturn(TaskStatusesResponse(emptyList(), emptyList()))
         val serviceSpy = spy(sut)
 
         val result = serviceSpy.getTaskStatus(taskId)
@@ -255,7 +260,7 @@ class RunnerServiceTest {
         val taskIds = listOf("task-id1", "task-id2")
         val filterName = "filter-name"
         val payload = PageablePayload(pageNumber = 0, pageSize = 10)
-        `when`(client.getTaskStatuses(taskIds, false)).thenReturn(testTaskStatuses)
+        `when`(client.getTaskStatuses(taskIds, false)).thenReturn(TaskStatusesResponse(testTaskStatuses, emptyList()))
 
         val result = sut.getTasksStatuses(payload, filterName)
 
