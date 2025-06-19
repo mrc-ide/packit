@@ -23,7 +23,7 @@ jest.mock("../../../lib/localStorageManager", () => ({
 describe("login", () => {
   const renderElement = () => {
     return render(
-      <SWRConfig value={{ dedupingInterval: 0 }}>
+      <SWRConfig value={{ provider: () => new Map() }}>
         <MemoryRouter initialEntries={["/login?error=random&info=Notification"]}>
           <UserProvider>
             <RedirectOnLoginProvider>

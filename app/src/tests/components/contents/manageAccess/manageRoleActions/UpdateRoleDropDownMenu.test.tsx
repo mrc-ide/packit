@@ -16,7 +16,7 @@ describe("UpdateRoleDropDownMenu", () => {
 
     fireEvent.keyDown(await screen.findByRole("button", { name: "edit-role" }), DOWN_ARROW);
 
-    const userMenuItem = await screen.findByRole("menuitem", { name: "Update Users" });
+    const userMenuItem = await screen.findByRole("menuitem", { name: /update users/i });
     userEvent.click(userMenuItem);
 
     await waitFor(() => {
@@ -36,7 +36,7 @@ describe("UpdateRoleDropDownMenu", () => {
 
     fireEvent.keyDown(await screen.findByRole("button", { name: "edit-role" }), DOWN_ARROW);
 
-    const permissionMenuItem = await screen.findByRole("menuitem", { name: "Update Permissions" });
+    const permissionMenuItem = await screen.findByRole("menuitem", { name: /update permissions/i });
     userEvent.click(permissionMenuItem);
 
     await waitFor(() => {

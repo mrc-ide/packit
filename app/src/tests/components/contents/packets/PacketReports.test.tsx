@@ -16,7 +16,7 @@ URL.revokeObjectURL = jest.fn();
 describe("Packet reports component", () => {
   const renderComponent = (packet: PacketMetadata) => {
     return render(
-      <SWRConfig value={{ dedupingInterval: 0 }}>
+      <SWRConfig value={{ provider: () => new Map() }}>
         <MemoryRouter initialEntries={["/"]}>
           <Routes>
             <Route element={<Outlet context={{ packet }} />}>
@@ -40,7 +40,7 @@ describe("Packet reports component", () => {
     const iframe = await screen.findByTestId("report-iframe");
     expect(iframe).toBeVisible();
     expect(iframe.getAttribute("src")).toBe("fakeObjectUrl");
-    expect(screen.getByRole("link").getAttribute("href")).toBe(`${mockPacket.id}/file/report.html`);
+    expect(screen.getByRole("link").getAttribute("href")).toBe(`/${mockPacket.name}/${mockPacket.id}/file/report.html`);
   });
 
   it("renders None if no report in packet", async () => {

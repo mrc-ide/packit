@@ -10,7 +10,7 @@ import { mockPacket, mockPacketGroupResponse } from "../../../mocks";
 
 const renderComponent = (parentLoading = false) =>
   render(
-    <SWRConfig value={{ dedupingInterval: 0 }}>
+    <SWRConfig value={{ provider: () => new Map() }}>
       <MemoryRouter initialEntries={[`/${mockPacketGroupResponse.content[0].name}`]}>
         <Routes>
           <Route path="/:packetName" element={<PacketTable parentIsLoading={parentLoading} />} />

@@ -4,6 +4,7 @@ import { FileMetadata, PacketMetadata } from "../../../../types";
 import { AccordionContent, AccordionItem, AccordionTrigger } from "../../Base/Accordion";
 import { PacketReport } from "./PacketReport";
 import { getHtmlFileIfExists } from "./utils/htmlFile";
+import { NavLink } from "react-router-dom";
 
 interface PacketReportsProps {
   packet: PacketMetadata | undefined;
@@ -32,14 +33,14 @@ export const PacketReports = ({ packet }: PacketReportsProps) => {
               <PacketReport fileHash={htmlFile.hash} packet={packet}></PacketReport>
             </div>
             <div className="py-2 flex justify-end">
-              <a
+              <NavLink
                 className="text-blue-500 flex items-center gap-1
         hover:underline decoration-blue-500"
-                href={`${packet.id}/file/${htmlFile.path}`}
+                to={`/${packet.name}/${packet.id}/file/${htmlFile.path}`}
               >
                 <Fullscreen size={20} />
                 View Fullscreen
-              </a>
+              </NavLink>
             </div>
           </div>
         ) : (

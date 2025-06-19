@@ -11,7 +11,7 @@ describe("Home component", () => {
   const fetcherSpy = jest.spyOn(fetch, "fetcher");
   const renderComponent = () =>
     render(
-      <SWRConfig value={{ dedupingInterval: 0 }}>
+      <SWRConfig value={{ provider: () => new Map() }}>
         <MemoryRouter>
           <UserProvider>
             <Home />
