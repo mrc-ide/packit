@@ -8,6 +8,8 @@ import { FilterInput } from "../common/FilterInput";
 import { AddBasicUserButton } from "./AddBasicUserButton";
 import { setupManageUsersColumns } from "./utils/manageUsersColumns";
 import { usersGlobalFilterFn } from "./utils/rolesTableGlobalFilterFn";
+import { NavLink } from "react-router-dom";
+import { HelpCircle } from "lucide-react";
 
 export const ManageUsers = () => {
   const { users, mutate, roles } = useManageAccessLayoutContext();
@@ -17,7 +19,12 @@ export const ManageUsers = () => {
   return (
     <>
       <div>
-        <h2 className="text-2xl font-bold tracking-tight">Manage Users</h2>
+        <div className="flex gap-2 items-center">
+          <h2 className="text-2xl font-bold tracking-tight">Manage Users</h2>
+          <NavLink to={"/docs/manage-access-help"} className="text-blue-500   hover:text-blue-600">
+            <HelpCircle className="h-5 w-5" />
+          </NavLink>
+        </div>
         <p className="text-muted-foreground">Add users, update roles and permissions on users</p>
       </div>
       <div className="space-y-4 flex flex-col">
