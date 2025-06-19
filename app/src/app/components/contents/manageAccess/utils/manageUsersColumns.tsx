@@ -3,7 +3,6 @@ import { EllipsisVertical, Trash2 } from "lucide-react";
 import { KeyedMutator } from "swr";
 import { constructPermissionName } from "../../../../../lib/constructPermissionName";
 import { Button } from "../../../Base/Button";
-import { ScrollArea } from "../../../Base/ScrollArea";
 import { useUser } from "../../../providers/UserProvider";
 import { DeleteUserOrRole } from "../DeleteUserOrRole";
 import { UpdateUserDropdownMenu } from "../manageUsersActions/UpdateUserDropdownMenu";
@@ -17,9 +16,17 @@ export const setupManageUsersColumns = (
   roles: RoleWithRelationships[]
 ) => [
   columnHelper.accessor("username", {
-    header: "Username",
-    cell: ({ getValue }) => {
-      return <div>{getValue()}</div>;
+    header: "User",
+    cell: ({ row }) => {
+      return (
+        <div className="flex flex-col">
+          <span>{row.original.username}</span>
+          <span className="text-xs text-muted-foreground">
+            {row.original.displayName ? row.original.displayName : "No display name"}
+          </span>
+          <span className="text-xs text-muted-foreground">{row.original.email ? row.original.email : "No email"}</span>
+        </div>
+      );
     }
   }),
   columnHelper.accessor("roles", {
@@ -28,15 +35,13 @@ export const setupManageUsersColumns = (
       const roles = getValue();
 
       return (
-        <ScrollArea className="h-14" type="auto">
-          <div className="flex flex-wrap italic gap-0.5 text-xs pl-0.5">
-            {roles?.length === 0
-              ? "None"
-              : roles.map((role, index) => (
-                  <div key={role.id}>{index === roles.length - 1 ? role.name : role.name + ","}</div>
-                ))}
-          </div>
-        </ScrollArea>
+        <div className="flex flex-wrap italic gap-0.5 text-xs pl-0.5 max-h-20 overflow-auto [&::-webkit-scrollbar]:w-2">
+          {roles?.length === 0
+            ? "None"
+            : roles.map((role, index) => (
+                <div key={role.id}>{index === roles.length - 1 ? role.name : role.name + ","}</div>
+              ))}
+        </div>
       );
     }
   }),
@@ -46,19 +51,17 @@ export const setupManageUsersColumns = (
       const rolePermissions = getValue();
 
       return (
-        <ScrollArea className="h-14" type="auto">
-          <div className="flex flex-wrap gap-1 italic text-xs pl-0.5">
-            {rolePermissions?.length === 0
-              ? "None"
-              : rolePermissions.map((permission, index) => (
-                  <div key={permission.id}>
-                    {index === rolePermissions.length - 1
-                      ? constructPermissionName(permission)
-                      : constructPermissionName(permission) + ","}
-                  </div>
-                ))}
-          </div>
-        </ScrollArea>
+        <div className="flex flex-wrap gap-1 italic text-xs pl-0.5 max-h-20 overflow-auto [&::-webkit-scrollbar]:w-2">
+          {rolePermissions?.length === 0
+            ? "None"
+            : rolePermissions.map((permission, index) => (
+                <div key={permission.id}>
+                  {index === rolePermissions.length - 1
+                    ? constructPermissionName(permission)
+                    : constructPermissionName(permission) + ","}
+                </div>
+              ))}
+        </div>
       );
     }
   }),
