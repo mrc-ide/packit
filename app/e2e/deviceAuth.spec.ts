@@ -13,15 +13,15 @@ test.describe("Device auth", () => {
 
     // 2. Validate user code at /device page
     await page.goto("/device");
-    await page.getByRole("textbox").fill(user_code);
+    await page.keyboard.type(user_code);
     await page.getByRole("button", { name: /Continue/ }).click();
     await expect(await page.getByText("Success!")).toBeVisible();
 
     // 3. To check that validation has succeeded, get access token for device code
-    const tokenResponse = await apiUtils.post("/deviceAuth/token", {
-      device_code,
-      grant_type: "urn:ietf:params:oauth:grant-type:device_code" // required grant type
-    });
+    const tokenResponse = await apiUtils.post("/deviceAuth/token",
+        `device_code=${device_code}&grant_type=urn:ietf:params:oauth:grant-type:device_code`,
+        "application/x-www-form-urlencoded"
+    );
     expect(tokenResponse.status).toBe(200);
     const { access_token } = await tokenResponse.json();
 
@@ -38,7 +38,7 @@ test.describe("Device auth", () => {
 
   test("can see error message when enter invalid user code", async ({ page }) => {
     await page.goto("/device");
-    await page.getByRole("textbox").fill("BAD-CODE-");
+    await page.keyboard.type("BAAD-CODE");
     await page.getByRole("button", { name: /Continue/ }).click();
     await expect(await page.getByText("Code has expired or is not recognised.")).toBeVisible();
   });
