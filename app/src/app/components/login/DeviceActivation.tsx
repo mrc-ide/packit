@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useState } from "react";
+import {Ref, useRef, useState} from "react";
 import {useForm} from "react-hook-form";
 import { REGEXP_ONLY_CHARS } from "input-otp";
 import {fetcher} from "../../../lib/fetch";
@@ -29,6 +29,7 @@ export const DeviceActivation = () => {
         resolver: zodResolver(formSchema),
         defaultValues: { user_code: "" }
     });
+    const inputRef: Ref<HTMLInputElement> = useRef(null);
     const url = `${appConfig.apiUrl()}/deviceAuth/validate`;
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
@@ -43,6 +44,10 @@ export const DeviceActivation = () => {
                setFetchError("Code has expired or is not recognised.");
             } else {
                 setFetchError("An unexpected error occurred.");
+            }
+            form.reset();
+            if (inputRef.current) {
+                inputRef.current.focus();
             }
         }
     };
@@ -61,9 +66,10 @@ export const DeviceActivation = () => {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                         <FormField control={form.control} name="user_code" render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="h-[3rem]">
                                  <FormControl>
                                     <InputOTP {...field}
+                                        ref={inputRef}
                                         autoFocus={true}
                                         maxLength={8}
                                         pattern={REGEXP_ONLY_CHARS}
