@@ -3,7 +3,7 @@ set -exu
 
 # Export env vars needed for running test dependencies
 export OUTPACK_SERVER_IMAGE=docker.io/mrcide/outpack_server:main
-export ORDERLY_RUNNER_IMAGE=ghcr.io/mrc-ide/orderly.runner:mrc-6548-fix-runner-logs #TODO: revert to main before merging
+export ORDERLY_RUNNER_IMAGE=ghcr.io/mrc-ide/orderly.runner:main
 
 export RUNNER_CONTAINER_NAMESPACE=orderly.runner
 export RUNNER_REDIS=$RUNNER_CONTAINER_NAMESPACE-redis
