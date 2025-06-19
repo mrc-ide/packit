@@ -214,7 +214,7 @@ class RunnerControllerTest : IntegrationTest() {
 
         val res = restTemplate.exchange(
             "/runner/list/status?pageNumber=$pageNumber&pageSize=" +
-                "$pageSize&filterPacketGroupName=$filterPacketGroupName",
+                    "$pageSize&filterPacketGroupName=$filterPacketGroupName",
             HttpMethod.GET,
             getTokenizedHttpEntity(),
             String::class.java
@@ -270,6 +270,22 @@ class RunnerControllerTest : IntegrationTest() {
         )
         assertEquals(HttpStatus.OK, res.statusCode)
         assertEquals(testPacketGroupName, jacksonObjectMapper().readTree(res.body).get("name").asText())
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.run"])
+    fun `can get task id by packet id`() {
+        val (taskId) = submitTestRun()
+        val info = waitForTask(taskId)
+
+        val res: ResponseEntity<Map<String, String>> = restTemplate.exchange(
+            "/runner/by-packet-id/${info.packetId}",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        assertSuccess(res)
+        assertEquals(taskId, res.body!!["runTaskId"])
     }
 }
 

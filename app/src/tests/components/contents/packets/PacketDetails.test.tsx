@@ -8,6 +8,7 @@ import { server } from "../../../../msw/server";
 import { PacketMetadata } from "../../../../types";
 import { mockPackets, mockPacket } from "../../../mocks";
 import { packetIndexUri } from "../../../../msw/handlers/packetHandlers";
+import { basicRunnerUri } from "../../../../msw/handlers/runnerHandlers";
 
 jest.mock("../../../../lib/download", () => ({
   getFileObjectUrl: async () => "fakeObjectUrl"
@@ -96,6 +97,28 @@ describe("packet details component", () => {
       mockPackets.forEach(async (packet) => {
         expect(await screen.findByText(packet.id)).toBeVisible();
       });
+    });
+  });
+
+  it("should render navigate button run logs when runTaskId is present", async () => {
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByRole("link", { name: /view run logs/i })).toBeVisible();
+    });
+  });
+
+  it("should not render navigate button run logs when runTaskId is not present", async () => {
+    server.use(
+      rest.get(`${basicRunnerUri}/by-packet-id/:packetId`, (req, res, ctx) => {
+        return res(ctx.status(404));
+      })
+    );
+
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.queryByRole("link", { name: /view run logs/i })).not.toBeInTheDocument();
     });
   });
 });

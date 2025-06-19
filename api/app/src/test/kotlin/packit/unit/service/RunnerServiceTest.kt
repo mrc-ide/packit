@@ -339,4 +339,29 @@ class RunnerServiceTest {
         assertEquals(taskStatus.packetId, updatedRunInfo.packetId)
         assertEquals(taskStatus.queuePosition, updatedRunInfo.queuePosition)
     }
+
+    @Test
+    fun `getTaskIdByPacketId should return taskId for given packetId`() {
+        val expectedTaskId = "task-id"
+        val packetId = "packetId"
+        val runInfo = mock<RunInfo> {
+            on { taskId } doReturn expectedTaskId
+        }
+        `when`(runInfoRepository.findByPacketId(packetId)).thenReturn(runInfo)
+
+        val taskId = sut.getTaskIdByPacketId(packetId)
+
+        assertEquals(expectedTaskId, taskId)
+    }
+
+    @Test
+    fun `getTaskIdByPacketId should throw error if cant find runInfo`() {
+        `when`(runInfoRepository.findByPacketId("packetId")).thenReturn(null)
+
+        assertThrows<PackitException> { sut.getTaskIdByPacketId("packetId") }.apply {
+            assertEquals("runInfoNotFoundForPacket", key)
+            assertEquals(HttpStatus.NOT_FOUND, httpStatus)
+        }
+
+    }
 }
