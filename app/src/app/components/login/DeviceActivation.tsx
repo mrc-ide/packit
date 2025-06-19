@@ -31,7 +31,6 @@ export const DeviceActivation = () => {
     });
     const url = `${appConfig.apiUrl()}/deviceAuth/validate`;
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
-        console.log("values are " + JSON.stringify(values))
         try {
             await fetcher({
                 url,
@@ -53,7 +52,7 @@ export const DeviceActivation = () => {
             {success && (
                 <div>
                     <Check className="mx-auto h-20 w-20 text-muted-foreground" />
-                    Success! You are now logged in and can access Packit API from your console.
+                    Success! Code is activated - you can now access Packit API from your console.
                 </div>
             )}
             {!success && (
@@ -98,4 +97,3 @@ export const DeviceActivation = () => {
         </div>
     );
 }
-// TODO: terminology

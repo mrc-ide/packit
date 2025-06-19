@@ -1,29 +1,39 @@
-import { render, screen, waitFor } from "@testing-library/react";
-import { DeviceLogin } from "../../../app/components/login";
+import {act, render, screen, waitFor, waitForOptions} from "@testing-library/react";
+import { DeviceActivation } from "../../../app/components/login";
 import userEvent from "@testing-library/user-event";
 import { server } from "../../../msw/server";
 import { rest } from "msw";
 import appConfig from "../../../config/appConfig";
+import * as fetch from "../../../lib/fetch";
 
-describe("DeviceLogin", () => {
+describe("DeviceActivation", () => {
+  //const fetcherSpy = jest.spyOn(fetch, "fetcher");s
+
   const renderComponent = () => {
-    render(<DeviceLogin />);
+    render(<DeviceActivation/>);
   };
 
   const getButton = () => screen.getByRole("button", { name: /Continue/ });
   const getTextBox = () => screen.getByRole("textbox", {});
 
-  const successText = /Success! You are now logged in and can access Packit API from your console./;
+  const successText = /Success! Code is activated - you can now access Packit API from your console./;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    document.elementFromPoint = (x, y) => {};
+  });
 
   it("can submit valid code and see success message", async () => {
-    renderComponent();
+    await renderComponent();
     const button = getButton();
     const textbox = getTextBox();
     expect(button).not.toBeEnabled();
     expect(screen.queryByText(successText)).toBeNull;
     expect(textbox).toHaveFocus();
     userEvent.type(textbox, "ABCD-EFGH");
-    expect(button).toBeEnabled();
+    await waitFor(() => {
+      expect(button).toBeEnabled();
+    });
 
     userEvent.click(button);
 
@@ -94,14 +104,20 @@ describe("DeviceLogin", () => {
   it("cannot enter invalid characters", () => {
     renderComponent();
     const textbox = getTextBox();
-    userEvent.type(textbox, "A!1-_B");
-    expect(textbox).toHaveValue("A-B");
+    userEvent.type(textbox, "A!1-_Bc");
+    expect(textbox).toHaveValue("ABc");
   });
 
-  it("lower case letters are converted to upper case", () => {
+  it("lower case letters are converted to upper case on submit", async () => {
     renderComponent();
     const textbox = getTextBox();
-    userEvent.type(textbox, "Abcd-Efgh");
-    expect(textbox).toHaveValue("ABCD-EFGH");
+    userEvent.type(textbox, "Abcd-Efgh{enter}");
+    await waitFor(() => {
+      expect(fetcherSpy).toHaveBeenCalledWith({
+        url: `${appConfig.apiUrl()}/deviceAuth/validate`,
+        body: {user_code: "ABCD-EFGH"},
+        method: "POST"
+      });
+    });
   });
 });
