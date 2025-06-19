@@ -18,9 +18,10 @@ test.describe("Device auth", () => {
     await expect(await page.getByText("Success!")).toBeVisible();
 
     // 3. To check that validation has succeeded, get access token for device code
-    const tokenResponse = await apiUtils.post("/deviceAuth/token",
-        `device_code=${device_code}&grant_type=urn:ietf:params:oauth:grant-type:device_code`,
-        "application/x-www-form-urlencoded"
+    const tokenResponse = await apiUtils.post(
+      "/deviceAuth/token",
+      `device_code=${device_code}&grant_type=urn:ietf:params:oauth:grant-type:device_code`,
+      "application/x-www-form-urlencoded"
     );
     expect(tokenResponse.status).toBe(200);
     const { access_token } = await tokenResponse.json();

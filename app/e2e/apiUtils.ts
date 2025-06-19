@@ -19,7 +19,7 @@ export class PackitApiUtils {
   }
 
   async post(url: string, data: any, contentType = APPLICATION_JSON, accept = APPLICATION_JSON) {
-    const body = typeof data === "string" ? data : JSON.stringify(data)
+    const body = typeof data === "string" ? data : JSON.stringify(data);
     return await fetch(`${this.apiUrl}${url}`, {
       method: "POST",
       ...(body && { body }),

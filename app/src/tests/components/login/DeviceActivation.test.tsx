@@ -8,7 +8,7 @@ import * as fetch from "../../../lib/fetch";
 
 describe("DeviceActivation", () => {
   const renderComponent = () => {
-    render(<DeviceActivation/>);
+    render(<DeviceActivation />);
   };
 
   const getButton = () => screen.getByRole("button", { name: /Continue/ });
@@ -101,7 +101,6 @@ describe("DeviceActivation", () => {
     });
   });
 
-
   it("cannot enter invalid characters", () => {
     renderComponent();
     const textbox = getTextBox();
@@ -117,7 +116,7 @@ describe("DeviceActivation", () => {
     await waitFor(() => {
       expect(fetcherSpy).toHaveBeenCalledWith({
         url: `${appConfig.apiUrl()}/deviceAuth/validate`,
-        body: {user_code: "ABCD-EFGH"},
+        body: { user_code: "ABCD-EFGH" },
         method: "POST"
       });
     });
