@@ -6,10 +6,12 @@ import { useGetPacketById } from "./hooks/useGetPacketById";
 import { HttpStatus } from "../../../lib/types/HttpStatus";
 import { Unauthorized } from "../contents/common/Unauthorized";
 import { PacketNameError } from "../../../lib/errors";
+import { useGetRunTaskIdByPacketId } from "./hooks/useGetRunTaskIdByPacketId";
 
 export const PacketOutlet = () => {
   const { packetName, packetId } = useParams();
   const { packet, isLoading, error } = useGetPacketById(packetId);
+  const { runTaskId } = useGetRunTaskIdByPacketId(packetId);
 
   if (error?.status === HttpStatus.Unauthorized) return <Unauthorized />;
   if (error) return <ErrorComponent error={error} message="Error fetching packet details" />;
@@ -25,10 +27,11 @@ export const PacketOutlet = () => {
     return <ErrorComponent error={new PacketNameError()} message="Error fetching packet details" />;
   }
 
-  return packet ? <Outlet context={{ packet }} /> : null;
+  return packet ? <Outlet context={{ packet, runTaskId }} /> : null;
 };
 
 interface PacketOutletContext {
   packet: PacketMetadata | undefined;
+  runTaskId: string | undefined;
 }
 export const usePacketOutletContext = () => useOutletContext<PacketOutletContext>();
