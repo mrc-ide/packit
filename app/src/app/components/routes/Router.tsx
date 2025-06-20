@@ -3,7 +3,6 @@ import { App } from "../../App";
 import { NotFound } from "../NotFound";
 import { Downloads, Home, Metadata, PacketGroup } from "../contents";
 import { PacketDetails, PacketFileFullScreen } from "../contents/packets";
-import { Login, Redirect, UpdatePassword, AuthLayoutForm, DeviceActivation } from "../login";
 import { Breadcrumb } from "../main/Breadcrumb";
 import { PacketLayout } from "../main";
 import { ProtectedRoute } from "./ProtectedRoute";
@@ -12,14 +11,7 @@ import { PacketRun, PacketRunTaskLogs, PacketRunTasksLogs, PacketRunnerLayout } 
 import { PacketOutlet } from "../main/PacketOutlet";
 import { PacketReadPermission } from "../contents/PacketReadPermission";
 import { Markdown } from "../Base/Markdown";
-import { ManageAccessLayout, ManageRoles, ManageUsers } from "../contents/manageAccess";
-import { PacketDetails, PacketFileFullScreen } from "../contents/packets";
-import { PacketRun, PacketRunTaskLogs, PacketRunTasksLogs, PacketRunnerLayout } from "../contents/runner";
-import { AuthLayoutForm, Login, Redirect, UpdatePassword } from "../login";
-import { PacketLayout } from "../main";
-import { Breadcrumb } from "../main/Breadcrumb";
-import { PacketOutlet } from "../main/PacketOutlet";
-import { ProtectedRoute } from "./ProtectedRoute";
+import { AuthLayoutForm, DeviceActivation, Login, Redirect, UpdatePassword } from "../login";
 
 export const Router = () => {
   return (
