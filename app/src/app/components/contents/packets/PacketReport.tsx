@@ -14,10 +14,11 @@ interface PacketReportProps {
 // in future
 export const PacketReport = ({ packet, fileHash }: PacketReportProps) => {
   const file = getHtmlFileIfExists(packet);
+
   if (file?.hash !== fileHash)
     return <ErrorComponent message={defaultErrorMessage} error={new Error("File not found")} />;
 
-  const { fileObjectUrl, error } = useFileObjectUrl(file);
+  const { fileObjectUrl, error } = useFileObjectUrl(file, packet);
 
   if (error) return <ErrorComponent message={defaultErrorMessage} error={error} />;
 

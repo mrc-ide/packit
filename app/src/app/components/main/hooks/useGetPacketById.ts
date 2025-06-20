@@ -6,7 +6,8 @@ import { PacketMetadata } from "../../../../types";
 export const useGetPacketById = (packetId: string | undefined) => {
   const { data, isLoading, error } = useSWR<PacketMetadata>(
     packetId ? `${appConfig.apiUrl()}/packets/${packetId}` : null,
-    (url: string) => fetcher({ url })
+    (url: string) => fetcher({ url }),
+    { revalidateOnFocus: false }
   );
 
   const displayName = data?.custom?.orderly?.description?.display;

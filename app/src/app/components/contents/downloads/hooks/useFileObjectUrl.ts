@@ -1,11 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { getFileObjectUrl } from "../../../../../lib/download";
-import { FileMetadata } from "../../../../../types";
-import { usePacketOutletContext } from "../../../main/PacketOutlet";
+import { FileMetadata, PacketMetadata } from "../../../../../types";
 
-export const useFileObjectUrl = (file: FileMetadata | undefined) => {
-  const { packet } = usePacketOutletContext();
-
+export const useFileObjectUrl = (file: FileMetadata | undefined, packet: PacketMetadata | undefined) => {
   const [error, setError] = useState<null | Error>(null);
   const [fileObjectUrl, setFileObjectUrl] = useState<string | undefined>(undefined);
   // By using useRef, we make the latest value of fileObjectUrlRef available to the clean-up function (that which

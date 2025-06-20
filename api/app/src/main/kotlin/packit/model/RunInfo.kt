@@ -24,6 +24,7 @@ class RunInfo(
     var timeStarted: Double? = null,
     var timeCompleted: Double? = null,
     var timeQueued: Double? = null,
+    @Column(unique = true, nullable = true)
     var packetId: String? = null,
 
     @JdbcTypeCode(SqlTypes.JSON)

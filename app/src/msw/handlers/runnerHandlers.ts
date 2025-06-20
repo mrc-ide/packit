@@ -29,5 +29,8 @@ export const runnerHandlers = [
   }),
   rest.get(`${basicRunnerUri}/list/status`, (req, res, ctx) => {
     return res(ctx.json(mockTasksRunInfo));
+  }),
+  rest.get(`${basicRunnerUri}/by-packet-id/:packetId`, (req, res, ctx) => {
+    return res(ctx.json({ runTaskId: mockTaskId }));
   })
 ];

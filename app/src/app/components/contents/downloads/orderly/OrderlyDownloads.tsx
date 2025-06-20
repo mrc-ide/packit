@@ -2,7 +2,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "..
 import { FileMetadata, InputFileType } from "../../../../../types";
 import { Artefacts } from "./Artefacts";
 import { OtherFiles } from "./OtherFiles";
-import { usePacketOutletContext } from "../../../main/PacketOutlet";
+import { usePacketOutletContext } from "../../../main/PacketLayout";
 import { ZipDownloadButton } from "../ZipDownloadButton";
 import { useParams } from "react-router-dom";
 import { getFileByPath } from "../utils/getFileByPath";

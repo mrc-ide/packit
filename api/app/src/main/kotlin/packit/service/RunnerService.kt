@@ -22,6 +22,7 @@ interface RunnerService {
     fun submitRun(info: SubmitRunInfo, username: String): SubmitRunResponse
     fun getTaskStatus(taskId: String): RunInfo
     fun getTasksStatuses(payload: PageablePayload, filterPacketGroupName: String): Page<RunInfo>
+    fun getTaskIdByPacketId(packetId: String): String
 }
 
 class BaseRunnerService(
@@ -105,6 +106,13 @@ class BaseRunnerService(
         return updateRunInfosWithStatuses(runInfos, taskStatuses)
     }
 
+    override fun getTaskIdByPacketId(packetId: String): String {
+        val runInfo = runInfoRepository.findByPacketId(packetId)
+            ?: throw PackitException("runInfoNotFoundForPacket", HttpStatus.NOT_FOUND)
+
+        return runInfo.taskId
+    }
+
     internal fun updateRunInfosWithStatuses(runInfos: Page<RunInfo>, taskStatuses: List<TaskStatus>): Page<RunInfo> {
         runInfos.forEach { runInfo ->
             val taskStatus = taskStatuses.find { it.taskId == runInfo.taskId }
@@ -156,6 +164,7 @@ class DisabledRunnerService : RunnerService {
     override fun submitRun(info: SubmitRunInfo, username: String): SubmitRunResponse = error()
     override fun getTaskStatus(taskId: String): RunInfo = error()
     override fun getTasksStatuses(payload: PageablePayload, filterPacketGroupName: String): Page<RunInfo> = error()
+    override fun getTaskIdByPacketId(packetId: String): String = error()
 }
 
 @Configuration

@@ -1,11 +1,11 @@
 import { useParams } from "react-router-dom";
-import { usePacketOutletContext } from "../../main/PacketOutlet";
+import { Accordion } from "../../Base/Accordion";
+import { Separator } from "../../Base/Separator";
+import { usePacketOutletContext } from "../../main/PacketLayout";
+import { PacketDependencies } from "./PacketDependencies";
 import { PacketHeader } from "./PacketHeader";
 import { PacketParameters } from "./PacketParameters";
 import { PacketReports } from "./PacketReports";
-import { Separator } from "../../Base/Separator";
-import { PacketDependencies } from "./PacketDependencies";
-import { Accordion } from "../../Base/Accordion";
 
 export const PacketDetails = () => {
   const { packetId, packetName } = useParams();

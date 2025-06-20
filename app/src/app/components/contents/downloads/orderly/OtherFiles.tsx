@@ -1,7 +1,7 @@
 import { Card, CardContent } from "../../../Base/Card";
 import { FileRow } from "../FileRow";
 import { InputFile, InputFileType } from "../../../../../types";
-import { usePacketOutletContext } from "../../../main/PacketOutlet";
+import { usePacketOutletContext } from "../../../main/PacketLayout";
 import { getFileByPath } from "../utils/getFileByPath";
 
 // 'Other files' are any files to display other than artefact groups.

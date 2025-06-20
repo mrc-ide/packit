@@ -3,9 +3,10 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
 import { ZipDownloadButton } from "../../../../app/components/contents/downloads/ZipDownloadButton";
-import { PacketOutlet } from "../../../../app/components/main/PacketOutlet";
 import { FileMetadata } from "../../../../types";
 import { mockPacket } from "../../../mocks";
+import { PacketLayout } from "../../../../app/components/main";
+import * as UserProvider from "../../../../app/components/providers/UserProvider";
 
 let errorOnDownload = false;
 const mockDownload = jest.fn();
@@ -13,8 +14,15 @@ jest.mock("../../../../lib/download", () => ({
   ...jest.requireActual("../../../../lib/download"),
   download: async (...args: any[]) => mockDownload(...args)
 }));
+const mockUseUser = jest.spyOn(UserProvider, "useUser");
 
 describe("ZipDownloadButton", () => {
+  beforeEach(() => {
+    mockUseUser.mockReturnValue({
+      authorities: []
+    } as any);
+  });
+
   const filesToDownload = [
     {
       path: "test.txt",
@@ -35,7 +43,7 @@ describe("ZipDownloadButton", () => {
       <SWRConfig value={{ provider: () => new Map() }}>
         <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/downloads`]}>
           <Routes>
-            <Route element={<PacketOutlet />}>
+            <Route element={<PacketLayout />}>
               <Route
                 path="/:packetName/:packetId/downloads"
                 element={<ZipDownloadButton files={files} zipName={zipName} buttonText={buttonText} variant="ghost" />}

@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { getDateUTCString, getElapsedTime } from "../../../../helpers";
-import { usePacketOutletContext } from "../../main/PacketOutlet";
+import { usePacketOutletContext } from "../../main/PacketLayout";
 import { PacketHeader } from "../packets";
 import { MetadataListItem } from "./MetadataListItem";
 import { Github, Library, Monitor, Timer } from "lucide-react";
