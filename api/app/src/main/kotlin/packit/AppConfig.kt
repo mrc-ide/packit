@@ -51,4 +51,12 @@ class AppConfig(private val environment: Environment) {
     val brandLogoAltText: String? = optionalEnvValue("packit.branding.logoAltText")
     val brandLogoFilename: String? = optionalEnvValue("packit.branding.logoFilename")
     val brandLogoLink: String? = optionalEnvValue("packit.branding.logoLink")
+    val darkModeEnabled: Boolean = requiredEnvValue("packit.branding.darkModeEnabled").toBoolean()
+    val lightModeEnabled: Boolean = requiredEnvValue("packit.branding.lightModeEnabled").toBoolean()
+
+    init {
+        require(darkModeEnabled || lightModeEnabled) {
+            "At least one theme must be enabled."
+        }
+    }
 }

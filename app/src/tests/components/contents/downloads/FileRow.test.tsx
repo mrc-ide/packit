@@ -14,7 +14,7 @@ const renderComponent = (filePath: string, sharedResource?: boolean) => {
   const file = mockPacket.files.find((file) => file.path === filePath) as FileMetadata;
 
   return render(
-    <SWRConfig value={{ dedupingInterval: 0 }}>
+    <SWRConfig value={{ provider: () => new Map() }}>
       <MemoryRouter initialEntries={["/"]}>
         <Routes>
           <Route element={<Outlet context={{ packet: mockPacket }} />}>

@@ -18,13 +18,13 @@ describe("BrandingProvider", () => {
 
   it("provides logo branding information and brand name", async () => {
     const TestComponent = () => {
-      const { logoConfig, brandName } = useBrandingContext();
+      const { brandingConfig, brandName } = useBrandingContext();
 
       return (
         <>
-          <span data-testid="logo-config-alt-text">{logoConfig?.altText}</span>;
-          <span data-testid="logo-config-filename">{logoConfig?.filename}</span>;
-          <span data-testid="logo-config-link">{logoConfig?.linkDestination}</span>;
+          <span data-testid="logo-config-alt-text">{brandingConfig?.logoAltText}</span>;
+          <span data-testid="logo-config-filename">{brandingConfig?.logoFilename}</span>;
+          <span data-testid="logo-config-link">{brandingConfig?.logoLinkDestination}</span>;
           <span data-testid="brand-name">{brandName}</span>;
         </>
       );
