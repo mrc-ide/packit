@@ -59,7 +59,7 @@ export const getPacketPageAccordionSection = async (
     return null;
   }
 
-  await expect(await section).toBeVisible();
+  await expect(section).toBeVisible();
   if (clickToExpand) {
     await section.locator("h3[data-orientation='vertical']").click();
   }
@@ -67,7 +67,7 @@ export const getPacketPageAccordionSection = async (
 };
 
 export const selectPacketPageTab = async (content: Locator, tab: string) => {
-  const nav = await content.getByRole("navigation");
+  const nav = content.getByRole("navigation");
   await nav.getByRole("link", { name: tab }).click();
 };
 
