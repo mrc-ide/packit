@@ -25,7 +25,7 @@ describe("DeviceActivation", () => {
   const successText = /Success! Code is activated - you can now access Packit API from your console./;
 
   beforeEach(() => {
-    document.elementFromPoint = (x, y) => null;
+    document.elementFromPoint = (_x, _y) => null;
   });
 
   it("can submit valid code and see success message", async () => {
