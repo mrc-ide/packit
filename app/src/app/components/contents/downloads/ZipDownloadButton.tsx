@@ -38,7 +38,7 @@ export const ZipDownloadButton = ({
     }
     setDownloading(true);
     setError("");
-    await download(files, packetId, zipName)
+    await download(files, packetId, zipName, true)
       .catch((e) => {
         setError(e.message);
       })

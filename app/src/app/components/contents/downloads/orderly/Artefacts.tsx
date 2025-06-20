@@ -19,7 +19,7 @@ export const Artefacts = ({ artefacts }: ArtefactsProps) => {
 
   return (
     <>
-      {artefacts.length > 1 && allArtefactsFiles && (
+      {allArtefactsFiles && (
         <span className="self-end absolute top-3 right-8">
           <ZipDownloadButton
             packetId={packet.id}

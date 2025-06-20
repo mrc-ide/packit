@@ -78,7 +78,7 @@ describe("ZipDownloadButton", () => {
     const button = await screen.findByRole("button");
     userEvent.click(button);
     expect(button).toBeDisabled();
-    expect(mockDownload).toHaveBeenCalledWith(filesToDownload, mockPacket.id, zipName);
+    expect(mockDownload).toHaveBeenCalledWith(filesToDownload, mockPacket.id, zipName, true);
     await waitFor(() => {
       expect(button).not.toBeDisabled();
     });

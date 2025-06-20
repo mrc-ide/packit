@@ -60,6 +60,6 @@ describe("Pinned Packet component", () => {
       ].includes(file.path)
     );
     const zipName = `${mockPacket.name}_artefacts_${mockPacket.id}.zip`;
-    expect(mockDownload).toHaveBeenCalledWith(filesToBeDownloaded, mockPacket.id, zipName);
+    expect(mockDownload).toHaveBeenCalledWith(filesToBeDownloaded, mockPacket.id, zipName, true);
   });
 });
