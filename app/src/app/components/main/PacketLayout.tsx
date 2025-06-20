@@ -3,14 +3,13 @@ import { Outlet, useOutletContext, useParams } from "react-router-dom";
 import { PacketNameError } from "../../../lib/errors";
 import { HttpStatus } from "../../../lib/types/HttpStatus";
 import { PacketMetadata } from "../../../types";
-import { ErrorComponent } from "../contents/common/ErrorComponent";
+import { ErrorPage } from "../contents/common/ErrorPage";
 import { Sidebar } from "../contents/common/Sidebar";
 import { Unauthorized } from "../contents/common/Unauthorized";
 import { useUser } from "../providers/UserProvider";
 import { useGetPacketById } from "./hooks/useGetPacketById";
 import { useGetRunTaskIdByPacketId } from "./hooks/useGetRunTaskIdByPacketId";
 import { getSideBarNavItems } from "./utils/getSideBarNavItems";
-import { ErrorPage } from "../contents/common/ErrorPage";
 
 export const PacketLayout = () => {
   const { packetName, packetId } = useParams();
