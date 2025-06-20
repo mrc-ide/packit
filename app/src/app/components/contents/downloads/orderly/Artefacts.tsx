@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader } from "../../../Base/Card";
 import { FileRow } from "../FileRow";
 import { ZipDownloadButton } from "../ZipDownloadButton";
 import { Artefact, FileMetadata } from "../../../../../types";
-import { usePacketOutletContext } from "../../../main/PacketOutlet";
+import { usePacketOutletContext } from "../../../main/PacketLayout";
 import { getFileByPath } from "../utils/getFileByPath";
 import { useParams } from "react-router-dom";
 

@@ -22,13 +22,7 @@ describe("image display component", () => {
   const renderComponent = () => {
     return render(
       <SWRConfig value={{ provider: () => new Map() }}>
-        <MemoryRouter initialEntries={["/"]}>
-          <Routes>
-            <Route element={<Outlet context={{ packet }} />}>
-              <Route path="/" element={<ImageDisplay file={file} />} />
-            </Route>
-          </Routes>
-        </MemoryRouter>
+        <Route path="/" element={<ImageDisplay file={file} packet={packet} />} />
       </SWRConfig>
     );
   };

@@ -4,7 +4,7 @@ import { mockPacket } from "../../../mocks";
 import { PacketFileFullScreen } from "../../../../app/components/contents/packets";
 import { SWRConfig } from "swr";
 import { PacketMetadata } from "../../../../types";
-import { PacketOutlet } from "../../../../app/components/main/PacketOutlet";
+import { PacketLayout } from "../../../../app/components/main";
 
 jest.mock("../../../../lib/auth/getAuthHeader", () => ({
   getAuthHeader: () => ({ Authorization: "fakeAuthHeader" })
@@ -18,7 +18,7 @@ describe("PacketFileFullScreen", () => {
       <SWRConfig value={{ dedupingInterval: 0 }}>
         <MemoryRouter initialEntries={[`/${packet.name}/${packet.id}/file/${filePath}`]}>
           <Routes>
-            <Route element={<PacketOutlet />}>
+            <Route element={<PacketLayout />}>
               <Route path="/:packetName/:packetId/file/*" element={<PacketFileFullScreen />} />
             </Route>
           </Routes>

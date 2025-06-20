@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { download } from "../../../../lib/download";
 import { Button, buttonVariants } from "../../Base/Button";
 import { FolderDown, Loader2 } from "lucide-react";
-import { usePacketOutletContext } from "../../main/PacketOutlet";
+import { usePacketOutletContext } from "../../main/PacketLayout";
 import { FileMetadata } from "../../../../types";
 import { useState } from "react";
 import { filesToSize } from "../../../../helpers";

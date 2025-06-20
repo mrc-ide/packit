@@ -3,12 +3,12 @@ import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
 import { PacketDetails } from "../../../../app/components/contents/packets";
-import { PacketOutlet } from "../../../../app/components/main/PacketOutlet";
 import { server } from "../../../../msw/server";
 import { PacketMetadata } from "../../../../types";
 import { mockPackets, mockPacket } from "../../../mocks";
 import { packetIndexUri } from "../../../../msw/handlers/packetHandlers";
 import { basicRunnerUri } from "../../../../msw/handlers/runnerHandlers";
+import { PacketLayout } from "../../../../app/components/main";
 
 jest.mock("../../../../lib/download", () => ({
   getFileObjectUrl: async () => "fakeObjectUrl"
@@ -20,7 +20,7 @@ describe("packet details component", () => {
       <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>
         <MemoryRouter initialEntries={[`/${packet.name}/${packet.id}`]}>
           <Routes>
-            <Route element={<PacketOutlet />} path="/:packetName/:packetId">
+            <Route element={<PacketLayout />} path="/:packetName/:packetId">
               <Route path="/:packetName/:packetId" element={<PacketDetails />} />
             </Route>
           </Routes>

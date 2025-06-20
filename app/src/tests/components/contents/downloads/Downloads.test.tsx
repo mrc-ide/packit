@@ -4,11 +4,11 @@ import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
 import { Downloads } from "../../../../app/components/contents";
-import { PacketOutlet } from "../../../../app/components/main/PacketOutlet";
 import appConfig from "../../../../config/appConfig";
 import { server } from "../../../../msw/server";
 import { PacketMetadata } from "../../../../types";
 import { mockPacket } from "../../../mocks";
+import { PacketLayout } from "../../../../app/components/main";
 
 const mockDownload = jest.fn();
 jest.mock("../../../../lib/download", () => ({
@@ -24,7 +24,7 @@ describe("download component", () => {
       <SWRConfig value={{ provider: () => new Map() }}>
         <MemoryRouter initialEntries={[`/${packet.name}/${packet.id}/downloads`]}>
           <Routes>
-            <Route element={<PacketOutlet />}>
+            <Route element={<PacketLayout />}>
               <Route path="/:packetName/:packetId/downloads" element={<Downloads />} />
             </Route>
           </Routes>

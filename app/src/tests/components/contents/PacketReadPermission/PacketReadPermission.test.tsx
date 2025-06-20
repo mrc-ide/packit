@@ -3,12 +3,12 @@ import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
 import { PacketReadPermission } from "../../../../app/components/contents/PacketReadPermission/PacketReadPermission";
-import { PacketOutlet } from "../../../../app/components/main/PacketOutlet";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
 import { server } from "../../../../msw/server";
 import { mockNonUsernameRolesWithRelationships, mockPacket } from "../../../mocks";
 import { packetIndexUri } from "../../../../msw/handlers/packetHandlers";
 import { UserProvider } from "../../../../app/components/providers/UserProvider";
+import { PacketLayout } from "../../../../app/components/main";
 
 const renderComponent = () =>
   render(
@@ -16,7 +16,7 @@ const renderComponent = () =>
       <UserProvider>
         <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/read-access`]}>
           <Routes>
-            <Route element={<PacketOutlet />}>
+            <Route element={<PacketLayout />}>
               <Route path="/:packetName/:packetId/read-access" element={<PacketReadPermission />} />
             </Route>
           </Routes>
