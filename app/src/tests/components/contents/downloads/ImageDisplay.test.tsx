@@ -1,8 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { PacketMetadata } from "../../../../types";
-import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
-import { ImageDisplay } from "../../../../app/components/contents/downloads/ImageDisplay";
+import { Route } from "react-router-dom";
 import { SWRConfig } from "swr";
+import { ImageDisplay } from "../../../../app/components/contents/downloads/ImageDisplay";
+import { PacketMetadata } from "../../../../types";
 
 const mockGetFileObjectUrl = jest.fn();
 jest.mock("../../../../lib/download", () => ({
@@ -22,7 +22,7 @@ describe("image display component", () => {
   const renderComponent = () => {
     return render(
       <SWRConfig value={{ provider: () => new Map() }}>
-        <Route path="/" element={<ImageDisplay file={file} packet={packet} />} />
+        <ImageDisplay file={file} packet={packet} />
       </SWRConfig>
     );
   };

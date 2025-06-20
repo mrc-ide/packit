@@ -6,6 +6,7 @@ import { ZipDownloadButton } from "../../../../app/components/contents/downloads
 import { FileMetadata } from "../../../../types";
 import { mockPacket } from "../../../mocks";
 import { PacketLayout } from "../../../../app/components/main";
+import * as UserProvider from "../../../../app/components/providers/UserProvider";
 
 let errorOnDownload = false;
 const mockDownload = jest.fn();
@@ -13,8 +14,15 @@ jest.mock("../../../../lib/download", () => ({
   ...jest.requireActual("../../../../lib/download"),
   download: async (...args: any[]) => mockDownload(...args)
 }));
+const mockUseUser = jest.spyOn(UserProvider, "useUser");
 
 describe("ZipDownloadButton", () => {
+  beforeEach(() => {
+    mockUseUser.mockReturnValue({
+      authorities: []
+    } as any);
+  });
+
   const filesToDownload = [
     {
       path: "test.txt",

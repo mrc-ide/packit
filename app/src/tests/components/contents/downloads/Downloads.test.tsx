@@ -9,12 +9,14 @@ import { server } from "../../../../msw/server";
 import { PacketMetadata } from "../../../../types";
 import { mockPacket } from "../../../mocks";
 import { PacketLayout } from "../../../../app/components/main";
+import * as UserProvider from "../../../../app/components/providers/UserProvider";
 
 const mockDownload = jest.fn();
 jest.mock("../../../../lib/download", () => ({
   ...jest.requireActual("../../../../lib/download"),
   download: async (...args: any[]) => mockDownload(...args)
 }));
+const mockUseUser = jest.spyOn(UserProvider, "useUser");
 
 describe("download component", () => {
   URL.createObjectURL = jest.fn(() => "fakeObjectUrl");
@@ -33,6 +35,11 @@ describe("download component", () => {
     );
   };
 
+  beforeEach(() => {
+    mockUseUser.mockReturnValue({
+      authorities: []
+    } as any);
+  });
   afterAll(() => {
     jest.clearAllMocks();
   });

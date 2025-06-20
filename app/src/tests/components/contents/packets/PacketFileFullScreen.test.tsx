@@ -5,10 +5,12 @@ import { PacketFileFullScreen } from "../../../../app/components/contents/packet
 import { SWRConfig } from "swr";
 import { PacketMetadata } from "../../../../types";
 import { PacketLayout } from "../../../../app/components/main";
+import * as UserProvider from "../../../../app/components/providers/UserProvider";
 
 jest.mock("../../../../lib/auth/getAuthHeader", () => ({
   getAuthHeader: () => ({ Authorization: "fakeAuthHeader" })
 }));
+const mockUseUser = jest.spyOn(UserProvider, "useUser");
 
 const imageFile = mockPacket.files.filter((file) => file.path === "directory/graph.png")[0];
 
@@ -26,6 +28,11 @@ describe("PacketFileFullScreen", () => {
       </SWRConfig>
     );
   };
+  beforeEach(() => {
+    mockUseUser.mockReturnValue({
+      authorities: []
+    } as any);
+  });
 
   it("renders PacketReport when the file is an HTML file, and correctly revokes blob URL", async () => {
     URL.createObjectURL = jest.fn(() => "testFileObjectUrl");

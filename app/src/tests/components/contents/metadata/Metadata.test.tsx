@@ -1,5 +1,4 @@
 import { render, screen } from "@testing-library/react";
-
 import userEvent from "@testing-library/user-event";
 import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
@@ -8,6 +7,9 @@ import { Metadata } from "../../../../app/components/contents";
 import { server } from "../../../../msw/server";
 import { mockPacket } from "../../../mocks";
 import { PacketLayout } from "../../../../app/components/main";
+import * as UserProvider from "../../../../app/components/providers/UserProvider";
+
+const mockUseUser = jest.spyOn(UserProvider, "useUser");
 
 describe("Metadata component", () => {
   const renderComponent = () => {
@@ -24,6 +26,11 @@ describe("Metadata component", () => {
     );
   };
 
+  beforeEach(() => {
+    mockUseUser.mockReturnValue({
+      authorities: []
+    } as any);
+  });
   it("renders all metadata and sub-headings if metadata is present", async () => {
     renderComponent();
 

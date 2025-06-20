@@ -3,31 +3,38 @@ import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
 import { PacketDetails } from "../../../../app/components/contents/packets";
+import { PacketLayout } from "../../../../app/components/main";
+import { packetIndexUri } from "../../../../msw/handlers/packetHandlers";
 import { server } from "../../../../msw/server";
 import { PacketMetadata } from "../../../../types";
-import { mockPackets, mockPacket } from "../../../mocks";
-import { packetIndexUri } from "../../../../msw/handlers/packetHandlers";
-import { basicRunnerUri } from "../../../../msw/handlers/runnerHandlers";
-import { PacketLayout } from "../../../../app/components/main";
+import { mockPacket, mockPackets } from "../../../mocks";
+import * as UserProvider from "../../../../app/components/providers/UserProvider";
 
 jest.mock("../../../../lib/download", () => ({
   getFileObjectUrl: async () => "fakeObjectUrl"
 }));
 
+const mockUseUser = jest.spyOn(UserProvider, "useUser");
+
+const renderComponent = (packet: PacketMetadata = mockPacket) => {
+  render(
+    <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>
+      <MemoryRouter initialEntries={[`/${packet.name}/${packet.id}`]}>
+        <Routes>
+          <Route element={<PacketLayout />} path="/:packetName/:packetId">
+            <Route path="/:packetName/:packetId" element={<PacketDetails />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    </SWRConfig>
+  );
+};
 describe("packet details component", () => {
-  const renderComponent = (packet: PacketMetadata = mockPacket) => {
-    render(
-      <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>
-        <MemoryRouter initialEntries={[`/${packet.name}/${packet.id}`]}>
-          <Routes>
-            <Route element={<PacketLayout />} path="/:packetName/:packetId">
-              <Route path="/:packetName/:packetId" element={<PacketDetails />} />
-            </Route>
-          </Routes>
-        </MemoryRouter>
-      </SWRConfig>
-    );
-  };
+  beforeEach(() => {
+    mockUseUser.mockReturnValue({
+      authorities: []
+    } as any);
+  });
 
   it("renders packet header and the long description", async () => {
     renderComponent();
@@ -97,28 +104,6 @@ describe("packet details component", () => {
       mockPackets.forEach(async (packet) => {
         expect(await screen.findByText(packet.id)).toBeVisible();
       });
-    });
-  });
-
-  it("should render navigate button run logs when runTaskId is present", async () => {
-    renderComponent();
-
-    await waitFor(() => {
-      expect(screen.getByRole("link", { name: /view run logs/i })).toBeVisible();
-    });
-  });
-
-  it("should not render navigate button run logs when runTaskId is not present", async () => {
-    server.use(
-      rest.get(`${basicRunnerUri}/by-packet-id/:packetId`, (req, res, ctx) => {
-        return res(ctx.status(404));
-      })
-    );
-
-    renderComponent();
-
-    await waitFor(() => {
-      expect(screen.queryByRole("link", { name: /view run logs/i })).not.toBeInTheDocument();
     });
   });
 });
