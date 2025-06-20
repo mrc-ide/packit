@@ -11,6 +11,15 @@ import { ManageAccessLayout, ManageRoles, ManageUsers } from "../contents/manage
 import { PacketRun, PacketRunTaskLogs, PacketRunTasksLogs, PacketRunnerLayout } from "../contents/runner";
 import { PacketOutlet } from "../main/PacketOutlet";
 import { PacketReadPermission } from "../contents/PacketReadPermission";
+import { Markdown } from "../Base/Markdown";
+import { ManageAccessLayout, ManageRoles, ManageUsers } from "../contents/manageAccess";
+import { PacketDetails, PacketFileFullScreen } from "../contents/packets";
+import { PacketRun, PacketRunTaskLogs, PacketRunTasksLogs, PacketRunnerLayout } from "../contents/runner";
+import { AuthLayoutForm, Login, Redirect, UpdatePassword } from "../login";
+import { PacketLayout } from "../main";
+import { Breadcrumb } from "../main/Breadcrumb";
+import { PacketOutlet } from "../main/PacketOutlet";
+import { ProtectedRoute } from "./ProtectedRoute";
 
 export const Router = () => {
   return (
@@ -52,6 +61,11 @@ export const Router = () => {
             </Route>
           </Route>
         </Route>
+        {/* documentation */}
+        <Route
+          path="/docs/manage-access-help"
+          element={<Markdown mdPath={`${process.env.PUBLIC_URL}/docs/manageAccessHelpPage.md`} />}
+        />
       </Route>
       <Route element={<ProtectedRoute />}>
         <Route element={<PacketOutlet />}>

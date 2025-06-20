@@ -67,7 +67,7 @@ export const AddRoleForm = ({ mutate, setOpen }: AddRoleFormProps) => {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input autoComplete="name" placeholder="enter role name..." {...field} />
+                <Input autoComplete="name" placeholder="Enter role name..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -79,9 +79,9 @@ export const AddRoleForm = ({ mutate, setOpen }: AddRoleFormProps) => {
           render={() => (
             <FormItem>
               <div className="mb-3">
-                <FormLabel>Permissions</FormLabel>
+                <FormLabel>Global Permissions</FormLabel>
                 <FormDescription className="text-xs">
-                  Select the permissions that will be assigned to this role.
+                  Select any global permissions to be assigned to this role
                 </FormDescription>
               </div>
               {GLOBAL_PERMISSIONS.map((permission, idx) => (

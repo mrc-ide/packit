@@ -14,7 +14,7 @@ jest.mock("../../../../lib/localStorageManager", () => ({
   getAuthConfigFromLocalStorage: () => mockAuthConfig(),
   getUserFromLocalStorage: () => mockUser()
 }));
-const renderComponent = () => {
+const renderComponent = () =>
   render(
     <SWRConfig value={{ dedupingInterval: 0 }}>
       <AuthConfigProvider>
@@ -30,18 +30,19 @@ const renderComponent = () => {
       </AuthConfigProvider>
     </SWRConfig>
   );
-};
-
 describe("ManageUsers", () => {
   it("it should render users data correctly", async () => {
     mockAuthConfig.mockReturnValue({ enableBasicLogin: false });
     mockUser.mockReturnValue({ userName: mockUsersWithPermissions[0].username });
     renderComponent();
 
-    // only username roles are rendered
     await waitFor(() => {
       mockUsersWithPermissions.forEach((user) => {
-        expect(screen.getAllByText(user.username, { exact: false })[0]).toBeVisible();
+        const userColumn = screen.getAllByText(user.username, { exact: false })[0].parentElement as HTMLElement;
+        expect(userColumn).toHaveTextContent(user.username);
+        expect(userColumn).toHaveTextContent(user.email ?? "No email");
+        expect(userColumn).toHaveTextContent(user.displayName ?? "No display name");
+
         user.specificPermissions.forEach((permission) => {
           expect(screen.getAllByText(permission.permission, { exact: false })[0]).toBeVisible();
         });
@@ -60,21 +61,21 @@ describe("ManageUsers", () => {
     mockAuthConfig.mockReturnValue({ enableBasicLogin: true });
     renderComponent();
 
-    expect(screen.getByRole("button", { name: "Add User" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Add user" })).toBeVisible();
   });
 
   it("should not render add user button if basic login is disabled", async () => {
     mockAuthConfig.mockReturnValue({ enableBasicLogin: false });
     renderComponent();
 
-    expect(screen.queryByRole("button", { name: "Add User" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Add user" })).not.toBeInTheDocument();
   });
 
   it("should filter users by name", async () => {
     mockAuthConfig.mockReturnValue({ enableBasicLogin: false });
     renderComponent();
 
-    const filterInput = await screen.findByPlaceholderText(/Search by user or role/i);
+    const filterInput = await screen.findByPlaceholderText(/Search by username or role/i);
     userEvent.type(filterInput, "x@gmail");
 
     await waitFor(() => {
@@ -90,7 +91,7 @@ describe("ManageUsers", () => {
     mockAuthConfig.mockReturnValue({ enableBasicLogin: false });
     renderComponent();
 
-    const filterInput = await screen.findByPlaceholderText(/Search by user or role/i);
+    const filterInput = await screen.findByPlaceholderText(/Search by username or role/i);
     userEvent.type(filterInput, "x@gmail");
 
     await waitFor(() => {
@@ -103,7 +104,8 @@ describe("ManageUsers", () => {
       expect(filterInput).toHaveValue("");
     });
     mockUsersWithPermissions.forEach((user) => {
-      expect(screen.getByText(user.username)).toBeVisible();
+      // email is same as username thus need to getall and get the first one
+      expect(screen.getAllByText(user.username)[0]).toBeVisible();
     });
   });
 

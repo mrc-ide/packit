@@ -15,7 +15,7 @@ jest.mock("../../../../../lib/download", () => ({
 const renderComponent = (customMetadata: Custom) => {
   const packet = { ...mockPacket, custom: customMetadata };
   render(
-    <SWRConfig value={{ dedupingInterval: 0 }}>
+    <SWRConfig value={{ provider: () => new Map() }}>
       <MemoryRouter initialEntries={[`/${packet.name}/${packet.id}/downloads`]}>
         <Routes>
           <Route element={<Outlet context={{ packet }} />}>

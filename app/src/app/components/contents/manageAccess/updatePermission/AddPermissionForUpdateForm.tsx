@@ -59,7 +59,7 @@ export const AddPermissionForUpdateForm = ({ addPermission, currentPermissions }
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 w-[350px]">
-        <FormLabel className="font-semibold">Permissions To Add</FormLabel>
+        <FormLabel className="font-semibold">Permissions to add</FormLabel>
         <FormField
           control={form.control}
           name="permission"
@@ -76,7 +76,7 @@ export const AddPermissionForUpdateForm = ({ addPermission, currentPermissions }
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a Permission..." />
+                    <SelectValue placeholder="Select a permission..." />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>

@@ -64,7 +64,7 @@ test.describe("Demo packet group page", { tag: TAG_DEMO_PACKETS }, () => {
   test("can add parameter column", async ({ page }) => {
     const lastRowCells = await rows.last().getByRole("cell");
     await expect(lastRowCells).toHaveCount(2);
-    const parameterColumnsButton = page.getByRole("button", { name: "Parameter Columns" });
+    const parameterColumnsButton = page.getByRole("button", { name: "Parameter columns" });
     await expect(parameterColumnsButton).toBeEnabled();
     await parameterColumnsButton.click();
     const parameterCheckBox = page.getByRole("menuitemcheckbox", { name: "a" });

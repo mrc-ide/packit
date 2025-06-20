@@ -14,11 +14,11 @@
 
   *::-webkit-scrollbar-thumb {
     border-radius: 100vh;
-    background-color: hsl(var(--scroll-bar));
+    background-color: var(--scroll-bar);
     padding: 1px;
   }
   *::-webkit-scrollbar-corner {
-    background-color: hsl(var(--background));
+    background-color: var(--background);
   }
 }
 
