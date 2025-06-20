@@ -77,8 +77,8 @@ class BasePacketService(
         val newPackets = outpackPackets.filterKeys{ it in notInPacket }.values
         savePackets(newPackets)
 
-        // Technically this could leave some packet groups childless, but this shouldn't matter - the
-        // packetGroupSummaries endpoint already deals will not returning results for packet groups which have no
+        // This could leave some packet groups childless, but this shouldn't matter - the
+        // packetGroupSummaries endpoint already deals with not returning results for packet groups which have no
         // accessible packets
     }
 
