@@ -46,12 +46,18 @@ The following commands achieve the same things but allow for finer control of ea
 
 1. `./scripts/run-dependencies` to run the database and `outpack_server`
 2. `./api/scripts/run` to run the API
-   i.If running basic auth mode, run `./scripts/basic-create-super-user`. This will create a superadmin user that can be used. Ensure api has ran and created all DB tables first.
+   i.If running basic auth mode, run `./scripts/basic-create-super-user`. This will create a superadmin user that can be used. Ensure api has run and created all DB tables first.
 3. `npm start --prefix=app` to run the React app on port 3000.
 
 There are 3 subdirectories in this repo, each corresponding to a different service.
 See individual READMEs for further details on developing each service.
 `./scripts/clear-docker` is a useful command for reverting docker to a state without any of the containers, networks or volumes created by the services.
+
+### Development: Seeding the database
+
+Packets are automatically imported on a schedule. Pins that reference demo packets are automatically created by the `./scripts/dev-start` script, unless it was run with the `--create-pins-skip` flag (in which case you can run `./scripts/dev-create-pins` at any point in order to seed those demo pins).
+
+The only other thing you'll need to seed for development is a super user (if using basic auth) - see above.
 
 ## Database
 

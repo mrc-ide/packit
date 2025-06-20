@@ -1,8 +1,6 @@
-import { useParams } from "react-router-dom";
 import { download } from "../../../../lib/download";
 import { Button, buttonVariants } from "../../Base/Button";
 import { FolderDown, Loader2 } from "lucide-react";
-import { usePacketOutletContext } from "../../main/PacketOutlet";
 import { FileMetadata } from "../../../../types";
 import { useState } from "react";
 import { filesToSize } from "../../../../helpers";
@@ -11,30 +9,36 @@ import type { VariantProps } from "class-variance-authority";
 interface ZipDownloadButtonProps {
   files: FileMetadata[];
   zipName: string;
+  packetId: string;
   buttonText?: string;
   variant?: VariantProps<typeof buttonVariants>["variant"];
   className?: string;
+  containerClassName?: string;
+  disabled?: boolean;
 }
 
 export const ZipDownloadButton = ({
   files,
   zipName,
+  packetId,
   buttonText = "Download",
   variant = "default",
-  className
+  className,
+  containerClassName,
+  disabled
 }: ZipDownloadButtonProps) => {
-  const { packetId } = useParams();
-  const { packet } = usePacketOutletContext();
   const [error, setError] = useState("");
   const [downloading, setDownloading] = useState(false);
 
+  const text = disabled ? buttonText : `${buttonText} (${filesToSize(files)})`;
+
   const downloadFiles = async () => {
-    if (!packet || !packetId || files.length < 1) {
+    if (!packetId || files.length < 1) {
       return;
     }
     setDownloading(true);
     setError("");
-    await download(files, packetId, zipName)
+    await download(files, packetId, zipName, true)
       .catch((e) => {
         setError(e.message);
       })
@@ -44,13 +48,16 @@ export const ZipDownloadButton = ({
   };
 
   return (
-    <div className="flex flex-col items-end gap-1">
-      <Button onClick={downloadFiles} variant={variant} className={`px-3 h-fit ${className}`} disabled={downloading}>
+    <div className={`flex flex-col items-end gap-1 ${containerClassName}`} data-testid="zip-download-button">
+      <Button
+        onClick={downloadFiles}
+        variant={variant}
+        className={`px-3 h-fit ${className}`}
+        disabled={disabled || downloading}
+      >
         {downloading && <Loader2 size={18} className="animate-spin" />}
         {!downloading && <FolderDown size={18} />}
-        <span className="ps-2">
-          {buttonText} ({filesToSize(files)})
-        </span>
+        <span className="ps-1.5">{text}</span>
       </Button>
       <div className="text-red-500 text-right">{error}</div>
     </div>

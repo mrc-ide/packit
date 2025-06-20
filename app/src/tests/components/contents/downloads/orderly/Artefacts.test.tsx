@@ -68,11 +68,12 @@ describe("Artefacts component", () => {
     expect(mockDownload).toHaveBeenCalledWith(
       reportFile.concat(multifileArtefactFiles),
       mockPacket.id,
-      `parameters_artefacts_${mockPacket.id}.zip`
+      `parameters_artefacts_${mockPacket.id}.zip`,
+      true
     );
   });
 
-  it("renders a 'Download' button per artefact, except if the artefact contains only one file", async () => {
+  it("renders a 'Download' button per artefact", async () => {
     renderComponent(mockPacket);
 
     const artefactGroupDownloadButtonMatcher = /Download \(\d+\.\d+ KB\)/;
@@ -82,7 +83,8 @@ describe("Artefacts component", () => {
     expect(mockDownload).toHaveBeenCalledWith(
       multifileArtefactFiles,
       mockPacket.id,
-      `An artefact containi_${mockPacket.id}.zip`
+      `An artefact containi_${mockPacket.id}.zip`,
+      true
     );
   });
 

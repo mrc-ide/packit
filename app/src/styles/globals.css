@@ -17,6 +17,7 @@
     background-color: var(--scroll-bar);
     padding: 1px;
   }
+
   *::-webkit-scrollbar-corner {
     background-color: var(--background);
   }
@@ -98,9 +99,14 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+body {
+  text-underline-offset: 2px;
 }
 
 iframe {

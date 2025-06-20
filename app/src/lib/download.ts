@@ -55,11 +55,11 @@ export const getFileObjectUrl = async (file: FileMetadata, packetId: string, fil
 };
 
 // Download files using the browser’s native download manager, triggered by using an <a> tag with a 'download' attribute
-export const download = async (files: FileMetadata[], packetId: string, filename: string) => {
+export const download = async (files: FileMetadata[], packetId: string, filename: string, preferZip = false) => {
   const token = await getOneTimeToken(packetId, files, filename);
   const fileLink = document.createElement("a");
-  // Do a zip download if there are multiple files or if the file is larger than 1MB.
-  if (files.length > 1 || files[0].size > 1000000) {
+  // Do a zip download if there are multiple files or if the file is larger than 1MB, or if zip was requested.
+  if (files.length > 1 || files[0].size > 1000000 || preferZip) {
     fileLink.href = streamZipUrl(packetId, files, token, filename, false);
   } else {
     fileLink.href = streamFileUrl(packetId, files[0], token, filename, false);
