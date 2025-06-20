@@ -10,6 +10,7 @@ import { useUser } from "../providers/UserProvider";
 import { useGetPacketById } from "./hooks/useGetPacketById";
 import { useGetRunTaskIdByPacketId } from "./hooks/useGetRunTaskIdByPacketId";
 import { getSideBarNavItems } from "./utils/getSideBarNavItems";
+import { ErrorPage } from "../contents/common/ErrorPage";
 
 export const PacketLayout = () => {
   const { packetName, packetId } = useParams();
@@ -18,7 +19,7 @@ export const PacketLayout = () => {
   const { runTaskId } = useGetRunTaskIdByPacketId(packetId);
 
   if (error?.status === HttpStatus.Unauthorized) return <Unauthorized />;
-  if (error) return <ErrorComponent error={error} message="Error fetching packet details" />;
+  if (error) return <ErrorPage error={error} message="Error fetching packet details" />;
 
   if (isLoading)
     return (
@@ -28,7 +29,7 @@ export const PacketLayout = () => {
     );
 
   if (packet?.name !== packetName) {
-    return <ErrorComponent error={new PacketNameError()} message="Error fetching packet details" />;
+    return <ErrorPage error={new PacketNameError()} message="Error fetching packet details" />;
   }
 
   return packet ? (
