@@ -1,15 +1,16 @@
 import { Route, Routes } from "react-router-dom";
 import { App } from "../../App";
+import { Markdown } from "../Base/Markdown";
 import { NotFound } from "../NotFound";
 import { Downloads, Home, Metadata, PacketGroup } from "../contents";
-import { PacketDetails, PacketFileFullScreen } from "../contents/packets";
-import { Login, Redirect, UpdatePassword, AuthLayoutForm } from "../login";
-import { Breadcrumb } from "../main/Breadcrumb";
-import { PacketLayout } from "../main";
-import { ProtectedRoute } from "./ProtectedRoute";
-import { ManageAccessLayout, ManageRoles, ManageUsers } from "../contents/manageAccess";
-import { PacketRun, PacketRunTaskLogs, PacketRunTasksLogs, PacketRunnerLayout } from "../contents/runner";
 import { PacketReadPermission } from "../contents/PacketReadPermission";
+import { ManageAccessLayout, ManageRoles, ManageUsers } from "../contents/manageAccess";
+import { PacketDetails, PacketFileFullScreen } from "../contents/packets";
+import { PacketRun, PacketRunTaskLogs, PacketRunTasksLogs, PacketRunnerLayout } from "../contents/runner";
+import { AuthLayoutForm, Login, Redirect, UpdatePassword } from "../login";
+import { PacketLayout } from "../main";
+import { Breadcrumb } from "../main/Breadcrumb";
+import { ProtectedRoute } from "./ProtectedRoute";
 
 export const Router = () => {
   return (
@@ -48,6 +49,11 @@ export const Router = () => {
             </Route>
           </Route>
         </Route>
+        {/* documentation */}
+        <Route
+          path="/docs/manage-access-help"
+          element={<Markdown mdPath={`${process.env.PUBLIC_URL}/docs/manageAccessHelpPage.md`} />}
+        />
       </Route>
       <Route element={<ProtectedRoute />}>
         <Route path="/:packetName/:packetId/file/*" element={<PacketFileFullScreen />} />
