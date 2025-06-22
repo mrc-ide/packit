@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import packit.AppConfig
 import packit.exceptions.DeviceAuthTokenException
+import packit.model.DeviceAuthTokenErrorType
 import packit.model.dto.DeviceAuthDto
 import packit.model.dto.DeviceAuthTokenDto
 import packit.model.dto.DeviceAuthValidate
@@ -61,7 +62,7 @@ class DeviceAuthController(
         @RequestParam("device_code") deviceCode: String,
     ): ResponseEntity<DeviceAuthTokenDto> {
         if (grantType != expectedGrantType) {
-            throw DeviceAuthTokenException("unsupported_grant_type")
+            throw DeviceAuthTokenException(DeviceAuthTokenErrorType.UNSUPPORTED_GRANT_TYPE)
         }
         val validatingUser = deviceAuthRequestService.useValidatedRequest(deviceCode)
         val token = jwtIssuer.issue(validatingUser)

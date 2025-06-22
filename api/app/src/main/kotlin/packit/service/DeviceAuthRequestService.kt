@@ -5,6 +5,7 @@ import com.nimbusds.oauth2.sdk.device.UserCode
 import org.springframework.stereotype.Service
 import packit.AppConfig
 import packit.exceptions.DeviceAuthTokenException
+import packit.model.DeviceAuthTokenErrorType
 import packit.model.User
 import packit.security.oauth2.deviceFlow.DeviceAuthRequest
 import java.time.Clock
@@ -62,12 +63,12 @@ class BaseDeviceAuthRequestService(
         })
 
         if (request == null || request.validatedBy != null) {
-            throw DeviceAuthTokenException("access_denied")
+            throw DeviceAuthTokenException(DeviceAuthTokenErrorType.ACCESS_DENIED)
         }
         // remove request from list if it is expired
         if (isExpired(request)) {
             removeRequest(request)
-            throw DeviceAuthTokenException("expired_token")
+            throw DeviceAuthTokenException(DeviceAuthTokenErrorType.EXPIRED_TOKEN)
         }
         request.validatedBy = user
     }
@@ -78,14 +79,14 @@ class BaseDeviceAuthRequestService(
         // Throw 400 if not found, not validated or expired
         val request = findRequest(deviceCode)
         if (request == null) {
-            throw DeviceAuthTokenException("access_denied")
+            throw DeviceAuthTokenException(DeviceAuthTokenErrorType.ACCESS_DENIED)
         }
         if (isExpired(request)) {
             removeRequest(request)
-            throw DeviceAuthTokenException("expired_token")
+            throw DeviceAuthTokenException(DeviceAuthTokenErrorType.EXPIRED_TOKEN)
         }
         if (request.validatedBy == null) {
-            throw DeviceAuthTokenException("authorization_pending")
+            throw DeviceAuthTokenException(DeviceAuthTokenErrorType.AUTHORIZATION_PENDING)
         }
         removeRequest(request)
         return request.validatedBy!!

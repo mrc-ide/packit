@@ -1,5 +1,5 @@
 package packit.exceptions
 
-import org.springframework.http.HttpStatus
+import packit.model.DeviceAuthTokenErrorType
 
-class DeviceAuthTokenException(val error: String) : PackitException(error, HttpStatus.BAD_REQUEST)
+class DeviceAuthTokenException(val errorType: DeviceAuthTokenErrorType) : Exception("Device auth error: $errorType")
