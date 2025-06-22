@@ -77,7 +77,7 @@ class DeviceAuthControllerTest : IntegrationTest() {
     private fun assertDeviceAuthRequestError(result: ResponseEntity<String>, expectedErrorCode: String) {
         assertBadRequest(result)
         val resultBody = jacksonObjectMapper().readTree(result.body as String)
-        val error = resultBody["error"]["detail"].asText()
+        val error = resultBody["error"].asText()
         assertEquals(expectedErrorCode, error)
     }
 

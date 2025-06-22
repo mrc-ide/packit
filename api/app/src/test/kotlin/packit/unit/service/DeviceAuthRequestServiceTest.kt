@@ -7,6 +7,7 @@ import org.mockito.kotlin.mock
 import org.springframework.http.HttpStatus
 import packit.AppConfig
 import packit.exceptions.DeviceAuthTokenException
+import packit.model.DeviceAuthTokenErrorType
 import packit.model.User
 import packit.service.BaseDeviceAuthRequestService
 import java.time.Clock
@@ -94,8 +95,7 @@ class DeviceAuthRequestServiceTest {
         assertThrows<DeviceAuthTokenException> {
             sut.validateRequest(request.userCode.value, testValidatingUser1)
         }.apply {
-            assertEquals("expired_token", key)
-            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+            assertEquals(DeviceAuthTokenErrorType.EXPIRED_TOKEN, errorType)
         }
         assertNull(sut.findRequest(request.userCode.value))
     }
@@ -106,8 +106,7 @@ class DeviceAuthRequestServiceTest {
         assertThrows<DeviceAuthTokenException> {
             sut.validateRequest("not a code", testValidatingUser1)
         }.apply {
-            assertEquals("access_denied", key)
-            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+            assertEquals(DeviceAuthTokenErrorType.ACCESS_DENIED, errorType)
         }
     }
 
@@ -119,8 +118,7 @@ class DeviceAuthRequestServiceTest {
         assertThrows<DeviceAuthTokenException> {
             sut.validateRequest(request.userCode.value, testValidatingUser1)
         }.apply {
-            assertEquals("access_denied", key)
-            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+            assertEquals(DeviceAuthTokenErrorType.ACCESS_DENIED, errorType)
         }
     }
 
@@ -140,15 +138,13 @@ class DeviceAuthRequestServiceTest {
         assertThrows<DeviceAuthTokenException> {
             sut.useValidatedRequest(dar1.deviceCode.value)
         }.apply {
-            assertEquals("access_denied", key)
-            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+            assertEquals(DeviceAuthTokenErrorType.ACCESS_DENIED, errorType)
         }
 
         assertThrows<DeviceAuthTokenException> {
             sut.useValidatedRequest(dar2.deviceCode.value)
         }.apply {
-            assertEquals("access_denied", key)
-            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+            assertEquals(DeviceAuthTokenErrorType.ACCESS_DENIED, errorType)
         }
     }
 
@@ -158,8 +154,7 @@ class DeviceAuthRequestServiceTest {
         assertThrows<DeviceAuthTokenException> {
             sut.useValidatedRequest("nonexistent code")
         }.apply {
-            assertEquals("access_denied", key)
-            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+            assertEquals(DeviceAuthTokenErrorType.ACCESS_DENIED, errorType)
         }
     }
 
@@ -179,8 +174,7 @@ class DeviceAuthRequestServiceTest {
         assertThrows<DeviceAuthTokenException> {
             sut.useValidatedRequest(request.deviceCode.value)
         }.apply {
-            assertEquals("expired_token", key)
-            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+            assertEquals(DeviceAuthTokenErrorType.EXPIRED_TOKEN, errorType)
         }
     }
 
@@ -191,8 +185,7 @@ class DeviceAuthRequestServiceTest {
         assertThrows<DeviceAuthTokenException> {
             sut.useValidatedRequest(request.deviceCode.value)
         }.apply {
-            assertEquals("authorization_pending", key)
-            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+            assertEquals(DeviceAuthTokenErrorType.AUTHORIZATION_PENDING, errorType)
         }
     }
 }

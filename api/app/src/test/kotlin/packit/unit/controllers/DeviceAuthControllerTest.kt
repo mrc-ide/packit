@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus
 import packit.AppConfig
 import packit.controllers.DeviceAuthController
 import packit.exceptions.DeviceAuthTokenException
+import packit.model.DeviceAuthTokenErrorType
 import packit.model.User
 import packit.model.dto.DeviceAuthValidate
 import packit.security.oauth2.deviceFlow.DeviceAuthRequest
@@ -96,8 +97,7 @@ class DeviceAuthControllerTest {
         assertThrows<DeviceAuthTokenException> {
             sut.fetchToken("bad grant", "test code")
         }.apply {
-            assertEquals("unsupported_grant_type", key)
-            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+            assertEquals(DeviceAuthTokenErrorType.UNSUPPORTED_GRANT_TYPE, errorType)
         }
     }
 }
