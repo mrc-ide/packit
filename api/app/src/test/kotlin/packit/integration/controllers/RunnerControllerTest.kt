@@ -271,6 +271,22 @@ class RunnerControllerTest : IntegrationTest() {
         assertEquals(HttpStatus.OK, res.statusCode)
         assertEquals(testPacketGroupName, jacksonObjectMapper().readTree(res.body).get("name").asText())
     }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.run"])
+    fun `can get task id by packet id`() {
+        val (taskId) = submitTestRun()
+        val info = waitForTask(taskId)
+
+        val res: ResponseEntity<Map<String, String>> = restTemplate.exchange(
+            "/runner/packet/${info.packetId}/task",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        assertSuccess(res)
+        assertEquals(taskId, res.body!!["runTaskId"])
+    }
 }
 
 @TestPropertySource(properties = ["orderly.runner.repository.url=http://example.com"])

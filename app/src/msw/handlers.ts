@@ -7,7 +7,7 @@ import { manageRolesHandlers } from "./handlers/manageRolesHandlers";
 import { packetGroupHandlers } from "./handlers/packetGroupHandlers";
 import { packetGroupSummaryHandlers } from "./handlers/packetGroupSummaryHandlers";
 import { packetHandlers } from "./handlers/packetHandlers";
-import { tagHandlers } from "./handlers/tagHandler";
+import { tagHandlers } from "./handlers/tagHandlers";
 import { runnerHandlers } from "./handlers/runnerHandlers";
 import { usersRolesHandler } from "./handlers/usersRolesHandler";
 import { userHandlers } from "./handlers/userHandlers";

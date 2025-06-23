@@ -4,7 +4,7 @@ import { HoverCardContent, HoverCardTrigger } from "@radix-ui/react-hover-card";
 import { useFileObjectUrl } from "./hooks/useFileObjectUrl";
 import { ExternalLinkIcon } from "lucide-react";
 import { Link } from "react-router-dom";
-import { usePacketOutletContext } from "../../main/PacketOutlet";
+import { usePacketOutletContext } from "../../main/PacketLayout";
 import { ErrorComponent } from "../common/ErrorComponent";
 
 interface PreviewableFileProps {
@@ -20,7 +20,7 @@ export const PreviewableFile = ({ file, fileName }: PreviewableFileProps) => {
   // hover card closes and opens (which would create a noticeable latency).
   // Since the blob url is not revoked by the useFileObjectUrl hook until the component is unmounted, the file is
   // effectively cached while the img tag is not in the DOM, so we only need one one-time token.
-  const { fileObjectUrl, error } = useFileObjectUrl(file);
+  const { fileObjectUrl, error } = useFileObjectUrl(file, packet);
 
   if (error) return <ErrorComponent message="Error loading file" error={error} />;
 

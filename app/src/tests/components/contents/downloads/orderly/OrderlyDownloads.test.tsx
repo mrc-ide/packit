@@ -91,7 +91,8 @@ describe("orderly downloads component", () => {
     expect(mockDownload).toHaveBeenCalledWith(
       expect.arrayContaining(otherFiles),
       mockPacket.id,
-      `parameters_other_resources_${mockPacket.id}.zip`
+      `parameters_other_resources_${mockPacket.id}.zip`,
+      true
     );
 
     const filesDownloaded = mockDownload.mock.calls[0][0];

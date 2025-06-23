@@ -35,3 +35,17 @@ window.ResizeObserver = ResizeObserverPolyFill;
 
 // combobox needs this for tests
 window.HTMLElement.prototype.scrollIntoView = jest.fn();
+
+// fix issue with swr in tests TypeError: Cannot read properties of null (reading 'visibilityState')
+// https://github.com/vercel/swr/issues/2373
+global.beforeEach(() => {
+  const original = jest.requireActual("swr/_internal");
+  const originalIsVisible = original.defaultConfig.isVisible;
+  original.defaultConfig.isVisible = () => {
+    try {
+      return originalIsVisible();
+    } catch (e) {
+      return true;
+    }
+  };
+});

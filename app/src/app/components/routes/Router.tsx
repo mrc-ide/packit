@@ -1,17 +1,17 @@
 import { Route, Routes } from "react-router-dom";
 import { App } from "../../App";
+import { Markdown } from "../Base/Markdown";
 import { NotFound } from "../NotFound";
 import { Downloads, Home, Metadata, PacketGroup } from "../contents";
-import { PacketDetails, PacketFileFullScreen } from "../contents/packets";
-import { Breadcrumb } from "../main/Breadcrumb";
-import { PacketLayout } from "../main";
-import { ProtectedRoute } from "./ProtectedRoute";
-import { ManageAccessLayout, ManageRoles, ManageUsers } from "../contents/manageAccess";
-import { PacketRun, PacketRunTaskLogs, PacketRunTasksLogs, PacketRunnerLayout } from "../contents/runner";
-import { PacketOutlet } from "../main/PacketOutlet";
 import { PacketReadPermission } from "../contents/PacketReadPermission";
-import { Markdown } from "../Base/Markdown";
+import { ManageAccessLayout, ManageRoles, ManageUsers } from "../contents/manageAccess";
+import { PacketDetails, PacketFileFullScreen } from "../contents/packets";
+import { PacketRun, PacketRunTaskLogs, PacketRunTasksLogs, PacketRunnerLayout } from "../contents/runner";
 import { AuthLayoutForm, DeviceActivation, Login, Redirect, UpdatePassword } from "../login";
+import { PacketLayout } from "../main";
+import { Breadcrumb } from "../main/Breadcrumb";
+import { ProtectedRoute } from "./ProtectedRoute";
+
 
 export const Router = () => {
   return (
@@ -60,9 +60,7 @@ export const Router = () => {
         />
       </Route>
       <Route element={<ProtectedRoute />}>
-        <Route element={<PacketOutlet />}>
-          <Route path="/:packetName/:packetId/file/*" element={<PacketFileFullScreen />} />
-        </Route>
+        <Route path="/:packetName/:packetId/file/*" element={<PacketFileFullScreen />} />
       </Route>
     </Routes>
   );

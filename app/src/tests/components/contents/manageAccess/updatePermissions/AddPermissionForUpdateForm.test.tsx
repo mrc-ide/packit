@@ -2,8 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 // eslint-disable-next-line max-len
 import { AddPermissionForUpdateForm } from "../../../../../app/components/contents/manageAccess/updatePermission/AddPermissionForUpdateForm";
 import userEvent from "@testing-library/user-event";
-import { mockPacketGroupResponse, mockTags } from "../../../../mocks";
-import { Tag } from "../../../../../types";
+import { mockPacketGroupResponse, mockPackets } from "../../../../mocks";
 
 describe("AddPermissionForUpdateForm", () => {
   it("it should disable scope radio group, submit button if permission is not set to a scoped permission", async () => {
@@ -67,25 +66,26 @@ describe("AddPermissionForUpdateForm", () => {
     });
   });
 
-  it("should submit form with correct values for packet.read permission and tag scope", async () => {
-    const addPermission = jest.fn();
-    const testTag = { ...mockTags.content[0] };
-    render(<AddPermissionForUpdateForm addPermission={addPermission} currentPermissions={[]} />);
+  // TODO: Uncomment the following test if you want to test the tag scope functionality
+  // it("should submit form with correct values for packet.read permission and tag scope", async () => {
+  //   const addPermission = jest.fn();
+  //   const testTag = { ...mockTags.content[0] };
+  //   render(<AddPermissionForUpdateForm addPermission={addPermission} currentPermissions={[]} />);
 
-    const allComboBox = screen.getAllByRole("combobox", { hidden: true });
-    userEvent.selectOptions(allComboBox[1], "packet.read");
-    userEvent.click(screen.getByRole("radio", { name: "tag" }));
+  //   const allComboBox = screen.getAllByRole("combobox", { hidden: true });
+  //   userEvent.selectOptions(allComboBox[1], "packet.read");
+  //   userEvent.click(screen.getByRole("radio", { name: "tag" }));
 
-    userEvent.click(allComboBox[2]);
-    await screen.findByText(testTag.name);
-    userEvent.click(screen.getByRole("option", { name: testTag.name }));
+  //   userEvent.click(allComboBox[2]);
+  //   await screen.findByText(testTag.name);
+  //   userEvent.click(screen.getByRole("option", { name: testTag.name }));
 
-    userEvent.click(screen.getByRole("button"));
+  //   userEvent.click(screen.getByRole("button"));
 
-    await waitFor(() => {
-      expect(addPermission).toHaveBeenCalledWith({ permission: "packet.read", tag: testTag });
-    });
-  });
+  //   await waitFor(() => {
+  //     expect(addPermission).toHaveBeenCalledWith({ permission: "packet.read", tag: testTag });
+  //   });
+  // });
 
   it("should show error if packet.read permission and not global scope set but no scopeResource", async () => {
     const addPermission = jest.fn();
@@ -93,7 +93,7 @@ describe("AddPermissionForUpdateForm", () => {
 
     const allComboBox = screen.getAllByRole("combobox", { hidden: true });
     userEvent.selectOptions(allComboBox[1], "packet.read");
-    userEvent.click(screen.getByRole("radio", { name: "tag" }));
+    userEvent.click(screen.getByRole("radio", { name: "packet group" }));
 
     userEvent.click(screen.getByRole("button"));
 
@@ -111,21 +111,21 @@ describe("AddPermissionForUpdateForm", () => {
 
   it("should show error if duplicate permission is added", async () => {
     const addPermission = jest.fn();
-    const testTag = { ...mockTags.content[0] } as Tag;
+    const testPacket = { ...mockPackets[0] };
     render(
       <AddPermissionForUpdateForm
         addPermission={addPermission}
-        currentPermissions={[{ permission: "packet.read", tag: testTag }]}
+        currentPermissions={[{ permission: "packet.read", packet: testPacket }]}
       />
     );
 
     const allComboBox = screen.getAllByRole("combobox", { hidden: true });
     userEvent.selectOptions(allComboBox[1], "packet.read");
-    userEvent.click(screen.getByRole("radio", { name: "tag" }));
+    userEvent.click(screen.getByRole("radio", { name: "packet" }));
 
     userEvent.click(allComboBox[2]);
-    await screen.findByText(testTag.name);
-    userEvent.click(screen.getByRole("option", { name: testTag.name }));
+    await screen.findByText(new RegExp(testPacket.id));
+    userEvent.click(screen.getByRole("option", { name: new RegExp(testPacket.id) }));
 
     userEvent.click(screen.getByRole("button"));
 

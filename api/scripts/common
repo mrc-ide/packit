@@ -13,7 +13,8 @@ else
     GIT_BRANCH=$(git symbolic-ref --short HEAD)
 fi
 
-ORG=mrcide
+REGISTRY=ghcr.io
+ORG=mrc-ide
 IMAGE_NAME=packit-api
-TAG_SHA="${ORG}/${IMAGE_NAME}:${GIT_ID}"
-TAG_BRANCH="${ORG}/${IMAGE_NAME}:${GIT_BRANCH}"
+TAG_SHA="${REGISTRY}/${ORG}/${IMAGE_NAME}:${GIT_ID}"
+TAG_BRANCH="${REGISTRY}/${ORG}/${IMAGE_NAME}:${GIT_BRANCH}"
