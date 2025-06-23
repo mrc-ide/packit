@@ -43,9 +43,9 @@ test.describe("Demo index page", { tag: TAG_DEMO_PACKETS }, () => {
       expect(await pins.nth(1).getByRole("button").textContent()).toEqual("No artefacts");
       expect(pins.nth(1).getByText(/^Ran \d+ days ago$/)).toBeVisible();
 
-      expect(await packetDisplayNameFromPinListItem(pins.nth(1))).toEqual("artefact-types");
-      expect(await pins.nth(1).getByRole("button").textContent()).toEqual("Download artefacts (40 bytes");
-      expect(pins.nth(1).getByText(/^Ran \d+ days ago$/)).toBeVisible();
+      expect(await packetDisplayNameFromPinListItem(pins.nth(2))).toEqual("artefact-types");
+      expect(await pins.nth(2).getByRole("button").textContent()).toEqual("Download artefacts (40 bytes");
+      expect(pins.nth(2).getByText(/^Ran \d+ days ago$/)).toBeVisible();
     });
   });
 });
