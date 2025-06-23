@@ -8,29 +8,29 @@ test.describe("Demo packet group page", { tag: TAG_DEMO_PACKETS }, () => {
   let rows: Locator;
   test.beforeEach(async ({ page }) => {
     await page.goto("./parameters");
-    const table = await page.getByRole("table");
+    const table = page.getByRole("table");
     await expect(table).toBeVisible();
-    rows = await table.getByRole("row");
+    rows = table.getByRole("row");
   });
 
   // we can't assume new packets won't have been created, but should at least have those from the demo set
   test("can see packet rows", async ({ baseURL }) => {
     await expect(await rows.count()).toBeGreaterThanOrEqual(3);
-    const oldestRow = await rows.last();
-    const firstCell = await oldestRow.getByRole("cell").first();
-    const link = await firstCell.getByRole("link");
+    const oldestRow = rows.last();
+    const firstCell = oldestRow.getByRole("cell").first();
+    const link = firstCell.getByRole("link");
     await expect(link).toHaveText(packetId);
     const expectedHref = getInstanceRelativePath(baseURL, `parameters/${packetId}`);
-    await expect(await link.getAttribute("href")).toBe(expectedHref);
+    expect(await link.getAttribute("href")).toBe(expectedHref);
     const expectedDate = new Date(Date.UTC(2024, 6, 29, 15, 46, 52));
-    const dateLocator = await firstCell.locator("div.text-muted-foreground");
+    const dateLocator = firstCell.locator("div.text-muted-foreground");
     await expect(dateLocator).toBeVisible();
     const dateText = await dateLocator.innerHTML();
     // We set locale to en-GB in the playwright config
     expect(dateText === expectedDate.toLocaleString("en-GB")).toBe(true);
     const secondCell = (await oldestRow.getByRole("cell").all())[1];
     const parameterPills = await secondCell.locator(".rounded-md").all();
-    await expect(parameterPills.length).toBe(3);
+    expect(parameterPills.length).toBe(3);
     // Parameters are currently in a random order!
     const parameterTexts = [];
     for (const pill of parameterPills) {
@@ -44,25 +44,25 @@ test.describe("Demo packet group page", { tag: TAG_DEMO_PACKETS }, () => {
 
   test("can search packet rows by id", async () => {
     // Enter packet id in input
-    const packetInput = await rows.first().getByRole("cell").first().getByPlaceholder("Search...");
+    const packetInput = rows.first().getByRole("cell").first().getByPlaceholder("Search...");
     await packetInput.fill(packetId);
     // should only have two rows left (of which the first is headers) and last should have the id of the entered term
     await expect(rows).toHaveCount(2);
     const secondRow = (await rows.all())[1];
-    await expect(await secondRow.getByRole("cell").getByRole("link")).toHaveText(packetId);
+    await expect(secondRow.getByRole("cell").getByRole("link")).toHaveText(packetId);
   });
 
   test("can search packet rows by parameter", async () => {
     const secondCell = (await rows.first().getByRole("cell").all())[1];
-    const parametersInput = await secondCell.getByPlaceholder("Search...");
+    const parametersInput = secondCell.getByPlaceholder("Search...");
     await parametersInput.fill("hello");
     await expect(rows).toHaveCount(2);
     const secondRow = (await rows.all())[1];
-    await expect(await secondRow.getByRole("cell").getByRole("link")).toHaveText("20240829-185440-781be0f3");
+    await expect(secondRow.getByRole("cell").getByRole("link")).toHaveText("20240829-185440-781be0f3");
   });
 
   test("can add parameter column", async ({ page }) => {
-    const lastRowCells = await rows.last().getByRole("cell");
+    const lastRowCells = rows.last().getByRole("cell");
     await expect(lastRowCells).toHaveCount(2);
     const parameterColumnsButton = page.getByRole("button", { name: "Parameter columns" });
     await expect(parameterColumnsButton).toBeEnabled();
