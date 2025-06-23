@@ -214,7 +214,7 @@ class RunnerControllerTest : IntegrationTest() {
 
         val res = restTemplate.exchange(
             "/runner/list/status?pageNumber=$pageNumber&pageSize=" +
-                    "$pageSize&filterPacketGroupName=$filterPacketGroupName",
+                "$pageSize&filterPacketGroupName=$filterPacketGroupName",
             HttpMethod.GET,
             getTokenizedHttpEntity(),
             String::class.java
