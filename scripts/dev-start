@@ -6,12 +6,14 @@ usage() {
     echo " -h, --help            Show list of flags"
     echo " --db-build-skip       Skip building the db"
     echo " --api-build-skip      Skip building the api"
+    echo " --create-pins-skip    Skip creating packet pins"
     echo " --super-user          Add basic super user"
     echo " --preauth             Runs in preauth mode"
 }
 
 DB_BUILD_SKIP=0
 API_BUILD_SKIP=0
+CREATE_PINS_SKIP=0
 ADD_SUPER_USER=0
 PREAUTH=0
 
@@ -27,6 +29,9 @@ handle_options() {
         ;;
       --api-build-skip)
         API_BUILD_SKIP=1
+        ;;
+      --create-pins-skip)
+        CREATE_PINS_SKIP=1
         ;;
       --super-user)
         ADD_SUPER_USER=1
@@ -79,6 +84,12 @@ fi
 
 if [ $ADD_SUPER_USER -eq 1 ]; then
     "$HERE"/basic-create-super-user
+fi
+
+if [ "$CREATE_PINS_SKIP" -eq 0 ]; then
+    echo "Waiting for api to finish initial import of packets before creating pins"
+    sleep 1
+    "$HERE"/dev-create-pins
 fi
 
 npm start --prefix="$HERE/../app"

@@ -1,7 +1,7 @@
 import { Loader2 } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
-import { usePacketOutletContext } from "../../main/PacketOutlet";
+import { usePacketOutletContext } from "../../main/PacketLayout";
 import { ErrorComponent } from "../common/ErrorComponent";
 import { Unauthorized } from "../common/Unauthorized";
 import { PacketHeader } from "../packets";

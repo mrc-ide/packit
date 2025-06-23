@@ -87,4 +87,11 @@ class RunnerController(private val runnerService: RunnerService) {
         val payload = PageablePayload(pageNumber, pageSize)
         return ResponseEntity.ok(runnerService.getTasksStatuses(payload, filterPacketGroupName).map { it.toBasicDto() })
     }
+
+    @GetMapping("packet/{packetId}/task")
+    fun getTaskIdByPacketId(
+        @PathVariable packetId: String,
+    ): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.ok(mapOf("runTaskId" to runnerService.getTaskIdByPacketId(packetId)))
+    }
 }

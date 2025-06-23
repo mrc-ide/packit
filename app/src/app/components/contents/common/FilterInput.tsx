@@ -11,6 +11,7 @@ interface FilterByNameProps {
   placeholder?: string;
   inputClassNames?: string;
 }
+
 export const FilterInput = ({
   setFilter,
   postFilterAction,
