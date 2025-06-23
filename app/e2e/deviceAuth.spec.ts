@@ -43,4 +43,14 @@ test.describe("Device auth", () => {
     await page.getByRole("button", { name: /Continue/ }).click();
     await expect(await page.getByText("Code has expired or is not recognised.")).toBeVisible();
   });
+
+  test("can paste code containing hyphens", async ({ page }) => {
+    await page.goto("/device");
+    await page.evaluate(() => navigator.clipboard.writeText("ABCD-EFGH"));
+    await page.keyboard.press("Control+v");
+    const textbox = await page.getByRole("textbox");
+    await expect(textbox).toHaveValue("ABCDEFGH");
+    await page.getByRole("button", { name: /Continue/ }).click();
+    await expect(await page.getByText("Code has expired or is not recognised.")).toBeVisible();
+  });
 });
