@@ -4,17 +4,19 @@ import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
 import { Downloads } from "../../../../app/components/contents";
-import { PacketOutlet } from "../../../../app/components/main/PacketOutlet";
 import appConfig from "../../../../config/appConfig";
 import { server } from "../../../../msw/server";
 import { PacketMetadata } from "../../../../types";
 import { mockPacket } from "../../../mocks";
+import { PacketLayout } from "../../../../app/components/main";
+import * as UserProvider from "../../../../app/components/providers/UserProvider";
 
 const mockDownload = jest.fn();
 jest.mock("../../../../lib/download", () => ({
   ...jest.requireActual("../../../../lib/download"),
   download: async (...args: any[]) => mockDownload(...args)
 }));
+const mockUseUser = jest.spyOn(UserProvider, "useUser");
 
 describe("download component", () => {
   URL.createObjectURL = jest.fn(() => "fakeObjectUrl");
@@ -24,7 +26,7 @@ describe("download component", () => {
       <SWRConfig value={{ provider: () => new Map() }}>
         <MemoryRouter initialEntries={[`/${packet.name}/${packet.id}/downloads`]}>
           <Routes>
-            <Route element={<PacketOutlet />}>
+            <Route element={<PacketLayout />}>
               <Route path="/:packetName/:packetId/downloads" element={<Downloads />} />
             </Route>
           </Routes>
@@ -33,6 +35,11 @@ describe("download component", () => {
     );
   };
 
+  beforeEach(() => {
+    mockUseUser.mockReturnValue({
+      authorities: []
+    } as any);
+  });
   afterAll(() => {
     jest.clearAllMocks();
   });
@@ -51,7 +58,7 @@ describe("download component", () => {
     const downloadAllButton = await screen.findByText(/Download all files \(\d+\.\d+ KB\)/);
     expect(downloadAllButton).toBeVisible();
     userEvent.click(downloadAllButton);
-    expect(mockDownload).toHaveBeenCalledWith(mockPacket.files, mockPacket.id, `parameters_${mockPacket.id}.zip`);
+    expect(mockDownload).toHaveBeenCalledWith(mockPacket.files, mockPacket.id, `parameters_${mockPacket.id}.zip`, true);
   });
 
   it("renders the 'artefacts' and 'other files' sections for orderly packets", async () => {

@@ -104,7 +104,8 @@ export const AddPermissionForUpdateForm = ({ addPermission, currentPermissions }
                   disabled={!SCOPED_PERMISSIONS.includes(form.watch("permission"))}
                   value={field.value}
                 >
-                  {PERMISSION_SCOPES.map((scope) => (
+                  {/* TODO: remove tag filter when implemented */}
+                  {PERMISSION_SCOPES.filter((scope) => scope !== "tag").map((scope) => (
                     <FormItem key={scope} className="flex items-center space-x-2 space-y-0">
                       <FormControl>
                         <RadioGroupItem value={scope} />

@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { usePacketOutletContext } from "../../main/PacketOutlet";
+import { usePacketOutletContext } from "../../main/PacketLayout";
 import { PacketHeader } from "../packets";
 import { Card, CardContent } from "../../Base/Card";
 import { FileRow } from "./FileRow";
@@ -19,6 +19,7 @@ export const Downloads = () => {
             <PacketHeader packetName={packetName ?? ""} packetId={packetId ?? ""} displayName={packet.displayName} />
             <span className="self-end">
               <ZipDownloadButton
+                packetId={packet.id}
                 files={packet.files}
                 zipName={`${packetName}_${packetId}.zip`}
                 buttonText="Download all files"

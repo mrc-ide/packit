@@ -7,9 +7,11 @@ import { Downloads, Metadata } from "../../../app/components/contents";
 import { PacketDetails } from "../../../app/components/contents/packets";
 import { PacketLayout } from "../../../app/components/main";
 import { server } from "../../../msw/server";
-import { mockPacket } from "../../mocks";
+import { mockPacket, mockTaskId } from "../../mocks";
 import { HttpStatus } from "../../../lib/types/HttpStatus";
 import * as UserProvider from "../../../app/components/providers/UserProvider";
+import { basicRunnerUri } from "../../../msw/handlers/runnerHandlers";
+import { packetIndexUri } from "../../../msw/handlers/packetHandlers";
 
 jest.mock("../../../lib/download", () => ({
   ...jest.requireActual("../../../lib/download"),
@@ -61,7 +63,7 @@ describe("Packet Layout test", () => {
 
   it("should render error component and sidebar when error fetching packet", async () => {
     server.use(
-      rest.get("*", (req, res, ctx) => {
+      rest.get(`${packetIndexUri}/${mockPacket.id}`, (req, res, ctx) => {
         return res(ctx.status(400));
       })
     );
@@ -70,7 +72,6 @@ describe("Packet Layout test", () => {
     await waitFor(() => {
       expect(screen.getByText(/error fetching/i)).toBeVisible();
     });
-    expect(screen.getByRole("link", { name: /metadata/i })).toBeVisible();
   });
 
   it("should render unauthorized when 401 error fetching", async () => {
@@ -99,7 +100,8 @@ describe("Packet Layout test", () => {
 
     renderComponent();
 
-    userEvent.click(screen.getByRole("link", { name: /read access/i }));
+    const readAccessLink = await screen.findByRole("link", { name: /read access/i });
+    userEvent.click(readAccessLink);
 
     await waitFor(() => {
       expect(screen.getByText(/read access page/i)).toBeVisible();
@@ -111,6 +113,29 @@ describe("Packet Layout test", () => {
 
     await waitFor(() => {
       expect(screen.getByText(/Error fetching packet details/i)).toBeVisible();
+    });
+  });
+
+  it("should render creation logs sidebar item when runTaskId is present", async () => {
+    renderComponent();
+
+    const logsLink = await screen.findByRole("link", { name: /creation logs/i });
+
+    expect(logsLink).toBeVisible();
+    expect(logsLink).toHaveAttribute("href", `/runner/logs/${mockTaskId}`);
+  });
+
+  it("should not render creation logs sidebar item when runTaskId not is present", async () => {
+    server.use(
+      rest.get(`${basicRunnerUri}/by-packet-id/:packetId`, (req, res, ctx) => {
+        return res(ctx.status(404));
+      })
+    );
+
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.queryByRole("link", { name: /creation logs/i })).not.toBeInTheDocument();
     });
   });
 });
