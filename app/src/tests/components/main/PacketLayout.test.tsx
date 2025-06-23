@@ -7,7 +7,7 @@ import { Downloads, Metadata } from "../../../app/components/contents";
 import { PacketDetails } from "../../../app/components/contents/packets";
 import { PacketLayout } from "../../../app/components/main";
 import { server } from "../../../msw/server";
-import { mockPacket } from "../../mocks";
+import { mockPacket, mockTaskId } from "../../mocks";
 import { HttpStatus } from "../../../lib/types/HttpStatus";
 import * as UserProvider from "../../../app/components/providers/UserProvider";
 import { basicRunnerUri } from "../../../msw/handlers/runnerHandlers";
@@ -119,9 +119,10 @@ describe("Packet Layout test", () => {
   it("should render creation logs sidebar item when runTaskId is present", async () => {
     renderComponent();
 
-    await waitFor(() => {
-      expect(screen.getByRole("link", { name: /creation logs/i })).toBeVisible();
-    });
+    const logsLink = await screen.findByRole("link", { name: /creation logs/i });
+
+    expect(logsLink).toBeVisible();
+    expect(logsLink).toHaveAttribute("href", `/runner/logs/${mockTaskId}`);
   });
 
   it("should not render creation logs sidebar item when runTaskId not is present", async () => {

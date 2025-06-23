@@ -214,7 +214,7 @@ class RunnerControllerTest : IntegrationTest() {
 
         val res = restTemplate.exchange(
             "/runner/list/status?pageNumber=$pageNumber&pageSize=" +
-                "$pageSize&filterPacketGroupName=$filterPacketGroupName",
+                    "$pageSize&filterPacketGroupName=$filterPacketGroupName",
             HttpMethod.GET,
             getTokenizedHttpEntity(),
             String::class.java
@@ -279,7 +279,7 @@ class RunnerControllerTest : IntegrationTest() {
         val info = waitForTask(taskId)
 
         val res: ResponseEntity<Map<String, String>> = restTemplate.exchange(
-            "/runner/by-packet-id/${info.packetId}",
+            "/runner/packet/${info.packetId}/task",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )

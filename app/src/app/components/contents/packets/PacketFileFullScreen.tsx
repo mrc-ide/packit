@@ -13,15 +13,14 @@ export const PacketFileFullScreen = () => {
   const { packet, isLoading, error } = useGetPacketById(packetId);
   const file = getFileByPath(filePath ?? "", packet);
 
-  if (error?.status === HttpStatus.Unauthorized) return <Unauthorized />;
-  if (error || !file) return <ErrorPage error={error} message="Error fetching file details or file not found" />;
-
   if (isLoading)
     return (
-      <div className="flex justify-center items-center h-full">
+      <div className="flex justify-center items-center h-screen">
         <Loader2 className="animate-spin" />
       </div>
     );
+  if (error?.status === HttpStatus.Unauthorized) return <Unauthorized />;
+  if (error || !file) return <ErrorPage error={error} message="Error fetching file details or file not found" />;
 
   return packet ? (
     <div className="h-screen">
