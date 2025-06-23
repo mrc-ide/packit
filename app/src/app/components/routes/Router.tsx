@@ -12,7 +12,6 @@ import { PacketLayout } from "../main";
 import { Breadcrumb } from "../main/Breadcrumb";
 import { ProtectedRoute } from "./ProtectedRoute";
 
-
 export const Router = () => {
   return (
     <Routes>
