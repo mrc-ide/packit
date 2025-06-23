@@ -1,6 +1,6 @@
 import { bytesToSize } from "../../../../helpers";
 import { FileDownloadButton } from "./FileDownloadButton";
-import { usePacketOutletContext } from "../../main/PacketOutlet";
+import { usePacketOutletContext } from "../../main/PacketLayout";
 import { ExtensionIcon } from "./ExtensionIcon";
 import { isImageFile } from "./utils/extensions";
 import { PreviewableFile } from "./PreviewableFile";

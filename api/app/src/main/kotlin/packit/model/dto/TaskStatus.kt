@@ -1,5 +1,10 @@
 package packit.model.dto
 
+data class TaskStatusesResponse(
+    val statuses: List<TaskStatus>,
+    val missingTaskIds: List<String>,
+)
+
 data class TaskStatus(
     val timeQueued: Double,
     val timeStarted: Double?,

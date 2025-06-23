@@ -126,7 +126,7 @@ class OrderlyRunnerClientTest(
 
         val taskIds = listOf(res1.taskId, res2.taskId)
 
-        val statuses = sut.getTaskStatuses(taskIds, false)
+        val statuses = sut.getTaskStatuses(taskIds, false).statuses
 
         statuses.forEach {
             assertEquals(String::class.java, it.taskId::class.java)

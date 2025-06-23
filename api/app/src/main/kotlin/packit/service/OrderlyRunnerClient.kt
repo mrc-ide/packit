@@ -2,14 +2,7 @@ package packit.service
 
 import packit.config.RunnerConfig
 import packit.config.RunnerRepository
-import packit.model.dto.GitBranches
-import packit.model.dto.OrderlyRunnerVersion
-import packit.model.dto.Parameter
-import packit.model.dto.RepositoryFetch
-import packit.model.dto.RunnerPacketGroup
-import packit.model.dto.RunnerSubmitRunInfo
-import packit.model.dto.SubmitRunResponse
-import packit.model.dto.TaskStatus
+import packit.model.dto.*
 
 interface OrderlyRunner {
     fun getVersion(): OrderlyRunnerVersion
@@ -18,7 +11,7 @@ interface OrderlyRunner {
     fun getParameters(repo: RunnerRepository, ref: String, packetGroupName: String): List<Parameter>
     fun getPacketGroups(repo: RunnerRepository, ref: String): List<RunnerPacketGroup>
     fun submitRun(repo: RunnerRepository, info: RunnerSubmitRunInfo): SubmitRunResponse
-    fun getTaskStatuses(taskIds: List<String>, includeLogs: Boolean): List<TaskStatus>
+    fun getTaskStatuses(taskIds: List<String>, includeLogs: Boolean): TaskStatusesResponse
 }
 
 class OrderlyRunnerClient(val config: RunnerConfig) : OrderlyRunner {
@@ -63,7 +56,7 @@ class OrderlyRunnerClient(val config: RunnerConfig) : OrderlyRunner {
         )
     }
 
-    override fun getTaskStatuses(taskIds: List<String>, includeLogs: Boolean): List<TaskStatus> {
+    override fun getTaskStatuses(taskIds: List<String>, includeLogs: Boolean): TaskStatusesResponse {
         return GenericClient.post(
             constructUrl("/report/status?include_logs={includeLogs}"),
             taskIds,

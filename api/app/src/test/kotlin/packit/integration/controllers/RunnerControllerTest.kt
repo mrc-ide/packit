@@ -1,4 +1,5 @@
 package packit.integration.controllers
+
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -248,9 +249,9 @@ class RunnerControllerTest : IntegrationTest() {
         assertEquals(taskId, info.taskId)
         assertEquals(Status.COMPLETE, info.status)
 
-        assertThat(info.logs).anySatisfy({
+        assertThat(info.logs).anySatisfy {
             assertThat(it).contains("Starting packet 'incoming_data'")
-        })
+        }
     }
 
     @Test
@@ -269,6 +270,22 @@ class RunnerControllerTest : IntegrationTest() {
         )
         assertEquals(HttpStatus.OK, res.statusCode)
         assertEquals(testPacketGroupName, jacksonObjectMapper().readTree(res.body).get("name").asText())
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.run"])
+    fun `can get task id by packet id`() {
+        val (taskId) = submitTestRun()
+        val info = waitForTask(taskId)
+
+        val res: ResponseEntity<Map<String, String>> = restTemplate.exchange(
+            "/runner/packet/${info.packetId}/task",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        assertSuccess(res)
+        assertEquals(taskId, res.body!!["runTaskId"])
     }
 }
 
