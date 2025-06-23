@@ -72,7 +72,7 @@ const pollForToken = (device_code: string) => {
             console.log(JSON.stringify(body, null, 2));
             const { access_token } = body;
             await testToken(access_token);
-        } else if (status == 400 && body.error.detail == "authorization_pending") {
+        } else if (status == 400 && body.error == "authorization_pending") {
             pollForToken(device_code);
         } else {
             console.log(`Unexpected error response ${status} from token request:`);
