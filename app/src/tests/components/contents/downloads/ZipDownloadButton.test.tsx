@@ -1,11 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { SWRConfig } from "swr";
 import { ZipDownloadButton } from "../../../../app/components/contents/downloads/ZipDownloadButton";
 import { FileMetadata } from "../../../../types";
 import { mockPacket } from "../../../mocks";
-import { PacketLayout } from "../../../../app/components/main";
 import * as UserProvider from "../../../../app/components/providers/UserProvider";
 
 let errorOnDownload = false;
@@ -37,21 +34,20 @@ describe("ZipDownloadButton", () => {
   ] as FileMetadata[];
   const zipName = "myCompressedFiles.zip";
   const buttonText = "Custom text";
+  const testContainerClass = "testContainerClass";
+  let disabled: boolean;
 
   const renderComponent = (files = filesToDownload) => {
     return render(
-      <SWRConfig value={{ provider: () => new Map() }}>
-        <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/downloads`]}>
-          <Routes>
-            <Route element={<PacketLayout />}>
-              <Route
-                path="/:packetName/:packetId/downloads"
-                element={<ZipDownloadButton files={files} zipName={zipName} buttonText={buttonText} variant="ghost" />}
-              />
-            </Route>
-          </Routes>
-        </MemoryRouter>
-      </SWRConfig>
+      <ZipDownloadButton
+        packetId={mockPacket.id}
+        files={files}
+        zipName={zipName}
+        buttonText={buttonText}
+        containerClassName={testContainerClass}
+        variant="ghost"
+        disabled={disabled}
+      />
     );
   };
 
@@ -62,6 +58,7 @@ describe("ZipDownloadButton", () => {
       }
     });
     errorOnDownload = false;
+    disabled = false;
   });
 
   afterEach(() => {
@@ -73,6 +70,14 @@ describe("ZipDownloadButton", () => {
     expect(await screen.findByRole("button")).toHaveTextContent("Custom text (3 KB)");
     const icon = container.querySelector(".lucide") as HTMLImageElement;
     expect(icon.classList).toContain("lucide-folder-down");
+    expect(screen.getByTestId("zip-download-button").classList).toContain("testContainerClass");
+  });
+
+  it("can render as disabled", async () => {
+    disabled = true;
+    renderComponent();
+    expect(await screen.findByRole("button")).toBeDisabled();
+    expect(await screen.findByRole("button")).toHaveTextContent("Custom text");
   });
 
   it("downloads files", async () => {
@@ -81,7 +86,7 @@ describe("ZipDownloadButton", () => {
     const button = await screen.findByRole("button");
     userEvent.click(button);
     expect(button).toBeDisabled();
-    expect(mockDownload).toHaveBeenCalledWith(filesToDownload, mockPacket.id, zipName);
+    expect(mockDownload).toHaveBeenCalledWith(filesToDownload, mockPacket.id, zipName, true);
     await waitFor(() => {
       expect(button).not.toBeDisabled();
     });

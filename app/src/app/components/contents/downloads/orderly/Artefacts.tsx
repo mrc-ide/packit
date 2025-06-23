@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader } from "../../../Base/Card";
 import { FileRow } from "../FileRow";
 import { ZipDownloadButton } from "../ZipDownloadButton";
-import { Artefact, FileMetadata } from "../../../../../types";
+import { Artefact } from "../../../../../types";
 import { usePacketOutletContext } from "../../../main/PacketLayout";
-import { getFileByPath } from "../utils/getFileByPath";
 import { useParams } from "react-router-dom";
+import { allArtefactsFilesForPacket, filesForArtefact } from "../utils/artefactFiles";
 
 interface ArtefactsProps {
   artefacts: Artefact[];
@@ -15,18 +15,14 @@ export const Artefacts = ({ artefacts }: ArtefactsProps) => {
   const { packet } = usePacketOutletContext();
   if (!packet) return null;
 
-  const filesForArtefact = (artefact: Artefact) =>
-    artefact.paths.map((path) => getFileByPath(path, packet)).filter((file): file is FileMetadata => !!file);
-
-  const allArtefactsFiles = packet?.custom?.orderly.artefacts.flatMap((art): FileMetadata[] => {
-    return filesForArtefact(art);
-  });
+  const allArtefactsFiles = allArtefactsFilesForPacket(packet);
 
   return (
     <>
-      {artefacts.length > 1 && allArtefactsFiles && (
+      {allArtefactsFiles && (
         <span className="self-end absolute top-3 right-8">
           <ZipDownloadButton
+            packetId={packet.id}
             files={allArtefactsFiles}
             zipName={`${packetName}_artefacts_${packetId}.zip`}
             buttonText="Download all artefacts"
@@ -36,7 +32,7 @@ export const Artefacts = ({ artefacts }: ArtefactsProps) => {
       )}
       <ul className="space-y-2">
         {artefacts.map((artefact, key) => {
-          const files = filesForArtefact(artefact);
+          const files = filesForArtefact(artefact, packet);
           return (
             <li key={key}>
               <Card>
@@ -44,6 +40,7 @@ export const Artefacts = ({ artefacts }: ArtefactsProps) => {
                   <h3 className="">{artefact.description}</h3>
                   {files.length > 1 && (
                     <ZipDownloadButton
+                      packetId={packet.id}
                       files={files}
                       zipName={`${artefact.description.substring(0, 20)}_${packet.id}.zip`}
                       variant="outline"

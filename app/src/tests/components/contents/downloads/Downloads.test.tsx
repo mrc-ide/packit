@@ -58,7 +58,7 @@ describe("download component", () => {
     const downloadAllButton = await screen.findByText(/Download all files \(\d+\.\d+ KB\)/);
     expect(downloadAllButton).toBeVisible();
     userEvent.click(downloadAllButton);
-    expect(mockDownload).toHaveBeenCalledWith(mockPacket.files, mockPacket.id, `parameters_${mockPacket.id}.zip`);
+    expect(mockDownload).toHaveBeenCalledWith(mockPacket.files, mockPacket.id, `parameters_${mockPacket.id}.zip`, true);
   });
 
   it("renders the 'artefacts' and 'other files' sections for orderly packets", async () => {

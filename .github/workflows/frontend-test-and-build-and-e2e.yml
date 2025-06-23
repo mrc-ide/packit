@@ -69,6 +69,8 @@ jobs:
         run: ./scripts/run && ./scripts/smoke-test
       - name: Create super user
         run: ./scripts/basic-create-super-user
+      - name: Create packet pins
+        run: ./scripts/dev-create-pins
       - name: Install playwright
         working-directory: app
         run: npx playwright install --with-deps

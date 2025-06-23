@@ -10,8 +10,7 @@ export const useGetPacketById = (packetId: string | undefined) => {
     { revalidateOnFocus: false }
   );
 
-  const displayName = data?.custom?.orderly?.description?.display;
-
+  const displayName = data?.custom?.orderly.description.display;
   const packet = displayName ? { ...data, displayName } : data;
 
   return {

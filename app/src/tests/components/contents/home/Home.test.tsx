@@ -4,6 +4,7 @@ import { MemoryRouter } from "react-router";
 import { SWRConfig } from "swr";
 import { Home } from "../../../../app/components/contents/home";
 import * as fetch from "../../../../lib/fetch";
+import appConfig from "../../../../config/appConfig";
 import { UserProvider } from "../../../../app/components/providers/UserProvider";
 
 describe("Home component", () => {
@@ -18,17 +19,26 @@ describe("Home component", () => {
         </MemoryRouter>
       </SWRConfig>
     );
-  it("renders reset button when filter is being filled and & calls api 3 times", async () => {
+  it("renders reset button when filter is being filled and & calls api endpoints", async () => {
     renderComponent();
 
-    const filterInput = await screen.findByPlaceholderText(/filter packet groups/i);
+    expect(fetcherSpy).toHaveBeenCalledWith({
+      url: `${appConfig.apiUrl()}/packetGroupSummaries?pageNumber=0&pageSize=50&filter=`
+    });
 
+    const filterInput = await screen.findByPlaceholderText(/filter packet groups/i);
     userEvent.type(filterInput, "test");
 
     await waitFor(() => {
       expect(screen.getByRole("button", { name: /reset/i })).toBeVisible();
     });
 
-    expect(fetcherSpy).toHaveBeenCalledTimes(3); // 2 + 1 for rolesAndUsersForPacketReadPermission
+    expect(fetcherSpy).toHaveBeenCalledWith({
+      url: `${appConfig.apiUrl()}/packetGroupSummaries?pageNumber=0&pageSize=50&filter=test`
+    });
+
+    expect(fetcherSpy).toHaveBeenCalledWith({ url: `${appConfig.apiUrl()}/packetGroups/_/read-permission` });
+
+    expect(fetcherSpy).toHaveBeenCalledWith({ url: `${appConfig.apiUrl()}/pins/packets` });
   });
 });
