@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 set -ex
 
-GIT_ID=$(git rev-parse --short=7 HEAD)
+if [[ -v "GITHUB_SHA" ]]; then
+    GIT_ID=${GITHUB_SHA:0:7}
+else
+    GIT_ID=$(git rev-parse --short=7 HEAD)
+fi
 
 if [[ -v "BRANCH_NAME" ]]; then
     GIT_BRANCH=${BRANCH_NAME}
