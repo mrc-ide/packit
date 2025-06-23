@@ -9,4 +9,4 @@ enum class DeviceAuthTokenErrorType(@JsonValue val status: String) {
     UNSUPPORTED_GRANT_TYPE("unsupported_grant_type")
 }
 
-data class DeviceAuthTokenError (val error: DeviceAuthTokenErrorType)
+data class DeviceAuthTokenError(val error: DeviceAuthTokenErrorType)

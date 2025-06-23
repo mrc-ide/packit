@@ -3,7 +3,7 @@ package packit.service
 import com.nimbusds.oauth2.sdk.device.DeviceCode
 import com.nimbusds.oauth2.sdk.device.UserCode
 import org.springframework.stereotype.Service
-import packit.AppConfig
+import packit.config.DeviceFlowConfig
 import packit.exceptions.DeviceAuthTokenException
 import packit.model.DeviceAuthTokenErrorType
 import packit.model.User
@@ -20,47 +20,43 @@ interface DeviceAuthRequestService {
 
 @Service
 class BaseDeviceAuthRequestService(
-    private val appConfig: AppConfig,
+    private val config: DeviceFlowConfig,
     private val clock: Clock
 ) : DeviceAuthRequestService {
     // List of pending device auth requests - accessed by multiple threads so all read/writes should be done in
-    // synchronised blocks using this requests list as lock reference
+    // @Synchronised functions using this requests list as lock reference
     private val requests: MutableList<DeviceAuthRequest> = mutableListOf()
 
     companion object {
         const val DEVICE_CODE_LENGTH = 64
     }
 
+    @Synchronized
     override fun newDeviceAuthRequest(): DeviceAuthRequest {
         val req = DeviceAuthRequest(
             UserCode(), // defaults to 8 * letter only
             DeviceCode(DEVICE_CODE_LENGTH),
-            clock.instant().plusSeconds(appConfig.authDeviceFlowExpirySeconds),
+            clock.instant().plus(config.expirySeconds),
             null
         )
-        synchronized(requests, {
-            requests.add(req)
-        })
+        requests.add(req)
         return req
     }
 
+    @Synchronized
     override fun cleanUpExpiredRequests() {
-        synchronized(requests, {
-            requests.removeAll { isExpired(it) }
-        })
+        requests.removeAll { isExpired(it) }
     }
 
+    @Synchronized
     override fun findRequest(deviceCode: String): DeviceAuthRequest? {
-        synchronized(requests, {
-            return requests.firstOrNull { it.deviceCode.value == deviceCode }
-        })
+        return requests.firstOrNull { it.deviceCode.value == deviceCode }
     }
 
+    @Synchronized
     override fun validateRequest(userCode: String, user: User) {
         // Mark a request as validated by a given user. Return error if request not found, or already validated
-        val request = synchronized(requests, {
-            requests.firstOrNull { it.userCode.value == userCode }
-        })
+        val request = requests.firstOrNull { it.userCode.value == userCode }
 
         if (request == null || request.validatedBy != null) {
             throw DeviceAuthTokenException(DeviceAuthTokenErrorType.ACCESS_DENIED)
@@ -73,11 +69,12 @@ class BaseDeviceAuthRequestService(
         request.validatedBy = user
     }
 
+    @Synchronized
     override fun useValidatedRequest(deviceCode: String): User {
         // Find a validated request identified by the given device code, remove it from the list and
         // return the validating user so the controller can issue their access token
         // Throw 400 if not found, not validated or expired
-        val request = findRequest(deviceCode)
+        val request = requests.firstOrNull { it.deviceCode.value == deviceCode }
         if (request == null) {
             throw DeviceAuthTokenException(DeviceAuthTokenErrorType.ACCESS_DENIED)
         }
@@ -93,9 +90,7 @@ class BaseDeviceAuthRequestService(
     }
 
     private fun removeRequest(request: DeviceAuthRequest) {
-        synchronized(requests, {
-            requests.remove(request)
-        })
+        requests.remove(request)
     }
 
     private fun isExpired(request: DeviceAuthRequest): Boolean = request.expiryTime < clock.instant()
