@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import packit.AppConfig
+import packit.config.DeviceFlowConfig
 import packit.exceptions.DeviceAuthTokenException
 import packit.model.DeviceAuthTokenErrorType
 import packit.model.dto.DeviceAuthDto
@@ -25,6 +26,7 @@ import kotlin.time.Duration.Companion.days
 @RequestMapping("/deviceAuth")
 class DeviceAuthController(
     private val appConfig: AppConfig,
+    private val deviceFlowConfig: DeviceFlowConfig,
     private val deviceAuthRequestService: DeviceAuthRequestService,
     private val userService: UserService,
     private val jwtIssuer: JwtIssuer
@@ -39,8 +41,8 @@ class DeviceAuthController(
         val response = DeviceAuthDto(
             deviceAuthRequest.deviceCode.value,
             deviceAuthRequest.userCode.value,
-            appConfig.authDeviceFlowVerificationUri,
-            appConfig.authDeviceFlowExpirySeconds
+            deviceFlowConfig.verificationUri,
+            deviceFlowConfig.expirySeconds.toSeconds()
         )
         return ResponseEntity.ok(response)
     }

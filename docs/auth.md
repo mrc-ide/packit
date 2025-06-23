@@ -169,10 +169,7 @@ implemented in the `DeviceAuthController`. These are:
   The device can poll this endpoint (posting the device code) while waiting for the user code to be validated. It returns a 400 until the 
   request is validated. Once validated, the endpoint returns an access token for the validating user. 
 
-Some slight deviations from the spec:
-- The device authorization request endpoint is a POST as defined in spec, but does not take a body as `client_id` and `scope` are not used. 
-- Error responses conform to our usual format where the error detail (in this case one of the codes defined in the 
-spec, e.g. `access denied`) in nested under top level `error` property. 
+NB The device authorization request endpoint is a POST as defined in spec, but does not take a body as `client_id` and `scope` are not used. 
 
 ### DeviceAuthRequestService
 This class manages pending device auth requests, as an in-memory list (so requests are invalidated when the API restarts).

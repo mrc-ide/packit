@@ -8,6 +8,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.springframework.http.HttpStatus
 import packit.AppConfig
+import packit.config.DeviceFlowConfig
 import packit.controllers.DeviceAuthController
 import packit.exceptions.DeviceAuthTokenException
 import packit.model.DeviceAuthTokenErrorType
@@ -18,6 +19,7 @@ import packit.security.profile.UserPrincipal
 import packit.security.provider.JwtIssuer
 import packit.service.DeviceAuthRequestService
 import packit.service.UserService
+import java.time.Duration
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -29,9 +31,9 @@ class DeviceAuthControllerTest {
 
     @Test
     fun `can request device flow`() {
-        val mockAppConfig = mock<AppConfig> {
-            on { authDeviceFlowExpirySeconds } doReturn 100
-            on { authDeviceFlowVerificationUri } doReturn "http://example.com/device"
+        val mockConfig = mock<DeviceFlowConfig> {
+            on { expirySeconds } doReturn Duration.ofSeconds(100)
+            on { verificationUri } doReturn "http://example.com/device"
         }
 
         val testDeviceAuthRequest = DeviceAuthRequest(
@@ -40,11 +42,11 @@ class DeviceAuthControllerTest {
             Instant.now(),
             null
         )
-        val mockDevicAuthRequestService = mock<DeviceAuthRequestService> {
+        val mockDeviceAuthRequestService = mock<DeviceAuthRequestService> {
             on { newDeviceAuthRequest() } doReturn testDeviceAuthRequest
         }
 
-        val sut = DeviceAuthController(mockAppConfig, mockDevicAuthRequestService, mock(), mock())
+        val sut = DeviceAuthController(mock(), mockConfig, mockDeviceAuthRequestService, mock(), mock())
         val result = sut.deviceAuthRequest()
         assertEquals(HttpStatus.OK, result.statusCode)
         val resultBody = result.body
@@ -63,7 +65,7 @@ class DeviceAuthControllerTest {
             on { getByUsername(testValidatingUserPrincipal.name) } doReturn testValidatingUser
         }
 
-        val sut = DeviceAuthController(mock(), mockDeviceAuthRequestService, mockUserService, mock())
+        val sut = DeviceAuthController(mock(), mock(), mockDeviceAuthRequestService, mockUserService, mock())
         val result = sut.validateDeviceAuthRequest(DeviceAuthValidate(userCode), testValidatingUserPrincipal)
         assertEquals(HttpStatus.OK, result.statusCode)
         verify(mockDeviceAuthRequestService).validateRequest(userCode, testValidatingUser)
@@ -83,7 +85,7 @@ class DeviceAuthControllerTest {
             on { authExpiryDays } doReturn 2
         }
 
-        val sut = DeviceAuthController(mockAppConfig, mockDeviceAuthRequestService, mock(), mockJwtIssuer)
+        val sut = DeviceAuthController(mockAppConfig, mock(), mockDeviceAuthRequestService, mock(), mockJwtIssuer)
         val result = sut.fetchToken(grantType, deviceCode)
         assertEquals(HttpStatus.OK, result.statusCode)
         val resultBody = result.body
@@ -93,7 +95,7 @@ class DeviceAuthControllerTest {
 
     @Test
     fun `throws exception if wrong grant type`() {
-        val sut = DeviceAuthController(mock(), mock(), mock(), mock())
+        val sut = DeviceAuthController(mock(), mock(), mock(), mock(), mock())
         assertThrows<DeviceAuthTokenException> {
             sut.fetchToken("bad grant", "test code")
         }.apply {

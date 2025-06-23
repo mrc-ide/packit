@@ -4,13 +4,13 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import org.springframework.http.HttpStatus
-import packit.AppConfig
+import packit.config.DeviceFlowConfig
 import packit.exceptions.DeviceAuthTokenException
 import packit.model.DeviceAuthTokenErrorType
 import packit.model.User
 import packit.service.BaseDeviceAuthRequestService
 import java.time.Clock
+import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 import kotlin.test.Test
@@ -21,8 +21,8 @@ import kotlin.test.assertNull
 import kotlin.test.assertSame
 
 class DeviceAuthRequestServiceTest {
-    val mockAppConfig = mock<AppConfig> {
-        on { authDeviceFlowExpirySeconds } doReturn 200
+    val mockConfig = mock<DeviceFlowConfig> {
+        on { expirySeconds } doReturn Duration.ofSeconds(200)
     }
 
     val fixedClock = Clock.fixed(Instant.now(), ZoneId.of("UTC"))
@@ -31,7 +31,7 @@ class DeviceAuthRequestServiceTest {
 
     @Test
     fun `can issue new device auth request`() {
-        val sut = BaseDeviceAuthRequestService(mockAppConfig, fixedClock)
+        val sut = BaseDeviceAuthRequestService(mockConfig, fixedClock)
         val result = sut.newDeviceAuthRequest()
         assertEquals(fixedClock.instant().plusSeconds(200), result.expiryTime)
         assertEquals(9, result.userCode.value.length)
@@ -41,7 +41,7 @@ class DeviceAuthRequestServiceTest {
 
     @Test
     fun `can find request`() {
-        val sut = BaseDeviceAuthRequestService(mockAppConfig, fixedClock)
+        val sut = BaseDeviceAuthRequestService(mockConfig, fixedClock)
         val first = sut.newDeviceAuthRequest()
         val second = sut.newDeviceAuthRequest()
         assertNotEquals(first.deviceCode.value, second.deviceCode.value)
@@ -58,7 +58,7 @@ class DeviceAuthRequestServiceTest {
         doAnswer {
             now
         }.`when`(mockClock).instant()
-        val sut = BaseDeviceAuthRequestService(mockAppConfig, mockClock)
+        val sut = BaseDeviceAuthRequestService(mockConfig, mockClock)
         val oldRequest = sut.newDeviceAuthRequest()
         assertNotNull(sut.findRequest(oldRequest.deviceCode.value))
 
@@ -73,7 +73,7 @@ class DeviceAuthRequestServiceTest {
 
     @Test
     fun `can validate request`() {
-        val sut = BaseDeviceAuthRequestService(mockAppConfig, fixedClock)
+        val sut = BaseDeviceAuthRequestService(mockConfig, fixedClock)
         val request = sut.newDeviceAuthRequest()
 
         sut.validateRequest(request.userCode.value, testValidatingUser1)
@@ -88,7 +88,7 @@ class DeviceAuthRequestServiceTest {
         doAnswer {
             now
         }.`when`(mockClock).instant()
-        val sut = BaseDeviceAuthRequestService(mockAppConfig, mockClock)
+        val sut = BaseDeviceAuthRequestService(mockConfig, mockClock)
         val request = sut.newDeviceAuthRequest()
 
         now = now.plusSeconds(201)
@@ -102,7 +102,7 @@ class DeviceAuthRequestServiceTest {
 
     @Test
     fun `validate non-existent request throws error`() {
-        val sut = BaseDeviceAuthRequestService(mockAppConfig, fixedClock)
+        val sut = BaseDeviceAuthRequestService(mockConfig, fixedClock)
         assertThrows<DeviceAuthTokenException> {
             sut.validateRequest("not a code", testValidatingUser1)
         }.apply {
@@ -112,7 +112,7 @@ class DeviceAuthRequestServiceTest {
 
     @Test
     fun `validate request which has already been validated throws error`() {
-        val sut = BaseDeviceAuthRequestService(mockAppConfig, fixedClock)
+        val sut = BaseDeviceAuthRequestService(mockConfig, fixedClock)
         val request = sut.newDeviceAuthRequest()
         sut.validateRequest(request.userCode.value, testValidatingUser1)
         assertThrows<DeviceAuthTokenException> {
@@ -124,7 +124,7 @@ class DeviceAuthRequestServiceTest {
 
     @Test
     fun `can use validated requests`() {
-        val sut = BaseDeviceAuthRequestService(mockAppConfig, fixedClock)
+        val sut = BaseDeviceAuthRequestService(mockConfig, fixedClock)
         val dar1 = sut.newDeviceAuthRequest()
         val dar2 = sut.newDeviceAuthRequest()
         sut.validateRequest(dar2.userCode.value, testValidatingUser2)
@@ -150,7 +150,7 @@ class DeviceAuthRequestServiceTest {
 
     @Test
     fun `use validated request throws exception if device code does not exist`() {
-        val sut = BaseDeviceAuthRequestService(mockAppConfig, fixedClock)
+        val sut = BaseDeviceAuthRequestService(mockConfig, fixedClock)
         assertThrows<DeviceAuthTokenException> {
             sut.useValidatedRequest("nonexistent code")
         }.apply {
@@ -166,7 +166,7 @@ class DeviceAuthRequestServiceTest {
         doAnswer {
             now
         }.`when`(mockClock).instant()
-        val sut = BaseDeviceAuthRequestService(mockAppConfig, mockClock)
+        val sut = BaseDeviceAuthRequestService(mockConfig, mockClock)
         val request = sut.newDeviceAuthRequest()
         sut.validateRequest(request.userCode.value, testValidatingUser1)
 
@@ -180,7 +180,7 @@ class DeviceAuthRequestServiceTest {
 
     @Test
     fun `use validated request throws exception if device code is not validated`() {
-        val sut = BaseDeviceAuthRequestService(mockAppConfig, fixedClock)
+        val sut = BaseDeviceAuthRequestService(mockConfig, fixedClock)
         val request = sut.newDeviceAuthRequest()
         assertThrows<DeviceAuthTokenException> {
             sut.useValidatedRequest(request.deviceCode.value)
