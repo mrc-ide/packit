@@ -21,8 +21,6 @@ jobs:
       matrix:
         java-version: [17]
     steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
       - name: Login to GHCR (GitHub Packages)
         uses: docker/login-action@v3
         with:

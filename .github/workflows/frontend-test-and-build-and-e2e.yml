@@ -28,8 +28,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
       - name: Login to GHCR (GitHub Packages)
         uses: docker/login-action@v3
         with:
