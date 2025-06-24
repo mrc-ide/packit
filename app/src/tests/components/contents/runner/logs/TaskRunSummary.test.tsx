@@ -1,7 +1,11 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { TaskRunSummary } from "../../../../../app/components/contents/runner/logs/TaskRunSummary";
 import { mockCompleteRunInfo } from "../../../../mocks";
+import userEvent from "@testing-library/user-event";
+import { server } from "../../../../../msw/server";
+import { rest } from "msw";
+import { Toaster } from "sonner";
 
 describe("TaskRunSummary component", () => {
   it("should render summary information for task run", async () => {
@@ -58,5 +62,45 @@ describe("TaskRunSummary component", () => {
     );
 
     expect(screen.queryByRole("link", { name: /view/i })).not.toBeInTheDocument();
+  });
+
+  it("should loader spinner when cancel task is called", async () => {
+    render(
+      <MemoryRouter>
+        <TaskRunSummary runInfo={{ ...mockCompleteRunInfo, packetId: undefined, status: "RUNNING" }} />
+      </MemoryRouter>
+    );
+
+    const cancelButton = screen.getByRole("button", { name: /cancel task/i });
+    userEvent.click(cancelButton);
+
+    await waitFor(() => {
+      expect(cancelButton).toBeDisabled();
+      expect(cancelButton.querySelector(".lucide-loader-circle.animate-spin")).toBeInTheDocument();
+    });
+  });
+
+  it("should show error toast when cancel task fails", async () => {
+    server.use(
+      rest.post("*", (req, res, ctx) => {
+        return res(ctx.status(500));
+      })
+    );
+    render(
+      <MemoryRouter>
+        <TaskRunSummary runInfo={{ ...mockCompleteRunInfo, packetId: undefined, status: "RUNNING" }} />
+        <Toaster />
+      </MemoryRouter>
+    );
+
+    const cancelButton = screen.getByRole("button", { name: /cancel task/i });
+    userEvent.click(cancelButton);
+
+    await waitFor(() => {
+      // get first as test may render multiple toasts
+      expect(screen.getAllByText(/failed to cancel task/i)[0]).toBeVisible();
+    });
+    expect(cancelButton).not.toBeDisabled();
+    expect(cancelButton.querySelector(".lucide-loader-circle.animate-spin")).not.toBeInTheDocument();
   });
 });

@@ -7,6 +7,7 @@ import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { getTimeDifferenceToDisplay } from "../../../../../lib/time";
 import { absoluteApiUrl } from "../../../../../helpers";
+import { Toaster } from "sonner";
 
 const renderComponent = () => {
   const mutate = jest.fn();
@@ -19,6 +20,7 @@ const renderComponent = () => {
         />
         <Route path="runner/logs/:taskId" element={<div>Task logs</div>} />
       </Routes>
+      <Toaster />
     </MemoryRouter>
   );
   return mutate;
@@ -60,7 +62,7 @@ describe("PacketRunForm component", () => {
     });
   });
 
-  it("should call api with correct url and mutate when git fetch button clicked", async () => {
+  it("should do correct actions when git fetch button clicked", async () => {
     server.use(
       rest.post("*", (req, res, ctx) => {
         expect(req.url.href).toBe(`${absoluteApiUrl()}/runner/git/fetch`);
@@ -70,10 +72,35 @@ describe("PacketRunForm component", () => {
     );
     const mutate = renderComponent();
 
-    userEvent.click(screen.getByRole("button", { name: /git-fetch/i }));
+    const gitFetchButton = screen.getByRole("button", { name: /git-fetch/i });
+    userEvent.click(gitFetchButton);
 
     await waitFor(() => {
-      expect(mutate).toHaveBeenCalled();
+      expect(gitFetchButton.querySelector("svg")).toHaveClass("animate-spin");
+    });
+    expect(gitFetchButton).toBeDisabled();
+
+    await waitFor(() => {
+      expect(screen.getByText("Git branches fetched successfully.")).toBeVisible();
+    });
+    expect(mutate).toHaveBeenCalled();
+    expect(gitFetchButton).not.toBeDisabled();
+    expect(gitFetchButton.querySelector("svg")).not.toHaveClass("animate-spin");
+  });
+
+  it("should show error toast when error fetching git branches", async () => {
+    server.use(
+      rest.post("*", (req, res, ctx) => {
+        return res(ctx.status(500));
+      })
+    );
+    renderComponent();
+
+    const gitFetchButton = screen.getByRole("button", { name: /git-fetch/i });
+    userEvent.click(gitFetchButton);
+
+    await waitFor(() => {
+      expect(screen.getByText("Failed to fetch git branches. Please try again.")).toBeVisible();
     });
   });
 
