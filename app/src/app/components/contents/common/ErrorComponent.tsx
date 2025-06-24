@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-interface ErrorProps {
+export interface ErrorProps {
   message: string;
   error: Error;
 }
