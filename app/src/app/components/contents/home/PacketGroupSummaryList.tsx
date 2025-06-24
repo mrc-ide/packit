@@ -49,7 +49,7 @@ export const PacketGroupSummaryList = ({
   return (
     <>
       {packetGroupSummaries?.content?.length === 0 ? (
-        <div className="flex border rounded-md p-6 justify-center text-muted-foreground">No reports found</div>
+        <div className="flex border rounded-md p-6 justify-center text-muted-foreground">No packet groups found</div>
       ) : (
         <ul className="flex flex-col border rounded-md">
           {packetGroupSummaries?.content?.map((packetGroup) => (

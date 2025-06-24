@@ -95,4 +95,10 @@ class RunnerController(private val runnerService: RunnerService) {
         runnerService.cancelTask(taskId)
         return ResponseEntity.noContent().build()
     }
+    @GetMapping("packet/{packetId}/task")
+    fun getTaskIdByPacketId(
+        @PathVariable packetId: String,
+    ): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.ok(mapOf("runTaskId" to runnerService.getTaskIdByPacketId(packetId)))
+    }
 }

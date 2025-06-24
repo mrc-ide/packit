@@ -106,7 +106,7 @@ describe("download", () => {
     expect(mockRemoveChild).toHaveBeenCalledWith(mockFileLink);
   });
 
-  it("can download a stream of multiple files as a zip by clicking on an anchor tag", async () => {
+  it("can download a stream of multiple files as zip (even if zip format was not specifically requested)", async () => {
     const mockFileLink = {
       href: "",
       setAttribute: jest.fn(),
@@ -134,6 +134,41 @@ describe("download", () => {
     expect(mockFileLink.href).toBe(
       `${absoluteApiUrl()}/packets/${mockPacket.id}/files/zip?` +
         `paths=${mockPacket.files[0].path}&paths=${mockPacket.files[1].path}` +
+        `&token=fakeTokenId&filename=fakeFilename&inline=false`
+    );
+    expect(mockFileLink.setAttribute).toHaveBeenCalledWith("download", "fakeFilename");
+    expect(mockAppendChild).toHaveBeenCalledWith(mockFileLink);
+    expect(mockFileLink.click).toHaveBeenCalled();
+    expect(mockRemoveChild).toHaveBeenCalledWith(mockFileLink);
+  });
+
+  it("can download a stream of a single file as a zip, if zip format was specifically requested", async () => {
+    const mockFileLink = {
+      href: "",
+      setAttribute: jest.fn(),
+      click: jest.fn()
+    } as any;
+
+    const mockAppendChild = jest.fn();
+    const mockRemoveChild = jest.fn();
+
+    document.createElement = () => mockFileLink;
+    document.body.appendChild = mockAppendChild;
+    document.body.removeChild = mockRemoveChild;
+
+    await download([mockPacket.files[0]], mockPacket.id, "fakeFilename", true);
+
+    expect(fetchSpy).toHaveBeenCalledWith(
+      `${absoluteApiUrl()}/packets/${mockPacket.id}/files/token?` + `paths=${mockPacket.files[0].path}`,
+      {
+        method: "POST",
+        headers: { Authorization: "fakeAuthHeader" }
+      }
+    );
+
+    expect(mockFileLink.href).toBe(
+      `${absoluteApiUrl()}/packets/${mockPacket.id}/files/zip?` +
+        `paths=${mockPacket.files[0].path}` +
         `&token=fakeTokenId&filename=fakeFilename&inline=false`
     );
     expect(mockFileLink.setAttribute).toHaveBeenCalledWith("download", "fakeFilename");
