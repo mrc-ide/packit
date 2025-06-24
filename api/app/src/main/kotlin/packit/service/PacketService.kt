@@ -64,6 +64,7 @@ class BasePacketService(
     }
 
     override fun resyncPackets() {
+        log.info("Resyncing packets")
         // do a full resync with outpack, unlike incremental importPackets
         // add any outpack packets we already have, and delete any local packets that outpack doesn't have
 
@@ -73,14 +74,14 @@ class BasePacketService(
         val packitPacketIds = packetRepository.findAllIds().toSet()
 
         val notInOutpack = packitPacketIds subtract outpackPacketIds
-        log.info("Deleting $notInOutpack.size packets")
+        log.info("Deleting ${notInOutpack.size} packets")
         notInOutpack.forEach {
             runInfoRepository.deleteByPacketId(it)
             packetRepository.deleteById(it)
         }
 
         val notInPacket = outpackPacketIds subtract packitPacketIds
-        log.info("Deleting $notInPacket.size packets")
+        log.info("Saving ${notInPacket.size} new packets")
         val newPackets = outpackPackets.filterKeys{ it in notInPacket }.values
         savePackets(newPackets)
 

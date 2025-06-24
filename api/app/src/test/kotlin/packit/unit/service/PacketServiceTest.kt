@@ -12,6 +12,7 @@ import packit.exceptions.PackitException
 import packit.model.*
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
+import packit.repository.RunInfoRepository
 import packit.service.BasePacketService
 import packit.service.OutpackServerClient
 import packit.unit.packetToOutpackMetadata
@@ -119,9 +120,10 @@ class PacketServiceTest {
         on { findAll() } doReturn packetGroups
     }
 
+    private val newPacketOutpackMetadata = newPackets.map { packetToOutpackMetadata(it) }
     private val outpackServerClient =
         mock<OutpackServerClient> {
-            on { getMetadata(oldPackets[0].importTime) } doReturn newPackets.map { packetToOutpackMetadata(it) }
+            on { getMetadata(oldPackets[0].importTime) } doReturn newPacketOutpackMetadata
             on { getMetadataById(packetMetadata.id) } doReturn packetMetadata
             on {
                 getFileByHash(
@@ -142,7 +144,7 @@ class PacketServiceTest {
         val mockPacketRepository = mock<PacketRepository> {
             on { findAllById(packetIds) } doReturn packets
         }
-        val sut = BasePacketService(mockPacketRepository, packetGroupRepository, outpackServerClient)
+        val sut = BasePacketService(mockPacketRepository, packetGroupRepository, mock(), outpackServerClient)
 
         assertEquals(sut.getPackets(packetIds), packets)
         verify(mockPacketRepository).findAllById(packetIds)
@@ -150,7 +152,7 @@ class PacketServiceTest {
 
     @Test
     fun `gets packets`() {
-        val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), mock())
 
         val result = sut.getPackets()
 
@@ -162,7 +164,7 @@ class PacketServiceTest {
         val pageablePayload = PageablePayload(pageNumber = 0, pageSize = 10)
         val filterName = "para"
         val filterId = "123"
-        val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(),  mock())
 
         val result = sut.getPackets(pageablePayload, filterName, filterId)
 
@@ -176,7 +178,7 @@ class PacketServiceTest {
 
     @Test
     fun `gets packets by name`() {
-        val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), mock())
 
         val result = sut.getPacketsByName("pg1")
 
@@ -187,7 +189,7 @@ class PacketServiceTest {
 
     @Test
     fun `getMetadataBy throws exception if packet metadata does not exist`() {
-        val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), mock())
 
         assertThatThrownBy { sut.getMetadataBy("123") }
             .isInstanceOf(PackitException::class.java)
@@ -196,7 +198,7 @@ class PacketServiceTest {
 
     @Test
     fun `gets checksum of packet ids`() {
-        val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), mock())
 
         val result = sut.getChecksum()
 
@@ -206,7 +208,7 @@ class PacketServiceTest {
 
     @Test
     fun `imports packets and saves`() {
-        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), outpackServerClient)
         val argumentCaptor = argumentCaptor<List<Packet>>()
 
         sut.importPackets()
@@ -218,7 +220,7 @@ class PacketServiceTest {
 
     @Test
     fun `importPackets saves unique packet groups`() {
-        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), outpackServerClient)
         val argumentCaptor = argumentCaptor<List<PacketGroup>>()
 
         sut.importPackets()
@@ -232,8 +234,43 @@ class PacketServiceTest {
     }
 
     @Test
+    fun `resyncPackets saves new packets and deletes nonexistent packets`() {
+        // This time, let's say we already know about the first "new" packet id as well - that should be retained,
+        // while the other old packet ids should be deleted
+        val oldPacketIds = oldPackets.map { it.id }.toMutableList()
+        oldPacketIds.add(newPackets[0].id)
+
+        val resyncPacketRepository = mock<PacketRepository> {
+                on { findAllIds() } doReturn oldPacketIds
+            }
+        val resyncOutpackServerClient = mock<OutpackServerClient> {
+            on { getMetadata(null) } doReturn newPacketOutpackMetadata
+        }
+        val runInfoRepository = mock<RunInfoRepository> {}
+
+        val argumentCaptor = argumentCaptor<List<Packet>>()
+
+        // Should add packets from outpack even when they were run after packets we already know about
+        val sut = BasePacketService(resyncPacketRepository, packetGroupRepository, runInfoRepository, resyncOutpackServerClient)
+        sut.resyncPackets()
+
+        // should delete: all in "oldPackets"
+        verify(runInfoRepository).deleteByPacketId(oldPacketIds[0])
+        verify(runInfoRepository).deleteByPacketId(oldPacketIds[1])
+        verify(resyncPacketRepository).deleteById(oldPacketIds[0])
+        verify(resyncPacketRepository).deleteById(oldPacketIds[1])
+
+        // should add: new packets [1] and [2]
+        verify(resyncPacketRepository).saveAll(argumentCaptor.capture())
+        val savedPackets = argumentCaptor.allValues.flatten()
+        assertEquals(2, savedPackets.size,)
+        assertEquals(newPackets[1].id, savedPackets[0].id)
+        assertEquals(newPackets[2].id, savedPackets[1].id)
+    }
+
+    @Test
     fun `can get packet metadata`() {
-        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), outpackServerClient)
         val result = sut.getMetadataBy(packetMetadata.id)
 
         assertEquals(result, packetMetadata)
@@ -242,7 +279,7 @@ class PacketServiceTest {
     @Test
     fun `getPacket returns packet when packet exists with given id`() {
         whenever(packetRepository.findById(oldPackets[0].id)).thenReturn(Optional.of(oldPackets[0]))
-        val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(),  mock())
 
         val result = sut.getPacket(oldPackets[0].id)
 
@@ -253,7 +290,7 @@ class PacketServiceTest {
     fun `getPacket throws PackitException when no packet exists with given id`() {
         val packetId = "nonExistingId"
         whenever(packetRepository.findById(packetId)).thenReturn(Optional.empty())
-        val sut = BasePacketService(packetRepository, packetGroupRepository, mock())
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), mock())
 
         assertThrows<PackitException> {
             sut.getPacket(packetId)
@@ -265,7 +302,7 @@ class PacketServiceTest {
 
     @Test
     fun `validateFilesExistsForPacket throws when any path is not found on the packet metadata`() {
-        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), outpackServerClient)
 
         val error = assertThrows<PackitException> {
             sut.validateFilesExistForPacket(packetMetadata.id, listOf("file1.txt", "no-such-file.txt"))
@@ -275,7 +312,7 @@ class PacketServiceTest {
 
     @Test
     fun `validateFilesExistsForPacket throws when no paths are supplied`() {
-        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), outpackServerClient)
 
         val error = assertThrows<PackitException> {
             sut.validateFilesExistForPacket(packetMetadata.id, listOf())
@@ -285,7 +322,7 @@ class PacketServiceTest {
 
     @Test
     fun `validateFilesExistsForPacket returns the list of all files belonging to the packet`() {
-        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), outpackServerClient)
 
         val result = sut.validateFilesExistForPacket(packetMetadata.id, listOf("file1.txt"))
         assertEquals(packetMetadata.files, result)
@@ -294,7 +331,7 @@ class PacketServiceTest {
     @Test
     fun `getFileByPath should forward the request to outpack_server client`() {
         val outputStream = ByteArrayOutputStream()
-        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), outpackServerClient)
         val mockLambda = mock<(ClientHttpResponse) -> Unit>()
         sut.getFileByPath(packetMetadata.id, "file1.txt", outputStream, mockLambda)
         verify(outpackServerClient).getFileByHash("sha256:hash1", outputStream, mockLambda)
@@ -303,7 +340,7 @@ class PacketServiceTest {
     @Test
     fun `getFileByPath should throw PackitException if file not found`() {
         val outputStream = ByteArrayOutputStream()
-        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), outpackServerClient)
 
         assertThrows<PackitException> {
             sut.getFileByPath(packetMetadata.id, "no-such-file.txt", outputStream) {}
@@ -313,7 +350,7 @@ class PacketServiceTest {
     @Test
     fun `streamZip should write files to zip output stream`() {
         val outputStream = ByteArrayOutputStream()
-        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), outpackServerClient)
         sut.streamZip(listOf("file1.txt", "file2.txt"), packetMetadata.id, outputStream)
 
         val zipInputStream = ZipInputStream(outputStream.toByteArray().inputStream())
@@ -333,7 +370,7 @@ class PacketServiceTest {
     @Test
     fun `streamZip should throw PackitException if not all files are found`() {
         val outputStream = ByteArrayOutputStream()
-        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), outpackServerClient)
 
         assertThrows<PackitException> {
             sut.streamZip(listOf("file1.txt", "file2.txt", "no-such-file.txt"), packetMetadata.id, outputStream)
@@ -343,7 +380,7 @@ class PacketServiceTest {
     @Test
     fun `streamZip should throw PackitException if no paths supplied`() {
         val outputStream = ByteArrayOutputStream()
-        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), outpackServerClient)
 
         assertThrows<PackitException> {
             sut.streamZip(listOf(), packetMetadata.id, outputStream)
@@ -353,7 +390,7 @@ class PacketServiceTest {
     @Test
     fun `streamZip should throw PackitException if there is an error creating the zip`() {
         val outputStream = ByteArrayOutputStream()
-        val sut = BasePacketService(packetRepository, packetGroupRepository, outpackServerClient)
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), outpackServerClient)
         whenever(
             outpackServerClient.getFileByHash(anyString(), any<OutputStream>(), any<(ClientHttpResponse) -> Unit>())
         ).thenThrow(RuntimeException("error"))
