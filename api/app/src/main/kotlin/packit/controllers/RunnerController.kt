@@ -87,4 +87,12 @@ class RunnerController(private val runnerService: RunnerService) {
         val payload = PageablePayload(pageNumber, pageSize)
         return ResponseEntity.ok(runnerService.getTasksStatuses(payload, filterPacketGroupName).map { it.toBasicDto() })
     }
+
+    @PostMapping("/cancel/{taskId}")
+    fun cancelTask(
+        @PathVariable taskId: String
+    ): ResponseEntity<Unit> {
+        runnerService.cancelTask(taskId)
+        return ResponseEntity.noContent().build()
+    }
 }

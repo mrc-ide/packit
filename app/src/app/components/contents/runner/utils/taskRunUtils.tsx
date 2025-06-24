@@ -50,22 +50,25 @@ export const getStatusDisplayByStatus = (runInfo: RunInfo): RunStatusDisplay => 
         finishTime: new Date((runInfo.timeCompleted as number) * 1000),
         bgColor: "bg-green-50 dark:bg-green-950"
       };
-    default:
+    default: {
       // error, cancelled, died, timeout, missing, moved, deferred, impossible
+      const displayVerb = runInfo.status === "CANCELLED" ? "Cancelled" : "Failed";
       return {
         borderColor: "border-red-700",
         separatorColor: "bg-red-700",
         icon: () => <StatusIcon status="ERROR" />,
-        displayDuration: runInfo.timeCompleted
-          ? `Failed in ${getTimeInDisplayFormat(
-              getTimeDifferenceToDisplay(runInfo.timeStarted as number, runInfo.timeCompleted as number)
-            )}`
-          : "Failed",
+        displayDuration:
+          runInfo.timeCompleted && runInfo.timeStarted
+            ? `${displayVerb} in ${getTimeInDisplayFormat(
+                getTimeDifferenceToDisplay(runInfo.timeStarted, runInfo.timeCompleted)
+              )}`
+            : displayVerb,
         createdTime: new Date((runInfo.timeQueued as number) * 1000),
-        startTime: new Date((runInfo.timeStarted as number) * 1000),
-        finishTime: new Date((runInfo.timeCompleted as number) * 1000),
+        startTime: runInfo.timeStarted ? new Date(runInfo.timeStarted * 1000) : undefined,
+        finishTime: runInfo.timeCompleted ? new Date(runInfo.timeCompleted * 1000) : undefined,
         bgColor: "bg-red-50 dark:bg-red-950"
       };
+    }
   }
 };
 
