@@ -1,24 +1,16 @@
+import { CircleOff, Loader2 } from "lucide-react";
 import { NavLink } from "react-router-dom";
-import { RunInfo } from "../types/RunInfo";
 import { Button, buttonVariants } from "../../../Base/Button";
-import { fetcher } from "../../../../../lib/fetch";
-import appConfig from "../../../../../config/appConfig";
+import { useCancelTask } from "../hooks/useCancelTask";
+import { RunInfo } from "../types/RunInfo";
+import { isUnfinishedStatus } from "../utils/taskRunUtils";
 
 interface TaskRunSummaryBottomButtonProps {
   runInfo: RunInfo;
 }
 export const TaskRunSummaryBottomButton = ({ runInfo }: TaskRunSummaryBottomButtonProps) => {
-  const cancelTask = async () => {
-    try {
-      await fetcher({
-        url: `${appConfig.apiUrl()}/runner/cancel/${runInfo.taskId}`,
-        method: "POST"
-      });
-    } catch (error) {
-      console.error("Error cancelling task:", error);
-      // Handle error appropriately, e.g., show a notification or alert
-    }
-  };
+  const { cancelTask, cancelInitiated } = useCancelTask(runInfo.taskId);
+
   if (runInfo.packetId)
     return (
       <NavLink
@@ -29,12 +21,17 @@ export const TaskRunSummaryBottomButton = ({ runInfo }: TaskRunSummaryBottomButt
       </NavLink>
     );
 
-  // if (runInfo.status == "PENDING" || runInfo.status === "RUNNING" || runInfo.status === "DEFERRED") {
-  return (
-    <Button variant="destructive" size="sm" onClick={cancelTask}>
-      Cancel Task
-    </Button>
-  );
-  // }
+  if (isUnfinishedStatus(runInfo.status))
+    return (
+      <Button variant="destructive" size="sm" onClick={cancelTask} disabled={cancelInitiated}>
+        {cancelInitiated ? (
+          <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+        ) : (
+          <CircleOff className="h-4 w-4 mr-1" />
+        )}{" "}
+        Cancel Task
+      </Button>
+    );
+
   return <div></div>;
 };

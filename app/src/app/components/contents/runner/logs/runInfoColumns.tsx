@@ -1,10 +1,14 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { ExternalLink, GitBranch, GitCommit } from "lucide-react";
+import { CircleOff, ExternalLink, GitBranch, GitCommit } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import { getTimeDifferenceToDisplay } from "../../../../../lib/time";
+import { Button } from "../../../Base/Button";
 import { ScrollArea } from "../../../Base/ScrollArea";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../Base/Tooltip";
 import { ParameterContainer } from "../../common/ParameterContainer";
+import { useCancelTask } from "../hooks/useCancelTask";
 import { BasicRunInfo } from "../types/RunInfo";
+import { isUnfinishedStatus } from "../utils/taskRunUtils";
 import { StatusIcon } from "./StatusIcon";
 
 const columnHelper = createColumnHelper<BasicRunInfo>();
@@ -13,10 +17,34 @@ export const runInfoColumns = [
     header: "",
     cell: ({ row }) => {
       const { packetGroupName, taskId, status } = row.original;
-
+      const { cancelTask, cancelInitiated } = useCancelTask(taskId);
       return (
         <div className="flex space-x-2 items-center">
-          <StatusIcon status={status} iconClassName="h-4 w-4 stroke-2" iconWrapperClassName="h-7 w-7 m-0.5" />
+          <div className="flex flex-col space-y-1 justify-center items-center">
+            <StatusIcon status={status} iconClassName="h-4 w-4 stroke-2" iconWrapperClassName="h-7 w-7 m-0.5" />
+
+            {isUnfinishedStatus(status) && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      aria-label={`cancel-${taskId}`}
+                      className="hover:bg-red-100 dark:hover:bg-red-950 h-6 w-6"
+                      onClick={cancelTask}
+                      disabled={cancelInitiated}
+                    >
+                      <CircleOff className="h-3 w-3 text-red-500" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="left" className="text-xs">
+                    <p>Cancel task</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+          </div>
           <div className="flex flex-col">
             <Link to={`${taskId}`} className="hover:underline decoration-blue-500 font-semibold text-blue-500">
               {packetGroupName}

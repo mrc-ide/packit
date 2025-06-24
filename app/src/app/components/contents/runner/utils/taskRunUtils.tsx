@@ -84,3 +84,6 @@ export const getTimeInDisplayFormat = (timeDifference: TimeDifference[]): string
     return `${acc} ${value} ${unit[0]}`;
   }, "");
 };
+
+export const isUnfinishedStatus = (status: RunInfo["status"]): boolean =>
+  ["PENDING", "RUNNING", "DEFERRED"].includes(status);
