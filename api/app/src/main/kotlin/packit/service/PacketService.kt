@@ -1,5 +1,6 @@
 package packit.service
 
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
@@ -53,6 +54,10 @@ class BasePacketService(
     private val outpackServerClient: OutpackServer,
 ) : PacketService {
 
+    companion object {
+        private val log = LoggerFactory.getLogger(BasePacketService::class.java)
+    }
+
     override fun importPackets() {
         val mostRecent = packetRepository.findTopByOrderByImportTimeDesc()?.importTime
         savePackets(outpackServerClient.getMetadata(mostRecent))
@@ -68,12 +73,14 @@ class BasePacketService(
         val packitPacketIds = packetRepository.findAllIds().toSet()
 
         val notInOutpack = packitPacketIds subtract outpackPacketIds
+        log.info("Deleting $notInOutpack.size packets")
         notInOutpack.forEach {
             runInfoRepository.deleteByPacketId(it)
             packetRepository.deleteById(it)
         }
 
         val notInPacket = outpackPacketIds subtract packitPacketIds
+        log.info("Deleting $notInPacket.size packets")
         val newPackets = outpackPackets.filterKeys{ it in notInPacket }.values
         savePackets(newPackets)
 
