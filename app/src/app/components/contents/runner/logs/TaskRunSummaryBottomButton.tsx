@@ -24,12 +24,8 @@ export const TaskRunSummaryBottomButton = ({ runInfo }: TaskRunSummaryBottomButt
   if (isUnfinishedStatus(runInfo.status))
     return (
       <Button variant="destructive" size="sm" onClick={cancelTask} disabled={cancelInitiated}>
-        {cancelInitiated ? (
-          <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-        ) : (
-          <CircleOff className="h-4 w-4 mr-1" />
-        )}{" "}
-        Cancel Task
+        {cancelInitiated ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <CircleOff className="h-4 w-4 mr-1" />}
+        <span>Cancel task</span>
       </Button>
     );
 
