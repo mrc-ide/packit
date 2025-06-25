@@ -1,9 +1,9 @@
 import { render, screen, within } from "@testing-library/react";
-import { UserProvider } from "../../../../app/components/providers/UserProvider";
-import { PacketGroupSummaryListItem } from "../../../../app/components/contents/home/PacketGroupSummaryListItem";
-import { mockPacketGroupSummaries, mockUserState } from "../../../mocks";
 import { MemoryRouter } from "react-router-dom";
+import { PacketGroupSummaryListItem } from "../../../../app/components/contents/home/PacketGroupSummaryListItem";
 import { UserState } from "../../../../app/components/providers/types/UserTypes";
+import { UserProvider } from "../../../../app/components/providers/UserProvider";
+import { mockPacketGroupSummaries, mockUserState } from "../../../mocks";
 
 const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
 jest.mock("../../../../lib/localStorageManager", () => ({
@@ -17,11 +17,7 @@ describe("PacketGroupSummaryListItem", () => {
     render(
       <UserProvider>
         <MemoryRouter>
-          <PacketGroupSummaryListItem
-            packetGroup={mockPacketGroup}
-            rolesAndUsersToUpdateRead={{} as any}
-            mutate={jest.fn()}
-          />
+          <PacketGroupSummaryListItem packetGroup={mockPacketGroup} />
         </MemoryRouter>
       </UserProvider>
     );

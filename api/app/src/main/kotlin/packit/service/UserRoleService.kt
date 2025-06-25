@@ -11,8 +11,8 @@ interface UserRoleService {
     fun updateUserRoles(username: String, updateUserRoles: UpdateUserRoles): User
     fun getAllRolesAndUsersWithPermissions(): RolesAndUsersWithPermissionsDto
     fun getRolesAndUsersForPacketGroupReadUpdate(
-        packetGroupNames: List<String>
-    ): Map<String, RolesAndUsersForReadUpdate>
+        packetGroupName: String
+    ): RolesAndUsersForReadUpdate
 
     fun getRolesAndUsersForPacketReadUpdate(packet: Packet): RolesAndUsersForReadUpdate
     fun getUserAuthorities(username: String): List<String>
@@ -44,22 +44,25 @@ class BaseUserRoleService(
     }
 
     override fun getRolesAndUsersForPacketGroupReadUpdate(
-        packetGroupNames: List<String>
-    ): Map<String, RolesAndUsersForReadUpdate> {
+        packetGroupName: String
+    ): RolesAndUsersForReadUpdate {
         val (roles, users) = getNonUsernameRolesAndNonServiceUsers()
-        return packetGroupNames.associateWith {
-            RolesAndUsersForReadUpdate(
-                canRead = createSortedBasicRolesAndUsers(
-                    userRoleFilterService.getRolesAndSpecificUsersCanReadPacketGroup(roles, users, it)
-                ),
-                cannotRead = createSortedBasicRolesAndUsers(
-                    userRoleFilterService.getRolesAndUsersCannotReadPacketReadGroup(roles, users, it)
-                ),
-                withRead = createSortedBasicRolesAndUsers(
-                    userRoleFilterService.getRolesAndUsersWithSpecificReadPacketGroupPermission(roles, users, it)
+        return RolesAndUsersForReadUpdate(
+            canRead = createSortedBasicRolesAndUsers(
+                userRoleFilterService.getRolesAndSpecificUsersCanReadPacketGroup(roles, users, packetGroupName)
+            ),
+            cannotRead = createSortedBasicRolesAndUsers(
+                userRoleFilterService.getRolesAndUsersCannotReadPacketReadGroup(roles, users, packetGroupName)
+            ),
+            withRead = createSortedBasicRolesAndUsers(
+                userRoleFilterService.getRolesAndUsersWithSpecificReadPacketGroupPermission(
+                    roles,
+                    users,
+                    packetGroupName
                 )
             )
-        }
+        )
+
     }
 
     override fun getRolesAndUsersForPacketReadUpdate(packet: Packet): RolesAndUsersForReadUpdate {

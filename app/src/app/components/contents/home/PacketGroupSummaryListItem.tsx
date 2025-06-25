@@ -1,23 +1,18 @@
 import { ExternalLink, Hourglass, Layers } from "lucide-react";
 import { Link } from "react-router-dom";
-import { KeyedMutator } from "swr";
+import { canManagePacketGroup } from "../../../../lib/auth/hasPermission";
 import { getTimeDifferenceToDisplay } from "../../../../lib/time";
 import { PacketGroupSummary } from "../../../../types";
-import { RolesAndUsersToUpdateRead } from "../manageAccess/types/RoleWithRelationships";
-import { UpdatePermissionDialog } from "./UpdatePermissionDialog";
+import { useUser } from "../../providers/UserProvider";
+import { UpdatePermissionButton } from "./UpdatePermissionButton";
 
 interface PacketGroupSummaryListItemProps {
   packetGroup: PacketGroupSummary;
-  rolesAndUsersToUpdateRead?: RolesAndUsersToUpdateRead;
-  mutate: KeyedMutator<Record<string, RolesAndUsersToUpdateRead>>;
 }
 
-export const PacketGroupSummaryListItem = ({
-  packetGroup,
-  rolesAndUsersToUpdateRead,
-  mutate
-}: PacketGroupSummaryListItemProps) => {
+export const PacketGroupSummaryListItem = ({ packetGroup }: PacketGroupSummaryListItemProps) => {
   const { unit, value } = getTimeDifferenceToDisplay(packetGroup.latestTime)[0];
+  const { authorities } = useUser();
 
   return (
     <li key={packetGroup.latestId} className="flex p-4 justify-between items-center border-b">
@@ -53,12 +48,8 @@ export const PacketGroupSummaryListItem = ({
           </div>
         </div>
       </div>
-      {rolesAndUsersToUpdateRead && (
-        <UpdatePermissionDialog
-          packetGroupName={packetGroup.name}
-          rolesAndUsersToUpdateRead={rolesAndUsersToUpdateRead}
-          mutate={mutate}
-        />
+      {canManagePacketGroup(authorities, packetGroup.name) && (
+        <UpdatePermissionButton packetGroupName={packetGroup.name} />
       )}
     </li>
   );

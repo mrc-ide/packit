@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { UpdatePermissionDialog } from "../../../../app/components/contents/home/UpdatePermissionDialog";
+import { UpdatePermissionButton } from "../../../../app/components/contents/home/UpdatePermissionButton";
 import userEvent from "@testing-library/user-event";
 import { mockPacketGroupDtos, mockRolesAndUsersToUpdateRead } from "../../../mocks";
 
@@ -7,13 +7,7 @@ describe("UpdatePermissionDialog", () => {
   const packetGroupName = mockPacketGroupDtos.content[0].name;
   const rolesAndUsersToUpdateRead = mockRolesAndUsersToUpdateRead[packetGroupName];
   it("should render dialog on button click correctly", async () => {
-    render(
-      <UpdatePermissionDialog
-        packetGroupName={packetGroupName}
-        mutate={jest.fn()}
-        rolesAndUsersToUpdateRead={rolesAndUsersToUpdateRead}
-      />
-    );
+    render(<UpdatePermissionButton packetGroupName={packetGroupName} />);
 
     userEvent.click(screen.getByRole("button", { name: `manage-access-${packetGroupName}` }));
 
@@ -23,13 +17,7 @@ describe("UpdatePermissionDialog", () => {
   });
 
   it("should be able to open and close dialog", async () => {
-    render(
-      <UpdatePermissionDialog
-        packetGroupName={packetGroupName}
-        mutate={jest.fn()}
-        rolesAndUsersToUpdateRead={rolesAndUsersToUpdateRead}
-      />
-    );
+    render(<UpdatePermissionButton packetGroupName={packetGroupName} />);
 
     userEvent.click(screen.getByRole("button", { name: `manage-access-${packetGroupName}` }));
 
