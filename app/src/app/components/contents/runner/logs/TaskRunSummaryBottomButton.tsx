@@ -1,4 +1,4 @@
-import { CircleOff, Loader2 } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { Button, buttonVariants } from "../../../Base/Button";
 import { useCancelTask } from "../hooks/useCancelTask";
@@ -24,7 +24,7 @@ export const TaskRunSummaryBottomButton = ({ runInfo }: TaskRunSummaryBottomButt
   if (isUnfinishedStatus(runInfo.status))
     return (
       <Button variant="destructive" size="sm" onClick={cancelTask} disabled={cancelInitiated}>
-        {cancelInitiated ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <CircleOff className="h-4 w-4 mr-1" />}
+        {cancelInitiated ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <X className="h-4 w-4 mr-1" />}
         <span>Cancel task</span>
       </Button>
     );
