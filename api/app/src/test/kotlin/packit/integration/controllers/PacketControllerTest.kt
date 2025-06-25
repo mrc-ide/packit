@@ -696,20 +696,22 @@ class PacketControllerTest : IntegrationTest() {
             packetService.importPackets() //restore state
         }
 
-        @Test
-        fun `resync creates and removes expected packets`() {
-            val idsBeforeSync = packetRepository.findAllIds()
-
-            val requestEntity = HttpEntity<String?>(HttpHeaders())
-            val result = restTemplate.exchange(
+        private fun getResyncResponse(entity: HttpEntity<String?>? = null) = restTemplate.exchange(
                 "/packets/resync",
                 HttpMethod.POST,
-                requestEntity,
+                entity ?: getTokenizedHttpEntity(),
                 String::class.java
             )
 
-            val idsAfterSync = packetRepository.findAllIds()
+        @Test
+        @WithAuthenticatedUser(authorities = ["packet.manage"])
+        fun `resync creates and removes expected packets`() {
+            val idsBeforeSync = packetRepository.findAllIds()
+
+            val result = getResyncResponse()
             assertEquals(HttpStatus.NO_CONTENT, result.statusCode)
+
+            val idsAfterSync = packetRepository.findAllIds()
 
             val removedIds = idsBeforeSync.filter{ !idsAfterSync.contains(it) }
             val addedIds = idsAfterSync.filter{ !idsBeforeSync.contains(it) }
@@ -725,6 +727,20 @@ class PacketControllerTest : IntegrationTest() {
 
             // check "explicit" packet group was recreated
             assertThat(packetGroupRepository.findByName("explicit")).isNotNull()
+        }
+
+        @Test
+        fun `resync request by unauthenticated user returns 401`() {
+            val requestEntity = HttpEntity<String?>(HttpHeaders())
+            val result = getResyncResponse(requestEntity)
+            assertEquals(HttpStatus.UNAUTHORIZED, result.statusCode)
+        }
+
+        @Test
+        @WithAuthenticatedUser(authorities = ["packet.read"])
+        fun `resync request by user without packet manage permission returns 401`() {
+            val result = getResyncResponse()
+            assertEquals(HttpStatus.UNAUTHORIZED, result.statusCode)
         }
     }
 }

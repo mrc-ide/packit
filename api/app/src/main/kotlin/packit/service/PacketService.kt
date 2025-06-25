@@ -107,15 +107,9 @@ class BasePacketService(
     }
 
     internal fun saveUniquePacketGroups(packetGroupNames: List<String>) {
-        println("Saving ${packetGroupNames.size} packet groups: ${packetGroupNames.joinToString()}")
-        //val matchedPacketGroupNames = packetGroupRepository.findByNameIn(packetGroupNames).map { it.name }
-        //println("Matched packet group names: ${matchedPacketGroupNames.joinToString()}")
-        //println("Exitsting packt group names: ${packetGroupRepository.findAll().map{it.name}.joinToString()}")
-        // TODO: add comment here and in repo re perms
-        val newPacketGroups = packetGroupNames.filter{packetGroupRepository.findByName(it) == null}
-        //val newPacketGroups =
-        //    packetGroupNames.filter { it !in matchedPacketGroupNames }
-        println("New packet groups: ${newPacketGroups.joinToString()}")
+        val matchedPacketGroupNames = packetGroupRepository.findByNameIn(packetGroupNames).map { it.name }
+        val newPacketGroups =
+            packetGroupNames.filter { it !in matchedPacketGroupNames }
         packetGroupRepository.saveAll(newPacketGroups.map { PacketGroup(name = it) })
     }
 
