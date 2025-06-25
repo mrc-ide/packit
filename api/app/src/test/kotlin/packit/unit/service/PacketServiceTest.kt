@@ -246,12 +246,19 @@ class PacketServiceTest {
         val resyncOutpackServerClient = mock<OutpackServerClient> {
             on { getMetadata(null) } doReturn newPacketOutpackMetadata
         }
+
+        // ..and let's say that the test2 packet group isn't in the repo, so we can check that it gets created
+        val resyncPacketGroupRepository = mock<PacketGroupRepository> {
+            on { findByNameIn(listOf("test", "test2")) } doReturn listOf(PacketGroup("test"))
+        }
+
         val runInfoRepository = mock<RunInfoRepository> {}
 
-        val argumentCaptor = argumentCaptor<List<Packet>>()
+        val packetsArgCaptor = argumentCaptor<List<Packet>>()
+        val packetGroupArgCaptor = argumentCaptor<List<PacketGroup>>()
 
         // Should add packets from outpack even when they were run after packets we already know about
-        val sut = BasePacketService(resyncPacketRepository, packetGroupRepository, runInfoRepository, resyncOutpackServerClient)
+        val sut = BasePacketService(resyncPacketRepository, resyncPacketGroupRepository, runInfoRepository, resyncOutpackServerClient)
         sut.resyncPackets()
 
         // should delete: all in "oldPackets"
@@ -261,11 +268,16 @@ class PacketServiceTest {
         verify(resyncPacketRepository).deleteById(oldPacketIds[1])
 
         // should add: new packets [1] and [2]
-        verify(resyncPacketRepository).saveAll(argumentCaptor.capture())
-        val savedPackets = argumentCaptor.allValues.flatten()
+        verify(resyncPacketRepository).saveAll(packetsArgCaptor.capture())
+        val savedPackets = packetsArgCaptor.allValues.flatten()
         assertEquals(2, savedPackets.size,)
         assertEquals(newPackets[1].id, savedPackets[0].id)
         assertEquals(newPackets[2].id, savedPackets[1].id)
+
+        verify(resyncPacketGroupRepository).saveAll(packetGroupArgCaptor.capture())
+        val savedPacketGroups = packetGroupArgCaptor.allValues.flatten()
+        assertEquals(1, savedPacketGroups.size)
+        assertEquals("test2", savedPacketGroups[0].name)
     }
 
     @Test
