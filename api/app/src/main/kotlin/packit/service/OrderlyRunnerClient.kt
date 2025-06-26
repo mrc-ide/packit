@@ -12,6 +12,7 @@ interface OrderlyRunner {
     fun getPacketGroups(repo: RunnerRepository, ref: String): List<RunnerPacketGroup>
     fun submitRun(repo: RunnerRepository, info: RunnerSubmitRunInfo): SubmitRunResponse
     fun getTaskStatuses(taskIds: List<String>, includeLogs: Boolean): TaskStatusesResponse
+    fun cancelTask(taskId: String)
 }
 
 class OrderlyRunnerClient(val config: RunnerConfig) : OrderlyRunner {
@@ -61,6 +62,12 @@ class OrderlyRunnerClient(val config: RunnerConfig) : OrderlyRunner {
             constructUrl("/report/status?include_logs={includeLogs}"),
             taskIds,
             mapOf("includeLogs" to includeLogs)
+        )
+    }
+
+    override fun cancelTask(taskId: String) {
+        return GenericClient.post(
+            constructUrl("/report/cancel/$taskId"),
         )
     }
 

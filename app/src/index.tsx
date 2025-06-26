@@ -9,6 +9,7 @@ import { BrandingProvider } from "./app/components/providers/BrandingProvider";
 import reportWebVitals from "./reportWebVitals";
 import "./styles/globals.css";
 import { Router } from "./app/components/routes/Router";
+import { Toaster } from "./app/components/Base/Sonner";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
@@ -19,6 +20,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
             <RedirectOnLoginProvider>
               <BrowserRouter basename={process.env.PUBLIC_URL}>
                 <Router />
+                <Toaster />
               </BrowserRouter>
             </RedirectOnLoginProvider>
           </UserProvider>

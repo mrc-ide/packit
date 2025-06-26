@@ -7,12 +7,15 @@ import { PAGE_SIZE } from "../../../../../lib/constants";
 import { server } from "../../../../../msw/server";
 import { mockTasksRunInfo } from "../../../../mocks";
 import { basicRunnerUri } from "../../../../../msw/handlers/runnerHandlers";
+import userEvent from "@testing-library/user-event";
+import { Toaster } from "sonner";
 
 const renderComponent = () =>
   render(
     <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>
       <MemoryRouter>
         <TasksLogsTable pageNumber={1} pageSize={PAGE_SIZE} filterPacketGroupName="" setPageNumber={jest.fn()} />
+        <Toaster />
       </MemoryRouter>
     </SWRConfig>
   );
@@ -146,6 +149,49 @@ describe("TasksLogsTable component", () => {
 
     await waitFor(() => {
       expect(numApiCalled).toBe(1);
+    });
+  });
+
+  it("should allow cancel task when status is running, pending or deferred", async () => {
+    let cancelCalled = false;
+    server.use(
+      rest.post(`${basicRunnerUri}/cancel/:taskId`, (req, res, ctx) => {
+        cancelCalled = true;
+
+        expect(req.params.taskId).toBe(mockTasksRunInfo.content[2].taskId);
+        return res(ctx.status(204));
+      })
+    );
+
+    renderComponent();
+
+    const cancelButtons = await screen.findAllByRole("button", { name: /cancel/i });
+    expect(cancelButtons).toHaveLength(2); // 2 tasks are running or pending
+
+    userEvent.click(cancelButtons[0]);
+
+    await waitFor(() => {
+      expect(cancelCalled).toBe(true);
+      expect(cancelButtons[0]).toBeDisabled();
+    });
+  });
+
+  it("should show error toast & re-enable cancel button on cancel fail", async () => {
+    server.use(
+      rest.post(`${basicRunnerUri}/cancel/:taskId`, (req, res, ctx) => {
+        expect(req.params.taskId).toBe(mockTasksRunInfo.content[2].taskId);
+        return res(ctx.status(500));
+      })
+    );
+
+    renderComponent();
+
+    const cancelButtons = await screen.findAllByRole("button", { name: /cancel/i });
+    userEvent.click(cancelButtons[0]);
+
+    await waitFor(() => {
+      expect(screen.getByText(/failed to cancel task/i)).toBeVisible();
+      expect(cancelButtons[0]).toBeEnabled();
     });
   });
 });

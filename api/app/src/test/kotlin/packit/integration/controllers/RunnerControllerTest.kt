@@ -32,13 +32,18 @@ class RunnerControllerTest : IntegrationTest() {
     private lateinit var userRepository: UserRepository
 
     private val testPacketGroupName = "incoming_data"
+    private val testLongRunningPacketGroupName = "t2"
     private val testUser = User("test.user@example.com", mutableListOf(), false, "source1", "Test User")
 
-    private fun getSubmitRunInfo(branch: String, commitHash: String): SubmitRunInfo {
-        return SubmitRunInfo(testPacketGroupName, branch, commitHash, emptyMap())
+    private fun getSubmitRunInfo(
+        branch: String,
+        commitHash: String,
+        packetName: String = testPacketGroupName
+    ): SubmitRunInfo {
+        return SubmitRunInfo(packetName, branch, commitHash, emptyMap())
     }
 
-    private fun submitTestRun(): Pair<String, GitBranchInfo> {
+    private fun submitTestRun(packetName: String = testPacketGroupName): Pair<String, GitBranchInfo> {
         val fetchRes: ResponseEntity<Unit> = restTemplate.exchange(
             "/runner/git/fetch",
             HttpMethod.POST,
@@ -58,7 +63,7 @@ class RunnerControllerTest : IntegrationTest() {
             HttpMethod.POST,
             getTokenizedHttpEntity(
                 MediaType.APPLICATION_JSON,
-                getSubmitRunInfo(branch.name, branch.commitHash)
+                getSubmitRunInfo(branch.name, branch.commitHash, packetName)
             )
         )
 
@@ -87,6 +92,7 @@ class RunnerControllerTest : IntegrationTest() {
     @AfterEach
     fun cleanupData() {
         runInfoRepository.deleteAllByPacketGroupName(testPacketGroupName)
+        runInfoRepository.deleteAllByPacketGroupName(testLongRunningPacketGroupName)
         userRepository.delete(testUser)
     }
 
@@ -286,6 +292,27 @@ class RunnerControllerTest : IntegrationTest() {
 
         assertSuccess(res)
         assertEquals(taskId, res.body!!["runTaskId"])
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.run"])
+    fun `can cancel task`() {
+        val (taskId) = submitTestRun(testLongRunningPacketGroupName)
+
+        val cancelRes: ResponseEntity<Unit> = restTemplate.exchange(
+            "/runner/cancel/$taskId",
+            HttpMethod.POST,
+            getTokenizedHttpEntity()
+        )
+        assertEquals(HttpStatus.NO_CONTENT, cancelRes.statusCode)
+
+        // Check that the task status is updated to CANCELLED
+        val statusRes: ResponseEntity<RunInfoDto> = restTemplate.exchange(
+            "/runner/status/$taskId",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+        assertEquals(Status.CANCELLED, statusRes.body!!.status)
     }
 }
 

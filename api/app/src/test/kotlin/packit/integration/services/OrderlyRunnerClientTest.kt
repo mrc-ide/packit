@@ -133,4 +133,24 @@ class OrderlyRunnerClientTest(
             assertEquals(String::class.java, it.status::class.java)
         }
     }
+
+    @Test
+    fun `can cancel task`() {
+        val branchInfo = sut.getBranches(repo)
+        val mainBranch = branchInfo.branches[0]
+        val submitInfo = RunnerSubmitRunInfo(
+            sshKey = null,
+            packetGroupName = "t2",
+            branch = mainBranch.name,
+            commitHash = mainBranch.commitHash,
+            parameters = emptyMap(),
+            location = OrderlyLocation.http(locationUrl)
+        )
+        val res = sut.submitRun(repo, submitInfo)
+
+        sut.cancelTask(res.taskId)
+
+        val statuses = sut.getTaskStatuses(listOf(res.taskId), false).statuses
+        assertEquals("CANCELLED", statuses[0].status)
+    }
 }

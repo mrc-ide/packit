@@ -1,9 +1,8 @@
 import { Github } from "lucide-react";
-import { NavLink } from "react-router-dom";
-import { buttonVariants } from "../../../Base/Button";
 import { Separator } from "../../../Base/Separator";
-import { RunInfo } from "../types/RunInfo";
 import { ParameterContainer } from "../../common/ParameterContainer";
+import { RunInfo } from "../types/RunInfo";
+import { TaskRunSummaryBottomButton } from "./TaskRunSummaryBottomButton";
 
 interface TaskSummaryTopProps {
   runInfo: RunInfo;
@@ -41,16 +40,6 @@ export const TaskRunSummaryBottom = ({ runInfo, createdTime, startTime, finishTi
         )}
       </div>
     </div>
-
-    {runInfo.packetId ? (
-      <NavLink
-        to={`/${runInfo.packetGroupName}/${runInfo.packetId}`}
-        className={buttonVariants({ variant: "outline", size: "sm" })}
-      >
-        View Packet
-      </NavLink>
-    ) : (
-      <div></div>
-    )}
+    <TaskRunSummaryBottomButton runInfo={runInfo} />
   </div>
 );
