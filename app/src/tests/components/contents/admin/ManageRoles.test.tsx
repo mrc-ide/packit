@@ -14,7 +14,7 @@ const renderComponent = () => {
     <SWRConfig value={{ provider: () => new Map() }}>
       <MemoryRouter initialEntries={["/manage-roles"]}>
         <Routes>
-          <Route element={<AdminOutlet />}>
+          <Route element={<AdminOutlet authorities={['user.manage']} />}>
             <Route path="/manage-roles" element={<ManageRoles />} />
           </Route>
         </Routes>

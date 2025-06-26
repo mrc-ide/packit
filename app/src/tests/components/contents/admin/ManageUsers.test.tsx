@@ -21,7 +21,7 @@ const renderComponent = () =>
         <UserProvider>
           <MemoryRouter initialEntries={["/manage-users"]}>
             <Routes>
-              <Route element={<AdminOutlet />}>
+              <Route element={<AdminOutlet authorities={['user.manage']} />}>
                 <Route path="/manage-users" element={<ManageUsers />} />
               </Route>
             </Routes>

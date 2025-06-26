@@ -10,10 +10,14 @@ import { setupManageRolesColumns } from "./utils/manageRolesColumns";
 import { rolesGlobalFilterFn } from "./utils/rolesTableGlobalFilterFn";
 
 import { NavLink } from "react-router-dom";
+import {Unauthorized} from "../common/Unauthorized";
 
 export const ManageRoles = () => {
   const { roles, users, mutate } = useManageAccessLayoutContext();
   const [filterValue, setFilterValue] = useState("");
+  if (!roles) {
+      return <Unauthorized />
+  }
   return (
     <>
       <div>

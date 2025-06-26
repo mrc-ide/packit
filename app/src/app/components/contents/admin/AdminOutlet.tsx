@@ -7,9 +7,17 @@ import { UserWithPermissions } from "./types/UserWithPermissions";
 import { KeyedMutator } from "swr";
 import { Unauthorized } from "../common/Unauthorized";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
+import {hasUserManagePermission} from "../../../../lib/auth/hasPermission";
 
-export const AdminOutlet = () => {
-  const { roles, users, isLoading, error, mutate } = useGetRolesAndUsersWithPermissions();
+interface AdminOutletProps {
+  authorities: string[]
+}
+
+export const AdminOutlet = ({authorities}: AdminOutletProps) => {
+  const isUserManager = hasUserManagePermission(authorities);
+  const { roles, users, isLoading, error, mutate } = isUserManager ?
+      useGetRolesAndUsersWithPermissions() :
+      { roles: null, users: null, isLoading: false, error: null, mutate: null };
 
   if (error) {
     if (error.status === HttpStatus.Unauthorized) {
@@ -31,7 +39,7 @@ export const AdminOutlet = () => {
         ))}
       </ul>
     );
-  return roles ? <Outlet context={{ roles, users, mutate }} /> : null;
+  return (roles || !isUserManager) ? <Outlet context={{ roles, users, mutate }} /> : null;
 };
 
 interface ManageAccessLayoutContext {
