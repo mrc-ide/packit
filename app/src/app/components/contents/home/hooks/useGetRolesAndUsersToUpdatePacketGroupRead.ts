@@ -3,13 +3,9 @@ import appConfig from "../../../../../config/appConfig";
 import { fetcher } from "../../../../../lib/fetch";
 import { RolesAndUsersToUpdateRead } from "../../manageAccess/types/RoleWithRelationships";
 
-/**
- * Key of return type is packet group name
- * Only returns packet group names that user has permissions to manage
- */
-export const useGetRolesAndUsersToUpdatePacketGroupRead = () => {
-  const { data, isLoading, error, mutate } = useSWR<Record<string, RolesAndUsersToUpdateRead>>(
-    `${appConfig.apiUrl()}/packetGroups/_/read-permission`,
+export const useGetRolesAndUsersToUpdatePacketGroupRead = (packetGroupName: string) => {
+  const { data, isLoading, error, mutate } = useSWR<RolesAndUsersToUpdateRead>(
+    `${appConfig.apiUrl()}/packetGroups/${packetGroupName}/read-permission`,
     (url: string) => fetcher({ url }),
     {
       revalidateOnFocus: false

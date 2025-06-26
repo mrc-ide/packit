@@ -305,7 +305,7 @@ class UserRoleServiceTest {
             roles = listOf(mockRole.toBasicRoleWithUsersDto()),
             users = listOf(mockUser.toBasicDto())
         )
-        val packetGroupNames = listOf("packetGroup1", "packetGroup2")
+        val packetGroupName = "packetGroup1"
         val serviceSpy = spy(service)
         `when`(userRoleFilterService.getRolesAndSpecificUsersCanReadPacketGroup(any(), any(), any())).thenReturn(
             rolesAndUsers
@@ -323,22 +323,26 @@ class UserRoleServiceTest {
         doReturn(rolesAndUsers).`when`(serviceSpy).getNonUsernameRolesAndNonServiceUsers()
         doReturn(rolesAndUsersDtos).`when`(serviceSpy).createSortedBasicRolesAndUsers(any())
 
-        val result = serviceSpy.getRolesAndUsersForPacketGroupReadUpdate(packetGroupNames)
+        val result = serviceSpy.getRolesAndUsersForPacketGroupReadUpdate(packetGroupName)
 
-        assertEquals(packetGroupNames, result.keys.toList())
-        packetGroupNames.forEach {
-            assert(result[it] is RolesAndUsersForReadUpdate)
-            verify(userRoleFilterService).getRolesAndUsersCannotReadPacketReadGroup(
-                rolesAndUsers.roles,
-                rolesAndUsers.users,
-                it
+        assertEquals(
+            result,
+            RolesAndUsersForReadUpdate(
+                canRead = rolesAndUsersDtos,
+                withRead = rolesAndUsersDtos,
+                cannotRead = rolesAndUsersDtos
             )
-            verify(userRoleFilterService).getRolesAndUsersWithSpecificReadPacketGroupPermission(
-                rolesAndUsers.roles,
-                rolesAndUsers.users,
-                it
-            )
-        }
+        )
+        verify(userRoleFilterService).getRolesAndUsersCannotReadPacketReadGroup(
+            rolesAndUsers.roles,
+            rolesAndUsers.users,
+            packetGroupName
+        )
+        verify(userRoleFilterService).getRolesAndUsersWithSpecificReadPacketGroupPermission(
+            rolesAndUsers.roles,
+            rolesAndUsers.users,
+            packetGroupName
+        )
     }
 
     @Test

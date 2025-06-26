@@ -37,8 +37,6 @@ describe("Home component", () => {
       url: `${appConfig.apiUrl()}/packetGroupSummaries?pageNumber=0&pageSize=50&filter=test`
     });
 
-    expect(fetcherSpy).toHaveBeenCalledWith({ url: `${appConfig.apiUrl()}/packetGroups/_/read-permission` });
-
     expect(fetcherSpy).toHaveBeenCalledWith({ url: `${appConfig.apiUrl()}/pins/packets` });
   });
 });

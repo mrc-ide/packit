@@ -787,17 +787,11 @@ export const mockPacketGroupDtos: PageableBasicDto = {
   number: 0,
   numberOfElements: 5
 };
-export const mockRolesAndUsersToUpdateRead = mockPacketGroupDtos.content.reduce(
-  (acc, packetGroup) => {
-    acc[packetGroup.name] = {
-      withRead: mockRolesAndUsersWithPermissions,
-      cannotRead: mockRolesAndUsersWithPermissions,
-      canRead: mockRolesAndUsersWithPermissions
-    };
-    return acc;
-  },
-  {} as Record<string, RolesAndUsersToUpdateRead>
-);
+export const mockRolesAndUsersToUpdateRead: RolesAndUsersToUpdateRead = {
+  withRead: mockRolesAndUsersWithPermissions,
+  cannotRead: mockRolesAndUsersWithPermissions,
+  canRead: mockRolesAndUsersWithPermissions
+};
 
 export const mockTags: PageableBasicDto = {
   content: [

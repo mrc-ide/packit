@@ -6,7 +6,6 @@ import { Pagination } from "../common/Pagination";
 import { Unauthorized } from "../common/Unauthorized";
 import { PacketGroupSummaryListItem } from "./PacketGroupSummaryListItem";
 import { useGetPacketGroupSummaries } from "./hooks/useGetPacketGroupSummaries";
-import { useGetRolesAndUsersToUpdatePacketGroupRead } from "./hooks/useGetRolesAndUsersToUpdatePacketGroupRead";
 
 interface PacketGroupSummaryListProps {
   filterByName: string;
@@ -20,7 +19,6 @@ export const PacketGroupSummaryList = ({
   pageSize,
   setPageNumber
 }: PacketGroupSummaryListProps) => {
-  const { rolesAndUsers, mutate, isLoading: isRolesLoading } = useGetRolesAndUsersToUpdatePacketGroupRead();
   const {
     packetGroupSummaries,
     isLoading,
@@ -30,7 +28,7 @@ export const PacketGroupSummaryList = ({
   if (packetFetchError?.status === HttpStatus.Unauthorized) return <Unauthorized />;
   if (packetFetchError) return <ErrorComponent message="Error fetching packet groups" error={packetFetchError} />;
 
-  if (isLoading || (isRolesLoading && !packetGroupSummaries))
+  if (isLoading)
     return (
       <ul className="flex flex-col border rounded-md">
         {[...Array(2)].map((_, index) => (
@@ -53,16 +51,10 @@ export const PacketGroupSummaryList = ({
       ) : (
         <ul className="flex flex-col border rounded-md">
           {packetGroupSummaries?.content?.map((packetGroup) => (
-            <PacketGroupSummaryListItem
-              key={packetGroup.latestId}
-              packetGroup={packetGroup}
-              rolesAndUsersToUpdateRead={rolesAndUsers?.[packetGroup.name]}
-              mutate={mutate}
-            />
+            <PacketGroupSummaryListItem key={packetGroup.latestId} packetGroup={packetGroup} />
           ))}
         </ul>
       )}
-
       {packetGroupSummaries?.content.length ? (
         <div className="flex items-center justify-center">
           <Pagination

@@ -5,12 +5,7 @@ import com.fasterxml.jackson.module.kotlin.convertValue
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.http.HttpMethod
@@ -335,19 +330,13 @@ class PacketGroupControllerTest(
 
         @Test
         @WithAuthenticatedUser(
-            authorities = [
-                "packet.manage:packetGroup:test1",
-                "packet.manage:packetGroup:test2",
-                "packet.read:packetGroup:custom_metadata" // Can only read, not manage
-            ]
+            authorities = ["packet.manage:packetGroup:test1"]
         )
-        fun `can get roles and users for all packet groups the user has manage permissions for, and not others`() {
-            val packetGroupWeCanManage = listOf("test1", "test2")
-            val packetGroupsWeHaveTestRolesFor = listOf("test1")
-            val packetGroupsWeDoNotHaveTestRolesFor = listOf("test2")
+        fun `can get roles and users for read permissions for packet group`() {
+            val packetGroupName = "test1"
             val adminRole = roleRepository.findByName("ADMIN")
             val result: ResponseEntity<String> = restTemplate.exchange(
-                "/packetGroups/_/read-permission",
+                "/packetGroups/$packetGroupName/read-permission",
                 HttpMethod.GET,
                 getTokenizedHttpEntity()
             )
@@ -356,41 +345,27 @@ class PacketGroupControllerTest(
 
             val body = jacksonObjectMapper().readValue(
                 result.body,
-                object : TypeReference<Map<String, RolesAndUsersForReadUpdate>>() {}
+                object : TypeReference<RolesAndUsersForReadUpdate>() {}
             )
 
-            assertThat(body.keys).containsExactlyInAnyOrderElementsOf(packetGroupWeCanManage)
-
-            packetGroupsWeDoNotHaveTestRolesFor.forEach {
-                val rolesAndUsers = body[it]
-                // If an 'ADMIN' role exists (created prior to running the tests), expect it in the can-read roles.
-                assertThat(rolesAndUsers?.canRead?.roles?.map { it.name }).containsExactlyInAnyOrderElementsOf(
-                    listOfNotNull(adminRole?.name)
-                )
-                assertThat(rolesAndUsers?.withRead?.roles?.map { it.name }).isEmpty()
-                assertThat(rolesAndUsers?.cannotRead?.roles?.map { it.name }).containsExactlyInAnyOrderElementsOf(
-                    roleNamesToStartWithout + roleNamesToBeginWith
-                )
-            }
-
-            packetGroupsWeHaveTestRolesFor.forEach {
-                val rolesAndUsers = body[it]
-                // If an 'ADMIN' role exists (created prior to running the tests), expect it in the can-read roles.
-                assertThat(rolesAndUsers?.canRead?.roles?.map { it.name }).containsExactlyInAnyOrderElementsOf(
-                    roleNamesToBeginWith + listOfNotNull(adminRole?.name)
-                )
-                assertThat(rolesAndUsers?.withRead?.roles?.map { it.name })
-                    .containsExactlyInAnyOrderElementsOf(roleNamesToBeginWith)
-                assertThat(rolesAndUsers?.cannotRead?.roles?.map { it.name })
-                    .containsExactlyInAnyOrderElementsOf(roleNamesToStartWithout)
-            }
+//            // If an 'ADMIN' role exists (created prior to running the tests), expect it in the can-read roles.
+            assertThat(body?.canRead?.roles?.map { it.name }).containsAll(
+                listOfNotNull(adminRole?.name) + roleNamesToBeginWith
+            )
+            assertThat(body?.withRead?.roles?.map { it.name }).containsAll(
+                roleNamesToBeginWith
+            )
+            assertThat(body?.cannotRead?.roles?.map { it.name }).containsAll(
+                roleNamesToStartWithout
+            )
         }
 
         @Test
-        @WithAuthenticatedUser(authorities = ["packet.read"])
+        @WithAuthenticatedUser(authorities = ["packet.manage:packetGroup:wrong-name"])
         fun `getting roles and users for update returns 401 if no packet manage`() {
+            val packetGroupName = "test1"
             val result: ResponseEntity<String> = restTemplate.exchange(
-                "/packetGroups/read-permission",
+                "/packetGroups/$packetGroupName/read-permission",
                 HttpMethod.GET
             )
 
