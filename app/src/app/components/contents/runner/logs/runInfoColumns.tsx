@@ -9,6 +9,7 @@ import { useCancelTask } from "../hooks/useCancelTask";
 import { BasicRunInfo } from "../types/RunInfo";
 import { isUnfinishedStatus } from "../utils/taskRunUtils";
 import { StatusIcon } from "./StatusIcon";
+import { Separator } from "../../../Base/Separator";
 
 const columnHelper = createColumnHelper<BasicRunInfo>();
 export const runInfoColumns = [
@@ -88,7 +89,7 @@ export const runInfoColumns = [
     }
   }),
   columnHelper.display({
-    id: "controls",
+    header: "Actions",
     cell: ({ row }) => {
       const { packetId, packetGroupName, status, taskId } = row.original;
       const { cancelTask, cancelInitiated } = useCancelTask(taskId);
@@ -114,7 +115,13 @@ export const runInfoColumns = [
           </NavLink>
         );
 
-      return null;
+      return (
+        <div className="flex">
+          <div className="w-12">
+            <Separator className="border-green bg-slate-400" />
+          </div>
+        </div>
+      );
     }
   })
 ];
