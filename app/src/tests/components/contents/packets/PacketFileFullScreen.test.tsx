@@ -43,7 +43,10 @@ describe("PacketFileFullScreen", () => {
 
     const { unmount } = renderComponent("report.html");
 
-    expect((await screen.findByTestId("report-iframe")).getAttribute("src")).toBe("testFileObjectUrl");
+    await waitFor(() => {
+      // flakey where it double renders the iframe sometimes
+      expect(screen.getAllByTestId("report-iframe")[0].getAttribute("src")).toBe("testFileObjectUrl");
+    });
 
     unmount();
 

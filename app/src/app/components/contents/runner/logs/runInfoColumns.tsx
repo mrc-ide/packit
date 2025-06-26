@@ -1,5 +1,5 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { ExternalLink, GitBranch, GitCommit, Loader2 } from "lucide-react";
+import { GitBranch, GitCommit, Loader2 } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import { getTimeDifferenceToDisplay } from "../../../../../lib/time";
 import { Button, buttonVariants } from "../../../Base/Button";
