@@ -9,13 +9,12 @@ import { Menu } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { Button, buttonVariants } from "../Base/Button";
 
-
 interface NavMenuProps extends React.HTMLAttributes<HTMLElement> {
   authorities: string[];
 }
 export const NavMenu = ({ className, authorities, ...props }: NavMenuProps) => {
   const NavItems: { [key: string]: string } = {
-    runner: "Runner",
+    runner: "Runner"
     // accessibility: "Accessibility",
   };
 
@@ -28,7 +27,7 @@ export const NavMenu = ({ className, authorities, ...props }: NavMenuProps) => {
   });
 
   // Special case: route "Admin" to appropriate tab depending on user perms
-  if (hasUserManagePermission(authorities) || (hasGlobalPacketManagePermission(authorities))) {
+  if (hasUserManagePermission(authorities) || hasGlobalPacketManagePermission(authorities)) {
     const key = hasUserManagePermission(authorities) ? "manage-roles" : "resync-packets";
     NavItems[key] = "Admin";
     displayableItems.push(key);

@@ -1,5 +1,4 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { Route } from "react-router-dom";
 import { SWRConfig } from "swr";
 import { ImageDisplay } from "../../../../app/components/contents/downloads/ImageDisplay";
 import { PacketMetadata } from "../../../../types";

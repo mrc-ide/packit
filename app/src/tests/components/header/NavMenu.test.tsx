@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import { NavMenu } from "../../../app/components/header/NavMenu";
 import { MemoryRouter } from "react-router-dom";
 
@@ -9,7 +9,7 @@ describe("NavMenu component", () => {
         <NavMenu authorities={["packet.run", "user.manage"]} />
       </MemoryRouter>
     );
-/*
+    /*
     Object.entries(NavItems).forEach(async ([to, title]) => {
       navItemIsDisplayedOnLargeScreens(to, title);
       await navItemIsDisplayedOnSmallScreens(to, title);
@@ -22,7 +22,7 @@ describe("NavMenu component", () => {
         <NavMenu authorities={["user.manage"]} />
       </MemoryRouter>
     );
-/*
+    /*
     Object.entries(NavItems).forEach(async ([to, title]) => {
       if (to === "runner") {
         navItemIsNotDisplayedOnLargeScreens(to, title);
@@ -40,7 +40,7 @@ describe("NavMenu component", () => {
         <NavMenu authorities={["packet.run"]} />
       </MemoryRouter>
     );
-/*
+    /*
     Object.entries(NavItems).forEach(async ([to, title]) => {
       if (to === "manage-roles") {
         navItemIsNotDisplayedOnLargeScreens(to, title);
@@ -58,7 +58,7 @@ describe("NavMenu component", () => {
         <NavMenu authorities={[""]} />
       </MemoryRouter>
     );
-/*
+    /*
     Object.entries(NavItems).forEach(async ([to, title]) => {
       if (to === "manage-roles" || to === "runner") {
         navItemIsNotDisplayedOnLargeScreens(to, title);
@@ -71,7 +71,7 @@ describe("NavMenu component", () => {
   });
 });
 
-const navItemIsDisplayedOnLargeScreens = (to: string, title: string) => {
+/*const navItemIsDisplayedOnLargeScreens = (to: string, title: string) => {
   const link = screen.getByRole("link", { name: title });
   expect(link).toBeVisible();
   expect(link).toHaveAttribute("href", `/${to}`);
@@ -97,4 +97,4 @@ const navItemIsNotDisplayedOnSmallScreens = async (to: string, title: string) =>
 
 const pressDownKey = async () => {
   fireEvent.keyDown(await screen.findByRole("button"), { keyCode: 40 });
-};
+};*/

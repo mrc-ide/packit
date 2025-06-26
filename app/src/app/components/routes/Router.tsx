@@ -46,7 +46,7 @@ export const Router = () => {
             <Route element={<AdminLayout />}>
               <Route path="manage-roles" element={<ManageRoles />} />
               <Route path="manage-users" element={<ManageUsers />} />
-              <Route path="manage-packets" element={<ResyncPackets/>} />
+              <Route path="manage-packets" element={<ResyncPackets />} />
             </Route>
           </Route>
         </Route>
