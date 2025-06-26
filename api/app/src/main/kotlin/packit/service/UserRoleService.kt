@@ -62,7 +62,6 @@ class BaseUserRoleService(
                 )
             )
         )
-
     }
 
     override fun getRolesAndUsersForPacketReadUpdate(packet: Packet): RolesAndUsersForReadUpdate {

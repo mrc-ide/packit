@@ -63,7 +63,9 @@ class PacketGroupController(
         "@authz.canUpdatePacketGroupReadRoles(#root,#name)"
     )
     @GetMapping("packetGroups/{name}/read-permission")
-    fun getRolesAndUsersForReadPermissionUpdate(@PathVariable name: String): ResponseEntity<RolesAndUsersForReadUpdate> {
+    fun getRolesAndUsersForReadPermissionUpdate(
+        @PathVariable name: String
+    ): ResponseEntity<RolesAndUsersForReadUpdate> {
         val result = userRoleService.getRolesAndUsersForPacketGroupReadUpdate(name)
 
         return ResponseEntity.ok(result)

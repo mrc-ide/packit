@@ -2,24 +2,28 @@ import { render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { PacketGroupSummaryListItem } from "../../../../app/components/contents/home/PacketGroupSummaryListItem";
 import { UserState } from "../../../../app/components/providers/types/UserTypes";
-import { UserProvider } from "../../../../app/components/providers/UserProvider";
+import * as UserProvider from "../../../../app/components/providers/UserProvider";
 import { mockPacketGroupSummaries, mockUserState } from "../../../mocks";
 
 const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
 jest.mock("../../../../lib/localStorageManager", () => ({
   getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
 }));
+const mockUseUser = jest.spyOn(UserProvider, "useUser");
 
 describe("PacketGroupSummaryListItem", () => {
+  beforeEach(() => {
+    mockUseUser.mockReturnValue({
+      authorities: ["packet.manage"]
+    } as any);
+  });
+
   const mockPacketGroup = mockPacketGroupSummaries.content[0];
-  // TODO: fix tests
   const renderComponent = () =>
     render(
-      <UserProvider>
-        <MemoryRouter>
-          <PacketGroupSummaryListItem packetGroup={mockPacketGroup} />
-        </MemoryRouter>
-      </UserProvider>
+      <MemoryRouter>
+        <PacketGroupSummaryListItem packetGroup={mockPacketGroup} />
+      </MemoryRouter>
     );
   it("should render the packet group summary list item correctly", () => {
     renderComponent();
@@ -37,7 +41,7 @@ describe("PacketGroupSummaryListItem", () => {
     expect(within(listItem).getByText(mockPacketGroup.name)).toBeVisible();
   });
 
-  it("should render manage permission dialog button when user has permission", () => {
+  it("should render manage permission button when user has permission", () => {
     mockGetUserFromLocalStorage.mockReturnValueOnce(mockUserState());
     renderComponent();
 
