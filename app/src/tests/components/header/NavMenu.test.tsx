@@ -1,4 +1,4 @@
-import {fireEvent, render, screen} from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { NavMenu } from "../../../app/components/header/NavMenu";
 import { MemoryRouter } from "react-router-dom";
 
@@ -38,7 +38,7 @@ describe("NavMenu component", () => {
     });
   });
 
-  it("should not render Manage Access nav item when relevant permission is not present", () => {
+  it("should not render Admin nav item when relevant permission is not present", () => {
     render(
       <MemoryRouter>
         <NavMenu authorities={["packet.run"]} />

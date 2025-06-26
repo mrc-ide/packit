@@ -86,7 +86,7 @@ setup("authenticate", async ({ page, baseURL }, testInfo) => {
   }
 
   // Check login has succeeded - admin user should have user access role
-  await expect(page.locator("body")).toHaveText(/Manage Access/);
+  await expect(page.locator("body")).toHaveText(/Admin/);
 
   // write out context to tmp location to be picked up by dependent tests
   const authFile = testInfo.outputPath("auth.json");
