@@ -2,7 +2,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { ExternalLink, GitBranch, GitCommit, Loader2 } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import { getTimeDifferenceToDisplay } from "../../../../../lib/time";
-import { Button } from "../../../Base/Button";
+import { Button, buttonVariants } from "../../../Base/Button";
 import { ScrollArea } from "../../../Base/ScrollArea";
 import { ParameterContainer } from "../../common/ParameterContainer";
 import { useCancelTask } from "../hooks/useCancelTask";
@@ -109,21 +109,12 @@ export const runInfoColumns = [
 
       if (packetId)
         return (
-          <NavLink
-            to={`/${packetGroupName}/${packetId}`}
-            className=" text-blue-500  flex items-center gap-0.5 
-      hover:underline decoration-blue-500"
-          >
-            <ExternalLink size={16} />
-            View
+          <NavLink to={`/${packetGroupName}/${packetId}`} className={buttonVariants({ size: "sm" })}>
+            <span className="text-xs">&nbsp;View&nbsp;</span>
           </NavLink>
         );
 
-      return (
-        <div>
-          <div className="italic">N/A</div>
-        </div>
-      );
+      return null;
     }
   })
 ];
