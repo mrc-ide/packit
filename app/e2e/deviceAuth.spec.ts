@@ -45,12 +45,12 @@ test.describe("Device auth", () => {
   });
 
   test("can paste code containing hyphens", async ({ browser, browserName }) => {
-    const context = await browser.newContext()
+    const context = await browser.newContext();
     const isChromium = browserName === "chromium";
     if (isChromium) {
-      await context.grantPermissions(["clipboard-write"])
+      await context.grantPermissions(["clipboard-write"]);
     }
-    const page = await context.newPage()
+    const page = await context.newPage();
     await page.goto("/device");
     await page.evaluate(() => navigator.clipboard.writeText("ABCD-EFGH"));
     await page.keyboard.press("Control+v");
@@ -58,6 +58,6 @@ test.describe("Device auth", () => {
     await expect(textbox).toHaveValue("ABCDEFGH");
     await page.getByRole("button", { name: /Continue/ }).click();
     await expect(await page.getByText("Code has expired or is not recognised.")).toBeVisible();
-    await context.clearPermissions()
+    await context.clearPermissions();
   });
 });

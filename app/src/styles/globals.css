@@ -117,13 +117,3 @@ iframe {
   width: 1em;
   height: 1em;
 }
-
-.verification-input-selected-char {
-  color: var(--foreground);
-  outline-color: var(--muted-foreground);
-  outline-width: thin;
-}
-
-.verification-input-inactive-char {
-  background-color: var(--muted);
-}

@@ -4,7 +4,9 @@ on:
   push:
     branches:
       - "main" # Add feature branch here if you need a non-main image to deploy
-      - "mrc-5702-device-flow-front-end"
+  pull_request:
+    branches:
+      - "*"
 env:
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 

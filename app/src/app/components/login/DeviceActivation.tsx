@@ -53,7 +53,9 @@ export const DeviceActivation = () => {
       <h1 className="text-2xl font-semibold tracking-tight">Packit API Activation</h1>
       {success && (
         <div>
-          <Check className="mx-auto h-20 w-20 text-muted-foreground" />
+          <div className="mx-auto mb-5 w-20 h-20 rounded-full bg-green-400 flex items-center justify-center">
+            <Check className="text-background w-16 h-16" />
+          </div>
           Success! Code is activated - you can now access Packit API from your console.
         </div>
       )}
