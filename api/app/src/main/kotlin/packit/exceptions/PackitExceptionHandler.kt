@@ -28,7 +28,7 @@ class PackitExceptionHandler {
     }
 
     @ExceptionHandler(Exception::class)
-    fun fallbackExceptionHandler(e: Exception): Any {
+    fun fallbackExceptionHandler(e: Exception): ResponseEntity<String> {
         val errorId = UUID.randomUUID().toString()
         log.error("ErrorId: $errorId - ${e.message}", e)
         val message = "An unexpected error occurred. Please contact support with Error ID: $errorId"
@@ -38,19 +38,19 @@ class PackitExceptionHandler {
     }
 
     @ExceptionHandler(IllegalStateException::class)
-    fun handleIllegalStateException(e: Exception): Any {
+    fun handleIllegalStateException(e: Exception): ResponseEntity<String> {
         return ErrorDetail(HttpStatus.INTERNAL_SERVER_ERROR, e.message ?: "")
             .toResponseEntity()
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException::class)
-    fun handleHttpRequestMethodNotSupportedException(e: Exception): Any {
+    fun handleHttpRequestMethodNotSupportedException(e: Exception): ResponseEntity<String> {
         return ErrorDetail(HttpStatus.METHOD_NOT_ALLOWED, e.message ?: "")
             .toResponseEntity()
     }
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
-    fun handleHttpMessageNotReadableException(e: Exception): Any {
+    fun handleHttpMessageNotReadableException(e: Exception): ResponseEntity<String> {
         return ErrorDetail(HttpStatus.BAD_REQUEST, e.message ?: "")
             .toResponseEntity()
     }
