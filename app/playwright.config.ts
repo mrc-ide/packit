@@ -52,7 +52,7 @@ export default defineConfig({
     headless: true,
     screenshot: "only-on-failure",
     locale: "en-GB",
-    permissions: ["clipboard-read", "clipboard-write"]
+    permissions: ["clipboard-read"]
   },
   /* Configure projects for major browsers */
   projects: process.env.CI
