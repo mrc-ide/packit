@@ -645,7 +645,7 @@ class PacketControllerTest : IntegrationTest() {
         // packets we'll delete on setup, which should be reinstated when we resync - includes both of the "explicit"
         // packet group - this should be recreated on resync
         private val missingPacketIds = listOf(
-            "20250121-074735-560d65c5", //explicit packet group
+            "20250121-074735-560d65c5", // explicit packet group
             "20240729-154639-25b955eb", // explicit packet group
             "20250117-142138-c026f2e0" // depends packet group
         )
@@ -653,7 +653,8 @@ class PacketControllerTest : IntegrationTest() {
         // new local packets we'll create on setup, which should be removed when we resync
         private val now = Instant.now().epochSecond.toDouble()
         private val localPackets = listOf(
-            Packet( "20250624-160901-660d65c6",
+            Packet(
+                "20250624-160901-660d65c6",
                 "computed-resource",
                 "Computed resource",
                 mapOf(),
@@ -661,7 +662,8 @@ class PacketControllerTest : IntegrationTest() {
                 now - 100,
                 now - 20
             ),
-            Packet( "20250624-161203-744ddd37",
+            Packet(
+                "20250624-161203-744ddd37",
                 "incoming_data",
                 "",
                 mapOf(),
@@ -673,9 +675,9 @@ class PacketControllerTest : IntegrationTest() {
 
         // some examples of packets which we'll leave untouched on setup - these should not be changed by a resync
         val exampleRetainedPacketIds = listOf(
-            "20240729-154645-133b0929", //incoming_data packet group
-            "20240729-155513-1432bfa7", //artefact_types packet group
-            "20240729-154633-10abe7d1"  //artefact_types packet group
+            "20240729-154645-133b0929", // incoming_data packet group
+            "20240729-155513-1432bfa7", // artefact_types packet group
+            "20240729-154633-10abe7d1" // artefact_types packet group
         )
 
         // The nesting test class has already imported packets, so now mangle packet state
@@ -693,15 +695,15 @@ class PacketControllerTest : IntegrationTest() {
         fun cleanup() {
             packetRepository.deleteAll()
             packetGroupRepository.deleteAll()
-            packetService.importPackets() //restore state
+            packetService.importPackets() // restore state
         }
 
         private fun getResyncResponse(entity: HttpEntity<String?>? = null) = restTemplate.exchange(
-                "/packets/resync",
-                HttpMethod.POST,
-                entity ?: getTokenizedHttpEntity(),
-                String::class.java
-            )
+            "/packets/resync",
+            HttpMethod.POST,
+            entity ?: getTokenizedHttpEntity(),
+            String::class.java
+        )
 
         @Test
         @WithAuthenticatedUser(authorities = ["packet.manage"])
@@ -713,11 +715,11 @@ class PacketControllerTest : IntegrationTest() {
 
             val idsAfterSync = packetRepository.findAllIds()
 
-            val removedIds = idsBeforeSync.filter{ !idsAfterSync.contains(it) }
-            val addedIds = idsAfterSync.filter{ !idsBeforeSync.contains(it) }
-            val retainedIds = idsBeforeSync.filter{ idsAfterSync.contains(it) }
+            val removedIds = idsBeforeSync.filter { !idsAfterSync.contains(it) }
+            val addedIds = idsAfterSync.filter { !idsBeforeSync.contains(it) }
+            val retainedIds = idsBeforeSync.filter { idsAfterSync.contains(it) }
 
-            assertThat(removedIds).containsExactlyInAnyOrderElementsOf(localPackets.map{ it.id })
+            assertThat(removedIds).containsExactlyInAnyOrderElementsOf(localPackets.map { it.id })
             assertThat(addedIds).containsExactlyInAnyOrderElementsOf(missingPacketIds)
             assertThat(retainedIds).containsAll(exampleRetainedPacketIds)
 
@@ -744,5 +746,3 @@ class PacketControllerTest : IntegrationTest() {
         }
     }
 }
-
-

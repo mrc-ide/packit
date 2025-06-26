@@ -82,7 +82,7 @@ class BasePacketService(
 
         val notInPacket = outpackPacketIds subtract packitPacketIds
         log.info("Saving ${notInPacket.size} new packets")
-        val newPackets = outpackPackets.filterKeys{ it in notInPacket }.values
+        val newPackets = outpackPackets.filterKeys { it in notInPacket }.values
         savePackets(newPackets)
 
         // This could leave some packet groups childless, but this shouldn't matter - the

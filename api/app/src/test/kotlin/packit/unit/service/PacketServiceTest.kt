@@ -164,7 +164,7 @@ class PacketServiceTest {
         val pageablePayload = PageablePayload(pageNumber = 0, pageSize = 10)
         val filterName = "para"
         val filterId = "123"
-        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(),  mock())
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), mock())
 
         val result = sut.getPackets(pageablePayload, filterName, filterId)
 
@@ -241,8 +241,8 @@ class PacketServiceTest {
         oldPacketIds.add(newPackets[0].id)
 
         val resyncPacketRepository = mock<PacketRepository> {
-                on { findAllIds() } doReturn oldPacketIds
-            }
+            on { findAllIds() } doReturn oldPacketIds
+        }
         val resyncOutpackServerClient = mock<OutpackServerClient> {
             on { getMetadata(null) } doReturn newPacketOutpackMetadata
         }
@@ -258,7 +258,10 @@ class PacketServiceTest {
         val packetGroupArgCaptor = argumentCaptor<List<PacketGroup>>()
 
         // Should add packets from outpack even when they were run after packets we already know about
-        val sut = BasePacketService(resyncPacketRepository, resyncPacketGroupRepository, runInfoRepository, resyncOutpackServerClient)
+        val sut = BasePacketService(
+            resyncPacketRepository, resyncPacketGroupRepository, runInfoRepository,
+            resyncOutpackServerClient
+        )
         sut.resyncPackets()
 
         // should delete: all in "oldPackets"
@@ -291,7 +294,7 @@ class PacketServiceTest {
     @Test
     fun `getPacket returns packet when packet exists with given id`() {
         whenever(packetRepository.findById(oldPackets[0].id)).thenReturn(Optional.of(oldPackets[0]))
-        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(),  mock())
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), mock())
 
         val result = sut.getPacket(oldPackets[0].id)
 

@@ -218,7 +218,6 @@ class PacketControllerTest {
         assertEquals(HttpStatus.OK.value(), response.status)
     }
 
-
     @Test
     fun `resync packets`() {
         val result = sut.resyncPackets()
