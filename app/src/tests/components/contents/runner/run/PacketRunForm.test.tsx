@@ -39,6 +39,7 @@ describe("PacketRunForm component", () => {
 
   it("should be able to switch branches and update info", async () => {
     const branch1CommitTime = getTimeDifferenceToDisplay(mockGitBranches.branches[0].time)[0];
+    const branch2CommitTime = getTimeDifferenceToDisplay(mockGitBranches.branches[1].time)[0];
     renderComponent();
 
     const select = screen.getAllByRole("combobox", { hidden: true })[1];
@@ -47,8 +48,18 @@ describe("PacketRunForm component", () => {
     await waitFor(() => {
       expect(select).toHaveTextContent(mockGitBranches.branches[0].name);
     });
+
     expect(screen.getByText(mockGitBranches.branches[0].commitHash.slice(0, 7))).toBeVisible();
     expect(screen.getByText(`Updated ${branch1CommitTime.value} ${branch1CommitTime.unit} ago`)).toBeVisible();
+
+    userEvent.selectOptions(select, mockGitBranches.branches[1].name);
+
+    await waitFor(() => {
+      expect(select).toHaveTextContent(mockGitBranches.branches[1].name);
+    });
+
+    expect(screen.getByText(mockGitBranches.branches[1].commitHash.slice(0, 7))).toBeVisible();
+    expect(screen.getByText(`Updated ${branch2CommitTime.value} ${branch2CommitTime.unit} ago`)).toBeVisible();
   });
 
   it("should display tooltip on git fetch button hover", async () => {

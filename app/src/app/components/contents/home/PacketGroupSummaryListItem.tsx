@@ -41,7 +41,7 @@ export const PacketGroupSummaryListItem = ({
           </Link>
           <div className="text-muted-foreground text-xs flex items-center gap-[1px]">
             <Layers size={16} className="opacity-50" />
-            <span className="ps-1 w-[3.5rem]">
+            <span className="ps-1">
               {packetGroup.packetCount} {packetGroup.packetCount === 1 ? "packet" : "packets"}
             </span>
           </div>
