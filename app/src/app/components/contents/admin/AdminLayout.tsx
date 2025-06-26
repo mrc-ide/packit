@@ -24,7 +24,7 @@ export const AdminLayout = () => {
     sidebarItems.push(
         {
           to: "/manage-packets",
-          title: "Manage Packets"
+          title: "Resync Packets"
         }
     )
   }
