@@ -2,8 +2,8 @@ import {
   RolesAndUsersToUpdateRead,
   RolesAndUsersWithPermissions,
   RoleWithRelationships
-} from "../app/components/contents/manageAccess/types/RoleWithRelationships";
-import { UserWithPermissions } from "../app/components/contents/manageAccess/types/UserWithPermissions";
+} from "../app/components/contents/admin/types/RoleWithRelationships";
+import { UserWithPermissions } from "../app/components/contents/admin/types/UserWithPermissions";
 import { GitBranches } from "../app/components/contents/runner/types/GitBranches";
 import { PageableBasicRunInfo, RunInfo } from "../app/components/contents/runner/types/RunInfo";
 import { Parameter, RunnerPacketGroup } from "../app/components/contents/runner/types/RunnerPacketGroup";

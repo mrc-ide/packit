@@ -4,7 +4,7 @@ import { Markdown } from "../Base/Markdown";
 import { NotFound } from "../NotFound";
 import { Downloads, Home, Metadata, PacketGroup } from "../contents";
 import { PacketReadPermission } from "../contents/PacketReadPermission";
-import { ManageAccessLayout, ManageRoles, ManageUsers } from "../contents/manageAccess";
+import { AdminLayout, ManageRoles, ManageUsers, ResyncPackets } from "../contents/admin";
 import { PacketDetails, PacketFileFullScreen } from "../contents/packets";
 import { PacketRun, PacketRunTaskLogs, PacketRunTasksLogs, PacketRunnerLayout } from "../contents/runner";
 import { AuthLayoutForm, Login, Redirect, UpdatePassword } from "../login";
@@ -43,9 +43,10 @@ export const Router = () => {
               <Route path="/:packetName/:packetId/read-access" element={<PacketReadPermission />} />
               {/* <Route path="/:packetName/:packetId/changelogs" element={<ChangeLogs />} /> */}
             </Route>
-            <Route element={<ManageAccessLayout />}>
+            <Route element={<AdminLayout />}>
               <Route path="manage-roles" element={<ManageRoles />} />
               <Route path="manage-users" element={<ManageUsers />} />
+              <Route path="manage-packets" element={<ResyncPackets/>} />
             </Route>
           </Route>
         </Route>
