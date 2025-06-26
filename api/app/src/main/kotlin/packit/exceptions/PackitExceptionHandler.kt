@@ -1,5 +1,6 @@
 package packit.exceptions
 
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
@@ -13,18 +14,26 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.client.HttpStatusCodeException
-import org.springframework.web.servlet.NoHandlerFoundException
 import packit.model.DeviceAuthTokenError
 import packit.model.ErrorDetail
 import packit.service.GenericClientException
 import java.util.*
 
 @RestControllerAdvice
+
 class PackitExceptionHandler {
 
-    @ExceptionHandler(NoHandlerFoundException::class)
-    fun handleNoHandlerFoundException(e: Exception): Any {
-        return ErrorDetail(HttpStatus.NOT_FOUND, e.message ?: "")
+    companion object {
+        private val log = LoggerFactory.getLogger(PackitExceptionHandler::class.java)
+    }
+
+    @ExceptionHandler(Exception::class)
+    fun fallbackExceptionHandler(e: Exception): Any {
+        val errorId = UUID.randomUUID().toString()
+        log.error("ErrorId: $errorId - ${e.message}", e)
+        val message = "An unexpected error occurred. Please contact support with Error ID: $errorId"
+
+        return ErrorDetail(HttpStatus.INTERNAL_SERVER_ERROR, message)
             .toResponseEntity()
     }
 
