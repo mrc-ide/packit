@@ -7,7 +7,6 @@ on:
   pull_request:
     branches:
       - "*"
-
 env:
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 

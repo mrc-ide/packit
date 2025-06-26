@@ -7,7 +7,7 @@ import { PacketReadPermission } from "../contents/PacketReadPermission";
 import { ManageAccessLayout, ManageRoles, ManageUsers } from "../contents/manageAccess";
 import { PacketDetails, PacketFileFullScreen } from "../contents/packets";
 import { PacketRun, PacketRunTaskLogs, PacketRunTasksLogs, PacketRunnerLayout } from "../contents/runner";
-import { AuthLayoutForm, Login, Redirect, UpdatePassword } from "../login";
+import { AuthLayoutForm, DeviceActivation, Login, Redirect, UpdatePassword } from "../login";
 import { PacketLayout } from "../main";
 import { Breadcrumb } from "../main/Breadcrumb";
 import { ProtectedRoute } from "./ProtectedRoute";
@@ -22,6 +22,9 @@ export const Router = () => {
         </Route>
         {/* <Route path="accessibility" element={<Accessibility />} /> */}
         <Route path="redirect" element={<Redirect />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/device" element={<DeviceActivation />}></Route>
+        </Route>
         <Route element={<ProtectedRoute />}>
           <Route path="*" element={<NotFound />} />
         </Route>

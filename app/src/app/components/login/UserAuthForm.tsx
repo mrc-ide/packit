@@ -32,7 +32,7 @@ export const UserAuthForm = ({ className, ...props }: UserAuthFormProps) => {
         windowNavigate(loginRoute);
       }
     }
-  }, [user?.token]);
+  }, []);
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>
