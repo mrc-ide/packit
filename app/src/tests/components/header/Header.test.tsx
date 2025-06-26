@@ -94,18 +94,18 @@ describe("header component", () => {
     await waitFor(() => expectThemeClass("light"));
   });
 
-  it("should render link to manage access when user has user.manage authority", () => {
+  it("should render link to admin when user has user.manage authority", () => {
     mockUseUser.mockReturnValue(mockUserProviderState());
     renderElement();
 
-    expect(screen.getByRole("link", { name: "Manage Access" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Admin" })).toBeInTheDocument();
   });
 
-  it("should not render link to manage access when user does not have user.manage authority", () => {
+  it("should not render link to admin when user does not have user.manage or packet.manage authority", () => {
     mockUseUser.mockReturnValue({ authorities: [] } as any);
     renderElement();
 
-    expect(screen.queryByRole("link", { name: "Manage Access" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Admin" })).not.toBeInTheDocument();
   });
 
   it("should render nav menu if user is present", async () => {

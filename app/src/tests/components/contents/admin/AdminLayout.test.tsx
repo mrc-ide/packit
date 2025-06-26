@@ -6,22 +6,37 @@ import { server } from "../../../../msw/server";
 import { rest } from "msw";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
 import { SWRConfig } from "swr";
+import * as UserProviderModule from "../../../../app/components/providers/UserProvider";
+
+const mockUseUser = jest.spyOn(UserProviderModule, "useUser");
 
 const renderComponent = () =>
   render(
     <SWRConfig value={{ provider: () => new Map() }}>
-      <MemoryRouter initialEntries={["/manage-roles"]}>
-        <Routes>
-          <Route element={<AdminLayout />}>
-            <Route path="manage-roles" element={<div>role management</div>} />
-            <Route path="manage-users" element={<div>user management</div>} />
-          </Route>
-        </Routes>
-      </MemoryRouter>
+      <UserProviderModule.UserProvider>
+        <MemoryRouter initialEntries={["/manage-roles"]}>
+          <Routes>
+            <Route element={<AdminLayout />}>
+              <Route path="manage-roles" element={<div>role management</div>} />
+              <Route path="manage-users" element={<div>user management</div>} />
+            </Route>
+          </Routes>
+        </MemoryRouter>
+      </UserProviderModule.UserProvider>
     </SWRConfig>
   );
 
-describe("ManageAccessLayout", () => {
+describe("AdminLayout", () => {
+  beforeEach(() => {
+    mockUseUser.mockReturnValue({
+      authorities: ["user.manage", "packet.manage"]
+    } as any);
+  });
+
+  afterAll(() => {
+    jest.clearAllMocks();
+  });
+
   it("should allow navigation between sidebar and render outlet when user access", async () => {
     renderComponent();
 
