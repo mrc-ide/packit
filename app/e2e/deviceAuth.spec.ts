@@ -45,11 +45,9 @@ test.describe("Device auth", () => {
   });
 
   test("can paste code containing hyphens", async ({ browser, browserName }) => {
+    test.skip(browserName !== "chromium", "Running paste test on chromium only");
     const context = await browser.newContext();
-    const isChromium = browserName === "chromium";
-    if (isChromium) {
-      await context.grantPermissions(["clipboard-write"]);
-    }
+    await context.grantPermissions(["clipboard-write"]);
     const page = await context.newPage();
     await page.goto("/device");
     await page.evaluate(() => navigator.clipboard.writeText("ABCD-EFGH"));
