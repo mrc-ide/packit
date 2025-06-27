@@ -14,14 +14,14 @@ jest.mock("../../../../lib/localStorageManager", () => ({
   getAuthConfigFromLocalStorage: () => mockAuthConfig(),
   getUserFromLocalStorage: () => mockUser()
 }));
-const renderComponent = () =>
+const renderComponent = (authorities = ["user.manage"]) =>
   render(
     <SWRConfig value={{ dedupingInterval: 0 }}>
       <AuthConfigProvider>
         <UserProvider>
           <MemoryRouter initialEntries={["/manage-users"]}>
             <Routes>
-              <Route element={<AdminOutlet authorities={['user.manage']} />}>
+              <Route element={<AdminOutlet authorities={authorities} />}>
                 <Route path="/manage-users" element={<ManageUsers />} />
               </Route>
             </Routes>
@@ -116,5 +116,12 @@ describe("ManageUsers", () => {
 
     expect(screen.getAllByRole("button", { name: "delete-user" })[0]).toBeDisabled();
     expect(screen.getAllByRole("button", { name: "edit-user" })[0]).toBeDisabled();
+  });
+
+  it("shows unauthorized when user does not have user manage permission", async () => {
+    renderComponent(["packet.manage"]);
+    await waitFor(() => {
+      expect(screen.getByText(/You do not have permission to access this page/)).toBeInTheDocument();
+    });
   });
 });

@@ -2,9 +2,6 @@ import * as fetch from "../../../../lib/fetch";
 import {render, screen, waitFor} from "@testing-library/react";
 import {ResyncPacketsButton} from "../../../../app/components/contents/admin/ResyncPacketsButton";
 import userEvent from "@testing-library/user-event";
-import {server} from "../../../../msw/server";
-import {rest} from "msw";
-import {HttpStatus} from "../../../../lib/types/HttpStatus";
 import appConfig from "../../../../config/appConfig";
 
 describe("ResyncPacketsButton", () => {
@@ -13,12 +10,14 @@ describe("ResyncPacketsButton", () => {
     const renderComponent = () => render(<ResyncPacketsButton />);
 
     afterAll(() => {
-        jest.clearAllMocks();
+        jest.resetAllMocks();
     });
+
+    const getButton = () => screen.getByRole("button", { name: "Resync packets" });;
 
     it("makes resync request when button is pressed", async () => {
         renderComponent();
-        const button = screen.getByRole("button", { name: "Resync packets" });
+        const button = getButton();
         userEvent.click(button);
         await waitFor(() => {
             expect(fetcherSpy).toHaveBeenCalledWith({
@@ -34,12 +33,24 @@ describe("ResyncPacketsButton", () => {
         });
 
         renderComponent();
-        const button = screen.getByRole("button", { name: "Resync packets" });
+        const button = getButton();
         userEvent.click(button);
         await waitFor(() => {
             expect(screen.getByText(/Failed to resync. Please try again./)).toBeInTheDocument();
         });
     });
 
-    //it("disables button and shows progress message while request is pending");
+    it("disables button and shows progress message while request is pending", async () => {
+        renderComponent()
+        const button = getButton();
+        userEvent.click(button);
+        await waitFor(() => {
+            expect(screen.getByText(/Resync in progress.../)).toBeInTheDocument();
+            expect(button).toBeDisabled();
+        });
+        await waitFor(() => {
+            expect(screen.queryByText(/Resync in progress.../)).toBeNull();
+            expect(button).toBeEnabled();
+        });
+    });
 });

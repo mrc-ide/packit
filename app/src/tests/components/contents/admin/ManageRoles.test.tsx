@@ -9,12 +9,12 @@ import { server } from "../../../../msw/server";
 import { mockNonUsernameRolesWithRelationships } from "../../../mocks";
 import { usersRolesIndexUri } from "../../../../msw/handlers/usersRolesHandler";
 
-const renderComponent = () => {
+const renderComponent = (authorities = ["user.manage"]) => {
   render(
     <SWRConfig value={{ provider: () => new Map() }}>
       <MemoryRouter initialEntries={["/manage-roles"]}>
         <Routes>
-          <Route element={<AdminOutlet authorities={['user.manage']} />}>
+          <Route element={<AdminOutlet authorities={authorities} />}>
             <Route path="/manage-roles" element={<ManageRoles />} />
           </Route>
         </Routes>
@@ -103,5 +103,12 @@ describe("ManageRoles", () => {
     const editButtons = await screen.findAllByRole("button", { name: "edit-role" });
     expect(deleteButtons[0]).toBeDisabled();
     expect(editButtons[0]).toBeDisabled();
+  });
+
+  it("shows unauthorized when user does not have user manage permission", async () => {
+    renderComponent(["packet.manage"]);
+    await waitFor(() => {
+      expect(screen.getByText(/You do not have permission to access this page/)).toBeInTheDocument();
+    });
   });
 });
