@@ -1,5 +1,6 @@
 package packit.exceptions
 
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
@@ -8,40 +9,62 @@ import org.springframework.security.authentication.InternalAuthenticationService
 import org.springframework.security.core.AuthenticationException
 import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.web.bind.MissingRequestHeaderException
+import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.client.HttpStatusCodeException
-import org.springframework.web.servlet.NoHandlerFoundException
 import packit.model.DeviceAuthTokenError
 import packit.model.ErrorDetail
 import packit.service.GenericClientException
 import java.util.*
 
 @RestControllerAdvice
+
 class PackitExceptionHandler {
 
-    @ExceptionHandler(NoHandlerFoundException::class)
-    fun handleNoHandlerFoundException(e: Exception): Any {
-        return ErrorDetail(HttpStatus.NOT_FOUND, e.message ?: "")
+    companion object {
+        private val log = LoggerFactory.getLogger(PackitExceptionHandler::class.java)
+    }
+
+    @ExceptionHandler(Exception::class)
+    fun fallbackExceptionHandler(e: Exception): ResponseEntity<String> {
+        val errorId = UUID.randomUUID().toString()
+        log.error("ErrorId: $errorId - ${e.message}", e)
+        val message = "An unexpected error occurred. Please contact support with Error ID: $errorId"
+
+        return ErrorDetail(HttpStatus.INTERNAL_SERVER_ERROR, message)
+            .toResponseEntity()
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException::class)
+    fun handleMissingServletRequestParameterException(e: Exception): ResponseEntity<String> {
+        return ErrorDetail(HttpStatus.BAD_REQUEST, e.message ?: "Missing request parameter")
+            .toResponseEntity()
+    }
+
+    @ExceptionHandler(MissingRequestHeaderException::class)
+    fun handleMissingRequestHeaderException(e: Exception): ResponseEntity<String> {
+        return ErrorDetail(HttpStatus.BAD_REQUEST, e.message ?: "Missing request header")
             .toResponseEntity()
     }
 
     @ExceptionHandler(IllegalStateException::class)
-    fun handleIllegalStateException(e: Exception): Any {
+    fun handleIllegalStateException(e: Exception): ResponseEntity<String> {
         return ErrorDetail(HttpStatus.INTERNAL_SERVER_ERROR, e.message ?: "")
             .toResponseEntity()
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException::class)
-    fun handleHttpRequestMethodNotSupportedException(e: Exception): Any {
+    fun handleHttpRequestMethodNotSupportedException(e: Exception): ResponseEntity<String> {
         return ErrorDetail(HttpStatus.METHOD_NOT_ALLOWED, e.message ?: "")
             .toResponseEntity()
     }
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
-    fun handleHttpMessageNotReadableException(e: Exception): Any {
+    fun handleHttpMessageNotReadableException(e: Exception): ResponseEntity<String> {
         return ErrorDetail(HttpStatus.BAD_REQUEST, e.message ?: "")
             .toResponseEntity()
     }

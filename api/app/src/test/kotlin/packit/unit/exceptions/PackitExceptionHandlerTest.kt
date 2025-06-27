@@ -7,6 +7,7 @@ import packit.exceptions.PackitAuthenticationException
 import packit.exceptions.PackitException
 import packit.exceptions.PackitExceptionHandler
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class PackitExceptionHandlerTest {
     @Test
@@ -49,6 +50,24 @@ class PackitExceptionHandlerTest {
         assertEquals(
             jacksonObjectMapper().readTree(result.body).get("error").get("detail").asText(),
             key
+        )
+    }
+
+    @Test
+    fun `returns error detail for fallbackExceptionHandler`() {
+        val exception = Exception("This is a fallback exception")
+        val sut = PackitExceptionHandler()
+
+        val result = sut.fallbackExceptionHandler(exception)
+
+        assertEquals(
+            result.statusCode,
+            HttpStatus.INTERNAL_SERVER_ERROR
+        )
+        assertTrue(
+            jacksonObjectMapper().readTree(result.body).get("error").get("detail").asText().contains(
+                "An unexpected error occurred. Please contact support with Error ID:"
+            )
         )
     }
 }
