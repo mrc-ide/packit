@@ -9,6 +9,8 @@ import org.springframework.security.authentication.InternalAuthenticationService
 import org.springframework.security.core.AuthenticationException
 import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.web.bind.MissingRequestHeaderException
+import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.client.HttpClientErrorException
@@ -34,6 +36,18 @@ class PackitExceptionHandler {
         val message = "An unexpected error occurred. Please contact support with Error ID: $errorId"
 
         return ErrorDetail(HttpStatus.INTERNAL_SERVER_ERROR, message)
+            .toResponseEntity()
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException::class)
+    fun handleMissingServletRequestParameterException(e: Exception): ResponseEntity<String> {
+        return ErrorDetail(HttpStatus.BAD_REQUEST, e.message ?: "Missing request parameter")
+            .toResponseEntity()
+    }
+
+    @ExceptionHandler(MissingRequestHeaderException::class)
+    fun handleMissingRequestHeaderException(e: Exception): ResponseEntity<String> {
+        return ErrorDetail(HttpStatus.BAD_REQUEST, e.message ?: "Missing request header")
             .toResponseEntity()
     }
 
