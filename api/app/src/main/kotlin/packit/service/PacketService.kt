@@ -110,7 +110,7 @@ class BasePacketService(
     }
 
     internal fun saveUniquePacketGroups(packetGroupNames: List<String>) {
-        val newPacketGroups = packetGroupNames.filter{ packetGroupRepository.findByName(it) == null }
+        val newPacketGroups = packetGroupNames.filter { packetGroupRepository.findByName(it) == null }
         packetGroupRepository.saveAll(newPacketGroups.map { PacketGroup(name = it) })
     }
 
