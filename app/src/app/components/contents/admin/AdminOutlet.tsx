@@ -7,17 +7,17 @@ import { UserWithPermissions } from "./types/UserWithPermissions";
 import { KeyedMutator } from "swr";
 import { Unauthorized } from "../common/Unauthorized";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
-import {hasUserManagePermission} from "../../../../lib/auth/hasPermission";
+import { hasUserManagePermission } from "../../../../lib/auth/hasPermission";
 
 interface AdminOutletProps {
-  authorities: string[]
+  authorities: string[];
 }
 
-export const AdminOutlet = ({authorities}: AdminOutletProps) => {
+export const AdminOutlet = ({ authorities }: AdminOutletProps) => {
   const isUserManager = hasUserManagePermission(authorities);
-  const { roles, users, isLoading, error, mutate } = isUserManager ?
-      useGetRolesAndUsersWithPermissions() :
-      { roles: null, users: null, isLoading: false, error: null, mutate: null };
+  const { roles, users, isLoading, error, mutate } = isUserManager
+    ? useGetRolesAndUsersWithPermissions()
+    : { roles: null, users: null, isLoading: false, error: null, mutate: null };
 
   if (error) {
     if (error.status === HttpStatus.Unauthorized) {
@@ -39,7 +39,7 @@ export const AdminOutlet = ({authorities}: AdminOutletProps) => {
         ))}
       </ul>
     );
-  return (roles || !isUserManager) ? <Outlet context={{ roles, users, mutate }} /> : null;
+  return roles || !isUserManager ? <Outlet context={{ roles, users, mutate }} /> : null;
 };
 
 interface ManageAccessLayoutContext {

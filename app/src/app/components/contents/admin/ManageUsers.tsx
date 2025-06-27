@@ -10,7 +10,7 @@ import { setupManageUsersColumns } from "./utils/manageUsersColumns";
 import { usersGlobalFilterFn } from "./utils/rolesTableGlobalFilterFn";
 import { NavLink } from "react-router-dom";
 import { HelpCircle } from "lucide-react";
-import {Unauthorized} from "../common/Unauthorized";
+import { Unauthorized } from "../common/Unauthorized";
 
 export const ManageUsers = () => {
   const { users, mutate, roles } = useManageAccessLayoutContext();
@@ -18,7 +18,7 @@ export const ManageUsers = () => {
   const [filterValue, setFilterValue] = useState("");
 
   if (!users) {
-     return <Unauthorized />
+    return <Unauthorized />;
   }
 
   return (

@@ -27,7 +27,5 @@ export const AdminLayout = () => {
     });
   }
 
-  return <Sidebar sidebarItems={sidebarItems}>
-    {authorities && <AdminOutlet authorities={authorities!} />}
-  </Sidebar>;
+  return <Sidebar sidebarItems={sidebarItems}>{authorities && <AdminOutlet authorities={authorities} />}</Sidebar>;
 };

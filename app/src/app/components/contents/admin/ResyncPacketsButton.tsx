@@ -25,12 +25,7 @@ export const ResyncPacketsButton = () => {
 
   return (
     <div className="">
-      <Button
-        onClick={resyncPackets}
-        type="button"
-        className="w-[10rem]"
-        disabled={pending}
-      >
+      <Button onClick={resyncPackets} type="button" className="w-[10rem]" disabled={pending}>
         <RefreshCw className="p-1" /> Resync packets
       </Button>
       <div className={cn("text-sm pace-y-1 h-[1rem]", error ? "text-destructive" : "")}>

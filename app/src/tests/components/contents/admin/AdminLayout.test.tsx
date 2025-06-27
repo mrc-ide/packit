@@ -45,9 +45,9 @@ describe("AdminLayout", () => {
     const links = await screen.findAllByRole("link");
     expect(links.length).toBe(Object.keys(expectedLinks).length);
     links.forEach((link: HTMLElement) => {
-      expect(link.innerText).toBe(expectedLinks[(link as HTMLLinkElement).href])
+      expect(link.innerText).toBe(expectedLinks[(link as HTMLLinkElement).href]);
     });
-  }
+  };
 
   it("should allow navigation between sidebar and render outlet when user access", async () => {
     renderComponent();
@@ -87,26 +87,23 @@ describe("AdminLayout", () => {
   });
 
   it("should show all links when user has both permissions", async () => {
-    await expectRendersLinksWithPermissions(["user.manage", "packet.manage"],
-        {
-          "manage-users": "Manage Users",
-          "manage-roles": "Manage Roles",
-          "resync-packets": "Resync Packets"
-        });
+    await expectRendersLinksWithPermissions(["user.manage", "packet.manage"], {
+      "manage-users": "Manage Users",
+      "manage-roles": "Manage Roles",
+      "resync-packets": "Resync Packets"
+    });
   });
 
   it("should show only manage access links when user has only user.manage permission", async () => {
-    await expectRendersLinksWithPermissions(["user.manage"],
-        {
-          "manage-users": "Manage Users",
-          "manage-roles": "Manage Roles"
-        });
+    await expectRendersLinksWithPermissions(["user.manage"], {
+      "manage-users": "Manage Users",
+      "manage-roles": "Manage Roles"
+    });
   });
 
   it("should show only resync packets links when user has only packet.manage permission", async () => {
-    await expectRendersLinksWithPermissions(["packet.manage"],
-        {
-          "resync-packets": "Resync Packets"
-        });
+    await expectRendersLinksWithPermissions(["packet.manage"], {
+      "resync-packets": "Resync Packets"
+    });
   });
 });
