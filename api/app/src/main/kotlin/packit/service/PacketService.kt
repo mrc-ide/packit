@@ -6,6 +6,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.client.ClientHttpResponse
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import packit.exceptions.PackitException
 import packit.helpers.PagingHelper
 import packit.model.FileMetadata
@@ -58,11 +59,13 @@ class BasePacketService(
         private val log = LoggerFactory.getLogger(BasePacketService::class.java)
     }
 
+    @Transactional
     override fun importPackets() {
         val mostRecent = packetRepository.findTopByOrderByImportTimeDesc()?.importTime
         savePackets(outpackServerClient.getMetadata(mostRecent))
     }
 
+    @Transactional
     override fun resyncPackets() {
         log.info("Resyncing packets")
         // do a full resync with outpack, unlike incremental importPackets
