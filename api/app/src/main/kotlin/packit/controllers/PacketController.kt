@@ -123,4 +123,11 @@ class PacketController(
 
         return ResponseEntity.noContent().build()
     }
+
+    @PreAuthorize("hasAuthority('packet.manage')")
+    @PostMapping("/resync")
+    fun resyncPackets(): ResponseEntity<Unit> {
+        packetService.resyncPackets()
+        return ResponseEntity.noContent().build()
+    }
 }

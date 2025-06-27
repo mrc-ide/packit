@@ -7,6 +7,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.exchange
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -15,6 +17,7 @@ import packit.integration.IntegrationTest
 import packit.integration.PacketControllerTestHelper
 import packit.integration.WithAuthenticatedUser
 import packit.model.OneTimeToken
+import packit.model.Packet
 import packit.model.Role
 import packit.model.RolePermission
 import packit.model.dto.PacketDto
@@ -632,6 +635,114 @@ class PacketControllerTest : IntegrationTest() {
             )
 
             assertUnauthorized(result)
+        }
+    }
+
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    inner class PacketControllerSyncPacketsTest {
+
+        // packets we'll delete on setup, which should be reinstated when we resync - includes both of the "explicit"
+        // packet group - this should be recreated on resync
+        private val missingPacketIds = listOf(
+            "20250121-074735-560d65c5", // explicit packet group
+            "20240729-154639-25b955eb", // explicit packet group
+            "20250117-142138-c026f2e0" // depends packet group
+        )
+
+        // new local packets we'll create on setup, which should be removed when we resync
+        private val now = Instant.now().epochSecond.toDouble()
+        private val localPackets = listOf(
+            Packet(
+                "20250624-160901-660d65c6",
+                "computed-resource",
+                "Computed resource",
+                mapOf(),
+                now - 10,
+                now - 100,
+                now - 20
+            ),
+            Packet(
+                "20250624-161203-744ddd37",
+                "incoming_data",
+                "",
+                mapOf(),
+                now - 5,
+                now - 50,
+                now - 10
+            )
+        )
+
+        // some examples of packets which we'll leave untouched on setup - these should not be changed by a resync
+        val exampleRetainedPacketIds = listOf(
+            "20240729-154645-133b0929", // incoming_data packet group
+            "20240729-155513-1432bfa7", // artefact_types packet group
+            "20240729-154633-10abe7d1" // artefact_types packet group
+        )
+
+        // The nesting test class has already imported packets, so now mangle packet state
+        // by deleting some packets and adding others. A resync from outpack should put it
+        // back to how it was
+        @BeforeEach
+        fun setupData() {
+            missingPacketIds.forEach { packetRepository.deleteById(it) }
+            val explicitPacketGroup = packetGroupRepository.findByName("explicit")
+            packetGroupRepository.deleteById(explicitPacketGroup?.id!!)
+            localPackets.forEach { packetRepository.save(it) }
+        }
+
+        @AfterEach
+        fun cleanup() {
+            packetRepository.deleteAll()
+            packetGroupRepository.deleteAll()
+            packetService.importPackets() // restore state
+        }
+
+        private fun getResyncResponse(entity: HttpEntity<String?>? = null) = restTemplate.exchange(
+            "/packets/resync",
+            HttpMethod.POST,
+            entity ?: getTokenizedHttpEntity(),
+            String::class.java
+        )
+
+        @Test
+        @WithAuthenticatedUser(authorities = ["packet.manage"])
+        fun `resync creates and removes expected packets`() {
+            val idsBeforeSync = packetRepository.findAllIds()
+
+            val result = getResyncResponse()
+            assertEquals(HttpStatus.NO_CONTENT, result.statusCode)
+
+            val idsAfterSync = packetRepository.findAllIds()
+
+            val removedIds = idsBeforeSync.filter { !idsAfterSync.contains(it) }
+            val addedIds = idsAfterSync.filter { !idsBeforeSync.contains(it) }
+            val retainedIds = idsBeforeSync.filter { idsAfterSync.contains(it) }
+
+            assertThat(removedIds).containsExactlyInAnyOrderElementsOf(localPackets.map { it.id })
+            assertThat(addedIds).containsExactlyInAnyOrderElementsOf(missingPacketIds)
+            assertThat(retainedIds).containsAll(exampleRetainedPacketIds)
+
+            assertThat(packetRepository.findById(missingPacketIds[0]).get().name).isEqualTo("explicit")
+            assertThat(packetRepository.findById(missingPacketIds[1]).get().name).isEqualTo("explicit")
+            assertThat(packetRepository.findById(missingPacketIds[2]).get().name).isEqualTo("depends")
+
+            // check "explicit" packet group was recreated
+            assertThat(packetGroupRepository.findByName("explicit")).isNotNull()
+        }
+
+        @Test
+        fun `resync request by unauthenticated user returns 401`() {
+            val requestEntity = HttpEntity<String?>(HttpHeaders())
+            val result = getResyncResponse(requestEntity)
+            assertEquals(HttpStatus.UNAUTHORIZED, result.statusCode)
+        }
+
+        @Test
+        @WithAuthenticatedUser(authorities = ["packet.read"])
+        fun `resync request by user without packet manage permission returns 401`() {
+            val result = getResyncResponse()
+            assertEquals(HttpStatus.UNAUTHORIZED, result.statusCode)
         }
     }
 }

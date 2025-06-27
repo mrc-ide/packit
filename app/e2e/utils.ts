@@ -89,7 +89,7 @@ export const getInstanceRelativePath = (baseURL: string, path: string) => {
 
 export const createEmptyTestRole = async (page: Page) => {
   const testRoleName = `e2eTest${randomUUID().replaceAll("-", "")}`;
-  await page.getByRole("link", { name: "Manage Access" }).click();
+  await page.getByRole("link", { name: "Admin" }).click();
   await page.getByRole("button", { name: "Add Role" }).click();
   await page.getByRole("textbox", { name: "Name" }).fill(testRoleName);
   await page.getByRole("button", { name: "Add" }).click();

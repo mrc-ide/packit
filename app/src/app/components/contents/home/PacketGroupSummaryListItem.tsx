@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { KeyedMutator } from "swr";
 import { getTimeDifferenceToDisplay } from "../../../../lib/time";
 import { PacketGroupSummary } from "../../../../types";
-import { RolesAndUsersToUpdateRead } from "../manageAccess/types/RoleWithRelationships";
+import { RolesAndUsersToUpdateRead } from "../admin/types/RoleWithRelationships";
 import { UpdatePermissionDialog } from "./UpdatePermissionDialog";
 
 interface PacketGroupSummaryListItemProps {

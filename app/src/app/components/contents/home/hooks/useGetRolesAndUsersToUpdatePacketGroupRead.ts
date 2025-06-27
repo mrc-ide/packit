@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import appConfig from "../../../../../config/appConfig";
 import { fetcher } from "../../../../../lib/fetch";
-import { RolesAndUsersToUpdateRead } from "../../manageAccess/types/RoleWithRelationships";
+import { RolesAndUsersToUpdateRead } from "../../admin/types/RoleWithRelationships";
 
 /**
  * Key of return type is packet group name

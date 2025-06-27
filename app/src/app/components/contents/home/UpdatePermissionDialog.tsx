@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "../../Base/Button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../Base/Dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../Base/Tooltip";
-import { RolesAndUsersToUpdateRead } from "../manageAccess/types/RoleWithRelationships";
+import { RolesAndUsersToUpdateRead } from "../admin/types/RoleWithRelationships";
 import { UpdatePacketReadPermissionForm } from "./UpdatePacketReadPermissionForm";
 import { KeyedMutator } from "swr";
 
