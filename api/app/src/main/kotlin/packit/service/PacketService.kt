@@ -59,6 +59,7 @@ class BasePacketService(
         private val log = LoggerFactory.getLogger(BasePacketService::class.java)
     }
 
+    @Transactional
     override fun importPackets() {
         val mostRecent = packetRepository.findTopByOrderByImportTimeDesc()?.importTime
         savePackets(outpackServerClient.getMetadata(mostRecent))
@@ -109,9 +110,7 @@ class BasePacketService(
     }
 
     internal fun saveUniquePacketGroups(packetGroupNames: List<String>) {
-        val matchedPacketGroupNames = packetGroupRepository.findByNameIn(packetGroupNames).map { it.name }
-        val newPacketGroups =
-            packetGroupNames.filter { it !in matchedPacketGroupNames }
+        val newPacketGroups = packetGroupNames.filter{ packetGroupRepository.findByName(it) == null }
         packetGroupRepository.saveAll(newPacketGroups.map { PacketGroup(name = it) })
     }
 

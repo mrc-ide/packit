@@ -249,7 +249,8 @@ class PacketServiceTest {
 
         // ..and let's say that the test2 packet group isn't in the repo, so we can check that it gets created
         val resyncPacketGroupRepository = mock<PacketGroupRepository> {
-            on { findByNameIn(listOf("test", "test2")) } doReturn listOf(PacketGroup("test"))
+            on { findByName("test") } doReturn PacketGroup("test")
+            on { findByName("test2") } doReturn null
         }
 
         val runInfoRepository = mock<RunInfoRepository> {}
