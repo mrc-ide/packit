@@ -59,7 +59,6 @@ class BasePacketService(
         private val log = LoggerFactory.getLogger(BasePacketService::class.java)
     }
 
-    @Transactional
     override fun importPackets() {
         val mostRecent = packetRepository.findTopByOrderByImportTimeDesc()?.importTime
         savePackets(outpackServerClient.getMetadata(mostRecent))
