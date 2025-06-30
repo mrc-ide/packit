@@ -41,7 +41,7 @@ export const PacketRunForm = ({ defaultBranch, branches, mutate }: PacketRunForm
       parameters: []
     }
   });
-  const selectedBranch = branches.find((branch) => branch.name === form.getValues("branch"));
+  const selectedBranch = branches.find((branch) => branch.name === form.watch("branch"));
 
   const onSubmit = async (values: z.infer<typeof packetRunFormSchema>) => {
     if (selectedBranch !== undefined) {

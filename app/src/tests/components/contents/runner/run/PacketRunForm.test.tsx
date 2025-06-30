@@ -7,6 +7,7 @@ import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { getTimeDifferenceToDisplay } from "../../../../../lib/time";
 import { absoluteApiUrl } from "../../../../../helpers";
+import { Toaster } from "sonner";
 
 const renderComponent = () => {
   const mutate = jest.fn();
@@ -19,6 +20,7 @@ const renderComponent = () => {
         />
         <Route path="runner/logs/:taskId" element={<div>Task logs</div>} />
       </Routes>
+      <Toaster />
     </MemoryRouter>
   );
   return mutate;
@@ -37,6 +39,7 @@ describe("PacketRunForm component", () => {
 
   it("should be able to switch branches and update info", async () => {
     const branch1CommitTime = getTimeDifferenceToDisplay(mockGitBranches.branches[0].time)[0];
+    const branch2CommitTime = getTimeDifferenceToDisplay(mockGitBranches.branches[1].time)[0];
     renderComponent();
 
     const select = screen.getAllByRole("combobox", { hidden: true })[1];
@@ -45,8 +48,18 @@ describe("PacketRunForm component", () => {
     await waitFor(() => {
       expect(select).toHaveTextContent(mockGitBranches.branches[0].name);
     });
+
     expect(screen.getByText(mockGitBranches.branches[0].commitHash.slice(0, 7))).toBeVisible();
     expect(screen.getByText(`Updated ${branch1CommitTime.value} ${branch1CommitTime.unit} ago`)).toBeVisible();
+
+    userEvent.selectOptions(select, mockGitBranches.branches[1].name);
+
+    await waitFor(() => {
+      expect(select).toHaveTextContent(mockGitBranches.branches[1].name);
+    });
+
+    expect(screen.getByText(mockGitBranches.branches[1].commitHash.slice(0, 7))).toBeVisible();
+    expect(screen.getByText(`Updated ${branch2CommitTime.value} ${branch2CommitTime.unit} ago`)).toBeVisible();
   });
 
   it("should display tooltip on git fetch button hover", async () => {
@@ -60,7 +73,7 @@ describe("PacketRunForm component", () => {
     });
   });
 
-  it("should call api with correct url and mutate when git fetch button clicked", async () => {
+  it("should do correct actions when git fetch button clicked", async () => {
     server.use(
       rest.post("*", (req, res, ctx) => {
         expect(req.url.href).toBe(`${absoluteApiUrl()}/runner/git/fetch`);
@@ -70,10 +83,35 @@ describe("PacketRunForm component", () => {
     );
     const mutate = renderComponent();
 
-    userEvent.click(screen.getByRole("button", { name: /git-fetch/i }));
+    const gitFetchButton = screen.getByRole("button", { name: /git-fetch/i });
+    userEvent.click(gitFetchButton);
 
     await waitFor(() => {
-      expect(mutate).toHaveBeenCalled();
+      expect(gitFetchButton.querySelector("svg")).toHaveClass("animate-spin");
+    });
+    expect(gitFetchButton).toBeDisabled();
+
+    await waitFor(() => {
+      expect(screen.getByText("Git branches fetched successfully.")).toBeVisible();
+    });
+    expect(mutate).toHaveBeenCalled();
+    expect(gitFetchButton).not.toBeDisabled();
+    expect(gitFetchButton.querySelector("svg")).not.toHaveClass("animate-spin");
+  });
+
+  it("should show error toast when error fetching git branches", async () => {
+    server.use(
+      rest.post("*", (req, res, ctx) => {
+        return res(ctx.status(500));
+      })
+    );
+    renderComponent();
+
+    const gitFetchButton = screen.getByRole("button", { name: /git-fetch/i });
+    userEvent.click(gitFetchButton);
+
+    await waitFor(() => {
+      expect(screen.getByText("Failed to fetch git branches. Please try again.")).toBeVisible();
     });
   });
 

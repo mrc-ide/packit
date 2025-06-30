@@ -11,6 +11,7 @@ class Scheduler(
     private val oneTimeTokenService: OneTimeTokenService,
     private val packetService: PacketService,
     private val outpackServerClient: OutpackServerClient,
+    private val deviceAuthRequestService: DeviceAuthRequestService
 ) {
 
     @Scheduled(fixedDelay = 10000, initialDelay = 0)
@@ -27,6 +28,12 @@ class Scheduler(
     fun cleanUpExpiredTokens() {
         log.info("Cleaning up expired tokens")
         oneTimeTokenService.cleanUpExpiredTokens()
+    }
+
+    @Scheduled(cron = "@daily")
+    fun cleanUpExpiredDeviceAuthRequests() {
+        log.info("Cleaning up expired device auth requests")
+        deviceAuthRequestService.cleanUpExpiredRequests()
     }
 
     companion object {

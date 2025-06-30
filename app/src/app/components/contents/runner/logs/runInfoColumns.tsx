@@ -1,11 +1,15 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { ExternalLink, GitBranch, GitCommit } from "lucide-react";
+import { GitBranch, GitCommit, Loader2 } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import { getTimeDifferenceToDisplay } from "../../../../../lib/time";
+import { Button, buttonVariants } from "../../../Base/Button";
 import { ScrollArea } from "../../../Base/ScrollArea";
 import { ParameterContainer } from "../../common/ParameterContainer";
+import { useCancelTask } from "../hooks/useCancelTask";
 import { BasicRunInfo } from "../types/RunInfo";
+import { isUnfinishedStatus } from "../utils/taskRunUtils";
 import { StatusIcon } from "./StatusIcon";
+import { Separator } from "../../../Base/Separator";
 
 const columnHelper = createColumnHelper<BasicRunInfo>();
 export const runInfoColumns = [
@@ -84,22 +88,38 @@ export const runInfoColumns = [
       );
     }
   }),
-  columnHelper.accessor("packetId", {
-    header: "Packet",
+  columnHelper.display({
+    header: "Actions",
     cell: ({ row }) => {
-      const { packetId, packetGroupName } = row.original;
-      return packetId ? (
-        <NavLink
-          to={`/${packetGroupName}/${packetId}`}
-          className=" text-blue-500  flex items-center gap-0.5 
-      hover:underline decoration-blue-500"
-        >
-          <ExternalLink size={16} />
-          View
-        </NavLink>
-      ) : (
-        <div>
-          <div className="italic">N/A</div>
+      const { packetId, packetGroupName, status, taskId } = row.original;
+      const { cancelTask, cancelInitiated } = useCancelTask(taskId);
+
+      if (isUnfinishedStatus(status))
+        return (
+          <Button
+            variant="destructive"
+            size="sm"
+            aria-label={`cancel-${taskId}`}
+            onClick={cancelTask}
+            disabled={cancelInitiated}
+            className="text-xs"
+          >
+            {cancelInitiated ? <Loader2 className="h-4 w-4 mx-2.5 animate-spin" /> : "Cancel"}
+          </Button>
+        );
+
+      if (packetId)
+        return (
+          <NavLink to={`/${packetGroupName}/${packetId}`} className={buttonVariants({ size: "sm" })}>
+            <span className="text-xs">&nbsp;View&nbsp;</span>
+          </NavLink>
+        );
+
+      return (
+        <div className="flex">
+          <div className="w-12">
+            <Separator className="border-green bg-slate-400" />
+          </div>
         </div>
       );
     }

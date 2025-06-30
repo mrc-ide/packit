@@ -1,55 +1,44 @@
-import { UserCog } from "lucide-react";
-import { useState } from "react";
-import { Button } from "../../Base/Button";
+import { Dispatch, SetStateAction } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../Base/Dialog";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../Base/Tooltip";
-import { RolesAndUsersToUpdateRead } from "../admin/types/RoleWithRelationships";
+import { useGetRolesAndUsersToUpdatePacketGroupRead } from "./hooks/useGetRolesAndUsersToUpdatePacketGroupRead";
 import { UpdatePacketReadPermissionForm } from "./UpdatePacketReadPermissionForm";
-import { KeyedMutator } from "swr";
+import { Loader2 } from "lucide-react";
+import { ErrorComponent } from "../common/ErrorComponent";
 
-interface UpdatePermissionDialogProps {
+export interface UpdatePermissionDialogContentProps {
   packetGroupName: string;
-  rolesAndUsersToUpdateRead: RolesAndUsersToUpdateRead;
-  mutate: KeyedMutator<Record<string, RolesAndUsersToUpdateRead>>;
+  setDialogOpen: Dispatch<SetStateAction<boolean>>;
+  dialogOpen: boolean;
 }
 
 export const UpdatePermissionDialog = ({
   packetGroupName,
-  rolesAndUsersToUpdateRead,
-  mutate
-}: UpdatePermissionDialogProps) => {
-  const [dialogOpen, setDialogOpen] = useState(false);
+  setDialogOpen,
+  dialogOpen
+}: UpdatePermissionDialogContentProps) => {
+  const { rolesAndUsers, mutate, isLoading, error } = useGetRolesAndUsersToUpdatePacketGroupRead(packetGroupName);
 
   return (
-    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              aria-label={`manage-access-${packetGroupName}`}
-              variant="ghost"
-              size="icon"
-              onClick={() => setDialogOpen(true)}
-            >
-              <UserCog size={20} />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Update read access</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen} defaultOpen={dialogOpen}>
       <DialogContent onOpenAutoFocus={(e) => e.preventDefault()} onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Update read access on {packetGroupName}</DialogTitle>
         </DialogHeader>
-        <UpdatePacketReadPermissionForm
-          rolesAndUsersCannotRead={rolesAndUsersToUpdateRead.cannotRead}
-          rolesAndUsersWithRead={rolesAndUsersToUpdateRead.withRead}
-          setDialogOpen={setDialogOpen}
-          packetGroupName={packetGroupName}
-          mutate={mutate}
-        />
+        {isLoading && (
+          <div className="flex justify-center items-center h-full">
+            <Loader2 className="animate-spin" />
+          </div>
+        )}
+        {error && <ErrorComponent message="Error fetching roles and users for update" error={error} />}
+        {rolesAndUsers && (
+          <UpdatePacketReadPermissionForm
+            rolesAndUsersCannotRead={rolesAndUsers.cannotRead}
+            rolesAndUsersWithRead={rolesAndUsers.withRead}
+            setDialogOpen={setDialogOpen}
+            packetGroupName={packetGroupName}
+            mutate={mutate}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

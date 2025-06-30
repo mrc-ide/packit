@@ -14,6 +14,7 @@ import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.servlet.NoHandlerFoundException
+import packit.model.DeviceAuthTokenError
 import packit.model.ErrorDetail
 import packit.service.GenericClientException
 import java.util.*
@@ -85,6 +86,11 @@ class PackitExceptionHandler {
         val clientError = e.cause!! as HttpStatusCodeException
         val message = clientError.responseBodyAsString
         return ResponseEntity<String>(message, clientError.responseHeaders, clientError.statusCode)
+    }
+
+    @ExceptionHandler(DeviceAuthTokenException::class)
+    fun handleDeviceAuthTokenException(e: DeviceAuthTokenException): ResponseEntity<DeviceAuthTokenError> {
+        return ResponseEntity.badRequest().body(DeviceAuthTokenError(e.errorType))
     }
 
     @ExceptionHandler(PackitException::class)

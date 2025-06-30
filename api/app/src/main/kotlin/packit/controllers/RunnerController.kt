@@ -88,6 +88,13 @@ class RunnerController(private val runnerService: RunnerService) {
         return ResponseEntity.ok(runnerService.getTasksStatuses(payload, filterPacketGroupName).map { it.toBasicDto() })
     }
 
+    @PostMapping("/cancel/{taskId}")
+    fun cancelTask(
+        @PathVariable taskId: String
+    ): ResponseEntity<Unit> {
+        runnerService.cancelTask(taskId)
+        return ResponseEntity.noContent().build()
+    }
     @GetMapping("packet/{packetId}/task")
     fun getTaskIdByPacketId(
         @PathVariable packetId: String,

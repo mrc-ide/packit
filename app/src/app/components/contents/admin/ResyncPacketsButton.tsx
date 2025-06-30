@@ -4,6 +4,7 @@ import { useState } from "react";
 import { fetcher } from "../../../../lib/fetch";
 import appConfig from "../../../../config/appConfig";
 import { cn } from "../../../../lib/cn";
+import {toast} from "sonner";
 
 export const ResyncPacketsButton = () => {
   const [pending, setPending] = useState<boolean>(false);
@@ -16,6 +17,7 @@ export const ResyncPacketsButton = () => {
         url: `${appConfig.apiUrl()}/packets/resync`,
         method: "POST"
       });
+      toast.success("Resync packets completed successfully.");
     } catch (error) {
       console.error(error);
       setError("Failed to resync. Please try again.");

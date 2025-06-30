@@ -1,7 +1,8 @@
 import { RunInfo } from "../../../../../app/components/contents/runner/types/RunInfo";
 import {
   getStatusDisplayByStatus,
-  getTimeInDisplayFormat
+  getTimeInDisplayFormat,
+  isUnfinishedStatus
 } from "../../../../../app/components/contents/runner/utils/taskRunUtils";
 import { TimeDifference } from "../../../../../lib/time";
 
@@ -68,6 +69,27 @@ describe("getStatusDisplayByStatus", () => {
     const result = getStatusDisplayByStatus({ ...mockRunInfo, status: "ERROR", timeCompleted: null });
     expect(result.displayDuration).toBe("Failed");
   });
+
+  it("should not return startTime or finishTime for default case if missing", () => {
+    mockDisplayTime.mockReturnValueOnce([{ unit: "minutes", value: 10 }]);
+
+    const result = getStatusDisplayByStatus({
+      ...mockRunInfo,
+      timeStarted: null,
+      timeCompleted: null,
+      status: "ERROR"
+    });
+
+    expect(result.displayDuration).toBe("Failed");
+  });
+
+  it("should return display cancelled for default case if status is cancelled", () => {
+    mockDisplayTime.mockReturnValueOnce([{ unit: "minutes", value: 10 }]);
+
+    const result = getStatusDisplayByStatus({ ...mockRunInfo, status: "CANCELLED" });
+
+    expect(result.displayDuration).toBe("Cancelled in  10 m");
+  });
 });
 
 describe("getTimeInDisplayFormat", () => {
@@ -91,5 +113,16 @@ describe("getTimeInDisplayFormat", () => {
     const timeDifference: TimeDifference[] = [];
     const result = getTimeInDisplayFormat(timeDifference);
     expect(result).toBe("");
+  });
+});
+
+describe("isUnfinishedStatus", () => {
+  it.each([
+    [true, "PENDING"],
+    [true, "RUNNING"],
+    [true, "DEFERRED"],
+    [false, "COMPLETE"]
+  ])("should return %s for status %s", (expected, status) => {
+    expect(isUnfinishedStatus(status as RunInfo["status"])).toBe(expected);
   });
 });

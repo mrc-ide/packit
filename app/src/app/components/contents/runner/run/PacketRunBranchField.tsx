@@ -1,10 +1,12 @@
 import { Github, RefreshCw } from "lucide-react";
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
+import { toast } from "sonner";
 import { KeyedMutator } from "swr";
 import { z } from "zod";
 import appConfig from "../../../../../config/appConfig";
 import { fetcher } from "../../../../../lib/fetch";
+import { getTimeDifferenceToDisplay } from "../../../../../lib/time";
 import { Button } from "../../../Base/Button";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../../Base/Form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../Base/Select";
@@ -12,7 +14,6 @@ import { Separator } from "../../../Base/Separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../Base/Tooltip";
 import { GitBranches, GitBranchInfo } from "../types/GitBranches";
 import { packetRunFormSchema } from "./PacketRunForm";
-import { getTimeDifferenceToDisplay } from "../../../../../lib/time";
 
 interface PacketRunBranchFieldProps {
   branches: GitBranchInfo[];
@@ -39,7 +40,10 @@ const SelectedBranchInfo = ({ branch }: { branch: GitBranchInfo }) => {
 
 export const PacketRunBranchField = ({ branches, selectedBranch, form, mutate }: PacketRunBranchFieldProps) => {
   const [gitFetchError, setGitFetchError] = useState<string | null>(null);
+  const [isFetching, setIsFetching] = useState(false);
+
   const gitFetch = async () => {
+    setIsFetching(true);
     try {
       await fetcher({
         url: `${appConfig.apiUrl()}/runner/git/fetch`,
@@ -47,9 +51,12 @@ export const PacketRunBranchField = ({ branches, selectedBranch, form, mutate }:
       });
       mutate();
       setGitFetchError(null);
+      toast.success("Git branches fetched successfully.");
     } catch (error) {
       console.error(error);
       setGitFetchError("Failed to fetch git branches. Please try again.");
+    } finally {
+      setIsFetching(false);
     }
   };
 
@@ -87,8 +94,8 @@ export const PacketRunBranchField = ({ branches, selectedBranch, form, mutate }:
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button aria-label="git-fetch" size="icon" onClick={gitFetch} type="button">
-                <RefreshCw />
+              <Button aria-label="git-fetch" size="icon" onClick={gitFetch} type="button" disabled={isFetching}>
+                <RefreshCw className={isFetching ? "animate-spin" : ""} />
               </Button>
             </TooltipTrigger>
             <TooltipContent>

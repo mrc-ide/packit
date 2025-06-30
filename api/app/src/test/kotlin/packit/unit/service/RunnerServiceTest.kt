@@ -363,4 +363,36 @@ class RunnerServiceTest {
             assertEquals(HttpStatus.NOT_FOUND, httpStatus)
         }
     }
+
+    @Test
+    fun `cancelTask should cancel task and update run info`() {
+        val taskId = "task-id"
+        val runInfo = RunInfo(
+            taskId = taskId,
+            packetGroupName = "packet-group",
+            commitHash = "hash",
+            branch = "branch",
+            parameters = null,
+            status = Status.PENDING.toString(),
+            user = testUser
+        )
+        `when`(runInfoRepository.findByTaskId(taskId)).thenReturn(runInfo)
+
+        sut.cancelTask(taskId)
+
+        verify(client).cancelTask(taskId)
+        assertEquals(runInfo.status, Status.CANCELLED.toString())
+        verify(runInfoRepository).save(runInfo)
+    }
+
+    @Test
+    fun `cancelTask should throw error if runInfo not found`() {
+        val taskId = "task-id"
+        `when`(runInfoRepository.findByTaskId(taskId)).thenReturn(null)
+
+        assertThrows<PackitException> { sut.cancelTask(taskId) }.apply {
+            assertEquals("runInfoNotFound", key)
+            assertEquals(HttpStatus.NOT_FOUND, httpStatus)
+        }
+    }
 }
