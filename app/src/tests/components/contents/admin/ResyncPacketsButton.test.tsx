@@ -40,16 +40,14 @@ describe("ResyncPacketsButton", () => {
     });
   });
 
-  it("disables button and shows progress message while request is pending", async () => {
+  it("disables button while request is pending", async () => {
     renderComponent();
     const button = getButton();
     userEvent.click(button);
     await waitFor(() => {
-      expect(screen.getByText(/Resync in progress.../)).toBeInTheDocument();
       expect(button).toBeDisabled();
     });
     await waitFor(() => {
-      expect(screen.queryByText(/Resync in progress.../)).toBeNull();
       expect(button).toBeEnabled();
     });
   });
