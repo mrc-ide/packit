@@ -1,46 +1,38 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { UpdatePermissionDialog } from "../../../../app/components/contents/home/UpdatePermissionDialog";
-import userEvent from "@testing-library/user-event";
-import { mockPacketGroupDtos, mockRolesAndUsersToUpdateRead } from "../../../mocks";
+import { mockPacket } from "../../../mocks";
+import { server } from "../../../../msw/server";
+import { rest } from "msw";
+import { SWRConfig } from "swr";
 
 describe("UpdatePermissionDialog", () => {
-  const packetGroupName = mockPacketGroupDtos.content[0].name;
-  const rolesAndUsersToUpdateRead = mockRolesAndUsersToUpdateRead[packetGroupName];
-  it("should render dialog on button click correctly", async () => {
+  const renderComponent = () =>
     render(
-      <UpdatePermissionDialog
-        packetGroupName={packetGroupName}
-        mutate={jest.fn()}
-        rolesAndUsersToUpdateRead={rolesAndUsersToUpdateRead}
-      />
+      <SWRConfig value={{ provider: () => new Map(), dedupingInterval: 0 }}>
+        <UpdatePermissionDialog packetGroupName={mockPacket.name} dialogOpen={true} setDialogOpen={jest.fn()} />
+      </SWRConfig>
     );
 
-    userEvent.click(screen.getByRole("button", { name: `manage-access-${packetGroupName}` }));
+  it("should render dialog correctly when successfully fetched roles and users", async () => {
+    renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText(`update read access on ${packetGroupName}`, { exact: false })).toBeVisible();
+      expect(screen.getByText("Grant read access")).toBeVisible();
+      expect(screen.getByText("Remove read access")).toBeVisible();
     });
   });
 
-  it("should be able to open and close dialog", async () => {
-    render(
-      <UpdatePermissionDialog
-        packetGroupName={packetGroupName}
-        mutate={jest.fn()}
-        rolesAndUsersToUpdateRead={rolesAndUsersToUpdateRead}
-      />
+  it("should show error message when fetching roles and users fails", async () => {
+    server.use(
+      rest.get("*", (req, res, ctx) => {
+        return res(ctx.status(404));
+      })
     );
 
-    userEvent.click(screen.getByRole("button", { name: `manage-access-${packetGroupName}` }));
+    renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText(`update read access on ${packetGroupName}`, { exact: false })).toBeVisible();
-    });
-
-    userEvent.click(screen.getByRole("button", { name: /cancel/i }));
-
-    await waitFor(() => {
-      expect(screen.queryByText(`update read access on ${packetGroupName}`, { exact: false })).not.toBeInTheDocument();
+      expect(screen.getByText("Error fetching roles and users for update")).toBeVisible();
     });
   });
 });
