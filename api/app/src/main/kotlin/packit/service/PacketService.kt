@@ -78,19 +78,17 @@ class BasePacketService(
 
         val notInOutpack = packitPacketIds subtract outpackPacketIds
         log.info("Deleting ${notInOutpack.size} packets")
-        notInOutpack.forEach {
-            runInfoRepository.deleteByPacketId(it)
-            packetRepository.deleteById(it)
-        }
+        runInfoRepository.deleteAllByPacketIdIn(notInOutpack)
+        packetRepository.deleteAllByIdIn(notInOutpack)
 
-        val notInPacket = outpackPacketIds subtract packitPacketIds
-        log.info("Saving ${notInPacket.size} new packets")
-        val newPackets = outpackPackets.filterKeys { it in notInPacket }.values
+        val notInPackit = outpackPacketIds subtract packitPacketIds
+        log.info("Saving ${notInPackit.size} new packets")
+        val newPackets = outpackPackets.filterKeys { it in notInPackit }.values
         savePackets(newPackets)
 
-        // This could leave some packet groups childless, but this shouldn't matter - the
-        // packetGroupSummaries endpoint already deals with not returning results for packet groups which have no
-        // accessible packets
+        // Clean up any packet groups which have been left childless
+        val currentPacketGroups = outpackPackets.values.map { it.name }.distinct()
+        packetGroupRepository.deleteAllByNameNotIn(currentPacketGroups)
     }
 
     private fun savePackets(outpackMetadata: Collection<OutpackMetadata>) {
@@ -110,7 +108,9 @@ class BasePacketService(
     }
 
     internal fun saveUniquePacketGroups(packetGroupNames: List<String>) {
-        val newPacketGroups = packetGroupNames.filter { packetGroupRepository.findByName(it) == null }
+        val matchedPacketGroupNames = packetGroupRepository.findByNameIn(packetGroupNames).map { it.name }
+        val newPacketGroups =
+            packetGroupNames.filter { it !in matchedPacketGroupNames }
         packetGroupRepository.saveAll(newPacketGroups.map { PacketGroup(name = it) })
     }
 

@@ -14,8 +14,8 @@ interface AdminOutletProps {
 }
 
 export const AdminOutlet = ({ authorities }: AdminOutletProps) => {
-  const isUserManager = hasUserManagePermission(authorities);
-  const { roles, users, isLoading, error, mutate } = isUserManager
+  const hasUserManage = hasUserManagePermission(authorities);
+  const { roles, users, isLoading, error, mutate } = hasUserManage
     ? useGetRolesAndUsersWithPermissions()
     : { roles: null, users: null, isLoading: false, error: null, mutate: null };
 
@@ -39,7 +39,7 @@ export const AdminOutlet = ({ authorities }: AdminOutletProps) => {
         ))}
       </ul>
     );
-  return roles || !isUserManager ? <Outlet context={{ roles, users, mutate }} /> : null;
+  return roles || !hasUserManage ? <Outlet context={{ roles, users, mutate }} /> : null;
 };
 
 interface ManageAccessLayoutContext {

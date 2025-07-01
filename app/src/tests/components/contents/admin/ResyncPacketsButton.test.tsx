@@ -3,17 +3,18 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { ResyncPacketsButton } from "../../../../app/components/contents/admin/ResyncPacketsButton";
 import userEvent from "@testing-library/user-event";
 import appConfig from "../../../../config/appConfig";
-import {Toaster} from "sonner";
+import { Toaster } from "sonner";
 
 describe("ResyncPacketsButton", () => {
   const fetcherSpy = jest.spyOn(fetch, "fetcher");
 
-  const renderComponent = () => render(
-    <>
-      <ResyncPacketsButton />
-      <Toaster />
-    </>
-  );
+  const renderComponent = () =>
+    render(
+      <>
+        <ResyncPacketsButton />
+        <Toaster />
+      </>
+    );
 
   afterAll(() => {
     jest.resetAllMocks();

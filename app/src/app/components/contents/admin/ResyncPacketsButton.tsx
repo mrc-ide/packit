@@ -4,7 +4,7 @@ import { useState } from "react";
 import { fetcher } from "../../../../lib/fetch";
 import appConfig from "../../../../config/appConfig";
 import { cn } from "../../../../lib/cn";
-import {toast} from "sonner";
+import { toast } from "sonner";
 
 export const ResyncPacketsButton = () => {
   const [pending, setPending] = useState<boolean>(false);
@@ -30,9 +30,7 @@ export const ResyncPacketsButton = () => {
       <Button onClick={resyncPackets} type="button" className="w-[10rem]" disabled={pending}>
         <RefreshCw className={cn("p-1", pending ? "animate-spin" : "")} /> Resync packets
       </Button>
-      <div className={cn("text-sm pace-y-1 h-[1rem]", error ? "text-destructive" : "")}>
-        {error}
-      </div>
+      <div className={cn("text-sm pace-y-1 h-[1rem]", error ? "text-destructive" : "")}>{error}</div>
     </div>
   );
 };

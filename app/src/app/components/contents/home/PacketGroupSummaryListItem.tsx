@@ -6,7 +6,6 @@ import { PacketGroupSummary } from "../../../../types";
 import { useUser } from "../../providers/UserProvider";
 import { UpdatePermissionButton } from "./UpdatePermissionButton";
 
-
 interface PacketGroupSummaryListItemProps {
   packetGroup: PacketGroupSummary;
 }

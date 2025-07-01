@@ -21,6 +21,7 @@ import java.io.OutputStream
 import java.time.Instant
 import java.util.*
 import java.util.zip.ZipInputStream
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
 class PacketServiceTest {
@@ -249,14 +250,14 @@ class PacketServiceTest {
 
         // ..and let's say that the test2 packet group isn't in the repo, so we can check that it gets created
         val resyncPacketGroupRepository = mock<PacketGroupRepository> {
-            on { findByName("test") } doReturn PacketGroup("test")
-            on { findByName("test2") } doReturn null
+            on { findByNameIn(listOf("test", "test2")) } doReturn listOf(PacketGroup("test"))
         }
 
         val runInfoRepository = mock<RunInfoRepository> {}
 
         val packetsArgCaptor = argumentCaptor<List<Packet>>()
         val packetGroupArgCaptor = argumentCaptor<List<PacketGroup>>()
+        val packetGroupNamesArgCaptor = argumentCaptor<List<String>>()
 
         // Should add packets from outpack even when they were run after packets we already know about
         val sut = BasePacketService(
@@ -266,10 +267,8 @@ class PacketServiceTest {
         sut.resyncPackets()
 
         // should delete: all in "oldPackets"
-        verify(runInfoRepository).deleteByPacketId(oldPacketIds[0])
-        verify(runInfoRepository).deleteByPacketId(oldPacketIds[1])
-        verify(resyncPacketRepository).deleteById(oldPacketIds[0])
-        verify(resyncPacketRepository).deleteById(oldPacketIds[1])
+        verify(runInfoRepository).deleteAllByPacketIdIn(setOf(oldPacketIds[0], oldPacketIds[1]))
+        verify(resyncPacketRepository).deleteAllByIdIn(setOf(oldPacketIds[0], oldPacketIds[1]))
 
         // should add: new packets [1] and [2]
         verify(resyncPacketRepository).saveAll(packetsArgCaptor.capture())
@@ -282,6 +281,10 @@ class PacketServiceTest {
         val savedPacketGroups = packetGroupArgCaptor.allValues.flatten()
         assertEquals(1, savedPacketGroups.size)
         assertEquals("test2", savedPacketGroups[0].name)
+
+        verify(resyncPacketGroupRepository).deleteAllByNameNotIn(packetGroupNamesArgCaptor.capture())
+        val packetGroupNames = packetGroupNamesArgCaptor.allValues.flatten()
+        assertContentEquals(listOf("test", "test2"), packetGroupNames)
     }
 
     @Test

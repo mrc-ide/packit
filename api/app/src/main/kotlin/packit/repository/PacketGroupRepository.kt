@@ -1,5 +1,6 @@
 package packit.repository
 
+import jakarta.transaction.Transactional
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
@@ -14,7 +15,6 @@ interface PacketIdProjection {
 
 @Repository
 interface PacketGroupRepository : JpaRepository<PacketGroup, Int> {
-    @PostFilter("@authz.canViewPacketGroup(#root, filterObject.name)")
     fun findByNameIn(names: List<String>): List<PacketGroup>
 
     @PostFilter("@authz.canViewPacketGroup(#root, filterObject.name)")
@@ -34,4 +34,7 @@ interface PacketGroupRepository : JpaRepository<PacketGroup, Int> {
     )
     fun findLatestPacketIdForGroup(name: String): PacketIdProjection?
     fun findByName(name: String): PacketGroup?
+
+    @Transactional
+    fun deleteAllByNameNotIn(names: Collection<String>)
 }
