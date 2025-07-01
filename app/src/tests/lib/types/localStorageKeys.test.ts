@@ -1,20 +1,20 @@
 export {};
 
 describe("local storage keys", () => {
-  const OLD_ENV = process.env;
+  const OLD_ENV = import.meta.env;
 
   beforeEach(() => {
     jest.resetModules(); // Important - it clears the cache
-    process.env = { ...OLD_ENV }; // Make a copy
+    import.meta.env = { ...OLD_ENV }; // Make a copy
   });
 
   afterAll(() => {
-    process.env = OLD_ENV; // Restore old environment
+    import.meta.env = OLD_ENV; // Restore old environment
   });
 
   test("local storage keys are namespaced correctly", () => {
     const ns = "test-ns";
-    process.env.REACT_APP_PACKIT_NAMESPACE = ns;
+    import.meta.env.VITE_PACKIT_NAMESPACE = ns;
     /* eslint-disable */
     const keys = require("../../../lib/types/LocalStorageKeys").LocalStorageKeys;
     expect(keys).toStrictEqual({
@@ -26,7 +26,7 @@ describe("local storage keys", () => {
   });
 
   test("local storage keys are not namespaced when NAMESPACE unset", () => {
-    delete process.env["REACT_APP_PACKIT_NAMESPACE"];
+    delete import.meta.env["VITE_PACKIT_NAMESPACE"];
     /* eslint-disable */
     const keys = require("../../../lib/types/LocalStorageKeys").LocalStorageKeys;
     expect(keys).toStrictEqual({

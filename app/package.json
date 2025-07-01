@@ -53,7 +53,6 @@
     "react-markdown": "^10.1.0",
     "react-paginate": "^8.2.0",
     "react-router-dom": "^6.12.1",
-    "react-scripts": "5.0.1",
     "remark-gfm": "^4.0.1",
     "sonner": "^2.0.5",
     "swr": "^2.2.4",
@@ -72,9 +71,10 @@
     ]
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest",
     "test:e2e": "export PACKIT_E2E_BASE_URL=http://localhost:3000 && export PACKIT_E2E_BASIC_USER='resideUser@resideAdmin.ic.ac.uk' && export PACKIT_E2E_BASIC_PASSWORD=password && playwright test",
     "test:e2e-dev": "export PACKIT_E2E_BASE_URL=https://reside-dev.packit-dev.dide.ic.ac.uk/ && playwright test --grep-invert '@demoPackets|@stateMutate'",
     "test:e2e-prod": "export PACKIT_E2E_BASE_URL=https://reside.packit.dide.ic.ac.uk/ && playwright test --grep-invert '@demoPackets|@stateMutate'",
@@ -108,13 +108,16 @@
     "@octokit/auth-oauth-device": "^7.1.3",
     "@playwright/test": "^1.51.1",
     "@types/lodash.debounce": "^4.0.9",
-    "@types/node": "^22.13.10",
+    "@types/node": "^22.15.34",
     "@typescript-eslint/eslint-plugin": "^5.52.0",
     "@typescript-eslint/parser": "^5.52.0",
+    "@vitejs/plugin-react": "^4.6.0",
     "eslint": "^8.34.0",
     "eslint-plugin-react": "^7.37.3",
     "msw": "^1.3.2",
     "resize-observer-polyfill": "^1.5.1",
-    "tailwindcss": "^3.3.5"
+    "tailwindcss": "^3.3.5",
+    "vite": "^7.0.0",
+    "vitest": "^3.2.4"
   }
 }

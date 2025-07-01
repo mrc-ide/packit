@@ -21,7 +21,7 @@ export const Header = () => {
               {brandingConfig?.logoFilename && (
                 <NavLink to={logoLinkDestination} className="h-full p-2 hidden md:block flex-shrink-0 ml-2 mr-6">
                   <img
-                    src={`${process.env.PUBLIC_URL}/img/${brandingConfig?.logoFilename}`}
+                    src={`${import.meta.env.BASE_URL}/img/${brandingConfig?.logoFilename}`}
                     className="h-full"
                     alt={brandingConfig?.logoAltText}
                   />

@@ -55,7 +55,7 @@ export const Router = () => {
         {/* documentation */}
         <Route
           path="/docs/manage-access-help"
-          element={<Markdown mdPath={`${process.env.PUBLIC_URL}/docs/manageAccessHelpPage.md`} />}
+          element={<Markdown mdPath={`${import.meta.env.BASE_URL}/docs/manageAccessHelpPage.md`} />}
         />
       </Route>
       <Route element={<ProtectedRoute />}>

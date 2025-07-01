@@ -1,19 +1,19 @@
 export {};
 
 describe("api service", () => {
-  const OLD_ENV = process.env;
+  const OLD_ENV = import.meta.env;
 
   beforeEach(() => {
     jest.resetModules(); // Important - it clears the cache
-    process.env = { ...OLD_ENV }; // Make a copy
+    import.meta.env = { ...OLD_ENV }; // Make a copy
   });
 
   afterAll(() => {
-    process.env = OLD_ENV; // Restore old environment
+    import.meta.env = OLD_ENV; // Restore old environment
   });
 
   test("uses API URL from environment", () => {
-    process.env.REACT_APP_PACKIT_API_URL = "http://localhost/foo/api";
+    import.meta.env.VITE_PACKIT_API_URL = "http://localhost/foo/api";
     /* eslint-disable */
     const appConfig = require("../config/appConfig").default;
     /* eslint-enable */
@@ -21,7 +21,7 @@ describe("api service", () => {
   });
 
   test("throw error if environment variable is missing", () => {
-    delete process.env["REACT_APP_PACKIT_API_URL"];
+    delete import.meta.env["VITE_PACKIT_API_URL"];
     /* eslint-disable */
     const appConfig = require("../config/appConfig").default;
     /* eslint-enable */
@@ -29,7 +29,7 @@ describe("api service", () => {
   });
 
   test("uses PACKIT NAMESPACE from environment", () => {
-    process.env.REACT_APP_PACKIT_NAMESPACE = "my-repo";
+    import.meta.env.VITE_PACKIT_NAMESPACE = "my-repo";
     /* eslint-disable */
     const appConfig = require("../config/appConfig").default;
     /* eslint-enable */
@@ -37,7 +37,7 @@ describe("api service", () => {
   });
 
   test("returns null when PACKIT NAMESPACE is missing", () => {
-    delete process.env["REACT_APP_PACKIT_NAMESPACE"];
+    delete import.meta.env["VITE_PACKIT_NAMESPACE"];
     /* eslint-disable */
     const appConfig = require("../config/appConfig").default;
     /* eslint-enable */

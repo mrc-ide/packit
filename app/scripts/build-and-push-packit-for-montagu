@@ -19,7 +19,7 @@ docker build \
        -t "$MONTAGU_TAG_SHA" \
        -t "$MONTAGU_TAG_BRANCH" \
        --build-arg PUBLIC_URL=/packit \
-       --build-arg REACT_APP_PACKIT_API_URL=/packit/api \
+       --build-arg VITE_PACKIT_API_URL=/packit/api \
        $PACKAGE_ROOT
 
 docker push $MONTAGU_TAG_SHA
