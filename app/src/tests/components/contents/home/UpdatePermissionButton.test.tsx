@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { UpdatePermissionButton } from "../../../../app/components/contents/home/UpdatePermissionButton";
 import { mockPacket } from "../../../mocks";
 
-describe("UpdatePermissionDialog", () => {
+describe("UpdatePermissionButton", () => {
   const packetGroupName = mockPacket.name;
   it("should render dialog on button click correctly", async () => {
     render(<UpdatePermissionButton packetGroupName={packetGroupName} />);

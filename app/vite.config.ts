@@ -37,7 +37,7 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       include: ["src/app/**/*", "src/lib/**/*", "src/config/**/*"],
-      exclude: ["src/app/components/Base/*"]
+      exclude: ["src/app/components/Base/*", "src/app/components/routes/Router.tsx"]
     }
   }
 });
