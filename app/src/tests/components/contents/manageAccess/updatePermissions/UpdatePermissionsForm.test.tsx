@@ -11,9 +11,15 @@ import { HttpStatus } from "../../../../../lib/types/HttpStatus";
 import { mockNonUsernameRolesWithRelationships } from "../../../../mocks";
 
 describe("UpdatePermissionsForm", () => {
-  const fetchSpy = jest.spyOn(fetch, "fetcher");
+  const fetchSpy = vitest.spyOn(fetch, "fetcher");
+
+  beforeEach(() => {
+    vitest.clearAllMocks();
+    fetchSpy.mockResolvedValue({});
+  });
+
   const rolePermissions = mockNonUsernameRolesWithRelationships[0].rolePermissions;
-  const renderComponent = (roleName: string, mutate = jest.fn(), setOpen = jest.fn()) => {
+  const renderComponent = (roleName: string, mutate = vitest.fn(), setOpen = vitest.fn()) => {
     render(
       <Dialog>
         <UpdatePermissionsForm
@@ -64,8 +70,8 @@ describe("UpdatePermissionsForm", () => {
   });
 
   it("should call mutate, setOpen and reset updatePermissions on successful submit", async () => {
-    const mutate = jest.fn();
-    const setOpen = jest.fn();
+    const mutate = vitest.fn();
+    const setOpen = vitest.fn();
     renderComponent("test-role", mutate, setOpen);
     const allComboBox = screen.getAllByRole("combobox", { hidden: true });
 

@@ -9,7 +9,7 @@ describe("UpdateUserDropdownMenu", () => {
   it("should render update roles dialog on update roles click", async () => {
     render(
       <UpdateUserDropdownMenu
-        mutate={jest.fn()}
+        mutate={vitest.fn()}
         user={{ roles: [], username: "user1", id: "1", specificPermissions: [] }}
         roles={[]}
       />
@@ -29,7 +29,7 @@ describe("UpdateUserDropdownMenu", () => {
   it("should render update permissions dialog on update permissions click", async () => {
     render(
       <UpdateUserDropdownMenu
-        mutate={jest.fn()}
+        mutate={vitest.fn()}
         user={{ roles: [], username: "user1", id: "1", specificPermissions: [] }}
         roles={[]}
       />

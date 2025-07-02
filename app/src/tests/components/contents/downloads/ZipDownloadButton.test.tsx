@@ -6,12 +6,12 @@ import { mockPacket } from "../../../mocks";
 import * as UserProvider from "../../../../app/components/providers/UserProvider";
 
 let errorOnDownload = false;
-const mockDownload = jest.fn();
-jest.mock("../../../../lib/download", () => ({
-  ...jest.requireActual("../../../../lib/download"),
+const mockDownload = vitest.fn();
+vitest.mock("../../../../lib/download", async () => ({
+  ...(await vitest.importActual("../../../../lib/download")),
   download: async (...args: any[]) => mockDownload(...args)
 }));
-const mockUseUser = jest.spyOn(UserProvider, "useUser");
+const mockUseUser = vitest.spyOn(UserProvider, "useUser");
 
 describe("ZipDownloadButton", () => {
   beforeEach(() => {
@@ -62,7 +62,7 @@ describe("ZipDownloadButton", () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vitest.clearAllMocks();
   });
 
   it("renders as expected", async () => {
@@ -93,7 +93,7 @@ describe("ZipDownloadButton", () => {
   });
 
   // TODO: Fix this flakey test. Ticket: mrc-6223
-  xit("shows any download errors, and resets error display on re-trying the download", async () => {
+  it.skip("shows any download errors, and resets error display on re-trying the download", async () => {
     renderComponent();
 
     await waitFor(() => {

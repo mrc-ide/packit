@@ -7,9 +7,9 @@ import { server } from "../../../msw/server";
 import { rest } from "msw";
 import { HttpStatus } from "../../../lib/types/HttpStatus";
 
-const mockedUsedNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...(jest.requireActual("react-router-dom") as any),
+const mockedUsedNavigate = vitest.fn();
+vitest.mock("react-router-dom", async () => ({
+  ...(await vitest.importActual("react-router-dom")),
   useNavigate: () => mockedUsedNavigate
 }));
 describe("UpdatePasswordForm", () => {

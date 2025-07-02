@@ -109,7 +109,7 @@ describe("DeviceActivation", () => {
   });
 
   it("lower case letters are converted to upper case on submit", async () => {
-    const fetcherSpy = jest.spyOn(fetch, "fetcher");
+    const fetcherSpy = vitest.spyOn(fetch, "fetcher");
     renderComponent();
     const textbox = getTextBox();
     userEvent.type(textbox, "Abcd-Efgh{enter}");

@@ -8,9 +8,9 @@ import { SWRConfig } from "swr";
 import { server } from "../../../msw/server";
 import { rest } from "msw";
 
-const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
-jest.mock("../../../lib/localStorageManager", () => ({
-  ...jest.requireActual("../../../lib/localStorageManager"),
+const mockGetUserFromLocalStorage = vitest.fn((): null | UserState => null);
+vitest.mock("../../../lib/localStorageManager", async () => ({
+  ...(await vitest.importActual("../../../lib/localStorageManager")),
   getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
 }));
 const renderElement = (children: JSX.Element) => {

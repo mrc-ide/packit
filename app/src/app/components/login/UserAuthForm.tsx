@@ -18,8 +18,7 @@ export const UserAuthForm = ({ className, ...props }: UserAuthFormProps) => {
   const authConfig = useAuthConfig();
   const { user } = useUser();
   const { loggingOut, setLoggingOut } = useRedirectOnLogin();
-  const loginRoute = `${import.meta.env.BASE_URL}/login`;
-
+  const loginRoute = `${import.meta.env.BASE_URL}login`;
   useEffect(() => {
     if (loggingOut) {
       setLoggingOut(false);

@@ -1,15 +1,14 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { Route } from "react-router-dom";
 import { SWRConfig } from "swr";
 import { ImageDisplay } from "../../../../app/components/contents/downloads/ImageDisplay";
 import { PacketMetadata } from "../../../../types";
 
-const mockGetFileObjectUrl = jest.fn();
-jest.mock("../../../../lib/download", () => ({
-  ...jest.requireActual("../../../../lib/download"),
+const mockGetFileObjectUrl = vitest.fn();
+vitest.mock("../../../../lib/download", async () => ({
+  ...(await vitest.importActual("../../../../lib/download")),
   getFileObjectUrl: async (...args: any[]) => mockGetFileObjectUrl(...args)
 }));
-const revokeObjectURL = jest.fn();
+const revokeObjectURL = vitest.fn();
 URL.revokeObjectURL = revokeObjectURL;
 
 describe("image display component", () => {
@@ -32,7 +31,7 @@ describe("image display component", () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vitest.clearAllMocks();
   });
 
   it("gets file object url for image src", async () => {

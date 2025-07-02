@@ -8,7 +8,7 @@ import { ApiError } from "../../../../../lib/errors";
 import { HttpStatus } from "../../../../../lib/types/HttpStatus";
 
 describe("UpdateUserRoleForm", () => {
-  const fetcherSpy = jest.spyOn(fetch, "fetcher");
+  const fetcherSpy = vitest.spyOn(fetch, "fetcher");
   const testRoles = [
     { name: "role1", id: 1 },
     { name: "role2", id: 2 },
@@ -23,9 +23,14 @@ describe("UpdateUserRoleForm", () => {
     username: "user1"
   } as any;
 
+  beforeEach(() => {
+    vitest.clearAllMocks();
+    fetcherSpy.mockResolvedValue({});
+  });
+
   it("should call mutate,fetch,setOpen on successful form submission", async () => {
-    const mutate = jest.fn();
-    const setOpen = jest.fn();
+    const mutate = vitest.fn();
+    const setOpen = vitest.fn();
     render(
       <Dialog>
         <UpdateUserRoleForm user={testUser} roles={testRoles} mutate={mutate} setOpen={setOpen} />
@@ -45,7 +50,7 @@ describe("UpdateUserRoleForm", () => {
   it("should render correct options for both multiselect inputs", async () => {
     render(
       <Dialog>
-        <UpdateUserRoleForm user={testUser} roles={testRoles} mutate={jest.fn()} setOpen={jest.fn()} />
+        <UpdateUserRoleForm user={testUser} roles={testRoles} mutate={vitest.fn()} setOpen={vitest.fn()} />
       </Dialog>
     );
 
@@ -67,7 +72,7 @@ describe("UpdateUserRoleForm", () => {
   it("should call fetcher with correct data on form submission", async () => {
     render(
       <Dialog>
-        <UpdateUserRoleForm user={testUser} roles={testRoles} mutate={jest.fn()} setOpen={jest.fn()} />
+        <UpdateUserRoleForm user={testUser} roles={testRoles} mutate={vitest.fn()} setOpen={vitest.fn()} />
       </Dialog>
     );
 
@@ -97,7 +102,7 @@ describe("UpdateUserRoleForm", () => {
     fetcherSpy.mockRejectedValueOnce(new ApiError("message from backend", HttpStatus.BadRequest));
     render(
       <Dialog>
-        <UpdateUserRoleForm user={testUser} roles={testRoles} mutate={jest.fn()} setOpen={jest.fn()} />
+        <UpdateUserRoleForm user={testUser} roles={testRoles} mutate={vitest.fn()} setOpen={vitest.fn()} />
       </Dialog>
     );
 
@@ -112,7 +117,7 @@ describe("UpdateUserRoleForm", () => {
     fetcherSpy.mockRejectedValueOnce(new Error("unexpected error"));
     render(
       <Dialog>
-        <UpdateUserRoleForm user={testUser} roles={testRoles} mutate={jest.fn()} setOpen={jest.fn()} />
+        <UpdateUserRoleForm user={testUser} roles={testRoles} mutate={vitest.fn()} setOpen={vitest.fn()} />
       </Dialog>
     );
 

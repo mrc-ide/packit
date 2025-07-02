@@ -7,8 +7,8 @@ import { mockPacketGroupDtos, mockPacketGroupResponse, mockTags } from "../../..
 
 const getForm = (id: number | string, name: string) =>
   ({
-    watch: jest.fn(() => ({ id, name })),
-    setValue: jest.fn()
+    watch: vitest.fn(() => ({ id, name })),
+    setValue: vitest.fn()
   }) as unknown as UseFormReturn<any>;
 
 describe("AddScopedPermissionInput", () => {

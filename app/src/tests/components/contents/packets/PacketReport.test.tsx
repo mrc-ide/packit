@@ -4,13 +4,13 @@ import { FileMetadata, PacketMetadata } from "../../../../types";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
 
-const mockGetFileObjectUrl = jest.fn();
-jest.mock("../../../../lib/download", () => ({
-  ...jest.requireActual("../../../../lib/download"),
+const mockGetFileObjectUrl = vitest.fn();
+vitest.mock("../../../../lib/download", async () => ({
+  ...(await vitest.importActual("../../../../lib/download")),
   getFileObjectUrl: async (...args: any[]) => mockGetFileObjectUrl(...args)
 }));
 const mockHash = "sha256:12345";
-const revokeObjectURL = jest.fn();
+const revokeObjectURL = vitest.fn();
 URL.revokeObjectURL = revokeObjectURL;
 
 const file: FileMetadata = { path: "test.html", hash: mockHash, size: 100 };
@@ -39,7 +39,7 @@ describe("PacketReport component", () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vitest.clearAllMocks();
   });
 
   it("gets file object url for report src", async () => {

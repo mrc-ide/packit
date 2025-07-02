@@ -4,7 +4,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { PacketRunnerLayout } from "../../../../app/components/contents/runner";
 import * as UserProvider from "../../../../app/components/providers/UserProvider";
 
-const mockUseUser = jest.spyOn(UserProvider, "useUser");
+const mockUseUser = vitest.spyOn(UserProvider, "useUser");
 describe("packet runner component", () => {
   const renderElement = () => {
     return render(

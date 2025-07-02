@@ -8,7 +8,7 @@ import appConfig from "../../../../config/appConfig";
 import { UserProvider } from "../../../../app/components/providers/UserProvider";
 
 describe("Home component", () => {
-  const fetcherSpy = jest.spyOn(fetch, "fetcher");
+  const fetcherSpy = vitest.spyOn(fetch, "fetcher");
   const renderComponent = () =>
     render(
       <SWRConfig value={{ provider: () => new Map() }}>

@@ -13,15 +13,15 @@ import * as UserProvider from "../../../app/components/providers/UserProvider";
 import { basicRunnerUri } from "../../../msw/handlers/runnerHandlers";
 import { packetIndexUri } from "../../../msw/handlers/packetHandlers";
 
-jest.mock("../../../lib/download", () => ({
-  ...jest.requireActual("../../../lib/download"),
+vitest.mock("../../../lib/download", async () => ({
+  ...(await vitest.importActual("../../../lib/download")),
   getFileObjectUrl: async () => "fakeObjectUrl"
 }));
 
-URL.createObjectURL = jest.fn();
-URL.revokeObjectURL = jest.fn();
+URL.createObjectURL = vitest.fn();
+URL.revokeObjectURL = vitest.fn();
 
-const mockUseUser = jest.spyOn(UserProvider, "useUser");
+const mockUseUser = vitest.spyOn(UserProvider, "useUser");
 
 const renderComponent = (packet = mockPacket) => {
   render(

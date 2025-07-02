@@ -9,18 +9,21 @@ import { mockTasksRunInfo } from "../../../../mocks";
 import { basicRunnerUri } from "../../../../../msw/handlers/runnerHandlers";
 import userEvent from "@testing-library/user-event";
 import { Toaster } from "sonner";
-
+import { vi } from "vitest";
 const renderComponent = () =>
   render(
     <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>
       <MemoryRouter>
-        <TasksLogsTable pageNumber={1} pageSize={PAGE_SIZE} filterPacketGroupName="" setPageNumber={jest.fn()} />
+        <TasksLogsTable pageNumber={1} pageSize={PAGE_SIZE} filterPacketGroupName="" setPageNumber={vi.fn()} />
         <Toaster />
       </MemoryRouter>
     </SWRConfig>
   );
 
 describe("TasksLogsTable component", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
   it("should render error component when api call fails", async () => {
     server.use(
       rest.get("*", (req, res, ctx) => {
@@ -91,7 +94,6 @@ describe("TasksLogsTable component", () => {
 
     const noneParameters = await screen.findAllByText(/None/i);
     expect(noneParameters).toHaveLength(mockTasksRunInfo.content.length - 1);
-    // screen.debug(undefined, 300000);
     await waitFor(() => {
       Object.entries(firstTaskParameters).forEach(([key, val]) => {
         expect(screen.getByText(`${key}:`)).toBeVisible();
@@ -111,19 +113,20 @@ describe("TasksLogsTable component", () => {
         return res(ctx.json({ ...mockTasksRunInfo, content: [mockTasksRunInfo.content[0], pendingRunInfo] }));
       })
     );
-    jest.useFakeTimers();
     renderComponent();
+    vi.useFakeTimers();
 
     await waitFor(() => {
       expect(screen.getByText(/created 1 seconds ago/i)).toBeVisible();
     });
 
-    jest.advanceTimersByTime(3000);
+    vi.advanceTimersByTime(3000);
     await waitFor(() => {
       expect(screen.getByText(/created 4 seconds ago/i)).toBeVisible();
     });
 
-    jest.advanceTimersByTime(3000);
+    vi.advanceTimersByTime(3000);
+
     await waitFor(() => {
       expect(screen.getByText(/created 7 seconds ago/i)).toBeVisible();
       expect(numApiCalled).toBe(3);
@@ -141,11 +144,11 @@ describe("TasksLogsTable component", () => {
         return res(ctx.json({ ...mockTasksRunInfo, content: [completedRunInfo] }));
       })
     );
-    jest.useFakeTimers();
     renderComponent();
+    vi.useFakeTimers();
 
-    jest.advanceTimersByTime(3000);
-    jest.advanceTimersByTime(3000);
+    vi.advanceTimersByTime(3000);
+    vi.advanceTimersByTime(3000);
 
     await waitFor(() => {
       expect(numApiCalled).toBe(1);

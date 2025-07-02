@@ -4,37 +4,37 @@ import * as UserProvider from "../../../app/components/providers/UserProvider";
 import { ProtectedRoute } from "../../../app/components/routes/ProtectedRoute";
 import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
 import { mockUserProviderState } from "../../mocks";
-const mockedUsedNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...(jest.requireActual("react-router-dom") as any),
+const mockedUsedNavigate = vitest.fn();
+vitest.mock("react-router-dom", async () => ({
+  ...((await vitest.importActual("react-router-dom")) as any),
   useNavigate: () => mockedUsedNavigate
 }));
-const mockIsAuthenticated = jest.fn();
-const mockAuthIsExpired = jest.fn();
-jest.mock("../../../lib/isAuthenticated", () => ({
+const mockIsAuthenticated = vitest.fn();
+const mockAuthIsExpired = vitest.fn();
+vitest.mock("../../../lib/isAuthenticated", () => ({
   isAuthenticated: () => mockIsAuthenticated(),
   authIsExpired: () => mockAuthIsExpired()
 }));
 
-const mockSetRequestedUrl = jest.fn();
+const mockSetRequestedUrl = vitest.fn();
 let mockLoggingOut = false;
-jest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
+vitest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
   useRedirectOnLogin: () => ({
     setRequestedUrl: mockSetRequestedUrl,
     loggingOut: (() => mockLoggingOut)()
   })
 }));
 
-const mockUseAuthConfig = jest.fn();
-jest.mock("../../../app/components/providers/AuthConfigProvider", () => ({
+const mockUseAuthConfig = vitest.fn();
+vitest.mock("../../../app/components/providers/AuthConfigProvider", () => ({
   useAuthConfig: () => mockUseAuthConfig()
 }));
 
 const mockUserProvideState = mockUserProviderState();
-const mockUseUser = jest.spyOn(UserProvider, "useUser");
+const mockUseUser = vitest.spyOn(UserProvider, "useUser");
 
-const mockWindowNavigate = jest.fn();
-jest.mock("../../../lib/navigate", () => ({
+const mockWindowNavigate = vitest.fn();
+vitest.mock("../../../lib/navigate", () => ({
   windowNavigate: (href: string) => mockWindowNavigate(href)
 }));
 
@@ -51,7 +51,7 @@ const renderElement = () => {
 };
 describe("protected routes", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vitest.clearAllMocks();
     mockUseUser.mockReturnValue(mockUserProvideState);
   });
 

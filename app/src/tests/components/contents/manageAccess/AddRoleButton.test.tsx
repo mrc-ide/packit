@@ -8,10 +8,10 @@ import { rest } from "msw";
 import { HttpStatus } from "../../../../lib/types/HttpStatus";
 
 describe("AddRoleButton", () => {
-  const fetcherSpy = jest.spyOn(fetch, "fetcher");
+  const fetcherSpy = vitest.spyOn(fetch, "fetcher");
 
   it("should open dialog on add role button click with form", async () => {
-    render(<AddRoleButton mutate={jest.fn()} />);
+    render(<AddRoleButton mutate={vitest.fn()} />);
 
     userEvent.click(screen.getByRole("button", { name: /add role/i }));
 
@@ -26,7 +26,7 @@ describe("AddRoleButton", () => {
   });
 
   it("should close dialog and clear form on cancel button click", () => {
-    render(<AddRoleButton mutate={jest.fn()} />);
+    render(<AddRoleButton mutate={vitest.fn()} />);
 
     const addRoleButton = screen.getByRole("button", { name: /add role/i });
     userEvent.click(addRoleButton);
@@ -42,7 +42,7 @@ describe("AddRoleButton", () => {
   });
 
   it("should close dialog, reset form, call mutate on successful form submission", async () => {
-    const mutate = jest.fn();
+    const mutate = vitest.fn();
     render(<AddRoleButton mutate={mutate} />);
 
     const addRoleButton = screen.getByRole("button", { name: /add role/i });
@@ -63,7 +63,7 @@ describe("AddRoleButton", () => {
   });
 
   it("should call fetch with correct role name and permissionNames checked on submission", async () => {
-    render(<AddRoleButton mutate={jest.fn()} />);
+    render(<AddRoleButton mutate={vitest.fn()} />);
     userEvent.click(screen.getByRole("button", { name: /add role/i }));
 
     userEvent.type(screen.getByLabelText(/name/i), "Test Role");
@@ -84,7 +84,7 @@ describe("AddRoleButton", () => {
   });
 
   it("should show error message when role name is empty", async () => {
-    render(<AddRoleButton mutate={jest.fn()} />);
+    render(<AddRoleButton mutate={vitest.fn()} />);
     userEvent.click(screen.getByRole("button", { name: /add role/i }));
 
     userEvent.click(screen.getByRole("button", { name: /add/i }));
@@ -95,7 +95,7 @@ describe("AddRoleButton", () => {
   });
 
   it("should show error message when role name is not trimmed", async () => {
-    render(<AddRoleButton mutate={jest.fn()} />);
+    render(<AddRoleButton mutate={vitest.fn()} />);
     userEvent.click(screen.getByRole("button", { name: /add role/i }));
 
     userEvent.type(screen.getByLabelText(/name/i), " trim");
@@ -109,7 +109,7 @@ describe("AddRoleButton", () => {
   });
 
   it("should show error message when role name contains special characters", async () => {
-    render(<AddRoleButton mutate={jest.fn()} />);
+    render(<AddRoleButton mutate={vitest.fn()} />);
     userEvent.click(screen.getByRole("button", { name: /add role/i }));
 
     userEvent.type(screen.getByLabelText(/name/i), "Test, Role");
@@ -129,7 +129,7 @@ describe("AddRoleButton", () => {
         return res(ctx.status(HttpStatus.BadRequest), ctx.json({ error: { detail: errorMessage } }));
       })
     );
-    render(<AddRoleButton mutate={jest.fn()} />);
+    render(<AddRoleButton mutate={vitest.fn()} />);
 
     userEvent.click(screen.getByRole("button", { name: /add role/i }));
     userEvent.type(screen.getByLabelText(/name/i), "Test Role");
@@ -145,7 +145,7 @@ describe("AddRoleButton", () => {
         return res(ctx.status(HttpStatus.InternalServerError));
       })
     );
-    render(<AddRoleButton mutate={jest.fn()} />);
+    render(<AddRoleButton mutate={vitest.fn()} />);
 
     userEvent.click(screen.getByRole("button", { name: /add role/i }));
     userEvent.type(screen.getByLabelText(/name/i), "Test Role");

@@ -2,9 +2,9 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { RedirectOnLoginProvider, useRedirectOnLogin } from "../../../app/components/providers/RedirectOnLoginProvider";
 import { useEffect } from "react";
 
-const getItemSpy = jest.spyOn(Storage.prototype, "getItem");
-const setItemSpy = jest.spyOn(Storage.prototype, "setItem");
-const removeItemSpy = jest.spyOn(Storage.prototype, "removeItem");
+const getItemSpy = vitest.spyOn(Storage.prototype, "getItem");
+const setItemSpy = vitest.spyOn(Storage.prototype, "setItem");
+const removeItemSpy = vitest.spyOn(Storage.prototype, "removeItem");
 
 describe("RedirectOnLoginProvider", () => {
   const renderElement = (children: JSX.Element) => {
@@ -12,7 +12,7 @@ describe("RedirectOnLoginProvider", () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vitest.clearAllMocks();
     getItemSpy.mockImplementation(() => "/test");
   });
 

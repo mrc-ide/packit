@@ -6,7 +6,7 @@ import { FileMetadata } from "../../../../types";
 import userEvent from "@testing-library/user-event";
 import { SWRConfig } from "swr";
 
-jest.mock("../../../../lib/auth/getAuthHeader", () => ({
+vitest.mock("../../../../lib/auth/getAuthHeader", () => ({
   getAuthHeader: () => ({ Authorization: "fakeAuthHeader" })
 }));
 
@@ -38,8 +38,8 @@ describe("previewable file component", () => {
   });
 
   it("renders preview of file within hover card when an image file, and revokes blob URL on unmounting", async () => {
-    URL.createObjectURL = jest.fn(() => "fakeObjectUrl");
-    const revokeObjectURL = jest.fn();
+    URL.createObjectURL = vitest.fn(() => "fakeObjectUrl");
+    const revokeObjectURL = vitest.fn();
     URL.revokeObjectURL = revokeObjectURL;
 
     const { unmount } = renderComponent(imageFile, "plot.gif");
@@ -59,7 +59,7 @@ describe("previewable file component", () => {
   });
 
   it("renders error component if error fetching file data", async () => {
-    const mockCreateObjectUrl = jest.fn();
+    const mockCreateObjectUrl = vitest.fn();
     URL.createObjectURL = mockCreateObjectUrl;
     mockCreateObjectUrl.mockImplementation(() => {
       throw new Error("test error");

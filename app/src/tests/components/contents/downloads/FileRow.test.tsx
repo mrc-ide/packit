@@ -39,7 +39,7 @@ describe("file row component", () => {
   });
 
   it("when the file path includes a directory it excludes this from the displayed file name", async () => {
-    URL.createObjectURL = jest.fn(() => "fakeObjectUrl");
+    URL.createObjectURL = vitest.fn(() => "fakeObjectUrl");
 
     const { container } = renderComponent("directory/graph.png");
 

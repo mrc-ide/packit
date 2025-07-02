@@ -11,7 +11,7 @@ describe("RemovePermissionsForUpdate", () => {
       <RemovePermissionsForUpdate
         rolePermissions={mockNonUsernameRolesWithRelationships[0].rolePermissions}
         removedPermissions={[]}
-        removePermission={jest.fn()}
+        removePermission={vitest.fn()}
       />
     );
 
@@ -26,7 +26,7 @@ describe("RemovePermissionsForUpdate", () => {
   });
 
   it("should call removePermission and close popover", async () => {
-    const removePermission = jest.fn();
+    const removePermission = vitest.fn();
     render(
       <RemovePermissionsForUpdate
         rolePermissions={mockNonUsernameRolesWithRelationships[0].rolePermissions}
@@ -52,7 +52,7 @@ describe("RemovePermissionsForUpdate", () => {
       <RemovePermissionsForUpdate
         rolePermissions={mockNonUsernameRolesWithRelationships[0].rolePermissions}
         removedPermissions={removedPermissions}
-        removePermission={jest.fn()}
+        removePermission={vitest.fn()}
       />
     );
 

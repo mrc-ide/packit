@@ -18,9 +18,9 @@ const renderComponent = (children: ReactNode) =>
 
 describe("PermissionCommandList", () => {
   it("should call setScopeResource, setFilterName and setOpen on select", async () => {
-    const setFilterName = jest.fn();
-    const setOpen = jest.fn();
-    const setScopeResource = jest.fn();
+    const setFilterName = vitest.fn();
+    const setOpen = vitest.fn();
+    const setScopeResource = vitest.fn();
     renderComponent(
       <PermissionScopeCommandList
         scope="tag"
@@ -46,14 +46,14 @@ describe("PermissionCommandList", () => {
   it("should render check on selected and call setScopeResource with default values on unselect", async () => {
     const testPacket = { id: mockPacketGroupResponse.content[0].id, name: mockPacketGroupResponse.content[0].name };
     const scopeResource = { id: testPacket.id, name: testPacket.name };
-    const setScopeResource = jest.fn();
+    const setScopeResource = vitest.fn();
     renderComponent(
       <PermissionScopeCommandList
         scope="packet"
         filterName=""
         scopeResource={scopeResource}
-        setFilterName={jest.fn()}
-        setOpen={jest.fn()}
+        setFilterName={vitest.fn()}
+        setOpen={vitest.fn()}
         setScopeResource={setScopeResource}
       />
     );
@@ -77,9 +77,9 @@ describe("PermissionCommandList", () => {
         scope="tag"
         filterName=""
         scopeResource={{ id: "11", name: "tag1" }}
-        setFilterName={jest.fn()}
-        setOpen={jest.fn()}
-        setScopeResource={jest.fn()}
+        setFilterName={vitest.fn()}
+        setOpen={vitest.fn()}
+        setScopeResource={vitest.fn()}
       />
     );
 

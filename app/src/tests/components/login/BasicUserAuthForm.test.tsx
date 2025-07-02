@@ -6,15 +6,15 @@ import userEvent from "@testing-library/user-event";
 import { server } from "../../../msw/server";
 import { rest } from "msw";
 
-const mockedUsedNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...(jest.requireActual("react-router-dom") as any),
+const mockedUsedNavigate = vitest.fn();
+vitest.mock("react-router-dom", async () => ({
+  ...((await vitest.importActual("react-router-dom")) as any),
   useNavigate: () => mockedUsedNavigate
 }));
 
-const mockSetRequestedUrl = jest.fn();
+const mockSetRequestedUrl = vitest.fn();
 let mockRequestedUrl: string | null = null;
-jest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
+vitest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
   useRedirectOnLogin: () => ({
     setRequestedUrl: mockSetRequestedUrl,
     requestedUrl: (() => mockRequestedUrl)()
@@ -24,7 +24,7 @@ jest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
 describe("BasicUserAuthForm", () => {
   beforeEach(() => {
     mockRequestedUrl = null;
-    jest.clearAllMocks();
+    vitest.clearAllMocks();
   });
 
   it("should validate both email and password by showing errors if fails schema", async () => {
