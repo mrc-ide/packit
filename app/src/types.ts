@@ -1,5 +1,4 @@
 import { JwtPayload } from "jwt-decode";
-import { fileURLToPath } from "url";
 
 export interface Pageable {
   totalPages: number;

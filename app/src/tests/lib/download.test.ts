@@ -1,10 +1,9 @@
-import { download, getFileObjectUrl } from "../../lib/download";
-import { mockFileBlob, mockPacket } from "../mocks";
-import { server } from "../../msw/server";
 import { rest } from "msw";
 import appConfig from "../../config/appConfig";
+import { download, getFileObjectUrl } from "../../lib/download";
+import { server } from "../../msw/server";
+import { mockPacket } from "../mocks";
 import { testBaseUrl } from "./constants";
-import { absoluteApiUrl } from "../../helpers";
 
 vitest.mock("../../lib/auth/getAuthHeader", () => ({
   getAuthHeader: () => ({ Authorization: "fakeAuthHeader" })

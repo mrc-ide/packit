@@ -8,6 +8,7 @@ import { configDefaults } from "vitest/config";
 
 export default defineConfig({
   plugins: [react()],
+  assetsInclude: ["**/*.md"],
   css: {
     postcss: {
       plugins: [tailwind(), autoprefixer()]
