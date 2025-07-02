@@ -15,7 +15,7 @@ describe("UpdatePermissionDialog", () => {
     });
   });
 
-  it.only("should be able to open and close dialog", async () => {
+  it("should be able to open and close dialog", async () => {
     render(<UpdatePermissionButton packetGroupName={packetGroupName} />);
 
     userEvent.click(screen.getByRole("button", { name: `manage-access-${packetGroupName}` }));
