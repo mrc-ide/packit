@@ -14,7 +14,7 @@ export default defineConfig({
     }
   },
   build: {
-    outDir: "build" // CRA's default build output
+    outDir: "build"
   },
   resolve: {
     alias: {

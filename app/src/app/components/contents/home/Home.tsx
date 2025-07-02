@@ -11,6 +11,7 @@ export const Home = () => {
 
   return (
     <div className="flex justify-center">
+      <h1 className="text-4xl font-bold">WTF IS IT WORKING</h1>
       <div className="h-full flex flex-1 flex-col space-y-6 p-8 max-w-5xl">
         <Pins />
         <h2 className="text-2xl font-bold tracking-tight">Find a packet group</h2>
