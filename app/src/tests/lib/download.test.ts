@@ -9,8 +9,8 @@ vitest.mock("../../lib/auth/getAuthHeader", () => ({
   getAuthHeader: () => ({ Authorization: "fakeAuthHeader" })
 }));
 
-let fetchSpy: vitest.SpyInstance;
-let windowSpy: vitest.SpyInstance;
+let fetchSpy: any;
+let windowSpy: any;
 
 const testWindowLocation = `${testBaseUrl}/path/subpath`;
 
