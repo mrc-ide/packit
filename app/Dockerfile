@@ -15,7 +15,7 @@ COPY . /app
 # override env var in production file if set
 RUN if [ -n "$VITE_PACKIT_API_URL" ]; then  echo "VITE_PACKIT_API_URL=$VITE_PACKIT_API_URL" >> env.production.local;  fi
 
-RUN npm run build
+RUN if [ -n "$PUBLIC_URL" ]; then npm run build -- --base=$PUBLIC_URL; else npm run build; fi
 
 FROM nginx:stable
 
