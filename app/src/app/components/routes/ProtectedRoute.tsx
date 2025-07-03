@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { authIsExpired, isAuthenticated } from "../../../lib/isAuthenticated";
+import { authIsExpired, isAuthenticated } from "@lib/isAuthenticated";
 import { useAuthConfig } from "../providers/AuthConfigProvider";
 import { useUser } from "../providers/UserProvider";
 import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
-import { windowNavigate } from "../../../lib/navigate";
+import { windowNavigate } from "@lib/navigate";
 
 export const ProtectedRoute = () => {
   const navigate = useNavigate();

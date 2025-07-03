@@ -1,6 +1,5 @@
-/* eslint-disable max-len */
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { UpdateUserDropdownMenu } from "../../../../../app/components/contents/manageAccess/manageUsersActions/UpdateUserDropdownMenu";
+import { UpdateUserDropdownMenu } from "@components/contents/manageAccess/manageUsersActions/UpdateUserDropdownMenu";
 import userEvent from "@testing-library/user-event";
 
 describe("UpdateUserDropdownMenu", () => {

@@ -1,10 +1,10 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { ManageAccessLayout } from "../../../../app/components/contents/manageAccess";
-import { server } from "../../../../msw/server";
+import { ManageAccessLayout } from "@components/contents/manageAccess";
+import { server } from "@/msw/server";
 import { rest } from "msw";
-import { HttpStatus } from "../../../../lib/types/HttpStatus";
+import { HttpStatus } from "@lib/types/HttpStatus";
 import { SWRConfig } from "swr";
 
 const renderComponent = () =>

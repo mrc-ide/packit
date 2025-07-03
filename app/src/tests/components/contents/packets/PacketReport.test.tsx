@@ -1,12 +1,12 @@
 import { render, screen } from "@testing-library/react";
-import { PacketReport } from "../../../../app/components/contents/packets/PacketReport";
-import { FileMetadata, PacketMetadata } from "../../../../types";
+import { PacketReport } from "@components/contents/packets/PacketReport";
+import { FileMetadata, PacketMetadata } from "@/types";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
 
 const mockGetFileObjectUrl = vitest.fn();
-vitest.mock("../../../../lib/download", async () => ({
-  ...(await vitest.importActual("../../../../lib/download")),
+vitest.mock("@lib/download", async () => ({
+  ...(await vitest.importActual("@lib/download")),
   getFileObjectUrl: async (...args: any[]) => mockGetFileObjectUrl(...args)
 }));
 const mockHash = "sha256:12345";

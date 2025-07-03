@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Pagination } from "../../../../app/components/contents/common/Pagination";
+import { Pagination } from "@components/contents/common/Pagination";
 
 describe("Pagination test", () => {
   it("correctly navigates to all pages", () => {

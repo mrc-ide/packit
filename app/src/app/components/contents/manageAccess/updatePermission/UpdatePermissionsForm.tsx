@@ -1,15 +1,15 @@
 import { Dispatch, FormEvent, SetStateAction, useState } from "react";
 import { KeyedMutator } from "swr";
-import appConfig from "../../../../../config/appConfig";
-import { ApiError } from "../../../../../lib/errors";
-import { fetcher } from "../../../../../lib/fetch";
+import appConfig from "@config/appConfig";
+import { ApiError } from "@lib/errors";
+import { fetcher } from "@lib/fetch";
 import { CustomDialogFooter } from "../../common/CustomDialogFooter";
 import { BaseRolePermission, RolePermission, RoleWithRelationships } from "../types/RoleWithRelationships";
 import { AddPermissionForUpdateForm } from "./AddPermissionForUpdateForm";
 import { RemovePermissionsForUpdate } from "./RemovePermissionsForUpdate";
 import { UpdatePermissionScrollArea } from "./UpdatePermissionScrollArea";
 import { convertUpdatePermissionsForFetch } from "./utils/convertUpdatePermissionsForFetch";
-import { Separator } from "../../../Base/Separator";
+import { Separator } from "@components/Base/Separator";
 
 interface UpdatePermissionsFormProps {
   roleName: string;

@@ -1,11 +1,11 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { AddRoleButton } from "../../../../app/components/contents/manageAccess/AddRoleButton";
+import { AddRoleButton } from "@components/contents/manageAccess/AddRoleButton";
 import userEvent from "@testing-library/user-event";
-import { GLOBAL_PERMISSIONS } from "../../../../lib/constants";
-import * as fetch from "../../../../lib/fetch";
-import { server } from "../../../../msw/server";
+import { GLOBAL_PERMISSIONS } from "@lib/constants";
+import * as fetch from "@lib/fetch";
+import { server } from "@/msw/server";
 import { rest } from "msw";
-import { HttpStatus } from "../../../../lib/types/HttpStatus";
+import { HttpStatus } from "@lib/types/HttpStatus";
 
 describe("AddRoleButton", () => {
   const fetcherSpy = vitest.spyOn(fetch, "fetcher");

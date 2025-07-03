@@ -8,7 +8,7 @@ import {
   hasPacketManagePermissionForPacket,
   hasPacketRunPermission,
   hasUserManagePermission
-} from "../../../lib/auth/hasPermission";
+} from "@lib/auth/hasPermission";
 
 describe("hasPermission functions", () => {
   describe("Global permission functions", () => {

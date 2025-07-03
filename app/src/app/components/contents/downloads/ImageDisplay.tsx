@@ -1,4 +1,4 @@
-import { FileMetadata, PacketMetadata } from "../../../../types";
+import { FileMetadata, PacketMetadata } from "@/types";
 import { useFileObjectUrl } from "./hooks/useFileObjectUrl";
 import { ErrorComponent } from "../common/ErrorComponent";
 

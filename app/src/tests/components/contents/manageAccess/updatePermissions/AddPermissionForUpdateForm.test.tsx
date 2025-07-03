@@ -1,8 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
 // eslint-disable-next-line max-len
-import { AddPermissionForUpdateForm } from "../../../../../app/components/contents/manageAccess/updatePermission/AddPermissionForUpdateForm";
+import { AddPermissionForUpdateForm } from "@components/contents/manageAccess/updatePermission/AddPermissionForUpdateForm";
 import userEvent from "@testing-library/user-event";
-import { mockPacketGroupResponse, mockPackets } from "../../../../mocks";
+import { mockPacketGroupResponse, mockPackets } from "@/tests/mocks";
 
 describe("AddPermissionForUpdateForm", () => {
   it("it should disable scope radio group, submit button if permission is not set to a scoped permission", async () => {

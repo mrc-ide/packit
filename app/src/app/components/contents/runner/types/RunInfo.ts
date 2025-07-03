@@ -1,4 +1,4 @@
-import { Pageable } from "../../../../../types";
+import { Pageable } from "@/types";
 
 export interface RunInfo {
   taskId: string;

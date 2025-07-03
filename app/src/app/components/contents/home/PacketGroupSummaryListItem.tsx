@@ -1,8 +1,8 @@
 import { ExternalLink, Hourglass, Layers } from "lucide-react";
 import { Link } from "react-router-dom";
-import { canManagePacketGroup } from "../../../../lib/auth/hasPermission";
-import { getTimeDifferenceToDisplay } from "../../../../lib/time";
-import { PacketGroupSummary } from "../../../../types";
+import { canManagePacketGroup } from "@lib/auth/hasPermission";
+import { getTimeDifferenceToDisplay } from "@lib/time";
+import { PacketGroupSummary } from "@/types";
 import { useUser } from "../../providers/UserProvider";
 import { UpdatePermissionButton } from "./UpdatePermissionButton";
 

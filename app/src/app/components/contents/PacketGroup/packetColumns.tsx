@@ -1,8 +1,8 @@
 import { createColumnHelper, SortDirection } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Packet } from "../../../../types";
-import { Button } from "../../Base/Button";
+import { Packet } from "@/types";
+import { Button } from "@components/Base/Button";
 import { FilterInput } from "../common/FilterInput";
 import { ParameterContainer } from "../common/ParameterContainer";
 

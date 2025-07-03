@@ -15,10 +15,10 @@ import { deviceAuthHandlers } from "./handlers/deviceAuthHandlers";
 
 // catch any missed requests in tests
 const defaultHandlers = [
-  rest.get("*", (req, res, ctx) => res(ctx.status(200))),
-  rest.post("*", (req, res, ctx) => res(ctx.status(201))),
-  rest.patch("*", (req, res, ctx) => res(ctx.status(204))),
-  rest.delete("*", (req, res, ctx) => res(ctx.status(204)))
+  rest.get("*", (_req, res, ctx) => res(ctx.status(200))),
+  rest.post("*", (_req, res, ctx) => res(ctx.status(201))),
+  rest.patch("*", (_req, res, ctx) => res(ctx.status(204))),
+  rest.delete("*", (_req, res, ctx) => res(ctx.status(204)))
 ];
 
 export const handlers = [

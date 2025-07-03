@@ -1,11 +1,11 @@
 import userEvent from "@testing-library/user-event";
-import * as fetch from "../../../../../lib/fetch";
+import * as fetch from "@lib/fetch";
 import { Dialog } from "../../../Base/Dialog";
 import { UpdateUserRoleForm } from "./UpdateUserRoleForm";
 import { render, screen, waitFor } from "@testing-library/react";
-import appConfig from "../../../../../config/appConfig";
-import { ApiError } from "../../../../../lib/errors";
-import { HttpStatus } from "../../../../../lib/types/HttpStatus";
+import appConfig from "@config/appConfig";
+import { ApiError } from "@lib/errors";
+import { HttpStatus } from "@lib/types/HttpStatus";
 
 describe("UpdateUserRoleForm", () => {
   const fetcherSpy = vitest.spyOn(fetch, "fetcher");

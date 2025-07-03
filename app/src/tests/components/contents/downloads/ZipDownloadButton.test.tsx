@@ -1,14 +1,14 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ZipDownloadButton } from "../../../../app/components/contents/downloads/ZipDownloadButton";
-import { FileMetadata } from "../../../../types";
-import { mockPacket } from "../../../mocks";
-import * as UserProvider from "../../../../app/components/providers/UserProvider";
+import { ZipDownloadButton } from "@components/contents/downloads/ZipDownloadButton";
+import { FileMetadata } from "@/types";
+import { mockPacket } from "@/tests/mocks";
+import * as UserProvider from "@components/providers/UserProvider";
 
 let errorOnDownload = false;
 const mockDownload = vitest.fn();
-vitest.mock("../../../../lib/download", async () => ({
-  ...(await vitest.importActual("../../../../lib/download")),
+vitest.mock("@lib/download", async () => ({
+  ...(await vitest.importActual("@lib/download")),
   download: async (...args: any[]) => mockDownload(...args)
 }));
 const mockUseUser = vitest.spyOn(UserProvider, "useUser");

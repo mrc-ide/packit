@@ -1,12 +1,12 @@
 import { render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { PacketGroupSummaryListItem } from "../../../../app/components/contents/home/PacketGroupSummaryListItem";
-import { UserState } from "../../../../app/components/providers/types/UserTypes";
-import * as UserProvider from "../../../../app/components/providers/UserProvider";
-import { mockPacketGroupSummaries, mockUserState } from "../../../mocks";
+import { PacketGroupSummaryListItem } from "@components/contents/home/PacketGroupSummaryListItem";
+import { UserState } from "@components/providers/types/UserTypes";
+import * as UserProvider from "@components/providers/UserProvider";
+import { mockPacketGroupSummaries, mockUserState } from "@/tests//mocks";
 
 const mockGetUserFromLocalStorage = vitest.fn((): null | UserState => null);
-vitest.mock("../../../../lib/localStorageManager", () => ({
+vitest.mock("@lib/localStorageManager", () => ({
   getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
 }));
 const mockUseUser = vitest.spyOn(UserProvider, "useUser");

@@ -1,4 +1,4 @@
-import { getTimeDifferenceToDisplay, TimeDifference } from "../../../../../lib/time";
+import { getTimeDifferenceToDisplay, TimeDifference } from "@lib/time";
 import { StatusIcon } from "../logs/StatusIcon";
 import { RunInfo } from "../types/RunInfo";
 

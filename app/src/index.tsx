@@ -1,15 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import { AuthConfigProvider } from "./app/components/providers/AuthConfigProvider";
-import { ThemeProvider } from "./app/components/providers/ThemeProvider";
-import { UserProvider } from "./app/components/providers/UserProvider";
-import { RedirectOnLoginProvider } from "./app/components/providers/RedirectOnLoginProvider";
-import { BrandingProvider } from "./app/components/providers/BrandingProvider";
+import { AuthConfigProvider } from "@components/providers/AuthConfigProvider";
+import { ThemeProvider } from "@components/providers/ThemeProvider";
+import { UserProvider } from "@components/providers/UserProvider";
+import { RedirectOnLoginProvider } from "@components/providers/RedirectOnLoginProvider";
+import { BrandingProvider } from "@components/providers/BrandingProvider";
 import reportWebVitals from "./reportWebVitals";
 import "./styles/globals.css";
-import { Router } from "./app/components/routes/Router";
-import { Toaster } from "./app/components/Base/Sonner";
+import { Router } from "@components/routes/Router";
+import { Toaster } from "@components/Base/Sonner";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>

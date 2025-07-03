@@ -1,7 +1,7 @@
 import { ListTree } from "lucide-react";
 import { Link } from "react-router-dom";
-import { AccordionContent, AccordionItem, AccordionTrigger } from "../../Base/Accordion";
-import { PacketDepends } from "../../../../types";
+import { AccordionContent, AccordionItem, AccordionTrigger } from "@components/Base/Accordion";
+import { PacketDepends } from "@/types";
 import { useGetPackets } from "./hooks/useGetPackets";
 interface PacketDependenciesProps {
   depends: PacketDepends[];

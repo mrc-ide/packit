@@ -1,9 +1,9 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { EllipsisVertical, Trash2 } from "lucide-react";
 import { KeyedMutator } from "swr";
-import { constructPermissionName } from "../../../../../lib/constructPermissionName";
-import { Button } from "../../../Base/Button";
-import { useUser } from "../../../providers/UserProvider";
+import { constructPermissionName } from "@lib/constructPermissionName";
+import { Button } from "@components/Base/Button";
+import { useUser } from "@components/providers/UserProvider";
 import { DeleteUserOrRole } from "../DeleteUserOrRole";
 import { UpdateUserDropdownMenu } from "../manageUsersActions/UpdateUserDropdownMenu";
 import { RoleWithRelationships } from "../types/RoleWithRelationships";

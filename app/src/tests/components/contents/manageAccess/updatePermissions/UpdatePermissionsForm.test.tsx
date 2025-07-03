@@ -1,14 +1,14 @@
 /* eslint-disable max-len */
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Dialog } from "../../../../../app/components/Base/Dialog";
-import { UpdatePermissionsForm } from "../../../../../app/components/contents/manageAccess/updatePermission/UpdatePermissionsForm";
-import appConfig from "../../../../../config/appConfig";
-import { constructPermissionName } from "../../../../../lib/constructPermissionName";
-import { ApiError } from "../../../../../lib/errors";
-import * as fetch from "../../../../../lib/fetch";
-import { HttpStatus } from "../../../../../lib/types/HttpStatus";
-import { mockNonUsernameRolesWithRelationships } from "../../../../mocks";
+import { Dialog } from "@components/Base/Dialog";
+import { UpdatePermissionsForm } from "@components/contents/manageAccess/updatePermission/UpdatePermissionsForm";
+import appConfig from "@config/appConfig";
+import { constructPermissionName } from "@lib/constructPermissionName";
+import { ApiError } from "@lib/errors";
+import * as fetch from "@lib/fetch";
+import { HttpStatus } from "@lib/types/HttpStatus";
+import { mockNonUsernameRolesWithRelationships } from "@/tests/mocks";
 
 describe("UpdatePermissionsForm", () => {
   const fetchSpy = vitest.spyOn(fetch, "fetcher");

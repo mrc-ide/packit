@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import { PageableBasicRunInfo } from "../types/RunInfo";
-import { fetcher } from "../../../../../lib/fetch";
-import appConfig from "../../../../../config/appConfig";
+import { fetcher } from "@lib/fetch";
+import appConfig from "@config/appConfig";
 
 export const useGetTasksRunLogs = (pageNumber: number, pageSize: number, filterPacketGroupName: string) => {
   const { data, isLoading, error, mutate } = useSWR<PageableBasicRunInfo>(

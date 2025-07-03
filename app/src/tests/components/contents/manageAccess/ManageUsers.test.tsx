@@ -2,15 +2,15 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
-import { ManageUsers } from "../../../../app/components/contents/manageAccess";
-import { ManageAccessOutlet } from "../../../../app/components/contents/manageAccess/ManageAccessOutlet";
-import { AuthConfigProvider } from "../../../../app/components/providers/AuthConfigProvider";
-import { UserProvider } from "../../../../app/components/providers/UserProvider";
-import { mockUsersWithPermissions } from "../../../mocks";
+import { ManageUsers } from "@components/contents/manageAccess";
+import { ManageAccessOutlet } from "@components/contents/manageAccess/ManageAccessOutlet";
+import { AuthConfigProvider } from "@components/providers/AuthConfigProvider";
+import { UserProvider } from "@components/providers/UserProvider";
+import { mockUsersWithPermissions } from "@/tests/mocks";
 
 const mockAuthConfig = vitest.fn();
 const mockUser = vitest.fn();
-vitest.mock("../../../../lib/localStorageManager", () => ({
+vitest.mock("@lib/localStorageManager", () => ({
   getAuthConfigFromLocalStorage: () => mockAuthConfig(),
   getUserFromLocalStorage: () => mockUser()
 }));

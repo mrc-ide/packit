@@ -1,8 +1,5 @@
-import {
-  filesForArtefact,
-  allArtefactsFilesForPacket
-} from "../../../../app/components/contents/downloads/utils/artefactFiles";
-import { PacketMetadata } from "../../../../types";
+import { filesForArtefact, allArtefactsFilesForPacket } from "@components/contents/downloads/utils/artefactFiles";
+import { PacketMetadata } from "@/types";
 
 const artefact = {
   description: "An artefact containing some files",

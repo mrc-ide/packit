@@ -1,11 +1,11 @@
 import { Settings2 } from "lucide-react";
-import { Button } from "../../Base/Button";
+import { Button } from "@components/Base/Button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger
-} from "../../Base/DropdownMenu";
+} from "@components/Base/DropdownMenu";
 import { Dispatch, SetStateAction } from "react";
 
 interface ToggleParamColumnsDropdownColumnsProps {

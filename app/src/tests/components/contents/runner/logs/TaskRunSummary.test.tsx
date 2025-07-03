@@ -1,9 +1,9 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { TaskRunSummary } from "../../../../../app/components/contents/runner/logs/TaskRunSummary";
-import { mockCompleteRunInfo } from "../../../../mocks";
+import { TaskRunSummary } from "@components/contents/runner/logs/TaskRunSummary";
+import { mockCompleteRunInfo } from "@/tests/mocks";
 import userEvent from "@testing-library/user-event";
-import { server } from "../../../../../msw/server";
+import { server } from "@/msw/server";
 import { rest } from "msw";
 import { Toaster } from "sonner";
 

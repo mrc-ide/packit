@@ -1,9 +1,9 @@
 /* eslint-disable max-len */
 import { render, screen, waitFor } from "@testing-library/react";
 import { UseFormReturn } from "react-hook-form";
-import { AddScopedPermissionInput } from "../../../../../app/components/contents/manageAccess/updatePermission/AddScopedPermissionInput";
+import { AddScopedPermissionInput } from "@components/contents/manageAccess/updatePermission/AddScopedPermissionInput";
 import userEvent from "@testing-library/user-event";
-import { mockPacketGroupDtos, mockPacketGroupResponse, mockTags } from "../../../../mocks";
+import { mockPacketGroupDtos, mockPacketGroupResponse, mockTags } from "@/tests/mocks";
 
 const getForm = (id: number | string, name: string) =>
   ({

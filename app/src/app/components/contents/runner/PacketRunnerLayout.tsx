@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
-import { hasPacketRunPermission } from "../../../../lib/auth/hasPermission";
-import { SidebarItem } from "../../../../lib/types/SidebarItem";
+import { hasPacketRunPermission } from "@lib/auth/hasPermission";
+import { SidebarItem } from "@lib/types/SidebarItem";
 import { useUser } from "../../providers/UserProvider";
 import { Sidebar } from "../common/Sidebar";
 import { Unauthorized } from "../common/Unauthorized";

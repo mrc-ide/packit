@@ -1,11 +1,11 @@
 import { MemoryRouter } from "react-router-dom";
-import { UserProvider } from "../../../app/components/providers/UserProvider";
-import { UpdatePasswordForm } from "../../../app/components/login/UpdatePasswordForm";
+import { UserProvider } from "@components/providers/UserProvider";
+import { UpdatePasswordForm } from "@components/login/UpdatePasswordForm";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { server } from "../../../msw/server";
+import { server } from "@/msw/server";
 import { rest } from "msw";
-import { HttpStatus } from "../../../lib/types/HttpStatus";
+import { HttpStatus } from "@lib/types/HttpStatus";
 
 const mockedUsedNavigate = vitest.fn();
 vitest.mock("react-router-dom", async () => ({

@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { ProjectDocumentation } from "../../../../app/components/contents/documents";
+import { ProjectDocumentation } from "@components/contents/documents";
 
 describe("project documentation component", () => {
   it("renders skeleton div", async () => {

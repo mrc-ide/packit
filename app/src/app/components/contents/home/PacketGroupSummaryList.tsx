@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
-import { HttpStatus } from "../../../../lib/types/HttpStatus";
-import { Skeleton } from "../../Base/Skeleton";
+import { HttpStatus } from "@lib/types/HttpStatus";
+import { Skeleton } from "@components/Base/Skeleton";
 import { ErrorComponent } from "../common/ErrorComponent";
 import { Pagination } from "../common/Pagination";
 import { Unauthorized } from "../common/Unauthorized";

@@ -1,4 +1,4 @@
-import { SidebarItem } from "../../../../lib/types/SidebarItem";
+import { SidebarItem } from "@lib/types/SidebarItem";
 import { Sidebar } from "../common/Sidebar";
 import { ManageAccessOutlet } from "./ManageAccessOutlet";
 

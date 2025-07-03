@@ -1,7 +1,7 @@
 import useSWR from "swr";
-import appConfig from "../../../../../config/appConfig";
-import { fetcher } from "../../../../../lib/fetch";
-import { PacketMetadata } from "../../../../../types";
+import appConfig from "@config/appConfig";
+import { fetcher } from "@lib/fetch";
+import { PacketMetadata } from "@/types";
 
 export const useGetPinnedPackets = () => {
   const { data, isLoading, error } = useSWR<PacketMetadata[]>(`${appConfig.apiUrl()}/pins/packets`, (url: string) =>

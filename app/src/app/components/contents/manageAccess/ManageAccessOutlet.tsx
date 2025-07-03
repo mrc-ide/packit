@@ -1,12 +1,12 @@
 import { Outlet, useOutletContext } from "react-router-dom";
 import { useGetRolesAndUsersWithPermissions } from "./hooks/useGetRolesAndUsersWithPermissions";
 import { ErrorComponent } from "../common/ErrorComponent";
-import { Skeleton } from "../../Base/Skeleton";
+import { Skeleton } from "@components/Base/Skeleton";
 import { RoleWithRelationships } from "./types/RoleWithRelationships";
 import { UserWithPermissions } from "./types/UserWithPermissions";
 import { KeyedMutator } from "swr";
 import { Unauthorized } from "../common/Unauthorized";
-import { HttpStatus } from "../../../../lib/types/HttpStatus";
+import { HttpStatus } from "@lib/types/HttpStatus";
 
 export const ManageAccessOutlet = () => {
   const { roles, users, isLoading, error, mutate } = useGetRolesAndUsersWithPermissions();

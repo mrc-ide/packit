@@ -1,18 +1,17 @@
 import { rest } from "msw";
-import appConfig from "../../config/appConfig";
-import { download, getFileObjectUrl } from "../../lib/download";
-import { server } from "../../msw/server";
+import appConfig from "@config/appConfig";
+import { download, getFileObjectUrl } from "@lib/download";
+import { server } from "@/msw/server";
 import { mockPacket } from "../mocks";
-import { testBaseUrl } from "./constants";
 
-vitest.mock("../../lib/auth/getAuthHeader", () => ({
+vitest.mock("@lib/auth/getAuthHeader", () => ({
   getAuthHeader: () => ({ Authorization: "fakeAuthHeader" })
 }));
 
 let fetchSpy: any;
 let windowSpy: any;
 
-const testWindowLocation = `${testBaseUrl}/path/subpath`;
+const testWindowLocation = `${appConfig.apiUrl()}/path/subpath`;
 
 beforeEach(async () => {
   fetchSpy = vitest.spyOn(global, "fetch");

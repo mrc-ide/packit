@@ -1,9 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { UserProvider } from "../../app/components/providers/UserProvider";
-import { RedirectOnLoginProvider } from "../../app/components/providers/RedirectOnLoginProvider";
-import { App } from "../../app/App";
-import { BrandingProvider } from "../../app/components/providers/BrandingProvider";
+import { UserProvider } from "@components/providers/UserProvider";
+import { RedirectOnLoginProvider } from "@components/providers/RedirectOnLoginProvider";
+import { App } from "@/app/App";
+import { BrandingProvider } from "@components/providers/BrandingProvider";
 
 describe("app component", () => {
   const renderElement = () => {

@@ -1,15 +1,15 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { GLOBAL_PERMISSIONS, PERMISSION_SCOPES, SCOPED_PERMISSIONS } from "../../../../../lib/constants";
-import { Button } from "../../../Base/Button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../../Base/Form";
-import { RadioGroup, RadioGroupItem } from "../../../Base/RadioGroup";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../Base/Select";
+import { GLOBAL_PERMISSIONS, PERMISSION_SCOPES, SCOPED_PERMISSIONS } from "@lib/constants";
+import { Button } from "@components/Base/Button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@components/Base/Form";
+import { RadioGroup, RadioGroupItem } from "@components/Base/RadioGroup";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/Base/Select";
 import { BaseRolePermission } from "../types/RoleWithRelationships";
 import { AddScopedPermissionInput } from "./AddScopedPermissionInput";
 import { isDuplicateUpdatePermission } from "./utils/isDuplicateUpdatePermission";
-import { cn } from "../../../../../lib/cn";
+import { cn } from "@lib/cn";
 
 export const addPermissionFormSchema = z
   .object({

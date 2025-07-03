@@ -1,8 +1,8 @@
 import { Loader2 } from "lucide-react";
 import { Outlet, useOutletContext, useParams } from "react-router-dom";
-import { PacketNameError } from "../../../lib/errors";
-import { HttpStatus } from "../../../lib/types/HttpStatus";
-import { PacketMetadata } from "../../../types";
+import { PacketNameError } from "@lib/errors";
+import { HttpStatus } from "@lib/types/HttpStatus";
+import { PacketMetadata } from "@/types";
 import { ErrorPage } from "../contents/common/ErrorPage";
 import { Sidebar } from "../contents/common/Sidebar";
 import { Unauthorized } from "../contents/common/Unauthorized";
