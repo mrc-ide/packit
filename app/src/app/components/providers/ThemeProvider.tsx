@@ -1,10 +1,10 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
+import { LocalStorageKeys } from "@lib/types/LocalStorageKeys";
 import { Theme, ThemeProviderProps, ThemeProviderState } from "./types/ThemeTypes";
 import { useGetBrandingConfig } from "./hooks/useGetBrandingConfig";
 import { ErrorComponent } from "../contents/common/ErrorComponent";
 import { DEFAULT_AVAILABLE_THEMES, DEFAULT_THEME, getSystemTheme } from "./utils/themeUtils";
-import { BrandingConfiguration } from "../../../types";
+import { BrandingConfiguration } from "@/types";
 
 const ThemeProviderContext = createContext<ThemeProviderState>({
   availableThemes: DEFAULT_AVAILABLE_THEMES,

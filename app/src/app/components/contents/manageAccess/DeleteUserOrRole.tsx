@@ -9,12 +9,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger
-} from "../../Base/AlertDialog";
-import { Button, buttonVariants } from "../../Base/Button";
+} from "@components/Base/AlertDialog";
+import { Button, buttonVariants } from "@components/Base/Button";
 import { RoleWithRelationships } from "./types/RoleWithRelationships";
 import { KeyedMutator } from "swr";
-import { fetcher } from "../../../../lib/fetch";
-import appConfig from "../../../../config/appConfig";
+import { fetcher } from "@lib/fetch";
+import appConfig from "@config/appConfig";
 
 interface DeleteUserOrRoleProps {
   mutate: KeyedMutator<RoleWithRelationships[]>;

@@ -1,5 +1,5 @@
 import { Github } from "lucide-react";
-import { Separator } from "../../../Base/Separator";
+import { Separator } from "@components/Base/Separator";
 import { ParameterContainer } from "../../common/ParameterContainer";
 import { RunInfo } from "../types/RunInfo";
 import { TaskRunSummaryBottomButton } from "./TaskRunSummaryBottomButton";

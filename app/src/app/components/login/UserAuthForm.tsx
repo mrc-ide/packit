@@ -2,14 +2,14 @@
 "use client";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { cn } from "../../../lib/cn";
-import { isAuthenticated } from "../../../lib/isAuthenticated";
+import { cn } from "@lib/cn";
+import { isAuthenticated } from "@lib/isAuthenticated";
 import { useAuthConfig } from "../providers/AuthConfigProvider";
 import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 import { useUser } from "../providers/UserProvider";
 import { BasicUserAuthForm } from "./BasicUserAuthForm";
 import { GithubAuthForm } from "./GithubAuthForm";
-import { windowNavigate } from "../../../lib/navigate";
+import { windowNavigate } from "@lib/navigate";
 
 type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>;
 

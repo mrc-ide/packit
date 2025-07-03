@@ -3,12 +3,12 @@ import { Button } from "../Base/Button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../Base/Form";
 import { Input } from "../Base/Input";
 import { useUpdatePasswordForm } from "./hooks/useUpdatePasswordForm";
-import { fetcher } from "../../../lib/fetch";
-import appConfig from "../../../config/appConfig";
+import { fetcher } from "@lib/fetch";
+import appConfig from "@config/appConfig";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
-import { ApiError } from "../../../lib/errors";
-import { HttpStatus } from "../../../lib/types/HttpStatus";
+import { ApiError } from "@lib/errors";
+import { HttpStatus } from "@lib/types/HttpStatus";
 
 interface UpdatePasswordFormProps {
   email: string;

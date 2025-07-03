@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Search } from "lucide-react";
 import { FilterInput } from "../common/FilterInput";
 import { PacketGroupSummaryList } from "./PacketGroupSummaryList";
-import { PAGE_SIZE } from "../../../../lib/constants";
+import { PAGE_SIZE } from "@lib/constants";
 import { Pins } from "./Pins";
 
 export const Home = () => {

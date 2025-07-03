@@ -1,4 +1,4 @@
-import { BaseRolePermission } from "../app/components/contents/manageAccess/types/RoleWithRelationships";
+import type { BaseRolePermission } from "@components/contents/manageAccess/types/RoleWithRelationships";
 
 export const mapPermissionsToNames = (rolePermissions: BaseRolePermission[] = []) =>
   rolePermissions.map((permission) => constructPermissionName(permission));

@@ -1,15 +1,15 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { GitBranch, GitCommit, Loader2 } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
-import { getTimeDifferenceToDisplay } from "../../../../../lib/time";
-import { Button, buttonVariants } from "../../../Base/Button";
-import { ScrollArea } from "../../../Base/ScrollArea";
+import { getTimeDifferenceToDisplay } from "@lib/time";
+import { Button, buttonVariants } from "@components/Base/Button";
+import { ScrollArea } from "@components/Base/ScrollArea";
 import { ParameterContainer } from "../../common/ParameterContainer";
 import { useCancelTask } from "../hooks/useCancelTask";
 import { BasicRunInfo } from "../types/RunInfo";
 import { isUnfinishedStatus } from "../utils/taskRunUtils";
 import { StatusIcon } from "./StatusIcon";
-import { Separator } from "../../../Base/Separator";
+import { Separator } from "@components/Base/Separator";
 
 const columnHelper = createColumnHelper<BasicRunInfo>();
 export const runInfoColumns = [

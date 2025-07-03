@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
-import { HttpStatus } from "../../../../lib/types/HttpStatus";
-import { Skeleton } from "../../Base/Skeleton";
+import { HttpStatus } from "@lib/types/HttpStatus";
+import { Skeleton } from "@components/Base/Skeleton";
 import { ErrorComponent } from "../common/ErrorComponent";
 import { Unauthorized } from "../common/Unauthorized";
 import { PacketDataTable } from "./PacketDataTable";

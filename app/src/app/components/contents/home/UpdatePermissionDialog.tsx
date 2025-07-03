@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../Base/Dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@components/Base/Dialog";
 import { useGetRolesAndUsersToUpdatePacketGroupRead } from "./hooks/useGetRolesAndUsersToUpdatePacketGroupRead";
 import { UpdatePacketReadPermissionForm } from "./UpdatePacketReadPermissionForm";
 import { Loader2 } from "lucide-react";

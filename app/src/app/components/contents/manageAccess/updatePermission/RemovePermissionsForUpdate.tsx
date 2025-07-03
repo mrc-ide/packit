@@ -1,10 +1,10 @@
 import { ChevronsUpDown } from "lucide-react";
 import React from "react";
-import { constructPermissionName } from "../../../../../lib/constructPermissionName";
-import { Button } from "../../../Base/Button";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../../../Base/Command";
-import { Label } from "../../../Base/Label";
-import { Popover, PopoverContent, PopoverTrigger } from "../../../Base/Popover";
+import { constructPermissionName } from "@lib/constructPermissionName";
+import { Button } from "@components/Base/Button";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@components/Base/Command";
+import { Label } from "@components/Base/Label";
+import { Popover, PopoverContent, PopoverTrigger } from "@components/Base/Popover";
 import { BaseRolePermission, RolePermission } from "../types/RoleWithRelationships";
 import { isDuplicateUpdatePermission } from "./utils/isDuplicateUpdatePermission";
 

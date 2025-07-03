@@ -9,7 +9,7 @@ import {
 } from "../Base/DropdownMenu";
 import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
 import { useUser } from "../providers/UserProvider";
-import { getInitials } from "../../../lib/string";
+import { getInitials } from "@lib/string";
 
 export const AccountHeaderDropdown = () => {
   const { removeUser, user } = useUser();

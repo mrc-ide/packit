@@ -1,7 +1,7 @@
 import useSWR from "swr";
-import appConfig from "../../../../../config/appConfig";
-import { fetcher } from "../../../../../lib/fetch";
-import { Packet } from "../../../../../types";
+import appConfig from "@config/appConfig";
+import { fetcher } from "@lib/fetch";
+import { Packet } from "@/types";
 
 export const useGetPackets = (packetIds: string[]) => {
   // By default, useSWR reuses the 'key' parameter as the URL, (temporarily) cacheing requests to the same URL.

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { KeyedMutator } from "swr";
-import { Dialog } from "../../../Base/Dialog";
+import { Dialog } from "@components/Base/Dialog";
 import { UpdateDialogContent } from "../UpdateDialogContent";
 import { UpdateDropdown, UpdateOptions } from "../UpdateDropdown";
 import { RoleWithRelationships } from "../types/RoleWithRelationships";

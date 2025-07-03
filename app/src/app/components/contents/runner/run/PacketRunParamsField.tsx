@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useFieldArray, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../../../Base/Form";
-import { Input } from "../../../Base/Input";
-import { Skeleton } from "../../../Base/Skeleton";
+import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@components/Base/Form";
+import { Input } from "@components/Base/Input";
+import { Skeleton } from "@components/Base/Skeleton";
 import { ErrorComponent } from "../../common/ErrorComponent";
 import { useGetParameters } from "../hooks/useGetParameters";
 import { packetRunFormSchema } from "./PacketRunForm";

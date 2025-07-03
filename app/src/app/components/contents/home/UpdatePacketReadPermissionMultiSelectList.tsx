@@ -1,5 +1,5 @@
-import { cn } from "../../../../lib/cn";
-import { MultiSelectorItem, MultiSelectorList } from "../../Base/MultiSelect";
+import { cn } from "@lib/cn";
+import { MultiSelectorItem, MultiSelectorList } from "@components/Base/MultiSelect";
 import { BasicRolesAndUsers } from "../manageAccess/types/RoleWithRelationships";
 
 interface UpdatePacketReadPermissionMultiSelectListProps {

@@ -3,7 +3,7 @@ import { DataTable } from "../common/DataTable";
 import { useManageAccessLayoutContext } from "./ManageAccessOutlet";
 
 import { HelpCircle } from "lucide-react";
-import { PAGE_SIZE } from "../../../../lib/constants";
+import { PAGE_SIZE } from "@lib/constants";
 import { FilterInput } from "../common/FilterInput";
 import { AddRoleButton } from "./AddRoleButton";
 import { setupManageRolesColumns } from "./utils/manageRolesColumns";

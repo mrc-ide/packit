@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FilterInput } from "../common/FilterInput";
-import { PAGE_SIZE } from "../../../../lib/constants";
+import { PAGE_SIZE } from "@lib/constants";
 import { TasksLogsTable } from "./logs/TasksLogsTable";
 
 export const PacketRunTasksLogs = () => {

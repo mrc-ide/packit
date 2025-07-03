@@ -1,6 +1,6 @@
 import { Loader2, X } from "lucide-react";
 import { NavLink } from "react-router-dom";
-import { Button, buttonVariants } from "../../../Base/Button";
+import { Button, buttonVariants } from "@components/Base/Button";
 import { useCancelTask } from "../hooks/useCancelTask";
 import { RunInfo } from "../types/RunInfo";
 import { isUnfinishedStatus } from "../utils/taskRunUtils";

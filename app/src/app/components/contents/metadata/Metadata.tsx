@@ -1,10 +1,10 @@
 import { useParams } from "react-router-dom";
-import { getDateUTCString, getElapsedTime } from "../../../../helpers";
+import { getDateUTCString, getElapsedTime } from "@/helpers";
 import { usePacketOutletContext } from "../../main/PacketLayout";
 import { PacketHeader } from "../packets";
 import { MetadataListItem } from "./MetadataListItem";
 import { Github, Library, Monitor, Timer } from "lucide-react";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../Base/Accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@components/Base/Accordion";
 
 export const Metadata = () => {
   const { packetId, packetName } = useParams();

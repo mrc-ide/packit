@@ -1,8 +1,8 @@
 import useSWR from "swr";
-import appConfig from "../../../../../../config/appConfig";
-import { PermissionScope } from "../../../../../../lib/constants";
-import { PageableBasicDto } from "../../../../../../types";
-import { fetcher } from "../../../../../../lib/fetch";
+import appConfig from "@config/appConfig";
+import { PermissionScope } from "@lib/constants";
+import { PageableBasicDto } from "@/types";
+import { fetcher } from "@lib/fetch";
 import { getPermissionScopePaths } from "../utils/getPermissionScopePaths";
 
 export const useGetResourcesForScopedPermissions = (scope: PermissionScope, filterName: string) => {

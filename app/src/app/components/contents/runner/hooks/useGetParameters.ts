@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import { Parameter } from "../types/RunnerPacketGroup";
-import { fetcher } from "../../../../../lib/fetch";
-import appConfig from "../../../../../config/appConfig";
+import { fetcher } from "@lib/fetch";
+import appConfig from "@config/appConfig";
 
 export const useGetParameters = (packetGroupName: string | undefined, branchCommit: string | undefined) => {
   const { data, isLoading, error } = useSWR<Parameter[]>(

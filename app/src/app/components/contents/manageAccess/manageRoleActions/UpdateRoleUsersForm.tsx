@@ -3,10 +3,10 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
 import { KeyedMutator } from "swr";
 import { z } from "zod";
-import appConfig from "../../../../../config/appConfig";
-import { ApiError } from "../../../../../lib/errors";
-import { fetcher } from "../../../../../lib/fetch";
-import { Form, FormField, FormItem, FormLabel } from "../../../Base/Form";
+import appConfig from "@config/appConfig";
+import { ApiError } from "@lib/errors";
+import { fetcher } from "@lib/fetch";
+import { Form, FormField, FormItem, FormLabel } from "@components/Base/Form";
 import {
   MultiSelector,
   MultiSelectorContent,

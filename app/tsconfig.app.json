@@ -10,10 +10,10 @@
     "types": ["vitest/globals"],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
       "@components/*": ["./src/app/components/*"],
       "@lib/*": ["./src/lib/*"],
-      "@config/*": ["./src/config/*"]
+      "@config/*": ["./src/config/*"],
+      "@/*": ["./src/*"]
     },
 
     /* Bundler mode */

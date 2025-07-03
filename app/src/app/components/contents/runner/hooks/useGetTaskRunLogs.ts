@@ -1,6 +1,6 @@
 import useSWR from "swr";
-import appConfig from "../../../../../config/appConfig";
-import { fetcher } from "../../../../../lib/fetch";
+import appConfig from "@config/appConfig";
+import { fetcher } from "@lib/fetch";
 import { RunInfo } from "../types/RunInfo";
 
 export const useGetTaskRunLogs = (taskId: string | undefined) => {
