@@ -5,10 +5,10 @@ import {
   MultiSelectorContent,
   MultiSelectorInput,
   MultiSelectorTrigger
-} from "../../../../app/components/Base/MultiSelect";
+} from "@components/Base/MultiSelect";
 // eslint-disable-next-line max-len
-import { UpdatePacketReadPermissionMultiSelectList } from "../../../../app/components/contents/home/UpdatePacketReadPermissionMultiSelectList";
-import { mockRolesAndUsersWithPermissions } from "../../../mocks";
+import { UpdatePacketReadPermissionMultiSelectList } from "@components/contents/home/UpdatePacketReadPermissionMultiSelectList";
+import { mockRolesAndUsersWithPermissions } from "@/tests/mocks";
 
 describe("UpdatePacketReadPermissionMultiSelectList", () => {
   it("should render the list of roles and users correctly with styles", async () => {

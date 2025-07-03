@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { UpdatePermissionButton } from "../../../../app/components/contents/home/UpdatePermissionButton";
-import { mockPacket } from "../../../mocks";
+import { UpdatePermissionButton } from "@components/contents/home/UpdatePermissionButton";
+import { mockPacket } from "@/tests/mocks";
 
 describe("UpdatePermissionButton", () => {
   const packetGroupName = mockPacket.name;

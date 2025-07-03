@@ -1,11 +1,11 @@
 import { render } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { UserProvider } from "../../../app/components/providers/UserProvider";
-import { UserAuthForm } from "../../../app/components/login/UserAuthForm";
+import { UserProvider } from "@components/providers/UserProvider";
+import { UserAuthForm } from "@components/login/UserAuthForm";
 
 const mockSetLoggingOut = vitest.fn();
 let mockLoggingOut = false;
-vitest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
+vitest.mock("@components/providers/RedirectOnLoginProvider", () => ({
   useRedirectOnLogin: () => ({
     setLoggingOut: mockSetLoggingOut,
     loggingOut: (() => mockLoggingOut)()
@@ -24,7 +24,7 @@ const authConfig = {
   enablePreAuthLogin: false
 };
 const mockUseAuthConfig = vitest.fn().mockReturnValue(authConfig);
-vitest.mock("../../../app/components/providers/AuthConfigProvider", () => ({
+vitest.mock("@components/providers/AuthConfigProvider", () => ({
   useAuthConfig: () => mockUseAuthConfig()
 }));
 

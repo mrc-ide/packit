@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { WorkflowRunner } from "../../../../app/components/contents";
+import { WorkflowRunner } from "@components/contents";
 
 describe("workflow runner component", () => {
   it("renders skeleton text", async () => {

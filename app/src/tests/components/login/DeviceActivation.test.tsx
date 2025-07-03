@@ -1,10 +1,10 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { DeviceActivation } from "../../../app/components/login";
+import { DeviceActivation } from "@components/login";
 import userEvent from "@testing-library/user-event";
-import { server } from "../../../msw/server";
+import { server } from "@/msw/server";
 import { rest } from "msw";
-import appConfig from "../../../config/appConfig";
-import * as fetch from "../../../lib/fetch";
+import appConfig from "@config/appConfig";
+import * as fetch from "@lib/fetch";
 
 describe("DeviceActivation", () => {
   const renderComponent = () => {

@@ -1,9 +1,9 @@
 import { render, screen, waitFor } from "@testing-library/react";
 // eslint-disable-next-line max-len
-import { RemovePermissionsForUpdate } from "../../../../../app/components/contents/manageAccess/updatePermission/RemovePermissionsForUpdate";
-import { mockNonUsernameRolesWithRelationships } from "../../../../mocks";
+import { RemovePermissionsForUpdate } from "@components/contents/manageAccess/updatePermission/RemovePermissionsForUpdate";
+import { mockNonUsernameRolesWithRelationships } from "@/tests/mocks";
 import userEvent from "@testing-library/user-event";
-import { constructPermissionName } from "../../../../../lib/constructPermissionName";
+import { constructPermissionName } from "@lib/constructPermissionName";
 
 describe("RemovePermissionsForUpdate", () => {
   it("should show rolePermission names in dropdown", async () => {

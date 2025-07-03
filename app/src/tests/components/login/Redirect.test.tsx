@@ -1,19 +1,19 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { Home } from "../../../app/components/contents/home";
-import { Login, Redirect } from "../../../app/components/login";
-import { UserState } from "../../../app/components/providers/types/UserTypes";
+import { Home } from "@components/contents/home";
+import { Login, Redirect } from "@components/login";
+import { UserState } from "@components/providers/types/UserTypes";
 import { mockUserState, mockExpiredUserState } from "../../mocks";
-import { Accessibility } from "../../../app/components/contents/accessibility";
-import { AuthConfigProvider } from "../../../app/components/providers/AuthConfigProvider";
+import { Accessibility } from "@components/contents/accessibility";
+import { AuthConfigProvider } from "@components/providers/AuthConfigProvider";
 
-vitest.mock("../../../lib/localStorageManager", () => ({
+vitest.mock("@lib/localStorageManager", () => ({
   getAuthConfigFromLocalStorage: vitest.fn().mockReturnValue({ authEnabled: true, enableGithubLogin: true })
 }));
 
 const mockSetRequestedUrl = vitest.fn();
 let mockRequestedUrl: string | null = null;
-vitest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
+vitest.mock("@components/providers/RedirectOnLoginProvider", () => ({
   useRedirectOnLogin: () => ({
     setRequestedUrl: mockSetRequestedUrl,
     requestedUrl: (() => mockRequestedUrl)()
@@ -22,7 +22,7 @@ vitest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => (
 
 const mockSetUser = vitest.fn();
 let mockUser: UserState | null = null;
-vitest.mock("../../../app/components/providers/UserProvider.tsx", () => ({
+vitest.mock("@components/providers/UserProvider.tsx", () => ({
   useUser: () => ({
     setUser: mockSetUser,
     user: mockUser

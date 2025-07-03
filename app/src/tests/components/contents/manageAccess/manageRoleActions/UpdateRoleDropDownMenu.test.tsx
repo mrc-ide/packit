@@ -1,6 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-// eslint-disable-next-line max-len
-import { UpdateRoleDropDownMenu } from "../../../../../app/components/contents/manageAccess/manageRoleActions/UpdateRoleDropDownMenu";
+import { UpdateRoleDropDownMenu } from "@components/contents/manageAccess/manageRoleActions/UpdateRoleDropDownMenu";
 import userEvent from "@testing-library/user-event";
 
 describe("UpdateRoleDropDownMenu", () => {

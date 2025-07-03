@@ -1,13 +1,13 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { mockPacket } from "../../../mocks";
-import { PacketFileFullScreen } from "../../../../app/components/contents/packets";
+import { mockPacket } from "@/tests/mocks";
+import { PacketFileFullScreen } from "@components/contents/packets";
 import { SWRConfig } from "swr";
-import { PacketMetadata } from "../../../../types";
-import { PacketLayout } from "../../../../app/components/main";
-import * as UserProvider from "../../../../app/components/providers/UserProvider";
+import { PacketMetadata } from "@/types";
+import { PacketLayout } from "@components/main";
+import * as UserProvider from "@components/providers/UserProvider";
 
-vitest.mock("../../../../lib/auth/getAuthHeader", () => ({
+vitest.mock("@lib/auth/getAuthHeader", () => ({
   getAuthHeader: () => ({ Authorization: "fakeAuthHeader" })
 }));
 const mockUseUser = vitest.spyOn(UserProvider, "useUser");

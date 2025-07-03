@@ -2,10 +2,10 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
-import { PacketRunTaskLogs } from "../../../../app/components/contents/runner/PacketRunTaskLogs";
-import { basicRunnerUri } from "../../../../msw/handlers/runnerHandlers";
-import { server } from "../../../../msw/server";
-import { mockCompleteRunInfo } from "../../../mocks";
+import { PacketRunTaskLogs } from "@components/contents/runner/PacketRunTaskLogs";
+import { basicRunnerUri } from "@/msw/handlers/runnerHandlers";
+import { server } from "@/msw/server";
+import { mockCompleteRunInfo } from "@/tests/mocks";
 
 describe("PacketRunTaskLogs", () => {
   const testTaskId = "1234";

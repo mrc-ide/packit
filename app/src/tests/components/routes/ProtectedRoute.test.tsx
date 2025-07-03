@@ -1,9 +1,9 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import * as UserProvider from "../../../app/components/providers/UserProvider";
-import { ProtectedRoute } from "../../../app/components/routes/ProtectedRoute";
-import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
-import { mockUserProviderState } from "../../mocks";
+import * as UserProvider from "@components/providers/UserProvider";
+import { ProtectedRoute } from "@components/routes/ProtectedRoute";
+import { LocalStorageKeys } from "@lib/types/LocalStorageKeys";
+import { mockUserProviderState } from "@/tests/mocks";
 const mockedUsedNavigate = vitest.fn();
 vitest.mock("react-router-dom", async () => ({
   ...((await vitest.importActual("react-router-dom")) as any),
@@ -11,14 +11,14 @@ vitest.mock("react-router-dom", async () => ({
 }));
 const mockIsAuthenticated = vitest.fn();
 const mockAuthIsExpired = vitest.fn();
-vitest.mock("../../../lib/isAuthenticated", () => ({
+vitest.mock("@lib/isAuthenticated", () => ({
   isAuthenticated: () => mockIsAuthenticated(),
   authIsExpired: () => mockAuthIsExpired()
 }));
 
 const mockSetRequestedUrl = vitest.fn();
 let mockLoggingOut = false;
-vitest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
+vitest.mock("@components/providers/RedirectOnLoginProvider", () => ({
   useRedirectOnLogin: () => ({
     setRequestedUrl: mockSetRequestedUrl,
     loggingOut: (() => mockLoggingOut)()
@@ -26,7 +26,7 @@ vitest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => (
 }));
 
 const mockUseAuthConfig = vitest.fn();
-vitest.mock("../../../app/components/providers/AuthConfigProvider", () => ({
+vitest.mock("@components/providers/AuthConfigProvider", () => ({
   useAuthConfig: () => mockUseAuthConfig()
 }));
 

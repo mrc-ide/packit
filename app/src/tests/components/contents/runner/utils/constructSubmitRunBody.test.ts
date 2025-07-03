@@ -1,8 +1,5 @@
-import { GitBranchInfo } from "../../../../../app/components/contents/runner/types/GitBranches";
-import {
-  constructSubmitRunBody,
-  parseParameterValue
-} from "../../../../../app/components/contents/runner/utils/constructSubmitRunBody";
+import { GitBranchInfo } from "@components/contents/runner/types/GitBranches";
+import { constructSubmitRunBody, parseParameterValue } from "@components/contents/runner/utils/constructSubmitRunBody";
 
 describe("constructSubmitRunBody", () => {
   const branchInfo: GitBranchInfo = { name: "main", commitHash: "abc123", time: 123456, message: [] };

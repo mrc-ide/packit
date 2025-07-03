@@ -1,12 +1,12 @@
 /* eslint-disable max-len */
 import { render, screen, waitFor } from "@testing-library/react";
-import * as fetch from "../../../../../lib/fetch";
+import * as fetch from "@lib/fetch";
 import userEvent from "@testing-library/user-event";
-import { Dialog } from "../../../../../app/components/Base/Dialog";
-import { UpdateRoleUsersForm } from "../../../../../app/components/contents/manageAccess/manageRoleActions/UpdateRoleUsersForm";
-import appConfig from "../../../../../config/appConfig";
-import { ApiError } from "../../../../../lib/errors";
-import { HttpStatus } from "../../../../../lib/types/HttpStatus";
+import { Dialog } from "@components/Base/Dialog";
+import { UpdateRoleUsersForm } from "@components/contents/manageAccess/manageRoleActions/UpdateRoleUsersForm";
+import appConfig from "@config/appConfig";
+import { ApiError } from "@lib/errors";
+import { HttpStatus } from "@lib/types/HttpStatus";
 
 describe("UpdateRoleUsersForm", () => {
   const fetcherSpy = vitest.spyOn(fetch, "fetcher");

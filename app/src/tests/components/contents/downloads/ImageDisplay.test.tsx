@@ -1,11 +1,11 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { SWRConfig } from "swr";
-import { ImageDisplay } from "../../../../app/components/contents/downloads/ImageDisplay";
-import { PacketMetadata } from "../../../../types";
+import { ImageDisplay } from "@components/contents/downloads/ImageDisplay";
+import { PacketMetadata } from "@/types";
 
 const mockGetFileObjectUrl = vitest.fn();
-vitest.mock("../../../../lib/download", async () => ({
-  ...(await vitest.importActual("../../../../lib/download")),
+vitest.mock("@lib/download", async () => ({
+  ...(await vitest.importActual("@lib/download")),
   getFileObjectUrl: async (...args: any[]) => mockGetFileObjectUrl(...args)
 }));
 const revokeObjectURL = vitest.fn();

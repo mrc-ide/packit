@@ -2,10 +2,10 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { rest } from "msw";
-import { Command } from "../../../../../app/components/Base/Command";
-import { PermissionScopeCommandList } from "../../../../../app/components/contents/manageAccess/updatePermission/PermissionScopeCommandList";
-import { server } from "../../../../../msw/server";
-import { mockPacketGroupResponse, mockTags } from "../../../../mocks";
+import { Command } from "@components/Base/Command";
+import { PermissionScopeCommandList } from "@components/contents/manageAccess/updatePermission/PermissionScopeCommandList";
+import { server } from "@/msw/server";
+import { mockPacketGroupResponse, mockTags } from "@/tests/mocks";
 import { SWRConfig } from "swr";
 import { ReactNode } from "react";
 

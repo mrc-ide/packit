@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { mockPacket } from "../../../mocks";
-import { Accordion } from "../../../../app/components/Base/Accordion";
-import { PacketParameters } from "../../../../app/components/contents/packets/PacketParameters";
+import { mockPacket } from "@/tests/mocks";
+import { Accordion } from "@components/Base/Accordion";
+import { PacketParameters } from "@components/contents/packets/PacketParameters";
 
 describe("PacketParameters Component", () => {
   it("renders parameters correctly", async () => {

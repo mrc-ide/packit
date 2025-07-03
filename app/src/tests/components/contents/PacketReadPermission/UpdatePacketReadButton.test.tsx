@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 // eslint-disable-next-line max-len
-import { UpdatePacketReadButton } from "../../../../app/components/contents/PacketReadPermission/UpdatePacketReadButton";
-import { PacketMetadata } from "../../../../types";
+import { UpdatePacketReadButton } from "@components/contents/PacketReadPermission/UpdatePacketReadButton";
+import { PacketMetadata } from "@/types";
 import userEvent from "@testing-library/user-event";
 
 describe("UpdatePacketReadButton", () => {

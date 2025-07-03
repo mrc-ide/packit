@@ -1,5 +1,5 @@
-import { AuthConfig } from "../../app/components/providers/types/AuthConfigTypes";
-import { authIsExpired, isAuthenticated } from "../../lib/isAuthenticated";
+import { AuthConfig } from "@components/providers/types/AuthConfigTypes";
+import { authIsExpired, isAuthenticated } from "@lib/isAuthenticated";
 import { mockUserState, mockExpiredUserState } from "../mocks";
 
 describe("isAuthenticated", () => {

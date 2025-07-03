@@ -1,8 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { DeleteUserOrRole } from "../../../../app/components/contents/manageAccess/DeleteUserOrRole";
-import appConfig from "../../../../config/appConfig";
-import * as fetch from "../../../../lib/fetch";
+import { DeleteUserOrRole } from "@components/contents/manageAccess/DeleteUserOrRole";
+import appConfig from "@config/appConfig";
+import * as fetch from "@lib/fetch";
 
 describe("DeleteUserOrRole", () => {
   const fetcherSpy = vitest.spyOn(fetch, "fetcher");

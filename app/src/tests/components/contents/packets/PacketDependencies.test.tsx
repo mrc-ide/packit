@@ -1,9 +1,9 @@
 import { render, screen } from "@testing-library/react";
-import { Accordion } from "../../../../app/components/Base/Accordion";
-import { PacketDependencies } from "../../../../app/components/contents/packets/PacketDependencies";
-import { BasicPacket, PacketDepends } from "../../../../types";
+import { Accordion } from "@components/Base/Accordion";
+import { PacketDependencies } from "@components/contents/packets/PacketDependencies";
+import { BasicPacket, PacketDepends } from "@/types";
 import { MemoryRouter } from "react-router-dom";
-import { mockPackets } from "../../../mocks";
+import { mockPackets } from "@/tests/mocks";
 
 const renderComponent = (depends: PacketDepends[]) =>
   render(

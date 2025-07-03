@@ -1,9 +1,9 @@
 import { MemoryRouter } from "react-router-dom";
-import { UpdatePassword } from "../../../app/components/login";
+import { UpdatePassword } from "@components/login";
 import { render, screen, waitFor } from "@testing-library/react";
 
 const mockUseAuthConfig = vitest.fn();
-vitest.mock("../../../app/components/providers/AuthConfigProvider", () => ({
+vitest.mock("@components/providers/AuthConfigProvider", () => ({
   useAuthConfig: () => mockUseAuthConfig()
 }));
 describe("UpdatePassword", () => {

@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
-import { mockPacket } from "../../../mocks";
-import { FileRow } from "../../../../app/components/contents/downloads/FileRow";
+import { mockPacket } from "@/tests//mocks";
+import { FileRow } from "@components/contents/downloads/FileRow";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
-import { FileMetadata } from "../../../../types";
+import { FileMetadata } from "@/types";
 import { SWRConfig } from "swr";
 
 const expectIconToBeRendered = (container: HTMLElement, iconName: string) => {

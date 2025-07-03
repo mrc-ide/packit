@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { NavMenu, NavItems } from "../../../app/components/header/NavMenu";
+import { NavMenu, NavItems } from "@components/header/NavMenu";
 import { MemoryRouter } from "react-router-dom";
 
 describe("NavMenu component", () => {

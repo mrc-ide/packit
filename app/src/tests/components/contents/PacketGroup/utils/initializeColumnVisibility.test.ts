@@ -1,5 +1,4 @@
-// eslint-disable-next-line max-len
-import { initializeColumnVisibility } from "../../../../../app/components/contents/PacketGroup/utils/initializeColumnVisibility";
+import { initializeColumnVisibility } from "@components/contents/PacketGroup/utils/initializeColumnVisibility";
 
 describe("initializeColumnVisibility", () => {
   it("should return empty object for empty parameter set", () => {

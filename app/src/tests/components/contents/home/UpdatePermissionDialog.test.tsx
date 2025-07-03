@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { UpdatePermissionDialog } from "../../../../app/components/contents/home/UpdatePermissionDialog";
-import { mockPacket } from "../../../mocks";
-import { server } from "../../../../msw/server";
+import { UpdatePermissionDialog } from "@components/contents/home/UpdatePermissionDialog";
+import { mockPacket } from "@/tests/mocks";
+import { server } from "@/msw/server";
 import { rest } from "msw";
 import { SWRConfig } from "swr";
 

@@ -2,14 +2,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Form } from "../../../../../app/components/Base/Form";
-import { packetRunFormSchema } from "../../../../../app/components/contents/runner/run/PacketRunForm";
-import { mockGitBranches, mockPacketGroupsParameters, mockRunnerPacketGroups } from "../../../../mocks";
+import { Form } from "@components/Base/Form";
+import { packetRunFormSchema } from "@components/contents/runner/run/PacketRunForm";
+import { mockGitBranches, mockPacketGroupsParameters, mockRunnerPacketGroups } from "@/tests/mocks";
 import userEvent from "@testing-library/user-event";
 import { rest } from "msw";
 // eslint-disable-next-line max-len
-import { PacketRunPacketGroupFields } from "../../../../../app/components/contents/runner/run/PacketRunPacketGroupFields";
-import { server } from "../../../../../msw/server";
+import { PacketRunPacketGroupFields } from "@components/contents/runner/run/PacketRunPacketGroupFields";
+import { server } from "@/msw/server";
 
 const ComponentWithFormWrapper = () => {
   const form = useForm<z.infer<typeof packetRunFormSchema>>({

@@ -1,7 +1,7 @@
 import {
   rolesGlobalFilterFn,
   usersGlobalFilterFn
-} from "../../../../../app/components/contents/manageAccess/utils/rolesTableGlobalFilterFn";
+} from "@components/contents/manageAccess/utils/rolesTableGlobalFilterFn";
 
 describe("rolesTableGlobalFilterFn", () => {
   const row = {

@@ -1,14 +1,14 @@
 import { render, screen } from "@testing-library/react";
-import { Artefacts } from "../../../../../app/components/contents/downloads/orderly/Artefacts";
-import { mockPacket } from "../../../../mocks";
-import { Artefact, PacketMetadata } from "../../../../../types";
+import { Artefacts } from "@components/contents/downloads/orderly/Artefacts";
+import { mockPacket } from "@/tests/mocks";
+import { Artefact, PacketMetadata } from "@/types";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
 import userEvent from "@testing-library/user-event";
 
 const mockDownload = vitest.fn();
-vitest.mock("../../../../../lib/download", async () => ({
-  ...(await vitest.importActual("../../../../../lib/download")),
+vitest.mock("@lib/download", async () => ({
+  ...(await vitest.importActual("@lib/download")),
   download: async (...args: any[]) => mockDownload(...args)
 }));
 

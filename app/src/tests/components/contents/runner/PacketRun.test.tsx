@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { PacketRun } from "../../../../app/components/contents/runner";
-import { mockGitBranches } from "../../../mocks";
-import { server } from "../../../../msw/server";
+import { PacketRun } from "@components/contents/runner";
+import { mockGitBranches } from "@/tests/mocks";
+import { server } from "@/msw/server";
 import { rest } from "msw";
 import { SWRConfig } from "swr";
 import { MemoryRouter } from "react-router-dom";

@@ -1,5 +1,5 @@
 // eslint-disable-next-line max-len
-import { getPermissionScopePaths } from "../../../../../../app/components/contents/manageAccess/updatePermission/utils/getPermissionScopePaths";
+import { getPermissionScopePaths } from "@components/contents/manageAccess/updatePermission/utils/getPermissionScopePaths";
 
 describe("getScopePaths", () => {
   test("should return correct paths when filterName contains colon", () => {

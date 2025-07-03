@@ -1,12 +1,12 @@
 /* eslint-disable max-len */
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { BaseRolePermission } from "../../../../../app/components/contents/manageAccess/types/RoleWithRelationships";
-import { UpdatePermissionScrollArea } from "../../../../../app/components/contents/manageAccess/updatePermission/UpdatePermissionScrollArea";
-import { constructPermissionName } from "../../../../../lib/constructPermissionName";
+import { BaseRolePermission } from "@components/contents/manageAccess/types/RoleWithRelationships";
+import { UpdatePermissionScrollArea } from "@components/contents/manageAccess/updatePermission/UpdatePermissionScrollArea";
+import { constructPermissionName } from "@lib/constructPermissionName";
 
 const mockIsPermissionEqual = vitest.fn();
-vitest.mock("../../../../../app/components/contents/manageAccess/utils/isPermissionEqual", () => ({
+vitest.mock("@components/contents/manageAccess/utils/isPermissionEqual", () => ({
   isPermissionEqual: () => mockIsPermissionEqual()
 }));
 describe("UpdatePermissionScrollArea", () => {

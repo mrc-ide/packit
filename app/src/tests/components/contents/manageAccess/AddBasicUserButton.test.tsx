@@ -1,11 +1,11 @@
-import * as fetch from "../../../../lib/fetch";
-import { server } from "../../../../msw/server";
+import * as fetch from "@lib/fetch";
+import { server } from "@/msw/server";
 import { rest } from "msw";
-import { HttpStatus } from "../../../../lib/types/HttpStatus";
+import { HttpStatus } from "@lib/types/HttpStatus";
 import { render, screen, waitFor } from "@testing-library/react";
-import { AddBasicUserButton } from "../../../../app/components/contents/manageAccess/AddBasicUserButton";
+import { AddBasicUserButton } from "@components/contents/manageAccess/AddBasicUserButton";
 import userEvent from "@testing-library/user-event";
-import appConfig from "../../../../config/appConfig";
+import appConfig from "@config/appConfig";
 
 describe("AddBasicUser", () => {
   const fetcherSpy = vitest.spyOn(fetch, "fetcher");

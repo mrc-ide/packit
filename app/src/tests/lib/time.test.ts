@@ -1,4 +1,4 @@
-import { getTimeDifferenceToDisplay } from "../../lib/time";
+import { getTimeDifferenceToDisplay } from "@lib/time";
 
 describe("getTimeDifferenceToDisplay", () => {
   it("should return correct difference in days, hours, minutes, and seconds", () => {

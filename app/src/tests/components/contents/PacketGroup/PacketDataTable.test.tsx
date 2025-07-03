@@ -1,8 +1,8 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
-import { PacketDataTable } from "../../../../app/components/contents/PacketGroup/PacketDataTable";
-import { mockPacketGroupResponse } from "../../../mocks";
+import { PacketDataTable } from "@components/contents/PacketGroup/PacketDataTable";
+import { mockPacketGroupResponse } from "@/tests/mocks";
 
 const renderComponent = () =>
   render(

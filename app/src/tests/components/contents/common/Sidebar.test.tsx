@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { Sidebar } from "../../../../app/components/contents/common/Sidebar";
+import { Sidebar } from "@components/contents/common/Sidebar";
 
 describe("Sidebar", () => {
   it("should render sidebar items with children and correct button type based on current route", () => {

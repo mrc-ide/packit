@@ -1,13 +1,13 @@
-import { RunInfo } from "../../../../../app/components/contents/runner/types/RunInfo";
+import { RunInfo } from "@components/contents/runner/types/RunInfo";
 import {
   getStatusDisplayByStatus,
   getTimeInDisplayFormat,
   isUnfinishedStatus
-} from "../../../../../app/components/contents/runner/utils/taskRunUtils";
-import { TimeDifference } from "../../../../../lib/time";
+} from "@components/contents/runner/utils/taskRunUtils";
+import { TimeDifference } from "@lib/time";
 
 const mockDisplayTime = vitest.fn();
-vitest.mock("../../../../../lib/time", () => ({
+vitest.mock("@lib/time", () => ({
   getTimeDifferenceToDisplay: () => mockDisplayTime()
 }));
 

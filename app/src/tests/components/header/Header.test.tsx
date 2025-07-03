@@ -1,14 +1,14 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
-import { RedirectOnLoginProvider } from "../../../app/components/providers/RedirectOnLoginProvider";
-import { ThemeProvider } from "../../../app/components/providers/ThemeProvider";
-import * as UserProvider from "../../../app/components/providers/UserProvider";
+import { RedirectOnLoginProvider } from "@components/providers/RedirectOnLoginProvider";
+import { ThemeProvider } from "@components/providers/ThemeProvider";
+import * as UserProvider from "@components/providers/UserProvider";
 import { mockUserProviderState } from "../../mocks";
-import { Header } from "../../../app/components/header";
-import { BrandingProvider } from "../../../app/components/providers/BrandingProvider";
+import { Header } from "@components/header";
+import { BrandingProvider } from "@components/providers/BrandingProvider";
 import { expectThemeClass, handleRequestWithEnabledThemes } from "../../testUtils";
-import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
+import { LocalStorageKeys } from "@lib/types/LocalStorageKeys";
 import { SWRConfig } from "swr";
 
 const mockUseUser = vitest.spyOn(UserProvider, "useUser");
