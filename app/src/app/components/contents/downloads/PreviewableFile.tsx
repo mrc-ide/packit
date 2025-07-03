@@ -1,4 +1,4 @@
-import { FileMetadata } from "../../../../types";
+import { FileMetadata } from "@/types";
 import { HoverCard } from "../../Base/HoverCard";
 import { HoverCardContent, HoverCardTrigger } from "@radix-ui/react-hover-card";
 import { useFileObjectUrl } from "./hooks/useFileObjectUrl";

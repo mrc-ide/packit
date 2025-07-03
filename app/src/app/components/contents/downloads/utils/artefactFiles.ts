@@ -1,4 +1,4 @@
-import { Artefact, FileMetadata, PacketMetadata } from "../../../../../types";
+import { Artefact, FileMetadata, PacketMetadata } from "@/types";
 import { getFileByPath } from "./getFileByPath";
 
 export const filesForArtefact = (artefact: Artefact, packet: PacketMetadata) =>

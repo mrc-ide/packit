@@ -1,7 +1,7 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { buttonVariants } from "../../Base/Button";
-import { cn } from "../../../../lib/cn";
-import { SidebarItem } from "../../../../lib/types/SidebarItem";
+import { buttonVariants } from "@components/Base/Button";
+import { cn } from "@lib/cn";
+import { SidebarItem } from "@lib/types/SidebarItem";
 
 interface SidebarProps {
   sidebarItems: SidebarItem[];
