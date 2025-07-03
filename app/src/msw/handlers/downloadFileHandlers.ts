@@ -1,5 +1,5 @@
-import appConfig from "../../config/appConfig";
 import { rest } from "msw";
+import appConfig from "../../config/appConfig";
 import { mockPacket } from "../../tests/mocks";
 
 export const downloadFileHandlers = [

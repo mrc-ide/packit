@@ -12,7 +12,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@components/*": ["./src/app/components/*"],
-      "@lib/*": ["./src/lib/*"]
+      "@lib/*": ["./src/lib/*"],
+      "@config/*": ["./src/config/*"]
     },
 
     /* Bundler mode */

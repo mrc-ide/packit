@@ -9,7 +9,7 @@ Node 22.
 
 **App can be started in the project directory when you run:**
 
-### `npm start`
+### `npm run dev`
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
@@ -25,7 +25,15 @@ To see a working app you will need to run dependencies. From the root directory:
 ### `npm test`
 
 Launches the test runner in the interactive watch mode. Excludes integration tests. \
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+See the section about [vitest features](https://vitest.dev/guide/features) for more information.
+
+### `npm run test:coverage`
+
+Launches the test runner in the interactive watch mode, running all tests and generating a coverage report.
+
+### `npm run test:ui`
+
+Launches [vitest ui](https://vitest.dev/guide/ui) in the browser, which allows you to run tests and see results in a UI.
 
 ### `npm run integration-test`
 
