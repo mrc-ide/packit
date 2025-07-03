@@ -1,12 +1,11 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { PacketRunTaskLogs } from "../../../../app/components/contents/runner/PacketRunTaskLogs";
-import { mockCompleteRunInfo } from "../../../mocks";
-import { server } from "../../../../msw/server";
 import { rest } from "msw";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
+import { PacketRunTaskLogs } from "../../../../app/components/contents/runner/PacketRunTaskLogs";
 import { basicRunnerUri } from "../../../../msw/handlers/runnerHandlers";
-import { vi } from "vitest";
+import { server } from "../../../../msw/server";
+import { mockCompleteRunInfo } from "../../../mocks";
 
 describe("PacketRunTaskLogs", () => {
   const testTaskId = "1234";
@@ -28,7 +27,7 @@ describe("PacketRunTaskLogs", () => {
   };
 
   afterEach(() => {
-    vi.useRealTimers();
+    vitest.useRealTimers();
   });
 
   it("should render runInfo if successfully gets status", async () => {
@@ -65,18 +64,18 @@ describe("PacketRunTaskLogs", () => {
       })
     );
     renderComponent();
-    vi.useFakeTimers();
+    vitest.useFakeTimers();
 
     await waitFor(() => {
       expect(screen.getByText(/Running for 1 s/i)).toBeVisible();
     });
 
-    vi.advanceTimersByTime(2000);
+    vitest.advanceTimersByTime(2000);
     await waitFor(() => {
       expect(screen.getByText(/Running for 3 s/i)).toBeVisible();
     });
 
-    vi.advanceTimersByTime(2000);
+    vitest.advanceTimersByTime(2000);
     await waitFor(() => {
       expect(screen.getByText(/Running for 5 s/i)).toBeVisible();
     });
@@ -93,18 +92,18 @@ describe("PacketRunTaskLogs", () => {
       })
     );
     renderComponent();
-    vi.useFakeTimers();
+    vitest.useFakeTimers();
 
     await waitFor(() => {
       expect(screen.getByText(/Waiting for 1 s/i)).toBeVisible();
     });
 
-    vi.advanceTimersByTime(2000);
+    vitest.advanceTimersByTime(2000);
     await waitFor(() => {
       expect(screen.getByText(/Waiting for 3 s/i)).toBeVisible();
     });
 
-    vi.advanceTimersByTime(2000);
+    vitest.advanceTimersByTime(2000);
     await waitFor(() => {
       expect(screen.getByText(/Waiting for 5 s/i)).toBeVisible();
     });
@@ -120,14 +119,14 @@ describe("PacketRunTaskLogs", () => {
       })
     );
     renderComponent();
-    vi.useFakeTimers();
+    vitest.useFakeTimers();
 
     await awaitTaskId();
 
-    vi.advanceTimersByTime(2000);
+    vitest.advanceTimersByTime(2000);
     await awaitTaskId();
 
-    vi.advanceTimersByTime(2000);
+    vitest.advanceTimersByTime(2000);
     await awaitTaskId();
 
     await waitFor(() => {

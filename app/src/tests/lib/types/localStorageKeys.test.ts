@@ -1,6 +1,7 @@
 describe("local storage keys", () => {
   afterEach(() => {
     vitest.unstubAllEnvs();
+    vitest.resetModules();
   });
 
   test("local storage keys are namespaced correctly", async () => {
@@ -14,6 +15,19 @@ describe("local storage keys", () => {
       USER: `${ns}.user`,
       THEME: "ui-theme",
       REQUESTED_URL: `${ns}.requestedUrl`
+    });
+  });
+
+  test("local storage keys without namespace", async () => {
+    vitest.stubEnv("VITE_PACKIT_NAMESPACE", "");
+
+    const { LocalStorageKeys } = await import("../../../lib/types/LocalStorageKeys");
+
+    expect(LocalStorageKeys).toStrictEqual({
+      AUTH_CONFIG: "authConfig",
+      USER: "user",
+      THEME: "ui-theme",
+      REQUESTED_URL: "requestedUrl"
     });
   });
 });

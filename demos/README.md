@@ -25,7 +25,7 @@ will have been stored in the outpack server, ready for us to try to download it.
 1. Create a build of the packit backend using `./api/scripts/build`, and (if your goal is to test that the server does
 not run out of memory when transferring large files) run this build using a reduced heap size, e.g. 128MB, by running
 this command from the `./api` directory: `java -Xmx128m -jar app/build/libs/app.jar`
-1. Run the front-end (if you want to test the full stack) from the /app directory as normal (`npm start`). Navigate to
+1. Run the front-end (if you want to test the full stack) from the /app directory as normal (`npm run dev`). Navigate to
 `massive-file` packet download page and do your testing. You can also test if the main thread gets blocked by the
 download by trying to make requests while the download is in progress, such as by making other download requests.
 1. Clean up your downloads folder! These files are big.

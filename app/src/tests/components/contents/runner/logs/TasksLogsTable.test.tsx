@@ -1,20 +1,19 @@
 import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { rest } from "msw";
 import { MemoryRouter } from "react-router-dom";
+import { Toaster } from "sonner";
 import { SWRConfig } from "swr";
 import { TasksLogsTable } from "../../../../../app/components/contents/runner/logs/TasksLogsTable";
 import { PAGE_SIZE } from "../../../../../lib/constants";
+import { basicRunnerUri } from "../../../../../msw/handlers/runnerHandlers";
 import { server } from "../../../../../msw/server";
 import { mockTasksRunInfo } from "../../../../mocks";
-import { basicRunnerUri } from "../../../../../msw/handlers/runnerHandlers";
-import userEvent from "@testing-library/user-event";
-import { Toaster } from "sonner";
-import { vi } from "vitest";
 const renderComponent = () =>
   render(
     <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>
       <MemoryRouter>
-        <TasksLogsTable pageNumber={1} pageSize={PAGE_SIZE} filterPacketGroupName="" setPageNumber={vi.fn()} />
+        <TasksLogsTable pageNumber={1} pageSize={PAGE_SIZE} filterPacketGroupName="" setPageNumber={vitest.fn()} />
         <Toaster />
       </MemoryRouter>
     </SWRConfig>
@@ -22,7 +21,7 @@ const renderComponent = () =>
 
 describe("TasksLogsTable component", () => {
   afterEach(() => {
-    vi.useRealTimers();
+    vitest.useRealTimers();
   });
   it("should render error component when api call fails", async () => {
     server.use(
@@ -114,18 +113,18 @@ describe("TasksLogsTable component", () => {
       })
     );
     renderComponent();
-    vi.useFakeTimers();
+    vitest.useFakeTimers();
 
     await waitFor(() => {
       expect(screen.getByText(/created 1 seconds ago/i)).toBeVisible();
     });
 
-    vi.advanceTimersByTime(3000);
+    vitest.advanceTimersByTime(3000);
     await waitFor(() => {
       expect(screen.getByText(/created 4 seconds ago/i)).toBeVisible();
     });
 
-    vi.advanceTimersByTime(3000);
+    vitest.advanceTimersByTime(3000);
 
     await waitFor(() => {
       expect(screen.getByText(/created 7 seconds ago/i)).toBeVisible();
@@ -145,10 +144,10 @@ describe("TasksLogsTable component", () => {
       })
     );
     renderComponent();
-    vi.useFakeTimers();
+    vitest.useFakeTimers();
 
-    vi.advanceTimersByTime(3000);
-    vi.advanceTimersByTime(3000);
+    vitest.advanceTimersByTime(3000);
+    vitest.advanceTimersByTime(3000);
 
     await waitFor(() => {
       expect(numApiCalled).toBe(1);
