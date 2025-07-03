@@ -11,6 +11,7 @@ import { AuthLayoutForm, DeviceActivation, Login, Redirect, UpdatePassword } fro
 import { PacketLayout } from "../main";
 import { Breadcrumb } from "../main/Breadcrumb";
 import { ProtectedRoute } from "./ProtectedRoute";
+import manageAccessHelpURL from "@/docs/manageAccessHelpPage.md";
 
 export const Router = () => {
   return (
@@ -53,10 +54,7 @@ export const Router = () => {
           </Route>
         </Route>
         {/* documentation */}
-        <Route
-          path="/docs/manage-access-help"
-          element={<Markdown mdPath={`${process.env.PUBLIC_URL}/docs/manageAccessHelpPage.md`} />}
-        />
+        <Route path="/docs/manage-access-help" element={<Markdown mdPath={manageAccessHelpURL} />} />
       </Route>
       <Route element={<ProtectedRoute />}>
         <Route path="/:packetName/:packetId/file/*" element={<PacketFileFullScreen />} />

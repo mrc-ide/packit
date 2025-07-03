@@ -1,5 +1,5 @@
-import { Header } from "./components/header";
-import { Main } from "./components/main";
+import { Header } from "@components/header";
+import { Main } from "@components/main";
 
 export const App = () => {
   return (

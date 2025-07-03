@@ -6,12 +6,12 @@ import { SWRConfig } from "swr";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import { Accordion } from "../../../../app/components/Base/Accordion";
 
-jest.mock("../../../../lib/download", () => ({
-  ...jest.requireActual("../../../../lib/download"),
+vitest.mock("../../../../lib/download", async () => ({
+  ...(await vitest.importActual("../../../../lib/download")),
   getFileObjectUrl: async () => "fakeObjectUrl"
 }));
-URL.createObjectURL = jest.fn();
-URL.revokeObjectURL = jest.fn();
+URL.createObjectURL = vitest.fn();
+URL.revokeObjectURL = vitest.fn();
 
 describe("Packet reports component", () => {
   const renderComponent = (packet: PacketMetadata) => {

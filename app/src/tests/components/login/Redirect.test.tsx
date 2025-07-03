@@ -7,22 +7,22 @@ import { mockUserState, mockExpiredUserState } from "../../mocks";
 import { Accessibility } from "../../../app/components/contents/accessibility";
 import { AuthConfigProvider } from "../../../app/components/providers/AuthConfigProvider";
 
-jest.mock("../../../lib/localStorageManager", () => ({
-  getAuthConfigFromLocalStorage: jest.fn().mockReturnValue({ authEnabled: true, enableGithubLogin: true })
+vitest.mock("../../../lib/localStorageManager", () => ({
+  getAuthConfigFromLocalStorage: vitest.fn().mockReturnValue({ authEnabled: true, enableGithubLogin: true })
 }));
 
-const mockSetRequestedUrl = jest.fn();
+const mockSetRequestedUrl = vitest.fn();
 let mockRequestedUrl: string | null = null;
-jest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
+vitest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
   useRedirectOnLogin: () => ({
     setRequestedUrl: mockSetRequestedUrl,
     requestedUrl: (() => mockRequestedUrl)()
   })
 }));
 
-const mockSetUser = jest.fn();
+const mockSetUser = vitest.fn();
 let mockUser: UserState | null = null;
-jest.mock("../../../app/components/providers/UserProvider.tsx", () => ({
+vitest.mock("../../../app/components/providers/UserProvider.tsx", () => ({
   useUser: () => ({
     setUser: mockSetUser,
     user: mockUser
@@ -48,7 +48,7 @@ describe("redirect", () => {
   beforeEach(() => {
     mockRequestedUrl = null;
     mockUser = null;
-    jest.clearAllMocks();
+    vitest.clearAllMocks();
   });
 
   it("renders home page if no token or error", async () => {

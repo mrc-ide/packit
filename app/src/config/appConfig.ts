@@ -5,17 +5,17 @@ interface AppConfig {
 
 const appConfig: AppConfig = {
   apiUrl: () => {
-    if (process.env.REACT_APP_PACKIT_API_URL === undefined) {
+    if (import.meta.env.VITE_PACKIT_API_URL === undefined) {
       throw new Error("An API URL must be configured");
     } else {
-      return process.env.REACT_APP_PACKIT_API_URL;
+      return import.meta.env.VITE_PACKIT_API_URL;
     }
   },
   appNamespace: () => {
-    if (!process.env.REACT_APP_PACKIT_NAMESPACE) {
+    if (!import.meta.env.VITE_PACKIT_NAMESPACE) {
       return null;
     } else {
-      return process.env.REACT_APP_PACKIT_NAMESPACE;
+      return import.meta.env.VITE_PACKIT_NAMESPACE;
     }
   }
 };

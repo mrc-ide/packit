@@ -9,7 +9,7 @@ import { mockPacket } from "../../../mocks";
 import { PacketLayout } from "../../../../app/components/main";
 import * as UserProvider from "../../../../app/components/providers/UserProvider";
 
-const mockUseUser = jest.spyOn(UserProvider, "useUser");
+const mockUseUser = vitest.spyOn(UserProvider, "useUser");
 
 describe("Metadata component", () => {
   const renderComponent = () => {

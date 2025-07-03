@@ -10,9 +10,9 @@ import appConfig from "../../../../config/appConfig";
 import { UserProvider } from "../../../../app/components/providers/UserProvider";
 import { UserState } from "../../../../app/components/providers/types/UserTypes";
 
-const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
-jest.mock("../../../../lib/localStorageManager", () => ({
-  ...jest.requireActual("../../../../lib/localStorageManager"),
+const mockGetUserFromLocalStorage = vitest.fn((): null | UserState => null);
+vitest.mock("../../../../lib/localStorageManager", async () => ({
+  ...(await vitest.importActual("../../../../lib/localStorageManager")),
   getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
 }));
 
@@ -24,7 +24,7 @@ describe("PacketGroupSummaryList test", () => {
       <SWRConfig value={{ provider: () => new Map() }}>
         <MemoryRouter>
           <UserProvider>
-            <PacketGroupSummaryList filterByName="" pageNumber={0} pageSize={10} setPageNumber={jest.fn()} />
+            <PacketGroupSummaryList filterByName="" pageNumber={0} pageSize={10} setPageNumber={vitest.fn()} />
           </UserProvider>
         </MemoryRouter>
       </SWRConfig>

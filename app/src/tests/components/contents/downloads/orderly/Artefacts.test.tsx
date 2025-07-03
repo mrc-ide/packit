@@ -6,9 +6,9 @@ import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
 import userEvent from "@testing-library/user-event";
 
-const mockDownload = jest.fn();
-jest.mock("../../../../../lib/download", () => ({
-  ...jest.requireActual("../../../../../lib/download"),
+const mockDownload = vitest.fn();
+vitest.mock("../../../../../lib/download", async () => ({
+  ...(await vitest.importActual("../../../../../lib/download")),
   download: async (...args: any[]) => mockDownload(...args)
 }));
 
@@ -43,7 +43,7 @@ const renderComponent = (packet?: PacketMetadata) => {
 
 describe("Artefacts component", () => {
   afterAll(() => {
-    jest.clearAllMocks();
+    vitest.clearAllMocks();
   });
 
   it("renders each artefact's description and its files' names", async () => {

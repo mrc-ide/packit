@@ -8,7 +8,7 @@ import userEvent from "@testing-library/user-event";
 import appConfig from "../../../../config/appConfig";
 
 describe("AddBasicUser", () => {
-  const fetcherSpy = jest.spyOn(fetch, "fetcher");
+  const fetcherSpy = vitest.spyOn(fetch, "fetcher");
   const roleNames = ["role1", "role2", "role3", "role4", "role5"];
   const userFormValues = {
     email: "random@gmail.com",
@@ -17,8 +17,11 @@ describe("AddBasicUser", () => {
     userRoles: ["role1", "role3"]
   };
 
+  afterEach(() => {
+    vitest.clearAllMocks();
+  });
   it("should open dialog on add user button click with form", async () => {
-    render(<AddBasicUserButton mutate={jest.fn()} roleNames={roleNames} />);
+    render(<AddBasicUserButton mutate={vitest.fn()} roleNames={roleNames} />);
 
     userEvent.click(screen.getByRole("button", { name: /add user/i }));
 
@@ -32,7 +35,7 @@ describe("AddBasicUser", () => {
   });
 
   it("should close dialog and clear form on cancel button click", () => {
-    render(<AddBasicUserButton mutate={jest.fn()} roleNames={roleNames} />);
+    render(<AddBasicUserButton mutate={vitest.fn()} roleNames={roleNames} />);
     const addUserButton = screen.getByRole("button", { name: /add user/i });
     userEvent.click(addUserButton);
 
@@ -47,7 +50,7 @@ describe("AddBasicUser", () => {
   });
 
   it("should close dialog, reset form, call mutate on successful form submission", async () => {
-    const mutate = jest.fn();
+    const mutate = vitest.fn();
     render(<AddBasicUserButton mutate={mutate} roleNames={roleNames} />);
     const addUserButton = screen.getByRole("button", { name: /add user/i });
     userEvent.click(addUserButton);
@@ -69,7 +72,7 @@ describe("AddBasicUser", () => {
   });
 
   it("should call fetch with correct params on successful form submission", async () => {
-    render(<AddBasicUserButton mutate={jest.fn()} roleNames={roleNames} />);
+    render(<AddBasicUserButton mutate={vitest.fn()} roleNames={roleNames} />);
     const addUserButton = screen.getByRole("button", { name: /add user/i });
     userEvent.click(addUserButton);
 
@@ -91,7 +94,7 @@ describe("AddBasicUser", () => {
   });
 
   it("should validate email, display error message on form submission without calling fetch", async () => {
-    render(<AddBasicUserButton mutate={jest.fn()} roleNames={roleNames} />);
+    render(<AddBasicUserButton mutate={vitest.fn()} roleNames={roleNames} />);
     const addUserButton = screen.getByRole("button", { name: /add user/i });
     userEvent.click(addUserButton);
 
@@ -108,7 +111,7 @@ describe("AddBasicUser", () => {
   });
 
   it("should show error message when role name is not trimmed", async () => {
-    render(<AddBasicUserButton mutate={jest.fn()} roleNames={roleNames} />);
+    render(<AddBasicUserButton mutate={vitest.fn()} roleNames={roleNames} />);
     userEvent.click(screen.getByRole("button", { name: /add user/i }));
 
     userEvent.type(screen.getByLabelText(/name/i), " trim ");
@@ -126,7 +129,7 @@ describe("AddBasicUser", () => {
         return res(ctx.status(HttpStatus.BadRequest), ctx.json({ error: { detail: errorMessage } }));
       })
     );
-    render(<AddBasicUserButton mutate={jest.fn()} roleNames={roleNames} />);
+    render(<AddBasicUserButton mutate={vitest.fn()} roleNames={roleNames} />);
     const addUserButton = screen.getByRole("button", { name: /add user/i });
     userEvent.click(addUserButton);
 
@@ -147,7 +150,7 @@ describe("AddBasicUser", () => {
         return res(ctx.status(HttpStatus.InternalServerError), ctx.json({ error: { detail: errorMessage } }));
       })
     );
-    render(<AddBasicUserButton mutate={jest.fn()} roleNames={roleNames} />);
+    render(<AddBasicUserButton mutate={vitest.fn()} roleNames={roleNames} />);
     const addUserButton = screen.getByRole("button", { name: /add user/i });
     userEvent.click(addUserButton);
 

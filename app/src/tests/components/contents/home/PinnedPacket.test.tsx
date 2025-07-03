@@ -6,9 +6,9 @@ import { MemoryRouter } from "react-router-dom";
 import { PacketMetadata } from "../../../../types";
 import userEvent from "@testing-library/user-event";
 
-const mockDownload = jest.fn();
-jest.mock("../../../../lib/download", () => ({
-  ...jest.requireActual("../../../../lib/download"),
+const mockDownload = vitest.fn();
+vitest.mock("../../../../lib/download", async () => ({
+  ...(await vitest.importActual("../../../../lib/download")),
   download: async (...args: any[]) => mockDownload(...args)
 }));
 

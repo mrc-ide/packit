@@ -10,11 +10,11 @@ import { PacketMetadata } from "../../../../types";
 import { mockPacket, mockPackets } from "../../../mocks";
 import * as UserProvider from "../../../../app/components/providers/UserProvider";
 
-jest.mock("../../../../lib/download", () => ({
+vitest.mock("../../../../lib/download", () => ({
   getFileObjectUrl: async () => "fakeObjectUrl"
 }));
 
-const mockUseUser = jest.spyOn(UserProvider, "useUser");
+const mockUseUser = vitest.spyOn(UserProvider, "useUser");
 
 const renderComponent = (packet: PacketMetadata = mockPacket) => {
   render(

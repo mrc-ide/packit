@@ -9,14 +9,15 @@ import { UserState } from "../../../app/components/providers/types/UserTypes";
 import appConfig from "../../../config/appConfig";
 import { mockUserState } from "../../mocks";
 
-const mockedUsedNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...(jest.requireActual("react-router-dom") as any),
+const mockedUsedNavigate = vitest.fn();
+vitest.mock("react-router-dom", async () => ({
+  ...((await vitest.importActual("react-router-dom")) as any),
   useNavigate: () => mockedUsedNavigate
 }));
-const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
-jest.mock("../../../lib/localStorageManager", () => ({
-  ...(jest.requireActual("../../../lib/localStorageManager") as any),
+
+const mockGetUserFromLocalStorage = vitest.fn((): null | UserState => null);
+vitest.mock("../../../lib/localStorageManager", async () => ({
+  ...((await vitest.importActual("../../../lib/localStorageManager")) as any),
   getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
 }));
 

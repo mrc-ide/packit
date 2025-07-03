@@ -9,7 +9,7 @@ describe("UpdatePermissionDialog", () => {
   const renderComponent = () =>
     render(
       <SWRConfig value={{ provider: () => new Map(), dedupingInterval: 0 }}>
-        <UpdatePermissionDialog packetGroupName={mockPacket.name} dialogOpen={true} setDialogOpen={jest.fn()} />
+        <UpdatePermissionDialog packetGroupName={mockPacket.name} dialogOpen={true} setDialogOpen={vitest.fn()} />
       </SWRConfig>
     );
 

@@ -1,46 +1,27 @@
-export {};
+import appConfig from "../config/appConfig";
 
 describe("api service", () => {
-  const OLD_ENV = process.env;
-
-  beforeEach(() => {
-    jest.resetModules(); // Important - it clears the cache
-    process.env = { ...OLD_ENV }; // Make a copy
+  afterEach(() => {
+    vitest.unstubAllEnvs();
   });
-
-  afterAll(() => {
-    process.env = OLD_ENV; // Restore old environment
-  });
-
   test("uses API URL from environment", () => {
-    process.env.REACT_APP_PACKIT_API_URL = "http://localhost/foo/api";
-    /* eslint-disable */
-    const appConfig = require("../config/appConfig").default;
-    /* eslint-enable */
+    vitest.stubEnv("VITE_PACKIT_API_URL", "http://localhost/foo/api");
     expect(appConfig.apiUrl()).toBe("http://localhost/foo/api");
   });
 
   test("throw error if environment variable is missing", () => {
-    delete process.env["REACT_APP_PACKIT_API_URL"];
-    /* eslint-disable */
-    const appConfig = require("../config/appConfig").default;
-    /* eslint-enable */
+    vitest.stubEnv("VITE_PACKIT_API_URL", undefined);
+
     expect(appConfig.apiUrl).toThrow();
   });
 
   test("uses PACKIT NAMESPACE from environment", () => {
-    process.env.REACT_APP_PACKIT_NAMESPACE = "my-repo";
-    /* eslint-disable */
-    const appConfig = require("../config/appConfig").default;
-    /* eslint-enable */
+    vitest.stubEnv("VITE_PACKIT_NAMESPACE", "my-repo");
     expect(appConfig.appNamespace()).toBe("my-repo");
   });
 
   test("returns null when PACKIT NAMESPACE is missing", () => {
-    delete process.env["REACT_APP_PACKIT_NAMESPACE"];
-    /* eslint-disable */
-    const appConfig = require("../config/appConfig").default;
-    /* eslint-enable */
+    vitest.stubEnv("VITE_PACKIT_NAMESPACE", undefined);
     expect(appConfig.appNamespace()).toBe(null);
   });
 });

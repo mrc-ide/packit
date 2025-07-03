@@ -1,9 +1,9 @@
 import { X } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
-import { cn } from "../../../../../lib/cn";
-import { constructPermissionName } from "../../../../../lib/constructPermissionName";
-import { Badge } from "../../../Base/Badge";
-import { ScrollArea } from "../../../Base/ScrollArea";
+import { cn } from "@lib/cn";
+import { constructPermissionName } from "@lib/constructPermissionName";
+import { Badge } from "@components/Base/Badge";
+import { ScrollArea } from "@components/Base/ScrollArea";
 import { BaseRolePermission } from "../types/RoleWithRelationships";
 import { isPermissionEqual } from "../utils/isPermissionEqual";
 

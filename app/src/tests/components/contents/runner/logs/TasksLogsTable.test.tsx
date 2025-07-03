@@ -1,26 +1,28 @@
 import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { rest } from "msw";
 import { MemoryRouter } from "react-router-dom";
+import { Toaster } from "sonner";
 import { SWRConfig } from "swr";
 import { TasksLogsTable } from "../../../../../app/components/contents/runner/logs/TasksLogsTable";
 import { PAGE_SIZE } from "../../../../../lib/constants";
+import { basicRunnerUri } from "../../../../../msw/handlers/runnerHandlers";
 import { server } from "../../../../../msw/server";
 import { mockTasksRunInfo } from "../../../../mocks";
-import { basicRunnerUri } from "../../../../../msw/handlers/runnerHandlers";
-import userEvent from "@testing-library/user-event";
-import { Toaster } from "sonner";
-
 const renderComponent = () =>
   render(
     <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>
       <MemoryRouter>
-        <TasksLogsTable pageNumber={1} pageSize={PAGE_SIZE} filterPacketGroupName="" setPageNumber={jest.fn()} />
+        <TasksLogsTable pageNumber={1} pageSize={PAGE_SIZE} filterPacketGroupName="" setPageNumber={vitest.fn()} />
         <Toaster />
       </MemoryRouter>
     </SWRConfig>
   );
 
 describe("TasksLogsTable component", () => {
+  afterEach(() => {
+    vitest.useRealTimers();
+  });
   it("should render error component when api call fails", async () => {
     server.use(
       rest.get("*", (req, res, ctx) => {
@@ -91,7 +93,6 @@ describe("TasksLogsTable component", () => {
 
     const noneParameters = await screen.findAllByText(/None/i);
     expect(noneParameters).toHaveLength(mockTasksRunInfo.content.length - 1);
-    // screen.debug(undefined, 300000);
     await waitFor(() => {
       Object.entries(firstTaskParameters).forEach(([key, val]) => {
         expect(screen.getByText(`${key}:`)).toBeVisible();
@@ -111,19 +112,20 @@ describe("TasksLogsTable component", () => {
         return res(ctx.json({ ...mockTasksRunInfo, content: [mockTasksRunInfo.content[0], pendingRunInfo] }));
       })
     );
-    jest.useFakeTimers();
     renderComponent();
+    vitest.useFakeTimers();
 
     await waitFor(() => {
       expect(screen.getByText(/created 1 seconds ago/i)).toBeVisible();
     });
 
-    jest.advanceTimersByTime(3000);
+    vitest.advanceTimersByTime(3000);
     await waitFor(() => {
       expect(screen.getByText(/created 4 seconds ago/i)).toBeVisible();
     });
 
-    jest.advanceTimersByTime(3000);
+    vitest.advanceTimersByTime(3000);
+
     await waitFor(() => {
       expect(screen.getByText(/created 7 seconds ago/i)).toBeVisible();
       expect(numApiCalled).toBe(3);
@@ -141,11 +143,11 @@ describe("TasksLogsTable component", () => {
         return res(ctx.json({ ...mockTasksRunInfo, content: [completedRunInfo] }));
       })
     );
-    jest.useFakeTimers();
     renderComponent();
+    vitest.useFakeTimers();
 
-    jest.advanceTimersByTime(3000);
-    jest.advanceTimersByTime(3000);
+    vitest.advanceTimersByTime(3000);
+    vitest.advanceTimersByTime(3000);
 
     await waitFor(() => {
       expect(numApiCalled).toBe(1);

@@ -18,7 +18,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         <AuthConfigProvider>
           <UserProvider>
             <RedirectOnLoginProvider>
-              <BrowserRouter basename={process.env.PUBLIC_URL}>
+              <BrowserRouter basename={import.meta.env.BASE_URL}>
                 <Router />
                 <Toaster />
               </BrowserRouter>

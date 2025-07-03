@@ -11,7 +11,7 @@ import { expectThemeClass, handleRequestWithEnabledThemes } from "../../testUtil
 import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
 import { SWRConfig } from "swr";
 
-const mockUseUser = jest.spyOn(UserProvider, "useUser");
+const mockUseUser = vitest.spyOn(UserProvider, "useUser");
 
 describe("header component", () => {
   const renderElement = () => {

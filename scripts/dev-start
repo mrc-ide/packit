@@ -92,4 +92,4 @@ if [ "$CREATE_PINS_SKIP" -eq 0 ]; then
     "$HERE"/dev-create-pins
 fi
 
-npm start --prefix="$HERE/../app"
+npm run dev --prefix="$HERE/../app"

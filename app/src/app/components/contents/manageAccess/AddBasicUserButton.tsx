@@ -1,7 +1,7 @@
 import { SquarePlus } from "lucide-react";
 import { useState } from "react";
 import { KeyedMutator } from "swr";
-import { Button } from "../../Base/Button";
+import { Button } from "@components/Base/Button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../Base/Dialog";
 import { AddUserForm } from "./AddUserForm";
 import { RoleWithRelationships } from "./types/RoleWithRelationships";

@@ -6,8 +6,8 @@ import {
 } from "../../../../../app/components/contents/runner/utils/taskRunUtils";
 import { TimeDifference } from "../../../../../lib/time";
 
-const mockDisplayTime = jest.fn();
-jest.mock("../../../../../lib/time", () => ({
+const mockDisplayTime = vitest.fn();
+vitest.mock("../../../../../lib/time", () => ({
   getTimeDifferenceToDisplay: () => mockDisplayTime()
 }));
 

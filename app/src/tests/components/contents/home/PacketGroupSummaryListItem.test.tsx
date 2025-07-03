@@ -5,11 +5,11 @@ import { UserState } from "../../../../app/components/providers/types/UserTypes"
 import * as UserProvider from "../../../../app/components/providers/UserProvider";
 import { mockPacketGroupSummaries, mockUserState } from "../../../mocks";
 
-const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
-jest.mock("../../../../lib/localStorageManager", () => ({
+const mockGetUserFromLocalStorage = vitest.fn((): null | UserState => null);
+vitest.mock("../../../../lib/localStorageManager", () => ({
   getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
 }));
-const mockUseUser = jest.spyOn(UserProvider, "useUser");
+const mockUseUser = vitest.spyOn(UserProvider, "useUser");
 
 describe("PacketGroupSummaryListItem", () => {
   beforeEach(() => {

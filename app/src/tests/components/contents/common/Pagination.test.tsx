@@ -4,7 +4,7 @@ import { Pagination } from "../../../../app/components/contents/common/Paginatio
 
 describe("Pagination test", () => {
   it("correctly navigates to all pages", () => {
-    const setPageNumber = jest.fn();
+    const setPageNumber = vitest.fn();
     render(
       <Pagination
         currentPageNumber={2}
@@ -28,7 +28,7 @@ describe("Pagination test", () => {
   });
 
   it("should disable buttons when on first and last page", () => {
-    const setPageNumber = jest.fn();
+    const setPageNumber = vitest.fn();
     render(
       <Pagination
         currentPageNumber={0}

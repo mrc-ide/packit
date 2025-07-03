@@ -1,11 +1,11 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { PacketRunTaskLogs } from "../../../../app/components/contents/runner/PacketRunTaskLogs";
-import { mockCompleteRunInfo } from "../../../mocks";
-import { server } from "../../../../msw/server";
 import { rest } from "msw";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
+import { PacketRunTaskLogs } from "../../../../app/components/contents/runner/PacketRunTaskLogs";
 import { basicRunnerUri } from "../../../../msw/handlers/runnerHandlers";
+import { server } from "../../../../msw/server";
+import { mockCompleteRunInfo } from "../../../mocks";
 
 describe("PacketRunTaskLogs", () => {
   const testTaskId = "1234";
@@ -25,6 +25,10 @@ describe("PacketRunTaskLogs", () => {
       expect(screen.getByText(testTaskId, { exact: false })).toBeVisible();
     });
   };
+
+  afterEach(() => {
+    vitest.useRealTimers();
+  });
 
   it("should render runInfo if successfully gets status", async () => {
     renderComponent();
@@ -59,19 +63,19 @@ describe("PacketRunTaskLogs", () => {
         return res(ctx.json({ ...mockCompleteRunInfo, status: "RUNNING", timeStarted }));
       })
     );
-    jest.useFakeTimers();
     renderComponent();
+    vitest.useFakeTimers();
 
     await waitFor(() => {
       expect(screen.getByText(/Running for 1 s/i)).toBeVisible();
     });
 
-    jest.advanceTimersByTime(2000);
+    vitest.advanceTimersByTime(2000);
     await waitFor(() => {
       expect(screen.getByText(/Running for 3 s/i)).toBeVisible();
     });
 
-    jest.advanceTimersByTime(2000);
+    vitest.advanceTimersByTime(2000);
     await waitFor(() => {
       expect(screen.getByText(/Running for 5 s/i)).toBeVisible();
     });
@@ -87,19 +91,19 @@ describe("PacketRunTaskLogs", () => {
         return res(ctx.json({ ...mockCompleteRunInfo, status: "PENDING", timeQueued }));
       })
     );
-    jest.useFakeTimers();
     renderComponent();
+    vitest.useFakeTimers();
 
     await waitFor(() => {
       expect(screen.getByText(/Waiting for 1 s/i)).toBeVisible();
     });
 
-    jest.advanceTimersByTime(2000);
+    vitest.advanceTimersByTime(2000);
     await waitFor(() => {
       expect(screen.getByText(/Waiting for 3 s/i)).toBeVisible();
     });
 
-    jest.advanceTimersByTime(2000);
+    vitest.advanceTimersByTime(2000);
     await waitFor(() => {
       expect(screen.getByText(/Waiting for 5 s/i)).toBeVisible();
     });
@@ -114,15 +118,15 @@ describe("PacketRunTaskLogs", () => {
         return res(ctx.json(mockCompleteRunInfo));
       })
     );
-    jest.useFakeTimers();
     renderComponent();
+    vitest.useFakeTimers();
 
     await awaitTaskId();
 
-    jest.advanceTimersByTime(2000);
+    vitest.advanceTimersByTime(2000);
     await awaitTaskId();
 
-    jest.advanceTimersByTime(2000);
+    vitest.advanceTimersByTime(2000);
     await awaitTaskId();
 
     await waitFor(() => {

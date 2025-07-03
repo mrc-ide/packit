@@ -1,23 +1,16 @@
-export {};
-
 describe("local storage keys", () => {
-  const OLD_ENV = process.env;
-
-  beforeEach(() => {
-    jest.resetModules(); // Important - it clears the cache
-    process.env = { ...OLD_ENV }; // Make a copy
+  afterEach(() => {
+    vitest.unstubAllEnvs();
+    vitest.resetModules();
   });
 
-  afterAll(() => {
-    process.env = OLD_ENV; // Restore old environment
-  });
-
-  test("local storage keys are namespaced correctly", () => {
+  test("local storage keys are namespaced correctly", async () => {
     const ns = "test-ns";
-    process.env.REACT_APP_PACKIT_NAMESPACE = ns;
-    /* eslint-disable */
-    const keys = require("../../../lib/types/LocalStorageKeys").LocalStorageKeys;
-    expect(keys).toStrictEqual({
+    vitest.stubEnv("VITE_PACKIT_NAMESPACE", ns);
+
+    const { LocalStorageKeys } = await import("../../../lib/types/LocalStorageKeys");
+
+    expect(LocalStorageKeys).toStrictEqual({
       AUTH_CONFIG: `${ns}.authConfig`,
       USER: `${ns}.user`,
       THEME: "ui-theme",
@@ -25,11 +18,12 @@ describe("local storage keys", () => {
     });
   });
 
-  test("local storage keys are not namespaced when NAMESPACE unset", () => {
-    delete process.env["REACT_APP_PACKIT_NAMESPACE"];
-    /* eslint-disable */
-    const keys = require("../../../lib/types/LocalStorageKeys").LocalStorageKeys;
-    expect(keys).toStrictEqual({
+  test("local storage keys without namespace", async () => {
+    vitest.stubEnv("VITE_PACKIT_NAMESPACE", "");
+
+    const { LocalStorageKeys } = await import("../../../lib/types/LocalStorageKeys");
+
+    expect(LocalStorageKeys).toStrictEqual({
       AUTH_CONFIG: "authConfig",
       USER: "user",
       THEME: "ui-theme",

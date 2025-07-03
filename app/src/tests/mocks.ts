@@ -62,8 +62,8 @@ export const mockAuthorities = ["user.manage", "packet.read", "packet.run"];
 export const mockUserProviderState = (): UserProviderState => ({
   user: mockUserState(),
   authorities: mockAuthorities,
-  setUser: jest.fn(),
-  removeUser: jest.fn()
+  setUser: vitest.fn(),
+  removeUser: vitest.fn()
 });
 export const mockExpiredUserState = (): UserState => {
   return {

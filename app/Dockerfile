@@ -3,7 +3,7 @@ FROM node:22
 ARG PUBLIC_URL=
 ENV PUBLIC_URL=$PUBLIC_URL
 
-ARG REACT_APP_PACKIT_API_URL=
+ARG VITE_PACKIT_API_URL=
 
 COPY package.json /app/package.json
 COPY package-lock.json /app/package-lock.json
@@ -13,9 +13,9 @@ RUN npm ci
 COPY . /app
 
 # override env var in production file if set
-RUN if [ -n "$REACT_APP_PACKIT_API_URL" ]; then  echo "REACT_APP_PACKIT_API_URL=$REACT_APP_PACKIT_API_URL" >> env.production.local;  fi
+RUN if [ -n "$VITE_PACKIT_API_URL" ]; then  echo "VITE_PACKIT_API_URL=$VITE_PACKIT_API_URL" >> env.production.local;  fi
 
-RUN npm run build
+RUN if [ -n "$PUBLIC_URL" ]; then npm run build -- --base=$PUBLIC_URL; else npm run build; fi
 
 FROM nginx:stable
 

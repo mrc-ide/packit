@@ -1,10 +1,10 @@
 import { getAuthHeader } from "../../../lib/auth/getAuthHeader";
 
-const mockAuthConfig = jest.fn();
-jest.mock("../../../lib/localStorageManager", () => ({
+const mockAuthConfig = vitest.fn();
+vitest.mock("../../../lib/localStorageManager", () => ({
   getAuthConfigFromLocalStorage: () => mockAuthConfig()
 }));
-jest.mock("../../../lib/auth/getBearerToken", () => ({
+vitest.mock("../../../lib/auth/getBearerToken", () => ({
   getBearerToken: () => "12345"
 }));
 

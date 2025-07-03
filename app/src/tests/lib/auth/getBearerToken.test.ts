@@ -1,13 +1,13 @@
 import { UserState } from "../../../app/components/providers/types/UserTypes";
 import { getBearerToken } from "../../../lib/auth/getBearerToken";
 
-const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
-jest.mock("../../../lib/localStorageManager", () => ({
+const mockGetUserFromLocalStorage = vitest.fn((): null | UserState => null);
+vitest.mock("../../../lib/localStorageManager", () => ({
   getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
 }));
-jest.unmock("../../../lib/auth/getBearerToken");
+vitest.unmock("../../../lib/auth/getBearerToken");
 
-const mockResponse = jest.fn();
+const mockResponse = vitest.fn();
 Object.defineProperty(window, "location", {
   value: {
     hash: {

@@ -5,18 +5,18 @@ import { AccountHeaderDropdown } from "../../../app/components/header/AccountHea
 import * as UserProvider from "../../../app/components/providers/UserProvider";
 import { mockUserProviderState } from "../../mocks";
 
-const mockedUsedNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...(jest.requireActual("react-router-dom") as any),
+const mockedUsedNavigate = vitest.fn();
+vitest.mock("react-router-dom", async () => ({
+  ...((await vitest.importActual("react-router-dom")) as any),
   useNavigate: () => mockedUsedNavigate
 }));
-const mockSetLoggingOut = jest.fn();
-jest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
+const mockSetLoggingOut = vitest.fn();
+vitest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
   useRedirectOnLogin: () => ({
     setLoggingOut: mockSetLoggingOut
   })
 }));
-const mockUseUser = jest.spyOn(UserProvider, "useUser");
+const mockUseUser = vitest.spyOn(UserProvider, "useUser");
 
 const DOWN_ARROW = { keyCode: 40 };
 
@@ -30,7 +30,7 @@ describe("header drop down menu component", () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vitest.clearAllMocks();
   });
 
   it("renders drop down menu without user initials if not authenticated", async () => {

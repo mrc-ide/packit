@@ -1,6 +1,6 @@
 import { ChevronRight } from "lucide-react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { kebabToSentenceCase } from "../../../lib/string";
+import { kebabToSentenceCase } from "@lib/string";
 
 export const Breadcrumb = () => {
   const { pathname } = useLocation();

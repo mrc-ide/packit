@@ -14,7 +14,7 @@ describe("UpdatePacketReadPermissionMultiSelectList", () => {
   it("should render the list of roles and users correctly with styles", async () => {
     const rolesAndUsersArray = [...mockRolesAndUsersWithPermissions.roles, ...mockRolesAndUsersWithPermissions.users];
     render(
-      <MultiSelector onValuesChange={jest.fn()} values={[]}>
+      <MultiSelector onValuesChange={vitest.fn()} values={[]}>
         <MultiSelectorTrigger>
           <MultiSelectorInput />
         </MultiSelectorTrigger>

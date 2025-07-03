@@ -4,8 +4,8 @@ import userEvent from "@testing-library/user-event";
 
 describe("FilterInput component", () => {
   it("filtering on input & calls passed in functions", async () => {
-    const setFilterByName = jest.fn();
-    const postFilterAction = jest.fn();
+    const setFilterByName = vitest.fn();
+    const postFilterAction = vitest.fn();
     const placeholder = "filter by name...";
     render(<FilterInput setFilter={setFilterByName} postFilterAction={postFilterAction} placeholder={placeholder} />);
 
@@ -23,8 +23,8 @@ describe("FilterInput component", () => {
   it("should add classnames to input if passed in", async () => {
     render(
       <FilterInput
-        setFilter={jest.fn()}
-        postFilterAction={jest.fn()}
+        setFilter={vitest.fn()}
+        postFilterAction={vitest.fn()}
         placeholder={"placeholder"}
         inputClassNames="sm:w-[1000px] h-14"
       />

@@ -15,7 +15,7 @@ describe("UpdatePacketReadButton", () => {
         rolesAndUsersCannotRead={{} as any}
         rolesAndUsersWithRead={{} as any}
         packet={packet}
-        mutate={jest.fn()}
+        mutate={vitest.fn()}
       />
     );
 
@@ -32,7 +32,7 @@ describe("UpdatePacketReadButton", () => {
         rolesAndUsersCannotRead={{} as any}
         rolesAndUsersWithRead={{} as any}
         packet={packet}
-        mutate={jest.fn()}
+        mutate={vitest.fn()}
       />
     );
 

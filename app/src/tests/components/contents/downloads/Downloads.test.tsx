@@ -11,15 +11,15 @@ import { mockPacket } from "../../../mocks";
 import { PacketLayout } from "../../../../app/components/main";
 import * as UserProvider from "../../../../app/components/providers/UserProvider";
 
-const mockDownload = jest.fn();
-jest.mock("../../../../lib/download", () => ({
-  ...jest.requireActual("../../../../lib/download"),
+const mockDownload = vitest.fn();
+vitest.mock("../../../../lib/download", async () => ({
+  ...(await vitest.importActual("../../../../lib/download")),
   download: async (...args: any[]) => mockDownload(...args)
 }));
-const mockUseUser = jest.spyOn(UserProvider, "useUser");
+const mockUseUser = vitest.spyOn(UserProvider, "useUser");
 
 describe("download component", () => {
-  URL.createObjectURL = jest.fn(() => "fakeObjectUrl");
+  URL.createObjectURL = vitest.fn(() => "fakeObjectUrl");
 
   const renderComponent = (packet: PacketMetadata = mockPacket) => {
     render(
@@ -41,7 +41,7 @@ describe("download component", () => {
     } as any);
   });
   afterAll(() => {
-    jest.clearAllMocks();
+    vitest.clearAllMocks();
   });
 
   it("can render packet header", async () => {
