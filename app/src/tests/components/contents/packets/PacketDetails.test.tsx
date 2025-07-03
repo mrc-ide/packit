@@ -10,7 +10,7 @@ import { PacketMetadata } from "@/types";
 import { mockPacket, mockPackets } from "@/tests/mocks";
 import * as UserProvider from "@components/providers/UserProvider";
 
-vitest.mock("@ib/download", () => ({
+vitest.mock("@lib/download", () => ({
   getFileObjectUrl: async () => "fakeObjectUrl"
 }));
 
