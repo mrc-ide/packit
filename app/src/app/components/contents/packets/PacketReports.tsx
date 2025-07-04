@@ -1,7 +1,7 @@
 import { Fullscreen, Presentation } from "lucide-react";
 import { useEffect, useState } from "react";
-import { FileMetadata, PacketMetadata } from "../../../../types";
-import { AccordionContent, AccordionItem, AccordionTrigger } from "../../Base/Accordion";
+import { FileMetadata, PacketMetadata } from "@/types";
+import { AccordionContent, AccordionItem, AccordionTrigger } from "@components/Base/Accordion";
 import { PacketReport } from "./PacketReport";
 import { getHtmlFileIfExists } from "./utils/htmlFile";
 import { NavLink } from "react-router-dom";

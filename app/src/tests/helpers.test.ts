@@ -1,4 +1,4 @@
-import { bytesToSize, getElapsedTime } from "../helpers";
+import { bytesToSize, getElapsedTime } from "@/helpers";
 
 describe("helpers", () => {
   test("can format time for minutes and seconds", () => {

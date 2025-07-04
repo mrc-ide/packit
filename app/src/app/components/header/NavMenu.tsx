@@ -1,9 +1,5 @@
-import {
-  hasGlobalPacketManagePermission,
-  hasPacketRunPermission,
-  hasUserManagePermission
-} from "../../../lib/auth/hasPermission";
-import { cn } from "../../../lib/cn";
+import { hasPacketRunPermission, hasUserManagePermission, hasGlobalPacketManagePermission } from "@lib/auth/hasPermission";
+import { cn } from "@lib/cn";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "../Base/DropdownMenu";
 import { Menu } from "lucide-react";
 import { NavLink } from "react-router-dom";

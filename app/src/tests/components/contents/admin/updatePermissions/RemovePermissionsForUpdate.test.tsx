@@ -1,9 +1,9 @@
 import { render, screen, waitFor } from "@testing-library/react";
 // eslint-disable-next-line max-len
-import { RemovePermissionsForUpdate } from "../../../../../app/components/contents/admin/updatePermission/RemovePermissionsForUpdate";
-import { mockNonUsernameRolesWithRelationships } from "../../../../mocks";
+import { RemovePermissionsForUpdate } from "@components/contents/admin/updatePermission/RemovePermissionsForUpdate";
+import { mockNonUsernameRolesWithRelationships } from "@/tests/mocks";
 import userEvent from "@testing-library/user-event";
-import { constructPermissionName } from "../../../../../lib/constructPermissionName";
+import { constructPermissionName } from "@lib/constructPermissionName";
 
 describe("RemovePermissionsForUpdate", () => {
   it("should show rolePermission names in dropdown", async () => {
@@ -11,7 +11,7 @@ describe("RemovePermissionsForUpdate", () => {
       <RemovePermissionsForUpdate
         rolePermissions={mockNonUsernameRolesWithRelationships[0].rolePermissions}
         removedPermissions={[]}
-        removePermission={jest.fn()}
+        removePermission={vitest.fn()}
       />
     );
 
@@ -26,7 +26,7 @@ describe("RemovePermissionsForUpdate", () => {
   });
 
   it("should call removePermission and close popover", async () => {
-    const removePermission = jest.fn();
+    const removePermission = vitest.fn();
     render(
       <RemovePermissionsForUpdate
         rolePermissions={mockNonUsernameRolesWithRelationships[0].rolePermissions}
@@ -52,7 +52,7 @@ describe("RemovePermissionsForUpdate", () => {
       <RemovePermissionsForUpdate
         rolePermissions={mockNonUsernameRolesWithRelationships[0].rolePermissions}
         removedPermissions={removedPermissions}
-        removePermission={jest.fn()}
+        removePermission={vitest.fn()}
       />
     );
 

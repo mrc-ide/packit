@@ -1,14 +1,14 @@
 /* eslint-disable max-len */
 import { render, screen, waitFor } from "@testing-library/react";
 import { UseFormReturn } from "react-hook-form";
-import { AddScopedPermissionInput } from "../../../../../app/components/contents/admin/updatePermission/AddScopedPermissionInput";
+import { AddScopedPermissionInput } from "@components/contents/admin/updatePermission/AddScopedPermissionInput";
 import userEvent from "@testing-library/user-event";
-import { mockPacketGroupDtos, mockPacketGroupResponse, mockTags } from "../../../../mocks";
+import { mockPacketGroupDtos, mockPacketGroupResponse, mockTags } from "@/tests/mocks";
 
 const getForm = (id: number | string, name: string) =>
   ({
-    watch: jest.fn(() => ({ id, name })),
-    setValue: jest.fn()
+    watch: vitest.fn(() => ({ id, name })),
+    setValue: vitest.fn()
   }) as unknown as UseFormReturn<any>;
 
 describe("AddScopedPermissionInput", () => {

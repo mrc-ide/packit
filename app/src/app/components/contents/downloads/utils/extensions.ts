@@ -1,4 +1,4 @@
-import { FileMetadata } from "../../../../../types";
+import { FileMetadata } from "@/types";
 
 export const presentationExtensions = ["pdf", "html", "ppt", "pptm", "pptx", "potx", "potm", "pps", "xps"];
 export const tableExtensions = ["csv", "xls", "xlsx", "xlsm", "xltx", "ods"];

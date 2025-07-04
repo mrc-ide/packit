@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { BrandingProvider, useBrandingContext } from "../../../app/components/providers/BrandingProvider";
+import { BrandingProvider, useBrandingContext } from "@components/providers/BrandingProvider";
 
 describe("BrandingProvider", () => {
   const renderElement = (children: JSX.Element) => {

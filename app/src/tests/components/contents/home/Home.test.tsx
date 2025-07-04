@@ -2,13 +2,13 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
 import { SWRConfig } from "swr";
-import { Home } from "../../../../app/components/contents/home";
-import * as fetch from "../../../../lib/fetch";
-import appConfig from "../../../../config/appConfig";
-import { UserProvider } from "../../../../app/components/providers/UserProvider";
+import { Home } from "@components/contents/home";
+import * as fetch from "@lib/fetch";
+import appConfig from "@config/appConfig";
+import { UserProvider } from "@components/providers/UserProvider";
 
 describe("Home component", () => {
-  const fetcherSpy = jest.spyOn(fetch, "fetcher");
+  const fetcherSpy = vitest.spyOn(fetch, "fetcher");
   const renderComponent = () =>
     render(
       <SWRConfig value={{ provider: () => new Map() }}>

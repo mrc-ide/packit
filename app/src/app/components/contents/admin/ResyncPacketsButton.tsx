@@ -1,9 +1,9 @@
 import { Button } from "../../Base/Button";
 import { RefreshCw } from "lucide-react";
 import { useState } from "react";
-import { fetcher } from "../../../../lib/fetch";
-import appConfig from "../../../../config/appConfig";
-import { cn } from "../../../../lib/cn";
+import { fetcher } from "@lib/fetch";
+import appConfig from "@config/appConfig";
+import { cn } from "@lib/cn";
 import { toast } from "sonner";
 
 export const ResyncPacketsButton = () => {

@@ -2,13 +2,13 @@ import {
   RolesAndUsersToUpdateRead,
   RolesAndUsersWithPermissions,
   RoleWithRelationships
-} from "../app/components/contents/admin/types/RoleWithRelationships";
-import { UserWithPermissions } from "../app/components/contents/admin/types/UserWithPermissions";
-import { GitBranches } from "../app/components/contents/runner/types/GitBranches";
-import { PageableBasicRunInfo, RunInfo } from "../app/components/contents/runner/types/RunInfo";
-import { Parameter, RunnerPacketGroup } from "../app/components/contents/runner/types/RunnerPacketGroup";
-import { AuthConfig } from "../app/components/providers/types/AuthConfigTypes";
-import { UserProviderState, UserState } from "../app/components/providers/types/UserTypes";
+} from "@components/contents/admin/types/RoleWithRelationships";
+import { UserWithPermissions } from "@components/contents/admin/types/UserWithPermissions";
+import { GitBranches } from "@components/contents/runner/types/GitBranches";
+import { PageableBasicRunInfo, RunInfo } from "@components/contents/runner/types/RunInfo";
+import { Parameter, RunnerPacketGroup } from "@components/contents/runner/types/RunnerPacketGroup";
+import { AuthConfig } from "@components/providers/types/AuthConfigTypes";
+import { UserProviderState, UserState } from "@components/providers/types/UserTypes";
 import {
   Custom,
   PacketMetadata,
@@ -62,8 +62,8 @@ export const mockAuthorities = ["user.manage", "packet.read", "packet.run"];
 export const mockUserProviderState = (): UserProviderState => ({
   user: mockUserState(),
   authorities: mockAuthorities,
-  setUser: jest.fn(),
-  removeUser: jest.fn()
+  setUser: vitest.fn(),
+  removeUser: vitest.fn()
 });
 export const mockExpiredUserState = (): UserState => {
   return {

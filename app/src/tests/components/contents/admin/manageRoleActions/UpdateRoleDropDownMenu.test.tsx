@@ -1,6 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-// eslint-disable-next-line max-len
-import { UpdateRoleDropDownMenu } from "../../../../../app/components/contents/admin/manageRoleActions/UpdateRoleDropDownMenu";
+import { UpdateRoleDropDownMenu } from "@components/contents/admin/manageRoleActions/UpdateRoleDropDownMenu";
 import userEvent from "@testing-library/user-event";
 
 describe("UpdateRoleDropDownMenu", () => {
@@ -8,7 +7,7 @@ describe("UpdateRoleDropDownMenu", () => {
   it("should render update user dialog on update users click", async () => {
     render(
       <UpdateRoleDropDownMenu
-        mutate={jest.fn()}
+        mutate={vitest.fn()}
         role={{ users: [], name: "role1", rolePermissions: [], id: 2, isUsername: false }}
         users={[]}
       />
@@ -28,7 +27,7 @@ describe("UpdateRoleDropDownMenu", () => {
   it("should render update permissions dialog on update permissions click", async () => {
     render(
       <UpdateRoleDropDownMenu
-        mutate={jest.fn()}
+        mutate={vitest.fn()}
         role={{ users: [], name: "role1", rolePermissions: [], id: 2, isUsername: false }}
         users={[]}
       />

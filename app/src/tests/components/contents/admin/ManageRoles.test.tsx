@@ -3,11 +3,11 @@ import userEvent from "@testing-library/user-event";
 import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
-import { ManageRoles } from "../../../../app/components/contents/admin";
-import { AdminOutlet } from "../../../../app/components/contents/admin/AdminOutlet";
-import { server } from "../../../../msw/server";
-import { mockNonUsernameRolesWithRelationships } from "../../../mocks";
-import { usersRolesIndexUri } from "../../../../msw/handlers/usersRolesHandler";
+import { ManageRoles } from "@components/contents/admin";
+import { AdminOutlet } from "@components/contents/admin/AdminOutlet";
+import { server } from "@/msw/server";
+import { mockNonUsernameRolesWithRelationships } from "@/tests/mocks";
+import { usersRolesIndexUri } from "@/msw/handlers/usersRolesHandler";
 
 const renderComponent = (authorities = ["user.manage"]) => {
   render(

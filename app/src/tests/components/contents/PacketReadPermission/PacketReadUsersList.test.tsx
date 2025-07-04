@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import { PacketReadUsersList } from "../../../../app/components/contents/PacketReadPermission/PacketReadUsersList";
-import { UserWithPermissions } from "../../../../app/components/contents/admin/types/UserWithPermissions";
+import { PacketReadUsersList } from "@components/contents/PacketReadPermission/PacketReadUsersList";
+import { UserWithPermissions } from "@components/contents/admin/types/UserWithPermissions";
 
 describe("PacketReadUsersList", () => {
   it("should render users with read access", () => {

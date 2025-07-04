@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { getFileObjectUrl } from "../../../../../lib/download";
-import { FileMetadata, PacketMetadata } from "../../../../../types";
+import { getFileObjectUrl } from "@lib/download";
+import { FileMetadata, PacketMetadata } from "@/types";
 
 export const useFileObjectUrl = (file: FileMetadata | undefined, packet: PacketMetadata | undefined) => {
   const [error, setError] = useState<null | Error>(null);

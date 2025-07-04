@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
-import { mockPacket } from "../../../mocks";
-import { FileRow } from "../../../../app/components/contents/downloads/FileRow";
+import { mockPacket } from "@/tests//mocks";
+import { FileRow } from "@components/contents/downloads/FileRow";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
-import { FileMetadata } from "../../../../types";
+import { FileMetadata } from "@/types";
 import { SWRConfig } from "swr";
 
 const expectIconToBeRendered = (container: HTMLElement, iconName: string) => {
@@ -39,7 +39,7 @@ describe("file row component", () => {
   });
 
   it("when the file path includes a directory it excludes this from the displayed file name", async () => {
-    URL.createObjectURL = jest.fn(() => "fakeObjectUrl");
+    URL.createObjectURL = vitest.fn(() => "fakeObjectUrl");
 
     const { container } = renderComponent("directory/graph.png");
 

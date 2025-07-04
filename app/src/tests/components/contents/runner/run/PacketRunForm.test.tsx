@@ -1,16 +1,16 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { PacketRunForm } from "../../../../../app/components/contents/runner/run/PacketRunForm";
-import { mockGitBranches } from "../../../../mocks";
 import userEvent from "@testing-library/user-event";
-import { server } from "../../../../../msw/server";
 import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { getTimeDifferenceToDisplay } from "../../../../../lib/time";
-import { absoluteApiUrl } from "../../../../../helpers";
 import { Toaster } from "sonner";
+import { PacketRunForm } from "@components/contents/runner/run/PacketRunForm";
+import { getTimeDifferenceToDisplay } from "@lib/time";
+import { basicRunnerUri } from "@/msw/handlers/runnerHandlers";
+import { server } from "@/msw/server";
+import { mockGitBranches } from "@/tests/mocks";
 
 const renderComponent = () => {
-  const mutate = jest.fn();
+  const mutate = vitest.fn();
   render(
     <MemoryRouter initialEntries={["/runner"]}>
       <Routes>
@@ -76,7 +76,7 @@ describe("PacketRunForm component", () => {
   it("should do correct actions when git fetch button clicked", async () => {
     server.use(
       rest.post("*", (req, res, ctx) => {
-        expect(req.url.href).toBe(`${absoluteApiUrl()}/runner/git/fetch`);
+        expect(req.url.href).toBe(`${basicRunnerUri}/git/fetch`);
 
         return res(ctx.status(201));
       })
@@ -171,7 +171,7 @@ describe("PacketRunForm component", () => {
   it("should submit run when form submitted correctly & navigate to task run logs", async () => {
     server.use(
       rest.post("*", async (req, res, ctx) => {
-        expect(req.url.href).toBe(`${absoluteApiUrl()}/runner/run`);
+        expect(req.url.href).toBe(`${basicRunnerUri}/run`);
         const body = await req.json();
 
         expect(body).toEqual({

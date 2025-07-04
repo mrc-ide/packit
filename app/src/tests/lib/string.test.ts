@@ -1,4 +1,4 @@
-import { getInitials, kebabToSentenceCase } from "../../lib/string";
+import { getInitials, kebabToSentenceCase } from "@lib/string";
 
 describe("getInitials", () => {
   it("returns XX if name is empty", () => {

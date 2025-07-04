@@ -4,14 +4,14 @@ import { Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { z } from "zod";
-import appConfig from "../../../config/appConfig";
-import { ApiError } from "../../../lib/errors";
-import { fetcher } from "../../../lib/fetch";
+import appConfig from "@config/appConfig";
+import { ApiError } from "@lib/errors";
+import { fetcher } from "@lib/fetch";
 import { Button } from "../Base/Button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../Base/Form";
 import { Input } from "../Base/Input";
 import { useUser } from "../providers/UserProvider";
-import { HttpStatus } from "../../../lib/types/HttpStatus";
+import { HttpStatus } from "@lib/types/HttpStatus";
 
 export const BasicUserAuthForm = () => {
   const navigate = useNavigate();

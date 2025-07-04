@@ -3,13 +3,13 @@ import userEvent from "@testing-library/user-event";
 import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
-import { Metadata } from "../../../../app/components/contents";
-import { server } from "../../../../msw/server";
-import { mockPacket } from "../../../mocks";
-import { PacketLayout } from "../../../../app/components/main";
-import * as UserProvider from "../../../../app/components/providers/UserProvider";
+import { Metadata } from "@components/contents";
+import { server } from "@/msw/server";
+import { mockPacket } from "@/tests/mocks";
+import { PacketLayout } from "@components/main";
+import * as UserProvider from "@components/providers/UserProvider";
 
-const mockUseUser = jest.spyOn(UserProvider, "useUser");
+const mockUseUser = vitest.spyOn(UserProvider, "useUser");
 
 describe("Metadata component", () => {
   const renderComponent = () => {

@@ -1,10 +1,10 @@
 import { PacketTable } from "./PacketTable";
 import { useParams } from "react-router-dom";
-import { HttpStatus } from "../../../../lib/types/HttpStatus";
+import { HttpStatus } from "@lib/types/HttpStatus";
 import { Unauthorized } from "../common/Unauthorized";
 import { ErrorComponent } from "../common/ErrorComponent";
 import { useGetPacketGroupDisplay } from "./hooks/useGetPacketGroupDisplay";
-import { Skeleton } from "../../Base/Skeleton";
+import { Skeleton } from "@components/Base/Skeleton";
 
 export const PacketGroup = () => {
   const { packetName } = useParams();

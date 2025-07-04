@@ -1,8 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { DataTable } from "../../../../app/components/contents/common/DataTable";
+import { DataTable } from "@components/contents/common/DataTable";
 import { createColumnHelper, FilterFn } from "@tanstack/react-table";
-import { FilterInput } from "../../../../app/components/contents/common/FilterInput";
+import { FilterInput } from "@components/contents/common/FilterInput";
 import { useState } from "react";
 
 describe("DataTable", () => {

@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { Skeleton } from "../../../Base/Skeleton";
+import { Skeleton } from "@components/Base/Skeleton";
 import { DataTable } from "../../common/DataTable";
 import { ErrorComponent } from "../../common/ErrorComponent";
 import { Pagination } from "../../common/Pagination";

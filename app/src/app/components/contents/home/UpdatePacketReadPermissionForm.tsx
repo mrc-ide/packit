@@ -3,11 +3,16 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
 import { KeyedMutator } from "swr";
 import { z } from "zod";
-import appConfig from "../../../../config/appConfig";
-import { ApiError } from "../../../../lib/errors";
-import { fetcher } from "../../../../lib/fetch";
-import { Form, FormDescription, FormField, FormItem, FormLabel } from "../../Base/Form";
-import { MultiSelector, MultiSelectorContent, MultiSelectorInput, MultiSelectorTrigger } from "../../Base/MultiSelect";
+import appConfig from "@config/appConfig";
+import { ApiError } from "@lib/errors";
+import { fetcher } from "@lib/fetch";
+import { Form, FormDescription, FormField, FormItem, FormLabel } from "@components/Base/Form";
+import {
+  MultiSelector,
+  MultiSelectorContent,
+  MultiSelectorInput,
+  MultiSelectorTrigger
+} from "@components/Base/MultiSelect";
 import { CustomDialogFooter } from "../common/CustomDialogFooter";
 import { BasicRolesAndUsers, RolesAndUsersToUpdateRead } from "../admin/types/RoleWithRelationships";
 import { UpdatePacketReadPermissionMultiSelectList } from "./UpdatePacketReadPermissionMultiSelectList";

@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { Breadcrumb } from "../../../app/components/main/Breadcrumb";
+import { Breadcrumb } from "@components/main/Breadcrumb";
 
 const renderBreadcrumb = (pathname: string) =>
   render(

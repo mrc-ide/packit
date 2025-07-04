@@ -1,5 +1,5 @@
-import { BaseRolePermission } from "../../../../../app/components/contents/admin/types/RoleWithRelationships";
-import { isPermissionEqual } from "../../../../../app/components/contents/admin/utils/isPermissionEqual";
+import { BaseRolePermission } from "@components/contents/admin/types/RoleWithRelationships";
+import { isPermissionEqual } from "@components/contents/admin/utils/isPermissionEqual";
 
 describe("isPermissionEqual", () => {
   const permission1 = {

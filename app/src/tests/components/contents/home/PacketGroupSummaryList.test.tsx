@@ -2,17 +2,17 @@ import { render, screen, waitFor, within } from "@testing-library/react";
 import { rest } from "msw";
 import { MemoryRouter } from "react-router";
 import { SWRConfig } from "swr";
-import { PacketGroupSummaryList } from "../../../../app/components/contents/home/PacketGroupSummaryList";
-import { server } from "../../../../msw/server";
+import { PacketGroupSummaryList } from "@components/contents/home/PacketGroupSummaryList";
+import { server } from "@/msw/server";
 import { mockPacketGroupSummaries } from "../../../mocks";
-import { HttpStatus } from "../../../../lib/types/HttpStatus";
-import appConfig from "../../../../config/appConfig";
-import { UserProvider } from "../../../../app/components/providers/UserProvider";
-import { UserState } from "../../../../app/components/providers/types/UserTypes";
+import { HttpStatus } from "@lib/types/HttpStatus";
+import appConfig from "@config/appConfig";
+import { UserProvider } from "@components/providers/UserProvider";
+import { UserState } from "@components/providers/types/UserTypes";
 
-const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
-jest.mock("../../../../lib/localStorageManager", () => ({
-  ...jest.requireActual("../../../../lib/localStorageManager"),
+const mockGetUserFromLocalStorage = vitest.fn((): null | UserState => null);
+vitest.mock("@lib/localStorageManager", async () => ({
+  ...(await vitest.importActual("@lib/localStorageManager")),
   getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
 }));
 
@@ -24,7 +24,7 @@ describe("PacketGroupSummaryList test", () => {
       <SWRConfig value={{ provider: () => new Map() }}>
         <MemoryRouter>
           <UserProvider>
-            <PacketGroupSummaryList filterByName="" pageNumber={0} pageSize={10} setPageNumber={jest.fn()} />
+            <PacketGroupSummaryList filterByName="" pageNumber={0} pageSize={10} setPageNumber={vitest.fn()} />
           </UserProvider>
         </MemoryRouter>
       </SWRConfig>

@@ -1,5 +1,5 @@
-import { Button } from "../../Base/Button";
-import { DialogClose, DialogFooter } from "../../Base/Dialog";
+import { Button } from "@components/Base/Button";
+import { DialogClose, DialogFooter } from "@components/Base/Dialog";
 
 interface CustomDialogFooterProps {
   error?: string;

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import { OtherFiles } from "../../../../../app/components/contents/downloads/orderly/OtherFiles";
-import { mockPacket } from "../../../../mocks";
-import { InputFile, InputFileType, PacketMetadata } from "../../../../../types";
+import { OtherFiles } from "@components/contents/downloads/orderly/OtherFiles";
+import { mockPacket } from "@/tests/mocks";
+import { InputFile, InputFileType, PacketMetadata } from "@/types";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
 

@@ -1,8 +1,8 @@
 import { FileDown, Loader2 } from "lucide-react";
 import { useState } from "react";
-import { download } from "../../../../lib/download";
-import { FileMetadata } from "../../../../types";
-import { Button } from "../../Base/Button";
+import { download } from "@lib/download";
+import { FileMetadata } from "@/types";
+import { Button } from "@components/Base/Button";
 
 interface FileDownloadButtonProps {
   file: FileMetadata;

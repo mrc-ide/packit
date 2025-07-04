@@ -1,11 +1,11 @@
 import {
   rolesGlobalFilterFn,
   usersGlobalFilterFn
-} from "../../../../../app/components/contents/admin/utils/rolesTableGlobalFilterFn";
+} from "@components/contents/admin/utils/rolesTableGlobalFilterFn";
 
 describe("rolesTableGlobalFilterFn", () => {
   const row = {
-    getValue: jest.fn()
+    getValue: vitest.fn()
   } as any;
   describe("rolesGlobalFilterFn", () => {
     it("should return true if rowValue is a string and includes filterValue", () => {
@@ -13,7 +13,7 @@ describe("rolesTableGlobalFilterFn", () => {
       const columnId = "name";
       const filterValue = "test";
 
-      const result = rolesGlobalFilterFn(row, columnId, filterValue, jest.fn());
+      const result = rolesGlobalFilterFn(row, columnId, filterValue, vitest.fn());
 
       expect(result).toBe(true);
       expect(row.getValue).toHaveBeenCalledWith(columnId);
@@ -24,7 +24,7 @@ describe("rolesTableGlobalFilterFn", () => {
       const columnId = "users";
       const filterValue = "test";
 
-      const result = rolesGlobalFilterFn(row, columnId, filterValue, jest.fn());
+      const result = rolesGlobalFilterFn(row, columnId, filterValue, vitest.fn());
 
       expect(result).toBe(true);
     });
@@ -34,7 +34,7 @@ describe("rolesTableGlobalFilterFn", () => {
       const columnId = "name";
       const filterValue = "other";
 
-      const result = rolesGlobalFilterFn(row, columnId, filterValue, jest.fn());
+      const result = rolesGlobalFilterFn(row, columnId, filterValue, vitest.fn());
 
       expect(result).toBe(false);
     });
@@ -44,7 +44,7 @@ describe("rolesTableGlobalFilterFn", () => {
       const columnId = "users";
       const filterValue = "notFound";
 
-      const result = rolesGlobalFilterFn(row, columnId, filterValue, jest.fn());
+      const result = rolesGlobalFilterFn(row, columnId, filterValue, vitest.fn());
 
       expect(result).toBe(false);
     });
@@ -53,7 +53,7 @@ describe("rolesTableGlobalFilterFn", () => {
       const columnId = "name";
       const filterValue = "test";
 
-      const result = rolesGlobalFilterFn(row, columnId, filterValue, jest.fn());
+      const result = rolesGlobalFilterFn(row, columnId, filterValue, vitest.fn());
 
       expect(result).toBe(false);
     });
@@ -65,7 +65,7 @@ describe("rolesTableGlobalFilterFn", () => {
       const columnId = "username";
       const filterValue = "test";
 
-      const result = usersGlobalFilterFn(row, columnId, filterValue, jest.fn());
+      const result = usersGlobalFilterFn(row, columnId, filterValue, vitest.fn());
 
       expect(result).toBe(true);
     });
@@ -75,7 +75,7 @@ describe("rolesTableGlobalFilterFn", () => {
       const columnId = "roles";
       const filterValue = "test";
 
-      const result = usersGlobalFilterFn(row, columnId, filterValue, jest.fn());
+      const result = usersGlobalFilterFn(row, columnId, filterValue, vitest.fn());
 
       expect(result).toBe(true);
     });
@@ -85,7 +85,7 @@ describe("rolesTableGlobalFilterFn", () => {
       const columnId = "username";
       const filterValue = "other";
 
-      const result = usersGlobalFilterFn(row, columnId, filterValue, jest.fn());
+      const result = usersGlobalFilterFn(row, columnId, filterValue, vitest.fn());
 
       expect(result).toBe(false);
     });
@@ -95,7 +95,7 @@ describe("rolesTableGlobalFilterFn", () => {
       const columnId = "roles";
       const filterValue = "notFound";
 
-      const result = usersGlobalFilterFn(row, columnId, filterValue, jest.fn());
+      const result = usersGlobalFilterFn(row, columnId, filterValue, vitest.fn());
 
       expect(result).toBe(false);
     });
@@ -105,7 +105,7 @@ describe("rolesTableGlobalFilterFn", () => {
       const columnId = "username";
       const filterValue = "test";
 
-      const result = usersGlobalFilterFn(row, columnId, filterValue, jest.fn());
+      const result = usersGlobalFilterFn(row, columnId, filterValue, vitest.fn());
 
       expect(result).toBe(false);
     });

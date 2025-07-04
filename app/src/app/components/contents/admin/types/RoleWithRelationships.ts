@@ -1,4 +1,4 @@
-import { BasicPacket, BasicPacketGroup, Tag } from "../../../../../types";
+import { BasicPacket, BasicPacketGroup, Tag } from "@/types";
 import { UserWithPermissions } from "./UserWithPermissions";
 
 export interface RolePermission extends BaseRolePermission {

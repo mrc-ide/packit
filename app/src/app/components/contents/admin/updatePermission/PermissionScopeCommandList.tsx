@@ -1,8 +1,8 @@
 import { CommandLoading } from "cmdk";
 import { Check } from "lucide-react";
-import { cn } from "../../../../../lib/cn";
-import { PermissionScope } from "../../../../../lib/constants";
-import { CommandEmpty, CommandGroup, CommandItem, CommandList } from "../../../Base/Command";
+import { cn } from "@lib/cn";
+import { PermissionScope } from "@lib/constants";
+import { CommandEmpty, CommandGroup, CommandItem, CommandList } from "@components/Base/Command";
 import { useGetResourcesForScopedPermissions } from "./hooks/useGetResourcesForScopedPermissions";
 
 interface PermissionCommandListProps {

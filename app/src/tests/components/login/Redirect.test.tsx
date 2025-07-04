@@ -1,28 +1,28 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { Home } from "../../../app/components/contents/home";
-import { Login, Redirect } from "../../../app/components/login";
-import { UserState } from "../../../app/components/providers/types/UserTypes";
+import { Home } from "@components/contents/home";
+import { Login, Redirect } from "@components/login";
+import { UserState } from "@components/providers/types/UserTypes";
 import { mockUserState, mockExpiredUserState } from "../../mocks";
-import { Accessibility } from "../../../app/components/contents/accessibility";
-import { AuthConfigProvider } from "../../../app/components/providers/AuthConfigProvider";
+import { Accessibility } from "@components/contents/accessibility";
+import { AuthConfigProvider } from "@components/providers/AuthConfigProvider";
 
-jest.mock("../../../lib/localStorageManager", () => ({
-  getAuthConfigFromLocalStorage: jest.fn().mockReturnValue({ authEnabled: true, enableGithubLogin: true })
+vitest.mock("@lib/localStorageManager", () => ({
+  getAuthConfigFromLocalStorage: vitest.fn().mockReturnValue({ authEnabled: true, enableGithubLogin: true })
 }));
 
-const mockSetRequestedUrl = jest.fn();
+const mockSetRequestedUrl = vitest.fn();
 let mockRequestedUrl: string | null = null;
-jest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
+vitest.mock("@components/providers/RedirectOnLoginProvider", () => ({
   useRedirectOnLogin: () => ({
     setRequestedUrl: mockSetRequestedUrl,
     requestedUrl: (() => mockRequestedUrl)()
   })
 }));
 
-const mockSetUser = jest.fn();
+const mockSetUser = vitest.fn();
 let mockUser: UserState | null = null;
-jest.mock("../../../app/components/providers/UserProvider.tsx", () => ({
+vitest.mock("@components/providers/UserProvider.tsx", () => ({
   useUser: () => ({
     setUser: mockSetUser,
     user: mockUser
@@ -48,7 +48,7 @@ describe("redirect", () => {
   beforeEach(() => {
     mockRequestedUrl = null;
     mockUser = null;
-    jest.clearAllMocks();
+    vitest.clearAllMocks();
   });
 
   it("renders home page if no token or error", async () => {

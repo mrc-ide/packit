@@ -1,5 +1,5 @@
 import { createContext, useContext, ReactNode } from "react";
-import { BrandingConfiguration } from "../../../types";
+import { BrandingConfiguration } from "@/types";
 import { useGetBrandingConfig } from "./hooks/useGetBrandingConfig";
 import { ErrorComponent } from "../contents/common/ErrorComponent";
 

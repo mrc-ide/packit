@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { PacketHeader } from "../../../../app/components/contents/packets";
+import { PacketHeader } from "@components/contents/packets";
 
 describe("Packet Header component", () => {
   it("renders packet header with id, name, and display name when available", async () => {

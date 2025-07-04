@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import * as UserProviderModule from "../../../../app/components/providers/UserProvider";
-import { ResyncPackets } from "../../../../app/components/contents/admin";
+import * as UserProviderModule from "@components/providers/UserProvider";
+import { ResyncPackets } from "@components/contents/admin";
 
 const mockUseUser = jest.spyOn(UserProviderModule, "useUser");
 const renderComponent = () =>

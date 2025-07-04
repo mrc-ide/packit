@@ -1,5 +1,5 @@
-import { AuthConfig } from "../app/components/providers/types/AuthConfigTypes";
-import { UserState } from "../app/components/providers/types/UserTypes";
+import type { AuthConfig } from "@components/providers/types/AuthConfigTypes";
+import type { UserState } from "@components/providers/types/UserTypes";
 import { LocalStorageKeys } from "./types/LocalStorageKeys";
 
 export const getUserFromLocalStorage = (): UserState | null => {

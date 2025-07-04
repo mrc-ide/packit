@@ -1,5 +1,5 @@
-import { canManagePacket } from "../../../../lib/auth/hasPermission";
-import { SidebarItem } from "../../../../lib/types/SidebarItem";
+import { canManagePacket } from "@lib/auth/hasPermission";
+import { SidebarItem } from "@lib/types/SidebarItem";
 
 export const getSideBarNavItems = (
   packetName = "",

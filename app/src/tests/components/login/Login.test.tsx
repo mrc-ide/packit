@@ -1,22 +1,23 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { SWRConfig } from "swr";
-import { Login } from "../../../app/components/login";
-import { AuthConfigProvider } from "../../../app/components/providers/AuthConfigProvider";
-import { RedirectOnLoginProvider } from "../../../app/components/providers/RedirectOnLoginProvider";
-import { UserProvider } from "../../../app/components/providers/UserProvider";
-import { UserState } from "../../../app/components/providers/types/UserTypes";
-import appConfig from "../../../config/appConfig";
-import { mockUserState } from "../../mocks";
+import { Login } from "@components/login";
+import { AuthConfigProvider } from "@components/providers/AuthConfigProvider";
+import { RedirectOnLoginProvider } from "@components/providers/RedirectOnLoginProvider";
+import { UserProvider } from "@components/providers/UserProvider";
+import { UserState } from "@components/providers/types/UserTypes";
+import appConfig from "@config/appConfig";
+import { mockUserState } from "@/tests/mocks";
 
-const mockedUsedNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...(jest.requireActual("react-router-dom") as any),
+const mockedUsedNavigate = vitest.fn();
+vitest.mock("react-router-dom", async () => ({
+  ...((await vitest.importActual("react-router-dom")) as any),
   useNavigate: () => mockedUsedNavigate
 }));
-const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
-jest.mock("../../../lib/localStorageManager", () => ({
-  ...(jest.requireActual("../../../lib/localStorageManager") as any),
+
+const mockGetUserFromLocalStorage = vitest.fn((): null | UserState => null);
+vitest.mock("@lib/localStorageManager", async () => ({
+  ...((await vitest.importActual("@lib/localStorageManager")) as any),
   getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
 }));
 

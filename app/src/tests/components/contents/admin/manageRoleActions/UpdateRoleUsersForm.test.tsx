@@ -1,15 +1,15 @@
 /* eslint-disable max-len */
 import { render, screen, waitFor } from "@testing-library/react";
-import * as fetch from "../../../../../lib/fetch";
+import * as fetch from "@lib/fetch";
 import userEvent from "@testing-library/user-event";
-import { Dialog } from "../../../../../app/components/Base/Dialog";
-import { UpdateRoleUsersForm } from "../../../../../app/components/contents/admin/manageRoleActions/UpdateRoleUsersForm";
-import appConfig from "../../../../../config/appConfig";
-import { ApiError } from "../../../../../lib/errors";
-import { HttpStatus } from "../../../../../lib/types/HttpStatus";
+import { Dialog } from "@components/Base/Dialog";
+import { UpdateRoleUsersForm } from "@components/contents/admin/manageRoleActions/UpdateRoleUsersForm";
+import appConfig from "@config/appConfig";
+import { ApiError } from "@lib/errors";
+import { HttpStatus } from "@lib/types/HttpStatus";
 
 describe("UpdateRoleUsersForm", () => {
-  const fetcherSpy = jest.spyOn(fetch, "fetcher");
+  const fetcherSpy = vitest.spyOn(fetch, "fetcher");
   const testUsers = [
     { id: 1, username: "user1" },
     { id: 2, username: "user2" },
@@ -23,9 +23,15 @@ describe("UpdateRoleUsersForm", () => {
     ],
     name: "role1"
   } as any;
+
+  beforeEach(() => {
+    vitest.clearAllMocks();
+    fetcherSpy.mockResolvedValue({});
+  });
+
   it("should call mutate,fetch,setOpen on successful form submission", async () => {
-    const mutate = jest.fn();
-    const setOpen = jest.fn();
+    const mutate = vitest.fn();
+    const setOpen = vitest.fn();
     render(
       <Dialog>
         <UpdateRoleUsersForm role={testRole} users={testUsers} mutate={mutate} setOpen={setOpen} />
@@ -45,7 +51,7 @@ describe("UpdateRoleUsersForm", () => {
   it("should render correct options for both multiselect inputs", async () => {
     render(
       <Dialog>
-        <UpdateRoleUsersForm role={testRole} users={testUsers} mutate={jest.fn()} setOpen={jest.fn()} />
+        <UpdateRoleUsersForm role={testRole} users={testUsers} mutate={vitest.fn()} setOpen={vitest.fn()} />
       </Dialog>
     );
 
@@ -67,7 +73,7 @@ describe("UpdateRoleUsersForm", () => {
   it("should call fetcher with correct data on form submission", async () => {
     render(
       <Dialog>
-        <UpdateRoleUsersForm role={testRole} users={testUsers} mutate={jest.fn()} setOpen={jest.fn()} />
+        <UpdateRoleUsersForm role={testRole} users={testUsers} mutate={vitest.fn()} setOpen={vitest.fn()} />
       </Dialog>
     );
 
@@ -96,7 +102,7 @@ describe("UpdateRoleUsersForm", () => {
 
     render(
       <Dialog>
-        <UpdateRoleUsersForm role={testRole} users={testUsers} mutate={jest.fn()} setOpen={jest.fn()} />
+        <UpdateRoleUsersForm role={testRole} users={testUsers} mutate={vitest.fn()} setOpen={vitest.fn()} />
       </Dialog>
     );
 
@@ -113,7 +119,7 @@ describe("UpdateRoleUsersForm", () => {
 
     render(
       <Dialog>
-        <UpdateRoleUsersForm role={testRole} users={testUsers} mutate={jest.fn()} setOpen={jest.fn()} />
+        <UpdateRoleUsersForm role={testRole} users={testUsers} mutate={vitest.fn()} setOpen={vitest.fn()} />
       </Dialog>
     );
 

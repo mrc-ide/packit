@@ -1,4 +1,4 @@
-import { Separator } from "../../../Base/Separator";
+import { Separator } from "@components/Base/Separator";
 import { RunInfo } from "../types/RunInfo";
 import { getStatusDisplayByStatus } from "../utils/taskRunUtils";
 import { TaskRunSummaryBottom } from "./TaskRunSummaryBottom";

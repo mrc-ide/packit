@@ -1,16 +1,16 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { useEffect } from "react";
-import { UserProvider, useUser } from "../../../app/components/providers/UserProvider";
-import { UserState } from "../../../app/components/providers/types/UserTypes";
-import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
+import { UserProvider, useUser } from "@components/providers/UserProvider";
+import { UserState } from "@components/providers/types/UserTypes";
+import { LocalStorageKeys } from "@lib/types/LocalStorageKeys";
 import { mockAuthorities, mockToken, mockUserState } from "../../mocks";
 import { SWRConfig } from "swr";
-import { server } from "../../../msw/server";
+import { server } from "@/msw/server";
 import { rest } from "msw";
 
-const mockGetUserFromLocalStorage = jest.fn((): null | UserState => null);
-jest.mock("../../../lib/localStorageManager", () => ({
-  ...jest.requireActual("../../../lib/localStorageManager"),
+const mockGetUserFromLocalStorage = vitest.fn((): null | UserState => null);
+vitest.mock("@lib/localStorageManager", async () => ({
+  ...(await vitest.importActual("@lib/localStorageManager")),
   getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
 }));
 const renderElement = (children: JSX.Element) => {

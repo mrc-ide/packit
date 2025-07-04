@@ -2,11 +2,11 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
-import { PacketGroup } from "../../../../app/components/contents/PacketGroup";
-import { server } from "../../../../msw/server";
+import { PacketGroup } from "@components/contents/PacketGroup";
+import { server } from "@/msw/server";
 import { mockPacket, mockPacketGroupResponse, mockPacketGroupSummaries } from "../../../mocks";
-import { HttpStatus } from "../../../../lib/types/HttpStatus";
-import appConfig from "../../../../config/appConfig";
+import { HttpStatus } from "@lib/types/HttpStatus";
+import appConfig from "@config/appConfig";
 
 describe("PacketGroup", () => {
   const packetGroupName = mockPacket.name;

@@ -1,20 +1,20 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { BasicUserAuthForm } from "../../../app/components/login/BasicUserAuthForm";
+import { BasicUserAuthForm } from "@components/login/BasicUserAuthForm";
 import { MemoryRouter } from "react-router-dom";
-import { UserProvider } from "../../../app/components/providers/UserProvider";
+import { UserProvider } from "@components/providers/UserProvider";
 import userEvent from "@testing-library/user-event";
-import { server } from "../../../msw/server";
+import { server } from "@/msw/server";
 import { rest } from "msw";
 
-const mockedUsedNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...(jest.requireActual("react-router-dom") as any),
+const mockedUsedNavigate = vitest.fn();
+vitest.mock("react-router-dom", async () => ({
+  ...((await vitest.importActual("react-router-dom")) as any),
   useNavigate: () => mockedUsedNavigate
 }));
 
-const mockSetRequestedUrl = jest.fn();
+const mockSetRequestedUrl = vitest.fn();
 let mockRequestedUrl: string | null = null;
-jest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
+vitest.mock("@components/providers/RedirectOnLoginProvider", () => ({
   useRedirectOnLogin: () => ({
     setRequestedUrl: mockSetRequestedUrl,
     requestedUrl: (() => mockRequestedUrl)()
@@ -24,7 +24,7 @@ jest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
 describe("BasicUserAuthForm", () => {
   beforeEach(() => {
     mockRequestedUrl = null;
-    jest.clearAllMocks();
+    vitest.clearAllMocks();
   });
 
   it("should validate both email and password by showing errors if fails schema", async () => {

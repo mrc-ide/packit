@@ -2,7 +2,7 @@ name: frontend-test
 run-name: ${{ github.actor }} is testing packit features
 on:
   workflow_run:
-    workflows: [ "backend-test" ]
+    workflows: ["backend-test"]
     types:
       - completed
   push:
@@ -19,8 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [ 22.x ]
-        java-version: [ 17 ]
+        node-version: [22.x]
+        java-version: [17]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -45,15 +45,20 @@ jobs:
       - name: Build API
         uses: ./.github/actions/build-api
       - name: Install dependencies
-        run: npm ci --prefix=app
+        working-directory: app
+        run: npm ci
       - name: Check formatting with prettier
-        run: npm run format:check --prefix=app
+        working-directory: app
+        run: npm run format:check
       - name: Run eslint
-        run: npm run lint --prefix=app
+        working-directory: app
+        run: npm run lint
       - name: Build app
-        run: npm run build --prefix=app
+        working-directory: app
+        run: npm run build
       - name: Run unit tests
-        run: npm test --prefix=app -- --coverage
+        working-directory: app
+        run: npm run test:coverage
       - name: Run dependencies and API
         run: ./scripts/run-dependencies && ./api/scripts/run basic && ./api/scripts/smoke-test
       - name: Upload coverage to codecov
@@ -76,7 +81,7 @@ jobs:
         run: npx playwright install --with-deps
       - name: Run app
         working-directory: app
-        run: npm start &
+        run: npm run dev &
       - name: E2E tests
         working-directory: app
         run: npm run test:e2e

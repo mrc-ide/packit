@@ -1,13 +1,13 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { EllipsisVertical, Trash2 } from "lucide-react";
 import { KeyedMutator } from "swr";
-import { constructPermissionName } from "../../../../../lib/constructPermissionName";
+import { constructPermissionName } from "@lib/constructPermissionName";
 import { Button } from "../../../Base/Button";
 import { DeleteUserOrRole } from "../DeleteUserOrRole";
 import { UpdateRoleDropDownMenu } from "../manageRoleActions/UpdateRoleDropDownMenu";
 import { RoleWithRelationships } from "../types/RoleWithRelationships";
 import { UserWithPermissions } from "../types/UserWithPermissions";
-import { cn } from "../../../../../lib/cn";
+import { cn } from "@lib/cn";
 
 const columnHelper = createColumnHelper<RoleWithRelationships>();
 

@@ -1,10 +1,10 @@
-import { bytesToSize } from "../../../../helpers";
+import { bytesToSize } from "@/helpers";
 import { FileDownloadButton } from "./FileDownloadButton";
 import { usePacketOutletContext } from "../../main/PacketLayout";
 import { ExtensionIcon } from "./ExtensionIcon";
 import { isImageFile } from "./utils/extensions";
 import { PreviewableFile } from "./PreviewableFile";
-import { FileMetadata } from "../../../../types";
+import { FileMetadata } from "@/types";
 
 interface FileRowProps {
   file: FileMetadata;

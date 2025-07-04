@@ -1,13 +1,19 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { DeleteUserOrRole } from "../../../../app/components/contents/admin/DeleteUserOrRole";
-import appConfig from "../../../../config/appConfig";
-import * as fetch from "../../../../lib/fetch";
+import { DeleteUserOrRole } from "@components/contents/admin/DeleteUserOrRole";
+import appConfig from "@config/appConfig";
+import * as fetch from "@lib/fetch";
 
 describe("DeleteUserOrRole", () => {
-  const fetcherSpy = jest.spyOn(fetch, "fetcher");
+  const fetcherSpy = vitest.spyOn(fetch, "fetcher");
+
+  beforeEach(() => {
+    vitest.clearAllMocks();
+    fetcherSpy.mockResolvedValue({});
+  });
+
   it("should delete user on user delete", async () => {
-    const mutate = jest.fn();
+    const mutate = vitest.fn();
     const username = "testUser";
     render(<DeleteUserOrRole mutate={mutate} data={{ name: username, type: "user" }} />);
 
@@ -25,7 +31,7 @@ describe("DeleteUserOrRole", () => {
   });
 
   it("should delete role on role delete", async () => {
-    const mutate = jest.fn();
+    const mutate = vitest.fn();
     const roleName = "testRole";
     render(<DeleteUserOrRole mutate={mutate} data={{ name: roleName, type: "role" }} />);
 
@@ -44,7 +50,7 @@ describe("DeleteUserOrRole", () => {
 
   it("should not call mutate if delete fails", async () => {
     fetcherSpy.mockImplementation(() => Promise.reject(new Error("Internal server error")));
-    const mutate = jest.fn();
+    const mutate = vitest.fn();
     render(<DeleteUserOrRole mutate={mutate} data={{ name: "roleName", type: "role" }} />);
 
     userEvent.click(screen.getByRole("button", { name: "delete-role" }));

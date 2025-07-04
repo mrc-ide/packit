@@ -1,11 +1,11 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { PacketRunTasksLogs } from "../../../../app/components/contents/runner";
+import { PacketRunTasksLogs } from "@components/contents/runner";
 import { MemoryRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
-import { server } from "../../../../msw/server";
+import { server } from "@/msw/server";
 import { rest } from "msw";
-import { mockTasksRunInfo } from "../../../mocks";
-import { basicRunnerUri } from "../../../../msw/handlers/runnerHandlers";
+import { mockTasksRunInfo } from "@/tests/mocks";
+import { basicRunnerUri } from "@/msw/handlers/runnerHandlers";
 import { SWRConfig } from "swr";
 
 describe("PacketRunTasksLogs component", () => {

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { PAGE_SIZE } from "../../../../lib/constants";
-import { Packet } from "../../../../types";
+import { PAGE_SIZE } from "@lib/constants";
+import { Packet } from "@/types";
 import { DataTable } from "../common/DataTable";
 import { setupPacketColumns } from "./packetColumns";
 import { ToggleParamColumnsDropdownColumns } from "./ToggleParamColumnsDropdown";

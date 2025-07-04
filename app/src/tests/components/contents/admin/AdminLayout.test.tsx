@@ -1,12 +1,12 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { AdminLayout } from "../../../../app/components/contents/admin";
-import { server } from "../../../../msw/server";
+import { AdminLayout } from "@components/contents/admin";
+import { server } from "@/msw/server.ts";
 import { rest } from "msw";
-import { HttpStatus } from "../../../../lib/types/HttpStatus";
+import { HttpStatus } from "@lib/types/HttpStatus";
 import { SWRConfig } from "swr";
-import * as UserProviderModule from "../../../../app/components/providers/UserProvider";
+import * as UserProviderModule from "@components/providers/UserProvider";
 
 const mockUseUser = jest.spyOn(UserProviderModule, "useUser");
 

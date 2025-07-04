@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { DialogContent, DialogHeader, DialogTitle } from "../../Base/Dialog";
+import { DialogContent, DialogHeader, DialogTitle } from "@components/Base/Dialog";
 
 interface UpdateDialogContentProps {
   action: "roles" | "permissions" | "users";

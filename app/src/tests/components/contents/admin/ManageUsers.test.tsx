@@ -2,15 +2,15 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
-import { ManageUsers } from "../../../../app/components/contents/admin";
-import { AdminOutlet } from "../../../../app/components/contents/admin/AdminOutlet";
-import { AuthConfigProvider } from "../../../../app/components/providers/AuthConfigProvider";
-import { UserProvider } from "../../../../app/components/providers/UserProvider";
-import { mockUsersWithPermissions } from "../../../mocks";
+import { ManageUsers } from "@components/contents/admin";
+import { AdminOutlet } from "@components/contents/admin/AdminOutlet";
+import { AuthConfigProvider } from "@components/providers/AuthConfigProvider";
+import { UserProvider } from "@components/providers/UserProvider";
+import { mockUsersWithPermissions } from "@/tests/mocks";
 
-const mockAuthConfig = jest.fn();
-const mockUser = jest.fn();
-jest.mock("../../../../lib/localStorageManager", () => ({
+const mockAuthConfig = vitest.fn();
+const mockUser = vitest.fn();
+vitest.mock("@lib/localStorageManager", () => ({
   getAuthConfigFromLocalStorage: () => mockAuthConfig(),
   getUserFromLocalStorage: () => mockUser()
 }));

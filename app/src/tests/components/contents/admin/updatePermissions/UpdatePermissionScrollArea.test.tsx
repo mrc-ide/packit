@@ -1,15 +1,19 @@
 /* eslint-disable max-len */
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { BaseRolePermission } from "../../../../../app/components/contents/admin/types/RoleWithRelationships";
-import { UpdatePermissionScrollArea } from "../../../../../app/components/contents/admin/updatePermission/UpdatePermissionScrollArea";
-import { constructPermissionName } from "../../../../../lib/constructPermissionName";
+import { BaseRolePermission } from "@components/contents/admin/types/RoleWithRelationships";
+import { UpdatePermissionScrollArea } from "@components/contents/admin/updatePermission/UpdatePermissionScrollArea";
+import { constructPermissionName } from "@lib/constructPermissionName";
 
-const mockIsPermissionEqual = jest.fn();
-jest.mock("../../../../../app/components/contents/admin/utils/isPermissionEqual", () => ({
+const mockIsPermissionEqual = vitest.fn();
+vitest.mock("@components/contents/manageAccess/utils/isPermissionEqual", () => ({
   isPermissionEqual: () => mockIsPermissionEqual()
 }));
 describe("UpdatePermissionScrollArea", () => {
+  beforeEach(() => {
+    vitest.clearAllMocks();
+  });
+
   const updatePermissions: BaseRolePermission[] = [
     { permission: "permission1" },
     { permission: "permission2", packet: { name: "packet1", id: "420" } },
@@ -22,7 +26,7 @@ describe("UpdatePermissionScrollArea", () => {
       <UpdatePermissionScrollArea
         updatePermissions={updatePermissions}
         updateFieldName="addPermissions"
-        setUpdatePermissions={jest.fn()}
+        setUpdatePermissions={vitest.fn()}
       />
     );
 
@@ -32,7 +36,7 @@ describe("UpdatePermissionScrollArea", () => {
   });
 
   it("should call setUpdatePermissions with updated permissions when X click", () => {
-    const setUpdatePermissions = jest.fn().mockImplementation((callback) => {
+    const setUpdatePermissions = vitest.fn().mockImplementation((callback) => {
       const prevUpdatePermissions = {
         addPermissions: updatePermissions,
         removePermissions: []
@@ -54,8 +58,8 @@ describe("UpdatePermissionScrollArea", () => {
     expect(mockIsPermissionEqual).toHaveBeenCalledTimes(updatePermissions.length);
   });
 
-  it("should not call isPermissionEqual on X click when field is diffrerent", () => {
-    const setUpdatePermissions = jest.fn().mockImplementation((callback) => {
+  it("should not call isPermissionEqual on X click when field is different", () => {
+    const setUpdatePermissions = vitest.fn().mockImplementation((callback) => {
       const prevUpdatePermissions = {
         addPermissions: updatePermissions,
         removePermissions: []

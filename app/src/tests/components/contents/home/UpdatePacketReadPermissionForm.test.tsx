@@ -1,19 +1,19 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Dialog } from "../../../../app/components/Base/Dialog";
-import * as fetch from "../../../../lib/fetch";
+import { Dialog } from "@components/Base/Dialog";
+import * as fetch from "@lib/fetch";
 // eslint-disable-next-line max-len
-import { UpdatePacketReadPermissionForm } from "../../../../app/components/contents/home/UpdatePacketReadPermissionForm";
-import appConfig from "../../../../config/appConfig";
-import { ApiError } from "../../../../lib/errors";
-import { HttpStatus } from "../../../../lib/types/HttpStatus";
-import { mockRolesAndUsersWithPermissions } from "../../../mocks";
+import { UpdatePacketReadPermissionForm } from "@components/contents/home/UpdatePacketReadPermissionForm";
+import appConfig from "@config/appConfig";
+import { ApiError } from "@lib/errors";
+import { HttpStatus } from "@lib/types/HttpStatus";
+import { mockRolesAndUsersWithPermissions } from "@/tests/mocks";
 
 describe("UpdatePacketReadPermissionForm", () => {
-  const fetcherSpy = jest.spyOn(fetch, "fetcher");
+  const fetcherSpy = vitest.spyOn(fetch, "fetcher");
   const packetGroupName = "explicit";
-  const mutate = jest.fn();
-  const setDialogOpen = jest.fn();
+  const mutate = vitest.fn();
+  const setDialogOpen = vitest.fn();
   const renderComponent = (packetId?: string) => {
     const [canRead, withRead] = [
       {
@@ -39,6 +39,11 @@ describe("UpdatePacketReadPermissionForm", () => {
     );
   };
 
+  beforeEach(() => {
+    vitest.clearAllMocks();
+    fetcherSpy.mockResolvedValue({});
+  });
+
   const submitValidForm = async () => {
     const multiSelects = screen.getAllByRole("combobox");
 
@@ -63,7 +68,7 @@ describe("UpdatePacketReadPermissionForm", () => {
     userEvent.click(screen.getByRole("button", { name: /save/i }));
   };
   beforeEach(() => {
-    jest.clearAllMocks();
+    vitest.clearAllMocks();
   });
 
   it("should call correct functions when form is submitted successfully with correct url", async () => {

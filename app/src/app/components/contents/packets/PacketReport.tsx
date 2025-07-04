@@ -1,6 +1,6 @@
 import { getHtmlFileIfExists } from "./utils/htmlFile";
 import { ErrorComponent } from "../common/ErrorComponent";
-import { PacketMetadata } from "../../../../types";
+import { PacketMetadata } from "@/types";
 import { useFileObjectUrl } from "../downloads/hooks/useFileObjectUrl";
 
 const defaultErrorMessage = "Error loading report";

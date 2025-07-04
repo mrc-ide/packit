@@ -1,8 +1,8 @@
-import { SidebarItem } from "../../../../lib/types/SidebarItem";
+import { SidebarItem } from "@lib/types/SidebarItem";
 import { Sidebar } from "../common/Sidebar";
 import { AdminOutlet } from "./AdminOutlet";
 import { useUser } from "../../providers/UserProvider";
-import { hasGlobalPacketManagePermission, hasUserManagePermission } from "../../../../lib/auth/hasPermission";
+import { hasGlobalPacketManagePermission, hasUserManagePermission } from "@lib/auth/hasPermission";
 
 export const AdminLayout = () => {
   const { authorities } = useUser();

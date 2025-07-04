@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import appConfig from "../../../../../config/appConfig";
-import { fetcher } from "../../../../../lib/fetch";
+import appConfig from "@config/appConfig";
+import { fetcher } from "@lib/fetch";
 
 export const useCancelTask = (taskId: string) => {
   const [cancelInitiated, setCancelInitiated] = useState(false);

@@ -2,19 +2,19 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
-import { PacketDetails } from "../../../../app/components/contents/packets";
-import { PacketLayout } from "../../../../app/components/main";
-import { packetIndexUri } from "../../../../msw/handlers/packetHandlers";
-import { server } from "../../../../msw/server";
-import { PacketMetadata } from "../../../../types";
-import { mockPacket, mockPackets } from "../../../mocks";
-import * as UserProvider from "../../../../app/components/providers/UserProvider";
+import { PacketDetails } from "@components/contents/packets";
+import { PacketLayout } from "@components/main";
+import { packetIndexUri } from "@/msw/handlers/packetHandlers";
+import { server } from "@/msw/server";
+import { PacketMetadata } from "@/types";
+import { mockPacket, mockPackets } from "@/tests/mocks";
+import * as UserProvider from "@components/providers/UserProvider";
 
-jest.mock("../../../../lib/download", () => ({
+vitest.mock("@lib/download", () => ({
   getFileObjectUrl: async () => "fakeObjectUrl"
 }));
 
-const mockUseUser = jest.spyOn(UserProvider, "useUser");
+const mockUseUser = vitest.spyOn(UserProvider, "useUser");
 
 const renderComponent = (packet: PacketMetadata = mockPacket) => {
   render(

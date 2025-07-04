@@ -3,23 +3,23 @@ import userEvent from "@testing-library/user-event";
 import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
-import { Downloads } from "../../../../app/components/contents";
-import appConfig from "../../../../config/appConfig";
-import { server } from "../../../../msw/server";
-import { PacketMetadata } from "../../../../types";
-import { mockPacket } from "../../../mocks";
-import { PacketLayout } from "../../../../app/components/main";
-import * as UserProvider from "../../../../app/components/providers/UserProvider";
+import { Downloads } from "@components/contents";
+import appConfig from "@config/appConfig";
+import { server } from "@/msw/server";
+import { PacketMetadata } from "@/types";
+import { mockPacket } from "@/tests/mocks";
+import { PacketLayout } from "@components/main";
+import * as UserProvider from "@components/providers/UserProvider";
 
-const mockDownload = jest.fn();
-jest.mock("../../../../lib/download", () => ({
-  ...jest.requireActual("../../../../lib/download"),
+const mockDownload = vitest.fn();
+vitest.mock("@lib/download", async () => ({
+  ...(await vitest.importActual("@lib/download")),
   download: async (...args: any[]) => mockDownload(...args)
 }));
-const mockUseUser = jest.spyOn(UserProvider, "useUser");
+const mockUseUser = vitest.spyOn(UserProvider, "useUser");
 
 describe("download component", () => {
-  URL.createObjectURL = jest.fn(() => "fakeObjectUrl");
+  URL.createObjectURL = vitest.fn(() => "fakeObjectUrl");
 
   const renderComponent = (packet: PacketMetadata = mockPacket) => {
     render(
@@ -41,7 +41,7 @@ describe("download component", () => {
     } as any);
   });
   afterAll(() => {
-    jest.clearAllMocks();
+    vitest.clearAllMocks();
   });
 
   it("can render packet header", async () => {

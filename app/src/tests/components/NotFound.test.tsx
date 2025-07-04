@@ -1,5 +1,5 @@
 import { render } from "@testing-library/react";
-import { NotFound } from "../../app/components/NotFound";
+import { NotFound } from "@components/NotFound";
 
 describe("NotFound component", () => {
   it("renders the page not found message", () => {

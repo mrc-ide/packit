@@ -2,7 +2,7 @@
 import * as tailwindAnimate from "tailwindcss-animate";
 
 export const darkMode = ["class"];
-export const content = ["./src/**/*.{js,jsx,ts,tsx}"];
+export const content = ["./src/**/*.{js,jsx,ts,tsx}", "./index.html"];
 export const theme = {
   container: {
     center: true,

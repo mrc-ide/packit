@@ -1,14 +1,14 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { mockPacket } from "../../../../mocks";
-import { Custom } from "../../../../../types";
-import { OrderlyDownloads } from "../../../../../app/components/contents/downloads/orderly/OrderlyDownloads";
+import { mockPacket } from "@/tests//mocks";
+import { Custom } from "@/types";
+import { OrderlyDownloads } from "@components/contents/downloads/orderly/OrderlyDownloads";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
 
-const mockDownload = jest.fn();
-jest.mock("../../../../../lib/download", () => ({
-  ...jest.requireActual("../../../../../lib/download"),
+const mockDownload = vitest.fn();
+vitest.mock("@lib/download", async () => ({
+  ...(await vitest.importActual("@lib/download")),
   download: async (...args: any[]) => mockDownload(...args)
 }));
 
@@ -29,7 +29,7 @@ const renderComponent = (customMetadata: Custom) => {
 
 describe("orderly downloads component", () => {
   afterAll(() => {
-    jest.clearAllMocks();
+    vitest.clearAllMocks();
   });
 
   it("renders the 'artefacts' and 'other files' accordion sections with only the first open", async () => {

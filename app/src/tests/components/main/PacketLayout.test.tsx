@@ -3,25 +3,25 @@ import userEvent from "@testing-library/user-event";
 import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
-import { Downloads, Metadata } from "../../../app/components/contents";
-import { PacketDetails } from "../../../app/components/contents/packets";
-import { PacketLayout } from "../../../app/components/main";
-import { server } from "../../../msw/server";
-import { mockPacket, mockTaskId } from "../../mocks";
-import { HttpStatus } from "../../../lib/types/HttpStatus";
-import * as UserProvider from "../../../app/components/providers/UserProvider";
-import { basicRunnerUri } from "../../../msw/handlers/runnerHandlers";
-import { packetIndexUri } from "../../../msw/handlers/packetHandlers";
+import { Downloads, Metadata } from "@components/contents";
+import { PacketDetails } from "@components/contents/packets";
+import { PacketLayout } from "@components/main";
+import { server } from "@/msw/server";
+import { mockPacket, mockTaskId } from "@/tests/mocks";
+import { HttpStatus } from "@lib/types/HttpStatus";
+import * as UserProvider from "@components/providers/UserProvider";
+import { basicRunnerUri } from "@/msw/handlers/runnerHandlers";
+import { packetIndexUri } from "@/msw/handlers/packetHandlers";
 
-jest.mock("../../../lib/download", () => ({
-  ...jest.requireActual("../../../lib/download"),
+vitest.mock("@lib/download", async () => ({
+  ...(await vitest.importActual("@lib/download")),
   getFileObjectUrl: async () => "fakeObjectUrl"
 }));
 
-URL.createObjectURL = jest.fn();
-URL.revokeObjectURL = jest.fn();
+URL.createObjectURL = vitest.fn();
+URL.revokeObjectURL = vitest.fn();
 
-const mockUseUser = jest.spyOn(UserProvider, "useUser");
+const mockUseUser = vitest.spyOn(UserProvider, "useUser");
 
 const renderComponent = (packet = mockPacket) => {
   render(

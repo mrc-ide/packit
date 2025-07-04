@@ -1,19 +1,19 @@
 import { render } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { UserProvider } from "../../../app/components/providers/UserProvider";
-import { UserAuthForm } from "../../../app/components/login/UserAuthForm";
+import { UserProvider } from "@components/providers/UserProvider";
+import { UserAuthForm } from "@components/login/UserAuthForm";
 
-const mockSetLoggingOut = jest.fn();
+const mockSetLoggingOut = vitest.fn();
 let mockLoggingOut = false;
-jest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
+vitest.mock("@components/providers/RedirectOnLoginProvider", () => ({
   useRedirectOnLogin: () => ({
     setLoggingOut: mockSetLoggingOut,
     loggingOut: (() => mockLoggingOut)()
   })
 }));
 
-const mockWindowNavigate = jest.fn();
-jest.mock("../../../lib/navigate", () => ({
+const mockWindowNavigate = vitest.fn();
+vitest.mock("../../../lib/navigate", () => ({
   windowNavigate: (href: string) => mockWindowNavigate(href)
 }));
 
@@ -23,8 +23,8 @@ const authConfig = {
   enableGithubLogin: true,
   enablePreAuthLogin: false
 };
-const mockUseAuthConfig = jest.fn().mockReturnValue(authConfig);
-jest.mock("../../../app/components/providers/AuthConfigProvider", () => ({
+const mockUseAuthConfig = vitest.fn().mockReturnValue(authConfig);
+vitest.mock("@components/providers/AuthConfigProvider", () => ({
   useAuthConfig: () => mockUseAuthConfig()
 }));
 
@@ -40,7 +40,7 @@ describe("UserAuthForm", () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vitest.clearAllMocks();
   });
 
   it("resets logging out", () => {

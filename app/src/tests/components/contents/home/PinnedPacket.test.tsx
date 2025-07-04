@@ -1,14 +1,14 @@
 import { render, screen } from "@testing-library/react";
-import { mockPacket } from "../../../mocks";
-import { PinnedPacket } from "../../../../app/components/contents/home/PinnedPacket";
+import { mockPacket } from "@/tests/mocks";
+import { PinnedPacket } from "@components/contents/home/PinnedPacket";
 import { SWRConfig } from "swr";
 import { MemoryRouter } from "react-router-dom";
-import { PacketMetadata } from "../../../../types";
+import { PacketMetadata } from "@/types";
 import userEvent from "@testing-library/user-event";
 
-const mockDownload = jest.fn();
-jest.mock("../../../../lib/download", () => ({
-  ...jest.requireActual("../../../../lib/download"),
+const mockDownload = vitest.fn();
+vitest.mock("@lib/download", async () => ({
+  ...(await vitest.importActual("@lib/download")),
   download: async (...args: any[]) => mockDownload(...args)
 }));
 

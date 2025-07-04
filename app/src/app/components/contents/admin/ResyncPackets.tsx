@@ -1,5 +1,5 @@
 import { useUser } from "../../providers/UserProvider";
-import { hasGlobalPacketManagePermission } from "../../../../lib/auth/hasPermission";
+import { hasGlobalPacketManagePermission } from "@lib/auth/hasPermission";
 import { Unauthorized } from "../common/Unauthorized";
 import { ResyncPacketsButton } from "./ResyncPacketsButton";
 

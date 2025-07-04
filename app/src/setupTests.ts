@@ -10,21 +10,21 @@ beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-jest.mock("./lib/auth/getBearerToken", () => ({
-  getBearerToken: jest.fn(() => "fake-token")
+vitest.mock("./lib/auth/getBearerToken", () => ({
+  getBearerToken: vitest.fn(() => "fake-token")
 }));
 
 Object.defineProperty(window, "matchMedia", {
   writable: true,
-  value: jest.fn().mockImplementation((query) => ({
+  value: vitest.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
-    addListener: jest.fn(), // deprecated
-    removeListener: jest.fn(), // deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn()
+    addListener: vitest.fn(), // deprecated
+    removeListener: vitest.fn(), // deprecated
+    addEventListener: vitest.fn(),
+    removeEventListener: vitest.fn(),
+    dispatchEvent: vitest.fn()
   }))
 });
 
@@ -34,12 +34,12 @@ document.title = "App Title";
 window.ResizeObserver = ResizeObserverPolyFill;
 
 // combobox needs this for tests
-window.HTMLElement.prototype.scrollIntoView = jest.fn();
+window.HTMLElement.prototype.scrollIntoView = vitest.fn();
 
 // fix issue with swr in tests TypeError: Cannot read properties of null (reading 'visibilityState')
 // https://github.com/vercel/swr/issues/2373
-global.beforeEach(() => {
-  const original = jest.requireActual("swr/_internal");
+global.beforeEach(async () => {
+  const original = (await vitest.importActual("swr/_internal")) as any;
   const originalIsVisible = original.defaultConfig.isVisible;
   original.defaultConfig.isVisible = () => {
     try {

@@ -1,22 +1,22 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
-import { AccountHeaderDropdown } from "../../../app/components/header/AccountHeaderDropdown";
-import * as UserProvider from "../../../app/components/providers/UserProvider";
-import { mockUserProviderState } from "../../mocks";
+import { AccountHeaderDropdown } from "@components/header/AccountHeaderDropdown";
+import * as UserProvider from "@components/providers/UserProvider";
+import { mockUserProviderState } from "@/tests/mocks";
 
-const mockedUsedNavigate = jest.fn();
-jest.mock("react-router-dom", () => ({
-  ...(jest.requireActual("react-router-dom") as any),
+const mockedUsedNavigate = vitest.fn();
+vitest.mock("react-router-dom", async () => ({
+  ...((await vitest.importActual("react-router-dom")) as any),
   useNavigate: () => mockedUsedNavigate
 }));
-const mockSetLoggingOut = jest.fn();
-jest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
+const mockSetLoggingOut = vitest.fn();
+vitest.mock("@components/providers/RedirectOnLoginProvider", () => ({
   useRedirectOnLogin: () => ({
     setLoggingOut: mockSetLoggingOut
   })
 }));
-const mockUseUser = jest.spyOn(UserProvider, "useUser");
+const mockUseUser = vitest.spyOn(UserProvider, "useUser");
 
 const DOWN_ARROW = { keyCode: 40 };
 
@@ -30,7 +30,7 @@ describe("header drop down menu component", () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vitest.clearAllMocks();
   });
 
   it("renders drop down menu without user initials if not authenticated", async () => {

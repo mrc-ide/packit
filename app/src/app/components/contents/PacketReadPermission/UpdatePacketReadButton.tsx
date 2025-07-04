@@ -1,9 +1,9 @@
 import { UserCog } from "lucide-react";
 import { useState } from "react";
 import { KeyedMutator } from "swr";
-import { PacketMetadata } from "../../../../types";
-import { Button } from "../../Base/Button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../Base/Dialog";
+import { PacketMetadata } from "@/types";
+import { Button } from "@components/Base/Button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@components/Base/Dialog";
 import { UpdatePacketReadPermissionForm } from "../home/UpdatePacketReadPermissionForm";
 import { RolesAndUsersToUpdateRead, BasicRolesAndUsers } from "../admin/types/RoleWithRelationships";
 

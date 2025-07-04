@@ -1,4 +1,4 @@
-import { FileMetadata, PacketMetadata } from "../../../../types";
+import { FileMetadata, PacketMetadata } from "@/types";
 import { ImageDisplay } from "../downloads/ImageDisplay";
 import { filePathToExtension, isImageFile } from "../downloads/utils/extensions";
 import { PacketReport } from "./PacketReport";

@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { authIsExpired, isAuthenticated } from "../../../lib/isAuthenticated";
+import { authIsExpired, isAuthenticated } from "@lib/isAuthenticated";
 import { useAuthConfig } from "../providers/AuthConfigProvider";
 import { useUser } from "../providers/UserProvider";
 import { useRedirectOnLogin } from "../providers/RedirectOnLoginProvider";
-import { windowNavigate } from "../../../lib/navigate";
+import { windowNavigate } from "@lib/navigate";
 
 export const ProtectedRoute = () => {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ export const ProtectedRoute = () => {
     // using pre-auth, which may require logout action from auth provider. (See /packit/logout route in montagu nginx
     // conf for how this works with Montagu: https://github.com/vimc/montagu-proxy/blob/master/nginx.montagu.conf)
     if (authConfig?.enablePreAuthLogin) {
-      const href = `${process.env.PUBLIC_URL}/logout`;
+      const href = `${import.meta.env.BASE_URL}logout`;
       windowNavigate(href);
     } else {
       navigate(`/login${qs}`);

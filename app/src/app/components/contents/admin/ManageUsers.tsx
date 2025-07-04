@@ -3,13 +3,13 @@ import { useAuthConfig } from "../../providers/AuthConfigProvider";
 import { DataTable } from "../common/DataTable";
 import { useManageAccessLayoutContext } from "./AdminOutlet";
 
-import { PAGE_SIZE } from "../../../../lib/constants";
+import { HelpCircle } from "lucide-react";
+import { NavLink } from "react-router-dom";
+import { PAGE_SIZE } from "@lib/constants";
 import { FilterInput } from "../common/FilterInput";
 import { AddBasicUserButton } from "./AddBasicUserButton";
 import { setupManageUsersColumns } from "./utils/manageUsersColumns";
 import { usersGlobalFilterFn } from "./utils/rolesTableGlobalFilterFn";
-import { NavLink } from "react-router-dom";
-import { HelpCircle } from "lucide-react";
 import { Unauthorized } from "../common/Unauthorized";
 
 export const ManageUsers = () => {

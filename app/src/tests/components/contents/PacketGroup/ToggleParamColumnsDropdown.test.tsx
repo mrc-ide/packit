@@ -1,6 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-// eslint-disable-next-line max-len
-import { ToggleParamColumnsDropdownColumns } from "../../../../app/components/contents/PacketGroup/ToggleParamColumnsDropdown";
+import { ToggleParamColumnsDropdownColumns } from "@components/contents/PacketGroup/ToggleParamColumnsDropdown";
 import userEvent from "@testing-library/user-event";
 
 describe("ToggleParamColumnsDropdown", () => {
@@ -15,7 +14,7 @@ describe("ToggleParamColumnsDropdown", () => {
       <ToggleParamColumnsDropdownColumns
         columnVisibility={visibility}
         allParametersKeys={allParammetersKeys}
-        setColumnVisibility={jest.fn()}
+        setColumnVisibility={vitest.fn()}
       />
     );
 
@@ -28,7 +27,7 @@ describe("ToggleParamColumnsDropdown", () => {
   });
 
   it("should call setColumnVisibility with correct value when all parameter columns selected", async () => {
-    const setColumnVisibility = jest.fn();
+    const setColumnVisibility = vitest.fn();
     const mockPrevState = {
       parameters_key1: true,
       parameters_key2: false
@@ -59,7 +58,7 @@ describe("ToggleParamColumnsDropdown", () => {
   });
 
   it("should call setColumnVisibility with correct value when any parameter unselected", async () => {
-    const setColumnVisibility = jest.fn();
+    const setColumnVisibility = vitest.fn();
     const mockPrevState = {
       parameters_key1: true,
       parameters_key2: true

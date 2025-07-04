@@ -51,6 +51,7 @@ export const getFileObjectUrl = async (file: FileMetadata, packetId: string, fil
   const blob = await res.blob().catch(() => {
     throw new Error("Error retrieving data from response");
   });
+
   return URL.createObjectURL(blob);
 };
 

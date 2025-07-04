@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import appConfig, { githubAuthEndpoint } from "../../../config/appConfig";
+import appConfig, { githubAuthEndpoint } from "@config/appConfig";
 import { buttonVariants } from "../Base/Button";
 import { Github } from "lucide-react";
 
