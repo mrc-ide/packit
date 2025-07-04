@@ -15,6 +15,7 @@ interface PacketIdProjection {
 
 @Repository
 interface PacketGroupRepository : JpaRepository<PacketGroup, Int> {
+    @PostFilter("@authz.canViewPacketGroup(#root, filterObject.name)")
     fun findByNameIn(names: List<String>): List<PacketGroup>
 
     @PostFilter("@authz.canViewPacketGroup(#root, filterObject.name)")
