@@ -1,6 +1,7 @@
 package packit.model
 
 import jakarta.persistence.*
+import packit.model.dto.PinDto
 import java.util.UUID
 
 @Entity
@@ -14,3 +15,5 @@ class Pin(
     @Column(name = "packet_id", nullable = false)
     var packetId: String,
 )
+
+fun Pin.toDto() = PinDto(packetId)
