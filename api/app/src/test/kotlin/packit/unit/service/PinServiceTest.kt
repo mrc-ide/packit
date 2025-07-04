@@ -2,8 +2,14 @@ package packit.unit.service
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import org.springframework.http.HttpStatus
+import packit.exceptions.PackitException
 import packit.model.PacketMetadata
 import packit.model.Pin
 import packit.model.TimeMetadata
@@ -11,7 +17,9 @@ import packit.repository.PinRepository
 import packit.service.BasePacketService
 import packit.service.BasePinService
 import java.time.Instant
+import java.util.Optional
 import java.util.UUID
+import kotlin.test.assertEquals
 
 class PinServiceTest {
     private val packetService = mock<BasePacketService>()
@@ -75,5 +83,65 @@ class PinServiceTest {
         val pinnedPackets = sut.findAllPinnedPackets()
 
         assertThat(pinnedPackets).containsExactly(newPacket, middlePacket, oldPacket)
+    }
+
+    @Test
+    fun `findPinByPacketId should return null if pin does not exist`() {
+        val packetId = "testPacketId"
+        whenever(pinRepository.findByPacketId(any<String>())).thenReturn(null)
+
+        val sut = BasePinService(packetService, pinRepository)
+        assertThat(sut.findPinByPacketId(packetId)).isNull()
+    }
+
+    @Test
+    fun `findPinByPacketId should return the pin if it exists`() {
+        val packetId = "testPacketId"
+        val pin = Pin(UUID.randomUUID(), packetId)
+        whenever(pinRepository.findByPacketId(any<String>())).thenReturn(pin)
+
+        val sut = BasePinService(packetService, pinRepository)
+        assertThat(sut.findPinByPacketId(packetId)).isNotNull
+    }
+
+    @Test
+    fun `createPinByPacketId should create a pin for the given packet id`() {
+        val packetId = "testPacketId"
+        val pin = Pin(UUID.randomUUID(), packetId)
+        whenever(pinRepository.findByPacketId(any<String>())).thenReturn(null)
+        whenever(pinRepository.save(any<Pin>())).thenReturn(pin)
+
+        val sut = BasePinService(packetService, pinRepository)
+        val createdPin = sut.createPinByPacketId(packetId)
+        assertThat(createdPin.id).isNotNull()
+        assertThat(createdPin.packetId).isEqualTo(packetId)
+    }
+
+    @Test
+    fun `createPinByPacketId returns the pin for a packet id if it already exists`() {
+        val packetId = "testPacketId"
+        val pin = Pin(UUID.randomUUID(), packetId)
+        whenever(pinRepository.findByPacketId(any<String>())).thenReturn(pin)
+
+        val sut = BasePinService(packetService, pinRepository)
+        val createdPin = sut.createPinByPacketId(packetId)
+        assertThat(createdPin.id).isNotNull()
+        assertThat(createdPin.packetId).isEqualTo(packetId)
+
+        verify(pinRepository, never()).save(any<Pin>())
+    }
+
+    @Test
+    fun `createPinByPacketId throws PackitException when no packet exists with given id`() {
+        val packetId = "nonExistingId"
+        whenever(packetService.getPacket(packetId)).thenThrow(PackitException::class.java)
+        val sut = BasePinService(packetService, pinRepository)
+
+        assertThrows<PackitException> {
+            sut.createPinByPacketId(packetId)
+        }.apply {
+            assertEquals("packetNotFound", key)
+            assertEquals(HttpStatus.NOT_FOUND, httpStatus)
+        }
     }
 }
