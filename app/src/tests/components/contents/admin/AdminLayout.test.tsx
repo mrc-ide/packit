@@ -8,7 +8,7 @@ import { HttpStatus } from "@lib/types/HttpStatus";
 import { SWRConfig } from "swr";
 import * as UserProviderModule from "@components/providers/UserProvider";
 
-const mockUseUser = jest.spyOn(UserProviderModule, "useUser");
+const mockUseUser = vitest.spyOn(UserProviderModule, "useUser");
 
 const renderComponent = () =>
   render(
@@ -34,7 +34,7 @@ describe("AdminLayout", () => {
   });
 
   afterAll(() => {
-    jest.clearAllMocks();
+    vitest.clearAllMocks();
   });
 
   const expectRendersLinksWithPermissions = async (permissions: string[], expectedLinks: Record<string, string>) => {

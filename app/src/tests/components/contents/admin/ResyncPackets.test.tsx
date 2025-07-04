@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import * as UserProviderModule from "@components/providers/UserProvider";
 import { ResyncPackets } from "@components/contents/admin";
 
-const mockUseUser = jest.spyOn(UserProviderModule, "useUser");
+const mockUseUser = vitest.spyOn(UserProviderModule, "useUser");
 const renderComponent = () =>
   render(
     <UserProviderModule.UserProvider>
@@ -12,7 +12,7 @@ const renderComponent = () =>
 
 describe("ResyncPackets", () => {
   afterAll(() => {
-    jest.clearAllMocks();
+    vitest.clearAllMocks();
   });
 
   const unauthorizedText = /You do not have permission to access this page/;

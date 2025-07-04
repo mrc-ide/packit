@@ -6,7 +6,7 @@ import appConfig from "@config/appConfig";
 import { Toaster } from "sonner";
 
 describe("ResyncPacketsButton", () => {
-  const fetcherSpy = jest.spyOn(fetch, "fetcher");
+  const fetcherSpy = vitest.spyOn(fetch, "fetcher");
 
   const renderComponent = () =>
     render(
@@ -17,7 +17,7 @@ describe("ResyncPacketsButton", () => {
     );
 
   afterAll(() => {
-    jest.resetAllMocks();
+    vitest.resetAllMocks();
   });
 
   const getButton = () => screen.getByRole("button", { name: "Resync packets" });
