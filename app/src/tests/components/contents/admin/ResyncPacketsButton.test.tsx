@@ -16,7 +16,7 @@ describe("ResyncPacketsButton", () => {
       </>
     );
 
-  afterAll(() => {
+  afterEach(() => {
     vitest.resetAllMocks();
   });
 

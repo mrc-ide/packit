@@ -6,7 +6,7 @@ import { UpdatePermissionScrollArea } from "@components/contents/admin/updatePer
 import { constructPermissionName } from "@lib/constructPermissionName";
 
 const mockIsPermissionEqual = vitest.fn();
-vitest.mock("@components/contents/manageAccess/utils/isPermissionEqual", () => ({
+vitest.mock("@components/contents/admin/utils/isPermissionEqual", () => ({
   isPermissionEqual: () => mockIsPermissionEqual()
 }));
 describe("UpdatePermissionScrollArea", () => {
