@@ -1,6 +1,6 @@
 import { cn } from "@lib/cn";
 import { MultiSelectorItem, MultiSelectorList } from "@components/Base/MultiSelect";
-import { BasicRolesAndUsers } from "../manageAccess/types/RoleWithRelationships";
+import { BasicRolesAndUsers } from "../admin/types/RoleWithRelationships";
 
 interface UpdatePacketReadPermissionMultiSelectListProps {
   rolesAndUsers: BasicRolesAndUsers;

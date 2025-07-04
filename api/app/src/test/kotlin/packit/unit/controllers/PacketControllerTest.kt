@@ -217,4 +217,12 @@ class PacketControllerTest {
         assertEquals("attachment; filename=\"my_archive.zip\"", response.getHeader("Content-Disposition"))
         assertEquals(HttpStatus.OK.value(), response.status)
     }
+
+    @Test
+    fun `resync packets`() {
+        val result = sut.resyncPackets()
+        verify(packetService).resyncPackets()
+        assertEquals(HttpStatus.NO_CONTENT, result.statusCode)
+        assertEquals(null, result.body)
+    }
 }

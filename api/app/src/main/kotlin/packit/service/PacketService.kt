@@ -1,10 +1,12 @@
 package packit.service
 
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.client.ClientHttpResponse
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import packit.exceptions.PackitException
 import packit.helpers.PagingHelper
 import packit.model.FileMetadata
@@ -12,8 +14,10 @@ import packit.model.Packet
 import packit.model.PacketGroup
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
+import packit.model.dto.OutpackMetadata
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
+import packit.repository.RunInfoRepository
 import java.io.OutputStream
 import java.security.MessageDigest
 import java.time.Instant
@@ -27,6 +31,7 @@ interface PacketService {
     fun getPackets(pageablePayload: PageablePayload, filterName: String, filterId: String): Page<Packet>
     fun getChecksum(): String
     fun importPackets()
+    fun resyncPackets()
     fun getMetadataBy(id: String): PacketMetadata
     fun getFileByPath(
         packetId: String,
@@ -46,19 +51,55 @@ interface PacketService {
 class BasePacketService(
     private val packetRepository: PacketRepository,
     private val packetGroupRepository: PacketGroupRepository,
+    private val runInfoRepository: RunInfoRepository,
     private val outpackServerClient: OutpackServer,
 ) : PacketService {
+
+    companion object {
+        private val log = LoggerFactory.getLogger(BasePacketService::class.java)
+    }
+
+    @Transactional
     override fun importPackets() {
         val mostRecent = packetRepository.findTopByOrderByImportTimeDesc()?.importTime
+        savePackets(outpackServerClient.getMetadata(mostRecent))
+    }
+
+    @Transactional
+    override fun resyncPackets() {
+        log.info("Resyncing packets")
+        // do a full resync with outpack, unlike incremental importPackets
+        // add any outpack packets we already have, and delete any local packets that outpack doesn't have
+
+        val outpackPackets = outpackServerClient.getMetadata(null).associateBy { it.id }
+        val outpackPacketIds = outpackPackets.keys
+
+        val packitPacketIds = packetRepository.findAllIds().toSet()
+
+        val notInOutpack = packitPacketIds subtract outpackPacketIds
+        log.info("Deleting ${notInOutpack.size} packets")
+        runInfoRepository.deleteAllByPacketIdIn(notInOutpack)
+        packetRepository.deleteAllByIdIn(notInOutpack)
+
+        val notInPackit = outpackPacketIds subtract packitPacketIds
+        log.info("Saving ${notInPackit.size} new packets")
+        val newPackets = outpackPackets.filterKeys { it in notInPackit }.values
+        savePackets(newPackets)
+
+        // Clean up any packet groups which have been left childless
+        val currentPacketGroups = outpackPackets.values.map { it.name }.distinct()
+        packetGroupRepository.deleteAllByNameNotIn(currentPacketGroups)
+    }
+
+    private fun savePackets(outpackMetadata: Collection<OutpackMetadata>) {
         val now = Instant.now().epochSecond.toDouble()
-        val packets = outpackServerClient.getMetadata(mostRecent)
-            .map {
-                Packet(
-                    it.id, it.name, it.name,
-                    it.parameters ?: mapOf(), now,
-                    it.time.start, it.time.end
-                )
-            }
+        val packets = outpackMetadata.map {
+            Packet(
+                it.id, it.name, it.name,
+                it.parameters ?: mapOf(), now,
+                it.time.start, it.time.end
+            )
+        }
         val packetGroupNames = packets.groupBy { it.name }
             .map { it.key }
 

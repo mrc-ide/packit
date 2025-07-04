@@ -1,15 +1,16 @@
 package packit.unit.service
 
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.mockStatic
 import org.mockito.internal.verification.Times
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
-import packit.service.DeviceAuthRequestService
-import packit.service.OneTimeTokenService
-import packit.service.OutpackServerClient
-import packit.service.PacketService
-import packit.service.Scheduler
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.context.SecurityContext
+import org.springframework.security.core.context.SecurityContextHolder
+import packit.service.*
 
 class SchedulerTests {
     private val mockOneTimeTokenService = mock<OneTimeTokenService>()
@@ -57,5 +58,36 @@ class SchedulerTests {
         val sut = getSut()
         sut.cleanUpExpiredDeviceAuthRequests()
         verify(mockDeviceAuthRequestService).cleanUpExpiredRequests()
+    }
+
+    private fun testUsesAuthorizedSecurityContext(func: () -> Unit) {
+        val mockSecurityContext = mock<SecurityContext>()
+        mockStatic(SecurityContextHolder::class.java).use { mockSecurityContextHolder ->
+            mockSecurityContextHolder.`when`<Any>(SecurityContextHolder::createEmptyContext)
+                .thenReturn(mockSecurityContext)
+
+            func()
+
+            verify(mockSecurityContext).authentication = UsernamePasswordAuthenticationToken(
+                "system", null,
+                listOf(
+                    SimpleGrantedAuthority("user.manage"),
+                    SimpleGrantedAuthority("packet.manage"),
+                    SimpleGrantedAuthority("packet.run"),
+                    SimpleGrantedAuthority("outpack.read"),
+                    SimpleGrantedAuthority("outpack.write"),
+                )
+            )
+            mockSecurityContextHolder.verify { SecurityContextHolder.setContext(mockSecurityContext) }
+            mockSecurityContextHolder.verify { SecurityContextHolder.clearContext() }
+        }
+    }
+
+    @Test
+    fun `uses authorized security context`() {
+        val sut = getSut()
+        testUsesAuthorizedSecurityContext { sut.checkPackets() }
+        testUsesAuthorizedSecurityContext { sut.cleanUpExpiredTokens() }
+        testUsesAuthorizedSecurityContext { sut.cleanUpExpiredDeviceAuthRequests() }
     }
 }

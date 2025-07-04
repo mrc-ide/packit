@@ -14,5 +14,7 @@ interface RunInfoRepository : JpaRepository<RunInfo, String> {
 
     @Transactional
     fun deleteAllByPacketGroupName(packetGroupName: String)
+    @Transactional
+    fun deleteAllByPacketIdIn(packetId: Collection<String>)
     fun findByPacketId(packetId: String): RunInfo?
 }

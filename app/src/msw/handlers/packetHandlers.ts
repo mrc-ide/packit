@@ -2,7 +2,7 @@ import { rest } from "msw";
 import appConfig from "../../config/appConfig";
 import { mockPackets, mockPacket, mockPacketGroupResponse, mockRolesAndUsersWithPermissions } from "../../tests/mocks";
 // eslint-disable-next-line max-len
-import { RolesAndUsersToUpdateRead } from "../../app/components/contents/manageAccess/types/RoleWithRelationships";
+import { RolesAndUsersToUpdateRead } from "../../app/components/contents/admin/types/RoleWithRelationships";
 
 export const packetIndexUri = `${appConfig.apiUrl()}/packets`;
 

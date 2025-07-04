@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { RoleWithRelationships } from "@components/contents/manageAccess/types/RoleWithRelationships";
+import { RoleWithRelationships } from "@components/contents/admin/types/RoleWithRelationships";
 import { PacketReadRolesTable } from "@components/contents/PacketReadPermission/PacketReadRolesTable";
 import userEvent from "@testing-library/user-event";
 

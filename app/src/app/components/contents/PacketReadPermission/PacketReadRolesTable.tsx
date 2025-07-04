@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { DataTable } from "../common/DataTable";
 import { FilterInput } from "../common/FilterInput";
-import { BasicRoleWithUsers } from "../manageAccess/types/RoleWithRelationships";
-import { roleDefaultColumns } from "../manageAccess/utils/manageRolesColumns";
-import { rolesGlobalFilterFn } from "../manageAccess/utils/rolesTableGlobalFilterFn";
+import { BasicRoleWithUsers } from "../admin/types/RoleWithRelationships";
+import { roleDefaultColumns } from "../admin/utils/manageRolesColumns";
+import { rolesGlobalFilterFn } from "../admin/utils/rolesTableGlobalFilterFn";
 import { ColumnDef, FilterFn } from "@tanstack/react-table";
 
 interface PacketReadRolesTableProps {

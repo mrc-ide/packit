@@ -14,7 +14,7 @@ import {
   MultiSelectorTrigger
 } from "@components/Base/MultiSelect";
 import { CustomDialogFooter } from "../common/CustomDialogFooter";
-import { BasicRolesAndUsers, RolesAndUsersToUpdateRead } from "../manageAccess/types/RoleWithRelationships";
+import { BasicRolesAndUsers, RolesAndUsersToUpdateRead } from "../admin/types/RoleWithRelationships";
 import { UpdatePacketReadPermissionMultiSelectList } from "./UpdatePacketReadPermissionMultiSelectList";
 
 interface UpdatePacketReadPermissionFormProps {

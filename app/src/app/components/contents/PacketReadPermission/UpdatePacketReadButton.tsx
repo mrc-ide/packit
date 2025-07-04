@@ -5,7 +5,7 @@ import { PacketMetadata } from "@/types";
 import { Button } from "@components/Base/Button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@components/Base/Dialog";
 import { UpdatePacketReadPermissionForm } from "../home/UpdatePacketReadPermissionForm";
-import { RolesAndUsersToUpdateRead, BasicRolesAndUsers } from "../manageAccess/types/RoleWithRelationships";
+import { RolesAndUsersToUpdateRead, BasicRolesAndUsers } from "../admin/types/RoleWithRelationships";
 
 interface UpdatePacketReadButtonProps {
   packet: PacketMetadata;
