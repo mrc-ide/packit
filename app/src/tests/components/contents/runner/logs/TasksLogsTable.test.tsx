@@ -4,11 +4,11 @@ import { rest } from "msw";
 import { MemoryRouter } from "react-router-dom";
 import { Toaster } from "sonner";
 import { SWRConfig } from "swr";
-import { TasksLogsTable } from "../../../../../app/components/contents/runner/logs/TasksLogsTable";
-import { PAGE_SIZE } from "../../../../../lib/constants";
-import { basicRunnerUri } from "../../../../../msw/handlers/runnerHandlers";
-import { server } from "../../../../../msw/server";
-import { mockTasksRunInfo } from "../../../../mocks";
+import { TasksLogsTable } from "@components/contents/runner/logs/TasksLogsTable";
+import { PAGE_SIZE } from "@lib/constants";
+import { basicRunnerUri } from "@/msw/handlers/runnerHandlers";
+import { server } from "@/msw/server";
+import { mockTasksRunInfo } from "@/tests/mocks";
 const renderComponent = () =>
   render(
     <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>

@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { RedirectOnLoginProvider, useRedirectOnLogin } from "../../../app/components/providers/RedirectOnLoginProvider";
+import { RedirectOnLoginProvider, useRedirectOnLogin } from "@components/providers/RedirectOnLoginProvider";
 import { useEffect } from "react";
 
 const getItemSpy = vitest.spyOn(Storage.prototype, "getItem");

@@ -2,13 +2,13 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
-import { PacketReadPermission } from "../../../../app/components/contents/PacketReadPermission/PacketReadPermission";
-import { HttpStatus } from "../../../../lib/types/HttpStatus";
-import { server } from "../../../../msw/server";
+import { PacketReadPermission } from "@components/contents/PacketReadPermission/PacketReadPermission";
+import { HttpStatus } from "@lib/types/HttpStatus";
+import { server } from "@/msw/server";
 import { mockNonUsernameRolesWithRelationships, mockPacket } from "../../../mocks";
-import { packetIndexUri } from "../../../../msw/handlers/packetHandlers";
-import { UserProvider } from "../../../../app/components/providers/UserProvider";
-import { PacketLayout } from "../../../../app/components/main";
+import { packetIndexUri } from "@/msw/handlers/packetHandlers";
+import { UserProvider } from "@components/providers/UserProvider";
+import { PacketLayout } from "@components/main";
 
 const renderComponent = () =>
   render(

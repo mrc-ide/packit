@@ -1,8 +1,8 @@
 import { jwtDecode } from "jwt-decode";
 import { ReactNode, createContext, useContext, useState } from "react";
-import { getUserFromLocalStorage } from "../../../lib/localStorageManager";
-import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
-import { PacketJwtPayload } from "../../../types";
+import { getUserFromLocalStorage } from "@lib/localStorageManager";
+import { LocalStorageKeys } from "@lib/types/LocalStorageKeys";
+import { PacketJwtPayload } from "@/types";
 import { ErrorComponent } from "../contents/common/ErrorComponent";
 import { useGetUserAuthorities } from "./hooks/useGetUserAuthorities";
 import { UserProviderState, UserState } from "./types/UserTypes";

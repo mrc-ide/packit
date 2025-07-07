@@ -1,8 +1,8 @@
-import { Card, CardContent, CardHeader } from "../../../Base/Card";
+import { Card, CardContent, CardHeader } from "@components/Base/Card";
 import { FileRow } from "../FileRow";
 import { ZipDownloadButton } from "../ZipDownloadButton";
-import { Artefact } from "../../../../../types";
-import { usePacketOutletContext } from "../../../main/PacketLayout";
+import { Artefact } from "@components/../../types";
+import { usePacketOutletContext } from "@components/main/PacketLayout";
 import { useParams } from "react-router-dom";
 import { allArtefactsFilesForPacket, filesForArtefact } from "../utils/artefactFiles";
 

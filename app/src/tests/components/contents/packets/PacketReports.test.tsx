@@ -1,13 +1,13 @@
 import { render, screen } from "@testing-library/react";
-import { PacketReports } from "../../../../app/components/contents/packets/PacketReports";
-import { mockPacket } from "../../../mocks";
-import { PacketMetadata } from "../../../../types";
+import { PacketReports } from "@components/contents/packets/PacketReports";
+import { mockPacket } from "@/tests/mocks";
+import { PacketMetadata } from "@/types";
 import { SWRConfig } from "swr";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
-import { Accordion } from "../../../../app/components/Base/Accordion";
+import { Accordion } from "@components/Base/Accordion";
 
-vitest.mock("../../../../lib/download", async () => ({
-  ...(await vitest.importActual("../../../../lib/download")),
+vitest.mock("@lib/download", async () => ({
+  ...(await vitest.importActual("@lib/download")),
   getFileObjectUrl: async () => "fakeObjectUrl"
 }));
 URL.createObjectURL = vitest.fn();

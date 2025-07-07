@@ -1,7 +1,7 @@
 import useSWR from "swr";
-import appConfig from "../../../../../config/appConfig";
-import { fetcher } from "../../../../../lib/fetch";
-import { Packet } from "../../../../../types";
+import appConfig from "@config/appConfig";
+import { fetcher } from "@lib/fetch";
+import { Packet } from "@/types";
 
 export const useGetPacketsInGroup = (packetName: string | undefined) => {
   const url = `${appConfig.apiUrl()}/packetGroups/${packetName}/packets`;

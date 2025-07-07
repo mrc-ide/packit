@@ -1,14 +1,14 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
-import { RedirectOnLoginProvider } from "../../../app/components/providers/RedirectOnLoginProvider";
-import { ThemeProvider } from "../../../app/components/providers/ThemeProvider";
-import * as UserProvider from "../../../app/components/providers/UserProvider";
+import { RedirectOnLoginProvider } from "@components/providers/RedirectOnLoginProvider";
+import { ThemeProvider } from "@components/providers/ThemeProvider";
+import * as UserProvider from "@components/providers/UserProvider";
 import { mockUserProviderState } from "../../mocks";
-import { Header } from "../../../app/components/header";
-import { BrandingProvider } from "../../../app/components/providers/BrandingProvider";
+import { Header } from "@components/header";
+import { BrandingProvider } from "@components/providers/BrandingProvider";
 import { expectThemeClass, handleRequestWithEnabledThemes } from "../../testUtils";
-import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
+import { LocalStorageKeys } from "@lib/types/LocalStorageKeys";
 import { SWRConfig } from "swr";
 
 const mockUseUser = vitest.spyOn(UserProvider, "useUser");
@@ -94,18 +94,18 @@ describe("header component", () => {
     await waitFor(() => expectThemeClass("light"));
   });
 
-  it("should render link to manage access when user has user.manage authority", () => {
+  it("should render link to admin when user has user.manage authority", () => {
     mockUseUser.mockReturnValue(mockUserProviderState());
     renderElement();
 
-    expect(screen.getByRole("link", { name: "Manage Access" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Admin" })).toBeInTheDocument();
   });
 
-  it("should not render link to manage access when user does not have user.manage authority", () => {
+  it("should not render link to admin when user does not have user.manage or packet.manage authority", () => {
     mockUseUser.mockReturnValue({ authorities: [] } as any);
     renderElement();
 
-    expect(screen.queryByRole("link", { name: "Manage Access" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Admin" })).not.toBeInTheDocument();
   });
 
   it("should render nav menu if user is present", async () => {

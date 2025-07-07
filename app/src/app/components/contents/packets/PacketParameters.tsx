@@ -1,5 +1,5 @@
 import { SlidersVertical } from "lucide-react";
-import { AccordionContent, AccordionItem, AccordionTrigger } from "../../Base/Accordion";
+import { AccordionContent, AccordionItem, AccordionTrigger } from "@components/Base/Accordion";
 import { ParameterContainer } from "../common/ParameterContainer";
 
 interface PacketParametersProps {

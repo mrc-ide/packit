@@ -1,6 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-// eslint-disable-next-line max-len
-import { ToggleParamColumnsDropdownColumns } from "../../../../app/components/contents/PacketGroup/ToggleParamColumnsDropdown";
+import { ToggleParamColumnsDropdownColumns } from "@components/contents/PacketGroup/ToggleParamColumnsDropdown";
 import userEvent from "@testing-library/user-event";
 
 describe("ToggleParamColumnsDropdown", () => {

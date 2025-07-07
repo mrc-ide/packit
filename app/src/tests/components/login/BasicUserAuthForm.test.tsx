@@ -1,9 +1,9 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { BasicUserAuthForm } from "../../../app/components/login/BasicUserAuthForm";
+import { BasicUserAuthForm } from "@components/login/BasicUserAuthForm";
 import { MemoryRouter } from "react-router-dom";
-import { UserProvider } from "../../../app/components/providers/UserProvider";
+import { UserProvider } from "@components/providers/UserProvider";
 import userEvent from "@testing-library/user-event";
-import { server } from "../../../msw/server";
+import { server } from "@/msw/server";
 import { rest } from "msw";
 
 const mockedUsedNavigate = vitest.fn();
@@ -14,7 +14,7 @@ vitest.mock("react-router-dom", async () => ({
 
 const mockSetRequestedUrl = vitest.fn();
 let mockRequestedUrl: string | null = null;
-vitest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
+vitest.mock("@components/providers/RedirectOnLoginProvider", () => ({
   useRedirectOnLogin: () => ({
     setRequestedUrl: mockSetRequestedUrl,
     requestedUrl: (() => mockRequestedUrl)()

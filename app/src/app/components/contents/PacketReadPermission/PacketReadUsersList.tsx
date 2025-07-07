@@ -1,5 +1,5 @@
-import { Separator } from "../../Base/Separator";
-import { BasicUser } from "../manageAccess/types/RoleWithRelationships";
+import { Separator } from "@components/Base/Separator";
+import { BasicUser } from "../admin/types/RoleWithRelationships";
 
 interface PacketReadUsersListProps {
   users: BasicUser[];

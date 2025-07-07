@@ -1,9 +1,9 @@
-import { download } from "../../../../lib/download";
+import { download } from "@lib/download";
 import { Button, buttonVariants } from "../../Base/Button";
 import { FolderDown, Loader2 } from "lucide-react";
-import { FileMetadata } from "../../../../types";
+import { FileMetadata } from "@/types";
 import { useState } from "react";
-import { filesToSize } from "../../../../helpers";
+import { filesToSize } from "@/helpers";
 import type { VariantProps } from "class-variance-authority";
 
 interface ZipDownloadButtonProps {

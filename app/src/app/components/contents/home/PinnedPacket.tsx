@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import { getTimeDifferenceToDisplay } from "../../../../lib/time";
+import { getTimeDifferenceToDisplay } from "@lib/time";
 import { PinIcon } from "lucide-react";
 import { ZipDownloadButton } from "../downloads/ZipDownloadButton";
 import { allArtefactsFilesForPacket } from "../downloads/utils/artefactFiles";
-import { PacketMetadata } from "../../../../types";
+import { PacketMetadata } from "@/types";
 
 interface PinProps {
   packet: PacketMetadata;

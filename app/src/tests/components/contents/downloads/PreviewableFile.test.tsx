@@ -1,12 +1,12 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { PreviewableFile } from "../../../../app/components/contents/downloads/PreviewableFile";
-import { mockPacket } from "../../../mocks";
+import { PreviewableFile } from "@components/contents/downloads/PreviewableFile";
+import { mockPacket } from "@/tests//mocks";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
-import { FileMetadata } from "../../../../types";
+import { FileMetadata } from "@/types";
 import userEvent from "@testing-library/user-event";
 import { SWRConfig } from "swr";
 
-vitest.mock("../../../../lib/auth/getAuthHeader", () => ({
+vitest.mock("@lib/auth/getAuthHeader", () => ({
   getAuthHeader: () => ({ Authorization: "fakeAuthHeader" })
 }));
 

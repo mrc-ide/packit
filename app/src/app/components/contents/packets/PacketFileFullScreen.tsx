@@ -1,6 +1,6 @@
 import { Loader2 } from "lucide-react";
 import { useParams } from "react-router-dom";
-import { HttpStatus } from "../../../../lib/types/HttpStatus";
+import { HttpStatus } from "@lib/types/HttpStatus";
 import { useGetPacketById } from "../../main/hooks/useGetPacketById";
 import { ErrorPage } from "../common/ErrorPage";
 import { Unauthorized } from "../common/Unauthorized";

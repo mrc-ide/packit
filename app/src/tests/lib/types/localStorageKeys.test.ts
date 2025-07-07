@@ -8,7 +8,7 @@ describe("local storage keys", () => {
     const ns = "test-ns";
     vitest.stubEnv("VITE_PACKIT_NAMESPACE", ns);
 
-    const { LocalStorageKeys } = await import("../../../lib/types/LocalStorageKeys");
+    const { LocalStorageKeys } = await import("@lib/types/LocalStorageKeys");
 
     expect(LocalStorageKeys).toStrictEqual({
       AUTH_CONFIG: `${ns}.authConfig`,
@@ -21,7 +21,7 @@ describe("local storage keys", () => {
   test("local storage keys without namespace", async () => {
     vitest.stubEnv("VITE_PACKIT_NAMESPACE", "");
 
-    const { LocalStorageKeys } = await import("../../../lib/types/LocalStorageKeys");
+    const { LocalStorageKeys } = await import("@lib/types/LocalStorageKeys");
 
     expect(LocalStorageKeys).toStrictEqual({
       AUTH_CONFIG: "authConfig",

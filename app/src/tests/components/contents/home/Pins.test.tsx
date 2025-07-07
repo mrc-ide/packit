@@ -1,11 +1,11 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { SWRConfig } from "swr";
-import appConfig from "../../../../config/appConfig";
+import appConfig from "@config/appConfig";
 import { rest } from "msw";
-import { mockPacket } from "../../../mocks";
-import { Pins } from "../../../../app/components/contents/home/Pins";
-import { server } from "../../../../msw/server";
+import { mockPacket } from "@/tests/mocks";
+import { Pins } from "@components/contents/home/Pins";
+import { server } from "@/msw/server";
 
 describe("Pins component", () => {
   const packetWithNoDisplayName = {

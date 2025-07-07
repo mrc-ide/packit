@@ -1,10 +1,10 @@
-import { getAuthHeader } from "../../../lib/auth/getAuthHeader";
+import { getAuthHeader } from "@lib/auth/getAuthHeader";
 
 const mockAuthConfig = vitest.fn();
-vitest.mock("../../../lib/localStorageManager", () => ({
+vitest.mock("@lib/localStorageManager", () => ({
   getAuthConfigFromLocalStorage: () => mockAuthConfig()
 }));
-vitest.mock("../../../lib/auth/getBearerToken", () => ({
+vitest.mock("@lib/auth/getBearerToken", () => ({
   getBearerToken: () => "12345"
 }));
 

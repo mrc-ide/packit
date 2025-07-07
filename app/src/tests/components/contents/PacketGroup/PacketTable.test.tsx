@@ -2,11 +2,11 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
-import { PacketTable } from "../../../../app/components/contents/PacketGroup/PacketTable";
-import appConfig from "../../../../config/appConfig";
-import { HttpStatus } from "../../../../lib/types/HttpStatus";
-import { server } from "../../../../msw/server";
-import { mockPacket, mockPacketGroupResponse } from "../../../mocks";
+import { PacketTable } from "@components/contents/PacketGroup/PacketTable";
+import appConfig from "@config/appConfig";
+import { HttpStatus } from "@lib/types/HttpStatus";
+import { server } from "@/msw/server";
+import { mockPacket, mockPacketGroupResponse } from "@/tests/mocks";
 
 const renderComponent = (parentLoading = false) =>
   render(

@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 import { RedirectOnLoginProviderState } from "./types/UserTypes";
-import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
+import { LocalStorageKeys } from "@/lib/types/LocalStorageKeys";
 
 const RedirectOnLoginContext = createContext<RedirectOnLoginProviderState | undefined>(undefined);
 

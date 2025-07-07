@@ -3,11 +3,11 @@ import userEvent from "@testing-library/user-event";
 import { rest } from "msw";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { Toaster } from "sonner";
-import { PacketRunForm } from "../../../../../app/components/contents/runner/run/PacketRunForm";
-import { getTimeDifferenceToDisplay } from "../../../../../lib/time";
-import { basicRunnerUri } from "../../../../../msw/handlers/runnerHandlers";
-import { server } from "../../../../../msw/server";
-import { mockGitBranches } from "../../../../mocks";
+import { PacketRunForm } from "@components/contents/runner/run/PacketRunForm";
+import { getTimeDifferenceToDisplay } from "@lib/time";
+import { basicRunnerUri } from "@/msw/handlers/runnerHandlers";
+import { server } from "@/msw/server";
+import { mockGitBranches } from "@/tests/mocks";
 
 const renderComponent = () => {
   const mutate = vitest.fn();

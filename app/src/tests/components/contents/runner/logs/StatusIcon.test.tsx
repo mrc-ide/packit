@@ -1,5 +1,5 @@
 import { render } from "@testing-library/react";
-import { StatusIcon } from "../../../../../app/components/contents/runner/logs/StatusIcon";
+import { StatusIcon } from "@components/contents/runner/logs/StatusIcon";
 
 describe("StatusIcon component", () => {
   it("should render pending icon with extra classnames when status is PENDING", () => {

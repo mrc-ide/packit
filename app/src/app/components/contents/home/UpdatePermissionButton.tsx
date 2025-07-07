@@ -1,7 +1,7 @@
 import { UserCog } from "lucide-react";
 import { useState } from "react";
-import { Button } from "../../Base/Button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../Base/Tooltip";
+import { Button } from "@components/Base/Button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@components/Base/Tooltip";
 import { UpdatePermissionDialog } from "./UpdatePermissionDialog";
 
 interface UpdatePermissionDialogProps {

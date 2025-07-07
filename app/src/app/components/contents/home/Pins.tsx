@@ -1,8 +1,8 @@
 import { PinnedPacket } from "./PinnedPacket";
 import { useGetPinnedPackets } from "./hooks/useGetPinnedPackets";
 import { ErrorComponent } from "../common/ErrorComponent";
-import { Separator } from "../../Base/Separator";
-import { Skeleton } from "../../Base/Skeleton";
+import { Separator } from "@components/Base/Separator";
+import { Skeleton } from "@components/Base/Skeleton";
 
 export const Pins = () => {
   const { packets: pinnedPackets, error, isLoading } = useGetPinnedPackets();

@@ -1,13 +1,13 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Dialog } from "../../../../app/components/Base/Dialog";
-import * as fetch from "../../../../lib/fetch";
+import { Dialog } from "@components/Base/Dialog";
+import * as fetch from "@lib/fetch";
 // eslint-disable-next-line max-len
-import { UpdatePacketReadPermissionForm } from "../../../../app/components/contents/home/UpdatePacketReadPermissionForm";
-import appConfig from "../../../../config/appConfig";
-import { ApiError } from "../../../../lib/errors";
-import { HttpStatus } from "../../../../lib/types/HttpStatus";
-import { mockRolesAndUsersWithPermissions } from "../../../mocks";
+import { UpdatePacketReadPermissionForm } from "@components/contents/home/UpdatePacketReadPermissionForm";
+import appConfig from "@config/appConfig";
+import { ApiError } from "@lib/errors";
+import { HttpStatus } from "@lib/types/HttpStatus";
+import { mockRolesAndUsersWithPermissions } from "@/tests/mocks";
 
 describe("UpdatePacketReadPermissionForm", () => {
   const fetcherSpy = vitest.spyOn(fetch, "fetcher");

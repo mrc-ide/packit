@@ -9,7 +9,7 @@ import {
   useReactTable
 } from "@tanstack/react-table";
 import { Dispatch, SetStateAction } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../Base/Table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@components/Base/Table";
 import { Pagination } from "./Pagination";
 
 interface DataTableProps<TData> {

@@ -1,8 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { ThemeProvider, useTheme } from "../../../app/components/providers/ThemeProvider";
-import { LocalStorageKeys } from "../../../lib/types/LocalStorageKeys";
+import { ThemeProvider, useTheme } from "@components/providers/ThemeProvider";
+import { LocalStorageKeys } from "@lib/types/LocalStorageKeys";
 import { SWRConfig } from "swr";
-import { Theme } from "../../../app/components/providers/types/ThemeTypes";
+import { Theme } from "@components/providers/types/ThemeTypes";
 import { expectThemeClass, handleRequestWithEnabledThemes } from "../../testUtils";
 
 const mockSystemThemePreference = (theme: Theme) => {

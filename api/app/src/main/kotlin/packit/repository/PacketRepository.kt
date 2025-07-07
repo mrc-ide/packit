@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.security.access.prepost.PostFilter
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 import packit.model.Packet
 
 @Repository
@@ -18,4 +19,7 @@ interface PacketRepository : JpaRepository<Packet, String> {
 
     @PostFilter("@authz.canReadPacket(#root, filterObject)")
     fun findAllByNameContainingAndIdContaining(name: String, id: String, sort: Sort): List<Packet>
+
+    @Transactional
+    fun deleteAllByIdIn(ids: Collection<String>)
 }

@@ -1,11 +1,11 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { FileDownloadButton } from "../../../../app/components/contents/downloads/FileDownloadButton";
+import { FileDownloadButton } from "@components/contents/downloads/FileDownloadButton";
 
 let errorOnDownload = false;
 const mockDownload = vitest.fn();
-vitest.mock("../../../../lib/download", async () => ({
-  ...(await vitest.importActual("../../../../lib/download")),
+vitest.mock("@lib/download", async () => ({
+  ...(await vitest.importActual("@lib/download")),
   download: async (...args: any[]) => mockDownload(...args)
 }));
 

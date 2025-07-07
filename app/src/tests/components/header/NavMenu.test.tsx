@@ -1,8 +1,12 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { NavMenu, NavItems } from "../../../app/components/header/NavMenu";
+import { NavMenu } from "@components/header/NavMenu";
 import { MemoryRouter } from "react-router-dom";
 
 describe("NavMenu component", () => {
+  const userManageNavItems = {
+    runner: "Runner",
+    "manage-roles": "Admin"
+  };
   it("should render all nav items when relevant permissions are present", () => {
     render(
       <MemoryRouter>
@@ -10,7 +14,7 @@ describe("NavMenu component", () => {
       </MemoryRouter>
     );
 
-    Object.entries(NavItems).forEach(async ([to, title]) => {
+    Object.entries(userManageNavItems).forEach(async ([to, title]) => {
       navItemIsDisplayedOnLargeScreens(to, title);
       await navItemIsDisplayedOnSmallScreens(to, title);
     });
@@ -23,7 +27,7 @@ describe("NavMenu component", () => {
       </MemoryRouter>
     );
 
-    Object.entries(NavItems).forEach(async ([to, title]) => {
+    Object.entries(userManageNavItems).forEach(async ([to, title]) => {
       if (to === "runner") {
         navItemIsNotDisplayedOnLargeScreens(to, title);
         await navItemIsNotDisplayedOnSmallScreens(to, title);
@@ -34,14 +38,14 @@ describe("NavMenu component", () => {
     });
   });
 
-  it("should not render Manage Access nav item when relevant permission is not present", () => {
+  it("should not render Admin nav item when relevant permission is not present", () => {
     render(
       <MemoryRouter>
         <NavMenu authorities={["packet.run"]} />
       </MemoryRouter>
     );
 
-    Object.entries(NavItems).forEach(async ([to, title]) => {
+    Object.entries(userManageNavItems).forEach(async ([to, title]) => {
       if (to === "manage-roles") {
         navItemIsNotDisplayedOnLargeScreens(to, title);
         await navItemIsNotDisplayedOnSmallScreens(to, title);
@@ -59,7 +63,7 @@ describe("NavMenu component", () => {
       </MemoryRouter>
     );
 
-    Object.entries(NavItems).forEach(async ([to, title]) => {
+    Object.entries(userManageNavItems).forEach(async ([to, title]) => {
       if (to === "manage-roles" || to === "runner") {
         navItemIsNotDisplayedOnLargeScreens(to, title);
         await navItemIsNotDisplayedOnSmallScreens(to, title);

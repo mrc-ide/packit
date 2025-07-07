@@ -1,5 +1,5 @@
 import { Check, Ellipsis, LoaderCircle, X } from "lucide-react";
-import { cn } from "../../../../../lib/cn";
+import { cn } from "@lib/cn";
 import { Status } from "../types/RunInfo";
 
 interface StatusIconProps {

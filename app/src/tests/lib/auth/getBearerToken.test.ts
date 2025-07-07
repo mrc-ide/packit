@@ -1,11 +1,11 @@
-import { UserState } from "../../../app/components/providers/types/UserTypes";
-import { getBearerToken } from "../../../lib/auth/getBearerToken";
+import type { UserState } from "@components/providers/types/UserTypes";
+import { getBearerToken } from "@lib/auth/getBearerToken";
 
 const mockGetUserFromLocalStorage = vitest.fn((): null | UserState => null);
-vitest.mock("../../../lib/localStorageManager", () => ({
+vitest.mock("@lib/localStorageManager", () => ({
   getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
 }));
-vitest.unmock("../../../lib/auth/getBearerToken");
+vitest.unmock("@lib/auth/getBearerToken");
 
 const mockResponse = vitest.fn();
 Object.defineProperty(window, "location", {

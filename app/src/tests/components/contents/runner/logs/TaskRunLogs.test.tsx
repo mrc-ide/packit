@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { TaskRunLogs } from "../../../../../app/components/contents/runner/logs/TaskRunLogs";
+import { TaskRunLogs } from "@components/contents/runner/logs/TaskRunLogs";
 
 describe("TaskRunLogs component", () => {
   it("should render logs if logs are provided", async () => {

@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { FilterInput } from "../../../../app/components/contents/common/FilterInput";
+import { FilterInput } from "@components/contents/common/FilterInput";
 import userEvent from "@testing-library/user-event";
 
 describe("FilterInput component", () => {

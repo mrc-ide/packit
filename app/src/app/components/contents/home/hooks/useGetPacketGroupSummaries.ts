@@ -1,7 +1,7 @@
 import useSWR from "swr";
-import appConfig from "../../../../../config/appConfig";
-import { fetcher } from "../../../../../lib/fetch";
-import { PageablePacketGroupSummaries } from "../../../../../types";
+import { fetcher } from "@lib/fetch";
+import { PageablePacketGroupSummaries } from "@/types";
+import appConfig from "@config/appConfig";
 
 export const useGetPacketGroupSummaries = (pageNumber: number, pageSize: number, filter: string) => {
   const { data, isLoading, error } = useSWR<PageablePacketGroupSummaries>(

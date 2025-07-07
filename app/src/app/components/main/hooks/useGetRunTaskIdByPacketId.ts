@@ -1,6 +1,6 @@
 import useSWR from "swr";
-import appConfig from "../../../../config/appConfig";
-import { fetcher } from "../../../../lib/fetch";
+import appConfig from "@config/appConfig";
+import { fetcher } from "@lib/fetch";
 
 export const useGetRunTaskIdByPacketId = (packetId: string | undefined) => {
   const { data, isLoading, error } = useSWR<{ runTaskId: string }>(

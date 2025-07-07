@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
-import { Accordion } from "../../Base/Accordion";
-import { Separator } from "../../Base/Separator";
-import { usePacketOutletContext } from "../../main/PacketLayout";
+import { Accordion } from "@components/Base/Accordion";
+import { Separator } from "@components/Base/Separator";
+import { usePacketOutletContext } from "@components/main/PacketLayout";
 import { PacketDependencies } from "./PacketDependencies";
 import { PacketHeader } from "./PacketHeader";
 import { PacketParameters } from "./PacketParameters";

@@ -1,9 +1,9 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
-import { AccountHeaderDropdown } from "../../../app/components/header/AccountHeaderDropdown";
-import * as UserProvider from "../../../app/components/providers/UserProvider";
-import { mockUserProviderState } from "../../mocks";
+import { AccountHeaderDropdown } from "@components/header/AccountHeaderDropdown";
+import * as UserProvider from "@components/providers/UserProvider";
+import { mockUserProviderState } from "@/tests/mocks";
 
 const mockedUsedNavigate = vitest.fn();
 vitest.mock("react-router-dom", async () => ({
@@ -11,7 +11,7 @@ vitest.mock("react-router-dom", async () => ({
   useNavigate: () => mockedUsedNavigate
 }));
 const mockSetLoggingOut = vitest.fn();
-vitest.mock("../../../app/components/providers/RedirectOnLoginProvider", () => ({
+vitest.mock("@components/providers/RedirectOnLoginProvider", () => ({
   useRedirectOnLogin: () => ({
     setLoggingOut: mockSetLoggingOut
   })
