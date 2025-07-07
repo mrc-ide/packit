@@ -9,5 +9,5 @@ interface PinRepository : JpaRepository<Pin, UUID> {
     @PostFilter("@authz.canReadPacket(#root, filterObject.packetId)")
     override fun findAll(): List<Pin>
 
-     fun findByPacketId(packetId: String): Pin?
+    fun findByPacketId(packetId: String): Pin?
 }

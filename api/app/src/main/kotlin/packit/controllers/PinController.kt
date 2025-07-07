@@ -3,6 +3,7 @@ package packit.controllers
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -25,12 +26,10 @@ class PinController(
 
     @PreAuthorize("@authz.hasGlobalPacketManagePermission(#root)")
     @PostMapping()
-    fun pinPacket(@RequestBody packetId: String): ResponseEntity<PinDto> {
-        val foundPin = pinService.findPinByPacketId(packetId)
-        if (foundPin != null) {
-            return ResponseEntity(foundPin.toDto(), HttpStatus.OK)
-        }
-
+    fun pinPacket(
+        @RequestBody @Validated packetPin: PinDto,
+    ): ResponseEntity<PinDto> {
+        val packetId = packetPin.packetId
         val pin = pinService.createPinByPacketId(packetId)
 
         return ResponseEntity(pin.toDto(), HttpStatus.CREATED)

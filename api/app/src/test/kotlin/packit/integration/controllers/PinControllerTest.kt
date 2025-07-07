@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
 import packit.model.Pin
+import packit.model.dto.PinDto
 import packit.repository.PinRepository
 import packit.service.PacketService
 import kotlin.test.assertEquals
@@ -97,7 +98,7 @@ class PinControllerTest : IntegrationTest() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/pins",
             HttpMethod.POST,
-            getTokenizedHttpEntity(data = unpinnedPacketId)
+            getTokenizedHttpEntity(data = PinDto(packetId = unpinnedPacketId))
         )
         assertUnauthorized(result)
     }
@@ -108,7 +109,7 @@ class PinControllerTest : IntegrationTest() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/pins",
             HttpMethod.POST,
-            getTokenizedHttpEntity(data = unpinnedPacketId)
+            getTokenizedHttpEntity(data = PinDto(packetId = unpinnedPacketId))
         )
         assertThat(result.statusCode).isEqualTo(HttpStatus.CREATED)
         assertEquals(MediaType.APPLICATION_JSON, result.headers.contentType)
@@ -120,17 +121,16 @@ class PinControllerTest : IntegrationTest() {
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.manage"])
-    fun `pinPacket does not create a pin if it already exists for some packet id, and returns the packet id`() {
+    fun `pinPacket returns a 'bad request' response if it already exists for some packet id`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/pins",
             HttpMethod.POST,
-            getTokenizedHttpEntity(data = pinnedPacketIds[0])
+            getTokenizedHttpEntity(data = PinDto(packetId = pinnedPacketIds[0]))
         )
-        assertThat(result.statusCode).isEqualTo(HttpStatus.OK)
-        assertEquals(MediaType.APPLICATION_JSON, result.headers.contentType)
+        assertBadRequest(result)
 
         val body = jacksonObjectMapper().readTree(result.body)
-        assertThat(body.get("packetId").textValue()).isEqualTo(pinnedPacketIds[0])
+        assertThat(body.get("error").get("detail").textValue()).isEqualTo("Pin already exists")
         assertThat(pinRepository.findAll()).hasSize(3)
     }
 
@@ -140,7 +140,7 @@ class PinControllerTest : IntegrationTest() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/pins",
             HttpMethod.POST,
-            getTokenizedHttpEntity(data = "non-existent-packet-id")
+            getTokenizedHttpEntity(data = PinDto(packetId = "non-existent-packet-id"))
         )
 
         assertNotFound(result)

@@ -88,25 +88,6 @@ class PinServiceTest {
     }
 
     @Test
-    fun `findPinByPacketId should return null if pin does not exist`() {
-        val packetId = "testPacketId"
-        whenever(pinRepository.findByPacketId(any<String>())).thenReturn(null)
-
-        val sut = BasePinService(packetService, pinRepository)
-        assertThat(sut.findPinByPacketId(packetId)).isNull()
-    }
-
-    @Test
-    fun `findPinByPacketId should return the pin if it exists`() {
-        val packetId = "testPacketId"
-        val pin = Pin(UUID.randomUUID(), packetId)
-        whenever(pinRepository.findByPacketId(any<String>())).thenReturn(pin)
-
-        val sut = BasePinService(packetService, pinRepository)
-        assertThat(sut.findPinByPacketId(packetId)).isNotNull
-    }
-
-    @Test
     fun `createPinByPacketId should create a pin for the given packet id`() {
         val packetId = "testPacketId"
         val pin = Pin(UUID.randomUUID(), packetId)
@@ -120,15 +101,19 @@ class PinServiceTest {
     }
 
     @Test
-    fun `createPinByPacketId returns the pin for a packet id if it already exists`() {
+    fun `createPinByPacketId throws PackitException if pin already exists`() {
         val packetId = "testPacketId"
         val pin = Pin(UUID.randomUUID(), packetId)
         whenever(pinRepository.findByPacketId(any<String>())).thenReturn(pin)
 
         val sut = BasePinService(packetService, pinRepository)
-        val createdPin = sut.createPinByPacketId(packetId)
-        assertThat(createdPin.id).isNotNull()
-        assertThat(createdPin.packetId).isEqualTo(packetId)
+
+        assertThrows<PackitException> {
+            sut.createPinByPacketId(packetId)
+        }.apply {
+            assertEquals("pinAlreadyExists", key)
+            assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
+        }
 
         verify(pinRepository, never()).save(any<Pin>())
     }
@@ -140,7 +125,11 @@ class PinServiceTest {
 
         whenever(packetRepository.findById(packetId)).thenReturn(java.util.Optional.empty())
 
-        val unmockedPacketService = BasePacketService(packetRepository, mock<PacketGroupRepository>(), mock<OutpackServer>())
+        val unmockedPacketService = BasePacketService(
+            packetRepository,
+            mock<PacketGroupRepository>(),
+            mock<OutpackServer>()
+        )
         val sut = BasePinService(unmockedPacketService, pinRepository)
 
         assertThrows<PackitException> {
@@ -149,5 +138,7 @@ class PinServiceTest {
             assertEquals("packetNotFound", key)
             assertEquals(HttpStatus.NOT_FOUND, httpStatus)
         }
+
+        verify(pinRepository, never()).save(any<Pin>())
     }
 }

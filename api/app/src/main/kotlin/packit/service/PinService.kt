@@ -1,13 +1,14 @@
 package packit.service
 
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import packit.exceptions.PackitException
 import packit.model.PacketMetadata
 import packit.model.Pin
 import packit.repository.PinRepository
 
 interface PinService {
     fun findAllPinnedPackets(): List<PacketMetadata>
-    fun findPinByPacketId(packetId: String): Pin?
     fun createPinByPacketId(packetId: String): Pin
 }
 
@@ -24,15 +25,11 @@ class BasePinService(
         }.sortedByDescending { it.time.start }
     }
 
-    override fun findPinByPacketId(packetId: String): Pin? {
-        return pinRepository.findByPacketId(packetId)
-    }
-
     override fun createPinByPacketId(packetId: String): Pin {
         packetService.getPacket(packetId) // Ensure the packet exists
 
-        findPinByPacketId(packetId)?.let {
-            return it
+        if (pinRepository.findByPacketId(packetId) != null) {
+            throw PackitException("pinAlreadyExists", HttpStatus.BAD_REQUEST)
         }
 
         return pinRepository.save(Pin(packetId = packetId))

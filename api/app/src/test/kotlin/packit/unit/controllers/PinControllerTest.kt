@@ -10,6 +10,7 @@ import packit.controllers.PinController
 import packit.model.PacketMetadata
 import packit.model.Pin
 import packit.model.TimeMetadata
+import packit.model.dto.PinDto
 import packit.service.PinService
 import java.time.Instant
 import kotlin.test.assertEquals
@@ -59,7 +60,7 @@ class PinControllerTest {
 
     @Test
     fun `pinPacket should create a pin and return its packet id`() {
-        val response = sut.pinPacket(packet1id)
+        val response = sut.pinPacket(PinDto(packetId = packet1id))
         val responseBody = response.body
 
         verify(pinService).createPinByPacketId(packet1id)

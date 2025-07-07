@@ -4,7 +4,7 @@ import { Markdown } from "../Base/Markdown";
 import { NotFound } from "../NotFound";
 import { Downloads, Home, Metadata, PacketGroup } from "../contents";
 import { PacketReadPermission } from "../contents/PacketReadPermission";
-import { ManageAccessLayout, ManageRoles, ManageUsers } from "../contents/manageAccess";
+import { ManageAccessLayout, ManagePins, ManageRoles, ManageUsers } from "../contents/manageAccess";
 import { PacketDetails, PacketFileFullScreen } from "../contents/packets";
 import { PacketRun, PacketRunTaskLogs, PacketRunTasksLogs, PacketRunnerLayout } from "../contents/runner";
 import { AuthLayoutForm, DeviceActivation, Login, Redirect, UpdatePassword } from "../login";
@@ -50,6 +50,7 @@ export const Router = () => {
             <Route element={<ManageAccessLayout />}>
               <Route path="manage-roles" element={<ManageRoles />} />
               <Route path="manage-users" element={<ManageUsers />} />
+              <Route path="manage-pins" element={<ManagePins />} />
             </Route>
           </Route>
         </Route>
