@@ -13,11 +13,13 @@ import packit.exceptions.PackitException
 import packit.model.PacketMetadata
 import packit.model.Pin
 import packit.model.TimeMetadata
+import packit.repository.PacketGroupRepository
+import packit.repository.PacketRepository
 import packit.repository.PinRepository
 import packit.service.BasePacketService
 import packit.service.BasePinService
+import packit.service.OutpackServer
 import java.time.Instant
-import java.util.Optional
 import java.util.UUID
 import kotlin.test.assertEquals
 
@@ -134,12 +136,12 @@ class PinServiceTest {
     @Test
     fun `createPinByPacketId throws PackitException when no packet exists with given id`() {
         val packetId = "nonExistingId"
+        val packetRepository = mock<PacketRepository>()
 
-        given(packetService.getPacket(packetId)).willAnswer {
-            throw PackitException("packetNotFound", HttpStatus.NOT_FOUND)
-        }
+        whenever(packetRepository.findById(packetId)).thenReturn(java.util.Optional.empty())
 
-        val sut = BasePinService(packetService, pinRepository)
+        val unmockedPacketService = BasePacketService(packetRepository, mock<PacketGroupRepository>(), mock<OutpackServer>())
+        val sut = BasePinService(unmockedPacketService, pinRepository)
 
         assertThrows<PackitException> {
             sut.createPinByPacketId(packetId)

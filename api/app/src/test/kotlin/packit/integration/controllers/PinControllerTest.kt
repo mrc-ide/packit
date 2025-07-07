@@ -3,6 +3,7 @@ package packit.integration.controllers
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,8 +14,6 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
-import packit.integration.controllers.PacketControllerTest.Companion.idOfArtefactTypesPacket
-import packit.integration.controllers.PacketControllerTest.Companion.idOfDownloadTypesPacket3
 import packit.model.Pin
 import packit.repository.PinRepository
 import packit.service.PacketService
@@ -39,6 +38,10 @@ class PinControllerTest : IntegrationTest() {
     @BeforeAll
     fun setupData() {
         packetService.importPackets()
+    }
+
+    @BeforeEach
+    fun resetData() {
         pinRepository.deleteAll()
         pinnedPacketIds.forEach { pinRepository.save(Pin(packetId = it)) }
     }
