@@ -141,4 +141,31 @@ class PinServiceTest {
 
         verify(pinRepository, never()).save(any<Pin>())
     }
+
+    @Test
+    fun `deletePin should delete a pin given its id`() {
+        val packetId = "testPacketId"
+        val pinId = UUID.randomUUID()
+        val pin = Pin(UUID.randomUUID(), packetId)
+        whenever(pinRepository.findById(any<UUID>())).thenReturn(java.util.Optional.of(pin))
+
+        val sut = BasePinService(packetService, pinRepository)
+        sut.deletePin(pinId)
+
+        verify(pinRepository).delete(pin)
+    }
+
+    @Test
+    fun `deletePin throws PackitException if pin does not exist`() {
+        val sut = BasePinService(packetService, pinRepository)
+
+        assertThrows<PackitException> {
+            sut.deletePin(UUID.randomUUID())
+        }.apply {
+            assertEquals("pinNotFound", key)
+            assertEquals(HttpStatus.NOT_FOUND, httpStatus)
+        }
+
+        verify(pinRepository, never()).delete(any<Pin>())
+    }
 }
