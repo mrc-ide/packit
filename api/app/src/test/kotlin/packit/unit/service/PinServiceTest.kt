@@ -134,7 +134,11 @@ class PinServiceTest {
     @Test
     fun `createPinByPacketId throws PackitException when no packet exists with given id`() {
         val packetId = "nonExistingId"
-        whenever(packetService.getPacket(packetId)).thenThrow(PackitException::class.java)
+
+        given(packetService.getPacket(packetId)).willAnswer {
+            throw PackitException("packetNotFound", HttpStatus.NOT_FOUND)
+        }
+
         val sut = BasePinService(packetService, pinRepository)
 
         assertThrows<PackitException> {
