@@ -33,7 +33,7 @@ class PacketGroupController(
 
     @PreAuthorize("@authz.canViewPacketGroup(#root, #name)")
     @GetMapping("/packetGroups/{name}/packets")
-    fun getPackets(
+    fun getPacketsByName(
         @PathVariable name: String,
     ): ResponseEntity<List<PacketDto>> {
         return ResponseEntity.ok(

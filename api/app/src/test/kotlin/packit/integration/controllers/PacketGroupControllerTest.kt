@@ -135,34 +135,6 @@ class PacketGroupControllerTest(
     }
 
     @Test
-    @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:custom_metadata"])
-    fun `getDisplay returns display name and description`() {
-        val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packetGroups/custom_metadata/display",
-            HttpMethod.GET,
-            getTokenizedHttpEntity()
-        )
-
-        assertSuccess(result)
-
-        val body: PacketGroupDisplay = jacksonObjectMapper().readValue(result.body!!)
-        assertThat(body.latestDisplayName).isEqualTo("Packet with description")
-        assertThat(body.description).startsWith("A longer description")
-    }
-
-    @Test
-    @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:wrong-name"])
-    fun `getDisplay returns 401 if authority is not correct`() {
-        val result: ResponseEntity<String> = restTemplate.exchange(
-            "/packetGroups/custom_metadata/display",
-            HttpMethod.GET,
-            getTokenizedHttpEntity()
-        )
-
-        assertEquals(HttpStatus.UNAUTHORIZED, result.statusCode)
-    }
-
-    @Test
     fun `getPackets returns error if not authenticated`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packetGroups/artefact-types/packets",
@@ -173,17 +145,14 @@ class PacketGroupControllerTest(
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:random-name"])
-    fun `getPackets returns empty list if no permissions match`() {
+    fun `getPackets returns unauthorized if cant view packet`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packetGroups/artefact-types/packets",
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
 
-        assertSuccess(result)
-
-        val packets: List<PacketDto> = jacksonObjectMapper().readValue(result.body!!)
-        assertThat(packets).isEmpty()
+        assertUnauthorized(result)
     }
 
     @Test

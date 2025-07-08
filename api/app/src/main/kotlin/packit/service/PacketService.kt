@@ -88,7 +88,7 @@ class BasePacketService(
         packetGroupRepository.deleteAllByNameNotIn(currentPacketGroups)
     }
 
-    private fun savePackets(outpackMetadata: Collection<OutpackMetadata>) {
+    internal fun savePackets(outpackMetadata: Collection<OutpackMetadata>) {
         val now = Instant.now().epochSecond.toDouble()
         val packets = outpackMetadata.map {
             val displayName = getDisplayNameForPacket(it.custom, it.name)
