@@ -323,17 +323,17 @@ export const mockPacketGroupResponse: PageablePackets = {
         b: false,
         c: "hello"
       },
-
       importTime: 1701761844,
       startTime: 1701761844,
-      endTime: 1701761844
+      endTime: 1701761844,
+      description: "Parameters Packet"
     },
     {
       id: "20231205-073527-99db1138",
       name: mockPacket.name,
       displayName: "parameters",
       parameters: {},
-
+      description: "Parameters Packet",
       importTime: 1701761734,
       startTime: 1701761734,
       endTime: 1701761734
@@ -347,6 +347,7 @@ export const mockPacketGroupResponse: PageablePackets = {
         b: 2,
         a: 10
       },
+      description: "Parameters Packet",
       importTime: 1701694312,
       startTime: 1701694312,
       endTime: 1701694312
@@ -360,7 +361,7 @@ export const mockPacketGroupResponse: PageablePackets = {
         c: 90,
         b: 22
       },
-
+      description: "Parameters Packet",
       importTime: 1701694312,
       startTime: 1701694312,
       endTime: 1701694312
@@ -374,7 +375,7 @@ export const mockPacketGroupResponse: PageablePackets = {
         c: 11,
         a: 1
       },
-
+      description: "Parameters Packet",
       importTime: 1701694312,
       startTime: 1701694312,
       endTime: 1701694312

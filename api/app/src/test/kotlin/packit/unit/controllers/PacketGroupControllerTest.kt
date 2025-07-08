@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity
 import packit.controllers.PacketGroupController
 import packit.model.Packet
 import packit.model.PageablePayload
-import packit.model.dto.PacketGroupDisplay
 import packit.model.dto.PacketGroupSummary
 import packit.model.toDto
 import packit.service.PacketGroupService

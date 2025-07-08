@@ -26,11 +26,12 @@ class Packet(
     )
     var tags: MutableList<Tag> = mutableListOf(),
     @OneToMany(mappedBy = "packet", cascade = [CascadeType.ALL])
-    var rolePermissions: MutableList<RolePermission> = mutableListOf()
+    var rolePermissions: MutableList<RolePermission> = mutableListOf(),
+    val description: String? = null
 )
 
 fun Packet.toDto() = PacketDto(
-    id, name, displayName, parameters, importTime, startTime, endTime
+    id, name, displayName, parameters, importTime, startTime, endTime, description
 )
 
 fun Packet.toBasicDto() = BasicPacketDto(name, id)

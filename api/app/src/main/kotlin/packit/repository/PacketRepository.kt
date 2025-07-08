@@ -22,4 +22,13 @@ interface PacketRepository : JpaRepository<Packet, String> {
 
     @Transactional
     fun deleteAllByIdIn(ids: Collection<String>)
+
+    @PostFilter("@authz.canReadPacket(#root, filterObject)")
+    @Query(
+        """
+        SELECT p FROM Packet p
+        WHERE p.name ILIKE %?1% OR p.displayName ILIKE %?1%
+        """
+    )
+    fun searchByNameOrDisplayName(filterName: String): List<Packet>
 }

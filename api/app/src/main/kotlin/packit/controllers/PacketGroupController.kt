@@ -31,15 +31,7 @@ class PacketGroupController(
         return ResponseEntity.ok(packetGroupService.getPacketGroups(payload, filterName).map { it.toDto() })
     }
 
-    @GetMapping("/packetGroups/{name}/display")
-    fun getDisplay(
-        @PathVariable name: String
-    ): ResponseEntity<PacketGroupDisplay> {
-        val result = packetGroupService.getPacketGroupDisplay(name)
-
-        return ResponseEntity.ok(result)
-    }
-
+    @PreAuthorize("@authz.canViewPacketGroup(#root, #name)")
     @GetMapping("/packetGroups/{name}/packets")
     fun getPackets(
         @PathVariable name: String,
