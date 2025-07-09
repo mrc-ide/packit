@@ -2,7 +2,7 @@ import { SquarePlus } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@components/Base/Button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@components/Base/Dialog";
-import { AddPinsForm } from "./AddPinsForm";
+import { AddPinForm } from "./AddPinForm";
 import { PacketMetadata } from "@/types";
 import { KeyedMutator } from "swr";
 
@@ -24,7 +24,7 @@ export const AddPinButton = ({ mutate }: AddPinButtonProps) => {
         <DialogHeader>
           <DialogTitle>Pin a packet</DialogTitle>
         </DialogHeader>
-        <AddPinsForm setOpen={setOpen} mutate={mutate} />
+        <AddPinForm setOpen={setOpen} mutate={mutate} />
       </DialogContent>
     </Dialog>
   );

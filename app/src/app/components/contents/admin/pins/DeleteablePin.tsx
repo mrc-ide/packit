@@ -4,12 +4,12 @@ import { PacketMetadata } from "@/types";
 import { KeyedMutator } from "swr";
 import { DeletePinButton } from "./DeletePinButton";
 
-interface ManagebalePinProps {
+interface DeletablePinProps {
   packet: PacketMetadata;
   mutate: KeyedMutator<PacketMetadata[]>;
 }
 
-export const ManageablePin = ({ packet, mutate }: ManagebalePinProps) => {
+export const DeleteablePin = ({ packet, mutate }: DeletablePinProps) => {
   const { unit, value } = getTimeDifferenceToDisplay(packet.time.start)[0];
 
   return (

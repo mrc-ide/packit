@@ -14,11 +14,11 @@ import { PacketMetadata } from "@/types";
 import { PinCheck } from "./PinCheck";
 import { packetIdRegex } from "./utils/constants";
 
-interface AddPinsFormProps {
+interface AddPinFormProps {
   setOpen: Dispatch<SetStateAction<boolean>>;
   mutate: KeyedMutator<PacketMetadata[]>;
 }
-export const AddPinsForm = ({ mutate, setOpen }: AddPinsFormProps) => {
+export const AddPinForm = ({ mutate, setOpen }: AddPinFormProps) => {
   const [fetchError, setFetchError] = useState("");
 
   const formSchema = z.object({

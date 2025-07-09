@@ -2,7 +2,7 @@ import { Skeleton } from "@components/Base/Skeleton";
 import { ErrorComponent } from "@components/contents/common/ErrorComponent";
 import { useGetPinnedPackets } from "@components/contents/common/hooks/useGetPinnedPackets";
 import { AddPinButton } from "./AddPinButton";
-import { ManageablePin } from "./ManageablePin";
+import { DeleteablePin } from "./DeleteablePin";
 
 export const ManagePins = () => {
   const { packets, error, isLoading, mutate } = useGetPinnedPackets();
@@ -24,7 +24,7 @@ export const ManagePins = () => {
         <div>
           {packets?.map((packet) => (
             <div key={packet.id} className="mb-2">
-              <ManageablePin packet={packet} mutate={mutate} />
+              <DeleteablePin packet={packet} mutate={mutate} />
             </div>
           ))}
         </div>
