@@ -15,11 +15,9 @@ import org.springframework.http.ResponseEntity
 import packit.integration.IntegrationTest
 import packit.integration.WithAuthenticatedUser
 import packit.model.Pin
-import packit.model.dto.PacketPinDto
 import packit.model.dto.PinDto
 import packit.repository.PinRepository
 import packit.service.PacketService
-import java.util.UUID
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -38,8 +36,6 @@ class PinControllerTest : IntegrationTest() {
 
     private val unpinnedPacketId = "20240729-155506-6ed557a1"
 
-    private var pinIds = listOf<UUID?>()
-
     @BeforeAll
     fun setupData() {
         packetService.importPackets()
@@ -48,7 +44,7 @@ class PinControllerTest : IntegrationTest() {
     @BeforeEach
     fun resetData() {
         pinRepository.deleteAll()
-        pinIds = pinnedPacketIds.map { pinRepository.save(Pin(packetId = it)).id }
+        pinnedPacketIds.forEach { pinRepository.save(Pin(packetId = it)).id }
     }
 
     @Test
@@ -102,7 +98,7 @@ class PinControllerTest : IntegrationTest() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/pins",
             HttpMethod.POST,
-            getTokenizedHttpEntity(data = PacketPinDto(packetId = unpinnedPacketId))
+            getTokenizedHttpEntity(data = PinDto(packetId = unpinnedPacketId))
         )
         assertUnauthorized(result)
     }
@@ -113,7 +109,7 @@ class PinControllerTest : IntegrationTest() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/pins",
             HttpMethod.POST,
-            getTokenizedHttpEntity(data = PacketPinDto(packetId = unpinnedPacketId))
+            getTokenizedHttpEntity(data = PinDto(packetId = unpinnedPacketId))
         )
         assertThat(result.statusCode).isEqualTo(HttpStatus.CREATED)
         assertEquals(MediaType.APPLICATION_JSON, result.headers.contentType)
@@ -129,7 +125,7 @@ class PinControllerTest : IntegrationTest() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/pins",
             HttpMethod.POST,
-            getTokenizedHttpEntity(data = PacketPinDto(packetId = pinnedPacketIds[0]))
+            getTokenizedHttpEntity(data = PinDto(packetId = pinnedPacketIds[0]))
         )
         assertBadRequest(result)
 
@@ -144,7 +140,7 @@ class PinControllerTest : IntegrationTest() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/pins",
             HttpMethod.POST,
-            getTokenizedHttpEntity(data = PacketPinDto(packetId = "non-existent-packet-id"))
+            getTokenizedHttpEntity(data = PinDto(packetId = "non-existent-packet-id"))
         )
 
         assertNotFound(result)
@@ -165,43 +161,36 @@ class PinControllerTest : IntegrationTest() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/pins",
             HttpMethod.DELETE,
-            getTokenizedHttpEntity(data = PinDto(id = pinIds[0]!!))
+            getTokenizedHttpEntity(data = PinDto(packetId = pinnedPacketIds[0]))
         )
         assertUnauthorized(result)
+        assertThat(pinRepository.findByPacketId(pinnedPacketIds[0])).isNotNull()
     }
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.manage"])
     fun `deletePacket deletes a pin by packet id`() {
-        println("pinIds: $pinIds")
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/pins",
             HttpMethod.DELETE,
-            getTokenizedHttpEntity(data = PinDto(id = pinIds[0]!!))
+            getTokenizedHttpEntity(data = PinDto(packetId = pinnedPacketIds[0]))
         )
 
-        val body = jacksonObjectMapper().readTree(result.body)
-        println(body)
-
-        assertSuccess(result)
-
-//        val body = jacksonObjectMapper().readTree(result.body)
-//        assertThat(body.get("id").textValue()).isEqualTo(pinIds[0]!!.toString())
-        assertThat(pinRepository.findAll()).hasSize(2)
+        assertEquals(HttpStatus.NO_CONTENT, result.statusCode)
+        assertThat(pinRepository.findByPacketId(pinnedPacketIds[0])).isNull()
     }
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.manage"])
-    fun `deletePacket returns a 'not found' response if no pin with id exists`() {
+    fun `deletePacket returns a 'not found' response if no packet with id exists`() {
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/pins",
             HttpMethod.DELETE,
-            getTokenizedHttpEntity(data = PinDto(id = UUID.randomUUID()))
+            getTokenizedHttpEntity(data = PinDto(packetId = unpinnedPacketId))
         )
 
         assertNotFound(result)
         val body = jacksonObjectMapper().readTree(result.body)
         assertThat(body.get("error").get("detail").textValue()).isEqualTo("Pin not found")
-        assertThat(pinRepository.findAll()).hasSize(3)
     }
 }

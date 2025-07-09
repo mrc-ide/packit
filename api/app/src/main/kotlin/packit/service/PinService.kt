@@ -6,12 +6,11 @@ import packit.exceptions.PackitException
 import packit.model.PacketMetadata
 import packit.model.Pin
 import packit.repository.PinRepository
-import java.util.UUID
 
 interface PinService {
     fun findAllPinnedPackets(): List<PacketMetadata>
     fun createPinByPacketId(packetId: String): Pin
-    fun deletePin(pinId: UUID)
+    fun deletePin(packetId: String)
 }
 
 @Service
@@ -37,9 +36,12 @@ class BasePinService(
         return pinRepository.save(Pin(packetId = packetId))
     }
 
-    override fun deletePin(pinId: UUID) {
-        val pin = pinRepository.findById(pinId)
-            .orElseThrow { PackitException("pinNotFound", HttpStatus.NOT_FOUND) }
+    override fun deletePin(packetId: String) {
+        val pin = pinRepository.findByPacketId(packetId)
+
+        if (pin == null) {
+            throw PackitException("pinNotFound", HttpStatus.NOT_FOUND)
+        }
 
         pinRepository.delete(pin)
     }

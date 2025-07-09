@@ -1,11 +1,11 @@
 
-import { useGetPacketById } from "../../main/hooks/useGetPacketById";
+import { useGetPacketById } from "@components/main/hooks/useGetPacketById";
 import { ApiError } from "@/lib/errors";
 import { HttpStatus } from "@/lib/types/HttpStatus";
-import { ErrorComponent } from "../common/ErrorComponent";
+import { ErrorComponent } from "@components/contents/common/ErrorComponent";
 import { packetIdRegex } from "./utils/constants";
 import { CheckIcon, XIcon } from "lucide-react";
-import { useGetPinnedPackets } from "../home/hooks/useGetPinnedPackets";
+import { useGetPinnedPackets } from "@components/contents/common/hooks/useGetPinnedPackets";
 
 interface PinCheckProps {
   packetId: string;

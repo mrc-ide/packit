@@ -10,17 +10,14 @@ import packit.controllers.PinController
 import packit.model.PacketMetadata
 import packit.model.Pin
 import packit.model.TimeMetadata
-import packit.model.dto.PacketPinDto
 import packit.model.dto.PinDto
 import packit.service.PinService
 import java.time.Instant
-import java.util.UUID
 import kotlin.test.assertEquals
 
 class PinControllerTest {
     private val packet1id = "20180818-164847-7574883b"
     private val packet2id = "20170819-164847-7574883b"
-    private val pinId = UUID.randomUUID()
     private val pinService = mock<PinService> {
         on { findAllPinnedPackets() } doReturn listOf(
             PacketMetadata(
@@ -63,7 +60,7 @@ class PinControllerTest {
 
     @Test
     fun `pinPacket should create a pin and return its packet id`() {
-        val response = sut.pinPacket(PacketPinDto(packetId = packet1id))
+        val response = sut.pinPacket(PinDto(packetId = packet1id))
         val responseBody = response.body
 
         verify(pinService).createPinByPacketId(packet1id)
@@ -72,12 +69,10 @@ class PinControllerTest {
     }
 
     @Test
-    fun `deletePin should delete a pin and return its packet id`() {
-        val response = sut.deletePacket(PinDto(id = pinId))
-        val responseBody = response.body
+    fun `deletePin should delete a pin`() {
+        val response = sut.deletePacket(PinDto(packetId = packet1id))
 
-        verify(pinService).deletePin(pinId)
-        assertEquals(HttpStatus.OK, response.statusCode)
-        assertEquals(pinId, responseBody?.id)
+        verify(pinService).deletePin(packet1id)
+        assertEquals(HttpStatus.NO_CONTENT, response.statusCode)
     }
 }

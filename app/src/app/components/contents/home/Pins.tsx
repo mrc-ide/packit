@@ -1,5 +1,5 @@
 import { PinnedPacket } from "./PinnedPacket";
-import { useGetPinnedPackets } from "./hooks/useGetPinnedPackets";
+import { useGetPinnedPackets } from "../common/hooks/useGetPinnedPackets";
 import { ErrorComponent } from "../common/ErrorComponent";
 import { Separator } from "@components/Base/Separator";
 import { Skeleton } from "@components/Base/Skeleton";

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import packit.model.PacketMetadata
-import packit.model.dto.PacketPinDto
 import packit.model.dto.PinDto
 import packit.service.PinService
 
@@ -28,21 +27,21 @@ class PinController(
     @PreAuthorize("@authz.hasGlobalPacketManagePermission(#root)")
     @PostMapping()
     fun pinPacket(
-        @RequestBody @Validated packetPin: PacketPinDto,
-    ): ResponseEntity<PacketPinDto> {
+        @RequestBody @Validated packetPin: PinDto,
+    ): ResponseEntity<PinDto> {
         val packetId = packetPin.packetId
         val pin = pinService.createPinByPacketId(packetId)
 
-        return ResponseEntity(PacketPinDto(pin.packetId), HttpStatus.CREATED)
+        return ResponseEntity(PinDto(pin.packetId), HttpStatus.CREATED)
     }
 
     @PreAuthorize("@authz.hasGlobalPacketManagePermission(#root)")
     @DeleteMapping()
     fun deletePacket(
         @RequestBody @Validated pin: PinDto,
-    ): ResponseEntity<PinDto> {
-        pinService.deletePin(pin.id)
+    ): ResponseEntity<Void> {
+        pinService.deletePin(pin.packetId)
 
-        return ResponseEntity(PinDto(id = pin.id), HttpStatus.OK)
+        return ResponseEntity(HttpStatus.NO_CONTENT)
     }
 }

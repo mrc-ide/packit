@@ -16,6 +16,7 @@ import packit.model.TimeMetadata
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
 import packit.repository.PinRepository
+import packit.repository.RunInfoRepository
 import packit.service.BasePacketService
 import packit.service.BasePinService
 import packit.service.OutpackServer
@@ -91,7 +92,7 @@ class PinServiceTest {
     fun `createPinByPacketId should create a pin for the given packet id`() {
         val packetId = "testPacketId"
         val pin = Pin(UUID.randomUUID(), packetId)
-        whenever(pinRepository.findByPacketId(any<String>())).thenReturn(null)
+        whenever(pinRepository.findByPacketId(packetId)).thenReturn(null)
         whenever(pinRepository.save(any<Pin>())).thenReturn(pin)
 
         val sut = BasePinService(packetService, pinRepository)
@@ -128,6 +129,7 @@ class PinServiceTest {
         val unmockedPacketService = BasePacketService(
             packetRepository,
             mock<PacketGroupRepository>(),
+            mock<RunInfoRepository>(),
             mock<OutpackServer>()
         )
         val sut = BasePinService(unmockedPacketService, pinRepository)
@@ -143,14 +145,13 @@ class PinServiceTest {
     }
 
     @Test
-    fun `deletePin should delete a pin given its id`() {
+    fun `deletePin should delete a pin given an id of a packet`() {
         val packetId = "testPacketId"
-        val pinId = UUID.randomUUID()
         val pin = Pin(UUID.randomUUID(), packetId)
-        whenever(pinRepository.findById(any<UUID>())).thenReturn(java.util.Optional.of(pin))
+        whenever(pinRepository.findByPacketId(packetId)).thenReturn(pin)
 
         val sut = BasePinService(packetService, pinRepository)
-        sut.deletePin(pinId)
+        sut.deletePin(packetId)
 
         verify(pinRepository).delete(pin)
     }
@@ -160,7 +161,7 @@ class PinServiceTest {
         val sut = BasePinService(packetService, pinRepository)
 
         assertThrows<PackitException> {
-            sut.deletePin(UUID.randomUUID())
+            sut.deletePin("someNonExistingPacketId")
         }.apply {
             assertEquals("pinNotFound", key)
             assertEquals(HttpStatus.NOT_FOUND, httpStatus)
