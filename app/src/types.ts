@@ -26,11 +26,6 @@ export interface PacketGroupSummary {
   latestDisplayName: string;
 }
 
-export interface PacketGroupDisplay {
-  latestDisplayName: string;
-  description?: string;
-}
-
 export interface Packet {
   id: string;
   name: string;
@@ -39,6 +34,7 @@ export interface Packet {
   importTime: number;
   startTime: number;
   endTime: number;
+  description: string | null;
 }
 
 export interface PacketMetadata {

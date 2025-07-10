@@ -273,7 +273,7 @@ class PacketServiceTest {
         // should add: new packets [1] and [2]
         verify(resyncPacketRepository).saveAll(packetsArgCaptor.capture())
         val savedPackets = packetsArgCaptor.allValues.flatten()
-        assertEquals(2, savedPackets.size,)
+        assertEquals(2, savedPackets.size)
         assertEquals(newPackets[1].id, savedPackets[0].id)
         assertEquals(newPackets[2].id, savedPackets[1].id)
 
@@ -417,5 +417,40 @@ class PacketServiceTest {
         assertThrows<PackitException> {
             sut.streamZip(listOf("file1.txt", "file2.txt"), packetMetadata.id, outputStream)
         }
+    }
+
+    @Test
+    fun `getByNameOrDisplayName returns packets matching the filter`() {
+        val filter = "filterName"
+        whenever(packetRepository.searchByNameOrDisplayName(filter)).thenReturn(newPackets)
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), mock())
+
+        val result = sut.getByNameOrDisplayName(filter)
+
+        assertEquals(newPackets, result)
+        verify(packetRepository).searchByNameOrDisplayName(filter)
+    }
+
+    @Test
+    fun `savePackets saves packets and uniquePacketGroups`() {
+        val testPackets = newPackets.drop(1)
+        val outpackMetadata = testPackets.map { packetToOutpackMetadata(it) }
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), mock())
+        val sutSpy = spy(sut)
+        doNothing().`when`(sutSpy).saveUniquePacketGroups(any())
+
+        sutSpy.savePackets(outpackMetadata)
+
+        verify(sutSpy).saveUniquePacketGroups(testPackets.map { it.name }.distinct())
+        verify(packetRepository).saveAll(
+            argThat { packets: List<Packet> ->
+                assertEquals(testPackets.size, packets.size)
+                assertEquals(packets.map { it.id }, testPackets.map { it.id })
+                assertEquals(packets.map { it.displayName }, testPackets.map { it.displayName })
+                assertEquals(packets.map { it.name }, testPackets.map { it.name })
+                assertEquals(packets.map { it.description }, testPackets.map { "Description for ${it.name}" })
+                true
+            }
+        )
     }
 }

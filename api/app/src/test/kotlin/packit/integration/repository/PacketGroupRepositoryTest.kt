@@ -2,16 +2,13 @@ package packit.integration.repository
 
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
-import packit.integration.WithAuthenticatedUser
 import packit.model.Packet
 import packit.model.PacketGroup
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
 import java.time.Instant
-import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PacketGroupRepositoryTest : RepositoryTest() {
@@ -67,16 +64,5 @@ class PacketGroupRepositoryTest : RepositoryTest() {
     fun cleanup() {
         packetRepository.deleteAll()
         packetGroupRepository.deleteAll()
-    }
-
-    @Test
-    @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:correct_group"])
-    fun `can find latest packet id by group name`() {
-        packetRepository.saveAll(packets)
-        packetGroupRepository.save(packetGroup)
-
-        val result = packetGroupRepository.findLatestPacketIdForGroup("correct_group")
-
-        assertEquals(result?.id, "20170818-164847-7574853b")
     }
 }

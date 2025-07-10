@@ -71,9 +71,6 @@ class AuthorizationLogic(
     ): Boolean =
         permissionChecker.canManagePacketGroup(getAuthorities(operations), packetGroupName)
 
-    fun canManageAnyPacket(operations: SecurityExpressionOperations): Boolean =
-        permissionChecker.hasAnyPacketManagePermission(getAuthorities(operations))
-
     internal fun getAuthorities(operations: SecurityExpressionOperations) =
         operations.authentication.authorities.map { it.authority }
 }

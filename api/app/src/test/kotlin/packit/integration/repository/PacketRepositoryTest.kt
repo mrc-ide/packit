@@ -161,4 +161,43 @@ class PacketRepositoryTest : RepositoryTest() {
 
         assertEquals(id, "20180818-164847-7574833b")
     }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
+    fun `can search packets by name`() {
+        packetRepository.saveAll(packets)
+
+        val result = packetRepository.searchByNameOrDisplayName("test")
+
+        assertEquals(result.size, 5)
+        assertEquals(result[0].name, "test1")
+        assertEquals(result[1].name, "test2")
+        assertEquals(result[2].name, "test4")
+        assertEquals(result[3].name, "test4")
+        assertEquals(result[4].name, "test1")
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read"])
+    fun `can search packets by display name`() {
+        packetRepository.saveAll(packets)
+
+        val result = packetRepository.searchByNameOrDisplayName("name4")
+
+        assertEquals(result.size, 2)
+        assertEquals(result[0].displayName, "test name4")
+        assertEquals(result[1].displayName, "test name4")
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:test1"])
+    fun `search packets by name with group permission`() {
+        packetRepository.saveAll(packets)
+
+        val result = packetRepository.searchByNameOrDisplayName("")
+
+        assertEquals(result.size, 2)
+        assertEquals(result[0].name, "test1")
+        assertEquals(result[1].name, "test1")
+    }
 }

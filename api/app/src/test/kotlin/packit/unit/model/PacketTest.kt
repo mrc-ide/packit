@@ -10,7 +10,8 @@ import kotlin.test.assertTrue
 class PacketTest {
     @Test
     fun `toDto returns correct PacketDto for given Packet`() {
-        val packet = Packet("id1", "name1", "displayName1", emptyMap(), 1.0, 2.0, 3.0)
+        val packet =
+            Packet("id1", "name1", "displayName1", emptyMap(), 1.0, 2.0, 3.0, description = "this is a description")
         val packetDto = packet.toDto()
         assertEquals("id1", packetDto.id)
         assertEquals("name1", packetDto.name)
@@ -19,6 +20,7 @@ class PacketTest {
         assertEquals(1.0, packetDto.importTime)
         assertEquals(2.0, packetDto.startTime)
         assertEquals(3.0, packetDto.endTime)
+        assertEquals(packet.description, packetDto.description)
     }
 
     @Test
