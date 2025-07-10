@@ -80,6 +80,8 @@ export const mockToken =
   // eslint-disable-next-line max-len
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwYWNraXQiLCJpc3MiOiJwYWNraXQtYXBpIiwidXNlck5hbWUiOiJkQGdtYWlsLmNvbSIsImRpc3BsYXlOYW1lIjoicmFuZG9tIHB1c3NpbyIsImRhdGV0aW1lIjoxNzE1OTI5MjM5LCJhdSI6WyJkQGdtYWlsLmNvbSIsIkFETUlOIiwidXNlci5tYW5hZ2UiLCJwYWNrZXQucHVzaCIsInBhY2tldC5ydW4iLCJwYWNrZXQucmVhZCJdLCJleHAiOjE3MTYwMTU2Mzl9.l4GgV0YoENGT3tjS-2popxWxRHp_LRT5gIVP3nND838";
 
+export const nonExistentPacketId = "20250130-123456-1a2b3c4d";
+
 export const mockPacket: PacketMetadata = {
   id: "20240000-012345-00aa0000",
   name: "parameters",
@@ -217,6 +219,13 @@ export const mockPacket: PacketMetadata = {
     { packet: "20231130-082727-445fa3fa", query: 'latest(name == "test2")', files: [] }
   ]
 };
+
+export const mockPacket2 = {
+  ...mockPacket,
+  id: mockPacket.id.replace("12345", "67890"),
+  name: "aDifferentPacket",
+  custom: null,
+} as PacketMetadata;
 
 export const mockPacketGroupSummaries: PageablePacketGroupSummaries = {
   content: [

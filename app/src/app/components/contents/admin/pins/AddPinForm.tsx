@@ -62,7 +62,7 @@ export const AddPinForm = ({ mutate, setOpen }: AddPinFormProps) => {
             <FormItem>
               <FormLabel>Packet ID</FormLabel>
               <FormControl>
-                <Input autoComplete="name" placeholder={"Enter the ID of the packet you want to pin"} {...field} />
+                <Input placeholder={"Enter the ID of the packet you want to pin"} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

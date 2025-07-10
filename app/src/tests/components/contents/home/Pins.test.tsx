@@ -3,26 +3,11 @@ import { MemoryRouter } from "react-router";
 import { SWRConfig } from "swr";
 import appConfig from "@config/appConfig";
 import { rest } from "msw";
-import { mockPacket } from "@/tests/mocks";
 import { Pins } from "@components/contents/home/Pins";
 import { server } from "@/msw/server";
+import { mockPacket, mockPacket2 } from "@/tests/mocks";
 
 describe("Pins component", () => {
-  const packetWithNoDisplayName = {
-    ...mockPacket,
-    id: "12345",
-    name: "variation",
-    custom: {
-      ...mockPacket.custom,
-      orderly: {
-        ...mockPacket.custom?.orderly,
-        description: {
-          ...mockPacket.custom?.orderly.description,
-          display: null
-        }
-      }
-    }
-  };
   const renderComponent = () =>
     render(
       <SWRConfig value={{ dedupingInterval: 0 }}>
@@ -35,7 +20,7 @@ describe("Pins component", () => {
   it("renders all pinned packets (two in this case)", async () => {
     server.use(
       rest.get(`${appConfig.apiUrl()}/pins/packets`, (req, res, ctx) => {
-        return res(ctx.json([mockPacket, packetWithNoDisplayName]));
+        return res(ctx.json([mockPacket, mockPacket2]));
       })
     );
 
@@ -43,7 +28,7 @@ describe("Pins component", () => {
 
     await waitFor(() => {
       expect(screen.getByText("A packet with parameters and a report")).toBeVisible();
-      expect(screen.getByText("variation")).toBeVisible();
+      expect(screen.getByText("aDifferentPacket")).toBeVisible();
     });
   });
 

@@ -3,7 +3,6 @@ import { useGetPacketById } from "@components/main/hooks/useGetPacketById";
 import { ApiError } from "@/lib/errors";
 import { HttpStatus } from "@/lib/types/HttpStatus";
 import { ErrorComponent } from "@components/contents/common/ErrorComponent";
-import { packetIdRegex } from "./utils/constants";
 import { CheckIcon, XIcon } from "lucide-react";
 import { useGetPinnedPackets } from "@components/contents/common/hooks/useGetPinnedPackets";
 
@@ -11,16 +10,12 @@ interface PinCheckProps {
   packetId: string;
 }
 export const PinCheck = ({ packetId }: PinCheckProps) => {
-  if (!packetIdRegex.test(packetId)) {
-    return null;
-  }
-
   const { packet, isLoading, error } = useGetPacketById(packetId);
   const { packets: pinnedPackets } = useGetPinnedPackets();
 
   if (isLoading) return <p>Checking packet...</p>;
 
-  if (error instanceof ApiError && error.status === HttpStatus.BadRequest) {
+  if (error instanceof ApiError && error.status === HttpStatus.NotFound) {
     return <p className="text-xs font-medium text-red-500">
       <XIcon size={15} className="inline mr-1 text-red-500" />
       No packet found with ID { packetId }
