@@ -224,7 +224,7 @@ export const mockPacket2 = {
   ...mockPacket,
   id: mockPacket.id.replace("12345", "67890"),
   name: "aDifferentPacket",
-  custom: null,
+  custom: null
 } as PacketMetadata;
 
 export const mockPacketGroupSummaries: PageablePacketGroupSummaries = {

@@ -1,4 +1,3 @@
-
 import { useGetPacketById } from "@components/main/hooks/useGetPacketById";
 import { ApiError } from "@/lib/errors";
 import { HttpStatus } from "@/lib/types/HttpStatus";
@@ -16,10 +15,12 @@ export const PinCheck = ({ packetId }: PinCheckProps) => {
   if (isLoading) return <p>Checking packet...</p>;
 
   if (error instanceof ApiError && error.status === HttpStatus.NotFound) {
-    return <p className="text-xs font-medium text-red-500">
-      <XIcon size={15} className="inline mr-1 text-red-500" />
-      No packet found with ID { packetId }
-    </p>;
+    return (
+      <p className="text-xs font-medium text-red-500">
+        <XIcon size={15} className="inline mr-1 text-red-500" />
+        No packet found with ID {packetId}
+      </p>
+    );
   }
 
   if (error) {
@@ -30,7 +31,7 @@ export const PinCheck = ({ packetId }: PinCheckProps) => {
     return null;
   }
 
-  if (pinnedPackets?.map(pin => pin.id).includes(packetId)) {
+  if (pinnedPackets?.map((pin) => pin.id).includes(packetId)) {
     return (
       <p className="text-xs font-medium text-red-500">
         <XIcon size={15} className="inline mr-1 text-red-500" />
@@ -41,10 +42,10 @@ export const PinCheck = ({ packetId }: PinCheckProps) => {
 
   return (
     <div>
-    <p className="text-xs font-medium text-muted-foreground">
-      <CheckIcon size={15} className="inline mr-1 text-green-500" />
-      Matching unpinned packet found: &lsquo;{packet.displayName || packet.name}&rsquo;
-    </p>
+      <p className="text-xs font-medium text-muted-foreground">
+        <CheckIcon size={15} className="inline mr-1 text-green-500" />
+        Matching unpinned packet found: &lsquo;{packet.displayName || packet.name}&rsquo;
+      </p>
     </div>
   );
 };

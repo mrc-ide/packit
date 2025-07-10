@@ -10,10 +10,8 @@ import { HttpStatus } from "@lib/types/HttpStatus";
 import { PacketMetadata } from "@/types";
 
 const renderComponent = (mutate: any = vitest.fn(), packet: PacketMetadata = mockPacket) => {
-  return render(
-    <DeletePinButton packet={packet} mutate={mutate} />
-  );
-}
+  return render(<DeletePinButton packet={packet} mutate={mutate} />);
+};
 
 describe("DeletePinButton", () => {
   const fetcherSpy = vitest.spyOn(fetch, "fetcher");
@@ -23,9 +21,7 @@ describe("DeletePinButton", () => {
     userEvent.click(screen.getByTestId("unpinButton"));
 
     await waitFor(() => {
-      expect(screen.getByText(
-        /do you want to remove the pin on ‘parameters’/i
-      )).toBeVisible();
+      expect(screen.getByText(/do you want to remove the pin on ‘parameters’/i)).toBeVisible();
     });
   });
 
@@ -61,7 +57,7 @@ describe("DeletePinButton", () => {
     });
     await waitFor(() => {
       expect(mutate).toHaveBeenCalled();
-    })
+    });
     expect(screen.queryByRole("button", { name: "Yes" })).not.toBeInTheDocument();
   });
 

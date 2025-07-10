@@ -22,8 +22,8 @@ export const pinHandlers = [
     const body = await req.json();
 
     if (body.packetId === mockPacket.id) {
-      console.error("doing delete handler")
+      console.error("doing delete handler");
       return res(ctx.status(HttpStatus.NoContent));
     }
-  }),
+  })
 ];

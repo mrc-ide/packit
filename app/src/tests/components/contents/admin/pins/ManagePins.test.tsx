@@ -33,7 +33,7 @@ describe("manage pins page", () => {
     server.use(
       rest.get(`${appConfig.apiUrl()}/pins/packets`, (req, res, ctx) => {
         return res(ctx.json([mockPacket, mockPacket2]));
-      }),
+      })
     );
     renderComponent();
 
@@ -51,7 +51,6 @@ describe("manage pins page", () => {
     expect(screen.getAllByText(/Ran \d*\sdays ago/)).toHaveLength(2);
   });
 
-
   it("should render correctly when there are no pinned packets", async () => {
     mockUseUser.mockReturnValue({
       authorities: ["packet.manage"]
@@ -59,7 +58,7 @@ describe("manage pins page", () => {
     server.use(
       rest.get(`${appConfig.apiUrl()}/pins/packets`, (req, res, ctx) => {
         return res(ctx.json([]));
-      }),
+      })
     );
     renderComponent();
 
@@ -69,14 +68,13 @@ describe("manage pins page", () => {
     });
   });
 
-
   it("shows unauthorized when user does not have user manage permission", async () => {
-      mockUseUser.mockReturnValue({
-        authorities: ["packet.read"]
-      } as any);
-      renderComponent();
-      await waitFor(() => {
-        expect(screen.getByText(/You do not have permission to access this page/)).toBeInTheDocument();
-      });
+    mockUseUser.mockReturnValue({
+      authorities: ["packet.read"]
+    } as any);
+    renderComponent();
+    await waitFor(() => {
+      expect(screen.getByText(/You do not have permission to access this page/)).toBeInTheDocument();
     });
+  });
 });

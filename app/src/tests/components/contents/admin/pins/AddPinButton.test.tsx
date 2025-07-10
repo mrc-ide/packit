@@ -9,10 +9,8 @@ import { mockPacket, mockPacket2, nonExistentPacketId } from "@/tests/mocks";
 import { HttpStatus } from "@lib/types/HttpStatus";
 
 const renderComponent = (mutate: any = vitest.fn()) => {
-  return render(
-    <AddPinButton mutate={mutate} />
-  );
-}
+  return render(<AddPinButton mutate={mutate} />);
+};
 
 const typeIntoInput = async (value: string) => {
   const input = screen.getByLabelText(/packet id/i);
@@ -21,7 +19,7 @@ const typeIntoInput = async (value: string) => {
     userEvent.click(input);
   });
   userEvent.type(input, value);
-}
+};
 
 describe("AddPinButton", () => {
   const fetcherSpy = vitest.spyOn(fetch, "fetcher");
@@ -69,9 +67,11 @@ describe("AddPinButton", () => {
       expect(screen.getByText(/invalid packet id format/i)).toBeVisible();
     });
 
-    expect(fetcherSpy).not.toHaveBeenCalledWith(expect.objectContaining({
-      url: `${appConfig.apiUrl()}/pins`,
-    }));
+    expect(fetcherSpy).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: `${appConfig.apiUrl()}/pins`
+      })
+    );
     expect(mutate).not.toHaveBeenCalled();
     expect(screen.queryByRole("button", { name: "Add" })).toBeInTheDocument();
   });
@@ -96,9 +96,7 @@ describe("AddPinButton", () => {
     await typeIntoInput(nonExistentPacketId);
 
     await waitFor(() => {
-      expect(screen.getByText(
-        new RegExp(`no packet found with id ${nonExistentPacketId}`, "i"))
-      ).toBeVisible();
+      expect(screen.getByText(new RegExp(`no packet found with id ${nonExistentPacketId}`, "i"))).toBeVisible();
     });
   });
 
@@ -125,7 +123,7 @@ describe("AddPinButton", () => {
     server.use(
       rest.get(`${appConfig.apiUrl()}/pins/packets`, (req, res, ctx) => {
         return res(ctx.json([mockPacket]));
-      }),
+      })
     );
 
     const mutate = vitest.fn();
@@ -137,9 +135,7 @@ describe("AddPinButton", () => {
     await typeIntoInput(mockPacket2.id);
 
     await waitFor(() => {
-      expect(screen.getByText(
-        /matching unpinned packet found: ‘aDifferentPacket’/i
-      )).toBeVisible();
+      expect(screen.getByText(/matching unpinned packet found: ‘aDifferentPacket’/i)).toBeVisible();
     });
 
     userEvent.click(screen.getByRole("button", { name: "Add" }));

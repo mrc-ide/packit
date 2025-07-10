@@ -30,7 +30,7 @@ export const AddPinForm = ({ mutate, setOpen }: AddPinFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      packetId: "",
+      packetId: ""
     }
   });
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -68,7 +68,7 @@ export const AddPinForm = ({ mutate, setOpen }: AddPinFormProps) => {
             </FormItem>
           )}
         />
-        <PinCheck packetId={ form.watch("packetId") } />
+        <PinCheck packetId={form.watch("packetId")} />
         <CustomDialogFooter error={fetchError} onCancel={form.reset} submitText="Add" />
       </form>
     </Form>
