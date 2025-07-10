@@ -16,6 +16,7 @@ export const DeletePinButton = ({ packet, mutate }: DeletePinButtonProps) => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <PinOffIcon
+          data-testid="unpinButton"
           size={20}
           className="cursor-pointer stroke-destructive opacity-75 hover:opacity-100"
         />

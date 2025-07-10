@@ -3,9 +3,16 @@ import { ErrorComponent } from "@components/contents/common/ErrorComponent";
 import { useGetPinnedPackets } from "@components/contents/common/hooks/useGetPinnedPackets";
 import { AddPinButton } from "./AddPinButton";
 import { DeleteablePin } from "./DeleteablePin";
+import { Unauthorized } from "@components/contents/common/Unauthorized";
+import { useUser } from "@components/providers/UserProvider";
+import { hasGlobalPacketManagePermission } from "@lib/auth/hasPermission";
 
 export const ManagePins = () => {
   const { packets, error, isLoading, mutate } = useGetPinnedPackets();
+  const { authorities } = useUser();
+  if (!hasGlobalPacketManagePermission(authorities)) {
+    return <Unauthorized />;
+  }
 
   if (error) return <ErrorComponent message="Error fetching pinned packets" error={error} />;
 

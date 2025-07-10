@@ -26,10 +26,6 @@ const typeIntoInput = async (value: string) => {
 describe("AddPinButton", () => {
   const fetcherSpy = vitest.spyOn(fetch, "fetcher");
 
-  beforeEach(() => {
-    vitest.clearAllMocks();
-  });
-
   it("should open dialog on click with form", async () => {
     renderComponent();
     userEvent.click(screen.getByRole("button", { name: /add pin/i }));

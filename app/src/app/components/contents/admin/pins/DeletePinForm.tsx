@@ -29,6 +29,7 @@ export const DeletePinForm = ({ packet, mutate, setOpen }: DeletePinFormProps) =
       console.error(error);
       if (error instanceof ApiError && error.status === HttpStatus.NotFound) {
         setErrorMessage(error.message);
+        return;
       }
       setErrorMessage("An unexpected error occurred. Please try again.");
     }
@@ -38,7 +39,6 @@ export const DeletePinForm = ({ packet, mutate, setOpen }: DeletePinFormProps) =
     <div className="space-y-3">
       <p>Do you want to remove the pin on &lsquo;{ packet.displayName ?? packet.name }&rsquo;?</p>
       <form onSubmit={onSubmit} className="space-y-3">
-        <input type="hidden" name="packetId" value="delete" />
         <CustomDialogFooter error={errorMessage} onCancel={() => setOpen(false)} submitText="Yes" />
       </form>
     </div>

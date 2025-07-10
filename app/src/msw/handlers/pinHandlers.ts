@@ -17,5 +17,13 @@ export const pinHandlers = [
     } else {
       return res(ctx.status(HttpStatus.NotFound), ctx.json({ error: { detail: "Packet not found" } }));
     }
-  })
+  }),
+  rest.delete(`${appConfig.apiUrl()}/pins`, async (req, res, ctx) => {
+    const body = await req.json();
+
+    if (body.packetId === mockPacket.id) {
+      console.error("doing delete handler")
+      return res(ctx.status(HttpStatus.NoContent));
+    }
+  }),
 ];
