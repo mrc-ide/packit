@@ -12,7 +12,7 @@ class Packet(
     @Id
     val id: String,
     val name: String,
-    val displayName: String,
+    var displayName: String,
     @JdbcTypeCode(SqlTypes.JSON)
     val parameters: Map<String, Any>,
     val importTime: Double,
@@ -27,7 +27,7 @@ class Packet(
     var tags: MutableList<Tag> = mutableListOf(),
     @OneToMany(mappedBy = "packet", cascade = [CascadeType.ALL])
     var rolePermissions: MutableList<RolePermission> = mutableListOf(),
-    val description: String? = null
+    var description: String? = null
 )
 
 fun Packet.toDto() = PacketDto(
