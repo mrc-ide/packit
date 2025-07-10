@@ -2,7 +2,6 @@ package packit.model
 
 import jakarta.persistence.*
 
-
 @Entity
 @Table(name = "one_time_job")
 class OneTimeJob(

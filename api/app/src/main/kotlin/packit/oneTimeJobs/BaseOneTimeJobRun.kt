@@ -74,9 +74,11 @@ abstract class BaseOneTimeJobRun(
         status: OneTimeJobStatus,
         errorMessage: String? = null
     ) {
-        oneTimeJobRepository.save(job.apply {
-            this.status = status.toString()
-            this.error = errorMessage
-        })
+        oneTimeJobRepository.save(
+            job.apply {
+                this.status = status.toString()
+                this.error = errorMessage
+            }
+        )
     }
 }
