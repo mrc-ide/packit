@@ -2,10 +2,11 @@ import useSWR from "swr";
 import appConfig from "@config/appConfig";
 import { fetcher } from "@lib/fetch";
 import { PacketMetadata } from "@/types";
+import { packetIdRegex } from "@components/contents/admin/pins/utils/constants";
 
 export const useGetPacketById = (packetId: string | undefined) => {
   const { data, isLoading, error } = useSWR<PacketMetadata>(
-    packetId ? `${appConfig.apiUrl()}/packets/${packetId}` : null,
+    packetId && packetIdRegex.test(packetId) ? `${appConfig.apiUrl()}/packets/${packetId}` : null,
     (url: string) => fetcher({ url }),
     { revalidateOnFocus: false }
   );

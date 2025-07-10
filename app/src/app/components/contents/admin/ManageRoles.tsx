@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { DataTable } from "../common/DataTable";
-import { useManageAccessLayoutContext } from "./AdminOutlet";
+import { useAdminOutletContext } from "./AdminOutlet";
 
 import { HelpCircle } from "lucide-react";
 import { PAGE_SIZE } from "@lib/constants";
@@ -13,7 +13,7 @@ import { NavLink } from "react-router-dom";
 import { Unauthorized } from "../common/Unauthorized";
 
 export const ManageRoles = () => {
-  const { roles, users, mutate } = useManageAccessLayoutContext();
+  const { roles, users, mutate } = useAdminOutletContext();
   const [filterValue, setFilterValue] = useState("");
   if (!roles) {
     return <Unauthorized />;

@@ -21,10 +21,16 @@ export const AdminLayout = () => {
   }
 
   if (hasGlobalPacketManagePermission(authorities)) {
-    sidebarItems.push({
-      to: "/resync-packets",
-      title: "Resync Packets"
-    });
+    sidebarItems.push(
+      {
+        to: "/resync-packets",
+        title: "Resync Packets"
+      },
+      {
+        to: "/manage-pins",
+        title: "Manage Pins"
+      }
+    );
   }
 
   return <Sidebar sidebarItems={sidebarItems}>{authorities && <AdminOutlet authorities={authorities} />}</Sidebar>;

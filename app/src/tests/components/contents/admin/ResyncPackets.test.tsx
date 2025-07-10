@@ -11,7 +11,7 @@ const renderComponent = () =>
   );
 
 describe("ResyncPackets", () => {
-  afterAll(() => {
+  afterEach(() => {
     vitest.clearAllMocks();
   });
 

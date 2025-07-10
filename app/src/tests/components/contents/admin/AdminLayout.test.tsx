@@ -90,7 +90,8 @@ describe("AdminLayout", () => {
     await expectRendersLinksWithPermissions(["user.manage", "packet.manage"], {
       "manage-users": "Manage Users",
       "manage-roles": "Manage Roles",
-      "resync-packets": "Resync Packets"
+      "resync-packets": "Resync Packets",
+      "manage-pins": "Manage Pins"
     });
   });
 
@@ -101,9 +102,10 @@ describe("AdminLayout", () => {
     });
   });
 
-  it("should show only resync packets links when user has only packet.manage permission", async () => {
+  it("should show only resync packets and manage pins links when user has only packet.manage permission", async () => {
     await expectRendersLinksWithPermissions(["packet.manage"], {
-      "resync-packets": "Resync Packets"
+      "resync-packets": "Resync Packets",
+      "manage-pins": "Manage Pins"
     });
   });
 });

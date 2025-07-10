@@ -168,6 +168,14 @@ class PermissionCheckerTest {
             assertTrue(permissionChecker.hasAnyPacketManagePermission(listOf("packet.manage:packet:group1:packet1")))
             assertFalse(permissionChecker.hasAnyPacketManagePermission(listOf("other.permission")))
         }
+
+        @Test
+        fun hasGlobalPacketManagePermission() {
+            assertTrue(permissionChecker.hasGlobalPacketManagePermission(listOf("packet.manage")))
+            assertFalse(permissionChecker.hasGlobalPacketManagePermission(listOf("packet.manage:packet:group1")))
+            assertFalse(permissionChecker.hasGlobalPacketManagePermission(listOf("other.permission")))
+            assertFalse(permissionChecker.hasGlobalPacketManagePermission(emptyList()))
+        }
     }
 
     @Nested
