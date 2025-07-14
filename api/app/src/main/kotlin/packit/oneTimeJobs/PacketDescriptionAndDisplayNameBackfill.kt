@@ -9,6 +9,7 @@ import packit.service.utils.getDisplayNameForPacket
 
 /**
  * After this has been run on all servers, this can be deleted.
+ * Delete test for this in app/src/test/kotlin/packit/unit/oneTimeJobs/PacketDescriptionAndDisplayNameBackfillTest.kt
  */
 @Component
 class PacketDescriptionAndDisplayNameBackfill(

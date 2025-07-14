@@ -57,7 +57,7 @@ abstract class BaseOneTimeJobRun(
     }
 
     // Abstract method that each job implementation must provide
-    protected abstract fun performJob()
+    internal abstract fun performJob()
 
     internal fun getOrCreateJob(): OneTimeJob {
         return oneTimeJobRepository.findByName(jobName)
