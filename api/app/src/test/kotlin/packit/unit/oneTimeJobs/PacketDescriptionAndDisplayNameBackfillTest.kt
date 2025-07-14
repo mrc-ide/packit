@@ -68,6 +68,5 @@ class PacketDescriptionAndDisplayNameBackfillTest {
         verify(packetRepository).saveAll(packets)
         verify(outpackServerClient).getMetadata()
         verify(packetRepository).findAll()
-
     }
 }
