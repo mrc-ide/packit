@@ -72,9 +72,9 @@ class AuthorizationLogic(
         val permittedPaths = auth.getPermittedFilePaths()
 
         return auth.getExpiresAt().isAfter(Instant.now()) &&
-                auth.getPermittedPacketId() == requestedPacketId &&
-                permittedPaths.containsAll(requestedPaths) &&
-                permittedPaths.size == requestedPaths.size
+            auth.getPermittedPacketId() == requestedPacketId &&
+            permittedPaths.containsAll(requestedPaths) &&
+            permittedPaths.size == requestedPaths.size
     }
 
     fun canUpdatePacketGroupReadRoles(
