@@ -9,8 +9,8 @@ import { PacketDataTable } from "./PacketDataTable";
 export const PacketGroup = () => {
   const { packetName } = useParams();
   const { packets, error, isLoading } = useGetPacketsInGroup(packetName);
-  const displayName = packets?.[0].displayName;
-  const description = packets?.[0].description;
+  const displayName = packets?.[0]?.displayName;
+  const description = packets?.[0]?.description;
 
   if (error?.status == HttpStatus.Unauthorized) return <Unauthorized />;
   if (error) {

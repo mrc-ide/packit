@@ -114,6 +114,9 @@ class BasePacketService(
     }
 
     override fun getPacketsByName(name: String): List<Packet> {
+        if (!packetGroupRepository.existsByName(name)) {
+            throw PackitException("packetGroupNotFound", HttpStatus.NOT_FOUND)
+        }
         return packetRepository.findByName(name, Sort.by("startTime").descending())
     }
 
@@ -167,9 +170,9 @@ class BasePacketService(
 
     private fun String.toSHA256(): String {
         return "sha256:${
-        MessageDigest
-            .getInstance("SHA-256")
-            .digest(this.toByteArray()).toHex()
+            MessageDigest
+                .getInstance("SHA-256")
+                .digest(this.toByteArray()).toHex()
         }"
     }
 

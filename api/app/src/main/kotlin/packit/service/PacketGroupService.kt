@@ -19,6 +19,7 @@ interface PacketGroupService {
     fun getPacketGroup(id: Int): PacketGroup
     fun getPacketGroupByName(name: String): PacketGroup
     fun getAllPacketGroupsCanManage(): List<PacketGroup>
+    fun existsByName(name: String): Boolean
 }
 
 @Service
@@ -74,5 +75,9 @@ class BasePacketGroupService(
                 permissionChecker.hasPacketManagePermissionForGroup(authorities, it.name)
             }
         }
+    }
+
+    override fun existsByName(name: String): Boolean {
+        return packetGroupRepository.existsByName(name)
     }
 }

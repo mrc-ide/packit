@@ -7,10 +7,6 @@ import org.springframework.security.access.prepost.PostFilter
 import org.springframework.stereotype.Repository
 import packit.model.PacketGroup
 
-interface PacketIdProjection {
-    val id: String
-}
-
 @Repository
 interface PacketGroupRepository : JpaRepository<PacketGroup, Int> {
     @PostFilter("@authz.canViewPacketGroup(#root, filterObject.name)")
@@ -23,4 +19,6 @@ interface PacketGroupRepository : JpaRepository<PacketGroup, Int> {
 
     @Transactional
     fun deleteAllByNameNotIn(names: Collection<String>)
+
+    fun existsByName(name: String): Boolean
 }

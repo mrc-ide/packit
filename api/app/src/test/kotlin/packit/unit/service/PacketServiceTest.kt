@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.ArgumentMatchers.anyString
+import org.mockito.Mockito.`when`
 import org.mockito.kotlin.*
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
@@ -119,6 +120,7 @@ class PacketServiceTest {
     private val packetGroups = listOf(PacketGroup("test"), PacketGroup("test2"))
     private val packetGroupRepository = mock<PacketGroupRepository> {
         on { findAll() } doReturn packetGroups
+        on { existsByName(any()) } doReturn true
     }
 
     private val newPacketOutpackMetadata = newPackets.map { packetToOutpackMetadata(it) }
@@ -178,7 +180,7 @@ class PacketServiceTest {
     }
 
     @Test
-    fun `gets packets by name`() {
+    fun `gets packets by name when name exists`() {
         val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), mock())
 
         val result = sut.getPacketsByName("pg1")
@@ -186,6 +188,20 @@ class PacketServiceTest {
         assertEquals(result, oldPackets)
         verify(packetRepository)
             .findByName("pg1", Sort.by("startTime").descending())
+    }
+
+    @Test
+    fun `getPacketsByName throws exception if packet group does not exist`() {
+        val name = "nonExistingGroup"
+        `when`(packetGroupRepository.existsByName(name)).thenReturn(false)
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), mock())
+
+        assertThrows<PackitException> {
+            sut.getPacketsByName(name)
+        }.apply {
+            assertEquals("packetGroupNotFound", key)
+            assertEquals(HttpStatus.NOT_FOUND, httpStatus)
+        }
     }
 
     @Test
