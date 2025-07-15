@@ -5,6 +5,7 @@ import { ErrorComponent } from "../common/ErrorComponent";
 import { Unauthorized } from "../common/Unauthorized";
 import { useGetPacketsInGroup } from "./hooks/useGetPacketsInGroup";
 import { PacketDataTable } from "./PacketDataTable";
+import { ErrorPage } from "../common/ErrorPage";
 
 export const PacketGroup = () => {
   const { packetName } = useParams();
@@ -14,7 +15,7 @@ export const PacketGroup = () => {
 
   if (error?.status == HttpStatus.Unauthorized) return <Unauthorized />;
   if (error) {
-    return <ErrorComponent message="Error fetching packets for group" error={error} />;
+    return <ErrorPage message="Error fetching packets for group" error={error} />;
   }
 
   return (
