@@ -17,7 +17,7 @@ class PackitExceptionHandlerTest : IntegrationTest() {
             getTokenizedHttpEntity()
         )
 
-        assertEquals(HttpStatus.BAD_REQUEST, result.statusCode)
+        assertEquals(HttpStatus.NOT_FOUND, result.statusCode)
     }
 
     @Test

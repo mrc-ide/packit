@@ -202,7 +202,7 @@ class BasePacketService(
 
     override fun getMetadataBy(id: String): PacketMetadata {
         return outpackServerClient.getMetadataById(id)
-            ?: throw PackitException("doesNotExist", HttpStatus.NOT_FOUND)
+            ?: throw PackitException("packetNotFound", HttpStatus.NOT_FOUND)
     }
 
     override fun getFileByPath(

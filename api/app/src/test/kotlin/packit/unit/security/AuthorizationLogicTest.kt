@@ -2,11 +2,14 @@ package packit.unit.security
 
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.*
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.access.expression.SecurityExpressionOperations
 import org.springframework.security.access.expression.SecurityExpressionRoot
 import org.springframework.security.authentication.TestingAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import packit.exceptions.PackitException
 import packit.model.Packet
 import packit.security.AuthorizationLogic
 import packit.security.PermissionChecker
@@ -81,6 +84,20 @@ class AuthorizationLogicTest {
     }
 
     @Test
+    fun `canReadPacket throws AccessDeniedException when packet not found`() {
+        val ex = PackitException("Packet not found")
+        given { packetService.getPacket(packet.id) }.willAnswer { throw ex }
+
+        assertThrows<AccessDeniedException> {
+            sut.canReadPacket(ops, packet.id)
+        }.apply {
+            assertEquals("Access Denied", message)
+            assertEquals(ex, cause)
+        }
+        verify(permissionChecker, never()).canReadPacket(any(), any(), any())
+    }
+
+    @Test
     fun `canViewPacketGroup returns true when user can read packet group`() {
         val result = sut.canViewPacketGroup(ops, "testGroup")
 
@@ -106,6 +123,20 @@ class AuthorizationLogicTest {
         assertTrue(result)
         verify(permissionChecker).canManagePacket(authorities, packet.name, packet.id)
         verify(packetService).getPacket(packet.id)
+    }
+
+    @Test
+    fun `canUpdatePacketReadRoles throws AccessDeniedException when packet not found`() {
+        val ex = PackitException("Packet not found")
+        given { packetService.getPacket(packet.id) }.willAnswer { throw ex }
+
+        assertThrows<AccessDeniedException> {
+            sut.canUpdatePacketReadRoles(ops, packet.id)
+        }.apply {
+            assertEquals("Access Denied", message)
+            assertEquals(ex, cause)
+        }
+        verify(permissionChecker, never()).canManagePacket(any(), any(), any())
     }
 
     @Test

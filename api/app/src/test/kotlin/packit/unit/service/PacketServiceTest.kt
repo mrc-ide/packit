@@ -1,6 +1,5 @@
 package packit.unit.service
 
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.ArgumentMatchers.anyString
@@ -208,9 +207,12 @@ class PacketServiceTest {
     fun `getMetadataBy throws exception if packet metadata does not exist`() {
         val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), mock())
 
-        assertThatThrownBy { sut.getMetadataBy("123") }
-            .isInstanceOf(PackitException::class.java)
-            .hasMessageContaining("PackitException with key doesNotExist")
+        assertThrows<PackitException> {
+            sut.getMetadataBy("123")
+        }.apply {
+            assertEquals("packetNotFound", key)
+            assertEquals(HttpStatus.NOT_FOUND, httpStatus)
+        }
     }
 
     @Test

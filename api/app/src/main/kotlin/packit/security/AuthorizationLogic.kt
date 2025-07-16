@@ -1,7 +1,9 @@
 package packit.security
 
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.access.expression.SecurityExpressionOperations
 import org.springframework.stereotype.Component
+import packit.exceptions.PackitException
 import packit.model.Packet
 import packit.security.ott.OTTAuthenticationToken
 import packit.service.PacketService
@@ -21,8 +23,13 @@ class AuthorizationLogic(
         )
 
     fun canReadPacket(operations: SecurityExpressionOperations, id: String): Boolean {
-        val packet = packetService.getPacket(id)
-        return canReadPacket(operations, packet)
+        try {
+            val packet = packetService.getPacket(id)
+            return canReadPacket(operations, packet)
+        } catch (e: PackitException) {
+            // pass through PackitException to allow handling in the controller
+            throw AccessDeniedException("Access Denied", e)
+        }
     }
 
     fun canViewPacketGroup(operations: SecurityExpressionOperations, name: String): Boolean {
@@ -39,8 +46,13 @@ class AuthorizationLogic(
         operations: SecurityExpressionOperations,
         packetId: String,
     ): Boolean {
-        val packet = packetService.getPacket(packetId)
-        return permissionChecker.canManagePacket(getAuthorities(operations), packet.name, packet.id)
+        try {
+            val packet = packetService.getPacket(packetId)
+            return permissionChecker.canManagePacket(getAuthorities(operations), packet.name, packet.id)
+        } catch (e: PackitException) {
+            // pass through PackitException to allow handling in the controller
+            throw AccessDeniedException("Access Denied", e)
+        }
     }
 
     fun oneTimeTokenValid(operations: SecurityExpressionOperations, packetId: String, path: String): Boolean {
