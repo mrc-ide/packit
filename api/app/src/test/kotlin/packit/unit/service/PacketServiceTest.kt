@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.ArgumentMatchers.anyString
+import org.mockito.Mockito.`when`
 import org.mockito.kotlin.*
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
@@ -119,6 +120,7 @@ class PacketServiceTest {
     private val packetGroups = listOf(PacketGroup("test"), PacketGroup("test2"))
     private val packetGroupRepository = mock<PacketGroupRepository> {
         on { findAll() } doReturn packetGroups
+        on { existsByName(any()) } doReturn true
     }
 
     private val newPacketOutpackMetadata = newPackets.map { packetToOutpackMetadata(it) }
@@ -178,7 +180,7 @@ class PacketServiceTest {
     }
 
     @Test
-    fun `gets packets by name`() {
+    fun `gets packets by name when name exists`() {
         val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), mock())
 
         val result = sut.getPacketsByName("pg1")
@@ -186,6 +188,20 @@ class PacketServiceTest {
         assertEquals(result, oldPackets)
         verify(packetRepository)
             .findByName("pg1", Sort.by("startTime").descending())
+    }
+
+    @Test
+    fun `getPacketsByName throws exception if packet group does not exist`() {
+        val name = "nonExistingGroup"
+        `when`(packetGroupRepository.existsByName(name)).thenReturn(false)
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), mock())
+
+        assertThrows<PackitException> {
+            sut.getPacketsByName(name)
+        }.apply {
+            assertEquals("packetGroupNotFound", key)
+            assertEquals(HttpStatus.NOT_FOUND, httpStatus)
+        }
     }
 
     @Test
@@ -273,7 +289,7 @@ class PacketServiceTest {
         // should add: new packets [1] and [2]
         verify(resyncPacketRepository).saveAll(packetsArgCaptor.capture())
         val savedPackets = packetsArgCaptor.allValues.flatten()
-        assertEquals(2, savedPackets.size,)
+        assertEquals(2, savedPackets.size)
         assertEquals(newPackets[1].id, savedPackets[0].id)
         assertEquals(newPackets[2].id, savedPackets[1].id)
 
@@ -417,5 +433,40 @@ class PacketServiceTest {
         assertThrows<PackitException> {
             sut.streamZip(listOf("file1.txt", "file2.txt"), packetMetadata.id, outputStream)
         }
+    }
+
+    @Test
+    fun `getByNameOrDisplayName returns packets matching the filter`() {
+        val filter = "filterName"
+        whenever(packetRepository.searchByNameOrDisplayName(filter)).thenReturn(newPackets)
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), mock())
+
+        val result = sut.getByNameOrDisplayName(filter)
+
+        assertEquals(newPackets, result)
+        verify(packetRepository).searchByNameOrDisplayName(filter)
+    }
+
+    @Test
+    fun `savePackets saves packets and uniquePacketGroups`() {
+        val testPackets = newPackets.drop(1)
+        val outpackMetadata = testPackets.map { packetToOutpackMetadata(it) }
+        val sut = BasePacketService(packetRepository, packetGroupRepository, mock(), mock())
+        val sutSpy = spy(sut)
+        doNothing().`when`(sutSpy).saveUniquePacketGroups(any())
+
+        sutSpy.savePackets(outpackMetadata)
+
+        verify(sutSpy).saveUniquePacketGroups(testPackets.map { it.name }.distinct())
+        verify(packetRepository).saveAll(
+            argThat { packets: List<Packet> ->
+                assertEquals(testPackets.size, packets.size)
+                assertEquals(packets.map { it.id }, testPackets.map { it.id })
+                assertEquals(packets.map { it.displayName }, testPackets.map { it.displayName })
+                assertEquals(packets.map { it.name }, testPackets.map { it.name })
+                assertEquals(packets.map { it.description }, testPackets.map { "Description for ${it.name}" })
+                true
+            }
+        )
     }
 }
