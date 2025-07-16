@@ -100,7 +100,7 @@ class MyOneTimeJobRun(
 
 ### How it works
 
-- The job will automatically run on application startup
+- The job will automatically run on application startup thanks to `@PostConstruct` annotation on base class method `checkAndRun`.
 - The `OneTimeJobRepository` tracks which jobs have already been executed
 - Each job runs only once, even across application restarts
 - Jobs are identified by their class name
