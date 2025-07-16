@@ -9,15 +9,13 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import packit.exceptions.PackitException
 import packit.helpers.PagingHelper
-import packit.model.FileMetadata
-import packit.model.Packet
-import packit.model.PacketGroup
-import packit.model.PacketMetadata
-import packit.model.PageablePayload
+import packit.model.*
 import packit.model.dto.OutpackMetadata
 import packit.repository.PacketGroupRepository
 import packit.repository.PacketRepository
 import packit.repository.RunInfoRepository
+import packit.service.utils.getDescriptionForPacket
+import packit.service.utils.getDisplayNameForPacket
 import java.io.OutputStream
 import java.security.MessageDigest
 import java.time.Instant
@@ -39,12 +37,11 @@ interface PacketService {
         output: OutputStream,
         preStream: (ClientHttpResponse) -> Unit = {}
     )
-    fun getPacketsByName(
-        name: String
-    ): List<Packet>
 
+    fun getPacketsByName(name: String): List<Packet>
     fun streamZip(paths: List<String>, id: String, output: OutputStream)
     fun validateFilesExistForPacket(id: String, paths: List<String>): List<FileMetadata>
+    fun getByNameOrDisplayName(filterName: String): List<Packet>
 }
 
 @Service
@@ -91,13 +88,15 @@ class BasePacketService(
         packetGroupRepository.deleteAllByNameNotIn(currentPacketGroups)
     }
 
-    private fun savePackets(outpackMetadata: Collection<OutpackMetadata>) {
+    internal fun savePackets(outpackMetadata: Collection<OutpackMetadata>) {
         val now = Instant.now().epochSecond.toDouble()
         val packets = outpackMetadata.map {
+            val displayName = getDisplayNameForPacket(it.custom, it.name)
+            val description = getDescriptionForPacket(it.custom)
             Packet(
-                it.id, it.name, it.name,
+                it.id, it.name, displayName,
                 it.parameters ?: mapOf(), now,
-                it.time.start, it.time.end
+                it.time.start, it.time.end, description = description
             )
         }
         val packetGroupNames = packets.groupBy { it.name }
@@ -115,6 +114,9 @@ class BasePacketService(
     }
 
     override fun getPacketsByName(name: String): List<Packet> {
+        if (!packetGroupRepository.existsByName(name)) {
+            throw PackitException("packetGroupNotFound", HttpStatus.NOT_FOUND)
+        }
         return packetRepository.findByName(name, Sort.by("startTime").descending())
     }
 
@@ -160,6 +162,10 @@ class BasePacketService(
         }
 
         return metadataFiles
+    }
+
+    override fun getByNameOrDisplayName(filterName: String): List<Packet> {
+        return packetRepository.searchByNameOrDisplayName(filterName)
     }
 
     private fun String.toSHA256(): String {

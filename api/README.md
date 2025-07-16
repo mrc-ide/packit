@@ -65,3 +65,42 @@ existing tables. There is a [GitHub Actions workflow](../.github/workflows/check
 
 Note: A intelliJ called [JpaBuddy](https://jpa-buddy.com/) can be used to generate entity classes from a database schema and visa versa.
 This [tutorial](https://www.youtube.com/watch?v=9wEJ29QIDyM&t=51s) is a good starting point on how flyway and JpaBuddy can be used together.
+
+## One-off Jobs
+
+One-off jobs are useful for running tasks like data migrations, imports, or other operations that need to execute only once during application startup.
+
+### Creating a One-off Job
+
+To create a one-off job:
+
+1. **Create a new class** that extends `BaseOneTimeJobRun`
+2. **Add the `@Component` annotation** so Spring can discover it
+3. **Implement the `performJob` method** with your job logic
+4. **Pass required parameters** to the `BaseOneTimeJobRun` constructor:
+   - `oneTimeJobRepository` - injected dependency
+   - Job name - use your class's simple name
+
+### Example
+
+```kotlin
+@Component
+class MyOneTimeJobRun(
+    oneTimeJobRepository: OneTimeJobRepository
+) : BaseOneTimeJobRun(
+    oneTimeJobRepository, 
+    MyOneTimeJobRun::class.java.simpleName
+) {
+    override fun performJob() {
+        // Your job logic here
+        // This will run only once when the application starts
+    }
+}
+```
+
+### How it works
+
+- The job will automatically run on application startup thanks to `@PostConstruct` annotation on base class method `checkAndRun`.
+- The `OneTimeJobRepository` tracks which jobs have already been executed - `checkAndRun` omits execution of jobs which have already run. Note that this means that jobs will be re-run whenever the packit database volume is wiped and recreated. 
+- Each job runs only once, even across application restarts
+- Jobs are identified by their class name

@@ -6,7 +6,8 @@ import { BrandingConfiguration } from "@/types";
 export const useGetBrandingConfig = () => {
   const { data, isLoading, error } = useSWR<BrandingConfiguration>(
     `${appConfig.apiUrl()}/branding/config`,
-    (url: string) => fetcher({ url, noAuth: true })
+    (url: string) => fetcher({ url, noAuth: true }),
+    { revalidateOnFocus: false }
   );
 
   return {
