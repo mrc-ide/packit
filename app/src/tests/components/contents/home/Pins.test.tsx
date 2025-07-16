@@ -7,6 +7,11 @@ import { Pins } from "@components/contents/home/Pins";
 import { server } from "@/msw/server";
 import { mockPacket, mockPacket2 } from "@/tests/mocks";
 
+const packetWithSameNameAsMockPacket = {
+  ...mockPacket,
+  id: mockPacket.id.replace("12345", "54321")
+};
+
 describe("Pins component", () => {
   const renderComponent = () =>
     render(
@@ -29,6 +34,24 @@ describe("Pins component", () => {
     await waitFor(() => {
       expect(screen.getByText("A packet with parameters and a report")).toBeVisible();
       expect(screen.getByText("aDifferentPacket")).toBeVisible();
+      expect(screen.queryByText(mockPacket.id)).not.toBeInTheDocument();
+    });
+  });
+
+  it("renders packet ids if any pins are from the same packet group, entailing the same (display) name", async () => {
+    server.use(
+      rest.get(`${appConfig.apiUrl()}/pins/packets`, (req, res, ctx) => {
+        return res(ctx.json([mockPacket, packetWithSameNameAsMockPacket]));
+      })
+    );
+
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText("A packet with parameters and a report")).toBeVisible();
+      expect(screen.getByText("aDifferentPacket")).toBeVisible();
+      expect(screen.getByText(mockPacket.id)).toBeVisible();
+      expect(screen.getByText(packetWithSameNameAsMockPacket.id)).toBeVisible();
     });
   });
 

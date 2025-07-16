@@ -39,7 +39,12 @@ export const DeletePinForm = ({ packet, mutate, setOpen }: DeletePinFormProps) =
     <div className="space-y-3">
       <p>Do you want to remove the pin on &lsquo;{packet.displayName ?? packet.name}&rsquo;?</p>
       <form onSubmit={onSubmit} className="space-y-3">
-        <CustomDialogFooter error={errorMessage} onCancel={() => setOpen(false)} submitText="Yes" />
+        <CustomDialogFooter
+          error={errorMessage}
+          onCancel={() => setOpen(false)}
+          variant="destructive"
+          submitText="Yes"
+        />
       </form>
     </div>
   );

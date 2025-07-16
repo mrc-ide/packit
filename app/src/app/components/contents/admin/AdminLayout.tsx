@@ -23,12 +23,12 @@ export const AdminLayout = () => {
   if (hasGlobalPacketManagePermission(authorities)) {
     sidebarItems.push(
       {
-        to: "/resync-packets",
-        title: "Resync Packets"
+        to: "/manage-pins",
+        title: "Manage Packet Pins"
       },
       {
-        to: "/manage-pins",
-        title: "Manage Pins"
+        to: "/resync-packets",
+        title: "Resync Packets"
       }
     );
   }

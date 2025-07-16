@@ -33,7 +33,8 @@ export const packetHandlers = [
     return res(ctx.json(mockPacket2));
   }),
   rest.get(`${packetIndexUri}/${nonExistentPacketId}`, (req, res, ctx) => {
-    return res(ctx.status(HttpStatus.NotFound), ctx.json({ error: { detail: "Packet not found" } }));
+    // TODO: Update HttpStatus.BadRequest to HttpStatus.NotFound after https://github.com/mrc-ide/packit/pull/243 merged
+    return res(ctx.status(HttpStatus.BadRequest), ctx.json({ error: { detail: "Packet not found" } }));
   }),
   rest.get(`${packetIndexUri}/${mockPacket.id}/read-permission`, (req, res, ctx) => {
     const rolesAndUsers: RolesAndUsersToUpdateRead = {

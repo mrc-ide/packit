@@ -13,9 +13,8 @@ export const DeleteablePin = ({ packet, mutate }: DeletablePinProps) => {
   const { unit, value } = getTimeDifferenceToDisplay(packet.time.start)[0];
 
   return (
-    <li className="p-3.5 flex gap-3 items-center border rounded shadow">
-      <DeletePinButton packet={packet} mutate={mutate} />
-      <div>
+    <li className="p-3.5 flex items-center border rounded shadow">
+      <div className="me-auto">
         <div className="flex gap-2 items-center">
           <Link to={`/${packet.name}/${packet.id}`} className="hover:underline decoration-blue-500 min-w-[50%] w-fit">
             <h3 className="scroll-m-20 text-lg font-semibold tracking-tight text-blue-500">
@@ -31,6 +30,7 @@ export const DeleteablePin = ({ packet, mutate }: DeletablePinProps) => {
           </div>
         </div>
       </div>
+      <DeletePinButton packet={packet} mutate={mutate} />
     </li>
   );
 };

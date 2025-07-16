@@ -14,7 +14,8 @@ export const PinCheck = ({ packetId }: PinCheckProps) => {
 
   if (isLoading) return <p>Checking packet...</p>;
 
-  if (error instanceof ApiError && error.status === HttpStatus.NotFound) {
+  // TODO: Update HttpStatus.BadRequest to HttpStatus.NotFound after https://github.com/mrc-ide/packit/pull/243 merged
+  if (error instanceof ApiError && error.status === HttpStatus.BadRequest) {
     return (
       <p className="text-xs font-medium text-red-500">
         <XIcon size={15} className="inline mr-1 text-red-500" />

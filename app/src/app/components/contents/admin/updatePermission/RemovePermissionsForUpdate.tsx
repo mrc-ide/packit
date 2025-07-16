@@ -22,11 +22,11 @@ export const RemovePermissionsForUpdate = ({
 
   return (
     <>
-      <Label className="font-semibold">Permissions To Remove</Label>
+      <Label className="font-semibold">Permissions to remove</Label>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button variant="outline" role="combobox" aria-expanded={open} className="w-[400px] justify-between">
-            Select Permission...
+            Select permission...
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
