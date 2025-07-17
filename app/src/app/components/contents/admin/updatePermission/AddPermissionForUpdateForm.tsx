@@ -131,7 +131,7 @@ export const AddPermissionForUpdateForm = ({ addPermission, currentPermissions }
           <div className="text-xs text-destructive">{form.formState.errors.root.message}</div>
         )}
         <Button type="submit" variant="outline" disabled={form.getValues("permission") === undefined}>
-          Add Permission
+          Add permission
         </Button>
       </form>
     </Form>

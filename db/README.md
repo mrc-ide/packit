@@ -14,11 +14,9 @@ Now this super user can be used to create users and log in initially.
 
 ## Pin a packet
 
+This pinning script only exists so that it can be run programmatically (by the `dev-create-pins` script) in development or testing. In production instances you should prefer to pin and unpin packets using the front-end interface (or the API endpoints).
+
 `./bin/create-packet-pin --packet-id <id of an existing packet>`
-
-## Unpin a packet
-
-`./bin/delete-packet-pin --packet-id <id of an existing packet>`
 
 ## Development: Run direct postgres query.
 This can be to insert test data or just for testing. 

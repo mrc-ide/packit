@@ -1,15 +1,15 @@
 import { Link } from "react-router-dom";
 import { getTimeDifferenceToDisplay } from "@lib/time";
-import { PinIcon } from "lucide-react";
 import { ZipDownloadButton } from "../downloads/ZipDownloadButton";
 import { allArtefactsFilesForPacket } from "../downloads/utils/artefactFiles";
 import { PacketMetadata } from "@/types";
 
 interface PinProps {
   packet: PacketMetadata;
+  showPacketId: boolean;
 }
 
-export const PinnedPacket = ({ packet }: PinProps) => {
+export const PinnedPacket = ({ packet, showPacketId }: PinProps) => {
   const { unit, value } = getTimeDifferenceToDisplay(packet.time.start)[0];
   const allArtefactsFiles = allArtefactsFilesForPacket(packet);
 
@@ -21,8 +21,8 @@ export const PinnedPacket = ({ packet }: PinProps) => {
             {packet.displayName || packet.name}
           </h3>
         </Link>
-        <PinIcon size={18} className="opacity-50"></PinIcon>
       </div>
+      {showPacketId && <p className="text-muted-foreground text-xs">{packet.id}</p>}
       <div className="flex gap-x-3 items-center mt-2 text-xs">
         {allArtefactsFiles && (
           <ZipDownloadButton

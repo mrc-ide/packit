@@ -4,8 +4,9 @@ import { fetcher } from "@lib/fetch";
 import { PacketMetadata } from "@/types";
 
 export const useGetPinnedPackets = () => {
-  const { data, isLoading, error } = useSWR<PacketMetadata[]>(`${appConfig.apiUrl()}/pins/packets`, (url: string) =>
-    fetcher({ url })
+  const { data, isLoading, error, mutate } = useSWR<PacketMetadata[]>(
+    `${appConfig.apiUrl()}/pins/packets`,
+    (url: string) => fetcher({ url })
   );
 
   const packets = data?.map((packet) => {
@@ -16,6 +17,7 @@ export const useGetPinnedPackets = () => {
   return {
     packets,
     isLoading,
-    error
+    error,
+    mutate
   };
 };

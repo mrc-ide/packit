@@ -80,6 +80,8 @@ export const mockToken =
   // eslint-disable-next-line max-len
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJwYWNraXQiLCJpc3MiOiJwYWNraXQtYXBpIiwidXNlck5hbWUiOiJkQGdtYWlsLmNvbSIsImRpc3BsYXlOYW1lIjoicmFuZG9tIHB1c3NpbyIsImRhdGV0aW1lIjoxNzE1OTI5MjM5LCJhdSI6WyJkQGdtYWlsLmNvbSIsIkFETUlOIiwidXNlci5tYW5hZ2UiLCJwYWNrZXQucHVzaCIsInBhY2tldC5ydW4iLCJwYWNrZXQucmVhZCJdLCJleHAiOjE3MTYwMTU2Mzl9.l4GgV0YoENGT3tjS-2popxWxRHp_LRT5gIVP3nND838";
 
+export const nonExistentPacketId = "20250130-123456-1a2b3c4d";
+
 export const mockPacket: PacketMetadata = {
   id: "20240000-012345-00aa0000",
   name: "parameters",
@@ -340,8 +342,8 @@ export const mockPacketGroupResponse: PageablePackets = {
     },
     {
       id: "20230427-150722-0ebd6545",
-      name: mockPacket.name,
-      displayName: "parameters",
+      name: "aDifferentPacketName",
+      displayName: "A different packet display name",
       parameters: {
         c: 30,
         b: 2,
@@ -391,6 +393,12 @@ export const mockPacketGroupResponse: PageablePackets = {
 };
 
 export const mockPackets = mockPacketGroupResponse.content.slice(1, 3);
+
+export const mockPacket2 = {
+  ...mockPacket,
+  ...mockPackets[1],
+  custom: null
+} as PacketMetadata;
 
 export const mockFileBlob = new Blob(["test contents"]);
 

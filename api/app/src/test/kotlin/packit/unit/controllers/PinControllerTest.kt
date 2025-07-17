@@ -4,13 +4,15 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.springframework.http.HttpStatus
 import packit.controllers.PinController
 import packit.model.PacketMetadata
+import packit.model.Pin
 import packit.model.TimeMetadata
+import packit.model.dto.PinDto
 import packit.service.PinService
 import java.time.Instant
-import java.util.*
 import kotlin.test.assertEquals
 
 class PinControllerTest {
@@ -39,6 +41,7 @@ class PinControllerTest {
                 emptyList()
             )
         )
+        on { createPinByPacketId(packet1id) } doReturn Pin(packetId = packet1id)
     }
 
     private val sut = PinController(pinService)
@@ -53,5 +56,23 @@ class PinControllerTest {
         assertThat(
             listOf(responseBody?.get(0)?.id, responseBody?.get(1)?.id)
         ).containsExactly(packet1id, packet2id)
+    }
+
+    @Test
+    fun `pinPacket should create a pin and return its packet id`() {
+        val response = sut.pinPacket(PinDto(packetId = packet1id))
+        val responseBody = response.body
+
+        verify(pinService).createPinByPacketId(packet1id)
+        assertEquals(HttpStatus.CREATED, response.statusCode)
+        assertEquals(packet1id, responseBody?.packetId)
+    }
+
+    @Test
+    fun `deletePin should delete a pin`() {
+        val response = sut.deletePacket(PinDto(packetId = packet1id))
+
+        verify(pinService).deletePin(packet1id)
+        assertEquals(HttpStatus.NO_CONTENT, response.statusCode)
     }
 }

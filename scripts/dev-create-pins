@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -eux
 
-# For the development environment.
-# Ensure api has run and tables and initial data have been created.
+# For development and testing environments only.
+# In production, pin and unpin using the front-end interface or API endpoints.
+# This script expects the API to be running, and tables and initial data to have been created.
 CUSTOM_METADATA_PACKET_ID='20241122-111130-544ddd35'
 TEST1_PACKET_ID='20240729-154657-76529696'
 ARTEFACT_TYPE_PACKET_ID='20240729-154633-10abe7d1'

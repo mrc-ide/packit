@@ -4,7 +4,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { SWRConfig } from "swr";
 import { PacketGroup } from "@components/contents/PacketGroup";
 import { server } from "@/msw/server";
-import { mockPacket, mockPacketGroupResponse, mockPacketGroupSummaries } from "../../../mocks";
+import { mockPacket, mockPacketGroupResponse } from "@/tests/mocks";
 import { HttpStatus } from "@lib/types/HttpStatus";
 import appConfig from "@config/appConfig";
 
@@ -46,7 +46,7 @@ describe("PacketGroup", () => {
     });
 
     mockPacketGroupResponse.content.forEach((packet) => {
-      expect(screen.getByText(packet.id)).toHaveAttribute("href", `/${packetGroupName}/${packet.id}`);
+      expect(screen.getByText(packet.id)).toHaveAttribute("href", `/${packet.name}/${packet.id}`);
       expect(screen.getAllByText(new Date(packet.startTime * 1000).toLocaleString())[0]).toBeVisible();
     });
 

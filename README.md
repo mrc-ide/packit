@@ -55,7 +55,7 @@ See individual READMEs for further details on developing each service.
 
 ### Development: Seeding the database
 
-Packets are automatically imported on a schedule. Pins that reference demo packets are automatically created by the `./scripts/dev-start` script, unless it was run with the `--create-pins-skip` flag (in which case you can run `./scripts/dev-create-pins` at any point in order to seed those demo pins).
+Packets are automatically imported on a schedule. Pins that reference demo packets are automatically created by the `./scripts/dev-start` script, unless it was run with the `--create-pins-skip` flag.
 
 The only other thing you'll need to seed for development is a super user (if using basic auth) - see above.
 

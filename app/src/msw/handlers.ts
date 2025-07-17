@@ -7,6 +7,7 @@ import { manageRolesHandlers } from "./handlers/manageRolesHandlers";
 import { packetGroupHandlers } from "./handlers/packetGroupHandlers";
 import { packetGroupSummaryHandlers } from "./handlers/packetGroupSummaryHandlers";
 import { packetHandlers } from "./handlers/packetHandlers";
+import { pinHandlers } from "./handlers/pinHandlers";
 import { tagHandlers } from "./handlers/tagHandlers";
 import { runnerHandlers } from "./handlers/runnerHandlers";
 import { usersRolesHandler } from "./handlers/usersRolesHandler";
@@ -31,6 +32,7 @@ export const handlers = [
   ...packetGroupSummaryHandlers,
   ...packetGroupHandlers,
   ...packetHandlers,
+  ...pinHandlers,
   ...tagHandlers,
   ...userHandlers,
   ...usersRolesHandler,
