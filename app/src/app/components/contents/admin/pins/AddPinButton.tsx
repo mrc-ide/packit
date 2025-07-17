@@ -10,10 +10,10 @@ interface AddPinButtonProps {
   mutate: KeyedMutator<PacketMetadata[]>;
 }
 export const AddPinButton = ({ mutate }: AddPinButtonProps) => {
-  const [open, setOpen] = useState(false);
+  const [formOpen, setFormOpen] = useState(false);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={formOpen} onOpenChange={setFormOpen}>
       <DialogTrigger asChild>
         <Button size="sm">
           <SquarePlus className="mr-2 h-5 w-5" />
@@ -24,7 +24,7 @@ export const AddPinButton = ({ mutate }: AddPinButtonProps) => {
         <DialogHeader>
           <DialogTitle>Pin a packet</DialogTitle>
         </DialogHeader>
-        <AddPinForm setOpen={setOpen} mutate={mutate} />
+        <AddPinForm setFormOpen={setFormOpen} mutate={mutate} formOpen={formOpen} />
       </DialogContent>
     </Dialog>
   );

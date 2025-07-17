@@ -24,7 +24,8 @@ export const PermissionScopeCommandList = ({
 }: PermissionCommandListProps) => {
   const { data, isLoading, error } = useGetResourcesForScopedPermissions(scope, filterName);
 
-  if (error) return <CommandEmpty>Error Fetching data</CommandEmpty>;
+  if (error) return <CommandEmpty>Error fetching data</CommandEmpty>;
+
   return (
     <CommandList>
       {isLoading && <CommandLoading>Loading {scope}s...</CommandLoading>}

@@ -130,7 +130,7 @@ class PinControllerTest : IntegrationTest() {
         assertBadRequest(result)
 
         val body = jacksonObjectMapper().readTree(result.body)
-        assertThat(body.get("error").get("detail").textValue()).isEqualTo("Pin already exists")
+        assertThat(body.get("error").get("detail").textValue()).isEqualTo("Packet already pinned")
         assertThat(pinRepository.findAll()).hasSize(3)
     }
 

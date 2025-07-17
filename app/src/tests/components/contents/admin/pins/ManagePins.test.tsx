@@ -38,16 +38,18 @@ describe("manage pins page", () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText(/current pins/i)).toBeInTheDocument();
+      expect(screen.getByText(/current pins/i)).toBeVisible();
     });
     const packet1Link = screen.getByRole("link", { name: "A packet with parameters and a report" });
     expect(packet1Link).toHaveAttribute("href", `/${mockPacket.name}/${mockPacket.id}`);
-    expect(screen.getByText(`(parameters)`)).toBeInTheDocument();
-    expect(screen.getByText(mockPacket.id)).toBeInTheDocument();
-    const packet2Link = screen.getByRole("link", { name: "aDifferentPacket" });
+    expect(screen.getByText("(parameters)")).toBeVisible();
+    expect(screen.getByText(mockPacket.id)).toBeVisible();
+
+    const packet2Link = screen.getByRole("link", { name: "A different packet display name" });
     expect(packet2Link).toHaveAttribute("href", `/${mockPacket2.name}/${mockPacket2.id}`);
-    expect(screen.queryByText(`(aDifferentPacket)`)).not.toBeInTheDocument();
+    expect(screen.getByText("(aDifferentPacketName)")).toBeVisible();
     expect(screen.getByText(mockPacket2.id)).toBeInTheDocument();
+
     expect(screen.getAllByText(/Ran \d*\sdays ago/)).toHaveLength(2);
   });
 

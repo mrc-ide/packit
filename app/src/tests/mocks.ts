@@ -220,13 +220,6 @@ export const mockPacket: PacketMetadata = {
   ]
 };
 
-export const mockPacket2 = {
-  ...mockPacket,
-  id: mockPacket.id.replace("12345", "67890"),
-  name: "aDifferentPacket",
-  custom: null
-} as PacketMetadata;
-
 export const mockPacketGroupSummaries: PageablePacketGroupSummaries = {
   content: [
     {
@@ -349,8 +342,8 @@ export const mockPacketGroupResponse: PageablePackets = {
     },
     {
       id: "20230427-150722-0ebd6545",
-      name: mockPacket.name,
-      displayName: "parameters",
+      name: "aDifferentPacketName",
+      displayName: "A different packet display name",
       parameters: {
         c: 30,
         b: 2,
@@ -400,6 +393,12 @@ export const mockPacketGroupResponse: PageablePackets = {
 };
 
 export const mockPackets = mockPacketGroupResponse.content.slice(1, 3);
+
+export const mockPacket2 = {
+  ...mockPacket,
+  ...mockPackets[1],
+  custom: null
+} as PacketMetadata;
 
 export const mockFileBlob = new Blob(["test contents"]);
 

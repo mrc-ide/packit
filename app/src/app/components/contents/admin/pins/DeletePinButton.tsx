@@ -16,18 +16,20 @@ export const DeletePinButton = ({ packet, mutate }: DeletePinButtonProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <PinOffIcon
-                data-testid="unpinButton"
-                size={20}
-                className="cursor-pointer stroke-red-500 opacity-75 hover:opacity-100"
-              />
-            </TooltipTrigger>
-            <TooltipContent>Remove pin from this packet</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <PinOffIcon
+                  data-testid="unpinButton"
+                  size={20}
+                  className="cursor-pointer stroke-destructive opacity-75 hover:opacity-100"
+                />
+              </TooltipTrigger>
+              <TooltipContent>Remove pin from this packet</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md" onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader>

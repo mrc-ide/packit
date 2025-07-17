@@ -9,7 +9,7 @@ import { mockPacket, mockPacket2 } from "@/tests/mocks";
 
 const packetWithSameNameAsMockPacket = {
   ...mockPacket,
-  id: mockPacket.id.replace("12345", "54321")
+  id: mockPacket.id.replace("00aa0000", "99ff9999")
 };
 
 describe("Pins component", () => {
@@ -33,7 +33,7 @@ describe("Pins component", () => {
 
     await waitFor(() => {
       expect(screen.getByText("A packet with parameters and a report")).toBeVisible();
-      expect(screen.getByText("aDifferentPacket")).toBeVisible();
+      expect(screen.getByText("A different packet display name")).toBeVisible();
       expect(screen.queryByText(mockPacket.id)).not.toBeInTheDocument();
     });
   });
@@ -48,8 +48,6 @@ describe("Pins component", () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText("A packet with parameters and a report")).toBeVisible();
-      expect(screen.getByText("aDifferentPacket")).toBeVisible();
       expect(screen.getByText(mockPacket.id)).toBeVisible();
       expect(screen.getByText(packetWithSameNameAsMockPacket.id)).toBeVisible();
     });
