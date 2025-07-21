@@ -74,6 +74,7 @@ class PackitExceptionHandler {
         val status = when (e) {
             is HttpClientErrorException.Unauthorized -> HttpStatus.UNAUTHORIZED
             is HttpClientErrorException.BadRequest -> HttpStatus.BAD_REQUEST
+            is HttpClientErrorException.NotFound -> HttpStatus.NOT_FOUND
             else -> HttpStatus.INTERNAL_SERVER_ERROR
         }
         return ErrorDetail(status, e.message ?: "")
@@ -94,8 +95,14 @@ class PackitExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException::class, AuthenticationException::class)
     fun handleAccessDenied(e: Exception): ResponseEntity<String> {
-        return ErrorDetail(HttpStatus.UNAUTHORIZED, e.message ?: "Unauthorized")
-            .toResponseEntity()
+        // if we throw AccessDeniedException with cause as PackitException, we handle it here
+        val cause = e.cause
+        return if (cause is PackitException) {
+            handlePackitException(cause)
+        } else {
+            ErrorDetail(HttpStatus.UNAUTHORIZED, e.message ?: "Unauthorized")
+                .toResponseEntity()
+        }
     }
 
     @ExceptionHandler(InternalAuthenticationServiceException::class)
