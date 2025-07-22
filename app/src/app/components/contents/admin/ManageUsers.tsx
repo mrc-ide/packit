@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuthConfig } from "../../providers/AuthConfigProvider";
 import { DataTable } from "../common/DataTable";
-import { useManageAccessLayoutContext } from "./AdminOutlet";
+import { useAdminOutletContext } from "./AdminOutlet";
 
 import { HelpCircle } from "lucide-react";
 import { NavLink } from "react-router-dom";
@@ -13,7 +13,7 @@ import { usersGlobalFilterFn } from "./utils/rolesTableGlobalFilterFn";
 import { Unauthorized } from "../common/Unauthorized";
 
 export const ManageUsers = () => {
-  const { users, mutate, roles } = useManageAccessLayoutContext();
+  const { users, mutate, roles } = useAdminOutletContext();
   const authConfig = useAuthConfig();
   const [filterValue, setFilterValue] = useState("");
 

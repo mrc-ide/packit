@@ -42,9 +42,9 @@ export const AdminOutlet = ({ authorities }: AdminOutletProps) => {
   return roles || !hasUserManage ? <Outlet context={{ roles, users, mutate }} /> : null;
 };
 
-interface ManageAccessLayoutContext {
+interface AdminOutletContext {
   roles: RoleWithRelationships[];
   users: UserWithPermissions[];
   mutate: KeyedMutator<RoleWithRelationships[]>;
 }
-export const useManageAccessLayoutContext = () => useOutletContext<ManageAccessLayoutContext>();
+export const useAdminOutletContext = () => useOutletContext<AdminOutletContext>();
