@@ -7,4 +7,4 @@ png("mygraph.png")
 plot(data)
 dev.off()
 
-orderly2::orderly_artefact(files = c("mygraph.png", "new.csv"), description = NULL)
+orderly2::orderly_artefact(files = c("mygraph.png", "new.csv"))
