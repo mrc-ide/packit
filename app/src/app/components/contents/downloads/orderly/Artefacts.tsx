@@ -18,7 +18,7 @@ export const Artefacts = ({ artefacts }: ArtefactsProps) => {
   const allArtefactsFiles = allArtefactsFilesForPacket(packet);
 
   const artefactName = (artefact: Artefact, index: number) => {
-      return artefact.description ? artefact.description.substring(0, 20) : `artefact_${index}`;
+    return artefact.description ? artefact.description.substring(0, 20) : `artefact_${index}`;
   };
 
   return (
