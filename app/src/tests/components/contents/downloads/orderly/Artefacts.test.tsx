@@ -32,7 +32,7 @@ const renderComponent = (packet?: PacketMetadata) => {
           <Route element={<Outlet context={{ packet }} />}>
             <Route
               path="/:packetName/:packetId/downloads"
-              element={<Artefacts artefacts={mockPacket.custom?.orderly.artefacts as Artefact[]} />}
+              element={<Artefacts artefacts={packet?.custom?.orderly.artefacts as Artefact[]} />}
             />
           </Route>
         </Routes>
@@ -48,7 +48,6 @@ describe("Artefacts component", () => {
 
   it("renders each artefact's description and its files' names", async () => {
     renderComponent(mockPacket);
-
     expect(await screen.findByText("An HTMl report")).toBeVisible();
     expect(await screen.findByText("report.html")).toBeVisible();
     expect(await screen.findByText("An artefact containing multiple files")).toBeVisible();
@@ -92,5 +91,50 @@ describe("Artefacts component", () => {
     renderComponent();
 
     expect(screen.queryByText("An HTMl report")).not.toBeInTheDocument();
+  });
+
+  it("renders default name for artefact if there is no artefact description", async () => {
+    // first artefact has empty string description, second artefact has null description
+    const packetWithNamelessArtefacts = {
+      ...mockPacket,
+      custom: {
+        ...mockPacket.custom,
+        orderly: {
+          ...mockPacket.custom.orderly,
+          artefacts: [
+            {
+              description: "",
+              paths: ["report.html"]
+            },
+            {
+              description: null,
+              paths: [
+                "directory//graph.png",
+                "artefact_data.csv",
+                "excel_file.xlsx",
+                "internal_presentation.pdf",
+                "other_extensions.txt"
+              ]
+            }
+          ]
+        }
+      }
+    };
+    renderComponent(packetWithNamelessArtefacts);
+
+    expect(await screen.findByText("artefact_0")).toBeVisible();
+    expect(await screen.findByText("artefact_1")).toBeVisible();
+
+    // Renders download button for mult-file artefact
+    const artefactGroupDownloadButtonMatcher = /Download \(\d+\.\d+ KB\)/;
+    const downloadButton = await screen.findAllByText(artefactGroupDownloadButtonMatcher);
+    expect(downloadButton).toHaveLength(1);
+    userEvent.click(downloadButton[0]);
+    expect(mockDownload).toHaveBeenCalledWith(
+      multifileArtefactFiles,
+      packetWithNamelessArtefacts.id,
+      `artefact_1_${packetWithNamelessArtefacts.id}.zip`,
+      true
+    );
   });
 });
