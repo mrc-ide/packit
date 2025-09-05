@@ -21,7 +21,7 @@ export const Artefacts = ({ artefacts }: ArtefactsProps) => {
     if (artefact.description) {
       return truncate ? artefact.description.substring(0, 20) : artefact.description;
     } else {
-      return `artefact_${index}`;
+      return `artefact_${index + 1}`;
     }
   };
 

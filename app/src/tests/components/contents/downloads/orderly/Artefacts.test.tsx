@@ -24,10 +24,12 @@ const multifileArtefactFiles = mockPacket.files.filter((file) => {
 });
 const reportFile = mockPacket.files.filter((file) => file.path === "report.html");
 
+const artefactGroupDownloadButtonMatcher = /Download \(\d+\.\d+ KB\)/;
+
 const renderComponent = (packet?: PacketMetadata) => {
   render(
     <SWRConfig value={{ provider: () => new Map() }}>
-      <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/downloads`]}>
+      <MemoryRouter initialEntries={[`/${packet?.name || "unknownPacket"}/${packet?.id || "unknownId"}/downloads`]}>
         <Routes>
           <Route element={<Outlet context={{ packet }} />}>
             <Route
@@ -75,7 +77,6 @@ describe("Artefacts component", () => {
   it("renders a 'Download' button per artefact", async () => {
     renderComponent(mockPacket);
 
-    const artefactGroupDownloadButtonMatcher = /Download \(\d+\.\d+ KB\)/;
     expect(await screen.findAllByText(artefactGroupDownloadButtonMatcher)).toHaveLength(1);
     const button = await screen.findByText(artefactGroupDownloadButtonMatcher);
     userEvent.click(button);
@@ -89,8 +90,7 @@ describe("Artefacts component", () => {
 
   it("when packet is not found it returns null", async () => {
     renderComponent();
-
-    expect(screen.queryByText("An HTMl report")).not.toBeInTheDocument();
+    expect(screen.queryByText(/Download/)).not.toBeInTheDocument();
   });
 
   it("renders default name for artefact if there is no artefact description", async () => {
@@ -122,18 +122,17 @@ describe("Artefacts component", () => {
     };
     renderComponent(packetWithNamelessArtefacts);
 
-    expect(await screen.findByText("artefact_0")).toBeVisible();
     expect(await screen.findByText("artefact_1")).toBeVisible();
+    expect(await screen.findByText("artefact_2")).toBeVisible();
 
-    // Renders download button for mult-file artefact
-    const artefactGroupDownloadButtonMatcher = /Download \(\d+\.\d+ KB\)/;
+    // Renders download button for multi-file artefact
     const downloadButton = await screen.findAllByText(artefactGroupDownloadButtonMatcher);
     expect(downloadButton).toHaveLength(1);
     userEvent.click(downloadButton[0]);
     expect(mockDownload).toHaveBeenCalledWith(
       multifileArtefactFiles,
       packetWithNamelessArtefacts.id,
-      `artefact_1_${packetWithNamelessArtefacts.id}.zip`,
+      `artefact_2_${packetWithNamelessArtefacts.id}.zip`,
       true
     );
   });
