@@ -1,0 +1,5 @@
+orderly2::orderly_resource("input_files/artefact_data.csv")
+orderly2::orderly_resource("input_files/test.txt")
+
+artefact_files <- list.files("artefact1/", full.names = TRUE)
+orderly2::orderly_artefact(description = NULL,artefact_files)

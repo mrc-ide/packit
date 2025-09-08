@@ -17,6 +17,14 @@ export const Artefacts = ({ artefacts }: ArtefactsProps) => {
 
   const allArtefactsFiles = allArtefactsFilesForPacket(packet);
 
+  const artefactName = (artefact: Artefact, index: number, truncate = false) => {
+    if (artefact.description) {
+      return truncate ? artefact.description.substring(0, 20) : artefact.description;
+    } else {
+      return `artefact_${index + 1}`;
+    }
+  };
+
   return (
     <>
       {allArtefactsFiles && (
@@ -37,12 +45,12 @@ export const Artefacts = ({ artefacts }: ArtefactsProps) => {
             <li key={key}>
               <Card>
                 <CardHeader className="bg-muted p-2 ps-6 flex-row justify-between items-center space-y-0">
-                  <h3 className="">{artefact.description}</h3>
+                  <h3 className="">{artefactName(artefact, key)}</h3>
                   {files.length > 1 && (
                     <ZipDownloadButton
                       packetId={packet.id}
                       files={files}
-                      zipName={`${artefact.description.substring(0, 20)}_${packet.id}.zip`}
+                      zipName={`${artefactName(artefact, key, true)}_${packet.id}.zip`}
                       variant="outline"
                       className="py-1"
                     />

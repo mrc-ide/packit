@@ -105,7 +105,7 @@ interface Description {
 }
 
 export interface Artefact {
-  description: string;
+  description: string | null;
   paths: string[];
 }
 

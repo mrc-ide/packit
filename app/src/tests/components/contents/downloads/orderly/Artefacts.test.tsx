@@ -24,15 +24,17 @@ const multifileArtefactFiles = mockPacket.files.filter((file) => {
 });
 const reportFile = mockPacket.files.filter((file) => file.path === "report.html");
 
+const artefactGroupDownloadButtonMatcher = /Download \(\d+\.\d+ KB\)/;
+
 const renderComponent = (packet?: PacketMetadata) => {
   render(
     <SWRConfig value={{ provider: () => new Map() }}>
-      <MemoryRouter initialEntries={[`/${mockPacket.name}/${mockPacket.id}/downloads`]}>
+      <MemoryRouter initialEntries={[`/${packet?.name || "unknownPacket"}/${packet?.id || "unknownId"}/downloads`]}>
         <Routes>
           <Route element={<Outlet context={{ packet }} />}>
             <Route
               path="/:packetName/:packetId/downloads"
-              element={<Artefacts artefacts={mockPacket.custom?.orderly.artefacts as Artefact[]} />}
+              element={<Artefacts artefacts={packet?.custom?.orderly.artefacts as Artefact[]} />}
             />
           </Route>
         </Routes>
@@ -48,7 +50,6 @@ describe("Artefacts component", () => {
 
   it("renders each artefact's description and its files' names", async () => {
     renderComponent(mockPacket);
-
     expect(await screen.findByText("An HTMl report")).toBeVisible();
     expect(await screen.findByText("report.html")).toBeVisible();
     expect(await screen.findByText("An artefact containing multiple files")).toBeVisible();
@@ -76,7 +77,6 @@ describe("Artefacts component", () => {
   it("renders a 'Download' button per artefact", async () => {
     renderComponent(mockPacket);
 
-    const artefactGroupDownloadButtonMatcher = /Download \(\d+\.\d+ KB\)/;
     expect(await screen.findAllByText(artefactGroupDownloadButtonMatcher)).toHaveLength(1);
     const button = await screen.findByText(artefactGroupDownloadButtonMatcher);
     userEvent.click(button);
@@ -90,7 +90,50 @@ describe("Artefacts component", () => {
 
   it("when packet is not found it returns null", async () => {
     renderComponent();
+    expect(screen.queryByText(/Download/)).not.toBeInTheDocument();
+  });
 
-    expect(screen.queryByText("An HTMl report")).not.toBeInTheDocument();
+  it("renders default name for artefact if there is no artefact description", async () => {
+    // first artefact has empty string description, second artefact has null description
+    const packetWithNamelessArtefacts = {
+      ...mockPacket,
+      custom: {
+        ...mockPacket.custom,
+        orderly: {
+          ...mockPacket.custom.orderly,
+          artefacts: [
+            {
+              description: "",
+              paths: ["report.html"]
+            },
+            {
+              description: null,
+              paths: [
+                "directory//graph.png",
+                "artefact_data.csv",
+                "excel_file.xlsx",
+                "internal_presentation.pdf",
+                "other_extensions.txt"
+              ]
+            }
+          ]
+        }
+      }
+    };
+    renderComponent(packetWithNamelessArtefacts);
+
+    expect(await screen.findByText("artefact_1")).toBeVisible();
+    expect(await screen.findByText("artefact_2")).toBeVisible();
+
+    // Renders download button for multi-file artefact
+    const downloadButton = await screen.findAllByText(artefactGroupDownloadButtonMatcher);
+    expect(downloadButton).toHaveLength(1);
+    userEvent.click(downloadButton[0]);
+    expect(mockDownload).toHaveBeenCalledWith(
+      multifileArtefactFiles,
+      packetWithNamelessArtefacts.id,
+      `artefact_2_${packetWithNamelessArtefacts.id}.zip`,
+      true
+    );
   });
 });
