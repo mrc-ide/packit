@@ -6,12 +6,12 @@ dev.off()
 
 artefact1_files <- list.files("artefact1/", full.names = TRUE)
 
-orderly2::orderly_artefact(description = "An artefact containing several files", files = artefact1_files)
+orderly::orderly_artefact(description = "An artefact containing several files", files = artefact1_files)
 
 writeLines(text = "<html><body><h1>TEST</h1></body></html>", "presentation.html")
-orderly2::orderly_artefact(description = "An artefact containing a single file", files = "presentation.html")
+orderly::orderly_artefact(description = "An artefact containing a single file", files = "presentation.html")
 
-orderly2::orderly_resource("data.csv")
-orderly2::orderly_resource("input_files/plot.png") # Test use of directories
+orderly::orderly_resource("data.csv")
+orderly::orderly_resource("input_files/plot.png") # Test use of directories
 
-orderly2::orderly_shared_resource(a_renamed_common_resource.csv = "a_common_resource.csv")
+orderly::orderly_shared_resource(a_renamed_common_resource.csv = "a_common_resource.csv")
