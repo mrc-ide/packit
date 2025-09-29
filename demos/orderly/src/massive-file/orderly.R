@@ -3,4 +3,4 @@
 # See demos/README.md for more information on how to use this report.
 
 write.csv(matrix(rnorm(5e7), ncol = 10), "massive.csv", row.names = FALSE)
-orderly2::orderly_artefact("Massive file", "massive.csv")
+orderly::orderly_artefact("Massive file", "massive.csv")

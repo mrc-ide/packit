@@ -1,4 +1,4 @@
-orderly2::orderly_resource("input_files/artefact_data.csv")
+orderly::orderly_resource("input_files/artefact_data.csv")
 
 data <- read.csv("input_files/artefact_data.csv", stringsAsFactors = FALSE)
 write.csv(data, file="new.csv", row.names=FALSE)
@@ -7,4 +7,4 @@ png("mygraph.png")
 plot(data)
 dev.off()
 
-orderly2::orderly_artefact(files = c("mygraph.png", "new.csv"), description = NULL)
+orderly::orderly_artefact(files = c("mygraph.png", "new.csv"), description = NULL)

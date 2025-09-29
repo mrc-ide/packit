@@ -1,6 +1,6 @@
 # In a normal repository, the entire .outpack directory is ignored.
 #
 # However we need the repository content to run our integration tests without
-# depending on orderly2 to produce packets. The index is only cache and can be
+# depending on orderly to produce packets. The index is only cache and can be
 # ignored regardless.
 .outpack/index/outpack.rds

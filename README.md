@@ -1,6 +1,6 @@
 # packit
 
-Web application for surfacing packet data and metadata. Packets are sets of files with related metadata conforming to the [outpack](https://github.com/mrc-ide/outpack/) format. Packets are produced as the result of running analysis scripts, typically using a package which supports outpack format, such as [orderly](https://github.com/mrc-ide/orderly2) or [pyorderly](https://github.com/mrc-ide/pyorderly), which also add their own custom metadata to the packets produced. 
+Web application for surfacing packet data and metadata. Packets are sets of files with related metadata conforming to the [outpack](https://github.com/mrc-ide/outpack/) format. Packets are produced as the result of running analysis scripts, typically using a package which supports outpack format, such as [orderly](https://github.com/mrc-ide/orderly) or [pyorderly](https://github.com/mrc-ide/pyorderly), which also add their own custom metadata to the packets produced. 
 
 Packet metadata includes:
 - timestamp
