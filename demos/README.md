@@ -1,15 +1,15 @@
 # Demo reports
 
-At the moment this contains one demo `orderly2` directory for testing. We might want 
+At the moment this contains one demo `orderly` directory for testing. We might want 
 to add a vanilla `outpack` directory as well.
 
 To add a new report to the `orderly` directory:
 
-1. install the `orderly2` R package from github:
-    ```devtools::install_github("mrc-ide/orderly2")```
+1. install the `orderly` R package from github:
+    ```devtools::install_github("mrc-ide/orderly")```
 1. add a new folder to `./orderly/src` with a valid `orderly.R` script
 1. set the working directory in R using e.g. `setwd("/home/jsmith/projects/mrc-ide/packit/demos/orderly")`
-1. run the new report with `orderly2::orderly_run(<name>)`
+1. run the new report with `orderly::orderly_run(<name>)`
 1. commit the results to GitHub to use in CI
 
 ### Using the 'massive-file' report for testing how the app copes with very large files
