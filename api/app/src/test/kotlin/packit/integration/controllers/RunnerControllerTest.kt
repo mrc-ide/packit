@@ -105,7 +105,7 @@ class RunnerControllerTest : IntegrationTest() {
             getTokenizedHttpEntity()
         )
         assertThat(res.body).isInstanceOf(OrderlyRunnerVersion::class.java)
-        assertThat(res.body!!.orderly2).isInstanceOf(String::class.java)
+        assertThat(res.body!!.orderly).isInstanceOf(String::class.java)
         assertThat(res.body!!.orderlyRunner).isInstanceOf(String::class.java)
     }
 
