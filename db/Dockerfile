@@ -1,4 +1,4 @@
-FROM postgres:18
+FROM postgres:17
 COPY bin /packit-bin
 ENV PATH="/packit-bin:$PATH"
 ENV POSTGRES_DB packit
