@@ -7,10 +7,10 @@ plugins {
     kotlin("plugin.allopen") version "1.7.22"
 
     // Spring plugins
-    id("org.flywaydb.flyway") version "9.2.0"
-    id("org.springframework.boot") version "3.0.2"
+    id("org.flywaydb.flyway") version "11.14.1"
+    id("org.springframework.boot") version "3.5.6"
     id("io.spring.dependency-management") version "1.1.0"
-    kotlin("plugin.spring") version "1.7.22"
+    kotlin("plugin.spring") version "2.2.20"
     kotlin("plugin.jpa") version "1.7.22"
 
     // Expose Git revision as a property
@@ -62,7 +62,9 @@ dependencies {
     implementation("org.kohsuke:github-api:1.315")
     implementation("com.auth0:java-jwt:4.4.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("org.flywaydb:flyway-core")
+    //implementation("org.flywaydb:flyway-core")
+    implementation("org.flywaydb:flyway-database-postgresql")
+    implementation("org.hibernate:hibernate-core:5.3.7.Final")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.postgresql:postgresql")
 
@@ -81,9 +83,13 @@ application {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions {
+    //kotlinOptions {
+    //    freeCompilerArgs = listOf("-Xjsr305=strict")
+    //    jvmTarget = "21"
+
+    compilerOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "21"
+        //jvmTarget = "21"
     }
 }
 
