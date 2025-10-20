@@ -62,9 +62,7 @@ dependencies {
     implementation("org.kohsuke:github-api:1.315")
     implementation("com.auth0:java-jwt:4.4.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    //implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-database-postgresql")
-    implementation("org.hibernate:hibernate-core:5.3.7.Final")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.postgresql:postgresql")
 
