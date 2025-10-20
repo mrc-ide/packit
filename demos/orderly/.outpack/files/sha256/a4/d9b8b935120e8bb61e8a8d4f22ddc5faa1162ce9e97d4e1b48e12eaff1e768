@@ -1,0 +1,5 @@
+for (i in 1:100) {
+  file <- paste0("data", i, ".rds")
+  saveRDS(list(a = 1, b = 2, c = 3), file)
+  orderly::orderly_artefact(paste("File", i), file)
+}
