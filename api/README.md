@@ -4,7 +4,7 @@ This API is built with [Spring boot framework](https://spring.io)
 
 ## Requirements
 
-- Eclipse temurin JDK 17
+- Eclipse temurin JDK 21
   Eclipse Temurin is the open source Java SE build based upon OpenJDK.
 
 ## Run dependencies

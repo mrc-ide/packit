@@ -23,7 +23,7 @@ plugins {
     application
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_17
+java.sourceCompatibility = JavaVersion.VERSION_21
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -83,7 +83,7 @@ application {
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "17"
+        jvmTarget = "21"
     }
 }
 
@@ -109,5 +109,5 @@ tasks.withType<Detekt>().configureEach {
         sarif.required.set(true) // standardized SARIF format (https://sarifweb.azurewebsites.net/) to support integrations with GitHub Code Scanning
         md.required.set(true) // simple Markdown format
     }
-    jvmTarget = "17"
+    jvmTarget = "21"
 }

@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java-version: [17]
+        java-version: [21]
     steps:
       - name: Login to GHCR (GitHub Packages)
         uses: docker/login-action@v3
