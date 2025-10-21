@@ -22,7 +22,6 @@ import packit.service.GenericClientException
 import java.util.*
 
 @RestControllerAdvice
-
 class PackitExceptionHandler {
 
     companion object {

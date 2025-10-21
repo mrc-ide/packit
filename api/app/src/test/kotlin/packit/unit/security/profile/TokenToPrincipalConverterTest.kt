@@ -89,7 +89,6 @@ class TokenToPrincipalConverterTest {
         assertThrows<PackitException> {
             tokenConverter.convert(mockDecodedJwt)
         }.apply {
-
             assertEquals(key, "userNameClaimNotInJwt")
             assertEquals(httpStatus, HttpStatus.UNAUTHORIZED)
         }

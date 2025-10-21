@@ -10,14 +10,14 @@ plugins {
     id("org.flywaydb.flyway") version "11.14.1"
     id("org.springframework.boot") version "3.5.6"
     id("io.spring.dependency-management") version "1.1.0"
-    kotlin("plugin.spring") version "2.2.20"
+    kotlin("plugin.spring") version "2.0.21"
     kotlin("plugin.jpa") version "1.7.22"
 
     // Expose Git revision as a property
     id("com.gorylenko.gradle-git-properties") version "2.4.2"
 
     // Deket for linting
-    id("io.gitlab.arturbosch.detekt") version "1.22.0"
+    id("io.gitlab.arturbosch.detekt") version "1.23.8"
 
     // Apply the application plugin to add support for building a CLI application in Java.
     application
@@ -66,7 +66,7 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.postgresql:postgresql")
 
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.21.0")
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.8")
 }
 
 allOpen {
@@ -81,13 +81,8 @@ application {
 }
 
 tasks.withType<KotlinCompile> {
-    //kotlinOptions {
-    //    freeCompilerArgs = listOf("-Xjsr305=strict")
-    //    jvmTarget = "21"
-
     compilerOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
-        //jvmTarget = "21"
     }
 }
 
@@ -99,8 +94,7 @@ tasks.withType<Test> {
 detekt {
     buildUponDefaultConfig = true // preconfigure defaults
     allRules = false // activate all available (even unstable) rules.
-    config =
-        files("$projectDir/config/detekt.yml") // point to your custom config defining rules to run, overwriting default behavior
+    config.setFrom("$projectDir/config/detekt.yml") // point to your custom config defining rules to run, overwriting default behavior
     baseline = file("$projectDir/config/baseline.xml") // a way of suppressing issues before introducing detekt
     autoCorrect = true
 }

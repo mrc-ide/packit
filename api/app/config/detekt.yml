@@ -37,7 +37,11 @@ style:
     active: false
   ForbiddenComment:
     active: false
+  UnusedParameter:
+    active: false
   UnusedPrivateMember:
+    active: false
+  UnusedPrivateProperty:
     active: false
   ThrowsCount:
     active: false

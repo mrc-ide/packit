@@ -118,7 +118,8 @@ class GithubUserClientTest {
         val errorSut = GithubUserClient(mockErrorConfig, mockGithubBuilder)
         assertSutThrowsPackitAuthenticationException(
             errorSut,
-            "githubConfigTeamNotInOrg", HttpStatus.UNAUTHORIZED
+            "githubConfigTeamNotInOrg",
+            HttpStatus.UNAUTHORIZED
         )
     }
 

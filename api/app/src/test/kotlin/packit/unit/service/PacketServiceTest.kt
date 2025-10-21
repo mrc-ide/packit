@@ -279,7 +279,9 @@ class PacketServiceTest {
 
         // Should add packets from outpack even when they were run after packets we already know about
         val sut = BasePacketService(
-            resyncPacketRepository, resyncPacketGroupRepository, runInfoRepository,
+            resyncPacketRepository,
+            resyncPacketGroupRepository,
+            runInfoRepository,
             resyncOutpackServerClient
         )
         sut.resyncPackets()

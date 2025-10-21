@@ -20,6 +20,7 @@ class OTTAuthenticationFilter(
     private val oneTimeTokenService: OneTimeTokenService,
 ) {
     private val securityContextRepository: SecurityContextRepository = HttpSessionSecurityContextRepository()
+
     // To avoid race conditions. See https://docs.spring.io/spring-security/reference/servlet/authentication/session-management.html#use-securitycontextholderstrategy
     private val securityContextHolderStrategy: SecurityContextHolderStrategy =
         SecurityContextHolder.getContextHolderStrategy()

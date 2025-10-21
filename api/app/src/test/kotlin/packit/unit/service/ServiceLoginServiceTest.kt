@@ -59,11 +59,11 @@ class ServiceLoginServiceTest {
         authorities = setOf(),
     )
 
-    private val mockAppConfig = mock<AppConfig>() {
+    private val mockAppConfig = mock<AppConfig> {
         on { authJWTSecret } doAnswer { "secret" }
         on { authExpiryDays } doAnswer { 1 }
     }
-    private val mockUserService = mock<UserService>() {
+    private val mockUserService = mock<UserService> {
         on { getServiceUser() } doAnswer { serviceUser }
     }
 

@@ -112,7 +112,8 @@ class PacketGroupServiceTest {
         val packetGroups = listOf(PacketGroup("test1"), PacketGroup("test2"))
         whenever(
             packetGroupRepository.findAllByNameContaining(
-                eq(filterName), any<Sort>()
+                eq(filterName),
+                any<Sort>()
             )
         ).thenReturn(packetGroups)
 

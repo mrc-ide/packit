@@ -62,7 +62,6 @@ class LoginControllerTestGithub : IntegrationTest() {
 
     @Test
     fun `can login with github API`() {
-
         val token = env.getProperty("GITHUB_ACCESS_TOKEN")!!
 
         assertThat(token.count()).isEqualTo(40) // sanity check access token correctly saved in environment
@@ -90,7 +89,9 @@ class LoginControllerTestGithub : IntegrationTest() {
     fun `preauth login returns forbidden when preauth login is disabled`() {
         val result =
             LoginTestHelper.getPreauthLoginResponse(
-                "preauth.user", "Preauth User", "preauth.user@example.com",
+                "preauth.user",
+                "Preauth User",
+                "preauth.user@example.com",
                 restTemplate
             )
         assertForbidden(result)
@@ -127,7 +128,10 @@ class LoginControllerTestPreAuth : IntegrationTest() {
     fun `can login without existing user`() {
         val result =
             LoginTestHelper.getPreauthLoginResponse(
-                userName, userDisplayName, userEmail, restTemplate
+                userName,
+                userDisplayName,
+                userEmail,
+                restTemplate
             )
 
         assertSuccess(result)
@@ -155,7 +159,10 @@ class LoginControllerTestPreAuth : IntegrationTest() {
 
         val result =
             LoginTestHelper.getPreauthLoginResponse(
-                userName, userDisplayName, userEmail, restTemplate
+                userName,
+                userDisplayName,
+                userEmail,
+                restTemplate
             )
 
         assertSuccess(result)
@@ -171,7 +178,10 @@ class LoginControllerTestPreAuth : IntegrationTest() {
     fun `returns 400 when username header not provided`() {
         val result =
             LoginTestHelper.getPreauthLoginResponse(
-                null, userDisplayName, userEmail, restTemplate
+                null,
+                userDisplayName,
+                userEmail,
+                restTemplate
             )
         assertEquals(result.statusCode, HttpStatus.BAD_REQUEST)
         val packitToken = jacksonObjectMapper().readTree(result.body).get("token")
@@ -182,7 +192,10 @@ class LoginControllerTestPreAuth : IntegrationTest() {
     fun `email and display name headers are optional`() {
         val result =
             LoginTestHelper.getPreauthLoginResponse(
-                userName, null, null, restTemplate
+                userName,
+                null,
+                null,
+                restTemplate
             )
 
         assertSuccess(result)
@@ -371,7 +384,11 @@ object LoginTestHelper {
         }
         val requestEntity = HttpEntity<String?>(headers)
         return restTemplate.exchange(
-            "/auth/login/preauth", HttpMethod.GET, requestEntity, String::class.java, {}
+            "/auth/login/preauth",
+            HttpMethod.GET,
+            requestEntity,
+            String::class.java,
+            {}
         )
     }
 

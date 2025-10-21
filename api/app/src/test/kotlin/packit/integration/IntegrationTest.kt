@@ -14,7 +14,6 @@ import packit.security.provider.JwtIssuer
 import kotlin.test.assertEquals
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-
 abstract class IntegrationTest {
     @BeforeEach
     fun setup() {

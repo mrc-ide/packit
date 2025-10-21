@@ -55,7 +55,6 @@ class RolePermissionTest {
 
     @Test
     fun `equals returns false when packet ids are different`() {
-
         val rolePermission1 =
             RolePermission(mockRoles.first(), mockPermissions.first(), mock<Packet> { on { id } doReturn "2024111" })
         val rolePermission2 =
