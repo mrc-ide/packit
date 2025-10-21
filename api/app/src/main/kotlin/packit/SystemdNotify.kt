@@ -1,7 +1,6 @@
 package packit
 
 import org.newsclub.net.unix.*
-import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 import java.net.DatagramPacket
@@ -22,7 +21,7 @@ import java.net.DatagramPacket
 @Component
 class SystemdNotify {
     @EventListener
-    fun onApplicationReadyEvent(event: ApplicationReadyEvent) {
+    fun onApplicationReadyEvent() {
         val path = System.getenv("NOTIFY_SOCKET")
         if (path != null) {
             // '@' as the first byte means an abstract Unix socket - we need to

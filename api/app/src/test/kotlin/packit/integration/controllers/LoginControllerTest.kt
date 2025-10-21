@@ -143,7 +143,6 @@ class LoginControllerTestPreAuth : IntegrationTest() {
 
     @Test
     fun `can login with existing user`() {
-        val adminRole = roleRepository.findByName("ADMIN")!!
         val testUser = User(
             username = userName,
             displayName = userDisplayName,

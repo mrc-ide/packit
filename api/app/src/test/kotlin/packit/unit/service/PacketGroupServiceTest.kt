@@ -26,29 +26,6 @@ class PacketGroupServiceTest {
     private val testPacketLatestId = "20190203-120000-1234dada"
     private val test2PacketLatestId = "20190403-120000-1234dfdf"
 
-    private val displayName = "Testable Display Name"
-    private val description = "A testable description"
-    private val packetMetadata =
-        PacketMetadata(
-            "3",
-            "test",
-            mapOf("name" to "value"),
-            emptyList(),
-            GitMetadata("git", "sha", emptyList()),
-            TimeMetadata(
-                Instant.now().epochSecond.toDouble(),
-                Instant.now().epochSecond.toDouble()
-            ),
-            mapOf(
-                "orderly" to mapOf(
-                    "description" to mapOf(
-                        "display" to displayName,
-                        "long" to description
-                    )
-                )
-            ),
-            emptyList()
-        )
     private val packets =
         listOf(
             Packet(
