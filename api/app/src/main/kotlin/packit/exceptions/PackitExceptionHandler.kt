@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.client.HttpStatusCodeException
+import org.springframework.web.servlet.resource.NoResourceFoundException
 import packit.model.DeviceAuthTokenError
 import packit.model.ErrorDetail
 import packit.service.GenericClientException
@@ -78,6 +79,11 @@ class PackitExceptionHandler {
         }
         return ErrorDetail(status, e.message ?: "")
             .toResponseEntity()
+    }
+
+    @ExceptionHandler(NoResourceFoundException::class)
+    fun handleNoResourceFoundException(e: NoResourceFoundException): ResponseEntity<String> {
+        return ErrorDetail(HttpStatus.NOT_FOUND, e.message ?: "Resource not found").toResponseEntity()
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
