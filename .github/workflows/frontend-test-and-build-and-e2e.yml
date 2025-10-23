@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
         node-version: [22.x]
-        java-version: [17]
+        java-version: [21]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3

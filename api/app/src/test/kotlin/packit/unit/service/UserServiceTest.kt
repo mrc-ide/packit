@@ -297,7 +297,6 @@ class UserServiceTest {
 
     @Test
     fun `createBasicUser creates new user if user does not exist`() {
-
         `when`(passwordEncoder.encode(createBasicUser.password)).doReturn("encodedPassword")
         `when`(mockUserRepository.existsByUsername(createBasicUser.email)).doReturn(false)
         val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder, rolePermissionService)
@@ -347,7 +346,6 @@ class UserServiceTest {
 
     @Test
     fun `createExternalUser creates new user`() {
-
         `when`(mockUserRepository.existsByUsername(createExternalUser.username)).doReturn(false)
         val service = BaseUserService(mockUserRepository, mockRoleService, passwordEncoder, rolePermissionService)
 

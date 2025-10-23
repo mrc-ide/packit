@@ -61,7 +61,6 @@ class TokenProviderBuilderTest {
 
     @Test
     fun `issue includes permissions when available`() {
-
         val builder = TokenProviderBuilder(config, user)
         val permissions = listOf("packet.read", "packet.write")
         val token = builder.withPermissions(permissions).issue()

@@ -387,7 +387,8 @@ class RoleServiceTest {
         assertEquals("permission1", result[0].rolePermissions[0].permission.name)
         assertEquals("permission2", result[0].rolePermissions[1].permission.name)
         assertEquals(
-            "permission5", result[1].rolePermissions[0].permission.name
+            "permission5",
+            result[1].rolePermissions[0].permission.name
         )
     }
 

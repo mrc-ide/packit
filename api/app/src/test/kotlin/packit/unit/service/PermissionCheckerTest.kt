@@ -91,12 +91,14 @@ class PermissionCheckerTest {
         fun hasPacketManagePermissionForGroup() {
             assertTrue(
                 permissionChecker.hasPacketManagePermissionForGroup(
-                    listOf("packet.manage:packet:group1"), "group1"
+                    listOf("packet.manage:packet:group1"),
+                    "group1"
                 )
             )
             assertFalse(
                 permissionChecker.hasPacketManagePermissionForGroup(
-                    listOf("other.permission"), "group1"
+                    listOf("other.permission"),
+                    "group1"
                 )
             )
         }
@@ -111,7 +113,8 @@ class PermissionCheckerTest {
         fun canManagePacketGroupWithGroupPermission() {
             assertTrue(
                 permissionChecker.canManagePacketGroup(
-                    listOf("packet.manage:packet:group1"), "group1"
+                    listOf("packet.manage:packet:group1"),
+                    "group1"
                 )
             )
         }
@@ -120,12 +123,16 @@ class PermissionCheckerTest {
         fun hasPacketManagePermissionForPacket() {
             assertTrue(
                 permissionChecker.hasPacketManagePermissionForPacket(
-                    listOf("packet.manage:packet:group1:packet1"), "group1", "packet1"
+                    listOf("packet.manage:packet:group1:packet1"),
+                    "group1",
+                    "packet1"
                 )
             )
             assertFalse(
                 permissionChecker.hasPacketManagePermissionForPacket(
-                    listOf("other.permission"), "group1", "packet1"
+                    listOf("other.permission"),
+                    "group1",
+                    "packet1"
                 )
             )
         }
@@ -140,7 +147,9 @@ class PermissionCheckerTest {
         fun canManagePacketWithGroupPermission() {
             assertTrue(
                 permissionChecker.canManagePacket(
-                    listOf("packet.manage:packet:group1"), "group1", "packet1"
+                    listOf("packet.manage:packet:group1"),
+                    "group1",
+                    "packet1"
                 )
             )
         }
@@ -149,7 +158,9 @@ class PermissionCheckerTest {
         fun canManagePacketWithPacketPermission() {
             assertTrue(
                 permissionChecker.canManagePacket(
-                    listOf("packet.manage:packet:group1:packet1"), "group1", "packet1"
+                    listOf("packet.manage:packet:group1:packet1"),
+                    "group1",
+                    "packet1"
                 )
             )
         }
@@ -200,12 +211,14 @@ class PermissionCheckerTest {
         fun hasPacketReadPermissionForGroup() {
             assertTrue(
                 permissionChecker.hasPacketReadPermissionForGroup(
-                    listOf("packet.read:packet:group1"), "group1"
+                    listOf("packet.read:packet:group1"),
+                    "group1"
                 )
             )
             assertFalse(
                 permissionChecker.hasPacketReadPermissionForGroup(
-                    listOf("other.permission"), "group1"
+                    listOf("other.permission"),
+                    "group1"
                 )
             )
         }
@@ -221,7 +234,8 @@ class PermissionCheckerTest {
         fun canReadPacketGroupWithGroupManagePermission() {
             assertTrue(
                 permissionChecker.canReadPacketGroup(
-                    listOf("packet.manage:packet:group1"), "group1"
+                    listOf("packet.manage:packet:group1"),
+                    "group1"
                 )
             )
         }
@@ -230,7 +244,8 @@ class PermissionCheckerTest {
         fun canReadPacketGroupWithGroupReadPermission() {
             assertTrue(
                 permissionChecker.canReadPacketGroup(
-                    listOf("packet.read:packet:group1"), "group1"
+                    listOf("packet.read:packet:group1"),
+                    "group1"
                 )
             )
         }
@@ -239,17 +254,20 @@ class PermissionCheckerTest {
         fun canReadAnyPacketInGroup() {
             assertTrue(
                 permissionChecker.canReadAnyPacketInGroup(
-                    listOf("packet.read:packet:group1:anything"), "group1"
+                    listOf("packet.read:packet:group1:anything"),
+                    "group1"
                 )
             )
             assertTrue(
                 permissionChecker.canReadAnyPacketInGroup(
-                    listOf("packet.manage:packet:group1:anything"), "group1"
+                    listOf("packet.manage:packet:group1:anything"),
+                    "group1"
                 )
             )
             assertFalse(
                 permissionChecker.canReadAnyPacketInGroup(
-                    listOf("other.permission"), "group1"
+                    listOf("other.permission"),
+                    "group1"
                 )
             )
         }
@@ -258,12 +276,16 @@ class PermissionCheckerTest {
         fun hasPacketReadPermissionForPacket() {
             assertTrue(
                 permissionChecker.hasPacketReadPermissionForPacket(
-                    listOf("packet.read:packet:group1:packet1"), "group1", "packet1"
+                    listOf("packet.read:packet:group1:packet1"),
+                    "group1",
+                    "packet1"
                 )
             )
             assertFalse(
                 permissionChecker.hasPacketReadPermissionForPacket(
-                    listOf("other.permission"), "group1", "packet1"
+                    listOf("other.permission"),
+                    "group1",
+                    "packet1"
                 )
             )
         }
@@ -279,12 +301,16 @@ class PermissionCheckerTest {
         fun canReadPacketWithGroupPermission() {
             assertTrue(
                 permissionChecker.canReadPacket(
-                    listOf("packet.manage:packet:group1"), "group1", "packet1"
+                    listOf("packet.manage:packet:group1"),
+                    "group1",
+                    "packet1"
                 )
             )
             assertTrue(
                 permissionChecker.canReadPacket(
-                    listOf("packet.read:packet:group1"), "group1", "packet1"
+                    listOf("packet.read:packet:group1"),
+                    "group1",
+                    "packet1"
                 )
             )
         }
@@ -293,12 +319,16 @@ class PermissionCheckerTest {
         fun canReadPacketWithPacketPermission() {
             assertTrue(
                 permissionChecker.canReadPacket(
-                    listOf("packet.manage:packet:group1:packet1"), "group1", "packet1"
+                    listOf("packet.manage:packet:group1:packet1"),
+                    "group1",
+                    "packet1"
                 )
             )
             assertTrue(
                 permissionChecker.canReadPacket(
-                    listOf("packet.read:packet:group1:packet1"), "group1", "packet1"
+                    listOf("packet.read:packet:group1:packet1"),
+                    "group1",
+                    "packet1"
                 )
             )
         }

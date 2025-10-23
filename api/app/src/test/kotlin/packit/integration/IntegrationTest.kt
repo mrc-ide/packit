@@ -14,7 +14,6 @@ import packit.security.provider.JwtIssuer
 import kotlin.test.assertEquals
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-
 abstract class IntegrationTest {
     @BeforeEach
     fun setup() {
@@ -22,7 +21,6 @@ abstract class IntegrationTest {
         // status of 401 responses, using alternative factory fixes this
         // https://stackoverflow.com/questions/16748969
         val factory = SimpleClientHttpRequestFactory()
-        factory.setOutputStreaming(false)
         restTemplate.restTemplate.requestFactory = factory
     }
 

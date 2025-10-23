@@ -305,7 +305,7 @@ class RunnerServiceTest {
         )
         val serviceSpy = spy(sut)
 
-        val runInfos = serviceSpy.updateRunInfosWithStatuses(PageImpl(testRunInfos), taskStatuses)
+        serviceSpy.updateRunInfosWithStatuses(PageImpl(testRunInfos), taskStatuses)
 
         verify(serviceSpy, times(1)).updateRunInfo(any(), eq(taskStatuses[0]))
     }

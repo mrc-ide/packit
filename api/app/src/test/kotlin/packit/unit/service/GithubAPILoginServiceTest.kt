@@ -28,8 +28,11 @@ class GithubAPILoginServiceTest {
         on { name } doReturn displayName
     }
     private val fakeUser = User(
-        username = username, displayName = displayName, disabled = false,
-        userSource = "github", roles = mutableListOf(Role(name = "USER"))
+        username = username,
+        displayName = displayName,
+        disabled = false,
+        userSource = "github",
+        roles = mutableListOf(Role(name = "USER"))
     )
 
     private val mockUserService = mock<UserService> {

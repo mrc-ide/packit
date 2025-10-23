@@ -94,9 +94,14 @@ class BasePacketService(
             val displayName = getDisplayNameForPacket(it.custom, it.name)
             val description = getDescriptionForPacket(it.custom)
             Packet(
-                it.id, it.name, displayName,
-                it.parameters ?: mapOf(), now,
-                it.time.start, it.time.end, description = description
+                it.id,
+                it.name,
+                displayName,
+                it.parameters ?: mapOf(),
+                now,
+                it.time.start,
+                it.time.end,
+                description = description
             )
         }
         val packetGroupNames = packets.groupBy { it.name }
@@ -170,9 +175,9 @@ class BasePacketService(
 
     private fun String.toSHA256(): String {
         return "sha256:${
-        MessageDigest
-            .getInstance("SHA-256")
-            .digest(this.toByteArray()).toHex()
+            MessageDigest
+                .getInstance("SHA-256")
+                .digest(this.toByteArray()).toHex()
         }"
     }
 

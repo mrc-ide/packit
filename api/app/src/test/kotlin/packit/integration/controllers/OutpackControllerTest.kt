@@ -124,7 +124,8 @@ class OutpackControllerTest : IntegrationTest() {
 
         assertEquals(result.statusCode, HttpStatusCode.valueOf(404))
         jsonValidator.validateError(
-            result.body!!, "NOT_FOUND",
+            result.body!!,
+            "NOT_FOUND",
             "This route does not exist"
         )
     }
@@ -140,7 +141,8 @@ class OutpackControllerTest : IntegrationTest() {
 
         assertEquals(result.statusCode, HttpStatusCode.valueOf(400))
         jsonValidator.validateError(
-            result.body!!, "invalid input parameter",
+            result.body!!,
+            "invalid input parameter",
             "Invalid hash format 'badhash'"
         )
     }

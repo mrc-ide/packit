@@ -54,7 +54,6 @@ class RunInfoTest {
 
     @Test
     fun `toDto should fallback to username if displayName is null`() {
-
         val runInfo = RunInfo(
             "task_id", "report_name", "PENDING", "hash", "branch", listOf("log1", "log2"),
             1.0, 1.0, 1.0, "packet_id", mapOf("param1" to "input"), user = testUserNoDisplayName

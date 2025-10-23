@@ -17,8 +17,11 @@ class OAuth2UserServiceTest {
     private val fakeLogin = "jammy123"
     private val fakeName = "Jammy"
     private val fakeUser = User(
-        username = fakeLogin, displayName = fakeName, disabled = false,
-        userSource = "github", roles = mutableListOf(Role(name = "USER"))
+        username = fakeLogin,
+        displayName = fakeName,
+        disabled = false,
+        userSource = "github",
+        roles = mutableListOf(Role(name = "USER"))
     )
     private val mockUserService = mock<UserService> {
         on { saveUserFromGithub(fakeLogin, fakeName, null) } doReturn fakeUser

@@ -21,7 +21,7 @@ formatting:
     active: false
 
 style:
-  MandatoryBracesIfStatements:
+  BracesOnIfStatements:
     active: true
   MandatoryBracesLoops:
     active: true

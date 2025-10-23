@@ -41,7 +41,8 @@ class Scheduler(
 
     internal fun <T> withSystemAuth(func: () -> T): T {
         val auth = UsernamePasswordAuthenticationToken(
-            "system", null,
+            "system",
+            null,
             listOf(
                 SimpleGrantedAuthority("user.manage"),
                 SimpleGrantedAuthority("packet.manage"),

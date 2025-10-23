@@ -125,7 +125,6 @@ class PermissionServiceTest {
         assertThrows<PackitException> {
             basePermissionService.getByName(permissionName)
         }.apply {
-
             assertEquals("permissionNotFound", key)
             assertEquals(HttpStatus.BAD_REQUEST, httpStatus)
         }
@@ -133,7 +132,6 @@ class PermissionServiceTest {
 
     @Test
     fun `buildScopedPermission throws error when both packetGroup and tag are provided`() {
-
         val packetGroupName = "packetGroupName"
         val tagName = "tagName"
 

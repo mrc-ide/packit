@@ -32,7 +32,7 @@ class AuthorizationLogicTest {
         now
     )
 
-    private var packetService = mock<PacketService>() {
+    private var packetService = mock<PacketService> {
         on { getPacket(packet.id) } doReturn packet
     }
 

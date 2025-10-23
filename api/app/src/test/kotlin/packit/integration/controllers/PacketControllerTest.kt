@@ -165,7 +165,6 @@ class PacketControllerTest : IntegrationTest() {
     @Test
     @WithAuthenticatedUser(authorities = ["packet.read:packet:name:wrong-id"])
     fun `findPacketMetadata returns 401 if incorrect specific permission`() {
-
         val result: ResponseEntity<String> = restTemplate.exchange(
             "/packets/$idOfArtefactTypesPacket",
             HttpMethod.GET,

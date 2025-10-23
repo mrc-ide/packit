@@ -25,7 +25,9 @@ class SchedulerTests {
 
     private fun getSut(): Scheduler {
         return Scheduler(
-            mockOneTimeTokenService, mockPacketService, mockOutpackServerClient,
+            mockOneTimeTokenService,
+            mockPacketService,
+            mockOutpackServerClient,
             mockDeviceAuthRequestService
         )
     }
