@@ -7,10 +7,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
-import packit.model.OneTimeToken
-import packit.repository.OneTimeTokenRepository
-import java.time.Instant
-import java.util.UUID
 
 @Service
 @ConditionalOnProperty(value = ["packit.scheduling.enabled"], havingValue = "true", matchIfMissing = true)
@@ -19,7 +15,7 @@ class Scheduler(
     private val packetService: PacketService,
     private val outpackServerClient: OutpackServerClient,
     private val deviceAuthRequestService: DeviceAuthRequestService,
-    //private val oneTimeTokenRepository: OneTimeTokenRepository // NB THIS IS FOR TESTING ONLY, REMOVE!!
+    // private val oneTimeTokenRepository: OneTimeTokenRepository // NB THIS IS FOR TESTING ONLY, REMOVE!!
 ) {
 
     @Scheduled(fixedDelay = 10000, initialDelay = 0)
@@ -32,7 +28,7 @@ class Scheduler(
         }
     }
 
-    //@Scheduled(cron = "*/10 * * * * *")  // every ten seconds
+    // @Scheduled(cron = "*/10 * * * * *")  // every ten seconds
     @Scheduled(cron = "@daily")
     fun cleanUpExpiredTokens() = withSystemAuth {
         /*log.info("FOR TESTING ONLY - create a token to delete")
