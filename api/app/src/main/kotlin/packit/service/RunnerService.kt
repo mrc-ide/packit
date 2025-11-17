@@ -1,6 +1,5 @@
 package packit.service
 
-import jakarta.transaction.Transactional
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.domain.Page
@@ -27,7 +26,7 @@ interface RunnerService {
     fun getTaskIdByPacketId(packetId: String): String
 }
 
-open class BaseRunnerService(
+class BaseRunnerService(
     private val config: RunnerConfig,
     private val orderlyRunnerClient: OrderlyRunner,
     private val runInfoRepository: RunInfoRepository,
@@ -97,22 +96,15 @@ open class BaseRunnerService(
         return runInfo
     }
 
-    @Transactional
     override fun getTasksStatuses(payload: PageablePayload, filterPacketGroupName: String): Page<RunInfo> {
-        println("Getting tasks statuses")
         val runInfos = getRunInfos(payload, filterPacketGroupName)
-        println("Got run infos")
         if (runInfos.isEmpty) {
             return Page.empty()
         }
         val taskIds = runInfos.map { it.taskId }.content
-        println("Mapped task ids")
         val taskStatuses = orderlyRunnerClient.getTaskStatuses(taskIds, false).statuses
-        println("Got task statuses")
-        val updated = updateRunInfosWithStatuses(runInfos, taskStatuses)
-        println("Updated task statuses")
 
-        return updated
+        return updateRunInfosWithStatuses(runInfos, taskStatuses)
     }
 
     override fun cancelTask(taskId: String) {
