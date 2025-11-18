@@ -14,8 +14,7 @@ class Scheduler(
     private val oneTimeTokenService: OneTimeTokenService,
     private val packetService: PacketService,
     private val outpackServerClient: OutpackServerClient,
-    private val deviceAuthRequestService: DeviceAuthRequestService,
-    // private val oneTimeTokenRepository: OneTimeTokenRepository // NB THIS IS FOR TESTING ONLY, REMOVE!!
+    private val deviceAuthRequestService: DeviceAuthRequestService
 ) {
 
     @Scheduled(fixedDelay = 10000, initialDelay = 0)
@@ -28,19 +27,8 @@ class Scheduler(
         }
     }
 
-    // @Scheduled(cron = "*/10 * * * * *")  // every ten seconds
     @Scheduled(cron = "@daily")
     fun cleanUpExpiredTokens() = withSystemAuth {
-        /*log.info("FOR TESTING ONLY - create a token to delete")
-        val packet = packetService.getPacket("20250904-093000-b988ac08")
-        val oneTimeToken = OneTimeToken(
-            id = UUID.randomUUID(),
-            packet = packet,
-            filePaths = listOf(),
-            expiresAt = Instant.now().minusSeconds(5)
-        )
-        oneTimeTokenRepository.save(oneTimeToken)*/
-
         log.info("Cleaning up expired tokens")
         oneTimeTokenService.cleanUpExpiredTokens()
     }
