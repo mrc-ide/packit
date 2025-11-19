@@ -8,7 +8,7 @@ plugins {
 
     // Spring plugins
     id("org.flywaydb.flyway") version "11.14.1"
-    id("org.springframework.boot") version "3.5.6"
+    id("org.springframework.boot") version "3.5.7"
     id("io.spring.dependency-management") version "1.1.0"
     kotlin("plugin.spring") version "2.0.21"
     kotlin("plugin.jpa") version "1.7.22"
@@ -16,7 +16,7 @@ plugins {
     // Expose Git revision as a property
     id("com.gorylenko.gradle-git-properties") version "2.4.2"
 
-    // Deket for linting
+    // Detekt for linting
     id("io.gitlab.arturbosch.detekt") version "1.23.8"
 
     // Apply the application plugin to add support for building a CLI application in Java.

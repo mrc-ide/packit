@@ -45,6 +45,7 @@ class BaseOneTimeTokenService(
         return oneTimeToken
     }
 
+    @Transactional
     override fun cleanUpExpiredTokens() {
         oneTimeTokenRepository.deleteByExpiresAtBefore(Instant.now())
     }
