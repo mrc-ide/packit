@@ -292,7 +292,7 @@ class PacketControllerTest : IntegrationTest() {
     }
 
     @Test
-    fun `streamFile returns 401 'unauthorized' when the token's filepaths do not match the requested files`() {
+    fun `streamFile returns 401 'unauthorized' when the token's filepaths do not match the requested file`() {
         val token = oneTimeTokenRepository.save(
             OneTimeToken(
                 id = UUID.randomUUID(),
@@ -303,7 +303,7 @@ class PacketControllerTest : IntegrationTest() {
         )
 
         val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFileEndpoint(
-            path = "a_renamed_common_resource.csv",
+            path = "orderly.R",
             packetId = idOfDownloadTypesPacket3,
             tokenId = token.id.toString(),
             filename = "filename-test.zip"
