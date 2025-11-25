@@ -55,26 +55,25 @@ class AuthorizationLogic(
         }
     }
 
-    fun oneTimeTokenValid(operations: SecurityExpressionOperations, packetId: String, path: String): Boolean {
-        return validateOneTimeToken(operations, packetId, listOf(path))
+    fun oneTimeTokenValidForPath(operations: SecurityExpressionOperations, packetId: String, path: String): Boolean {
+        return validateOneTimeToken(operations, packetId, path)
     }
 
-    fun oneTimeTokenValid(operations: SecurityExpressionOperations, packetId: String, paths: List<String>): Boolean {
-        return validateOneTimeToken(operations, packetId, paths)
+    fun oneTimeTokenValid(operations: SecurityExpressionOperations, packetId: String): Boolean {
+        return validateOneTimeToken(operations, packetId, null)
     }
 
     private fun validateOneTimeToken(
         operations: SecurityExpressionOperations,
         requestedPacketId: String,
-        requestedPaths: List<String>,
+        requestedPath: String?,
     ): Boolean {
         val auth = operations.authentication as OTTAuthenticationToken
         val permittedPaths = auth.getPermittedFilePaths()
 
         return auth.getExpiresAt().isAfter(Instant.now()) &&
             auth.getPermittedPacketId() == requestedPacketId &&
-            permittedPaths.containsAll(requestedPaths) &&
-            permittedPaths.size == requestedPaths.size
+                (requestedPath == null || permittedPaths.contains(requestedPath))
     }
 
     fun canUpdatePacketGroupReadRoles(

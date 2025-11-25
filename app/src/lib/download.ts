@@ -1,4 +1,5 @@
 import { getAuthHeader } from "./auth/getAuthHeader";
+import { fetcher } from "@lib/fetch";
 import appConfig from "../config/appConfig";
 import { FileMetadata } from "../types";
 
@@ -11,9 +12,8 @@ const streamFileUrl = (packetId: string, file: FileMetadata, token: string, file
   return url.toString();
 };
 
-const streamZipUrl = (packetId: string, files: FileMetadata[], token: string, filename: string, inline = false) => {
+const streamZipUrl = (packetId: string, token: string, filename: string, inline = false) => {
   const url = new URL(`${appConfig.apiUrl()}/packets/${packetId}/files/zip`, window.location.href);
-  files.forEach((file) => url.searchParams.append("paths", file.path));
   url.searchParams.append("token", token);
   url.searchParams.append("filename", filename);
   url.searchParams.append("inline", inline.toString());
@@ -22,18 +22,13 @@ const streamZipUrl = (packetId: string, files: FileMetadata[], token: string, fi
 
 const getOneTimeToken = async (packetId: string, files: FileMetadata[], filename: string) => {
   const url = new URL(`${appConfig.apiUrl()}/packets/${packetId}/files/token`, window.location.href);
-  files.forEach((file) => url.searchParams.append("paths", file.path));
+  const paths = files.map((file) => file.path);
 
-  const res = await fetch(url.toString(), {
+  const json = await fetcher({
+    url: url.toString(),
     method: "POST",
-    headers: getAuthHeader()
+    body: {paths}
   });
-  const json = await res.json();
-
-  if (!res.ok) {
-    const msg = json.error?.detail ? `Error: ${json.error.detail}` : `Error retrieving token for ${filename}`;
-    throw new Error(msg);
-  }
 
   return json.id;
 };
@@ -61,7 +56,7 @@ export const download = async (files: FileMetadata[], packetId: string, filename
   const fileLink = document.createElement("a");
   // Do a zip download if there are multiple files or if zip was requested.
   if (files.length > 1 || preferZip) {
-    fileLink.href = streamZipUrl(packetId, files, token, filename, false);
+    fileLink.href = streamZipUrl(packetId, token, filename, false);
   } else {
     fileLink.href = streamFileUrl(packetId, files[0], token, filename, false);
   }
