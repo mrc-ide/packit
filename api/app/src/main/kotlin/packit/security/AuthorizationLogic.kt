@@ -73,7 +73,7 @@ class AuthorizationLogic(
 
         return auth.getExpiresAt().isAfter(Instant.now()) &&
             auth.getPermittedPacketId() == requestedPacketId &&
-                (requestedPath == null || permittedPaths.contains(requestedPath))
+            (requestedPath == null || permittedPaths.contains(requestedPath))
     }
 
     fun canUpdatePacketGroupReadRoles(

@@ -4,7 +4,7 @@ import { download, getFileObjectUrl } from "@lib/download";
 import { server } from "@/msw/server";
 import { mockPacket } from "../mocks";
 import * as fetch from "@lib/fetch.ts";
-import {ApiError} from "@lib/errors.ts";
+import { ApiError } from "@lib/errors.ts";
 
 vitest.mock("@lib/auth/getAuthHeader", () => ({
   getAuthHeader: () => ({ Authorization: "fakeAuthHeader" })
@@ -58,15 +58,13 @@ describe("download", () => {
     const file = mockPacket.files[0];
     await getFileObjectUrl(file, mockPacket.id, "directory/fakeFilename");
 
-    expect(fetcherSpy).toHaveBeenCalledWith(
-      {
-        url: `${appConfig.apiUrl()}/packets/${mockPacket.id}/files/token`,
-        method: "POST",
-        body: {
-            paths: [file.path]
-        }
+    expect(fetcherSpy).toHaveBeenCalledWith({
+      url: `${appConfig.apiUrl()}/packets/${mockPacket.id}/files/token`,
+      method: "POST",
+      body: {
+        paths: [file.path]
       }
-    );
+    });
 
     expect(fetchSpy).toHaveBeenCalledWith(
       `${appConfig.apiUrl()}/packets/${mockPacket.id}/file` +
@@ -96,13 +94,11 @@ describe("download", () => {
     const file = mockPacket.files[0];
     await download([file], mockPacket.id, "fakeFilename");
 
-    expect(fetcherSpy).toHaveBeenCalledWith(
-      {
-        url: `${appConfig.apiUrl()}/packets/${mockPacket.id}/files/token`,
-        method: "POST",
-        body: { paths: [file.path] }
-      }
-    );
+    expect(fetcherSpy).toHaveBeenCalledWith({
+      url: `${appConfig.apiUrl()}/packets/${mockPacket.id}/files/token`,
+      method: "POST",
+      body: { paths: [file.path] }
+    });
 
     expect(mockFileLink.href).toEqual(
       `${appConfig.apiUrl()}/packets/${mockPacket.id}/file?` +
@@ -131,13 +127,11 @@ describe("download", () => {
     const files = [mockPacket.files[0], mockPacket.files[1]];
     await download(files, mockPacket.id, "fakeFilename");
 
-    expect(fetcherSpy).toHaveBeenCalledWith(
-      {
-        url: `${appConfig.apiUrl()}/packets/${mockPacket.id}/files/token`,
-        method: "POST",
-        body: { paths: [files[0].path, files[1].path] }
-      }
-    );
+    expect(fetcherSpy).toHaveBeenCalledWith({
+      url: `${appConfig.apiUrl()}/packets/${mockPacket.id}/files/token`,
+      method: "POST",
+      body: { paths: [files[0].path, files[1].path] }
+    });
 
     expect(mockFileLink.href).toBe(
       `${appConfig.apiUrl()}/packets/${mockPacket.id}/files/zip?` +
@@ -166,15 +160,13 @@ describe("download", () => {
     const file = mockPacket.files[0];
     await download([file], mockPacket.id, "fakeFilename", true);
 
-    expect(fetcherSpy).toHaveBeenCalledWith(
-       {
-        url: `${appConfig.apiUrl()}/packets/${mockPacket.id}/files/token`,
-        method: "POST",
-        body: {
-            paths: [file.path]
-        }
+    expect(fetcherSpy).toHaveBeenCalledWith({
+      url: `${appConfig.apiUrl()}/packets/${mockPacket.id}/files/token`,
+      method: "POST",
+      body: {
+        paths: [file.path]
       }
-    );
+    });
 
     expect(mockFileLink.href).toBe(
       `${appConfig.apiUrl()}/packets/${mockPacket.id}/files/zip?` +
@@ -221,5 +213,4 @@ describe("download", () => {
       new ApiError("test token endpoint error", 500)
     );
   });
-
 });

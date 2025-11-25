@@ -12,7 +12,7 @@ class PacketControllerTestHelper(val integrationTest: IntegrationTest) {
         return integrationTest.restTemplate.exchange(
             "/packets/{id}/files/token",
             HttpMethod.POST,
-            integrationTest.getTokenizedHttpEntity(data= OneTimeTokenFiles(paths.toList())),
+            integrationTest.getTokenizedHttpEntity(data = OneTimeTokenFiles(paths.toList())),
             params
         )
     }

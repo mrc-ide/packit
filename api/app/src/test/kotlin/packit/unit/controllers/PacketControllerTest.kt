@@ -152,7 +152,7 @@ class PacketControllerTest {
     @Test
     fun `generate token for downloading file`() {
         val paths = listOf("any_file.txt", "another_file.txt")
-        val result = sut.generateTokenForDownloadingFile(packetId,OneTimeTokenFiles(paths))
+        val result = sut.generateTokenForDownloadingFile(packetId, OneTimeTokenFiles(paths))
         verify(packetService).validateFilesExistForPacket(packetId, paths)
         verify(oneTimeTokenService).createToken(packetId, paths)
         assertEquals(result.statusCode, HttpStatus.OK)
@@ -216,7 +216,7 @@ class PacketControllerTest {
         mockStatic(SecurityContextHolder::class.java).use { mockSecurityContextHolder ->
             val filePaths = listOf("file1.txt", "file2.txt")
             val token = OTTAuthenticationToken(UUID.randomUUID(), packetId, filePaths, Instant.now().plusSeconds(10))
-            val mockSecurityContext = mock<SecurityContext>{
+            val mockSecurityContext = mock<SecurityContext> {
                 on { authentication } doReturn token
             }
 
