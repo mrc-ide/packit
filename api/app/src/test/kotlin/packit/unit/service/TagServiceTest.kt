@@ -27,7 +27,8 @@ class TagServiceTest {
         val page = PageImpl(tags)
         whenever(
             tagRepository.findAllByNameContaining(
-                eq(filterName), any<Pageable>()
+                eq(filterName),
+                any<Pageable>()
             )
         ).thenReturn(page)
         val baseTagService = BaseTagService(tagRepository)

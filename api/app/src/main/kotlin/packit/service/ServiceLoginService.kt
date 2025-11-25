@@ -35,7 +35,8 @@ class ServiceLoginService(
     init {
         if (audience != null) {
             val audValidator = JwtClaimValidator<List<String>>(
-                IdTokenClaimNames.AUD, { claimValue -> claimValue != null && claimValue.contains(audience) }
+                IdTokenClaimNames.AUD,
+                { claimValue -> claimValue != null && claimValue.contains(audience) }
             )
             policies = serviceLoginConfig.policies.map { policy ->
                 val validators = mutableListOf(

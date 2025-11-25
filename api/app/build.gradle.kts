@@ -3,27 +3,27 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
-    kotlin("jvm") version "1.7.22"
+    kotlin("jvm") version "1.9.20"
     kotlin("plugin.allopen") version "1.7.22"
 
     // Spring plugins
-    id("org.flywaydb.flyway") version "9.2.0"
-    id("org.springframework.boot") version "3.0.2"
+    id("org.flywaydb.flyway") version "11.14.1"
+    id("org.springframework.boot") version "3.5.7"
     id("io.spring.dependency-management") version "1.1.0"
-    kotlin("plugin.spring") version "1.7.22"
+    kotlin("plugin.spring") version "2.0.21"
     kotlin("plugin.jpa") version "1.7.22"
 
     // Expose Git revision as a property
     id("com.gorylenko.gradle-git-properties") version "2.4.2"
 
-    // Deket for linting
-    id("io.gitlab.arturbosch.detekt") version "1.22.0"
+    // Detekt for linting
+    id("io.gitlab.arturbosch.detekt") version "1.23.8"
 
     // Apply the application plugin to add support for building a CLI application in Java.
     application
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_17
+java.sourceCompatibility = JavaVersion.VERSION_21
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -35,7 +35,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 
     // Use the JUnit 5 integration.
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.12.2")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
@@ -62,11 +62,11 @@ dependencies {
     implementation("org.kohsuke:github-api:1.315")
     implementation("com.auth0:java-jwt:4.4.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("org.flywaydb:flyway-core")
+    implementation("org.flywaydb:flyway-database-postgresql")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.postgresql:postgresql")
 
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.21.0")
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.8")
 }
 
 allOpen {
@@ -81,9 +81,8 @@ application {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions {
+    compilerOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "17"
     }
 }
 
@@ -95,8 +94,7 @@ tasks.withType<Test> {
 detekt {
     buildUponDefaultConfig = true // preconfigure defaults
     allRules = false // activate all available (even unstable) rules.
-    config =
-        files("$projectDir/config/detekt.yml") // point to your custom config defining rules to run, overwriting default behavior
+    config.setFrom("$projectDir/config/detekt.yml") // point to your custom config defining rules to run, overwriting default behavior
     baseline = file("$projectDir/config/baseline.xml") // a way of suppressing issues before introducing detekt
     autoCorrect = true
 }
@@ -109,5 +107,5 @@ tasks.withType<Detekt>().configureEach {
         sarif.required.set(true) // standardized SARIF format (https://sarifweb.azurewebsites.net/) to support integrations with GitHub Code Scanning
         md.required.set(true) // simple Markdown format
     }
-    jvmTarget = "17"
+    jvmTarget = "21"
 }

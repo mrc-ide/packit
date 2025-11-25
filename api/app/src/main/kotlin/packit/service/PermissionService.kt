@@ -41,8 +41,10 @@ class BasePermissionService(
             else -> null
         }
         return buildScopedPermission(
-            rolePermission.permission.name, packetGroupName,
-            rolePermission.packet?.id, rolePermission.tag?.name
+            rolePermission.permission.name,
+            packetGroupName,
+            rolePermission.packet?.id,
+            rolePermission.tag?.name
         )
     }
 

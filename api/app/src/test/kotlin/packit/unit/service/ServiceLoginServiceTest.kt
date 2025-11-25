@@ -29,7 +29,6 @@ import packit.config.ServiceLoginPolicy
 import packit.exceptions.PackitException
 import packit.model.User
 import packit.model.dto.LoginWithToken
-import packit.security.profile.UserPrincipal
 import packit.security.provider.TokenProvider
 import packit.service.ServiceLoginService
 import packit.service.UserService
@@ -53,17 +52,11 @@ class ServiceLoginServiceTest {
         disabled = false,
     )
 
-    private val serviceUserPrincipal = UserPrincipal(
-        name = "service",
-        displayName = "Service Account",
-        authorities = setOf(),
-    )
-
-    private val mockAppConfig = mock<AppConfig>() {
+    private val mockAppConfig = mock<AppConfig> {
         on { authJWTSecret } doAnswer { "secret" }
         on { authExpiryDays } doAnswer { 1 }
     }
-    private val mockUserService = mock<UserService>() {
+    private val mockUserService = mock<UserService> {
         on { getServiceUser() } doAnswer { serviceUser }
     }
 

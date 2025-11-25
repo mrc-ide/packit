@@ -12,6 +12,7 @@ interface UserRepository : JpaRepository<User, UUID> {
 
     @Transactional
     fun deleteByEmail(email: String)
+
     @Transactional
     fun deleteByUsername(username: String)
     fun findByEmail(email: String): User?

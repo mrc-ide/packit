@@ -15,13 +15,15 @@ exceptions:
     active: false
   TooGenericExceptionCaught:
     active: false
+  TooGenericExceptionThrown:
+    active: false
 
 formatting:
   NoWildcardImports:
     active: false
 
 style:
-  MandatoryBracesIfStatements:
+  BracesOnIfStatements:
     active: true
   MandatoryBracesLoops:
     active: true

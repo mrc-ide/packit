@@ -13,7 +13,8 @@ class OneTimeTokenTest {
     private val examplePacket = Packet(
         "packetId",
         "name",
-        "", mapOf(),
+        "",
+        mapOf(),
         now.epochSecond.toDouble(),
         now.epochSecond.toDouble(),
         now.epochSecond.toDouble()

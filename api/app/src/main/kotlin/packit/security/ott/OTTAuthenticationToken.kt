@@ -24,6 +24,7 @@ class OTTAuthenticationToken(
     override fun getPrincipal(): Any = principal
 
     fun getPermittedPacketId(): String = details["permittedPacket"] as String
+
     @Suppress("UNCHECKED_CAST")
     fun getPermittedFilePaths(): List<String> = details["permittedFilePaths"] as List<String>
     fun getExpiresAt(): Instant = details["expiresAt"] as Instant

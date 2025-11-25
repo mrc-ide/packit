@@ -28,7 +28,7 @@ class RolePermissionServiceTest {
     private val packetService: PacketService = mock {
         on { getPacket(any()) } doReturn packet
     }
-    private val packetGroupService: PacketGroupService = mock() {
+    private val packetGroupService: PacketGroupService = mock {
         on { getPacketGroupByName(any()) } doReturn packetGroup
     }
     private val tagService: TagService = mock()
@@ -230,7 +230,6 @@ class RolePermissionServiceTest {
 
     @Test
     fun `removePermissionFromRoles throw error when 2 of packet, packetGroup, tag are not null`() {
-
         assertThrows<IllegalArgumentException> {
             service.removePermissionFromRoles(
                 listOf(Role("role1")),
@@ -265,7 +264,11 @@ class RolePermissionServiceTest {
 
         assertThrows<PackitException> {
             service.removePermissionFromRoles(
-                roles, permission, packet, null, null
+                roles,
+                permission,
+                packet,
+                null,
+                null
             )
         }.apply {
             assertEquals("rolePermissionDoesNotExist", key)
@@ -283,7 +286,11 @@ class RolePermissionServiceTest {
             )
         }
         service.removePermissionFromRoles(
-            roles, permission, packet, null, null
+            roles,
+            permission,
+            packet,
+            null,
+            null
         )
 
         assertEquals(0, roles[0].rolePermissions.size)
@@ -292,7 +299,6 @@ class RolePermissionServiceTest {
 
     @Test
     fun `addPermissionToRoles throw error when 2 of packet, packetGroup, tag are not null`() {
-
         assertThrows<IllegalArgumentException> {
             service.addPermissionToRoles(
                 listOf(Role("role1")),
@@ -327,7 +333,11 @@ class RolePermissionServiceTest {
 
         assertThrows<PackitException> {
             service.addPermissionToRoles(
-                roles, permission, packet, null, null
+                roles,
+                permission,
+                packet,
+                null,
+                null
             )
         }.apply {
             assertEquals("rolePermissionAlreadyExists", key)
@@ -340,7 +350,11 @@ class RolePermissionServiceTest {
         val roles = listOf(Role("role1"), Role("role2"))
         val permission = Permission("permission1", "d1")
         service.addPermissionToRoles(
-            roles, permission, packet, null, null
+            roles,
+            permission,
+            packet,
+            null,
+            null
         )
 
         roles.forEach {

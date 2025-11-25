@@ -22,6 +22,7 @@ import java.net.DatagramPacket
 @Component
 class SystemdNotify {
     @EventListener
+    @Suppress("UnusedParameter") // event parameter is required by EventListener even if not used
     fun onApplicationReadyEvent(event: ApplicationReadyEvent) {
         val path = System.getenv("NOTIFY_SOCKET")
         if (path != null) {

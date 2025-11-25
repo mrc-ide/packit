@@ -31,7 +31,14 @@ class Packet(
 )
 
 fun Packet.toDto() = PacketDto(
-    id, name, displayName, parameters, importTime, startTime, endTime, description
+    id,
+    name,
+    displayName,
+    parameters,
+    importTime,
+    startTime,
+    endTime,
+    description
 )
 
 fun Packet.toBasicDto() = BasicPacketDto(name, id)
