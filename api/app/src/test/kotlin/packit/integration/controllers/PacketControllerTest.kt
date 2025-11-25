@@ -381,7 +381,6 @@ class PacketControllerTest : IntegrationTest() {
     @Test
     fun `streamFilesZipped returns 401 'unauthorized' when no token query parameter is provided`() {
         val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFilesZippedEndpoint(
-            paths = setOf("a_renamed_common_resource.csv"),
             packetId = idOfDownloadTypesPacket3,
             tokenId = "",
             filename = "filename-test.zip"
@@ -394,29 +393,8 @@ class PacketControllerTest : IntegrationTest() {
     @Test
     fun `streamFilesZipped returns 401 'unauthorized' when passed a token id that does not exist`() {
         val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFilesZippedEndpoint(
-            paths = setOf("a_renamed_common_resource.csv"),
             packetId = idOfDownloadTypesPacket3,
             tokenId = UUID.randomUUID().toString(),
-            filename = "filename-test.zip"
-        )
-        assertUnauthorized(result)
-    }
-
-    @Test
-    fun `streamFilesZipped returns 401 'unauthorized' when the token's filepaths do not match the requested files`() {
-        val token = oneTimeTokenRepository.save(
-            OneTimeToken(
-                id = UUID.randomUUID(),
-                packet = packetRepository.findById(idOfDownloadTypesPacket3).get(),
-                filePaths = listOf("a_renamed_common_resource.csv"),
-                expiresAt = Instant.now().plusSeconds(10)
-            )
-        )
-
-        val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFilesZippedEndpoint(
-            paths = setOf("a_renamed_common_resource.csv", "artefact1/artefact_data.csv"),
-            packetId = idOfDownloadTypesPacket3,
-            tokenId = token.id.toString(),
             filename = "filename-test.zip"
         )
         assertUnauthorized(result)
@@ -434,7 +412,6 @@ class PacketControllerTest : IntegrationTest() {
         )
 
         val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFilesZippedEndpoint(
-            paths = setOf("a_renamed_common_resource.csv"),
             packetId = idOfArtefactTypesPacket,
             tokenId = token.id.toString(),
             filename = "filename-test.zip"
@@ -454,7 +431,6 @@ class PacketControllerTest : IntegrationTest() {
         )
 
         val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFilesZippedEndpoint(
-            paths = setOf("a_renamed_common_resource.csv", "artefact1/artefact_data.csv"),
             packetId = idOfDownloadTypesPacket3,
             tokenId = token.id.toString(),
             filename = "filename-test.zip"
@@ -463,7 +439,7 @@ class PacketControllerTest : IntegrationTest() {
     }
 
     @Test
-    fun `streamFilesZipped streams a zip file, and deletes the one-time token`() {
+    fun `streamFilesZipped streams a zip of all token's files, and deletes the one-time token`() {
         val paths = filePathsAndSizesForDownloadTypesPacket.keys
         val token = oneTimeTokenRepository.save(
             OneTimeToken(
@@ -475,7 +451,6 @@ class PacketControllerTest : IntegrationTest() {
         )
 
         val result: ResponseEntity<ByteArray> = packetControllerTestHelper.callStreamFilesZippedEndpoint(
-            paths = paths,
             packetId = idOfDownloadTypesPacket3,
             tokenId = token.id.toString(),
             filename = "filename-test.zip"
@@ -505,27 +480,6 @@ class PacketControllerTest : IntegrationTest() {
         assertThat(uncompressedSizes).containsExactlyInAnyOrderElementsOf(expectedSizes)
 
         assertThat(oneTimeTokenRepository.findById(token.id).isEmpty).isTrue
-    }
-
-    @Test
-    @WithAuthenticatedUser(authorities = ["packet.read:packetGroup:download-types"])
-    fun `streamFilesZipped 400s when passed an empty list of paths`() {
-        val token = oneTimeTokenRepository.save(
-            OneTimeToken(
-                id = UUID.randomUUID(),
-                packet = packetRepository.findById(idOfDownloadTypesPacket3).get(),
-                filePaths = listOf(),
-                expiresAt = Instant.now().plusSeconds(10)
-            )
-        )
-
-        val result: ResponseEntity<String> = packetControllerTestHelper.callStreamFilesZippedEndpoint(
-            paths = setOf(),
-            packetId = idOfDownloadTypesPacket3,
-            tokenId = token.id.toString(),
-            filename = "filename-test.csv"
-        )
-        assertBadRequest(result)
     }
 
     @Nested
