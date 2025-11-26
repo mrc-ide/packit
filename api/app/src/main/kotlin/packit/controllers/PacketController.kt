@@ -7,15 +7,14 @@ import org.springframework.http.MediaType
 import org.springframework.http.MediaTypeFactory.getMediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import packit.model.PacketMetadata
 import packit.model.PageablePayload
-import packit.model.dto.OneTimeTokenDto
-import packit.model.dto.PacketDto
-import packit.model.dto.RolesAndUsersForReadUpdate
-import packit.model.dto.UpdateReadRoles
+import packit.model.dto.*
 import packit.model.toDto
+import packit.security.ott.OTTAuthenticationToken
 import packit.service.OneTimeTokenService
 import packit.service.PacketService
 import packit.service.RoleService
@@ -57,15 +56,16 @@ class PacketController(
     @PreAuthorize("@authz.canReadPacket(#root, #id)")
     fun generateTokenForDownloadingFile(
         @PathVariable id: String,
-        @RequestParam paths: List<String>,
+        @RequestBody @Validated body: OneTimeTokenFiles,
     ): ResponseEntity<OneTimeTokenDto> {
+        val paths = body.paths
         packetService.validateFilesExistForPacket(id, paths)
         val oneTimeToken = oneTimeTokenService.createToken(id, paths)
         return ResponseEntity.ok(oneTimeToken.toDto())
     }
 
     @GetMapping("/{id}/file")
-    @PreAuthorize("@authz.oneTimeTokenValid(#root, #id, #path)")
+    @PreAuthorize("@authz.oneTimeTokenValidForPath(#root, #id, #path)")
     fun streamFile(
         @PathVariable id: String,
         @RequestParam path: String, // To identify which file to download
@@ -82,14 +82,18 @@ class PacketController(
     }
 
     @GetMapping("/{id}/files/zip")
-    @PreAuthorize("@authz.oneTimeTokenValid(#root, #id, #paths)")
+    @PreAuthorize("@authz.oneTimeTokenValid(#root, #id)")
     fun streamFilesZipped(
         @PathVariable id: String,
-        @RequestParam paths: List<String>, // To identify which files to download
         @RequestParam filename: String, // The suggested name for the client to use when saving the file
         @RequestParam inline: Boolean = false,
         response: HttpServletResponse,
     ) {
+        // Always zip all the files associated with the one time token
+        val authentication = SecurityContextHolder.getContext().authentication
+        val ott = authentication as OTTAuthenticationToken
+        val paths = ott.getPermittedFilePaths()
+
         val disposition = if (inline) ContentDisposition.inline() else ContentDisposition.attachment()
         response.setHeader("Content-Disposition", disposition.filename(filename).build().toString())
         response.contentType = "application/zip"

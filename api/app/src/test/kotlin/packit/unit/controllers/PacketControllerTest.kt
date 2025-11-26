@@ -3,14 +3,19 @@ package packit.unit.controllers
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyList
 import org.mockito.ArgumentMatchers.anyString
+import org.mockito.Mockito.mockStatic
 import org.mockito.kotlin.*
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.client.ClientHttpResponse
 import org.springframework.mock.web.MockHttpServletResponse
+import org.springframework.security.core.context.SecurityContext
+import org.springframework.security.core.context.SecurityContextHolder
 import packit.controllers.PacketController
 import packit.model.*
+import packit.model.dto.OneTimeTokenFiles
+import packit.security.ott.OTTAuthenticationToken
 import packit.service.OneTimeTokenService
 import packit.service.PacketService
 import packit.service.RoleService
@@ -146,9 +151,10 @@ class PacketControllerTest {
 
     @Test
     fun `generate token for downloading file`() {
-        val result = sut.generateTokenForDownloadingFile(packetId, listOf("any_file.txt", "another_file.txt"))
-        verify(packetService).validateFilesExistForPacket(packetId, listOf("any_file.txt", "another_file.txt"))
-        verify(oneTimeTokenService).createToken(packetId, listOf("any_file.txt", "another_file.txt"))
+        val paths = listOf("any_file.txt", "another_file.txt")
+        val result = sut.generateTokenForDownloadingFile(packetId, OneTimeTokenFiles(paths))
+        verify(packetService).validateFilesExistForPacket(packetId, paths)
+        verify(oneTimeTokenService).createToken(packetId, paths)
         assertEquals(result.statusCode, HttpStatus.OK)
         assertEquals(result.body?.id, tokenId)
     }
@@ -207,15 +213,25 @@ class PacketControllerTest {
 
     @Test
     fun `stream multiple files as a zip, with a valid token`() {
-        val response = MockHttpServletResponse()
+        mockStatic(SecurityContextHolder::class.java).use { mockSecurityContextHolder ->
+            val filePaths = listOf("file1.txt", "file2.txt")
+            val token = OTTAuthenticationToken(UUID.randomUUID(), packetId, filePaths, Instant.now().plusSeconds(10))
+            val mockSecurityContext = mock<SecurityContext> {
+                on { authentication } doReturn token
+            }
 
-        sut.streamFilesZipped(packetId, listOf("file1.txt", "file2.txt"), "my_archive.zip", false, response)
+            mockSecurityContextHolder.`when`<Any>(SecurityContextHolder::getContext)
+                .thenReturn(mockSecurityContext)
 
-        verify(packetService).streamZip(listOf("file1.txt", "file2.txt"), packetId, response.outputStream)
+            val response = MockHttpServletResponse()
+            sut.streamFilesZipped(packetId, "my_archive.zip", false, response)
 
-        assertEquals("application/zip", response.contentType)
-        assertEquals("attachment; filename=\"my_archive.zip\"", response.getHeader("Content-Disposition"))
-        assertEquals(HttpStatus.OK.value(), response.status)
+            verify(packetService).streamZip(filePaths, packetId, response.outputStream)
+
+            assertEquals("application/zip", response.contentType)
+            assertEquals("attachment; filename=\"my_archive.zip\"", response.getHeader("Content-Disposition"))
+            assertEquals(HttpStatus.OK.value(), response.status)
+        }
     }
 
     @Test

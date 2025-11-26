@@ -3,18 +3,22 @@ import appConfig from "@config/appConfig";
 import { download, getFileObjectUrl } from "@lib/download";
 import { server } from "@/msw/server";
 import { mockPacket } from "../mocks";
+import * as fetch from "@lib/fetch.ts";
+import { ApiError } from "@lib/errors.ts";
 
 vitest.mock("@lib/auth/getAuthHeader", () => ({
   getAuthHeader: () => ({ Authorization: "fakeAuthHeader" })
 }));
 
 let fetchSpy: any;
+let fetcherSpy: any;
 let windowSpy: any;
 
 const testWindowLocation = `${appConfig.apiUrl()}/path/subpath`;
 
 beforeEach(async () => {
   fetchSpy = vitest.spyOn(global, "fetch");
+  fetcherSpy = vitest.spyOn(fetch, "fetcher");
   windowSpy = vitest.spyOn(globalThis, "window", "get");
   windowSpy.mockImplementation(() => ({
     location: {
@@ -25,6 +29,7 @@ beforeEach(async () => {
 
 afterEach(() => {
   fetchSpy.mockRestore();
+  fetcherSpy.mockRestore();
   windowSpy.mockRestore();
   vitest.unstubAllGlobals();
 });
@@ -50,15 +55,16 @@ describe("download", () => {
     const mockCreateObjectUrl = vitest.fn(() => "fakeObjectUrl");
     URL.createObjectURL = mockCreateObjectUrl;
 
-    await getFileObjectUrl(mockPacket.files[0], mockPacket.id, "directory/fakeFilename");
+    const file = mockPacket.files[0];
+    await getFileObjectUrl(file, mockPacket.id, "directory/fakeFilename");
 
-    expect(fetchSpy).toHaveBeenCalledWith(
-      `${appConfig.apiUrl()}/packets/${mockPacket.id}/files/token?paths=${mockPacket.files[0].path}`,
-      {
-        method: "POST",
-        headers: { Authorization: "fakeAuthHeader" }
+    expect(fetcherSpy).toHaveBeenCalledWith({
+      url: `${appConfig.apiUrl()}/packets/${mockPacket.id}/files/token`,
+      method: "POST",
+      body: {
+        paths: [file.path]
       }
-    );
+    });
 
     expect(fetchSpy).toHaveBeenCalledWith(
       `${appConfig.apiUrl()}/packets/${mockPacket.id}/file` +
@@ -85,15 +91,14 @@ describe("download", () => {
     document.body.appendChild = mockAppendChild;
     document.body.removeChild = mockRemoveChild;
 
-    await download([mockPacket.files[0]], mockPacket.id, "fakeFilename");
+    const file = mockPacket.files[0];
+    await download([file], mockPacket.id, "fakeFilename");
 
-    expect(fetchSpy).toHaveBeenCalledWith(
-      `${appConfig.apiUrl()}/packets/${mockPacket.id}/files/token?paths=${mockPacket.files[0].path}`,
-      {
-        method: "POST",
-        headers: { Authorization: "fakeAuthHeader" }
-      }
-    );
+    expect(fetcherSpy).toHaveBeenCalledWith({
+      url: `${appConfig.apiUrl()}/packets/${mockPacket.id}/files/token`,
+      method: "POST",
+      body: { paths: [file.path] }
+    });
 
     expect(mockFileLink.href).toEqual(
       `${appConfig.apiUrl()}/packets/${mockPacket.id}/file?` +
@@ -119,21 +124,18 @@ describe("download", () => {
     document.body.appendChild = mockAppendChild;
     document.body.removeChild = mockRemoveChild;
 
-    await download([mockPacket.files[0], mockPacket.files[1]], mockPacket.id, "fakeFilename");
+    const files = [mockPacket.files[0], mockPacket.files[1]];
+    await download(files, mockPacket.id, "fakeFilename");
 
-    expect(fetchSpy).toHaveBeenCalledWith(
-      `${appConfig.apiUrl()}/packets/${mockPacket.id}/files/token?` +
-        `paths=${mockPacket.files[0].path}&paths=${mockPacket.files[1].path}`,
-      {
-        method: "POST",
-        headers: { Authorization: "fakeAuthHeader" }
-      }
-    );
+    expect(fetcherSpy).toHaveBeenCalledWith({
+      url: `${appConfig.apiUrl()}/packets/${mockPacket.id}/files/token`,
+      method: "POST",
+      body: { paths: [files[0].path, files[1].path] }
+    });
 
     expect(mockFileLink.href).toBe(
       `${appConfig.apiUrl()}/packets/${mockPacket.id}/files/zip?` +
-        `paths=${mockPacket.files[0].path}&paths=${mockPacket.files[1].path}` +
-        `&token=fakeTokenId&filename=fakeFilename&inline=false`
+        `token=fakeTokenId&filename=fakeFilename&inline=false`
     );
     expect(mockFileLink.setAttribute).toHaveBeenCalledWith("download", "fakeFilename");
     expect(mockAppendChild).toHaveBeenCalledWith(mockFileLink);
@@ -155,20 +157,20 @@ describe("download", () => {
     document.body.appendChild = mockAppendChild;
     document.body.removeChild = mockRemoveChild;
 
-    await download([mockPacket.files[0]], mockPacket.id, "fakeFilename", true);
+    const file = mockPacket.files[0];
+    await download([file], mockPacket.id, "fakeFilename", true);
 
-    expect(fetchSpy).toHaveBeenCalledWith(
-      `${appConfig.apiUrl()}/packets/${mockPacket.id}/files/token?` + `paths=${mockPacket.files[0].path}`,
-      {
-        method: "POST",
-        headers: { Authorization: "fakeAuthHeader" }
+    expect(fetcherSpy).toHaveBeenCalledWith({
+      url: `${appConfig.apiUrl()}/packets/${mockPacket.id}/files/token`,
+      method: "POST",
+      body: {
+        paths: [file.path]
       }
-    );
+    });
 
     expect(mockFileLink.href).toBe(
       `${appConfig.apiUrl()}/packets/${mockPacket.id}/files/zip?` +
-        `paths=${mockPacket.files[0].path}` +
-        `&token=fakeTokenId&filename=fakeFilename&inline=false`
+        `token=fakeTokenId&filename=fakeFilename&inline=false`
     );
     expect(mockFileLink.setAttribute).toHaveBeenCalledWith("download", "fakeFilename");
     expect(mockAppendChild).toHaveBeenCalledWith(mockFileLink);
@@ -180,7 +182,7 @@ describe("download", () => {
     setUpUnsuccessfulTokenResponse();
 
     await expect(getFileObjectUrl(mockPacket.files[0], mockPacket.id, "fakeFilename")).rejects.toEqual(
-      new Error("Error: test token endpoint error")
+      new ApiError("test token endpoint error", 500)
     );
   });
 
@@ -208,7 +210,7 @@ describe("download", () => {
     setUpUnsuccessfulTokenResponse();
 
     await expect(download([mockPacket.files[0]], mockPacket.id, "fakeFilename")).rejects.toEqual(
-      new Error("Error: test token endpoint error")
+      new ApiError("test token endpoint error", 500)
     );
   });
 });

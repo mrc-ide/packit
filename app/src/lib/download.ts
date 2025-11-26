@@ -1,4 +1,4 @@
-import { getAuthHeader } from "./auth/getAuthHeader";
+import { fetcher } from "@lib/fetch";
 import appConfig from "../config/appConfig";
 import { FileMetadata } from "../types";
 
@@ -11,36 +11,30 @@ const streamFileUrl = (packetId: string, file: FileMetadata, token: string, file
   return url.toString();
 };
 
-const streamZipUrl = (packetId: string, files: FileMetadata[], token: string, filename: string, inline = false) => {
+const streamZipUrl = (packetId: string, token: string, filename: string, inline = false) => {
   const url = new URL(`${appConfig.apiUrl()}/packets/${packetId}/files/zip`, window.location.href);
-  files.forEach((file) => url.searchParams.append("paths", file.path));
   url.searchParams.append("token", token);
   url.searchParams.append("filename", filename);
   url.searchParams.append("inline", inline.toString());
   return url.toString();
 };
 
-const getOneTimeToken = async (packetId: string, files: FileMetadata[], filename: string) => {
+const getOneTimeToken = async (packetId: string, files: FileMetadata[]) => {
   const url = new URL(`${appConfig.apiUrl()}/packets/${packetId}/files/token`, window.location.href);
-  files.forEach((file) => url.searchParams.append("paths", file.path));
+  const paths = files.map((file) => file.path);
 
-  const res = await fetch(url.toString(), {
+  const json = await fetcher({
+    url: url.toString(),
     method: "POST",
-    headers: getAuthHeader()
+    body: { paths }
   });
-  const json = await res.json();
-
-  if (!res.ok) {
-    const msg = json.error?.detail ? `Error: ${json.error.detail}` : `Error retrieving token for ${filename}`;
-    throw new Error(msg);
-  }
 
   return json.id;
 };
 
 // Fetch a file and pack it into a blob that is stored in the browser’s memory at a URL, until revoked.
 export const getFileObjectUrl = async (file: FileMetadata, packetId: string, filename: string, inline = true) => {
-  const token = await getOneTimeToken(packetId, [file], filename);
+  const token = await getOneTimeToken(packetId, [file]);
   const res = await fetch(streamFileUrl(packetId, file, token, filename, inline), { method: "GET" });
   if (!res.ok) {
     const json = await res.json();
@@ -57,11 +51,11 @@ export const getFileObjectUrl = async (file: FileMetadata, packetId: string, fil
 
 // Download files using the browser’s native download manager, triggered by using an <a> tag with a 'download' attribute
 export const download = async (files: FileMetadata[], packetId: string, filename: string, preferZip = false) => {
-  const token = await getOneTimeToken(packetId, files, filename);
+  const token = await getOneTimeToken(packetId, files);
   const fileLink = document.createElement("a");
   // Do a zip download if there are multiple files or if zip was requested.
   if (files.length > 1 || preferZip) {
-    fileLink.href = streamZipUrl(packetId, files, token, filename, false);
+    fileLink.href = streamZipUrl(packetId, token, filename, false);
   } else {
     fileLink.href = streamFileUrl(packetId, files[0], token, filename, false);
   }
