@@ -15,6 +15,7 @@ class PreAuthenticatedLoginService(
             throw PackitException("emptyUsername", HttpStatus.BAD_REQUEST)
         }
 
+        println("saving preauth user")
         val user = userService.savePreAuthenticatedUser(username, name, email)
         val token = jwtIssuer.issue(user)
 

@@ -49,6 +49,7 @@ class LoginController(
         if (!config.authEnablePreAuthLogin) {
             throw PackitException("preauthLoginDisabled", HttpStatus.FORBIDDEN)
         }
+        println("Logging in preauth")
 
         val token = preAuthenticatedLoginService.saveUserAndIssueToken(username, name, email)
         return ResponseEntity.ok(token)

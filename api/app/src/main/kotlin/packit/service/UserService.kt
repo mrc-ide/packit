@@ -49,16 +49,21 @@ class BaseUserService(
     }
 
     private fun saveUser(username: String, displayName: String?, email: String?, userSource: String): User {
+        println("saving user $username")
         val user = userRepository.findByUsername(username)
         if (user != null) {
+            println("user was founf")
             if (user.userSource != userSource) {
                 throw PackitException("userAlreadyExists", HttpStatus.BAD_REQUEST)
             }
             return updateUserLastLoggedIn(user, Instant.now())
         }
 
+        println("user was not found")
         val roles = roleService.getDefaultRoles().toMutableList()
+        println("default roles are $roles")
         roles.add(roleService.createUsernameRole(username))
+        println("created username role")
 
         val newUser = User(
             username = username,
