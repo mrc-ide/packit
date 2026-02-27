@@ -67,7 +67,7 @@ export const AddRoleForm = ({ mutate, setOpen }: AddRoleFormProps) => {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="Enter role name..." {...field} />
+                <Input autoComplete="off" placeholder="Enter role name..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
