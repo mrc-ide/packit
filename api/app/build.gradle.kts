@@ -1,6 +1,10 @@
 import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+kotlin {
+    jvmToolchain(21)
+}
+
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
     kotlin("jvm") version "1.9.20"
