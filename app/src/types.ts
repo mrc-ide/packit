@@ -77,7 +77,7 @@ interface Platform {
   system: string;
 }
 
-interface Package {
+interface PacketPackage {
   package: string;
   version: string;
   attached: boolean;
@@ -85,7 +85,7 @@ interface Package {
 
 interface Session {
   platform: Platform;
-  packages: Package[];
+  packages: PacketPackage[];
 }
 
 export interface Custom {
@@ -96,6 +96,12 @@ export interface Custom {
     role: InputFile[]; // Assigns a 'role' to input files. Any file that is not an output is considered an input.
     shared: SharedResource[];
   };
+}
+
+// Packages installed globally for the runner and workers
+export interface RunnerPackage {
+  name: string;
+  version: string;
 }
 
 interface Description {

@@ -103,4 +103,9 @@ class RunnerController(private val runnerService: RunnerService) {
     ): ResponseEntity<Map<String, String>> {
         return ResponseEntity.ok(mapOf("runTaskId" to runnerService.getTaskIdByPacketId(packetId)))
     }
+
+    @GetMapping("/packages")
+    fun getPackages(): ResponseEntity<List<RunnerPackageDto>> {
+        return ResponseEntity.ok(runnerService.getPackages())
+    }
 }
