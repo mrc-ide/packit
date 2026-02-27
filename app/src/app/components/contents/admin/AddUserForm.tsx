@@ -74,7 +74,7 @@ export const AddUserForm = ({ mutate, setOpen, roleNames }: AddUserFormProps) =>
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input autoComplete="email" placeholder="Enter email..." {...field} />
+                <Input placeholder="Enter email..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -88,7 +88,7 @@ export const AddUserForm = ({ mutate, setOpen, roleNames }: AddUserFormProps) =>
             <FormItem>
               <FormLabel>Display name</FormLabel>
               <FormControl>
-                <Input autoComplete="name" placeholder="Enter display name..." {...field} />
+                <Input placeholder="Enter display name..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -102,7 +102,7 @@ export const AddUserForm = ({ mutate, setOpen, roleNames }: AddUserFormProps) =>
               <FormLabel>Temporary password</FormLabel>
               <FormDescription className="text-xs mt-0">User must change this password on first login.</FormDescription>
               <FormControl>
-                <Input type="password" autoComplete="password" placeholder="Enter password..." {...field} />
+                <Input type="password" placeholder="Enter password..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
