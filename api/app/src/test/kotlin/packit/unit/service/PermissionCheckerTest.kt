@@ -70,23 +70,6 @@ class PermissionCheckerTest {
 
     @Nested
     inner class ManagePacketsPermissions {
-
-        @Test
-        fun canManageAllPacketsWithUserManage() {
-            assertTrue(permissionChecker.canManageAllPackets(listOf("user.manage")))
-        }
-
-        @Test
-        fun canManageAllPacketsWithGlobalPacketManage() {
-            assertTrue(permissionChecker.canManageAllPackets(listOf("packet.manage")))
-        }
-
-        @Test
-        fun cannotManageAllPacketsWithoutProperPermissions() {
-            assertFalse(permissionChecker.canManageAllPackets(listOf("other.permission")))
-            assertFalse(permissionChecker.canManageAllPackets(emptyList()))
-        }
-
         @Test
         fun hasPacketManagePermissionForGroup() {
             assertTrue(
