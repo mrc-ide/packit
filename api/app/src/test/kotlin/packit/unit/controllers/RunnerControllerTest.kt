@@ -4,16 +4,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
 import org.springframework.http.HttpStatus
 import packit.controllers.RunnerController
-import packit.model.PacketMetadata
-import packit.model.Pin
-import packit.model.TimeMetadata
-import packit.model.dto.PinDto
 import packit.model.dto.RunnerPackageDto
 import packit.service.RunnerService
-import java.time.Instant
 import kotlin.test.assertEquals
 
 class RunnerControllerTest {

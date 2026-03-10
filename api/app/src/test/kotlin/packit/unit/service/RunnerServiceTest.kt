@@ -89,10 +89,13 @@ class RunnerServiceTest {
     @Test
     fun `can get packages`() {
         val result = sut.getPackages()
-        assertEquals(listOf(
-            RunnerPackageDto("package1", "1.0.0"),
-            RunnerPackageDto("package2", "2.0.0"),
-        ), result)
+        assertEquals(
+            listOf(
+                RunnerPackageDto("package1", "1.0.0"),
+                RunnerPackageDto("package2", "2.0.0"),
+            ),
+            result
+        )
     }
 
     @Test
