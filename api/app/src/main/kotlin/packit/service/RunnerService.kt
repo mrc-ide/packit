@@ -15,11 +15,11 @@ import packit.repository.RunInfoRepository
 
 interface RunnerService {
     fun getVersion(): OrderlyRunnerVersion
+    fun getPackages(): List<RunnerPackageDto>
     fun gitFetch()
     fun getBranches(): GitBranches
     fun getParameters(ref: String, packetGroupName: String): List<Parameter>
     fun getPacketGroups(ref: String): List<RunnerPacketGroup>
-    fun getPackages(): List<RunnerPackageDto>
     fun submitRun(info: SubmitRunInfo, username: String): SubmitRunResponse
     fun getTaskStatus(taskId: String): RunInfo
     fun getTasksStatuses(payload: PageablePayload, filterPacketGroupName: String): Page<RunInfo>
@@ -35,6 +35,10 @@ class BaseRunnerService(
 ) : RunnerService {
     override fun getVersion(): OrderlyRunnerVersion {
         return orderlyRunnerClient.getVersion()
+    }
+
+    override fun getPackages(): List<RunnerPackageDto> {
+        return orderlyRunnerClient.getPackages()
     }
 
     override fun gitFetch() {
@@ -117,15 +121,6 @@ class BaseRunnerService(
         // Update the run info to reflect the cancellation
         runInfo.status = Status.CANCELLED.toString()
         runInfoRepository.save(runInfo)
-    }
-
-    override fun getPackages(): List<RunnerPackageDto> {
-        val dummyData = listOf(
-            RunnerPackageDto("dplyr", "1.0.10"),
-            RunnerPackageDto("ggplot2", "3.4.1"),
-            RunnerPackageDto("tidyr", "1.2.1"),
-        )
-        return dummyData
     }
 
     override fun getTaskIdByPacketId(packetId: String): String {

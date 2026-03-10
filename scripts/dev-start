@@ -9,13 +9,17 @@ usage() {
     echo " --create-pins-skip    Skip creating packet pins"
     echo " --super-user          Add basic super user"
     echo " --preauth             Runs in preauth mode"
+    echo " --r-lib-path <PATH>   Path to R library on host machine to be mounted into the runner"
 }
+
+HERE=$(realpath "$(dirname $0)")
 
 DB_BUILD_SKIP=0
 API_BUILD_SKIP=0
 CREATE_PINS_SKIP=0
 ADD_SUPER_USER=0
 PREAUTH=0
+PACKIT_HOST_R_LIBRARY_PATH=$HERE/fixtures/R
 
 handle_options() {
   while [ $# -gt 0 ]; do
@@ -39,6 +43,10 @@ handle_options() {
       --preauth)
         PREAUTH=1
         ;;
+      --r-lib-path)
+        PACKIT_HOST_R_LIBRARY_PATH="$2"
+        shift
+        ;;
       *)
         echo "Invalid option: $1" >&2
         usage
@@ -57,14 +65,13 @@ if [ $PREAUTH -eq 1 ] && [ $ADD_SUPER_USER -eq 1 ]; then
     exit 1
 fi
 
-HERE=$(realpath "$(dirname $0)")
 . "$HERE"/common
 
 if [ $DB_BUILD_SKIP -eq 0 ]; then
     "$HERE"/../db/scripts/build
 fi
 
-"$HERE"/run-dependencies
+PACKIT_HOST_R_LIBRARY_PATH="$PACKIT_HOST_R_LIBRARY_PATH" "$HERE"/run-dependencies
 
 if [ $API_BUILD_SKIP -eq 0 ]; then
     "$HERE"/../api/scripts/build

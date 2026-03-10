@@ -4,9 +4,15 @@ import { SidebarItem } from "@lib/types/SidebarItem";
 import { useUser } from "../../providers/UserProvider";
 import { Sidebar } from "../common/Sidebar";
 import { Unauthorized } from "../common/Unauthorized";
+import { Skeleton } from "@components/Base/Skeleton";
 
 export const PacketRunnerLayout = () => {
-  const { authorities } = useUser();
+  const { authorities, isLoading } = useUser();
+
+  if (isLoading) {
+    return <Skeleton className="w-full h-32" />;
+  }
+
   if (!hasPacketRunPermission(authorities)) {
     return <Unauthorized />;
   }

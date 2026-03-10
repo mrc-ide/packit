@@ -40,7 +40,13 @@ To run a specific test alone, add `--tests` + the \
 to the command. For example, the command for running AppTest.kt would
 be: `./api/gradlew -p api/app :app:test --tests AppTest`
 
-Dependencies must be running for integration tests to pass.
+Dependencies must be running for integration/e2e tests to pass. For tests involving the R package endpoints of `orderly.runner`, the dependencies should be started with the env var `PACKIT_HOST_R_LIBRARY_PATH` set so as to mount the test R library (`../scripts/fixtures/R`) to `/library` on the orderly runner; thus (from project root) you should run:
+
+```sh
+PACKIT_HOST_R_LIBRARY_PATH=./scripts/fixtures/R scripts/run-dependencies
+```
+
+See [scripts/fixtures/R/README.md](../scripts/fixtures/R/README.md) for more details.
 
 ## Building a docker image
 

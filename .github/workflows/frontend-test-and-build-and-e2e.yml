@@ -61,6 +61,8 @@ jobs:
         run: npm run test:coverage
       - name: Run dependencies and API
         run: ./scripts/run-dependencies && ./api/scripts/run basic && ./api/scripts/smoke-test
+        env:
+          PACKIT_HOST_R_LIBRARY_PATH: "./scripts/fixtures/R"
       - name: Upload coverage to codecov
         uses: codecov/codecov-action@v3
         with:

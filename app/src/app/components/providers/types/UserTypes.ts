@@ -7,6 +7,7 @@ export interface UserState {
 export interface UserProviderState {
   user: UserState | null;
   authorities?: string[];
+  isLoading: boolean;
   setUser: (jwt: string) => void;
   removeUser: () => void;
 }

@@ -98,7 +98,7 @@ export interface Custom {
   };
 }
 
-// Packages installed globally for the runner and workers
+// R packages installed into a shared library for the runner and workers
 export interface RunnerPackage {
   name: string;
   version: string;

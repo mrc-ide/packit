@@ -35,6 +35,7 @@ jobs:
         run: ./scripts/run-dependencies
         env:
           ORDERLY_RUNNER_LOGS_PATH: "${{ runner.temp }}/runner-logs"
+          PACKIT_HOST_R_LIBRARY_PATH: "./scripts/fixtures/R"
 
       - name: Set up Java JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v3

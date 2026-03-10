@@ -1,6 +1,7 @@
 .idea
 .vscode
 .token
+.nvmrc
 packit.iml
 app/test-results
 app/playwright-report

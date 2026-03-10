@@ -122,6 +122,17 @@ class RunnerControllerTest : IntegrationTest() {
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.run"])
+    fun `can get packages`() {
+        val res: ResponseEntity<List<RunnerPackageDto>> = restTemplate.exchange(
+            "/runner/packages",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+        assertEquals(listOf(RunnerPackageDto(name = "minimalRPackage", version = "0.0.1")), res.body)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.run"])
     fun `can fetch git`() {
         val res: ResponseEntity<Unit> = restTemplate.exchange(
             "/runner/git/fetch",

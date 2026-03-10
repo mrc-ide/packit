@@ -23,6 +23,11 @@ class RunnerController(private val runnerService: RunnerService) {
         return ResponseEntity.ok(runnerService.getVersion())
     }
 
+    @GetMapping("/packages")
+    fun getPackages(): ResponseEntity<List<RunnerPackageDto>> {
+        return ResponseEntity.ok(runnerService.getPackages())
+    }
+
     @PostMapping("/git/fetch")
     fun gitFetch(): ResponseEntity<Unit> {
         runnerService.gitFetch()
@@ -102,10 +107,5 @@ class RunnerController(private val runnerService: RunnerService) {
         @PathVariable packetId: String,
     ): ResponseEntity<Map<String, String>> {
         return ResponseEntity.ok(mapOf("runTaskId" to runnerService.getTaskIdByPacketId(packetId)))
-    }
-
-    @GetMapping("/packages")
-    fun getPackages(): ResponseEntity<List<RunnerPackageDto>> {
-        return ResponseEntity.ok(runnerService.getPackages())
     }
 }

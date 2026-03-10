@@ -23,11 +23,12 @@ interface UserProviderProps {
 
 export const UserProvider = ({ children }: UserProviderProps) => {
   const [userState, setUserState] = useState<UserState | null>(() => getUserFromLocalStorage());
-  const { authorities, error } = useGetUserAuthorities(userState);
+  const { authorities, error, isLoading } = useGetUserAuthorities(userState);
 
   const value = {
     user: userState,
     authorities,
+    isLoading,
     setUser(jwt: string) {
       const jwtPayload = jwtDecode<PacketJwtPayload>(jwt);
       const user: UserState = {
