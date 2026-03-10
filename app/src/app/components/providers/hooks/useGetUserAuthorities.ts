@@ -13,6 +13,6 @@ export const useGetUserAuthorities = (userState: UserState | null) => {
   return {
     authorities: data,
     error,
-    isLoading,
+    isLoading
   };
 };

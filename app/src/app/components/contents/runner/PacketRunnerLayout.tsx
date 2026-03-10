@@ -26,10 +26,14 @@ export const PacketRunnerLayout = () => {
       to: "/runner/logs",
       title: "Logs"
     },
-    ...(canManageAllPackets(authorities) ? [{
-      to: "/runner/packages",
-      title: "Packages"
-    }] : [])
+    ...(canManageAllPackets(authorities)
+      ? [
+          {
+            to: "/runner/packages",
+            title: "Packages"
+          }
+        ]
+      : [])
   ];
 
   return (

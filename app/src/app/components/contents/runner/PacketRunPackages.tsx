@@ -26,7 +26,7 @@ export const PacketRunPackages = () => {
               </span>
             </AccordionTrigger>
             <AccordionContent>
-              <ul className="space-y-1 overflow-y-auto" style={ { maxHeight: "1000px" } }>
+              <ul className="space-y-1 overflow-y-auto" style={{ maxHeight: "1000px" }}>
                 {packages.map((pkg, index) => (
                   <li key={index}>
                     <span className="font-semibold mr-2">{pkg.name}</span>
