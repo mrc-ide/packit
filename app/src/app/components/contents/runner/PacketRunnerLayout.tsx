@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { canManageAllPackets, hasPacketRunPermission } from "@lib/auth/hasPermission";
+import { hasGlobalPacketManagePermission, hasPacketRunPermission } from "@lib/auth/hasPermission";
 import { SidebarItem } from "@lib/types/SidebarItem";
 import { useUser } from "../../providers/UserProvider";
 import { Sidebar } from "../common/Sidebar";
@@ -26,7 +26,7 @@ export const PacketRunnerLayout = () => {
       to: "/runner/logs",
       title: "Logs"
     },
-    ...(canManageAllPackets(authorities)
+    ...(hasGlobalPacketManagePermission(authorities)
       ? [
           {
             to: "/runner/packages",

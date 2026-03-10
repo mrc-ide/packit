@@ -60,15 +60,8 @@ describe("packet runner component", () => {
     expect(screen.getByRole("link", { name: "Packages" })).toBeVisible();
   });
 
-  it("should show packages link in sidebar when user has user.manage authority", () => {
-    mockUseUser.mockReturnValue({ authorities: ["packet.run", "user.manage"] } as any);
-    renderElement();
-
-    expect(screen.getByRole("link", { name: "Packages" })).toBeVisible();
-  });
-
-  it("should not show packages link in sidebar when user does not have packet.manage or user.manage authority", () => {
-    mockUseUser.mockReturnValue({ authorities: ["packet.run"] } as any);
+  it("should not show packages link in sidebar when user does not have packet.manage authority", () => {
+    mockUseUser.mockReturnValue({ authorities: ["user.manage"] } as any);
     renderElement();
 
     expect(screen.queryByRole("link", { name: "Packages" })).not.toBeInTheDocument();
