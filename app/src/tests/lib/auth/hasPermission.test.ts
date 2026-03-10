@@ -83,8 +83,8 @@ describe("hasPermission functions", () => {
         expect(canManagePacketGroup(["packet.manage"], "groupA")).toBe(true);
       });
 
-      it("returns true when has manage permission", () => {
-        expect(canManagePacketGroup(["user.manage"], "groupA")).toBe(true);
+      it("returns false when only has global user manage permission", () => {
+        expect(canManagePacketGroup(["user.manage"], "groupA")).toBe(false);
       });
 
       it("returns true when has scoped manage permission for the group", () => {
