@@ -1,10 +1,9 @@
 import { Library } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@components/Base/Accordion";
-import { AddPackageButton } from "./packages/AddPackageButton";
 import { useGetPackages } from "./hooks/useGetPackages";
 
 export const PacketRunPackages = () => {
-  const { packages, error, isLoading, mutate } = useGetPackages();
+  const { packages } = useGetPackages();
 
   console.log("Packages:", packages, "Loading:", isLoading, "Error:", error);
 
@@ -15,7 +14,6 @@ export const PacketRunPackages = () => {
         <p className="text-muted-foreground">Manage packages installed globally on the runner</p>
       </div>
       <div className="space-y-4 flex flex-col mt-4 items-start w-full">
-        <AddPackageButton mutate={mutate} />
         <Accordion type="single" collapsible defaultValue="installed" className="w-full">
           <AccordionItem value="installed">
             <AccordionTrigger>
