@@ -2,9 +2,19 @@ import { Library } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@components/Base/Accordion";
 import { useGetPackages } from "./hooks/useGetPackages";
 import { Skeleton } from "@components/Base/Skeleton";
+import { HttpStatus } from "@lib/types/HttpStatus";
+import { Unauthorized } from "../common/Unauthorized";
+import { ErrorComponent } from "../common/ErrorComponent";
 
 export const PacketRunnerPackages = () => {
-  const { packages } = useGetPackages();
+  const { packages, error } = useGetPackages();
+
+  if (error) {
+    if (error.status === HttpStatus.Unauthorized) {
+      return <Unauthorized />;
+    }
+    return <ErrorComponent message="Error fetching data" error={error} />;
+  }
 
   if (!packages) {
     return <Skeleton className="w-full h-32" />;
@@ -27,8 +37,8 @@ export const PacketRunnerPackages = () => {
             </AccordionTrigger>
             <AccordionContent>
               <ul className="space-y-1 overflow-y-auto" style={{ maxHeight: "1000px" }}>
-                {packages.map((pkg, index) => (
-                  <li key={index}>
+                {packages.map((pkg, name) => (
+                  <li key={name}>
                     <span className="font-semibold mr-2">{pkg.name}</span>
                     <span className="text-muted-foreground">{pkg.version}</span>
                   </li>

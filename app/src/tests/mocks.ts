@@ -64,7 +64,8 @@ export const mockUserProviderState = (): UserProviderState => ({
   user: mockUserState(),
   authorities: mockAuthorities,
   setUser: vitest.fn(),
-  removeUser: vitest.fn()
+  removeUser: vitest.fn(),
+  isLoading: false,
 });
 export const mockExpiredUserState = (): UserState => {
   return {
