@@ -44,6 +44,11 @@ handle_options() {
         PREAUTH=1
         ;;
       --r-lib-path)
+        if [ -z "$2" ] || [[ "$2" == --* ]]; then
+          echo "Error: --r-lib-path requires a path argument" >&2
+          usage
+          exit 1
+        fi
         PACKIT_HOST_R_LIBRARY_PATH="$2"
         shift
         ;;
