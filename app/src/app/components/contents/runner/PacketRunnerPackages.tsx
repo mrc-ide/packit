@@ -3,7 +3,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@c
 import { useGetPackages } from "./hooks/useGetPackages";
 import { Skeleton } from "@components/Base/Skeleton";
 
-export const PacketRunPackages = () => {
+export const PacketRunnerPackages = () => {
   const { packages } = useGetPackages();
 
   if (!packages) {

@@ -8,7 +8,7 @@ import { AdminLayout, ManagePins, ManageRoles, ManageUsers, ResyncPackets } from
 import { PacketDetails, PacketFileFullScreen } from "../contents/packets";
 // eslint-disable-next-line max-len
 import {
-  PacketRunPackages,
+  PacketRunnerPackages,
   PacketRun,
   PacketRunTaskLogs,
   PacketRunTasksLogs,
@@ -43,7 +43,7 @@ export const Router = () => {
               <Route path="runner" element={<PacketRun />} />
               <Route path="runner/logs" element={<PacketRunTasksLogs />} />
               <Route path="runner/logs/:taskId" element={<PacketRunTaskLogs />} />
-              <Route path="runner/packages" element={<PacketRunPackages />} />
+              <Route path="runner/packages" element={<PacketRunnerPackages />} />
             </Route>
             {/* <Route path="run-workflow" element={<WorkflowRunner />} /> */}
             {/* <Route path="documentation" element={<ProjectDocumentation />} /> */}

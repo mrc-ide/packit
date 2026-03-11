@@ -1,15 +1,15 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { PacketRunPackages } from "@components/contents/runner";
+import { PacketRunnerPackages } from "@components/contents/runner";
 import { mockRunnerPackages } from "@/tests/mocks";
 import { SWRConfig } from "swr";
 import { MemoryRouter } from "react-router-dom";
 
-describe("Packet Run component", () => {
+describe("PacketRunnerPackages component", () => {
   const renderComponent = () =>
     render(
       <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>
         <MemoryRouter>
-          <PacketRunPackages />
+          <PacketRunnerPackages />
         </MemoryRouter>
       </SWRConfig>
     );
