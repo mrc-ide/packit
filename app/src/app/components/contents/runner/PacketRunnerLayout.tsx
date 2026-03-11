@@ -1,10 +1,25 @@
 import { Outlet } from "react-router-dom";
-import { hasGlobalPacketManagePermission, hasPacketRunPermission } from "@lib/auth/hasPermission";
+import { hasPacketRunPermission } from "@lib/auth/hasPermission";
 import { SidebarItem } from "@lib/types/SidebarItem";
 import { useUser } from "../../providers/UserProvider";
 import { Sidebar } from "../common/Sidebar";
 import { Unauthorized } from "../common/Unauthorized";
 import { Skeleton } from "@components/Base/Skeleton";
+
+const sidebarItems: SidebarItem[] = [
+  {
+    to: "/runner",
+    title: "Run"
+  },
+  {
+    to: "/runner/logs",
+    title: "Logs"
+  },
+  {
+    to: "/runner/packages",
+    title: "Packages"
+  }
+];
 
 export const PacketRunnerLayout = () => {
   const { authorities, isLoading } = useUser();
@@ -16,25 +31,6 @@ export const PacketRunnerLayout = () => {
   if (!hasPacketRunPermission(authorities)) {
     return <Unauthorized />;
   }
-
-  const sidebarItems: SidebarItem[] = [
-    {
-      to: "/runner",
-      title: "Run"
-    },
-    {
-      to: "/runner/logs",
-      title: "Logs"
-    },
-    ...(hasGlobalPacketManagePermission(authorities)
-      ? [
-          {
-            to: "/runner/packages",
-            title: "Packages"
-          }
-        ]
-      : [])
-  ];
 
   return (
     <Sidebar sidebarItems={sidebarItems}>

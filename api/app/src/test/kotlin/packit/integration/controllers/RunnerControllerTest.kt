@@ -121,7 +121,7 @@ class RunnerControllerTest : IntegrationTest() {
     }
 
     @Test
-    @WithAuthenticatedUser(authorities = ["packet.run", "packet.manage"])
+    @WithAuthenticatedUser(authorities = ["packet.run"])
     fun `can get packages`() {
         val res: ResponseEntity<List<RunnerPackageDto>> = restTemplate.exchange(
             "/runner/packages",
@@ -132,8 +132,8 @@ class RunnerControllerTest : IntegrationTest() {
     }
 
     @Test
-    @WithAuthenticatedUser(authorities = ["packet.run"])
-    fun `cannot get packages if no global packet manage authority`() {
+    @WithAuthenticatedUser(authorities = [])
+    fun `cannot get packages if no packet run authority`() {
         val res: ResponseEntity<String> = restTemplate.exchange(
             "/runner/packages",
             HttpMethod.GET,

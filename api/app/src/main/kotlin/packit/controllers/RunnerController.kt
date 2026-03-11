@@ -23,7 +23,6 @@ class RunnerController(private val runnerService: RunnerService) {
         return ResponseEntity.ok(runnerService.getVersion())
     }
 
-    @PreAuthorize("@authz.hasGlobalPacketManagePermission(#root)")
     @GetMapping("/packages")
     fun getPackages(): ResponseEntity<List<RunnerPackageDto>> {
         return ResponseEntity.ok(runnerService.getPackages())
