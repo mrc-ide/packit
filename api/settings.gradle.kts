@@ -7,5 +7,19 @@
  * in the user manual at https://docs.gradle.org/7.6/userguide/multi_project_builds.html
  */
 
+pluginManagement {
+    // Kotlin plugins (which configure compilation options or extend Kotlin, and look like `kotlin("name")`)
+    // should refer to the same Kotlin version to avoid compatibility issues.
+    // This block syncs the versions, which are then used in the app/build.gradle.kts file.
+    val kotlinPluginsVersion = "2.0.21"
+
+    plugins {
+        kotlin("jvm") version kotlinPluginsVersion
+        kotlin("plugin.allopen") version kotlinPluginsVersion
+        kotlin("plugin.spring") version kotlinPluginsVersion
+        kotlin("plugin.jpa") version kotlinPluginsVersion
+    }
+}
+
 rootProject.name = "packit"
 include("app")
