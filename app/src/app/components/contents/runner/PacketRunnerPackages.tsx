@@ -23,14 +23,12 @@ export const PacketRunnerPackages = () => {
     <>
       <div>
         <h2 className="text-2xl font-bold tracking-tight">Package versions</h2>
-        <p className="text-muted-foreground">
-          View installed R packages and versions
-        </p>
+        <p className="text-muted-foreground">View installed R packages and versions</p>
       </div>
       <div className="space-y-4 mt-4">
         <p>
-          This list includes only the packages installed in the R library exposed to the runner,
-          excluding for instance those installed on the runner itself.
+          This list includes only the packages installed in the R library exposed to the runner, excluding for instance
+          those installed on the runner itself.
         </p>
         <span className="flex gap-1 items-center">
           <Library className="small-icon text-muted-foreground" />
