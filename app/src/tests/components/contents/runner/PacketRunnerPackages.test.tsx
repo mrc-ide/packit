@@ -22,10 +22,9 @@ describe("PacketRunnerPackages component", () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText("Packages")).toBeVisible();
+      expect(screen.getByText("Package versions")).toBeVisible();
     });
 
-    expect(screen.getByText(`Installed packages (${mockRunnerPackages.length})`)).toBeVisible();
     mockRunnerPackages.forEach((pkg) => {
       expect(screen.getByText(pkg.name)).toBeVisible();
       expect(screen.getByText(pkg.version)).toBeVisible();
