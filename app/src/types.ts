@@ -77,15 +77,13 @@ interface Platform {
   system: string;
 }
 
-interface PacketPackage {
-  package: string;
-  version: string;
-  attached: boolean;
-}
-
 interface Session {
   platform: Platform;
-  packages: PacketPackage[];
+  packages: {
+    package: string;
+    version: string;
+    attached: boolean;
+  }[];
 }
 
 export interface Custom {
