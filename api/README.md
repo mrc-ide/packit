@@ -10,7 +10,7 @@ This API is built with [Spring boot framework](https://spring.io)
 ## Run dependencies
 
 Before you can start packit you need to run `./scripts/run-dependencies` from the project root
-to start database and `outpack_server` instances.
+to start database, `orderly.runner` server and worker, and `outpack_server` instances.
 
 ## Starting App
 

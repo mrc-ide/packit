@@ -10,11 +10,24 @@ import { BrandingProvider } from "@components/providers/BrandingProvider";
 import { expectThemeClass, handleRequestWithEnabledThemes } from "../../testUtils";
 import { LocalStorageKeys } from "@lib/types/LocalStorageKeys";
 import { SWRConfig } from "swr";
+import { useGetRunnerEnabled } from "@components/header/hooks/useGetRunnerEnabled";
 
 const mockUseUser = vitest.spyOn(UserProvider, "useUser");
 
+vitest.mock("@components/header/hooks/useGetRunnerEnabled", () => ({
+  useGetRunnerEnabled: vitest.fn()
+}));
+
+const mockedUseGetRunnerEnabled = vitest.mocked(useGetRunnerEnabled);
+
 describe("header component", () => {
   const renderElement = () => {
+    mockedUseGetRunnerEnabled.mockReturnValue({
+      isRunnerEnabled: true,
+      isLoading: false,
+      error: undefined
+    });
+
     return render(
       <SWRConfig value={{ provider: () => new Map() }}>
         <MemoryRouter>

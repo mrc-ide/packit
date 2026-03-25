@@ -98,6 +98,20 @@ class RunnerControllerTest : IntegrationTest() {
 
     @Test
     @WithAuthenticatedUser(authorities = ["packet.run"])
+    fun `reports enabled status`() {
+        val res: ResponseEntity<JsonNode> = restTemplate.exchange(
+            "/runner/enabled",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        assertSuccess(res)
+
+        assertEquals(true, res.body!!.asBoolean())
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.run"])
     fun `can get orderly runner version`() {
         val res: ResponseEntity<OrderlyRunnerVersion> = restTemplate.exchange(
             "/runner/version",
@@ -334,6 +348,20 @@ class UnknownRepoRunnerControllerTest : IntegrationTest() {
 
 @TestPropertySource(properties = ["orderly.runner.enabled=false"])
 class DisabledRunnerControllerTest : IntegrationTest() {
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.run"])
+    fun `reports disabled status`() {
+        val res: ResponseEntity<JsonNode> = restTemplate.exchange(
+            "/runner/enabled",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+
+        assertSuccess(res)
+
+        assertEquals(false, res.body!!.asBoolean())
+    }
+
     @Test
     @WithAuthenticatedUser(authorities = ["packet.run"])
     fun `cannot get orderly runner version`() {
