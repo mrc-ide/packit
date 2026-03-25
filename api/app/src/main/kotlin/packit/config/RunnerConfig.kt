@@ -3,7 +3,7 @@ package packit.config
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.ConfigurationProperties
 
-// NB 'repository' here refers to a git repository.
+// 'Repository' here refers to a git repository, not a database repository.
 data class RunnerRepository(
     val url: String,
     val sshKey: String?
