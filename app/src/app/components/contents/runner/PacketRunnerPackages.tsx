@@ -1,5 +1,4 @@
 import { Library } from "lucide-react";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@components/Base/Accordion";
 import { useGetPackages } from "./hooks/useGetPackages";
 import { Skeleton } from "@components/Base/Skeleton";
 import { HttpStatus } from "@lib/types/HttpStatus";
@@ -23,30 +22,28 @@ export const PacketRunnerPackages = () => {
   return (
     <>
       <div>
-        <h2 className="text-2xl font-bold tracking-tight">Packages</h2>
-        <p className="text-muted-foreground">Manage R packages installed globally on the runner</p>
+        <h2 className="text-2xl font-bold tracking-tight">Package versions</h2>
+        <p className="text-muted-foreground">
+          View installed R packages and versions
+        </p>
       </div>
-      <div className="space-y-4 flex flex-col mt-4 items-start w-full">
-        <Accordion type="single" collapsible defaultValue="installed" className="w-full">
-          <AccordionItem value="installed">
-            <AccordionTrigger>
-              <span className="flex gap-1 items-center">
-                <Library className="small-icon text-muted-foreground" />
-                <h3>Installed packages ({packages.length})</h3>
-              </span>
-            </AccordionTrigger>
-            <AccordionContent>
-              <ul className="space-y-1 overflow-y-auto" style={{ maxHeight: "1000px" }}>
-                {packages.map((pkg, name) => (
-                  <li key={name}>
-                    <span className="font-semibold mr-2">{pkg.name}</span>
-                    <span className="text-muted-foreground">{pkg.version}</span>
-                  </li>
-                ))}
-              </ul>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+      <div className="space-y-4 mt-4">
+        <p>
+          This list includes only the packages installed in the R library exposed to the runner,
+          excluding for instance those installed on the runner itself.
+        </p>
+        <span className="flex gap-1 items-center">
+          <Library className="small-icon text-muted-foreground" />
+          <h3 className="text-lg">Installed packages</h3>
+        </span>
+        <ul className="space-y-1">
+          {packages.map((pkg, name) => (
+            <li key={name}>
+              <span className="font-semibold mr-2">{pkg.name}</span>
+              <span className="text-muted-foreground">{pkg.version}</span>
+            </li>
+          ))}
+        </ul>
       </div>
     </>
   );

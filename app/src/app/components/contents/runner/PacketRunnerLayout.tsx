@@ -17,7 +17,7 @@ const sidebarItems: SidebarItem[] = [
   },
   {
     to: "/runner/packages",
-    title: "Packages"
+    title: "Package versions"
   }
 ];
 
