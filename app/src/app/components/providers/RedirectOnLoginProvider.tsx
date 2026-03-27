@@ -1,6 +1,10 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 import { RedirectOnLoginProviderState } from "./types/UserTypes";
-import { getRequestedUrlFromLocalStorage, setRequestedUrlInLocalStorage } from "@/lib/storageManager";
+import {
+  getRequestedUrlFromLocalStorage,
+  removeRequestedUrlFromLocalStorage,
+  setRequestedUrlInLocalStorage
+} from "@/lib/storageManager";
 
 const RedirectOnLoginContext = createContext<RedirectOnLoginProviderState | undefined>(undefined);
 
@@ -26,7 +30,11 @@ export const RedirectOnLoginProvider = ({ children }: RedirectOnLoginProviderPro
     requestedUrl,
     setRequestedUrl(url: string | null) {
       setRequestedUrlState(url);
-      setRequestedUrlInLocalStorage(url);
+      if (url === null) {
+        removeRequestedUrlFromLocalStorage();
+      } else {
+        setRequestedUrlInLocalStorage(url);
+      }
     },
     loggingOut,
     setLoggingOut

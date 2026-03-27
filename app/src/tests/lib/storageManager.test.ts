@@ -6,6 +6,7 @@ import {
   getRunnerConfigFromSessionStorage,
   getThemeFromLocalStorage,
   getUserFromLocalStorage,
+  removeRequestedUrlFromLocalStorage,
   removeThemeFromLocalStorage,
   removeUserFromLocalStorage,
   setAuthConfigInLocalStorage,
@@ -62,7 +63,7 @@ describe("storageManager", () => {
     setRequestedUrlInLocalStorage(url);
     expect(getRequestedUrlFromLocalStorage()).toBe(url);
 
-    setRequestedUrlInLocalStorage(null);
+    removeRequestedUrlFromLocalStorage();
     expect(getRequestedUrlFromLocalStorage()).toBe(null);
     expect(localStorage.getItem(StorageKeys.REQUESTED_URL)).toBe(null);
   });

@@ -34,10 +34,9 @@ export const removeThemeFromLocalStorage = () => {
   localStorage.removeItem(StorageKeys.THEME);
 };
 export const getRequestedUrlFromLocalStorage = () => localStorage.getItem(StorageKeys.REQUESTED_URL);
-export const setRequestedUrlInLocalStorage = (url: string | null) => {
-  if (url === null) {
-    localStorage.removeItem(StorageKeys.REQUESTED_URL);
-  } else {
-    localStorage.setItem(StorageKeys.REQUESTED_URL, url);
-  }
+export const setRequestedUrlInLocalStorage = (url: string) => {
+  localStorage.setItem(StorageKeys.REQUESTED_URL, url);
+};
+export const removeRequestedUrlFromLocalStorage = () => {
+  localStorage.removeItem(StorageKeys.REQUESTED_URL);
 };
