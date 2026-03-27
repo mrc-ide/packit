@@ -12,7 +12,7 @@ export const useGetRunnerEnabled = (runnerEnabled: boolean | null) => {
   );
 
   return {
-    data,
+    isRunnerEnabled: data,
     isLoading,
     error
   };

@@ -11,8 +11,8 @@ import { UserProvider } from "@components/providers/UserProvider";
 import { UserState } from "@components/providers/types/UserTypes";
 
 const mockGetUserFromLocalStorage = vitest.fn((): null | UserState => null);
-vitest.mock("@lib/localStorageManager", async () => ({
-  ...(await vitest.importActual("@lib/localStorageManager")),
+vitest.mock("@lib/storageManager", async () => ({
+  ...(await vitest.importActual("@lib/storageManager")),
   getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
 }));
 

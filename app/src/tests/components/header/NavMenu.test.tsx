@@ -98,6 +98,19 @@ describe("NavMenu component", () => {
     navItemIsNotDisplayedOnLargeScreens("Runner");
     navItemIsDisplayedOnLargeScreens("manage-roles", "Admin");
   });
+
+  it("should not render Runner nav item while runner config is loading", () => {
+    mockedUseRunnerConfig.mockReturnValueOnce(null);
+
+    render(
+      <MemoryRouter>
+        <NavMenu authorities={["packet.run", "user.manage"]} />
+      </MemoryRouter>
+    );
+
+    navItemIsNotDisplayedOnLargeScreens("Runner");
+    navItemIsDisplayedOnLargeScreens("manage-roles", "Admin");
+  });
 });
 
 const navItemIsDisplayedOnLargeScreens = (to: string, title: string) => {

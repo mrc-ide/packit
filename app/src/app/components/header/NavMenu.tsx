@@ -14,10 +14,11 @@ interface NavMenuProps extends React.HTMLAttributes<HTMLElement> {
 }
 export const NavMenu = ({ className, authorities, ...props }: NavMenuProps) => {
   const isRunnerEnabled = useRunnerConfig();
+  const isLoading = isRunnerEnabled === null;
 
   const NavItems: { [key: string]: string } = {};
 
-  if (hasPacketRunPermission(authorities) && isRunnerEnabled) {
+  if (hasPacketRunPermission(authorities) && !isLoading && isRunnerEnabled) {
     NavItems.runner = "Runner";
   }
 

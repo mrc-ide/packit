@@ -1,6 +1,6 @@
 import { ReactNode, createContext, useContext, useEffect, useState } from "react";
-import { getRunnerConfigFromLocalStorage } from "@lib/localStorageManager";
-import { LocalStorageKeys } from "@lib/types/LocalStorageKeys";
+import { getRunnerConfigFromSessionStorage } from "@lib/storageManager";
+import { StorageKeys } from "@lib/types/StorageKeys";
 import { ErrorComponent } from "../contents/common/ErrorComponent";
 import { useGetRunnerEnabled } from "../header/hooks/useGetRunnerEnabled";
 
@@ -13,17 +13,17 @@ interface RunnerConfigProviderProps {
 }
 
 export const RunnerConfigProvider = ({ children }: RunnerConfigProviderProps) => {
-  const [runnerEnabled, setRunnerEnabled] = useState<boolean | null>(() => getRunnerConfigFromLocalStorage());
-  const { data, error } = useGetRunnerEnabled(runnerEnabled);
+  const [runnerEnabled, setRunnerEnabled] = useState<boolean | null>(() => getRunnerConfigFromSessionStorage());
+  const { isRunnerEnabled, isLoading, error } = useGetRunnerEnabled(runnerEnabled);
 
   useEffect(() => {
-    if (data !== undefined) {
-      setRunnerEnabled(data);
-      localStorage.setItem(LocalStorageKeys.RUNNER_CONFIG, JSON.stringify(data));
+    if (isRunnerEnabled !== undefined) {
+      setRunnerEnabled(isRunnerEnabled);
+      sessionStorage.setItem(StorageKeys.RUNNER_CONFIG, JSON.stringify(isRunnerEnabled));
     }
-  }, [data]);
+  }, [isRunnerEnabled]);
 
   if (error) return <ErrorComponent message="failed to load runner config" error={error} />;
 
-  return <RunnerConfigContext.Provider value={runnerEnabled}>{children}</RunnerConfigContext.Provider>;
+  return <RunnerConfigContext.Provider value={isLoading ? null : runnerEnabled}>{children}</RunnerConfigContext.Provider>;
 };

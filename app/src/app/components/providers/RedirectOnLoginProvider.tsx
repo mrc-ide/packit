@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 import { RedirectOnLoginProviderState } from "./types/UserTypes";
-import { LocalStorageKeys } from "@/lib/types/LocalStorageKeys";
+import { StorageKeys } from "@/lib/types/StorageKeys";
 
 const RedirectOnLoginContext = createContext<RedirectOnLoginProviderState | undefined>(undefined);
 
@@ -20,7 +20,7 @@ export const RedirectOnLoginProvider = ({ children }: RedirectOnLoginProviderPro
   // NB We use local storage to store requested url rather than SessionStorage as Chrome is unreliable at
   // maintaining session keys for lifetime of tab.
   const [requestedUrl, setRequestedUrlState] = useState<string | null>(() =>
-    localStorage.getItem(LocalStorageKeys.REQUESTED_URL)
+    localStorage.getItem(StorageKeys.REQUESTED_URL)
   );
   const [loggingOut, setLoggingOut] = useState<boolean>(false);
 
@@ -28,7 +28,7 @@ export const RedirectOnLoginProvider = ({ children }: RedirectOnLoginProviderPro
     requestedUrl,
     setRequestedUrl(url: string | null) {
       setRequestedUrlState(url);
-      const key = LocalStorageKeys.REQUESTED_URL;
+      const key = StorageKeys.REQUESTED_URL;
       url === null ? localStorage.removeItem(key) : localStorage.setItem(key, url);
     },
     loggingOut,
