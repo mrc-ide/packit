@@ -2,9 +2,9 @@ import useSWR from "swr";
 import appConfig from "@config/appConfig";
 import { fetcher } from "@lib/fetch";
 
-export const useGetRunnerEnabled = (shouldFetch = true) => {
+export const useGetRunnerEnabled = (runnerEnabled: boolean | null) => {
   const { data, error, isLoading } = useSWR<boolean>(
-    shouldFetch ? `${appConfig.apiUrl()}/runner/enabled` : null,
+    runnerEnabled === null ? `${appConfig.apiUrl()}/runner/enabled` : null,
     (url: string) => fetcher({ url }),
     {
       revalidateOnFocus: false
@@ -12,7 +12,7 @@ export const useGetRunnerEnabled = (shouldFetch = true) => {
   );
 
   return {
-    isRunnerEnabled: data === true,
+    data,
     isLoading,
     error
   };

@@ -10,3 +10,7 @@ export const getAuthConfigFromLocalStorage = (): AuthConfig | null => {
   const authConfig = localStorage.getItem(LocalStorageKeys.AUTH_CONFIG);
   return authConfig ? JSON.parse(authConfig) : null;
 };
+export const getRunnerConfigFromLocalStorage = (): boolean | null => {
+  const runnerConfig = localStorage.getItem(LocalStorageKeys.RUNNER_CONFIG);
+  return runnerConfig !== null ? JSON.parse(runnerConfig) : null;
+};

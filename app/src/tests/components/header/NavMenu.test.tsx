@@ -1,13 +1,13 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { NavMenu } from "@components/header/NavMenu";
-import { useGetRunnerEnabled } from "@components/header/hooks/useGetRunnerEnabled";
+import { useRunnerConfig } from "@components/providers/RunnerConfigProvider";
 import { MemoryRouter } from "react-router-dom";
 
-vitest.mock("@components/header/hooks/useGetRunnerEnabled", () => ({
-  useGetRunnerEnabled: vitest.fn()
+vitest.mock("@components/providers/RunnerConfigProvider", () => ({
+  useRunnerConfig: vitest.fn()
 }));
 
-const mockedUseGetRunnerEnabled = vitest.mocked(useGetRunnerEnabled);
+const mockedUseRunnerConfig = vitest.mocked(useRunnerConfig);
 
 describe("NavMenu component", () => {
   const userManageNavItems = {
@@ -16,11 +16,7 @@ describe("NavMenu component", () => {
   };
 
   beforeEach(() => {
-    mockedUseGetRunnerEnabled.mockReturnValue({
-      isRunnerEnabled: true,
-      isLoading: false,
-      error: undefined
-    });
+    mockedUseRunnerConfig.mockReturnValue(true);
   });
 
   it("should render all nav items when relevant permissions are present", () => {
@@ -91,11 +87,7 @@ describe("NavMenu component", () => {
   });
 
   it("should not render Runner nav item when runner is disabled", () => {
-    mockedUseGetRunnerEnabled.mockReturnValueOnce({
-      isRunnerEnabled: false,
-      isLoading: false,
-      error: undefined
-    });
+    mockedUseRunnerConfig.mockReturnValueOnce(false);
 
     render(
       <MemoryRouter>

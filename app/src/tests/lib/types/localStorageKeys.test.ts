@@ -12,6 +12,7 @@ describe("local storage keys", () => {
 
     expect(LocalStorageKeys).toStrictEqual({
       AUTH_CONFIG: `${ns}.authConfig`,
+      RUNNER_CONFIG: `${ns}.runnerConfig`,
       USER: `${ns}.user`,
       THEME: "ui-theme",
       REQUESTED_URL: `${ns}.requestedUrl`
@@ -25,6 +26,7 @@ describe("local storage keys", () => {
 
     expect(LocalStorageKeys).toStrictEqual({
       AUTH_CONFIG: "authConfig",
+      RUNNER_CONFIG: "runnerConfig",
       USER: "user",
       THEME: "ui-theme",
       REQUESTED_URL: "requestedUrl"

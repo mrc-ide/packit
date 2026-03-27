@@ -8,17 +8,16 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { Menu } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { Button, buttonVariants } from "../Base/Button";
-import { useGetRunnerEnabled } from "./hooks/useGetRunnerEnabled";
+import { useRunnerConfig } from "../providers/RunnerConfigProvider";
 interface NavMenuProps extends React.HTMLAttributes<HTMLElement> {
   authorities: string[];
 }
 export const NavMenu = ({ className, authorities, ...props }: NavMenuProps) => {
-  const canRunPackets = hasPacketRunPermission(authorities);
-  const { isRunnerEnabled, isLoading: isRunnerEnabledLoading } = useGetRunnerEnabled(canRunPackets);
+  const isRunnerEnabled = useRunnerConfig();
 
   const NavItems: { [key: string]: string } = {};
 
-  if (canRunPackets && !isRunnerEnabledLoading && isRunnerEnabled) {
+  if (hasPacketRunPermission(authorities) && isRunnerEnabled) {
     NavItems.runner = "Runner";
   }
 

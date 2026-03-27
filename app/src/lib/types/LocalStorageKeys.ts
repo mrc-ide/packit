@@ -7,6 +7,7 @@ const getLocalStorageKey = (key: string) => {
 
 export const LocalStorageKeys = {
   AUTH_CONFIG: getLocalStorageKey("authConfig"),
+  RUNNER_CONFIG: getLocalStorageKey("runnerConfig"),
   USER: getLocalStorageKey("user"),
   THEME: "ui-theme",
   REQUESTED_URL: getLocalStorageKey("requestedUrl")
