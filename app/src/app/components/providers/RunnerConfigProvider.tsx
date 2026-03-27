@@ -1,6 +1,5 @@
 import { ReactNode, createContext, useContext, useEffect, useState } from "react";
-import { getRunnerConfigFromSessionStorage } from "@lib/storageManager";
-import { StorageKeys } from "@lib/types/StorageKeys";
+import { getRunnerConfigFromSessionStorage, setRunnerConfigInSessionStorage } from "@lib/storageManager";
 import { ErrorComponent } from "../contents/common/ErrorComponent";
 import { useGetRunnerEnabled } from "../header/hooks/useGetRunnerEnabled";
 
@@ -19,7 +18,7 @@ export const RunnerConfigProvider = ({ children }: RunnerConfigProviderProps) =>
   useEffect(() => {
     if (isRunnerEnabled !== undefined) {
       setRunnerEnabled(isRunnerEnabled);
-      sessionStorage.setItem(StorageKeys.RUNNER_CONFIG, JSON.stringify(isRunnerEnabled));
+      setRunnerConfigInSessionStorage(isRunnerEnabled);
     }
   }, [isRunnerEnabled]);
 

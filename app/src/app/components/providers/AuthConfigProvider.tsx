@@ -1,6 +1,5 @@
 import { ReactNode, createContext, useContext, useEffect, useState } from "react";
-import { getAuthConfigFromLocalStorage } from "@lib/storageManager";
-import { StorageKeys } from "@lib/types/StorageKeys";
+import { getAuthConfigFromLocalStorage, setAuthConfigInLocalStorage } from "@lib/storageManager";
 import { ErrorComponent } from "../contents/common/ErrorComponent";
 import { useGetAuthConfig } from "./hooks/useGetAuthConfig";
 import { AuthConfig } from "./types/AuthConfigTypes";
@@ -20,7 +19,7 @@ export const AuthConfigProvider = ({ children }: AuthConfigProviderProps) => {
   useEffect(() => {
     if (data) {
       setAuthConfig(data);
-      localStorage.setItem(StorageKeys.AUTH_CONFIG, JSON.stringify(data));
+      setAuthConfigInLocalStorage(data);
     }
   }, [data]);
 

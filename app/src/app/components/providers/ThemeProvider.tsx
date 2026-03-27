@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { StorageKeys } from "@lib/types/StorageKeys";
+import { getThemeFromLocalStorage, setThemeInLocalStorage } from "@lib/storageManager";
 import { Theme, ThemeProviderProps, ThemeProviderState } from "./types/ThemeTypes";
 import { useGetBrandingConfig } from "./hooks/useGetBrandingConfig";
 import { ErrorComponent } from "../contents/common/ErrorComponent";
@@ -35,9 +35,7 @@ const getAvailableThemes = (isLoading: boolean, brandingConfig: BrandingConfigur
 export const ThemeProvider = ({ children, ...props }: ThemeProviderProps) => {
   const { brandingConfig, isLoading, error } = useGetBrandingConfig();
 
-  const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem(StorageKeys.THEME) as Theme) || DEFAULT_THEME
-  );
+  const [theme, setTheme] = useState<Theme>(() => (getThemeFromLocalStorage() as Theme) || DEFAULT_THEME);
 
   const availableThemes = getAvailableThemes(isLoading, brandingConfig);
 
@@ -70,7 +68,7 @@ export const ThemeProvider = ({ children, ...props }: ThemeProviderProps) => {
     theme,
     setTheme: (newTheme: Theme) => {
       setTheme(newTheme);
-      localStorage.setItem(StorageKeys.THEME, newTheme);
+      setThemeInLocalStorage(newTheme);
     }
   };
 
