@@ -24,5 +24,7 @@ export const RunnerConfigProvider = ({ children }: RunnerConfigProviderProps) =>
 
   if (error) return <ErrorComponent message="failed to load runner config" error={error} />;
 
-  return <RunnerConfigContext.Provider value={isLoading ? null : runnerEnabled}>{children}</RunnerConfigContext.Provider>;
+  return (
+    <RunnerConfigContext.Provider value={isLoading ? null : runnerEnabled}>{children}</RunnerConfigContext.Provider>
+  );
 };

@@ -61,4 +61,3 @@ describe("packet runner component", () => {
     expect(screen.getByText(/Unauthorized/)).toBeVisible();
   });
 });
-
