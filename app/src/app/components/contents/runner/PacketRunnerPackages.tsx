@@ -27,8 +27,7 @@ export const PacketRunnerPackages = () => {
       </div>
       <div className="space-y-4 mt-4">
         <p>
-          This list includes only the packages installed in the R library exposed to the runner, excluding for instance
-          those installed on the runner itself.
+          This list includes only the additional packages installed in the runner's R library for use by reports, and excludes some standard packages. 
         </p>
         <span className="flex gap-1 items-center">
           <Library className="small-icon text-muted-foreground" />
