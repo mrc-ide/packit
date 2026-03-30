@@ -33,11 +33,9 @@ describe("useGetRunnerEnabled", () => {
 
     render(<TestComponent runnerEnabled={null} />);
 
-    expect(mockedUseSWR).toHaveBeenCalledWith(
-      `${appConfig.apiUrl()}/runner/enabled`,
-      expect.any(Function),
-      { revalidateOnFocus: false }
-    );
+    expect(mockedUseSWR).toHaveBeenCalledWith(`${appConfig.apiUrl()}/runner/enabled`, expect.any(Function), {
+      revalidateOnFocus: false
+    });
     expect(screen.getByTestId("is-runner-enabled")).toHaveTextContent("true");
   });
 
@@ -58,7 +56,7 @@ describe("useGetRunnerEnabled", () => {
     mockedUseSWR.mockReturnValue({
       data: false,
       error: undefined,
-      isLoading: false,
+      isLoading: false
     } as ReturnType<typeof useSWR<boolean>>);
 
     render(<TestComponent runnerEnabled={false} />);
