@@ -62,7 +62,7 @@ jobs:
       - name: Run dependencies and API
         run: ./scripts/run-dependencies && ./api/scripts/run basic && ./api/scripts/smoke-test
         env:
-          PACKIT_HOST_R_LIBRARY_PATH: "./fixtures/R"
+          PACKIT_HOST_R_LIBRARY_PATH: "./scripts/runnerDemoLib"
       - name: Upload coverage to codecov
         uses: codecov/codecov-action@v3
         with:

@@ -19,7 +19,7 @@ API_BUILD_SKIP=0
 CREATE_PINS_SKIP=0
 ADD_SUPER_USER=0
 PREAUTH=0
-PACKIT_HOST_R_LIBRARY_PATH=$HERE/../fixtures/R
+PACKIT_HOST_R_LIBRARY_PATH=$HERE/runnerDemoLib
 
 handle_options() {
   while [ $# -gt 0 ]; do

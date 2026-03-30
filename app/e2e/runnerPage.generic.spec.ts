@@ -14,7 +14,7 @@ test.describe("Runner page", () => {
   test.describe("Packages tab", { tag: TAG_DEMO_PACKETS }, () => {
     // Expect the example R package to be listed as installed; this package will not be present on
     // demo or prod environments, nor if PACKIT_HOST_R_LIBRARY_PATH was set to anything other than
-    // the `./fixtures/R` path when running dependencies.
+    // the `./scripts/runnerDemoLib` path when running dependencies.
     // See api/README.md for more details.
     test("can see list of installed packages", async ({ page }) => {
       await page.getByRole("link", { name: "Package versions" }).click();
