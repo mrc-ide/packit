@@ -10,13 +10,11 @@ vitest.mock("swr", () => ({
 const mockedUseSWR = vitest.mocked(useSWR);
 
 const TestComponent = ({ runnerEnabled }: { runnerEnabled: boolean | null }) => {
-  const { isRunnerEnabled, isLoading, error } = useGetRunnerEnabled(runnerEnabled);
+  const { isRunnerEnabled } = useGetRunnerEnabled(runnerEnabled);
 
   return (
     <>
       <div data-testid="is-runner-enabled">{`${isRunnerEnabled}`}</div>
-      <div data-testid="is-loading">{`${isLoading}`}</div>
-      <div data-testid="has-error">{`${Boolean(error)}`}</div>
     </>
   );
 };
@@ -41,8 +39,6 @@ describe("useGetRunnerEnabled", () => {
       { revalidateOnFocus: false }
     );
     expect(screen.getByTestId("is-runner-enabled")).toHaveTextContent("true");
-    expect(screen.getByTestId("is-loading")).toHaveTextContent("false");
-    expect(screen.getByTestId("has-error")).toHaveTextContent("false");
   });
 
   it("does not fetch runner enabled config when runnerEnabled is true", () => {
@@ -59,18 +55,15 @@ describe("useGetRunnerEnabled", () => {
   });
 
   it("does not fetch runner enabled config when runnerEnabled is false", () => {
-    const error = new Error("test");
     mockedUseSWR.mockReturnValue({
       data: false,
-      error,
-      isLoading: true
+      error: undefined,
+      isLoading: false,
     } as ReturnType<typeof useSWR<boolean>>);
 
     render(<TestComponent runnerEnabled={false} />);
 
     expect(mockedUseSWR).toHaveBeenCalledWith(null, expect.any(Function), { revalidateOnFocus: false });
     expect(screen.getByTestId("is-runner-enabled")).toHaveTextContent("false");
-    expect(screen.getByTestId("is-loading")).toHaveTextContent("true");
-    expect(screen.getByTestId("has-error")).toHaveTextContent("true");
   });
 });
