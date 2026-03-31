@@ -135,4 +135,8 @@ if that is the case. It will also warn if such tests are being run on dev, as th
 if `@demoPackets` tests are being run on non-localhost as this may explain any test failures. 
 
 By custom, we suffix generic tests with `.generic.spec.ts` and demo datasets tests with `.demo.spec.ts`, but this 
-naming convention is not interpreted by any test matchers or fixtures. 
+naming convention is not interpreted by any test matchers or fixtures.
+
+Another tag exists, `@demoRLibrary`, to denote tests that depend on the env var `PACKIT_HOST_R_LIBRARY_PATH` being
+set so as to mount the test R library (`../scripts/runnerDemoLib`) to `/library` on the orderly runner. These should pass
+locally, and not on any deployed instance.
