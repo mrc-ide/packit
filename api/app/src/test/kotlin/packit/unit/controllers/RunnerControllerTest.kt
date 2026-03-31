@@ -13,8 +13,8 @@ import kotlin.test.assertEquals
 class RunnerControllerTest {
     private val runnerService = mock<RunnerService> {
         on { getPackages() } doReturn listOf(
-            RunnerPackageDto("package1", "1.0.0"),
-            RunnerPackageDto("package2", "2.0.0"),
+            RunnerPackageDto("package1", "1.0.0", "/library"),
+            RunnerPackageDto("package2", "2.0.0", "/usr/lib/R/library"),
         )
     }
 
@@ -33,5 +33,8 @@ class RunnerControllerTest {
         assertThat(
             listOf(responseBody?.get(0)?.version, responseBody?.get(1)?.version)
         ).containsExactly("1.0.0", "2.0.0")
+        assertThat(
+            listOf(responseBody?.get(0)?.location, responseBody?.get(1)?.location)
+        ).containsExactly("/library", "/usr/lib/R/library")
     }
 }

@@ -51,7 +51,7 @@ class OrderlyRunnerClientTest(
         val result = sut.getPackages()
 
         assertIs<List<RunnerPackageDto>>(result)
-        assertEquals(listOf(RunnerPackageDto(name = "minimalRPackage", version = "0.0.1")), result)
+        assertEquals(listOf(RunnerPackageDto(name = "minimalRPackage", version = "0.0.1", location = "/library")), result)
     }
 
     @Test
