@@ -97,8 +97,20 @@ class RunnerControllerTest : IntegrationTest() {
     }
 
     @Test
-    @WithAuthenticatedUser(authorities = ["packet.run"])
-    fun `reports enabled status`() {
+    fun `reports enabled status when not logged in`() {
+        val res: ResponseEntity<JsonNode> = restTemplate.exchange(
+            "/runner/enabled",
+            HttpMethod.GET,
+        )
+
+        assertSuccess(res)
+
+        assertEquals(true, res.body!!.asBoolean())
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = [])
+    fun `reports enabled status when no packet run permision`() {
         val res: ResponseEntity<JsonNode> = restTemplate.exchange(
             "/runner/enabled",
             HttpMethod.GET,
@@ -349,8 +361,20 @@ class UnknownRepoRunnerControllerTest : IntegrationTest() {
 @TestPropertySource(properties = ["orderly.runner.enabled=false"])
 class DisabledRunnerControllerTest : IntegrationTest() {
     @Test
-    @WithAuthenticatedUser(authorities = ["packet.run"])
-    fun `reports disabled status`() {
+    fun `reports disabled status when not logged in`() {
+        val res: ResponseEntity<JsonNode> = restTemplate.exchange(
+            "/runner/enabled",
+            HttpMethod.GET,
+        )
+
+        assertSuccess(res)
+
+        assertEquals(false, res.body!!.asBoolean())
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = [])
+    fun `reports disabled status when no packet run permission`() {
         val res: ResponseEntity<JsonNode> = restTemplate.exchange(
             "/runner/enabled",
             HttpMethod.GET,
