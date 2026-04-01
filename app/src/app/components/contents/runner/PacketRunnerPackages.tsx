@@ -36,8 +36,8 @@ export const PacketRunnerPackages = () => {
             </AccordionTrigger>
             <AccordionContent>
               <p>
-                This list includes only the additional packages installed in the runner&rsquo;s R library
-                for use by reports.
+                This list includes only the additional packages installed in the runner&rsquo;s R library for use by
+                reports.
               </p>
               <ul className="space-y-1 mt-4 overflow-y-auto" style={{ maxHeight: "1000px" }}>
                 {sharedLibraryPackages.map((pkg, name) => (
@@ -54,11 +54,10 @@ export const PacketRunnerPackages = () => {
               <h3>Other packages</h3>
             </AccordionTrigger>
             <p>
-              This list includes packages that are part of the base R installation, or which are available
-              in the runner environment without having been specifically installed in the runner&rsquo;s
-              R library. They are included here for reference. It is recommended to specifically install
-              any packages your reports depend on in the runner&rsquo;s R library to ensure consistent
-              behavior across different environments.
+              This list includes packages that are part of the base R installation, or which are available in the runner
+              environment without having been specifically installed in the runner&rsquo;s R library. They are included
+              here for reference. It is recommended to specifically install any packages your reports depend on in the
+              runner&rsquo;s R library to ensure consistent behavior across different environments.
             </p>
             <AccordionContent>
               <ul className="space-y-1 mt-4 overflow-y-auto" style={{ maxHeight: "1000px" }}>
