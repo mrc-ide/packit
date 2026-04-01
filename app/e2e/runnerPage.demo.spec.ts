@@ -1,5 +1,5 @@
 import { Locator } from "@playwright/test";
-import { test, expect, TAG_DEMO_PACKETS } from "./tagCheckFixture";
+import { test, expect, TAG_DEMO_R_LIBRARY } from "./tagCheckFixture";
 import { getContentLocator } from "./utils";
 
 test.describe("Runner page", () => {
@@ -11,7 +11,7 @@ test.describe("Runner page", () => {
     await page.getByRole("link", { name: "Runner" }).click();
   });
 
-  test.describe("Packages tab", { tag: TAG_DEMO_PACKETS }, () => {
+  test.describe("Packages tab", { tag: TAG_DEMO_R_LIBRARY }, () => {
     // Expect the example R package to be listed as installed; this package will not be present on
     // demo or prod environments, nor if PACKIT_HOST_R_LIBRARY_PATH was set to anything other than
     // the `./scripts/runnerDemoLib` path when running dependencies.
