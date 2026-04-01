@@ -7,3 +7,4 @@ app/playwright-report
 testDeviceFlow/node_modules
 testDeviceFlow/index.js
 demos/orderly/draft
+.github/logs/
