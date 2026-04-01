@@ -1,5 +1,6 @@
 package packit.integration.services
 
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
@@ -14,7 +15,6 @@ import packit.model.dto.RunnerSubmitRunInfo
 import packit.service.OrderlyRunnerClient
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
-import org.assertj.core.api.Assertions.assertThat
 
 class OrderlyRunnerClientTest(
     @Value("\${orderly.runner.url}")
@@ -52,7 +52,9 @@ class OrderlyRunnerClientTest(
         val result = sut.getPackages()
 
         assertIs<List<RunnerPackageDto>>(result)
-        assertThat(result).contains(RunnerPackageDto(name = "minimalRPackage", version = "0.0.1", location = "/library"))
+        assertThat(
+            result
+        ).contains(RunnerPackageDto(name = "minimalRPackage", version = "0.0.1", location = "/library"))
     }
 
     @Test
