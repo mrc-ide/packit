@@ -70,23 +70,6 @@ class PermissionCheckerTest {
 
     @Nested
     inner class ManagePacketsPermissions {
-
-        @Test
-        fun canManageAllPacketsWithUserManage() {
-            assertTrue(permissionChecker.canManageAllPackets(listOf("user.manage")))
-        }
-
-        @Test
-        fun canManageAllPacketsWithGlobalPacketManage() {
-            assertTrue(permissionChecker.canManageAllPackets(listOf("packet.manage")))
-        }
-
-        @Test
-        fun cannotManageAllPacketsWithoutProperPermissions() {
-            assertFalse(permissionChecker.canManageAllPackets(listOf("other.permission")))
-            assertFalse(permissionChecker.canManageAllPackets(emptyList()))
-        }
-
         @Test
         fun hasPacketManagePermissionForGroup() {
             assertTrue(
@@ -105,7 +88,7 @@ class PermissionCheckerTest {
 
         @Test
         fun canManagePacketGroupWithGlobalPermission() {
-            assertTrue(permissionChecker.canManagePacketGroup(listOf("user.manage"), "group1"))
+            assertFalse(permissionChecker.canManagePacketGroup(listOf("user.manage"), "group1"))
             assertTrue(permissionChecker.canManagePacketGroup(listOf("packet.manage"), "group1"))
         }
 
@@ -139,7 +122,7 @@ class PermissionCheckerTest {
 
         @Test
         fun canManagePacketWithGlobalPermission() {
-            assertTrue(permissionChecker.canManagePacket(listOf("user.manage"), "group1", "packet1"))
+            assertFalse(permissionChecker.canManagePacket(listOf("user.manage"), "group1", "packet1"))
             assertTrue(permissionChecker.canManagePacket(listOf("packet.manage"), "group1", "packet1"))
         }
 
@@ -193,8 +176,8 @@ class PermissionCheckerTest {
     inner class ReadPacketsPermissions {
 
         @Test
-        fun canReadAllPacketsWithUserManage() {
-            assertTrue(permissionChecker.canReadAllPackets(listOf("user.manage")))
+        fun cannotReadAllPacketsWithUserManage() {
+            assertFalse(permissionChecker.canReadAllPackets(listOf("user.manage")))
         }
 
         @Test
@@ -225,7 +208,7 @@ class PermissionCheckerTest {
 
         @Test
         fun canReadPacketGroupWithGlobalPermission() {
-            assertTrue(permissionChecker.canReadPacketGroup(listOf("user.manage"), "group1"))
+            assertFalse(permissionChecker.canReadPacketGroup(listOf("user.manage"), "group1"))
             assertTrue(permissionChecker.canReadPacketGroup(listOf("packet.manage"), "group1"))
             assertTrue(permissionChecker.canReadPacketGroup(listOf("packet.read"), "group1"))
         }
@@ -292,7 +275,7 @@ class PermissionCheckerTest {
 
         @Test
         fun canReadPacketWithGlobalPermission() {
-            assertTrue(permissionChecker.canReadPacket(listOf("user.manage"), "group1", "packet1"))
+            assertFalse(permissionChecker.canReadPacket(listOf("user.manage"), "group1", "packet1"))
             assertTrue(permissionChecker.canReadPacket(listOf("packet.manage"), "group1", "packet1"))
             assertTrue(permissionChecker.canReadPacket(listOf("packet.read"), "group1", "packet1"))
         }

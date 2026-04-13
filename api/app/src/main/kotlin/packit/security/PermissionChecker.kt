@@ -10,7 +10,6 @@ interface PermissionChecker {
     fun hasGlobalReadPermission(authorities: List<String> = emptyList()): Boolean
 
     /** Manage packets */
-    fun canManageAllPackets(authorities: List<String> = emptyList()): Boolean
     fun hasPacketManagePermissionForGroup(authorities: List<String> = emptyList(), packetGroupName: String): Boolean
     fun canManagePacketGroup(authorities: List<String> = emptyList(), packetGroupName: String): Boolean
     fun hasPacketManagePermissionForPacket(
@@ -50,9 +49,6 @@ class BasePermissionChecker(private val permissionService: PermissionService) : 
         authorities.contains("packet.read")
 
     /** Manage packets */
-    override fun canManageAllPackets(authorities: List<String>): Boolean =
-        hasUserManagePermission(authorities) || hasGlobalPacketManagePermission(authorities)
-
     override fun hasPacketManagePermissionForGroup(
         authorities: List<String>,
         packetGroupName: String
@@ -60,7 +56,7 @@ class BasePermissionChecker(private val permissionService: PermissionService) : 
         authorities.contains(permissionService.buildScopedPermission("packet.manage", packetGroupName))
 
     override fun canManagePacketGroup(authorities: List<String>, packetGroupName: String): Boolean =
-        canManageAllPackets(authorities) || hasPacketManagePermissionForGroup(authorities, packetGroupName)
+        hasGlobalPacketManagePermission(authorities) || hasPacketManagePermissionForGroup(authorities, packetGroupName)
 
     override fun hasPacketManagePermissionForPacket(
         authorities: List<String>,
@@ -79,7 +75,7 @@ class BasePermissionChecker(private val permissionService: PermissionService) : 
 
     /** Read packets */
     override fun canReadAllPackets(authorities: List<String>): Boolean =
-        canManageAllPackets(authorities) || hasGlobalReadPermission(authorities)
+        hasGlobalPacketManagePermission(authorities) || hasGlobalReadPermission(authorities)
 
     override fun hasPacketReadPermissionForGroup(authorities: List<String>, packetGroupName: String): Boolean =
         authorities.contains(permissionService.buildScopedPermission("packet.read", packetGroupName))

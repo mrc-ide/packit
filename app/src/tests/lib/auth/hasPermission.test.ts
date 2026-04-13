@@ -1,5 +1,4 @@
 import {
-  canManageAllPackets,
   canManagePacket,
   canManagePacketGroup,
   hasGlobalPacketManagePermission,
@@ -65,20 +64,6 @@ describe("hasPermission functions", () => {
   });
 
   describe("Packet management permission functions", () => {
-    describe("canManageAllPackets", () => {
-      it("returns true when has 'user.manage' authority", () => {
-        expect(canManageAllPackets(["user.manage"])).toBe(true);
-      });
-
-      it("returns true when has 'packet.manage' authority", () => {
-        expect(canManageAllPackets(["packet.manage"])).toBe(true);
-      });
-
-      it("returns false when has neither 'user.manage' nor 'packet.manage' authorities", () => {
-        expect(canManageAllPackets(["packet.manage:packetGroup:groupA", "packet.run"])).toBe(false);
-      });
-    });
-
     describe("hasPacketManagePermissionForGroup", () => {
       it("returns true when has scoped manage permission for the group", () => {
         expect(hasPacketManagePermissionForGroup(["packet.manage:packetGroup:groupA"], "groupA")).toBe(true);
@@ -98,8 +83,8 @@ describe("hasPermission functions", () => {
         expect(canManagePacketGroup(["packet.manage"], "groupA")).toBe(true);
       });
 
-      it("returns true when has manage permission", () => {
-        expect(canManagePacketGroup(["user.manage"], "groupA")).toBe(true);
+      it("returns false when only has global user manage permission", () => {
+        expect(canManagePacketGroup(["user.manage"], "groupA")).toBe(false);
       });
 
       it("returns true when has scoped manage permission for the group", () => {
