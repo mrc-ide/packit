@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { ThemeProvider, useTheme } from "@components/providers/ThemeProvider";
-import { LocalStorageKeys } from "@lib/types/LocalStorageKeys";
+import { StorageKeys } from "@lib/types/StorageKeys";
 import { SWRConfig } from "swr";
 import { Theme } from "@components/providers/types/ThemeTypes";
 import { expectThemeClass, handleRequestWithEnabledThemes } from "../../testUtils";
@@ -37,7 +37,7 @@ describe("ThemeProvider", () => {
 
   afterEach(() => {
     window.matchMedia = originalMatchMedia;
-    localStorage.removeItem(LocalStorageKeys.THEME);
+    localStorage.removeItem(StorageKeys.THEME);
   });
 
   it("informs component which themes are available to be applied (both)", async () => {
@@ -75,7 +75,7 @@ describe("ThemeProvider", () => {
   });
 
   it("sets the theme to dark when the local storage theme setting is dark", async () => {
-    localStorage.setItem(LocalStorageKeys.THEME, "dark");
+    localStorage.setItem(StorageKeys.THEME, "dark");
 
     renderTestElement();
 
@@ -83,7 +83,7 @@ describe("ThemeProvider", () => {
   });
 
   it("sets the theme to light when the local storage theme setting is light", async () => {
-    localStorage.setItem(LocalStorageKeys.THEME, "light");
+    localStorage.setItem(StorageKeys.THEME, "light");
 
     renderTestElement();
 
@@ -93,7 +93,7 @@ describe("ThemeProvider", () => {
   it("overrides the local storage theme when that theme is not available to be applied", async () => {
     handleRequestWithEnabledThemes(["dark"]);
 
-    localStorage.setItem(LocalStorageKeys.THEME, "light");
+    localStorage.setItem(StorageKeys.THEME, "light");
 
     renderTestElement();
 

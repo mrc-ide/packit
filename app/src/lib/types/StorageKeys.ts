@@ -5,8 +5,9 @@ const getLocalStorageKey = (key: string) => {
   return ns ? `${ns}.${key}` : key;
 };
 
-export const LocalStorageKeys = {
+export const StorageKeys = {
   AUTH_CONFIG: getLocalStorageKey("authConfig"),
+  RUNNER_CONFIG: getLocalStorageKey("runnerConfig"),
   USER: getLocalStorageKey("user"),
   THEME: "ui-theme",
   REQUESTED_URL: getLocalStorageKey("requestedUrl")

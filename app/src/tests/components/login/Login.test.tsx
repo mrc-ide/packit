@@ -16,8 +16,8 @@ vitest.mock("react-router-dom", async () => ({
 }));
 
 const mockGetUserFromLocalStorage = vitest.fn((): null | UserState => null);
-vitest.mock("@lib/localStorageManager", async () => ({
-  ...((await vitest.importActual("@lib/localStorageManager")) as any),
+vitest.mock("@lib/storageManager", async () => ({
+  ...((await vitest.importActual("@lib/storageManager")) as any),
   getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
 }));
 

@@ -2,7 +2,7 @@ import type { UserState } from "@components/providers/types/UserTypes";
 import { getBearerToken } from "@lib/auth/getBearerToken";
 
 const mockGetUserFromLocalStorage = vitest.fn((): null | UserState => null);
-vitest.mock("@lib/localStorageManager", () => ({
+vitest.mock("@lib/storageManager", () => ({
   getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
 }));
 vitest.unmock("@lib/auth/getBearerToken");

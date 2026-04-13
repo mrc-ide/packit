@@ -4,6 +4,7 @@ import { SidebarItem } from "@lib/types/SidebarItem";
 import { useUser } from "../../providers/UserProvider";
 import { Sidebar } from "../common/Sidebar";
 import { Unauthorized } from "../common/Unauthorized";
+import { useRunnerConfig } from "../../providers/RunnerConfigProvider";
 
 const sidebarItems: SidebarItem[] = [
   {
@@ -18,7 +19,9 @@ const sidebarItems: SidebarItem[] = [
 
 export const PacketRunnerLayout = () => {
   const { authorities } = useUser();
-  if (!hasPacketRunPermission(authorities)) {
+  const isRunnerEnabled = useRunnerConfig();
+
+  if (!hasPacketRunPermission(authorities) || isRunnerEnabled === false) {
     return <Unauthorized />;
   }
   return (

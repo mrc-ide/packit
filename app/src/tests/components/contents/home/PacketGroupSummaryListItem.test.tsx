@@ -6,7 +6,7 @@ import * as UserProvider from "@components/providers/UserProvider";
 import { mockPacketGroupSummaries, mockUserState } from "@/tests//mocks";
 
 const mockGetUserFromLocalStorage = vitest.fn((): null | UserState => null);
-vitest.mock("@lib/localStorageManager", () => ({
+vitest.mock("@lib/storageManager", () => ({
   getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
 }));
 const mockUseUser = vitest.spyOn(UserProvider, "useUser");

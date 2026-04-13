@@ -123,6 +123,7 @@ class WebSecurityConfig(
                         .requestMatchers("/auth/**", "/oauth2/**").permitAll()
                         .requestMatchers("/deviceAuth", "/deviceAuth/token").permitAll()
                         .requestMatchers("/branding/config").permitAll()
+                        .requestMatchers("/runner/enabled").permitAll()
                         .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
                         .anyRequest().authenticated()
                 }

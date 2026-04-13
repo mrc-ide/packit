@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { AuthConfigProvider } from "@components/providers/AuthConfigProvider";
+import { RunnerConfigProvider } from "@components/providers/RunnerConfigProvider";
 import { ThemeProvider } from "@components/providers/ThemeProvider";
 import { UserProvider } from "@components/providers/UserProvider";
 import { RedirectOnLoginProvider } from "@components/providers/RedirectOnLoginProvider";
@@ -16,14 +17,16 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <BrandingProvider>
       <ThemeProvider>
         <AuthConfigProvider>
-          <UserProvider>
-            <RedirectOnLoginProvider>
-              <BrowserRouter basename={import.meta.env.BASE_URL}>
-                <Router />
-                <Toaster />
-              </BrowserRouter>
-            </RedirectOnLoginProvider>
-          </UserProvider>
+          <RunnerConfigProvider>
+            <UserProvider>
+              <RedirectOnLoginProvider>
+                <BrowserRouter basename={import.meta.env.BASE_URL}>
+                  <Router />
+                  <Toaster />
+                </BrowserRouter>
+              </RedirectOnLoginProvider>
+            </UserProvider>
+          </RunnerConfigProvider>
         </AuthConfigProvider>
       </ThemeProvider>
     </BrandingProvider>

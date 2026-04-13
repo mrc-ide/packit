@@ -8,13 +8,22 @@ import { mockUserProviderState } from "../../mocks";
 import { Header } from "@components/header";
 import { BrandingProvider } from "@components/providers/BrandingProvider";
 import { expectThemeClass, handleRequestWithEnabledThemes } from "../../testUtils";
-import { LocalStorageKeys } from "@lib/types/LocalStorageKeys";
+import { StorageKeys } from "@lib/types/StorageKeys";
 import { SWRConfig } from "swr";
+import { useRunnerConfig } from "@components/providers/RunnerConfigProvider";
 
 const mockUseUser = vitest.spyOn(UserProvider, "useUser");
 
+vitest.mock("@components/providers/RunnerConfigProvider", () => ({
+  useRunnerConfig: vitest.fn()
+}));
+
+const mockedUseRunnerConfig = vitest.mocked(useRunnerConfig);
+
 describe("header component", () => {
   const renderElement = () => {
+    mockedUseRunnerConfig.mockReturnValue(true);
+
     return render(
       <SWRConfig value={{ provider: () => new Map() }}>
         <MemoryRouter>
@@ -31,7 +40,7 @@ describe("header component", () => {
   };
 
   afterEach(() => {
-    localStorage.removeItem(LocalStorageKeys.THEME);
+    localStorage.removeItem(StorageKeys.THEME);
   });
 
   it("can render user related items when authenticated", async () => {
@@ -56,7 +65,7 @@ describe("header component", () => {
     await waitFor(() => {
       expect(screen.getByRole("button", { name: "theme-light" })).toBeInTheDocument();
       expectThemeClass("dark");
-      expect(localStorage.getItem(LocalStorageKeys.THEME)).toBe("dark");
+      expect(localStorage.getItem(StorageKeys.THEME)).toBe("dark");
     });
 
     const lightThemeButton = screen.getByRole("button", { name: "theme-light" });
@@ -66,7 +75,7 @@ describe("header component", () => {
     await waitFor(() => {
       expect(screen.getByRole("button", { name: "theme-dark" })).toBeInTheDocument();
       expectThemeClass("light");
-      expect(localStorage.getItem(LocalStorageKeys.THEME)).toBe("light");
+      expect(localStorage.getItem(StorageKeys.THEME)).toBe("light");
     });
   });
 
