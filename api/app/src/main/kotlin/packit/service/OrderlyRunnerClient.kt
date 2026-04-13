@@ -6,6 +6,7 @@ import packit.model.dto.*
 
 interface OrderlyRunner {
     fun getVersion(): OrderlyRunnerVersion
+    fun getPackages(): List<RunnerPackageDto>
     fun gitFetch(repo: RunnerRepository)
     fun getBranches(repo: RunnerRepository): GitBranches
     fun getParameters(repo: RunnerRepository, ref: String, packetGroupName: String): List<Parameter>
@@ -18,6 +19,10 @@ interface OrderlyRunner {
 class OrderlyRunnerClient(val config: RunnerConfig) : OrderlyRunner {
     override fun getVersion(): OrderlyRunnerVersion {
         return GenericClient.get(constructUrl("/"))
+    }
+
+    override fun getPackages(): List<RunnerPackageDto> {
+        return GenericClient.get(constructUrl("/library/list"))
     }
 
     override fun gitFetch(repo: RunnerRepository) {

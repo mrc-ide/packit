@@ -3,6 +3,7 @@ import appConfig from "../../config/appConfig";
 import {
   mockCompleteRunInfo,
   mockGitBranches,
+  mockRunnerPackages,
   mockPacketGroupsParameters,
   mockRunnerPacketGroups,
   mockTaskId,
@@ -32,5 +33,8 @@ export const runnerHandlers = [
   }),
   rest.get(`${basicRunnerUri}/packet/:packetId/task`, (req, res, ctx) => {
     return res(ctx.json({ runTaskId: mockTaskId }));
+  }),
+  rest.get(`${basicRunnerUri}/packages`, (req, res, ctx) => {
+    return res(ctx.json(mockRunnerPackages));
   })
 ];

@@ -16,6 +16,7 @@ import packit.repository.RunInfoRepository
 interface RunnerService {
     fun getEnabled(): Boolean = true
     fun getVersion(): OrderlyRunnerVersion
+    fun getPackages(): List<RunnerPackageDto>
     fun gitFetch()
     fun getBranches(): GitBranches
     fun getParameters(ref: String, packetGroupName: String): List<Parameter>
@@ -35,6 +36,10 @@ class BaseRunnerService(
 ) : RunnerService {
     override fun getVersion(): OrderlyRunnerVersion {
         return orderlyRunnerClient.getVersion()
+    }
+
+    override fun getPackages(): List<RunnerPackageDto> {
+        return orderlyRunnerClient.getPackages()
     }
 
     override fun gitFetch() {
@@ -118,6 +123,7 @@ class BaseRunnerService(
         runInfo.status = Status.CANCELLED.toString()
         runInfoRepository.save(runInfo)
     }
+
     override fun getTaskIdByPacketId(packetId: String): String {
         val runInfo = runInfoRepository.findByPacketId(packetId)
             ?: throw PackitException("runInfoNotFoundForPacket", HttpStatus.NOT_FOUND)
@@ -174,6 +180,7 @@ class DisabledRunnerService : RunnerService {
     override fun getBranches(): GitBranches = error()
     override fun getParameters(ref: String, packetGroupName: String): List<Parameter> = error()
     override fun getPacketGroups(ref: String): List<RunnerPacketGroup> = error()
+    override fun getPackages(): List<RunnerPackageDto> = error()
     override fun submitRun(info: SubmitRunInfo, username: String): SubmitRunResponse = error()
     override fun getTaskStatus(taskId: String): RunInfo = error()
     override fun getTasksStatuses(payload: PageablePayload, filterPacketGroupName: String): Page<RunInfo> = error()

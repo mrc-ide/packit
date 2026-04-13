@@ -6,7 +6,14 @@ import { Downloads, Home, Metadata, PacketGroup } from "../contents";
 import { PacketReadPermission } from "../contents/PacketReadPermission";
 import { AdminLayout, ManagePins, ManageRoles, ManageUsers, ResyncPackets } from "../contents/admin";
 import { PacketDetails, PacketFileFullScreen } from "../contents/packets";
-import { PacketRun, PacketRunTaskLogs, PacketRunTasksLogs, PacketRunnerLayout } from "../contents/runner";
+// eslint-disable-next-line max-len
+import {
+  PacketRunnerPackages,
+  PacketRun,
+  PacketRunTaskLogs,
+  PacketRunTasksLogs,
+  PacketRunnerLayout
+} from "../contents/runner";
 import { AuthLayoutForm, DeviceActivation, Login, Redirect, UpdatePassword } from "../login";
 import { PacketLayout } from "../main";
 import { Breadcrumb } from "../main/Breadcrumb";
@@ -36,6 +43,7 @@ export const Router = () => {
               <Route path="runner" element={<PacketRun />} />
               <Route path="runner/logs" element={<PacketRunTasksLogs />} />
               <Route path="runner/logs/:taskId" element={<PacketRunTaskLogs />} />
+              <Route path="runner/packages" element={<PacketRunnerPackages />} />
             </Route>
             {/* <Route path="run-workflow" element={<WorkflowRunner />} /> */}
             {/* <Route path="documentation" element={<ProjectDocumentation />} /> */}

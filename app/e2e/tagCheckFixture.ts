@@ -2,6 +2,7 @@ import { test as base } from "@playwright/test";
 
 export const TAG_STATE_MUTATE = "@stateMutate";
 export const TAG_DEMO_PACKETS = "@demoPackets";
+export const TAG_DEMO_R_LIBRARY = "@demoRLibrary";
 
 const isLocal = (baseURL: string) => baseURL.startsWith("http://localhost");
 const isDev = (baseURL: string) => new URL(baseURL).hostname.endsWith("packit-dev.dide.ic.ac.uk");

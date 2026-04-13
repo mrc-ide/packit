@@ -21,6 +21,8 @@ describe("packet runner component", () => {
           <Route element={<PacketRunnerLayout />}>
             <Route path="runner" element={<div>run page</div>} />
             <Route path="runner/logs" element={<div>logs page</div>} />
+            <Route path="runner/logs/:taskId" element={<div>logs for a particular task</div>} />
+            <Route path="runner/packages" element={<div>packages page</div>} />
           </Route>
         </Routes>
       </MemoryRouter>
@@ -52,10 +54,19 @@ describe("packet runner component", () => {
     expect(screen.getByText(/Unauthorized/)).toBeVisible();
   });
 
+  it("should show skeleton while authorities are still loading", () => {
+    mockUseUser.mockReturnValue({ isLoading: true } as any);
+    mockedUseRunnerConfig.mockReturnValue(true);
+    renderElement();
+
+    expect(screen.queryByText(/Unauthorized/)).not.toBeInTheDocument();
+    expect(screen.queryByTestId("sidebar")).not.toBeInTheDocument();
+    expect(screen.getByText("Loading...")).toBeVisible();
+  });
+
   it("should show unauthorized when orderly runner is not enabled", () => {
     mockUseUser.mockReturnValue({ authorities: ["packet.run"] } as any);
     mockedUseRunnerConfig.mockReturnValue(false);
-
     renderElement();
 
     expect(screen.getByText(/Unauthorized/)).toBeVisible();

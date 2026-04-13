@@ -98,6 +98,20 @@ describe("UserProvider", () => {
     });
   });
 
+  it("should set isLoading from useGetUserAuthorities", async () => {
+    mockGetUserFromLocalStorage.mockReturnValueOnce(mockUserState());
+    const TestComponent = () => {
+      const { isLoading } = useUser();
+      return <div>{JSON.stringify(isLoading)}</div>;
+    };
+
+    renderElement(<TestComponent />);
+
+    await waitFor(() => {
+      expect(screen.getByText("false")).toBeVisible();
+    });
+  });
+
   it("should show error if authorities are not loaded", async () => {
     mockGetUserFromLocalStorage.mockReturnValueOnce(mockUserState());
     server.use(

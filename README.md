@@ -44,7 +44,7 @@ For more options:
 
 The following commands achieve the same things but allow for finer control of each of the components:
 
-1. `./scripts/run-dependencies` to run the database and `outpack_server`
+1. `./scripts/run-dependencies`: runs the database, `orderly.runner` server & worker, and `outpack_server`
 2. `./api/scripts/run` to run the API
    i.If running basic auth mode, run `./scripts/basic-create-super-user`. This will create a superadmin user that can be used. Ensure api has run and created all DB tables first.
 3. `npm run dev --prefix=app` to run the React app on port 3000.
@@ -135,4 +135,8 @@ if that is the case. It will also warn if such tests are being run on dev, as th
 if `@demoPackets` tests are being run on non-localhost as this may explain any test failures. 
 
 By custom, we suffix generic tests with `.generic.spec.ts` and demo datasets tests with `.demo.spec.ts`, but this 
-naming convention is not interpreted by any test matchers or fixtures. 
+naming convention is not interpreted by any test matchers or fixtures.
+
+Another tag exists, `@demoRLibrary`, to denote tests that depend on the env var `PACKIT_HOST_R_LIBRARY_PATH` being
+set so as to mount the test R library (`../scripts/runnerDemoLib`) to `/library` on the orderly runner. These should pass
+locally, and not on any deployed instance.

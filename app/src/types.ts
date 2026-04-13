@@ -77,15 +77,13 @@ interface Platform {
   system: string;
 }
 
-interface Package {
-  package: string;
-  version: string;
-  attached: boolean;
-}
-
 interface Session {
   platform: Platform;
-  packages: Package[];
+  packages: {
+    package: string;
+    version: string;
+    attached: boolean;
+  }[];
 }
 
 export interface Custom {
@@ -96,6 +94,12 @@ export interface Custom {
     role: InputFile[]; // Assigns a 'role' to input files. Any file that is not an output is considered an input.
     shared: SharedResource[];
   };
+}
+
+// R packages installed into a shared library for the runner and workers
+export interface RunnerPackage {
+  name: string;
+  version: string;
 }
 
 interface Description {

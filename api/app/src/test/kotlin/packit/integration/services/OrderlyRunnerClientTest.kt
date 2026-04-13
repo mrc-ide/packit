@@ -9,6 +9,7 @@ import packit.integration.IntegrationTest
 import packit.model.dto.OrderlyLocation
 import packit.model.dto.OrderlyRunnerVersion
 import packit.model.dto.Parameter
+import packit.model.dto.RunnerPackageDto
 import packit.model.dto.RunnerSubmitRunInfo
 import packit.service.OrderlyRunnerClient
 import kotlin.test.assertEquals
@@ -43,6 +44,14 @@ class OrderlyRunnerClientTest(
         assertIs<OrderlyRunnerVersion>(result)
         assertIs<String>(result.orderly)
         assertIs<String>(result.orderlyRunner)
+    }
+
+    @Test
+    fun `can get packages`() {
+        val result = sut.getPackages()
+
+        assertIs<List<RunnerPackageDto>>(result)
+        assertEquals(listOf(RunnerPackageDto(name = "minimalRPackage", version = "0.0.1")), result)
     }
 
     @Test

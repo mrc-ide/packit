@@ -29,6 +29,11 @@ class RunnerController(private val runnerService: RunnerService) {
         return ResponseEntity.ok(runnerService.getVersion())
     }
 
+    @GetMapping("/packages")
+    fun getPackages(): ResponseEntity<List<RunnerPackageDto>> {
+        return ResponseEntity.ok(runnerService.getPackages())
+    }
+
     @PostMapping("/git/fetch")
     fun gitFetch(): ResponseEntity<Unit> {
         runnerService.gitFetch()

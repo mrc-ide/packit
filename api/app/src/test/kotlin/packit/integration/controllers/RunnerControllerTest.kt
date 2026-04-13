@@ -137,13 +137,35 @@ class RunnerControllerTest : IntegrationTest() {
 
     @Test
     @WithAuthenticatedUser(authorities = ["none"])
-    fun `gets unauthorized if no packet run authority`() {
+    fun `cannot get orderly runner version if no packet run authority`() {
         val res: ResponseEntity<OrderlyRunnerVersion> = restTemplate.getForEntity(
             "/runner/version",
             OrderlyRunnerVersion::class.java
         )
 
-        assertEquals(HttpStatus.UNAUTHORIZED, res.statusCode)
+        assertUnauthorized(res)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = ["packet.run"])
+    fun `can get packages`() {
+        val res: ResponseEntity<List<RunnerPackageDto>> = restTemplate.exchange(
+            "/runner/packages",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+        assertEquals(listOf(RunnerPackageDto(name = "minimalRPackage", version = "0.0.1")), res.body)
+    }
+
+    @Test
+    @WithAuthenticatedUser(authorities = [])
+    fun `cannot get packages if no packet run authority`() {
+        val res: ResponseEntity<String> = restTemplate.exchange(
+            "/runner/packages",
+            HttpMethod.GET,
+            getTokenizedHttpEntity()
+        )
+        assertUnauthorized(res)
     }
 
     @Test
