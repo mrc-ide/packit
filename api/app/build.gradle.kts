@@ -1,3 +1,4 @@
+// https://docs.gradle.org/8.6/userguide/building_java_projects.html
 import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -7,15 +8,15 @@ kotlin {
 
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
-    kotlin("jvm") version "1.9.20"
-    kotlin("plugin.allopen") version "1.7.22"
+    kotlin("jvm")
+    kotlin("plugin.allopen")
 
     // Spring plugins
     id("org.flywaydb.flyway") version "11.14.1"
     id("org.springframework.boot") version "3.5.7"
     id("io.spring.dependency-management") version "1.1.0"
-    kotlin("plugin.spring") version "2.0.21"
-    kotlin("plugin.jpa") version "1.7.22"
+    kotlin("plugin.spring")
+    kotlin("plugin.jpa")
 
     // Expose Git revision as a property
     id("com.gorylenko.gradle-git-properties") version "2.4.2"

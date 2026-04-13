@@ -1,7 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 import { ReactNode, createContext, useContext, useState } from "react";
-import { getUserFromLocalStorage } from "@lib/localStorageManager";
-import { LocalStorageKeys } from "@lib/types/LocalStorageKeys";
+import { getUserFromLocalStorage, removeUserFromLocalStorage, setUserInLocalStorage } from "@lib/storageManager";
 import { PacketJwtPayload } from "@/types";
 import { ErrorComponent } from "../contents/common/ErrorComponent";
 import { useGetUserAuthorities } from "./hooks/useGetUserAuthorities";
@@ -38,11 +37,11 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         userName: jwtPayload.userName ?? ""
       };
       setUserState(user);
-      localStorage.setItem(LocalStorageKeys.USER, JSON.stringify(user));
+      setUserInLocalStorage(user);
     },
     removeUser() {
       setUserState(null);
-      localStorage.removeItem(LocalStorageKeys.USER);
+      removeUserFromLocalStorage();
     }
   };
 

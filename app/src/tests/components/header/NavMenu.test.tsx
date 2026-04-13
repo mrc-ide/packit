@@ -1,12 +1,24 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { NavMenu } from "@components/header/NavMenu";
+import { useRunnerConfig } from "@components/providers/RunnerConfigProvider";
 import { MemoryRouter } from "react-router-dom";
+
+vitest.mock("@components/providers/RunnerConfigProvider", () => ({
+  useRunnerConfig: vitest.fn()
+}));
+
+const mockedUseRunnerConfig = vitest.mocked(useRunnerConfig);
 
 describe("NavMenu component", () => {
   const userManageNavItems = {
     runner: "Runner",
     "manage-roles": "Admin"
   };
+
+  beforeEach(() => {
+    mockedUseRunnerConfig.mockReturnValue(true);
+  });
+
   it("should render all nav items when relevant permissions are present", () => {
     render(
       <MemoryRouter>
@@ -29,8 +41,8 @@ describe("NavMenu component", () => {
 
     Object.entries(userManageNavItems).forEach(async ([to, title]) => {
       if (to === "runner") {
-        navItemIsNotDisplayedOnLargeScreens(to, title);
-        await navItemIsNotDisplayedOnSmallScreens(to, title);
+        navItemIsNotDisplayedOnLargeScreens(title);
+        await navItemIsNotDisplayedOnSmallScreens(title);
       } else {
         navItemIsDisplayedOnLargeScreens(to, title);
         await navItemIsDisplayedOnSmallScreens(to, title);
@@ -47,8 +59,8 @@ describe("NavMenu component", () => {
 
     Object.entries(userManageNavItems).forEach(async ([to, title]) => {
       if (to === "manage-roles") {
-        navItemIsNotDisplayedOnLargeScreens(to, title);
-        await navItemIsNotDisplayedOnSmallScreens(to, title);
+        navItemIsNotDisplayedOnLargeScreens(title);
+        await navItemIsNotDisplayedOnSmallScreens(title);
       } else {
         navItemIsDisplayedOnLargeScreens(to, title);
         await navItemIsDisplayedOnSmallScreens(to, title);
@@ -65,13 +77,39 @@ describe("NavMenu component", () => {
 
     Object.entries(userManageNavItems).forEach(async ([to, title]) => {
       if (to === "manage-roles" || to === "runner") {
-        navItemIsNotDisplayedOnLargeScreens(to, title);
-        await navItemIsNotDisplayedOnSmallScreens(to, title);
+        navItemIsNotDisplayedOnLargeScreens(title);
+        await navItemIsNotDisplayedOnSmallScreens(title);
       } else {
         navItemIsDisplayedOnLargeScreens(to, title);
         await navItemIsDisplayedOnSmallScreens(to, title);
       }
     });
+  });
+
+  it("should not render Runner nav item when runner is disabled", () => {
+    mockedUseRunnerConfig.mockReturnValueOnce(false);
+
+    render(
+      <MemoryRouter>
+        <NavMenu authorities={["packet.run", "user.manage"]} />
+      </MemoryRouter>
+    );
+
+    navItemIsNotDisplayedOnLargeScreens("Runner");
+    navItemIsDisplayedOnLargeScreens("manage-roles", "Admin");
+  });
+
+  it("should not render Runner nav item while runner config is loading", () => {
+    mockedUseRunnerConfig.mockReturnValueOnce(null);
+
+    render(
+      <MemoryRouter>
+        <NavMenu authorities={["packet.run", "user.manage"]} />
+      </MemoryRouter>
+    );
+
+    navItemIsNotDisplayedOnLargeScreens("Runner");
+    navItemIsDisplayedOnLargeScreens("manage-roles", "Admin");
   });
 });
 
@@ -81,7 +119,7 @@ const navItemIsDisplayedOnLargeScreens = (to: string, title: string) => {
   expect(link).toHaveAttribute("href", `/${to}`);
 };
 
-const navItemIsNotDisplayedOnLargeScreens = (to: string, title: string) => {
+const navItemIsNotDisplayedOnLargeScreens = (title: string) => {
   expect(screen.queryByRole("link", { name: title })).not.toBeInTheDocument();
 };
 
@@ -93,7 +131,7 @@ const navItemIsDisplayedOnSmallScreens = async (to: string, title: string) => {
   expect(link).toHaveAttribute("href", `/${to}`);
 };
 
-const navItemIsNotDisplayedOnSmallScreens = async (to: string, title: string) => {
+const navItemIsNotDisplayedOnSmallScreens = async (title: string) => {
   await pressDownKey();
 
   expect(screen.queryByRole("menuitem", { name: title })).not.toBeInTheDocument();

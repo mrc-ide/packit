@@ -18,6 +18,12 @@ import packit.service.RunnerService
 @RequestMapping("/runner")
 @PreAuthorize("hasAuthority('packet.run')")
 class RunnerController(private val runnerService: RunnerService) {
+    @PreAuthorize("permitAll()")
+    @GetMapping("/enabled")
+    fun getEnabled(): ResponseEntity<Boolean> {
+        return ResponseEntity.ok(runnerService.getEnabled())
+    }
+
     @GetMapping("/version")
     fun getVersion(): ResponseEntity<OrderlyRunnerVersion> {
         return ResponseEntity.ok(runnerService.getVersion())

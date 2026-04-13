@@ -3,8 +3,16 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { PacketRunnerLayout } from "@components/contents/runner";
 import * as UserProvider from "@components/providers/UserProvider";
+import { useRunnerConfig } from "@components/providers/RunnerConfigProvider";
 
 const mockUseUser = vitest.spyOn(UserProvider, "useUser");
+
+vitest.mock("@components/providers/RunnerConfigProvider", () => ({
+  useRunnerConfig: vitest.fn()
+}));
+
+const mockedUseRunnerConfig = vitest.mocked(useRunnerConfig);
+
 describe("packet runner component", () => {
   const renderElement = () => {
     return render(
@@ -23,6 +31,7 @@ describe("packet runner component", () => {
 
   it("should allow navigation between run and logs in from sidebar given packet.run permission", async () => {
     mockUseUser.mockReturnValue({ authorities: ["packet.run"] } as any);
+    mockedUseRunnerConfig.mockReturnValue(true);
     renderElement();
 
     // ensure correct url route is loaded
@@ -38,6 +47,7 @@ describe("packet runner component", () => {
   });
 
   it("should show unauthorized when user does not have packet.run authority", () => {
+    mockedUseRunnerConfig.mockReturnValue(true);
     mockUseUser.mockReturnValue({ authorities: [""] } as any);
     renderElement();
 
@@ -46,10 +56,19 @@ describe("packet runner component", () => {
 
   it("should show skeleton while authorities are still loading", () => {
     mockUseUser.mockReturnValue({ isLoading: true } as any);
+    mockedUseRunnerConfig.mockReturnValue(true);
     renderElement();
 
     expect(screen.queryByText(/Unauthorized/)).not.toBeInTheDocument();
     expect(screen.queryByTestId("sidebar")).not.toBeInTheDocument();
     expect(screen.getByText("Loading...")).toBeVisible();
+  });
+
+  it("should show unauthorized when orderly runner is not enabled", () => {
+    mockUseUser.mockReturnValue({ authorities: ["packet.run"] } as any);
+    mockedUseRunnerConfig.mockReturnValue(false);
+    renderElement();
+
+    expect(screen.getByText(/Unauthorized/)).toBeVisible();
   });
 });

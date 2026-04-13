@@ -10,7 +10,7 @@ import { mockUsersWithPermissions } from "@/tests/mocks";
 
 const mockAuthConfig = vitest.fn();
 const mockUser = vitest.fn();
-vitest.mock("@lib/localStorageManager", () => ({
+vitest.mock("@lib/storageManager", () => ({
   getAuthConfigFromLocalStorage: () => mockAuthConfig(),
   getUserFromLocalStorage: () => mockUser()
 }));

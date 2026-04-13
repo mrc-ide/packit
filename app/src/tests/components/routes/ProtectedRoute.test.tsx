@@ -2,7 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import * as UserProvider from "@components/providers/UserProvider";
 import { ProtectedRoute } from "@components/routes/ProtectedRoute";
-import { LocalStorageKeys } from "@lib/types/LocalStorageKeys";
+import { StorageKeys } from "@lib/types/StorageKeys";
 import { mockUserProviderState } from "@/tests/mocks";
 const mockedUsedNavigate = vitest.fn();
 vitest.mock("react-router-dom", async () => ({
@@ -114,7 +114,7 @@ describe("protected routes", () => {
     mockLoggingOut = false;
     mockIsAuthenticated.mockReturnValue(false);
     mockAuthIsExpired.mockReturnValue(true);
-    localStorage.setItem(LocalStorageKeys.USER, "mockUser");
+    localStorage.setItem(StorageKeys.USER, "mockUser");
     renderElement();
 
     await waitFor(() => {

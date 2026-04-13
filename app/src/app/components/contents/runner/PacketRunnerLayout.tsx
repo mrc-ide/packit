@@ -5,6 +5,7 @@ import { useUser } from "../../providers/UserProvider";
 import { Sidebar } from "../common/Sidebar";
 import { Unauthorized } from "../common/Unauthorized";
 import { Skeleton } from "@components/Base/Skeleton";
+import { useRunnerConfig } from "../../providers/RunnerConfigProvider";
 
 const sidebarItems: SidebarItem[] = [
   {
@@ -23,12 +24,13 @@ const sidebarItems: SidebarItem[] = [
 
 export const PacketRunnerLayout = () => {
   const { authorities, isLoading } = useUser();
+  const isRunnerEnabled = useRunnerConfig();
 
   if (isLoading) {
     return <Skeleton className="w-full h-32" />;
   }
 
-  if (!hasPacketRunPermission(authorities)) {
+  if (!hasPacketRunPermission(authorities) || isRunnerEnabled === false) {
     return <Unauthorized />;
   }
 

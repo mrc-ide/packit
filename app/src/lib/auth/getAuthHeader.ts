@@ -1,4 +1,4 @@
-import { getAuthConfigFromLocalStorage } from "../localStorageManager";
+import { getAuthConfigFromLocalStorage } from "../storageManager";
 import { getBearerToken } from "./getBearerToken";
 
 export const getAuthHeader = () => {

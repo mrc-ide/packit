@@ -14,6 +14,7 @@ import packit.model.dto.*
 import packit.repository.RunInfoRepository
 
 interface RunnerService {
+    fun getEnabled(): Boolean = true
     fun getVersion(): OrderlyRunnerVersion
     fun getPackages(): List<RunnerPackageDto>
     fun gitFetch()
@@ -173,6 +174,7 @@ class DisabledRunnerService : RunnerService {
         throw PackitException("runnerDisabled", HttpStatus.FORBIDDEN)
     }
 
+    override fun getEnabled(): Boolean = false
     override fun getVersion(): OrderlyRunnerVersion = error()
     override fun gitFetch() = error()
     override fun getBranches(): GitBranches = error()

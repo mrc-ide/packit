@@ -1,30 +1,32 @@
-describe("local storage keys", () => {
+describe("storage keys", () => {
   afterEach(() => {
     vitest.unstubAllEnvs();
     vitest.resetModules();
   });
 
-  test("local storage keys are namespaced correctly", async () => {
+  test("storage keys are namespaced correctly", async () => {
     const ns = "test-ns";
     vitest.stubEnv("VITE_PACKIT_NAMESPACE", ns);
 
-    const { LocalStorageKeys } = await import("@lib/types/LocalStorageKeys");
+    const { StorageKeys } = await import("@lib/types/StorageKeys");
 
-    expect(LocalStorageKeys).toStrictEqual({
+    expect(StorageKeys).toStrictEqual({
       AUTH_CONFIG: `${ns}.authConfig`,
+      RUNNER_CONFIG: `${ns}.runnerConfig`,
       USER: `${ns}.user`,
       THEME: "ui-theme",
       REQUESTED_URL: `${ns}.requestedUrl`
     });
   });
 
-  test("local storage keys without namespace", async () => {
+  test("storage keys without namespace", async () => {
     vitest.stubEnv("VITE_PACKIT_NAMESPACE", "");
 
-    const { LocalStorageKeys } = await import("@lib/types/LocalStorageKeys");
+    const { StorageKeys } = await import("@lib/types/StorageKeys");
 
-    expect(LocalStorageKeys).toStrictEqual({
+    expect(StorageKeys).toStrictEqual({
       AUTH_CONFIG: "authConfig",
+      RUNNER_CONFIG: "runnerConfig",
       USER: "user",
       THEME: "ui-theme",
       REQUESTED_URL: "requestedUrl"

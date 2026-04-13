@@ -1,0 +1,1 @@
+Before submitting a PR or set of changes to a PR, if any changes have been made to the front end, ensure linting and formatting are clean, e.g. with `npm run lint:fix --prefix=app` or `npm run format:write --prefix=app`. Don't make these pass by using comments to ignore linter warnings: actually fix the highlighted issues. No exceptions.

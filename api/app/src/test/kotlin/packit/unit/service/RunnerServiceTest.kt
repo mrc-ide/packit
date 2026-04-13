@@ -81,6 +81,12 @@ class RunnerServiceTest {
     )
 
     @Test
+    fun `can report enabled status`() {
+        val result = sut.getEnabled()
+        assertEquals(result, true)
+    }
+
+    @Test
     fun `can get version`() {
         val result = sut.getVersion()
         assertEquals(result, version)

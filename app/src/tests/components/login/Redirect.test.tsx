@@ -7,7 +7,7 @@ import { mockUserState, mockExpiredUserState } from "../../mocks";
 import { Accessibility } from "@components/contents/accessibility";
 import { AuthConfigProvider } from "@components/providers/AuthConfigProvider";
 
-vitest.mock("@lib/localStorageManager", () => ({
+vitest.mock("@lib/storageManager", () => ({
   getAuthConfigFromLocalStorage: vitest.fn().mockReturnValue({ authEnabled: true, enableGithubLogin: true })
 }));
 

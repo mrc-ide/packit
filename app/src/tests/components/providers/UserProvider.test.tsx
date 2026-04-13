@@ -2,15 +2,15 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { useEffect } from "react";
 import { UserProvider, useUser } from "@components/providers/UserProvider";
 import { UserState } from "@components/providers/types/UserTypes";
-import { LocalStorageKeys } from "@lib/types/LocalStorageKeys";
+import { StorageKeys } from "@lib/types/StorageKeys";
 import { mockAuthorities, mockToken, mockUserState } from "../../mocks";
 import { SWRConfig } from "swr";
 import { server } from "@/msw/server";
 import { rest } from "msw";
 
 const mockGetUserFromLocalStorage = vitest.fn((): null | UserState => null);
-vitest.mock("@lib/localStorageManager", async () => ({
-  ...(await vitest.importActual("@lib/localStorageManager")),
+vitest.mock("@lib/storageManager", async () => ({
+  ...(await vitest.importActual("@lib/storageManager")),
   getUserFromLocalStorage: () => mockGetUserFromLocalStorage()
 }));
 const renderElement = (children: JSX.Element) => {
@@ -61,7 +61,7 @@ describe("UserProvider", () => {
     await waitFor(() => {
       expect(screen.getByText(mockToken, { exact: false })).toBeVisible();
       expect(screen.getByText(/d@gmail.com/i)).toBeVisible();
-      expect(JSON.parse(localStorage.getItem(LocalStorageKeys.USER) as string)?.userName).toBe("d@gmail.com");
+      expect(JSON.parse(localStorage.getItem(StorageKeys.USER) as string)?.userName).toBe("d@gmail.com");
     });
   });
 
@@ -80,7 +80,7 @@ describe("UserProvider", () => {
 
     await waitFor(() => {
       expect(screen.getByText(/empty/i)).toBeVisible();
-      expect(localStorage.getItem(LocalStorageKeys.USER)).toBe(null);
+      expect(localStorage.getItem(StorageKeys.USER)).toBe(null);
     });
   });
 
