@@ -154,7 +154,9 @@ class RunnerControllerTest : IntegrationTest() {
             HttpMethod.GET,
             getTokenizedHttpEntity()
         )
-        assertEquals(listOf(RunnerPackageDto(name = "minimalRPackage", version = "0.0.1")), res.body)
+        assertThat(
+            res.body
+        ).contains(RunnerPackageDto(name = "minimalRPackage", version = "0.0.1", location = "/library"))
     }
 
     @Test

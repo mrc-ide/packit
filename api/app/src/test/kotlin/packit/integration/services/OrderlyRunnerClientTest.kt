@@ -1,5 +1,6 @@
 package packit.integration.services
 
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Value
@@ -51,7 +52,9 @@ class OrderlyRunnerClientTest(
         val result = sut.getPackages()
 
         assertIs<List<RunnerPackageDto>>(result)
-        assertEquals(listOf(RunnerPackageDto(name = "minimalRPackage", version = "0.0.1")), result)
+        assertThat(
+            result
+        ).contains(RunnerPackageDto(name = "minimalRPackage", version = "0.0.1", location = "/library"))
     }
 
     @Test

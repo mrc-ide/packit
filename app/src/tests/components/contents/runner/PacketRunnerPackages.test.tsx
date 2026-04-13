@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { PacketRunnerPackages } from "@components/contents/runner";
 import { mockRunnerPackages } from "@/tests/mocks";
 import { SWRConfig } from "swr";
@@ -18,16 +19,34 @@ describe("PacketRunnerPackages component", () => {
       </SWRConfig>
     );
 
-  it("should render packages page with a list of installed packages", async () => {
+  it("should render packages page with accordion sections for library and other packages", async () => {
     renderComponent();
 
     await waitFor(() => {
       expect(screen.getByText("Package versions")).toBeVisible();
     });
 
-    mockRunnerPackages.forEach((pkg) => {
+    expect(screen.getByText("Runner packages")).toBeVisible();
+    expect(screen.getByText("Other packages")).toBeVisible();
+
+    const libraryPackages = mockRunnerPackages.filter((pkg) => pkg.location === "/library");
+    const otherPackages = mockRunnerPackages.filter((pkg) => pkg.location !== "/library");
+    libraryPackages.forEach((pkg) => {
       expect(screen.getByText(pkg.name)).toBeVisible();
       expect(screen.getByText(pkg.version)).toBeVisible();
+    });
+    otherPackages.forEach((pkg) => {
+      expect(screen.queryByText(pkg.name)).not.toBeInTheDocument();
+      expect(screen.queryByText(pkg.version)).not.toBeInTheDocument();
+    });
+
+    await userEvent.click(screen.getByText("Other packages"));
+
+    await waitFor(() => {
+      otherPackages.forEach((pkg) => {
+        expect(screen.getByText(pkg.name)).toBeVisible();
+        expect(screen.getByText(pkg.version)).toBeVisible();
+      });
     });
   });
 
