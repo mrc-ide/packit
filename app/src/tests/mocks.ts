@@ -842,11 +842,13 @@ export const mockGitBranches: GitBranches = {
 export const mockRunnerPackages: RunnerPackage[] = [
   {
     name: "package1",
-    version: "0.1.0"
+    version: "0.1.0",
+    location: "/library"
   },
   {
     name: "package2",
-    version: "2.0.0"
+    version: "2.0.0",
+    location: "/usr/lib/R/library"
   }
 ];
 

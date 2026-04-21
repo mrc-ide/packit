@@ -96,10 +96,11 @@ export interface Custom {
   };
 }
 
-// R packages installed into a shared library for the runner and workers
+// R packages installed for the runner and workers
 export interface RunnerPackage {
   name: string;
   version: string;
+  location: string;
 }
 
 interface Description {

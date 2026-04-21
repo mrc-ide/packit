@@ -56,8 +56,8 @@ class RunnerServiceTest {
     private val client = mock<OrderlyRunner> {
         on { getVersion() } doReturn version
         on { getPackages() } doReturn listOf(
-            RunnerPackageDto("package1", "1.0.0"),
-            RunnerPackageDto("package2", "2.0.0"),
+            RunnerPackageDto("package1", "1.0.0", "/library"),
+            RunnerPackageDto("package2", "2.0.0", "/usr/lib/R/library"),
         )
     }
     private val runInfoRepository = mock<RunInfoRepository> {
@@ -97,8 +97,8 @@ class RunnerServiceTest {
         val result = sut.getPackages()
         assertEquals(
             listOf(
-                RunnerPackageDto("package1", "1.0.0"),
-                RunnerPackageDto("package2", "2.0.0"),
+                RunnerPackageDto("package1", "1.0.0", "/library"),
+                RunnerPackageDto("package2", "2.0.0", "/usr/lib/R/library"),
             ),
             result
         )
