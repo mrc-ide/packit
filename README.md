@@ -75,6 +75,10 @@ See [app/README.md](https://github.com/mrc-ide/packit/blob/main/app/README.md)
 
 See [docs/auth.md](docs/auth.md)
 
+## Deployment
+
+For all instances (whether in a montagu context or not), we use the [packit-deploy](https://github.com/mrc-ide/packit-deploy/) tool to deploy.
+
 ## Custom branding configuration
 
 See [docs/custom-branding.md](docs/custom-brandin.md)
