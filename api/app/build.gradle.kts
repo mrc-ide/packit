@@ -83,6 +83,8 @@ allOpen {
 application {
     // Define the main class for the application.
     mainClass.set("packit.AppKt")
+    // Set max memory for application to 4GB
+    applicationDefaultJvmArgs = listOf("-Xmx4g")
 }
 
 tasks.withType<KotlinCompile> {
