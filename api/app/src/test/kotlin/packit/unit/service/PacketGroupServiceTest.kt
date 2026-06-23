@@ -178,7 +178,7 @@ class PacketGroupServiceTest {
         whenever(packetGroupRepository.findAll()).thenReturn(allPacketGroups)
         val authorities = listOf("MANAGE_GROUP1", "MANAGE_GROUP2")
         setupSecurityContext(authorities)
-        whenever(permissionChecker.canManageAllPackets(authorities)).thenReturn(false)
+        whenever(permissionChecker.hasGlobalPacketManagePermission(authorities)).thenReturn(false)
         whenever(permissionChecker.hasPacketManagePermissionForGroup(authorities, "group1")).thenReturn(true)
         whenever(permissionChecker.hasPacketManagePermissionForGroup(authorities, "group2")).thenReturn(true)
         whenever(permissionChecker.hasPacketManagePermissionForGroup(authorities, "group3")).thenReturn(false)
@@ -192,7 +192,7 @@ class PacketGroupServiceTest {
         assertEquals(2, result.size)
         assertEquals("group1", result[0].name)
         assertEquals("group2", result[1].name)
-        verify(permissionChecker).canManageAllPackets(authorities)
+        verify(permissionChecker).hasGlobalPacketManagePermission(authorities)
         verify(permissionChecker, times(3)).hasPacketManagePermissionForGroup(any(), any())
     }
 
@@ -207,7 +207,7 @@ class PacketGroupServiceTest {
         whenever(packetGroupRepository.findAll()).thenReturn(allPacketGroups)
         val authorities = listOf("NO_PERMISSIONS")
         setupSecurityContext(authorities)
-        whenever(permissionChecker.canManageAllPackets(authorities)).thenReturn(false)
+        whenever(permissionChecker.hasGlobalPacketManagePermission(authorities)).thenReturn(false)
         whenever(permissionChecker.hasPacketManagePermissionForGroup(eq(authorities), any())).thenReturn(false)
 
         val sut = BasePacketGroupService(packetGroupRepository, packetService, permissionChecker)
@@ -217,7 +217,7 @@ class PacketGroupServiceTest {
 
         // Verify
         assertTrue { result.isEmpty() }
-        verify(permissionChecker).canManageAllPackets(authorities)
+        verify(permissionChecker).hasGlobalPacketManagePermission(authorities)
         verify(permissionChecker, times(3)).hasPacketManagePermissionForGroup(any(), any())
     }
 
@@ -227,7 +227,7 @@ class PacketGroupServiceTest {
         whenever(packetGroupRepository.findAll()).thenReturn(emptyList())
         val authorities = listOf("MANAGE_ALL")
         setupSecurityContext(authorities)
-        whenever(permissionChecker.canManageAllPackets(authorities)).thenReturn(true)
+        whenever(permissionChecker.hasGlobalPacketManagePermission(authorities)).thenReturn(true)
 
         val sut = BasePacketGroupService(packetGroupRepository, packetService, permissionChecker)
 
@@ -236,7 +236,7 @@ class PacketGroupServiceTest {
 
         // Verify
         assertTrue(result.isEmpty())
-        verify(permissionChecker).canManageAllPackets(authorities)
+        verify(permissionChecker).hasGlobalPacketManagePermission(authorities)
         verify(permissionChecker, never()).hasPacketManagePermissionForGroup(any(), any())
     }
 

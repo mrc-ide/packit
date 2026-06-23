@@ -68,7 +68,7 @@ class BasePacketGroupService(
         val allPacketGroups = packetGroupRepository.findAll()
         val authorities = SecurityContextHolder.getContext().authentication.authorities.map { it.authority }
 
-        return if (permissionChecker.canManageAllPackets(authorities)) {
+        return if (permissionChecker.hasGlobalPacketManagePermission(authorities)) {
             allPacketGroups
         } else {
             allPacketGroups.filter {
